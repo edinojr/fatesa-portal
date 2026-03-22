@@ -180,56 +180,73 @@ const BookViewer = () => {
             minHeight: 'min-content',
             transition: 'all 0.3s ease-in-out'
           }}>
-          <Document
-            file={book.pdf_url}
-            onLoadSuccess={onDocumentLoadSuccess}
-            onLoadError={onDocumentLoadError}
-            onSourceError={(err) => console.error('Erro na fonte do PDF:', err)}
-            loading={<Loader2 className="spinner" size={48} color="var(--primary)" />}
-          >
-            {numPages && (
-              // @ts-ignore
-              <HTMLFlipBook 
-                width={pageWidth} 
-                height={pageHeight} 
-                size="fixed"
-                minWidth={200}
-                maxWidth={pageWidth}
-                minHeight={300}
-                maxHeight={pageHeight}
-                maxShadowOpacity={0.5}
-                showCover={false}
-                usePortrait={true}
-                mobileScrollSupport={true}
-                useMouseEvents={false} // Prevents "Cannot read properties of undefined (reading 'x')" crash
-                onFlip={(e: any) => {
-                  setCurrentPage(e.data);
-                  if (scrollContainerRef.current) {
-                    scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-                  }
-                }}
-                showPageCorners={false}
-                disableFlipByClick={false}
-                startPage={currentPage}
-                ref={bookRef}
-                key={`${book.id}-${containerWidth}`}
-                className="fatesa-flipbook"
-                style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)', margin: '0 auto' }}
+          {book.pdf_url?.toLowerCase().endsWith('.epub') ? (
+            <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--glass)', borderRadius: '20px', border: '1px solid var(--glass-border)', maxWidth: '500px', margin: '2rem auto' }}>
+              <h2 style={{ marginBottom: '1.5rem' }}>Livro em formato EPUB</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+                Este livro está disponível no formato EPUB, ideal para leitura em dispositivos como Kindle, tablets ou aplicativos de leitura.
+              </p>
+              <a 
+                href={book.pdf_url} 
+                download 
+                className="btn btn-primary" 
+                style={{ width: 'auto', padding: '1rem 2rem', display: 'inline-flex', alignItems: 'center', gap: '0.75rem' }}
               >
-                {Array.from(new Array(numPages), (el, index) => (
-                  <div key={`page_${index + 1}`} className="page" style={{ background: '#fff', overflow: 'hidden' }}>
-                    <Page 
-                      pageNumber={index + 1} 
-                      width={pageWidth} 
-                      renderTextLayer={true} 
-                      renderAnnotationLayer={false} 
-                      devicePixelRatio={Math.max(window.devicePixelRatio || 1, 2)}
-                    />
-                  </div>
-                ))}
-              </HTMLFlipBook>
-            )}
-          </Document>
+                <ExternalLink size={20} /> Baixar EPUB para Leitura
+              </a>
+            </div>
+          ) : (
+            <Document
+              file={book.pdf_url}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={onDocumentLoadError}
+              onSourceError={(err) => console.error('Erro na fonte do PDF:', err)}
+              loading={<Loader2 className="spinner" size={48} color="var(--primary)" />}
+            >
+              {numPages && (
+                // @ts-ignore
+                <HTMLFlipBook 
+                  width={pageWidth} 
+                  height={pageHeight} 
+                  size="fixed"
+                  minWidth={200}
+                  maxWidth={pageWidth}
+                  minHeight={300}
+                  maxHeight={pageHeight}
+                  maxShadowOpacity={0.5}
+                  showCover={false}
+                  usePortrait={true}
+                  mobileScrollSupport={true}
+                  useMouseEvents={false} // Prevents "Cannot read properties of undefined (reading 'x')" crash
+                  onFlip={(e: any) => {
+                    setCurrentPage(e.data);
+                    if (scrollContainerRef.current) {
+                      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  showPageCorners={false}
+                  disableFlipByClick={false}
+                  startPage={currentPage}
+                  ref={bookRef}
+                  key={`${book.id}-${containerWidth}`}
+                  className="fatesa-flipbook"
+                  style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)', margin: '0 auto' }}
+                >
+                  {Array.from(new Array(numPages), (el, index) => (
+                    <div key={`page_${index + 1}`} className="page" style={{ background: '#fff', overflow: 'hidden' }}>
+                      <Page 
+                        pageNumber={index + 1} 
+                        width={pageWidth} 
+                        renderTextLayer={true} 
+                        renderAnnotationLayer={false} 
+                        devicePixelRatio={Math.max(window.devicePixelRatio || 1, 2)}
+                      />
+                    </div>
+                  ))}
+                </HTMLFlipBook>
+              )}
+            </Document>
+          )}
         </div>
 
         {/* Botão Próximo também removido */}

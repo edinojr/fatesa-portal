@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { 
   BookOpen, 
-  CheckCircle, 
-  Circle, 
   LogOut, 
   Award, 
   GraduationCap, 
   FileText, 
   CreditCard, 
-  Upload, 
   History,
   AlertCircle,
   CheckCircle2,
@@ -18,67 +15,14 @@ import {
   Users,
   ChevronLeft,
   Menu,
-  X,
-  PlayCircle,
-  ClipboardList,
-  Lock
+  X
 } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
-
-interface Lesson {
-  id: string
-  titulo: string
-  tipo: 'gravada' | 'ao_vivo' | 'atividade' | 'prova'
-  concluida?: boolean
-}
-
-interface Book {
-  id: string
-  titulo: string
-  aulas: Lesson[]
-  progresso: number
-  capa_url?: string
-  pdf_url?: string
-  isReleased?: boolean
-  isCurrent?: boolean
-  ordem?: number
-}
-
-interface Course {
-  id: string
-  nome: string
-  livros: Book[]
-}
-
-interface Documento {
-  id: string
-  tipo: 'rg' | 'cnh' | 'residencia' | 'exame' | 'outro'
-  url: string
-  status: 'pendente' | 'aprovado' | 'rejeitado'
-  feedback?: string
-}
-
-interface Pagamento {
-  id: string
-  valor: number
-  status: 'aberto' | 'pago' | 'atrasado'
-  data_vencimento: string
-  comprovante_url?: string
-  feedback?: string
-}
-
-interface UserProfile {
-  id: string
-  nome: string
-  email: string
-  tipo: string
-  acesso_definitivo?: boolean
-  data_expiracao_temp?: string
-  bolsista?: boolean
-  nucleo_id?: string
-  status_nucleo?: string
-  nucleos?: { nome: string }
-}
+import { Course, Documento, Pagamento, UserProfile } from '../types/dashboard'
+import CourseList from '../components/dashboard/CourseList'
+import DocumentUpload from '../components/dashboard/DocumentUpload'
+import FinancePanel from '../components/dashboard/FinancePanel'
+import GradesPanel from '../components/dashboard/GradesPanel'
 
 type Tab = 'cursos' | 'documentos' | 'financeiro' | 'boletim'
 
@@ -93,9 +37,7 @@ const Dashboard = () => {
   const [selectedBook, setSelectedBook] = useState<string | null>(null)
   const [selectedLessonType, setSelectedLessonType] = useState<'video' | 'atividade'>('video')
   const [atividades, setAtividades] = useState<any[]>([])
-  const [notas, setNotas] = useState<any[]>([])
   const [availableNucleos, setAvailableNucleos] = useState<any[]>([])
-  const [linkingNucleo, setLinkingNucleo] = useState(false)
   const [pixConfig, setPixConfig] = useState<{ key: string, qr: string }>({ key: '', qr: '' })
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
   const [showArchives, setShowArchives] = useState<Record<string, boolean>>({})
@@ -170,7 +112,6 @@ const Dashboard = () => {
       let mappedCourses: Course[] = [];
 
       if (isStaff) {
-        // Staff sees everything
         const { data: allCourses } = await supabase
           .from('cursos')
           .select(`
@@ -203,7 +144,6 @@ const Dashboard = () => {
           }))
         }
       } else {
-        // Students see only their enrollments
         const { data: enrollments } = await supabase
           .from('matriculas')
           .select(`
@@ -247,26 +187,6 @@ const Dashboard = () => {
       
       if (mappedCourses.length > 0) {
         setCourses(mappedCourses)
-      } else {
-        // Fallback mock with valid UUIDs
-        setCourses([
-          {
-            id: '00000000-0000-0000-0000-000000000001',
-            nome: 'Curso Teológico Básico',
-            livros: Array.from({ length: 5 }, (_, i) => ({
-              id: `00000000-0000-0000-0000-00000000001${i+1}`,
-              titulo: `Módulo ${i + 1}: Introdução`,
-              ordem: i + 1,
-              progresso: 0,
-              isReleased: i === 0,
-              isCurrent: i === 0,
-              aulas: [
-                { id: `a${i}-1`, titulo: 'Introdução ao Tema', tipo: 'gravada', concluida: false },
-                { id: `a${i}-2`, titulo: 'Aula Magna', tipo: 'ao_vivo', concluida: false },
-              ]
-            }))
-          }
-        ])
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -285,12 +205,6 @@ const Dashboard = () => {
     if (!profile) return
     const { data } = await supabase.from('pagamentos').select('*').eq('user_id', profile.id).order('data_vencimento', { ascending: false })
     if (data && data.length > 0) setPayments(data)
-    else {
-      setPayments([
-        { id: 'p1', valor: 70.00, status: 'aberto', data_vencimento: '2025-04-10' },
-        { id: 'p2', valor: 70.00, status: 'pago', data_vencimento: '2025-03-10', comprovante_url: '#' },
-      ])
-    }
 
     const { data: config } = await supabase.from('configuracoes').select('*')
     if (config) {
@@ -308,7 +222,6 @@ const Dashboard = () => {
     const { data: nucs } = await supabase.from('nucleos').select('id, nome, cidade, estado').order('nome')
     if (nucs) setAvailableNucleos(nucs)
 
-    // Fetch user answers/grades for activities and exams ALWAYS
     const { data: respostasData } = await supabase
       .from('respostas_aulas')
       .select('id, status, nota, tentativas, primeira_correcao_at, aulas(titulo, tipo)')
@@ -322,7 +235,6 @@ const Dashboard = () => {
 
   const handleChangeNucleo = async (nucleoId: string) => {
     if (!nucleoId || !profile) return
-    setLinkingNucleo(true)
     try {
       const { error } = await supabase.rpc('update_user_nucleo', { p_nucleo_id: nucleoId })
       if (error) throw error
@@ -330,8 +242,6 @@ const Dashboard = () => {
       fetchUserData()
     } catch(err: any) {
       showToast(err.message, 'error')
-    } finally {
-      setLinkingNucleo(false)
     }
   }
 
@@ -366,15 +276,6 @@ const Dashboard = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     navigate('/login')
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'aprovado': case 'pago': return <CheckCircle2 size={18} color="var(--success)" />
-      case 'rejeitado': case 'atrasado': return <XCircle size={18} color="var(--error)" />
-      case 'pendente': return <History size={18} color="var(--primary)" />
-      default: return <AlertCircle size={18} color="var(--text-muted)" />
-    }
   }
 
   if (loading) return <div className="auth-container"><Loader2 className="spinner" /> Carregando...</div>
@@ -504,248 +405,46 @@ const Dashboard = () => {
         </header>
 
         <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
-        {activeTab === 'cursos' && (
-          <div className="courses-grid">
-            {courses.map(course => {
-              const currentBook = course.livros.find(l => l.isCurrent) || course.livros.find(l => l.isReleased)
-              const pastBooks = course.livros.filter(l => l.isReleased && l.id !== currentBook?.id)
-              const isOpen = showArchives[course.id]
+          {activeTab === 'cursos' && (
+            <CourseList 
+              courses={courses}
+              showArchives={showArchives}
+              setShowArchives={setShowArchives}
+              selectedBook={selectedBook}
+              setSelectedBook={setSelectedBook}
+              selectedLessonType={selectedLessonType}
+              setSelectedLessonType={setSelectedLessonType}
+              atividades={atividades}
+            />
+          )}
 
-              return (
-                <div key={course.id}>
-                  <h3 style={{ marginBottom: '2rem' }}>{course.nome}</h3>
-                  {currentBook && (
-                    <div className="book-highlight-card">
-                      <div onClick={() => navigate(`/book/${currentBook.id}`)} className="book-cover" style={{ background: currentBook.capa_url ? `url(${currentBook.capa_url}) center/cover` : 'var(--glass-border)' }}></div>
-                      <div>
-                        <h2>{currentBook.titulo}</h2>
-                        <div className="book-actions">
-                          <button onClick={() => navigate(`/book/${currentBook.id}`)} className="btn btn-primary">
-                            <BookOpen size={20} /> Ler Livro
-                          </button>
-                          <button onClick={() => { setSelectedLessonType('video'); setSelectedBook(selectedBook === currentBook.id && selectedLessonType === 'video' ? null : currentBook.id) }} className="btn btn-outline">
-                            <PlayCircle size={20} /> Vídeos
-                          </button>
-                          <button onClick={() => { setSelectedLessonType('atividade'); setSelectedBook(selectedBook === currentBook.id && selectedLessonType === 'atividade' ? null : currentBook.id) }} className="btn btn-outline">
-                            <ClipboardList size={20} /> Atividades
-                          </button>
-                        </div>
-                        {selectedBook === currentBook.id && (
-                          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            {currentBook.aulas.filter(a => selectedLessonType === 'video' ? (a.tipo === 'gravada' || a.tipo === 'ao_vivo') : (a.tipo === 'atividade' || a.tipo === 'prova')).map(a => {
-                               const bookActivities = currentBook.aulas.filter(al => al.tipo === 'atividade');
-                               const submittedIds = atividades.map((at: any) => at.aula_id);
-                               const isLocked = a.tipo === 'prova' && bookActivities.some(bal => !submittedIds.includes(bal.id));
-                               
-                               return (
-                                 <div 
-                                   key={a.id} 
-                                   onClick={() => !isLocked && navigate(`/lesson/${a.id}`)} 
-                                   style={{ 
-                                     padding: '0.75rem 1rem', 
-                                     background: isLocked ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.02)', 
-                                     borderRadius: '8px', 
-                                     cursor: isLocked ? 'not-allowed' : 'pointer', 
-                                     display: 'flex', 
-                                     justifyContent: 'space-between',
-                                     alignItems: 'center', 
-                                     gap: '0.75rem', 
-                                     border: '1px solid rgba(255,255,255,0.05)',
-                                     opacity: isLocked ? 0.6 : 1
-                                   }} 
-                                   className="lesson-link-card"
-                                 >
-                                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                     {a.tipo === 'prova' ? <Award size={18} color="#EAB308" /> : a.tipo === 'atividade' ? <ClipboardList size={18} color="var(--success)" /> : <PlayCircle size={18} color="var(--primary)" />} 
-                                     <span style={{ fontWeight: 500 }}>{a.titulo}</span>
-                                   </div>
-                                   {isLocked && <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--error)', fontSize: '0.7rem' }}>
-                                     <Lock size={14} /> <span>Bloqueada</span>
-                                   </div>}
-                                 </div>
-                               );
-                             })}
-                            {currentBook.aulas.filter(a => selectedLessonType === 'video' ? (a.tipo === 'gravada' || a.tipo === 'ao_vivo') : (a.tipo === 'atividade' || a.tipo === 'prova')).length === 0 && (
-                               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', padding: '0.5rem' }}>Nenhum item de {selectedLessonType === 'video' ? 'vídeo' : 'atividade'} disponível ainda.</p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {pastBooks.length > 0 && (
-                    <div style={{ marginTop: '2rem' }}>
-                      <button onClick={() => setShowArchives({...showArchives, [course.id]: !isOpen})} className="btn" style={{ background: 'transparent', color: 'var(--text-muted)' }}>
-                        <History size={16} /> {isOpen ? 'Esconder anteriores' : 'Ver anteriores'}
-                      </button>
-                      {isOpen && (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
-                          {pastBooks.map(b => (
-                            <div key={b.id} onClick={() => navigate(`/book/${b.id}`)} style={{ cursor: 'pointer', padding: '1rem', background: 'var(--glass)', borderRadius: '12px' }}>{b.titulo}</div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        )}
+          {activeTab === 'documentos' && (
+            <DocumentUpload 
+              documents={documents}
+              handleFileUpload={handleFileUpload}
+              uploading={uploading}
+            />
+          )}
 
-        {activeTab === 'documentos' && (
-          <div className="data-card">
-            <h3>Documentos</h3>
-            {['rg', 'residencia', 'exame'].map(t => {
-              const d = documents.find(doc => doc.tipo === t)
-              return (
-                <div key={t} style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem 0', borderBottom: '1px solid var(--glass-border)' }}>
-                  <span>{t.toUpperCase()}</span>
-                  <input type="file" onChange={(e) => handleFileUpload(e, 'doc', undefined, t)} />
-                  {d && <span>{d.status}</span>}
-                </div>
-              )
-            })}
-          </div>
-        )}
+          {activeTab === 'financeiro' && (
+            <FinancePanel 
+              isExempt={isExempt}
+              pixConfig={pixConfig}
+              payments={payments}
+              uploading={uploading}
+              handleFileUpload={handleFileUpload}
+              showToast={(msg) => showToast(msg)}
+            />
+          )}
 
-        {activeTab === 'financeiro' && (
-          <div className="data-card">
-            <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><CreditCard /> Financeiro e Mensalidades</h3>
-            
-            {isExempt ? (
-              <div style={{ padding: '2rem', background: 'rgba(34, 197, 94, 0.05)', borderRadius: '16px', border: '1px solid rgba(34, 197, 94, 0.1)', textAlign: 'center' }}>
-                <CheckCircle2 color="var(--success)" size={32} style={{ marginBottom: '1rem' }} />
-                <p style={{ fontWeight: 600, color: 'var(--success)' }}>Você possui isenção ou gratuidade ativa.</p>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Nenhum pagamento é necessário no momento.</p>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                {/* Pix Payment Info */}
-                {(pixConfig.key || pixConfig.qr) && (
-                  <div style={{ padding: '1.5rem', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
-                      <div style={{ flex: 1, minWidth: '250px' }}>
-                        <h4 style={{ color: 'var(--primary)', marginBottom: '1rem', fontSize: '1rem' }}>Pagamento via PIX</h4>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Utilize a chave abaixo ou o QR Code ao lado para realizar o pagamento. Após concluir, anexe o comprovante na mensalidade correspondente abaixo.</p>
-                        
-                        {pixConfig.key && (
-                          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px dashed var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <code style={{ fontSize: '1rem', color: '#fff', letterSpacing: '1px' }}>{pixConfig.key}</code>
-                            <button 
-                              className="btn btn-outline" 
-                              style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}
-                              onClick={() => {
-                                navigator.clipboard.writeText(pixConfig.key);
-                                showToast('Chave PIX copiada!');
-                              }}
-                            >Copiar Chave</button>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {pixConfig.qr && (
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '12px', width: '130px', height: '130px', margin: '0 auto 0.5rem' }}>
-                            <img src={pixConfig.qr} alt="QR Code PIX" style={{ width: '100%', height: '100%' }} />
-                          </div>
-                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>QR Code do Polo</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Payments List */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <h4 style={{ fontSize: '1rem', opacity: 0.8 }}>Minhas Mensalidades</h4>
-                  {payments.map(p => (
-                    <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        {p.status === 'pago' ? <CheckCircle2 color="var(--success)" size={20} /> : <AlertCircle color="#EAB308" size={20} />}
-                        <div>
-                          <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>R$ {p.valor.toFixed(2)}</div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Vencimento: {new Date(p.data_vencimento).toLocaleDateString()}</div>
-                        </div>
-                      </div>
-                      
-                      <div style={{ textAlign: 'right' }}>
-                        {p.status === 'pago' ? (
-                          <div className="status-badge status-approved">Pago</div>
-                        ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <div className="status-badge status-pending" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#EAB308', border: '1px solid rgba(234, 179, 8, 0.2)' }}>Em Aberto</div>
-                            <label className="btn btn-outline" style={{ fontSize: '0.7rem', padding: '0.4rem 0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                              <Upload size={14} /> {uploading === p.id ? 'Enviando...' : 'Anexar Comprovante'}
-                              <input type="file" style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, 'pay', p.id)} />
-                            </label>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  {payments.length === 0 && (
-                    <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Nenhuma mensalidade registrada até o momento.</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'boletim' && (
-          <div className="data-card">
-            <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><Award color="var(--primary)" /> Notas e Atividades</h3>
-            
-            {!profile?.nucleo_id && (
-              <div style={{ padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', borderRadius: '12px', border: '1px solid rgba(234, 179, 8, 0.2)', marginBottom: '2rem' }}>
-                <p style={{ color: '#EAB308', fontSize: '0.9rem', marginBottom: '1rem', fontWeight: 600 }}>Você ainda não vinculou seu acesso a um Polo Educacional (Núcleo). Por favor, escolha um abaixo:</p>
-                <select className="form-control" onChange={(e) => handleChangeNucleo(e.target.value)}>
-                  <option value="">Escolha seu núcleo...</option>
-                  {availableNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
-                </select>
-              </div>
-            )}
-
-            {profile?.nucleo_id && (
-              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Seu Polo Vinculado: <strong style={{ color: '#fff' }}>{profile.nucleos?.nome}</strong></p>
-            )}
-                
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {atividades.map((a: any) => (
-                <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{a.aulas?.titulo || 'Atividade Excluída'}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                      {a.aulas?.tipo === 'prova' ? 'Prova' : 'Atividade'}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    {a.status === 'pendente' ? (
-                      <div style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Loader2 size={16} className="spinner" /> Em Correção
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                        <div style={{ fontSize: '1.5rem', fontWeight: 800, color: a.nota >= 7 ? 'var(--success)' : a.nota !== null ? 'var(--error)' : '#fff' }}>
-                          {a.nota !== null ? a.nota.toFixed(1) : 'Concluída'}
-                        </div>
-                        {a.aulas?.tipo === 'prova' && a.nota !== null && a.nota < 7 && a.tentativas < 3 && (
-                          <div style={{ fontSize: '0.7rem', color: 'var(--warning)', marginTop: '0.25rem' }}>
-                            {3 - a.tentativas} tentativas restantes
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {atividades.length === 0 && (
-                <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>Você ainda não concluiu nenhuma atividade ou prova.</p>
-              )}
-            </div>
-          </div>
-        )}
+          {activeTab === 'boletim' && (
+            <GradesPanel 
+              profile={profile}
+              availableNucleos={availableNucleos}
+              handleChangeNucleo={handleChangeNucleo}
+              atividades={atividades}
+            />
+          )}
         </div>
       </main>
     </div>

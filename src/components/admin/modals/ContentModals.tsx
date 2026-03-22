@@ -187,8 +187,8 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
             <input name="capa" type="file" accept="image/*" className="form-control" />
           </div>
           <div className="form-group">
-            <label>Arquivo do Livro (PDF)</label>
-            <input name="pdf" type="file" accept=".pdf" className="form-control" />
+            <label>Arquivo do Livro (PDF ou EPUB)</label>
+            <input name="pdf" type="file" accept=".pdf,.epub" className="form-control" />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddBook(false)}>Cancelar</button>
