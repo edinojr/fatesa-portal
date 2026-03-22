@@ -32,7 +32,7 @@ DROP POLICY IF EXISTS "Admin view all" ON public.users;
 DROP POLICY IF EXISTS "Admins manage all users" ON public.users;
 DROP POLICY IF EXISTS "Users view own profile" ON public.users;
 
--- 3. POLÍTICA DE VISUALIZAÇÃO DE USUÁRIOS (Admin/Professor/Staff vê tudo)
+DROP POLICY IF EXISTS "Staff view all users" ON public.users;
 CREATE POLICY "Staff view all users" 
 ON public.users 
 FOR SELECT 
@@ -42,7 +42,7 @@ USING (
   OR id = auth.uid()
 );
 
--- 4. POLÍTICA DE GESTÃO DE USUÁRIOS (Apenas Admins gerenciam)
+DROP POLICY IF EXISTS "Admins manage users" ON public.users;
 CREATE POLICY "Admins manage users" 
 ON public.users 
 FOR ALL 
@@ -50,25 +50,29 @@ USING (
   (auth.jwt()->>'email') IN (SELECT email FROM public.admins_autorizados)
 );
 
--- 5. POLÍTICAS DE CONTEÚDO (CRUD Livre para Admins e Professores)
+DROP POLICY IF EXISTS "Staff manage courses" ON public.cursos;
 CREATE POLICY "Staff manage courses" ON public.cursos FOR ALL USING (
   (auth.jwt()->>'email') IN (SELECT email FROM public.admins_autorizados) OR 
   (auth.jwt()->>'email') IN (SELECT email FROM public.professores_autorizados)
 );
 
+DROP POLICY IF EXISTS "Staff manage books" ON public.livros;
 CREATE POLICY "Staff manage books" ON public.livros FOR ALL USING (
   (auth.jwt()->>'email') IN (SELECT email FROM public.admins_autorizados) OR 
   (auth.jwt()->>'email') IN (SELECT email FROM public.professores_autorizados)
 );
 
+DROP POLICY IF EXISTS "Staff manage lessons" ON public.aulas;
 CREATE POLICY "Staff manage lessons" ON public.aulas FOR ALL USING (
   (auth.jwt()->>'email') IN (SELECT email FROM public.admins_autorizados) OR 
   (auth.jwt()->>'email') IN (SELECT email FROM public.professores_autorizados)
 );
 
--- 6. PERMISSÃO PARA USUÁRIOS COMUNS VEREM CONTEÚDO (SELECT)
+DROP POLICY IF EXISTS "Anyone authenticated can view courses" ON public.cursos;
 CREATE POLICY "Anyone authenticated can view courses" ON public.cursos FOR SELECT USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Anyone authenticated can view books" ON public.livros;
 CREATE POLICY "Anyone authenticated can view books" ON public.livros FOR SELECT USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Anyone authenticated can view lessons" ON public.aulas;
 CREATE POLICY "Anyone authenticated can view lessons" ON public.aulas FOR SELECT USING (auth.role() = 'authenticated');
 
 -- 7. RECURSO NUCLEAR: Desabilitar RLS se necessário? (Não recomendado, mas vamos garantir que as tabelas aceitem as políticas)
