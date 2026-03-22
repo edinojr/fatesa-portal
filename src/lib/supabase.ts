@@ -3,14 +3,16 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'undefined' || supabaseAnonKey === 'undefined') {
   console.error(
-    'Faltam variáveis de ambiente do Supabase! ' +
-    'Certifique-se de que os Secrets no GitHub (VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY) estão configurados corretamente.'
+    'ERRO CRÍTICO: Variáveis de ambiente do Supabase não encontradas!\n' +
+    'Se você estiver vendo isso no GitHub Pages, certifique-se de que os SECRETS ' +
+    '(VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY) estão configurados corretamente nas ' +
+    'configurações do repositório.'
   )
 }
 
 export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
+  supabaseUrl && supabaseUrl !== 'undefined' ? supabaseUrl : 'https://placeholder.supabase.co',
+  supabaseAnonKey && supabaseAnonKey !== 'undefined' ? supabaseAnonKey : 'placeholder-key'
 )
