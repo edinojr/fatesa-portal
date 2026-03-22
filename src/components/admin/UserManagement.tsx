@@ -1,5 +1,5 @@
 import React from 'react'
-import { GraduationCap, ShieldCheck, Loader2, Trash2 } from 'lucide-react'
+import { GraduationCap, ShieldCheck, Loader2, Trash2, UserPlus } from 'lucide-react'
 import Badge from '../ui/Badge'
 import LoadingSpinner from '../ui/LoadingSpinner'
 
@@ -13,6 +13,8 @@ interface UserManagementProps {
   handleToggleBlock: (userId: string, currentStatus: boolean) => Promise<void>
   handleToggleGratuidade: (userId: string, currentStatus: boolean) => Promise<void>
   handleUpdateUserNucleo: (userId: string, nucleoId: string) => Promise<void>
+  handleDeleteUser: (userId: string) => Promise<void>
+  setShowAddAdmin: (val: boolean) => void
 }
 
 const UserManagement: React.FC<UserManagementProps> = ({
@@ -24,7 +26,9 @@ const UserManagement: React.FC<UserManagementProps> = ({
   handleApproveAccess,
   handleToggleBlock,
   handleToggleGratuidade,
-  handleUpdateUserNucleo
+  handleUpdateUserNucleo,
+  handleDeleteUser,
+  setShowAddAdmin
 }) => {
   const filteredUsers = users.filter(u => 
     u.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -40,6 +44,15 @@ const UserManagement: React.FC<UserManagementProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <button 
+          className="btn btn-primary" 
+          onClick={() => setShowAddAdmin(true)}
+          style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          <UserPlus size={18} /> Adicionar Usuário
+        </button>
+      </div>
       {Object.entries(groupedUsers)
         .sort(([nA], [nB]) => nA.localeCompare(nB))
         .map(([nucleoName, nucleoUsers]: [string, any]) => (
@@ -146,8 +159,19 @@ const UserManagement: React.FC<UserManagementProps> = ({
                           >
                             {user.bloqueado ? 'Ativar' : 'Bloquear'}
                           </button>
-                          <button className="btn" style={{ width: 'auto', background: 'rgba(255, 77, 77, 0.1)', color: 'var(--error)' }}>
-                            <Trash2 size={16} />
+                          <button 
+                            className="btn" 
+                            style={{ 
+                              width: 'auto', 
+                              background: 'rgba(255, 77, 77, 0.1)', 
+                              color: 'var(--error)',
+                              padding: '0.4rem'
+                            }}
+                            onClick={() => handleDeleteUser(user.id)}
+                            disabled={actionLoading === user.id}
+                            title="Excluir Usuário"
+                          >
+                            {actionLoading === user.id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
                           </button>
                         </div>
                       </td>

@@ -16,6 +16,7 @@ interface ContentManagementProps {
   fetchBooks: (courseId: string) => Promise<void>
   fetchLessons: (bookId: string) => Promise<void>
   handleDelete: (table: 'cursos' | 'livros' | 'aulas', id: string) => Promise<void>
+  handleRemoveFile: (table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   setShowAddCourse: (val: boolean) => void
   setShowAddBook: (val: boolean) => void
@@ -44,6 +45,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   fetchBooks,
   fetchLessons,
   handleDelete,
+  handleRemoveFile,
   handleFileUpload,
   setShowAddCourse,
   setShowAddBook,
@@ -86,7 +88,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
             {!selectedCourse ? 'Todos os Cursos' : !selectedBook ? `Livros de ${selectedCourse.nome}` : `Aulas de ${selectedBook.titulo}`}
           </h3>
         </div>
-        {(userRole === 'admin' || userRole === 'suporte') && (
+        {(userRole === 'admin' || userRole === 'suporte' || userRole === 'professor') && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {!selectedCourse ? (
               <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => setShowAddCourse(true)}>
@@ -153,7 +155,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <h4 style={{ fontSize: '1.25rem', marginBottom: 0 }}>{book.titulo}</h4>
-                {(userRole === 'admin' || userRole === 'suporte') && (
+                {(userRole === 'admin' || userRole === 'suporte' || userRole === 'professor') && (
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'book', data: book })} title="Editar Livro"><Edit size={16} /></button>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} onClick={() => handleDelete('livros', book.id)}><Trash2 size={16} /></button>
@@ -162,14 +164,53 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
               </div>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>Ordem: {book.ordem}</p>
               
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>PDF do Livro:</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <label className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', width: 'auto', cursor: 'pointer' }}>
-                    {uploading === book.id ? <Loader2 className="spinner" /> : <Upload size={14} />} {book.pdf_url ? 'Alterar PDF' : 'Enviar PDF'}
-                    <input type="file" hidden accept=".pdf" onChange={(e) => handleFileUpload(e, 'livros', book.id, 'pdf_url')} />
-                  </label>
-                  {book.pdf_url && <CheckCircle2 size={16} color="var(--success)" />}
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>PDF do Livro:</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.4rem 0.6rem', width: 'auto', cursor: 'pointer' }}>
+                      {uploading === `${book.id}_pdf` ? <Loader2 className="spinner" /> : <Upload size={12} />} {book.pdf_url ? 'Alterar' : 'Enviar'}
+                      <input type="file" hidden accept=".pdf" onChange={(e) => handleFileUpload(e, 'livros', `${book.id}_pdf`, 'pdf_url')} />
+                    </label>
+                    {book.pdf_url && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <CheckCircle2 size={14} color="var(--success)" />
+                        <button 
+                          className="btn" 
+                          style={{ width: 'auto', padding: '0.2rem', color: 'var(--error)' }} 
+                          onClick={() => handleRemoveFile('livros', book.id, 'pdf_url')}
+                          disabled={actionLoading === `${book.id}_pdf_remove`}
+                          title="Remover PDF"
+                        >
+                          {actionLoading === `${book.id}_pdf_remove` ? <Loader2 className="spinner" size={12} /> : <Trash2 size={12} />}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>ePub do Livro:</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.4rem 0.6rem', width: 'auto', cursor: 'pointer' }}>
+                      {uploading === `${book.id}_epub` ? <Loader2 className="spinner" /> : <Upload size={12} />} {book.epub_url ? 'Alterar' : 'Enviar'}
+                      <input type="file" hidden accept=".epub" onChange={(e) => handleFileUpload(e, 'livros', `${book.id}_epub`, 'epub_url')} />
+                    </label>
+                    {book.epub_url && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <CheckCircle2 size={14} color="var(--success)" />
+                        <button 
+                          className="btn" 
+                          style={{ width: 'auto', padding: '0.2rem', color: 'var(--error)' }} 
+                          onClick={() => handleRemoveFile('livros', book.id, 'epub_url')}
+                          disabled={actionLoading === `${book.id}_epub_remove`}
+                          title="Remover ePub"
+                        >
+                          {actionLoading === `${book.id}_epub_remove` ? <Loader2 className="spinner" size={12} /> : <Trash2 size={12} />}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -206,7 +247,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                 {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
                   <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => navigate(`/lesson/${lesson.id}`)} title="Visualizar Aula"><Eye size={18} /></button>
                 )}
-                {(userRole === 'admin' || userRole === 'suporte') && (
+                {(userRole === 'admin' || userRole === 'suporte' || userRole === 'professor') && (
                   <>
                     {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
                       <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => {

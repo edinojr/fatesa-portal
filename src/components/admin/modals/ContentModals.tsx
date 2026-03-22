@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Loader2, Plus } from 'lucide-react'
+import { Loader2, Plus, Eye, EyeOff } from 'lucide-react'
 
 interface AddTeacherModalProps {
   showAddTeacher: boolean
@@ -134,11 +134,13 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
           const ordem = parseInt(formData.get('ordem') as string);
           const capaFile = formData.get('capa') as File | null;
           const pdfFile = formData.get('pdf') as File | null;
+          const epubFile = formData.get('epub') as File | null;
           
           setActionLoading('add-book');
           try {
             let capa_url = null;
             let pdf_url = null;
+            let epub_url = null;
 
             if (capaFile && capaFile.size > 0) {
               const safeName = normalizeFileName(capaFile.name);
@@ -156,12 +158,21 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
               pdf_url = supabase.storage.from('livros').getPublicUrl(pdfPath).data.publicUrl;
             }
 
+            if (epubFile && epubFile.size > 0) {
+              const safeName = normalizeFileName(epubFile.name);
+              const epubPath = `epubs/${Date.now()}_${safeName}`;
+              const { error: uploadError } = await supabase.storage.from('livros').upload(epubPath, epubFile);
+              if (uploadError) throw uploadError;
+              epub_url = supabase.storage.from('livros').getPublicUrl(epubPath).data.publicUrl;
+            }
+
             const { error } = await supabase.from('livros').insert({ 
               curso_id: selectedCourse.id, 
               titulo, 
               ordem,
               capa_url,
-              pdf_url
+              pdf_url,
+              epub_url
             });
             
             if (error) throw error;
@@ -187,8 +198,12 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
             <input name="capa" type="file" accept="image/*" className="form-control" />
           </div>
           <div className="form-group">
-            <label>Arquivo do Livro (PDF ou EPUB)</label>
-            <input name="pdf" type="file" accept=".pdf,.epub" className="form-control" />
+            <label>Arquivo do Livro (PDF)</label>
+            <input name="pdf" type="file" accept=".pdf" className="form-control" />
+          </div>
+          <div className="form-group">
+            <label>Arquivo do Livro (EPUB)</label>
+            <input name="epub" type="file" accept=".epub" className="form-control" />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddBook(false)}>Cancelar</button>
@@ -371,6 +386,89 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
             <button type="button" className="btn btn-outline" onClick={() => setEditingItem(null)}>Cancelar</button>
             <button type="submit" className="btn btn-primary" disabled={actionLoading === 'edit-item'}>
               {actionLoading === 'edit-item' ? <Loader2 className="spinner" /> : 'Salvar Alterações'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+interface AddAdminModalProps {
+  showAddAdmin: boolean
+  setShowAddAdmin: (val: boolean) => void
+  actionLoading: string | null
+  handleAddAdmin: (e: React.FormEvent) => Promise<void>
+}
+
+export const AddAdminModal: React.FC<AddAdminModalProps> = ({
+  showAddAdmin,
+  setShowAddAdmin,
+  actionLoading,
+  handleAddAdmin
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
+  if (!showAddAdmin) return null;
+
+  return (
+    <div className="modal-overlay" onClick={() => setShowAddAdmin(false)}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <h2 style={{ marginBottom: '1.5rem' }}>Adicionar Novo Usuário</h2>
+        <form onSubmit={handleAddAdmin}>
+          <div className="form-group">
+            <label>Tipo de Usuário</label>
+            <select name="tipo" className="form-control" required defaultValue="aluno">
+              <option value="aluno">Aluno (Online/Presencial)</option>
+              <option value="professor">Professor</option>
+              <option value="admin">Administrador</option>
+              <option value="suporte">Suporte</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Nome Completo</label>
+            <input name="nome" type="text" className="form-control" required placeholder="João Silva" />
+          </div>
+          <div className="form-group">
+            <label>E-mail</label>
+            <input name="email" type="email" className="form-control" required placeholder="admin@fatesa.edu" />
+          </div>
+          <div className="form-group">
+            <label>Senha</label>
+            <div className="password-field" style={{ position: 'relative' }}>
+              <input 
+                name="password" 
+                type={showPassword ? "text" : "password"} 
+                className="form-control" 
+                required 
+                placeholder="********"
+                style={{ paddingRight: '3rem' }}
+              />
+              <button 
+                type="button" 
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ 
+                  position: 'absolute', 
+                  right: '0.75rem', 
+                  top: '50%', 
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+          <p className="field-hint" style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+            O usuário será criado imediatamente e poderá acessar a plataforma com estas credenciais.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+            <button type="button" className="btn btn-outline" onClick={() => setShowAddAdmin(false)}>Cancelar</button>
+            <button type="submit" className="btn btn-primary" disabled={actionLoading === 'add-admin'}>
+              {actionLoading === 'add-admin' ? <Loader2 className="spinner" /> : 'Criar Usuário'}
             </button>
           </div>
         </form>

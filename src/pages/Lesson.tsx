@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, X, AlertCircle, Lock } from 'lucide-react'
+import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, X, AlertCircle, Lock, LogOut } from 'lucide-react'
 
 interface QuizQuestion {
   id: string
@@ -210,11 +210,20 @@ const Lesson = () => {
             Painel Inicial
           </button>
         </div>
-        {book && (
-          <button onClick={() => navigate(`/book/${book.id}`)} className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.9rem', borderColor: 'var(--primary)', color: 'var(--primary)' }}>
-            <BookOpen size={18} /> Acessar Livro do Módulo
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {book && (
+            <button onClick={() => navigate(`/book/${book.id}`)} className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.9rem', borderColor: 'var(--primary)', color: 'var(--primary)' }}>
+              <BookOpen size={18} /> Acessar Livro do Módulo
+            </button>
+          )}
+          <button 
+            onClick={async () => { await supabase.auth.signOut(); navigate('/login'); }} 
+            className="btn" 
+            style={{ width: 'auto', background: 'rgba(255, 77, 77, 0.1)', color: 'var(--error)', padding: '0.4rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}
+          >
+            <LogOut size={16} /> Sair
           </button>
-        )}
+        </div>
       </div>
 
       <div className="auth-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>

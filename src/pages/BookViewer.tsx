@@ -11,8 +11,10 @@ import {
   Minimize, 
   Edit, 
   ExternalLink,
+  FileText,
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  LogOut
 } from 'lucide-react';
 import HTMLFlipBook from 'react-pageflip';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -106,12 +108,52 @@ const BookViewer = () => {
 
   if (loading) return <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', background: '#111' }}><Loader2 className="spinner" size={48} color="var(--primary)" /></div>;
 
-  if (!book || !book.pdf_url) {
+  if (!book || (!book.pdf_url && !book.epub_url)) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center', height: '100vh', background: '#111', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Conteúdo não disponível</h2>
-        <p style={{ color: 'var(--text-muted)' }}>Este livro ainda não possui um arquivo PDF anexado.</p>
-        <button onClick={() => navigate('/dashboard')} className="btn btn-primary" style={{ marginTop: '2rem', width: 'auto' }}>Voltar ao Painel</button>
+      <div 
+      className={`admin-layout ${isFullscreen ? 'fullscreen' : ''}`} 
+      style={{ 
+        background: 'var(--bg)', 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column',
+        padding: isFullscreen ? '0' : '2rem'
+      }} 
+      ref={viewerRef}
+    >
+      {!isFullscreen && (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '2rem',
+          padding: '0 1rem'
+        }}>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button onClick={() => navigate(-1)} className="btn btn-outline" style={{ width: 'auto', padding: '0.6rem 1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <ChevronLeft size={20} /> Voltar
+            </button>
+            <button onClick={() => navigate('/dashboard')} className="btn btn-outline" style={{ width: 'auto', padding: '0.6rem 1.2rem' }}>
+              Início
+            </button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            {book && <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>{book.titulo}</h2>}
+            <button 
+              onClick={async () => { await supabase.auth.signOut(); navigate('/login'); }} 
+              className="btn" 
+              style={{ width: 'auto', background: 'rgba(255, 77, 77, 0.1)', color: 'var(--error)', padding: '0.6rem 1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <LogOut size={18} /> Sair
+            </button>
+          </div>
+        </div>
+      )}
+        <div style={{ padding: '2rem', textAlign: 'center', height: '100vh', background: '#111', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Conteúdo não disponível</h2>
+          <p style={{ color: 'var(--text-muted)' }}>Este livro ainda não possui arquivos anexados.</p>
+          <button onClick={() => navigate('/dashboard')} className="btn btn-primary" style={{ marginTop: '2rem', width: 'auto' }}>Voltar ao Painel</button>
+        </div>
       </div>
     );
   }
@@ -180,72 +222,93 @@ const BookViewer = () => {
             minHeight: 'min-content',
             transition: 'all 0.3s ease-in-out'
           }}>
-          {book.pdf_url?.toLowerCase().endsWith('.epub') ? (
+          {/* Se tiver epub_url e não tiver pdf_url, OU se o pdf_url for na verdade um epub */}
+          {(book.epub_url || book.pdf_url?.toLowerCase().endsWith('.epub')) ? (
             <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--glass)', borderRadius: '20px', border: '1px solid var(--glass-border)', maxWidth: '500px', margin: '2rem auto' }}>
-              <h2 style={{ marginBottom: '1.5rem' }}>Livro em formato EPUB</h2>
+              <div style={{ width: '80px', height: '80px', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
+                <FileText size={40} color="var(--primary)" />
+              </div>
+              <h2 style={{ marginBottom: '1.5rem' }}>Material em Formato EPUB</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-                Este livro está disponível no formato EPUB, ideal para leitura em dispositivos como Kindle, tablets ou aplicativos de leitura.
+                Este material está disponível no formato EPUB, que é mais leve e ideal para leitura em e-readers, tablets e celulares.
               </p>
-              <a 
-                href={book.pdf_url} 
-                download 
-                className="btn btn-primary" 
-                style={{ width: 'auto', padding: '1rem 2rem', display: 'inline-flex', alignItems: 'center', gap: '0.75rem' }}
-              >
-                <ExternalLink size={20} /> Baixar EPUB para Leitura
-              </a>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <a 
+                  href={book.epub_url || book.pdf_url} 
+                  download 
+                  className="btn btn-primary" 
+                  style={{ width: '100%', padding: '1rem 2rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}
+                >
+                  <ExternalLink size={20} /> Baixar EPUB para Leitura
+                </a>
+                
+                {book.pdf_url && !book.pdf_url.toLowerCase().endsWith('.epub') && (
+                  <button 
+                    onClick={() => {
+                      // Se tem PDF, mas estamos mostrando o EPUB (talvez no futuro adicionemos um toggle aqui)
+                      // Por enquanto, se tiver os dois, o PDF o viewer carrega abaixo se não cair neste if
+                    }}
+                    className="btn btn-outline"
+                    style={{ width: '100%' }}
+                  >
+                    Ver versão em PDF (Mais pesado)
+                  </button>
+                )}
+              </div>
             </div>
           ) : (
-            <Document
-              file={book.pdf_url}
-              onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={onDocumentLoadError}
-              onSourceError={(err) => console.error('Erro na fonte do PDF:', err)}
-              loading={<Loader2 className="spinner" size={48} color="var(--primary)" />}
-            >
-              {numPages && (
-                // @ts-ignore
-                <HTMLFlipBook 
-                  width={pageWidth} 
-                  height={pageHeight} 
-                  size="fixed"
-                  minWidth={200}
-                  maxWidth={pageWidth}
-                  minHeight={300}
-                  maxHeight={pageHeight}
-                  maxShadowOpacity={0.5}
-                  showCover={false}
-                  usePortrait={true}
-                  mobileScrollSupport={true}
-                  useMouseEvents={false} // Prevents "Cannot read properties of undefined (reading 'x')" crash
-                  onFlip={(e: any) => {
-                    setCurrentPage(e.data);
-                    if (scrollContainerRef.current) {
-                      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                  }}
-                  showPageCorners={false}
-                  disableFlipByClick={false}
-                  startPage={currentPage}
-                  ref={bookRef}
-                  key={`${book.id}-${containerWidth}`}
-                  className="fatesa-flipbook"
-                  style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)', margin: '0 auto' }}
-                >
-                  {Array.from(new Array(numPages), (el, index) => (
-                    <div key={`page_${index + 1}`} className="page" style={{ background: '#fff', overflow: 'hidden' }}>
-                      <Page 
-                        pageNumber={index + 1} 
-                        width={pageWidth} 
-                        renderTextLayer={true} 
-                        renderAnnotationLayer={false} 
-                        devicePixelRatio={Math.max(window.devicePixelRatio || 1, 2)}
-                      />
-                    </div>
-                  ))}
-                </HTMLFlipBook>
-              )}
-            </Document>
+            book.pdf_url && (
+              <Document
+                file={book.pdf_url}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                onSourceError={(err) => console.error('Erro na fonte do PDF:', err)}
+                loading={<Loader2 className="spinner" size={48} color="var(--primary)" />}
+              >
+                {numPages && (
+                  // @ts-ignore
+                  <HTMLFlipBook 
+                    width={pageWidth} 
+                    height={pageHeight} 
+                    size="fixed"
+                    minWidth={200}
+                    maxWidth={pageWidth}
+                    minHeight={300}
+                    maxHeight={pageHeight}
+                    maxShadowOpacity={0.5}
+                    showCover={false}
+                    usePortrait={true}
+                    mobileScrollSupport={true}
+                    useMouseEvents={false}
+                    onFlip={(e: any) => {
+                      setCurrentPage(e.data);
+                      if (scrollContainerRef.current) {
+                        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    showPageCorners={false}
+                    disableFlipByClick={false}
+                    startPage={currentPage}
+                    ref={bookRef}
+                    key={`${book.id}-${containerWidth}`}
+                    className="fatesa-flipbook"
+                    style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)', margin: '0 auto' }}
+                  >
+                    {Array.from(new Array(numPages), (el, index) => (
+                      <div key={`page_${index + 1}`} className="page" style={{ background: '#fff', overflow: 'hidden' }}>
+                        <Page 
+                          pageNumber={index + 1} 
+                          width={pageWidth} 
+                          renderTextLayer={true} 
+                          renderAnnotationLayer={false} 
+                          devicePixelRatio={Math.max(window.devicePixelRatio || 1, 2)}
+                        />
+                      </div>
+                    ))}
+                  </HTMLFlipBook>
+                )}
+              </Document>
+            )
           )}
         </div>
 

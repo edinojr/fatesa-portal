@@ -12,6 +12,7 @@ export interface Book {
   progresso: number
   capa_url?: string
   pdf_url?: string
+  epub_url?: string
   isReleased?: boolean
   isCurrent?: boolean
   ordem?: number

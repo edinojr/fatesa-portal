@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createClient } from '@supabase/supabase-js'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { 
@@ -39,7 +40,7 @@ import Badge from '../components/ui/Badge'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import LessonContentEditorModal from '../components/admin/modals/LessonContentEditorModal'
 import QuizEditorModal from '../components/admin/modals/QuizEditorModal'
-import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, EditItemModal } from '../components/admin/modals/ContentModals'
+import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, EditItemModal, AddAdminModal } from '../components/admin/modals/ContentModals'
 import { QuizQuestion, QuestionType } from '../types/admin'
 
 type Tab = 'home' | 'users' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance'
@@ -60,6 +61,7 @@ const Admin = () => {
   const [newTeacherEmail, setNewTeacherEmail] = useState('')
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
+  const [showAddAdmin, setShowAddAdmin] = useState(false)
   
   // Toast State
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
@@ -164,15 +166,19 @@ const Admin = () => {
 
     setUploading(id)
     try {
-      const bucket = table === 'livros' ? 'documentos' : 'comprovantes'
+      // FIX: Ensure 'livros' bucket is used only for books. 
+      // Fallback to 'documentos' if 'livros' is not ready (optional, but keep 'livros' as per migrations)
+      const bucket = table === 'livros' ? 'livros' : 'documentos'
       const safeName = normalizeFileName(file.name)
-      const filePath = `${table}/${id}/${Date.now()}_${safeName}`
+      const folder = column === 'capa_url' ? 'capas' : (file.name.toLowerCase().endsWith('.epub') ? 'epubs' : 'pdfs')
+      const filePath = `${folder}/${Date.now()}_${safeName}`
       const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file)
       if (uploadError) throw uploadError
 
       const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
       
-      const { error: updateError } = await supabase.from(table).update({ [column]: publicUrl }).eq('id', id)
+      const realId = id.replace('_pdf', '').replace('_epub', '')
+      const { error: updateError } = await supabase.from(table).update({ [column]: publicUrl }).eq('id', realId)
       if (updateError) throw updateError
 
       showToast('Arquivo enviado com sucesso!')
@@ -185,10 +191,40 @@ const Admin = () => {
     }
   }
 
+  const handleRemoveFile = async (table: 'livros' | 'aulas', id: string, column: string) => {
+    if (!confirm('Deseja realmente remover este arquivo?')) return
+    setActionLoading(`${id}_${column}_remove`)
+    try {
+      const { error } = await supabase.from(table).update({ [column]: null }).eq('id', id)
+      if (error) throw error
+      showToast('Arquivo removido com sucesso!')
+      
+      const realId = id.replace('_pdf', '').replace('_epub', '')
+      if (table === 'livros' && selectedCourse?.id) fetchBooks(selectedCourse.id)
+      else if (table === 'aulas' && selectedBook?.id) fetchLessons(selectedBook.id)
+    } catch (err: any) {
+      showToast('Erro ao remover: ' + err.message, 'error')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   const fetchData = async () => {
     setLoading(true)
     try {
-      if (activeTab === 'users') {
+      if (activeTab === 'home') {
+        const [usersCount, coursesCount, docsCount, paysCount] = await Promise.all([
+          supabase.from('users').select('id', { count: 'exact', head: true }),
+          supabase.from('cursos').select('id', { count: 'exact', head: true }),
+          supabase.from('documentos').select('id', { count: 'exact', head: true }).eq('status', 'pendente'),
+          supabase.from('pagamentos').select('id', { count: 'exact', head: true }).eq('status', 'pago')
+        ]);
+        
+        setUsers(new Array(usersCount.count || 0)); // Hack to show count in cards if they use users.length
+        setCourses(new Array(coursesCount.count || 0));
+        setPendingDocs(new Array(docsCount.count || 0));
+        setPendingPays(new Array(paysCount.count || 0));
+      } else if (activeTab === 'users') {
         const { data } = await supabase.from('users').select('*, nucleos(nome)')
         if (data) setUsers(data)
       } else if (activeTab === 'content') {
@@ -346,6 +382,23 @@ const Admin = () => {
     }
   }
 
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm('Tem certeza que deseja excluir permanentemente este usuário?')) return
+    setActionLoading(userId)
+    try {
+      // Direct delete from public.users (triggers should handle clean up if any)
+      const { error } = await supabase.from('users').delete().eq('id', userId)
+      if (error) throw error
+      
+      setUsers(users.filter(u => u.id !== userId))
+      showToast('Usuário excluído com sucesso!')
+    } catch (err: any) {
+      showToast('Erro ao excluir usuário: ' + err.message, 'error')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   const handleAddTeacher = async (e: React.FormEvent) => {
     e.preventDefault()
     setActionLoading('add-teacher')
@@ -363,6 +416,66 @@ const Admin = () => {
       fetchData()
     } catch (err: any) {
       showToast('Erro ao autorizar professor: ' + err.message, 'error')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleAddAdmin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget as HTMLFormElement)
+    const nome = formData.get('nome') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const tipo = formData.get('tipo') as string || 'admin'
+
+    setActionLoading('add-admin')
+    try {
+      // 1. Pre-authorize based on role
+      let authError;
+      if (tipo === 'admin') {
+        const { error } = await supabase.from('admins_autorizados').insert({ email })
+        authError = error
+      } else if (tipo === 'professor') {
+        const { error } = await supabase.from('professores_autorizados').insert({ email, nome })
+        authError = error
+      }
+      
+      if (authError && !authError.message.includes('unique constraint')) {
+        throw authError
+      }
+
+      // 2. Create the user using a secondary client to avoid session conflict
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+      
+      const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false
+        }
+      })
+
+      const { data: signUpData, error: signUpError } = await tempClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            nome: nome,
+            tipo: tipo,
+            acesso_definitivo: true
+          }
+        }
+      })
+
+      if (signUpError) throw signUpError
+
+      showToast('Administrador cadastrado com sucesso!')
+      setShowAddAdmin(false)
+      fetchData()
+    } catch (err: any) {
+      showToast('Erro ao cadastrar administrador: ' + err.message, 'error')
     } finally {
       setActionLoading(null)
     }
@@ -485,6 +598,11 @@ const Admin = () => {
               <Settings size={20} /> Configurações
             </div>
           )}
+          <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
+            <div className="admin-nav-item" style={{ color: 'var(--error)' }} onClick={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
+              <LogOut size={20} /> Sair
+            </div>
+          </div>
         </nav>
       </aside>
 
@@ -546,11 +664,13 @@ const Admin = () => {
                 searchTerm={searchTerm}
                 userRole={userRole}
                 actionLoading={actionLoading}
+                setShowAddAdmin={setShowAddAdmin}
                 handleTypeChange={handleTypeChange}
                 handleApproveAccess={handleApproveAccess}
                 handleToggleBlock={handleToggleBlock}
                 handleToggleGratuidade={handleToggleGratuidade}
                 handleUpdateUserNucleo={handleUpdateUserNucleo}
+                handleDeleteUser={handleDeleteUser}
               />
             )}
 
@@ -581,6 +701,7 @@ const Admin = () => {
                 setEditingQuiz={setEditingQuiz}
                 setQuizQuestions={setQuizQuestions}
                 uploading={uploading}
+                handleRemoveFile={handleRemoveFile}
               />
             )}
 
@@ -696,6 +817,13 @@ const Admin = () => {
           showToast={showToast}
           fetchLessons={fetchLessons}
           selectedBook={selectedBook}
+        />
+
+        <AddAdminModal 
+          showAddAdmin={showAddAdmin}
+          setShowAddAdmin={setShowAddAdmin}
+          actionLoading={actionLoading}
+          handleAddAdmin={handleAddAdmin}
         />
 
         {/* Toast Notification */}

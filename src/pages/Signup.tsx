@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { UserPlus, Loader2, GraduationCap, Eye, EyeOff, ChevronLeft } from 'lucide-react'
+import { UserPlus, Loader2, GraduationCap, Eye, EyeOff, ChevronLeft, ShieldCheck } from 'lucide-react'
 
 const Signup = () => {
   const location = useLocation()
@@ -18,6 +18,9 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isProfessor, setIsProfessor] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [checkingEmail, setCheckingEmail] = useState(false)
 
   useEffect(() => {
     const checkSession = async () => {
@@ -33,6 +36,33 @@ const Signup = () => {
     };
     checkSession();
   }, [navigate]);
+
+  useEffect(() => {
+    const checkProfessor = async () => {
+      if (!email || !email.includes('@')) {
+        setIsProfessor(false);
+        return;
+      }
+
+      setCheckingEmail(true);
+      try {
+        const [profRes, adminRes] = await Promise.all([
+          supabase.from('professores_autorizados').select('email').eq('email', email.toLowerCase().trim()).maybeSingle(),
+          supabase.from('admins_autorizados').select('email').eq('email', email.toLowerCase().trim()).maybeSingle()
+        ]);
+        
+        setIsProfessor(!!profRes.data);
+        setIsAdmin(!!adminRes.data);
+      } catch (err) {
+        console.error('Erro ao verificar autorização:', err);
+      } finally {
+        setCheckingEmail(false);
+      }
+    };
+
+    const timer = setTimeout(checkProfessor, 500);
+    return () => clearTimeout(timer);
+  }, [email]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -162,6 +192,24 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            {checkingEmail && <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Verificando cadastro...</p>}
+            {(isProfessor || isAdmin) && (
+              <div style={{ 
+                marginTop: '0.75rem', 
+                padding: '0.75rem', 
+                background: 'rgba(34, 197, 94, 0.1)', 
+                border: '1px solid var(--success)', 
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                color: 'var(--success)',
+                fontSize: '0.85rem',
+                fontWeight: 600
+              }}>
+                <ShieldCheck size={16} /> {isAdmin ? 'Administrador' : 'Professor'} Identificado! Prossiga com sua senha.
+              </div>
+            )}
           </div>
 
           <div className="form-group">
