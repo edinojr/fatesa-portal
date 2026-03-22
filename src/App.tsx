@@ -13,7 +13,7 @@ import ResetPassword from './pages/ResetPassword'
 
 function App() {
   return (
-    <Router>
+    <Router basename="/fatesa-portal">
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
