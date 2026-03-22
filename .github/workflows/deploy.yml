@@ -13,6 +13,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: github-pages # Faz com que os Secrets do ambiente github-pages fiquem disponíveis
 
     steps:
       - name: Checkout
