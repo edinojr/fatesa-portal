@@ -429,15 +429,15 @@ const Lesson = () => {
               {result && (
                 <div style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)', display: 'inline-block', minWidth: '240px' }}>
                   <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '2px', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Sua Pontuação</div>
-                  <div style={{ fontSize: '3rem', fontWeight: 800, color: (result.score ?? 10) >= 7 ? 'var(--success)' : 'var(--error)' }}>
-                    {result.score !== null ? result.score.toFixed(1) : (
+                  <div style={{ fontSize: '3rem', fontWeight: 800, color: (result && result.score != null && result.score >= 7) ? 'var(--success)' : 'var(--error)' }}>
+                    {result && result.score != null ? result.score.toFixed(1) : (
                       <span style={{ fontSize: '1rem', color: 'var(--primary)', letterSpacing: '0' }}>Aguardando Correção</span>
                     )}
                   </div>
                 </div>
               )}
 
-              {lesson?.tipo === 'prova' && result?.score !== null && result?.score < 7 && (
+              {lesson?.tipo === 'prova' && result && result.score != null && result.score < 7 && (
                 <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', border: '1px solid rgba(234, 179, 8, 0.2)', borderRadius: '16px', textAlign: 'left', maxWidth: '600px', margin: '2rem auto 0' }}>
                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#EAB308', marginBottom: '0.5rem', fontWeight: 700 }}>
                      <AlertCircle size={20} /> Recuperação de Ciclo
@@ -452,7 +452,7 @@ const Lesson = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
-              {questions.map((q: any, idx: number) => {
+              {questions.map((q: QuizQuestion, idx: number) => {
                 const studentAns = answers[q.id];
                 const isCorrect = q.type === 'multiple_choice' || !q.type ? (studentAns === q.correctOption) : (studentAns === q.correctAnswer);
                 const isAuto = q.type !== 'discursive';
@@ -519,7 +519,7 @@ const Lesson = () => {
                             if (q.type === 'matching' && q.matchingPairs) {
                               return (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                                  {q.matchingPairs.map((pair, pIdx) => (
+                                  {q.matchingPairs.map((pair: { left: string; right: string }, pIdx: number) => (
                                     <div key={pIdx}>{pair.left} ➔ {pair.right}</div>
                                   ))}
                                 </div>

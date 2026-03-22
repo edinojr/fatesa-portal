@@ -145,7 +145,7 @@ const Admin = () => {
 
     setUserRole(profile?.tipo || (roles.includes('admin') ? 'admin' : 'suporte'))
 
-    if (profile.tipo === 'professor') {
+    if (profile?.tipo === 'professor') {
       setActiveTab('content')
     } else {
       setActiveTab('home')
