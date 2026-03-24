@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, CheckCircle2, X, AlertCircle, Lock, LogOut, ClipboardList, XCircle, Upload } from 'lucide-react'
+import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, CheckCircle2, X, AlertCircle, Lock, LogOut, ClipboardList, XCircle, Upload, Edit2 } from 'lucide-react'
+import QuizEditorModal from '../components/admin/modals/QuizEditorModal'
+import { QuestionType } from '../types/admin'
 
 interface QuizQuestion {
   id: string
@@ -29,6 +31,8 @@ const Lesson = () => {
   const [existingSubmission, setExistingSubmission] = useState<any | null>(null)
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
   const [userProfile, setUserProfile] = useState<any>(null)
+  const [showQuizEditor, setShowQuizEditor] = useState(false)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
 
   useEffect(() => {
     fetchLessonData()
@@ -89,8 +93,14 @@ const Lesson = () => {
             setReviewMode(true);
             const gabarito: Record<string, any> = {};
             (Array.isArray(lessonData.questionario) ? lessonData.questionario : []).forEach((q: any) => {
-              if (q.type === 'multiple_choice') gabarito[q.id] = q.correct;
+              if (q.type === 'multiple_choice' || !q.type) gabarito[q.id] = q.correct;
               else if (q.type === 'true_false') gabarito[q.id] = q.isTrue;
+              else if (q.type === 'matching') {
+                const pairs: Record<string, string> = {};
+                q.matchingPairs?.forEach((_: any, idx: number) => { pairs[idx] = String(idx); });
+                gabarito[q.id] = pairs;
+              }
+              else if (q.type === 'discursive') gabarito[q.id] = q.expectedAnswer;
             });
             setAnswers(gabarito);
             setResult({ score: 10, passed: true });
@@ -271,7 +281,32 @@ const Lesson = () => {
             Sair
           </button>
         </div>
-      </div>
+
+      {reviewMode && userProfile?.tipo !== 'aluno' && (
+        <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--glass)', borderRadius: '24px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+          <h3 style={{ marginBottom: '1rem' }}>Controle do Professor</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Você está visualizando o gabarito oficial deste conteúdo.</p>
+          <button className="btn btn-primary" style={{ width: 'auto', gap: '0.5rem' }} onClick={() => setShowQuizEditor(true)}>
+            <Edit2 size={18} /> Alterar resposta no Gabarito
+          </button>
+        </div>
+      )}
+
+      {showQuizEditor && (
+        <QuizEditorModal 
+          editingQuiz={lesson}
+          setEditingQuiz={() => setShowQuizEditor(false)}
+          quizQuestions={questions}
+          setQuizQuestions={setQuestions}
+          actionLoading={actionLoading}
+          setActionLoading={setActionLoading}
+          supabase={supabase}
+          showToast={(msg, type) => alert(msg)} 
+          fetchLessons={async () => { await fetchLessonData(); }}
+          selectedBook={book}
+        />
+      )}
+    </div>
 
       <div style={{ marginBottom: '3rem' }}>
         <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '2px', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
@@ -630,6 +665,31 @@ const Lesson = () => {
           </button>
           <img src={selectedImage} alt="Zoom" style={{ maxWidth: '95vw', maxHeight: '90vh', objectFit: 'contain', boxShadow: '0 0 50px rgba(156, 39, 176, 0.3)', borderRadius: '8px' }} onClick={e => e.stopPropagation()} />
         </div>
+      )}
+
+      {reviewMode && userProfile?.tipo !== 'aluno' && (
+        <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--glass)', borderRadius: '24px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+          <h3 style={{ marginBottom: '1rem' }}>Controle do Professor</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Você está visualizando o gabarito oficial deste conteúdo.</p>
+          <button className="btn btn-primary" style={{ width: 'auto', gap: '0.5rem' }} onClick={() => setShowQuizEditor(true)}>
+            <Edit2 size={18} /> Alterar resposta no Gabarito
+          </button>
+        </div>
+      )}
+
+      {showQuizEditor && (
+        <QuizEditorModal 
+          editingQuiz={lesson}
+          setEditingQuiz={() => setShowQuizEditor(false)}
+          quizQuestions={questions}
+          setQuizQuestions={setQuestions}
+          actionLoading={actionLoading}
+          setActionLoading={setActionLoading}
+          supabase={supabase}
+          showToast={(msg) => alert(msg)} 
+          fetchLessons={async () => { await fetchLessonData(); }}
+          selectedBook={book}
+        />
       )}
     </div>
   )

@@ -10,6 +10,11 @@ import {
   ChevronLeft,
   Loader2,
   CheckCircle,
+  Menu,
+  X,
+  Bell,
+  AlertCircle,
+  FileText
 } from 'lucide-react'
 import NucleosPanel from '../components/NucleosPanel'
 import { Submission, Student, ProfessorCourse } from '../types/professor'
@@ -18,7 +23,6 @@ import ProfessorContent from '../components/professor/ProfessorContent'
 import GradingPanel from '../components/professor/GradingPanel'
 import AvisosManagement from '../components/professor/AvisosManagement'
 import MateriaisManagement from '../components/professor/MateriaisManagement'
-import { AlertCircle, FileText } from 'lucide-react'
 
 import { useProfile } from '../hooks/useProfile'
 
@@ -47,6 +51,7 @@ const Professor = () => {
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
   const [savingGrade, setSavingGrade] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const navigate = useNavigate()
 
@@ -95,7 +100,8 @@ const Professor = () => {
             titulo,
             tipo,
             video_url,
-            created_at
+            created_at,
+            nucleo_id
           )
         )
       `)
@@ -295,15 +301,20 @@ const Professor = () => {
     <div className="admin-layout">
 
       <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-            <GraduationCap size={32} color="var(--primary)" />
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 800, lineHeight: 1.2 }}>Painel do Professor</h2>
+        <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1rem', flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+              <GraduationCap size={32} color="var(--primary)" />
+              <h2 style={{ fontSize: '1.1rem', fontWeight: 800, lineHeight: 1.2 }}>Painel do Professor</h2>
+            </div>
+            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', opacity: 0.8, paddingLeft: '2.75rem' }}>{currentUserEmail}</p>
           </div>
-          <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', opacity: 0.8, paddingLeft: '2.75rem' }}>{currentUserEmail}</p>
+          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <nav className={isMobileMenuOpen ? 'mobile-open' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {availableRoles.length > 1 && (
             <div style={{ marginBottom: '1rem' }}>
               <button 
@@ -330,27 +341,27 @@ const Professor = () => {
             </div>
           )}
 
-          <div 
-            className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`}
-            onClick={() => setActiveTab('nucleos')}
-          >
+            <div 
+              className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}
+            >
             <Users size={20} /> Meus Núcleos
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'students' ? 'active' : ''}`}
-            onClick={() => setActiveTab('students')}
+            onClick={() => { setActiveTab('students'); setIsMobileMenuOpen(false); }}
           >
             <LayoutDashboard size={20} /> Gestão de Alunos
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'content' ? 'active' : ''}`}
-            onClick={() => setActiveTab('content')}
+            onClick={() => { setActiveTab('content'); setIsMobileMenuOpen(false); }}
           >
             <BookOpen size={20} /> Ver Conteúdo
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'grading' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('grading'); setSelectedSubmission(null); }}
+            onClick={() => { setActiveTab('grading'); setSelectedSubmission(null); setIsMobileMenuOpen(false); }}
           >
             <CheckCircle size={20} /> Correção de Provas
             {submissions.filter(s => s.status === 'pendente').length > 0 && (
@@ -361,13 +372,13 @@ const Professor = () => {
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'avisos' ? 'active' : ''}`}
-            onClick={() => setActiveTab('avisos')}
+            onClick={() => { setActiveTab('avisos'); setIsMobileMenuOpen(false); }}
           >
             <AlertCircle size={20} /> Quadro de Avisos
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'materiais' ? 'active' : ''}`}
-            onClick={() => setActiveTab('materiais')}
+            onClick={() => { setActiveTab('materiais'); setIsMobileMenuOpen(false); }}
           >
             <FileText size={20} /> Materiais Adicionais
           </div>
@@ -422,6 +433,7 @@ const Professor = () => {
             lessons={lessons}
             fetchBooks={fetchBooks}
             selectBookAndShowLessons={selectBookAndShowLessons}
+            profile={profile}
           />
         )}
 

@@ -46,10 +46,11 @@ const MateriaisManagement = () => {
       const myNucleos = profNucs?.map((n: any) => n.nucleos).filter(Boolean) || [];
       setNucleos(myNucleos);
 
+      // Buscar materiais dos núcleos do professor
       const { data: materiaisData } = await supabase
         .from('materiais_adicionais')
         .select('*, nucleos(nome)')
-        .eq('professor_id', user.id)
+        .in('nucleo_id', myNucleos.map((n: any) => n.id))
         .order('created_at', { ascending: false });
       
       setMateriais(materiaisData || []);

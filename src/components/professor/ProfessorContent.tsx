@@ -1,5 +1,7 @@
 import React from 'react'
-import { BookOpen, Eye, PlayCircle } from 'lucide-react'
+import { BookOpen, Eye, PlayCircle, Plus, Trash2, Edit2, Loader2 } from 'lucide-react'
+import { supabase } from '../../lib/supabase'
+import QuizEditorModal from '../admin/modals/QuizEditorModal'
 import { useNavigate } from 'react-router-dom'
 import { ProfessorCourse } from '../../types/professor'
 
@@ -13,6 +15,7 @@ interface ProfessorContentProps {
   lessons: any[]
   fetchBooks: (id: string) => void
   selectBookAndShowLessons: (book: any) => void
+  profile: any
 }
 
 const ProfessorContent: React.FC<ProfessorContentProps> = ({
@@ -24,9 +27,55 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   setSelectedBook,
   lessons,
   fetchBooks,
-  selectBookAndShowLessons
+  selectBookAndShowLessons,
+  profile
 }) => {
   const navigate = useNavigate()
+  const [addingActivity, setAddingActivity] = React.useState(false)
+  const [editingQuiz, setEditingQuiz] = React.useState<any>(null)
+  const [quizQuestions, setQuizQuestions] = React.useState<any[]>([])
+  const [actionLoading, setActionLoading] = React.useState<string | null>(null)
+
+  const handleAddActivity = async () => {
+    if (!selectedBook) return
+    setAddingActivity(true)
+    try {
+      const { data, error } = await supabase
+        .from('aulas')
+        .insert([{
+          titulo: 'Nova Atividade',
+          tipo: 'atividade',
+          livro_id: selectedBook.id,
+          nucleo_id: profile?.nucleo_id,
+          questionario: [],
+          ordem: lessons.length + 1
+        }])
+        .select()
+        .single()
+      
+      if (error) throw error
+      if (data) {
+        setQuizQuestions([])
+        setEditingQuiz(data)
+        selectBookAndShowLessons(selectedBook) // Refresh list
+      }
+    } catch (err: any) {
+      alert('Erro ao criar atividade: ' + err.message)
+    } finally {
+      setAddingActivity(false)
+    }
+  }
+
+  const handleDeleteActivity = async (id: string) => {
+    if (!confirm('Excluir esta atividade?')) return
+    try {
+      const { error } = await supabase.from('aulas').delete().eq('id', id)
+      if (error) throw error
+      selectBookAndShowLessons(selectedBook)
+    } catch (err: any) {
+      alert('Erro ao excluir: ' + err.message)
+    }
+  }
 
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
@@ -72,8 +121,11 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '12px', borderLeft: '4px solid var(--primary)' }}>
-            <h4 style={{ color: 'var(--primary)' }}>Aulas de {selectedBook.titulo}</h4>
+          <div style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '12px', borderLeft: '4px solid var(--primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h4 style={{ color: 'var(--primary)', margin: 0 }}>Aulas de {selectedBook.titulo}</h4>
+            <button className="btn btn-primary" style={{ width: 'auto' }} onClick={handleAddActivity} disabled={addingActivity}>
+              {addingActivity ? <Loader2 className="spinner" /> : <><Plus size={18} /> Nova Atividade</>}
+            </button>
           </div>
           {lessons.map(lesson => (
             <div key={lesson.id} style={{ padding: '1.25rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -84,11 +136,34 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{lesson.tipo === 'gravada' ? 'Vídeo Aula' : 'Aula ao Vivo'}</p>
                 </div>
               </div>
-              <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/lesson/${lesson.id}`)}><Eye size={18} /> Ver Aula</button>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/lesson/${lesson.id}`)}><Eye size={18} /> Ver</button>
+                {lesson.tipo === 'atividade' && lesson.nucleo_id === profile?.nucleo_id && (
+                  <>
+                    <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => { setEditingQuiz(lesson); setQuizQuestions(lesson.questionario || []); }}><Edit2 size={18} /></button>
+                    <button className="btn btn-outline" style={{ width: 'auto', color: 'var(--error)' }} onClick={() => handleDeleteActivity(lesson.id)}><Trash2 size={18} /></button>
+                  </>
+                )}
+              </div>
             </div>
           ))}
           {lessons.length === 0 && <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Nenhuma aula cadastrada ainda.</p>}
         </div>
+      )}
+
+      {editingQuiz && (
+        <QuizEditorModal 
+          editingQuiz={editingQuiz}
+          setEditingQuiz={setEditingQuiz}
+          quizQuestions={quizQuestions}
+          setQuizQuestions={setQuizQuestions}
+          actionLoading={actionLoading}
+          setActionLoading={setActionLoading}
+          supabase={supabase}
+          showToast={(msg) => alert(msg)}
+          fetchLessons={async () => selectBookAndShowLessons(selectedBook)}
+          selectedBook={selectedBook}
+        />
       )}
     </div>
   )

@@ -46,11 +46,11 @@ const AvisosManagement = () => {
       const myNucleos = profNucs?.map((n: any) => n.nucleos).filter(Boolean) || [];
       setNucleos(myNucleos);
 
-      // Buscar avisos
+      // Buscar avisos dos núcleos do professor
       const { data: avisosData } = await supabase
         .from('avisos')
         .select('*, nucleos(nome)')
-        .eq('professor_id', user.id)
+        .in('nucleo_id', myNucleos.map((n: any) => n.id))
         .order('created_at', { ascending: false });
       
       setAvisos(avisosData || []);

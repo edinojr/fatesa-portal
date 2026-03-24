@@ -116,7 +116,8 @@ const Dashboard = () => {
               parent_aula_id,
               ordem,
               arquivo_url,
-              video_url
+              video_url,
+              nucleo_id
             )
           )
         `);
@@ -129,6 +130,7 @@ const Dashboard = () => {
             nome: c.nome,
             livros: sortedLivros.map((l: any) => ({
               ...l,
+              aulas: (l.aulas || []).filter((a: any) => !a.nucleo_id || a.nucleo_id === profile?.nucleo_id),
               progresso: isStaff ? 100 : 0, 
               isReleased: isStaff || exemptStatus || (l.ordem || 1) <= releasedCount,
               isCurrent: !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount
