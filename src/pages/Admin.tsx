@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { useNavigate, Link } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 import { 
   Users, 
   BookOpen, 
@@ -29,6 +29,7 @@ import {
   ChevronLeft,
   LayoutDashboard,
   X,
+  Menu,
   ClipboardList
 } from 'lucide-react'
 import NucleosPanel from '../components/NucleosPanel'
@@ -42,7 +43,6 @@ import LessonContentEditorModal from '../components/admin/modals/LessonContentEd
 import QuizEditorModal from '../components/admin/modals/QuizEditorModal'
 import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, AddContentModal, EditItemModal, AddAdminModal } from '../components/admin/modals/ContentModals'
 import { QuizQuestion, QuestionType } from '../types/admin'
-import { supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 
 import { useProfile } from '../hooks/useProfile'
 
@@ -57,6 +57,11 @@ const Admin = () => {
   const [courses, setCourses] = useState<any[]>([])
   const [pendingDocs, setPendingDocs] = useState<any[]>([])
   const [pendingPays, setPendingPays] = useState<any[]>([])
+
+  const [userCount, setUserCount] = useState(0)
+  const [courseCount, setCourseCount] = useState(0)
+  const [pendingCount, setPendingCount] = useState(0)
+
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -233,10 +238,15 @@ const Admin = () => {
           supabase.from('pagamentos').select('id', { count: 'exact', head: true }).eq('status', 'pago')
         ]);
         
-        setUsers(new Array(usersCount.count || 0)); // Hack to show count in cards if they use users.length
-        setCourses(new Array(coursesCount.count || 0));
-        setPendingDocs(new Array(docsCount.count || 0));
-        setPendingPays(new Array(paysCount.count || 0));
+        setUserCount(usersCount.count || 0);
+        setCourseCount(coursesCount.count || 0);
+        setPendingCount((docsCount.count || 0) + (userRole === 'admin' ? (paysCount.count || 0) : 0));
+        
+        // Reset lists when on home to avoid rendering undefined items if tab changes
+        setUsers([]);
+        setCourses([]);
+        setPendingDocs([]);
+        setPendingPays([]);
       } else if (activeTab === 'users') {
         const { data } = await supabase.from('users').select('*, nucleos(nome)')
         if (data) setUsers(data)
@@ -713,17 +723,17 @@ const Admin = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
                 <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.2) 0%, rgba(var(--primary-rgb), 0.05) 100%)', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
                   <Users size={32} style={{ marginBottom: '1rem', color: 'var(--primary)' }} />
-                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{users.length}</h3>
+                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{userCount}</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Usuários Cadastrados</p>
                 </div>
                 <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.05) 100%)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
                   <BookOpen size={32} style={{ marginBottom: '1rem', color: 'var(--success)' }} />
-                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{courses.length}</h3>
+                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{courseCount}</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Cursos Ativos</p>
                 </div>
                 <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.05) 100%)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
                   <FileText size={32} style={{ marginBottom: '1rem', color: 'var(--warning)' }} />
-                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{pendingDocs.length + (userRole === 'admin' ? pendingPays.length : 0)}</h3>
+                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{pendingCount}</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Pendências de Validação</p>
                 </div>
               </div>
@@ -732,6 +742,7 @@ const Admin = () => {
             {activeTab === 'users' && (
               <UserManagement 
                 users={users}
+                allNucleos={allNucleos}
                 searchTerm={searchTerm}
                 userRole={userRole}
                 actionLoading={actionLoading}

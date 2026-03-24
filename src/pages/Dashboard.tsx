@@ -49,12 +49,14 @@ const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [avisos, setAvisos] = useState<any[]>([])
   const [materiais, setMateriais] = useState<any[]>([])
+  const [isBlocked, setIsBlocked] = useState(false)
 
   const navigate = useNavigate()
 
   useEffect(() => {
     if (!profileLoading && profile) {
       fetchDashboardData();
+      if (profile.bloqueado) setActiveTab('financeiro');
     }
   }, [profileLoading, profile]);
 
@@ -67,13 +69,33 @@ const Dashboard = () => {
     if (!profile) return;
     try {
       setLoading(true);
+
+      // Check if student is blocked — only applies to students, never to staff/professors
+      const profileIsStaff = ['admin', 'professor', 'suporte'].includes(profile.tipo || '');
+      if (profile.bloqueado && !profileIsStaff) {
+        setIsBlocked(true);
+        setLoading(false);
+        return;
+      }
       
       if (profile.nucleo_id) {
         fetchNoticeBoard(profile.nucleo_id);
       }
       
       const isStaff = ['admin', 'professor', 'suporte'].includes(profile.tipo || '');
-      const exemptStatus = profile.bolsista || isStaff;
+
+      // Check if user's nucleus is fully exempt (e.g. Epístolas aos Hebreus)
+      let nucleoIsento = false;
+      if (profile.nucleo_id) {
+        const { data: nucData } = await supabase
+          .from('nucleos')
+          .select('isento')
+          .eq('id', profile.nucleo_id)
+          .single();
+        nucleoIsento = !!nucData?.isento;
+      }
+
+      const exemptStatus = profile.bolsista || isStaff || nucleoIsento;
 
       let releasedCount = 999;
       if (!exemptStatus) {
@@ -288,15 +310,15 @@ const Dashboard = () => {
         </div>
       )}
 
-      <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
-        <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1rem', flex: 1 }}>
+      <aside className="admin-sidebar" style={{ paddingTop: '1rem' }}>
+        <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <GraduationCap size={40} color="var(--primary)" />
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               Portal do Aluno
               <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: 'var(--primary)', color: '#fff', borderRadius: '4px', opacity: 0.8 }}>v1.4</span>
             </h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all' }}>{profile?.email}</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', opacity: 0.8 }}>{profile?.email}</p>
           </div>
           <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -330,23 +352,29 @@ const Dashboard = () => {
             </div>
           )}
 
-          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[]).map(t => (
-            <div 
-              key={t} 
-              className={`admin-nav-item ${activeTab === t ? 'active' : ''}`} 
-              onClick={() => {
-                setActiveTab(t);
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              {t === 'cursos' && <BookOpen size={20} />}
-              {t === 'avisos' && <Bell size={20} />}
-              {t === 'documentos' && <FileText size={20} />}
-              {t === 'financeiro' && <CreditCard size={20} />}
-              {t === 'boletim' && <Award size={20} />}
-              {t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}
-            </div>
-          ))}
+          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[]).map(t => {
+            const isDisabledForBlocked = isBlocked && t !== 'financeiro';
+            return (
+              <div
+                key={t}
+                className={`admin-nav-item ${activeTab === t ? 'active' : ''} ${isDisabledForBlocked ? 'disabled' : ''}`}
+                onClick={() => {
+                  if (isDisabledForBlocked) return;
+                  setActiveTab(t);
+                  setIsMobileMenuOpen(false);
+                }}
+                style={{ opacity: isDisabledForBlocked ? 0.35 : 1, cursor: isDisabledForBlocked ? 'not-allowed' : 'pointer' }}
+                title={isDisabledForBlocked ? 'Acesso restrito — regularize seu pagamento' : undefined}
+              >
+                {t === 'cursos' && <BookOpen size={20} />}
+                {t === 'avisos' && <Bell size={20} />}
+                {t === 'documentos' && <FileText size={20} />}
+                {t === 'financeiro' && <CreditCard size={20} />}
+                {t === 'boletim' && <Award size={20} />}
+                {t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}
+              </div>
+            );
+          })}
 
           <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
             <div className="admin-nav-item" style={{ color: 'var(--error)' }} onClick={() => signOut()}>
@@ -356,8 +384,8 @@ const Dashboard = () => {
         </nav>
       </aside>
 
-      <main className="admin-main" style={{ paddingTop: '2rem' }}>
-        <header className="mobile-col-flex" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <main className="admin-main" style={{ paddingTop: '1rem' }}>
+        <header className="mobile-col-flex" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
               {activeTab === 'cursos' && 'Meus Cursos'}
@@ -371,6 +399,27 @@ const Dashboard = () => {
         </header>
 
         <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
+          {isBlocked && (
+            <div style={{
+              marginBottom: '1.5rem',
+              padding: '1rem 1.5rem',
+              background: 'rgba(255, 77, 77, 0.1)',
+              border: '1px solid var(--error)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.75rem'
+            }}>
+              <AlertCircle size={20} color="var(--error)" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+              <div>
+                <strong style={{ color: 'var(--error)' }}>Acesso suspenso pelo administrador.</strong>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>
+                  Seu acesso aos cursos e materiais está restrito. Regularize seu pagamento abaixo para reativar todos os recursos.
+                </p>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'cursos' && (
             <CourseList 
               courses={courses}

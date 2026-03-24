@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapPin, Clock } from 'lucide-react'
+import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapPin, Clock, ShieldCheck } from 'lucide-react'
 
 interface NucleoPanelProps {
   userRole?: string
@@ -26,6 +26,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
   const [autoGrade, setAutoGrade] = useState<string | null>(null)
 
   const isAdmin = userRole === 'admin'
+  const isProfessor = userRole === 'professor'
 
   useEffect(() => {
     fetchInitialData()
@@ -56,9 +57,25 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
     setSelectedNucleo(nuc)
     setShowStudentModal(null)
     setLoading(true)
-    // Fetch students of this nucleo ('online' or 'presencial' type doesn't matter, just any user with nucleo_id)
-    const { data } = await supabase.from('users').select('*').eq('nucleo_id', nuc.id)
-    if (data) setStudents(data)
+
+    // Fetch students of this nucleo
+    const { data: studentsData } = await supabase.from('users').select('*').eq('nucleo_id', nuc.id)
+
+    if (studentsData) {
+      // For each student, fetch their latest payment
+      const studentsWithPayments = await Promise.all(
+        studentsData.map(async (student: any) => {
+          const { data: pays } = await supabase
+            .from('pagamentos')
+            .select('status, comprovante_url, data_pagamento')
+            .eq('user_id', student.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+          return { ...student, pagamento: pays?.[0] || null }
+        })
+      )
+      setStudents(studentsWithPayments)
+    }
 
     // Fetch atividades for this nucleo
     const resAtv = await supabase.from('atividades').select('*').eq('nucleo_id', nuc.id).order('created_at', { ascending: false })
@@ -389,6 +406,51 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
     }
   }
 
+  const handleToggleNucleoIsento = async (nuc: any, e: React.MouseEvent) => {
+    e.stopPropagation()
+    const newIsento = !nuc.isento
+    const msg = newIsento
+      ? 'Isentar TODOS os alunos deste núcleo (inclusive futuros) de qualquer cobrança?'
+      : 'Remover a isenção geral deste núcleo? Os alunos voltarão a ser cobrados normalmente.'
+    if (!confirm(msg)) return
+    setActionLoading(`isento_nuc_${nuc.id}`)
+    try {
+      const { error } = await supabase.from('nucleos').update({ isento: newIsento }).eq('id', nuc.id)
+      if (error) throw error
+      alert(newIsento ? 'Núcleo marcado como isento com sucesso!' : 'Isenção removida.')
+      fetchInitialData()
+    } catch (err: any) {
+      alert('Erro: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleMarkPago = async (aluno: any, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!confirm(`Marcar pagamento de "${aluno.nome}" como PAGO manualmente?`)) return
+    setActionLoading(`pago_${aluno.id}`)
+    try {
+      // Upsert a payment record as 'pago'
+      const { error } = await supabase.from('pagamentos').upsert(
+        {
+          user_id: aluno.id,
+          status: 'pago',
+          data_pagamento: new Date().toISOString(),
+          descricao: 'Pago manualmente pelo administrador',
+        },
+        { onConflict: 'user_id' }
+      )
+      if (error) throw error
+      alert('Pagamento registrado com sucesso!')
+      selectNucleo(selectedNucleo) // Refresh
+    } catch (err: any) {
+      alert('Erro: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   // Define which list of nucleos to show on the main screen
   const displayNucleos = isAdmin ? nucleos : myNucleos
 
@@ -421,18 +483,39 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Users size={32} color="var(--primary)" style={{ marginBottom: '1rem' }} />
-                {isAdmin && (
-                  <button 
-                    className="btn btn-outline" 
-                    style={{ width: 'auto', padding: '0.4rem', border: 'none', color: 'var(--error)' }}
-                    onClick={(e) => handleDeleteNucleo(nuc.id, e)}
-                    disabled={actionLoading === `delete_nuc_${nuc.id}`}
-                  >
-                    {actionLoading === `delete_nuc_${nuc.id}` ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
-                  </button>
-                )}
+                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                  {isAdmin && (
+                    <button
+                      className="btn btn-outline"
+                      style={{ width: 'auto', padding: '0.4rem 0.7rem', border: 'none', color: nuc.isento ? 'var(--success)' : 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700 }}
+                      onClick={(e) => handleToggleNucleoIsento(nuc, e)}
+                      disabled={actionLoading === `isento_nuc_${nuc.id}`}
+                      title={nuc.isento ? 'Clique para remover isenção' : 'Clique para isentar este núcleo'}
+                    >
+                      {actionLoading === `isento_nuc_${nuc.id}` ? <Loader2 className="spinner" size={14} /> : <ShieldCheck size={14} />}
+                      {nuc.isento ? ' Isento' : ' Isentar'}
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      className="btn btn-outline"
+                      style={{ width: 'auto', padding: '0.4rem', border: 'none', color: 'var(--error)' }}
+                      onClick={(e) => handleDeleteNucleo(nuc.id, e)}
+                      disabled={actionLoading === `delete_nuc_${nuc.id}`}
+                    >
+                      {actionLoading === `delete_nuc_${nuc.id}` ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
+                    </button>
+                  )}
+                </div>
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>{nuc.nome}</h3>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+                {nuc.nome}
+                {nuc.isento && (
+                  <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(34,197,94,0.2)', color: 'var(--success)', fontWeight: 700, verticalAlign: 'middle' }}>
+                    ISENTO
+                  </span>
+                )}
+              </h3>
               
               <div style={{ marginBottom: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {nuc.professor_responsavel && <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Award size={14} color="var(--primary)"/> {nuc.professor_responsavel}</span>}
@@ -498,15 +581,55 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Users size={20} /> Alunos da Turma</h3>
                 {students.filter(s => s.status_nucleo !== 'pendente').length === 0 ? <p style={{ color: 'var(--text-muted)' }}>Nenhum aluno matriculado oficialmente ainda.</p> : (
                   <table className="admin-table">
-                    <thead><tr><th>Nome do Aluno</th><th>Visualizar / Notas</th></tr></thead>
+                    <thead><tr><th>Nome do Aluno</th><th>Pagamento</th><th>Ações</th></tr></thead>
                     <tbody>
                       {students.filter(s => s.status_nucleo !== 'pendente').map(aluno => (
                         <tr key={aluno.id}>
-                          <td>{aluno.nome} <div style={{ fontSize:'0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div></td>
                           <td>
-                            <button className="btn btn-outline" style={{ padding: '0.4rem 1rem', width: 'auto' }} onClick={() => openStudent(aluno)}>
-                              Avaliar <Award size={16} style={{ marginLeft: '0.5rem' }} />
-                            </button>
+                            {aluno.nome}
+                            <div style={{ fontSize:'0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div>
+                          </td>
+                          <td>
+                            {aluno.pagamento?.status === 'pago' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.7rem', borderRadius: '20px', background: 'rgba(34,197,94,0.15)', color: 'var(--success)', fontSize: '0.78rem', fontWeight: 700 }}>
+                                  <span>✔</span> Pago
+                                </span>
+                                {aluno.pagamento?.comprovante_url && (
+                                  <a href={aluno.pagamento.comprovante_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.72rem', color: 'var(--primary)', textDecoration: 'underline' }}>Ver comprovante</a>
+                                )}
+                              </div>
+                            ) : aluno.pagamento?.comprovante_url ? (
+                              <a
+                                href={aluno.pagamento.comprovante_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.7rem', borderRadius: '20px', background: 'rgba(34,197,94,0.15)', color: 'var(--success)', fontSize: '0.78rem', fontWeight: 700, textDecoration: 'none' }}
+                              >
+                                <span>✔</span> Ver Comprovante
+                              </a>
+                            ) : (
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.7rem', borderRadius: '20px', background: 'rgba(255,77,77,0.12)', color: 'var(--error)', fontSize: '0.78rem', fontWeight: 700 }}>
+                                <span>⚠</span> Sem comprovante
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              {isAdmin && aluno.pagamento?.status !== 'pago' && (
+                                <button
+                                  className="btn btn-primary"
+                                  style={{ padding: '0.4rem 0.8rem', width: 'auto', fontSize: '0.78rem' }}
+                                  onClick={(e) => handleMarkPago(aluno, e)}
+                                  disabled={actionLoading === `pago_${aluno.id}`}
+                                >
+                                  {actionLoading === `pago_${aluno.id}` ? <Loader2 className="spinner" size={14} /> : '✔ Pago'}
+                                </button>
+                              )}
+                              <button className="btn btn-outline" style={{ padding: '0.4rem 1rem', width: 'auto' }} onClick={() => openStudent(aluno)}>
+                                Ver Boletim <Award size={16} style={{ marginLeft: '0.5rem' }} />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -529,16 +652,19 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
                   {atividades.length === 0 && <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhuma atividade registrada.</p>}
                 </div>
 
-                <hr style={{ borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', margin: '1.5rem 0' }} />
-                
-                <h4 style={{ marginBottom: '1rem', fontSize: '0.9rem' }}>Publicar Nova Atividade</h4>
-                <form onSubmit={handleCreateAtividade} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <input type="text" name="titulo" placeholder="Ex: Fichamento Livro 1" className="form-control" required />
-                  <textarea name="descricao" placeholder="Instruções da atividade..." className="form-control" rows={3}></textarea>
-                  <button type="submit" className="btn btn-primary" disabled={actionLoading === 'create_atv'}>
-                    {actionLoading === 'create_atv' ? <Loader2 className="spinner" /> : 'Publicar na Turma'}
-                  </button>
-                </form>
+                {isProfessor && (
+                  <>
+                    <hr style={{ borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', margin: '1.5rem 0' }} />
+                    <h4 style={{ marginBottom: '1rem', fontSize: '0.9rem' }}>Publicar Nova Atividade</h4>
+                    <form onSubmit={handleCreateAtividade} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      <input type="text" name="titulo" placeholder="Ex: Fichamento Livro 1" className="form-control" required />
+                      <textarea name="descricao" placeholder="Instruções da atividade..." className="form-control" rows={3}></textarea>
+                      <button type="submit" className="btn btn-primary" disabled={actionLoading === 'create_atv'}>
+                        {actionLoading === 'create_atv' ? <Loader2 className="spinner" /> : 'Publicar na Turma'}
+                      </button>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -714,42 +840,49 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
               )}
             </div>
 
-            <h4 style={{ marginBottom: '1rem' }}>Lançar/Atualizar Nota</h4>
-            <form onSubmit={handleLancarNota}>
-              <div className="form-group">
-                <label>Selecione a Atividade</label>
-                <select name="atividade_id" className="form-control" required>
-                  <option value="">-- Escolha --</option>
-                  <optgroup label="Atividades do Pólo (Manuais)">
-                    {atividades.map(a => <option key={a.id} value={a.id}>{a.titulo}</option>)}
-                  </optgroup>
-                  <optgroup label="Fichário (Portal do Aluno)">
-                    {courseSubmissions.map(s => (
-                      <option key={s.id} value={`course:${s.aulas?.id}`}>
-                        {s.aulas?.titulo} (Enviado em {new Date(s.created_at).toLocaleDateString()})
-                      </option>
-                    ))}
-                  </optgroup>
-                </select>
-              </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 1 }}>
-                  <label>Nota (0 a 10)</label>
-                  <input type="number" name="nota" max="10" min="0" step="0.1" className="form-control" required />
-                </div>
-                <div className="form-group" style={{ flex: 2 }}>
-                  <label>Feedback Adicional (Opcional)</label>
-                  <input type="text" name="feedback" className="form-control" placeholder="Muito bom!" />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+            {isProfessor ? (
+              <>
+                <h4 style={{ marginBottom: '1rem' }}>Lançar/Atualizar Nota</h4>
+                <form onSubmit={handleLancarNota}>
+                  <div className="form-group">
+                    <label>Selecione a Atividade</label>
+                    <select name="atividade_id" className="form-control" required>
+                      <option value="">-- Escolha --</option>
+                      <optgroup label="Atividades do Pólo (Manuais)">
+                        {atividades.map(a => <option key={a.id} value={a.id}>{a.titulo}</option>)}
+                      </optgroup>
+                      <optgroup label="Fichário (Portal do Aluno)">
+                        {courseSubmissions.map(s => (
+                          <option key={s.id} value={`course:${s.aulas?.id}`}>
+                            {s.aulas?.titulo} (Enviado em {new Date(s.created_at).toLocaleDateString()})
+                          </option>
+                        ))}
+                      </optgroup>
+                    </select>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label>Nota (0 a 10)</label>
+                      <input type="number" name="nota" max="10" min="0" step="0.1" className="form-control" required />
+                    </div>
+                    <div className="form-group" style={{ flex: 2 }}>
+                      <label>Feedback Adicional (Opcional)</label>
+                      <input type="text" name="feedback" className="form-control" placeholder="Muito bom!" />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                    <button type="button" className="btn btn-outline" onClick={() => setShowStudentModal(null)}>Fechar</button>
+                    <button type="submit" className="btn btn-primary" disabled={actionLoading === 'lancar_nota' || atividades.length === 0}>
+                      <Save size={18} /> Salvar Avaliação
+                    </button>
+                  </div>
+                </form>
+              </>
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                 <button type="button" className="btn btn-outline" onClick={() => setShowStudentModal(null)}>Fechar</button>
-                <button type="submit" className="btn btn-primary" disabled={actionLoading === 'lancar_nota' || atividades.length === 0}>
-                  <Save size={18} /> Salvar Avaliação
-                </button>
               </div>
-            </form>
+            )}
           </div>
         </div>
       )}
