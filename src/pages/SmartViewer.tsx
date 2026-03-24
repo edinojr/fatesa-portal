@@ -38,6 +38,9 @@ const StandardContent = () => {
   const [nextLesson, setNextLesson] = useState<any>(null);
   const [relatedActivities, setRelatedActivities] = useState<any[]>([]);
 
+  // Otimização v1.4
+  const [viewType, setViewType] = useState<'scroll' | 'single'>('single'); // Padrão single para ser leve
+
   // 2. Refs
   const viewerRef = useRef<HTMLDivElement>(null);
   const epubContainerRef = useRef<HTMLDivElement>(null);
@@ -50,16 +53,22 @@ const StandardContent = () => {
     standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/standard_fonts/`,
     cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
     cMapPacked: true,
+    disableRange: false,
+    disableStream: false,
+    disableAutoFetch: false
   }), []);
 
   const pdfUrl = useMemo(() => {
     if (!data) return null;
-    return data.pdf_url || data.arquivo_url || data.url;
+    const url = data.pdf_url || data.arquivo_url || data.url;
+    console.log('PDF URL resolved:', url);
+    return url;
   }, [data]);
+
 
   // 4. Effects
   useEffect(() => {
-    console.log('Fatesa StandardContent v1.3 Init (CDN Mode)');
+    console.log('Fatesa StandardContent v1.4 Init (Production Mode)');
     fetchBook();
     const handleResize = () => setContainerWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
@@ -107,7 +116,9 @@ const StandardContent = () => {
   // 5. Handlers
   const fetchBook = async () => {
     try {
-      const searchParams = new URLSearchParams(window.location.hash.split('?')[1] || "");
+      // Suporte robusto a BrowserRouter e HashRouter legado
+      const searchStr = location.search || window.location.search || window.location.hash.split('?')[1] || "";
+      const searchParams = new URLSearchParams(searchStr);
       const isAula = searchParams.get('type') === 'aula';
       const table = isAula ? 'aulas' : 'livros';
       
@@ -244,7 +255,39 @@ const StandardContent = () => {
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span className="viewer-header-desktop-only" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>v1.3 Protegido</span>
+          <div className="viewer-header-desktop-only" style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '2px' }}>
+            <button 
+              onClick={() => setViewType('single')} 
+              style={{ 
+                padding: '4px 12px', 
+                fontSize: '0.75rem', 
+                borderRadius: '6px', 
+                background: viewType === 'single' ? 'var(--primary)' : 'transparent',
+                color: viewType === 'single' ? '#fff' : 'rgba(255,255,255,0.6)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              Página
+            </button>
+            <button 
+              onClick={() => setViewType('scroll')} 
+              style={{ 
+                padding: '4px 12px', 
+                fontSize: '0.75rem', 
+                borderRadius: '6px', 
+                background: viewType === 'scroll' ? 'var(--primary)' : 'transparent',
+                color: viewType === 'scroll' ? '#fff' : 'rgba(255,255,255,0.6)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              Scroll
+            </button>
+          </div>
+          
           <button onClick={toggleFullscreen} className="btn-icon">
             {isAnyFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
           </button>
@@ -255,26 +298,78 @@ const StandardContent = () => {
       <div style={{ flex: 1, overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 1rem' }}>
           {viewMode === 'pdf' && pdfUrl ? (
-            <Document 
-              file={pdfUrl} 
-              onLoadSuccess={onDocumentLoadSuccess} 
-              onLoadError={(e) => console.error('PDF Error:', e)}
-              loading={<Loader2 className="spinner" />}
-              options={pdfOptions}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', alignItems: 'center' }}>
-                {Array.from(new Array(numPages || 0), (_, index) => (
-                  <div key={`page_${index + 1}`} className="pdf-page-shadow">
-                    <Page 
-                      pageNumber={index + 1} 
-                      width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
-                      renderTextLayer={true} 
-                      renderAnnotationLayer={false}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Document>
+            <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {viewType === 'single' && numPages > 0 && (
+                <div style={{ 
+                  position: 'sticky', 
+                  top: '1rem', 
+                  zIndex: 10, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '1rem', 
+                  background: 'rgba(0,0,0,0.8)', 
+                  padding: '0.5rem 1rem', 
+                  borderRadius: '100px', 
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  marginBottom: '2rem'
+                }}>
+                  <button 
+                    onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+                    disabled={pageNumber <= 1}
+                    className="btn-icon"
+                    style={{ opacity: pageNumber <= 1 ? 0.3 : 1 }}
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 600, minWidth: '80px', textAlign: 'center' }}>
+                    {pageNumber} / {numPages}
+                  </span>
+                  <button 
+                    onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
+                    disabled={pageNumber >= numPages}
+                    className="btn-icon"
+                    style={{ opacity: pageNumber >= numPages ? 0.3 : 1 }}
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              )}
+
+              <Document 
+                file={pdfUrl} 
+                onLoadSuccess={onDocumentLoadSuccess} 
+                onLoadError={(e) => console.error('PDF Error:', e)}
+                loading={<Loader2 className="spinner" />}
+                options={pdfOptions}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', alignItems: 'center' }}>
+                  {viewType === 'scroll' ? (
+                    Array.from(new Array(numPages || 0), (_, index) => (
+                      <div key={`page_${index + 1}`} className="pdf-page-shadow" style={{ minHeight: pageWidth * 1.3 }}>
+                        <Page 
+                          pageNumber={index + 1} 
+                          width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
+                          renderTextLayer={true} 
+                          renderAnnotationLayer={false}
+                          loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="pdf-page-shadow">
+                      <Page 
+                        pageNumber={pageNumber} 
+                        width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
+                        renderTextLayer={true} 
+                        renderAnnotationLayer={false}
+                        loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>}
+                      />
+                    </div>
+                  )}
+                </div>
+              </Document>
+            </div>
           ) : (
             <div id="epub-viewer" ref={epubContainerRef} style={{ width: '100%', height: 'calc(100vh - 120px)', background: '#fff' }}></div>
           )}

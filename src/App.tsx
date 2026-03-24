@@ -1,9 +1,9 @@
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Lesson from './pages/Lesson'
-import StandardContent from './pages/StandardContent'
+import SmartViewer from './pages/SmartViewer'
 import Admin from './pages/Admin'
 import Professor from './pages/Professor'
 import Landing from './pages/Landing'
@@ -23,7 +23,7 @@ function App() {
         <Route path="/matricula" element={<Matricula />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/lesson/:id" element={<Lesson />} />
-        <Route path="/book/:id" element={<StandardContent />} />
+        <Route path="/book/:id" element={<SmartViewer />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/professor" element={<Professor />} />
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -33,3 +33,4 @@ function App() {
 }
 
 export default App
+
