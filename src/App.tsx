@@ -12,6 +12,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ProfessorLogin from './pages/ProfessorLogin'
 import AdminLogin from './pages/AdminLogin'
+import ProtectedRoute from './components/ProtectedRoute'
 
 
 function App() {
@@ -27,8 +28,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/lesson/:id" element={<Lesson />} />
         <Route path="/book/:id" element={<SmartViewer />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/professor" element={<Professor />} />
+        <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
+        <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
         <Route path="/professor/login" element={<ProfessorLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="*" element={<Navigate to="/" replace />} />
