@@ -19,8 +19,8 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Configurando o worker do PDF.js (usando .js para compatibilidade Safari iOS)
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Configurando o worker do PDF.js (usando .mjs para compatibilidade com versões recentes)
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const StandardContent = () => {
   const { id } = useParams();
@@ -139,7 +139,7 @@ const StandardContent = () => {
           .select('*')
           .eq('livro_id', data.livro_id)
           .gt('ordem', data.ordem || 0)
-          .not('tipo', 'in', ['atividade', 'prova', 'licao'])
+          .not('tipo', 'in', '(atividade,prova,licao)')
           .order('ordem', { ascending: true })
           .limit(1)
           .maybeSingle();
