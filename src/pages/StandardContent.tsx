@@ -19,8 +19,10 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Configurando o worker do PDF.js (usando .mjs para compatibilidade com versões recentes)
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+
+// Configurando o worker do PDF.js localmente via Vite
+pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const StandardContent = () => {
   const { id } = useParams();
