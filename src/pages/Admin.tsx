@@ -128,7 +128,7 @@ const Admin = () => {
   const checkAccess = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-      navigate('/login')
+      navigate('/professor/login')
       return
     }
     setCurrentUserEmail(user.email ?? null)

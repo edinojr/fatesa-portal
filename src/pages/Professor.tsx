@@ -53,7 +53,7 @@ const Professor = () => {
   useEffect(() => {
     if (!profileLoading) {
       if (!profile) {
-        navigate('/login');
+        navigate('/professor/login');
         return;
       }
       

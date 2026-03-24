@@ -89,7 +89,8 @@ const Landing = () => {
             <ChevronRight size={20} />
           </Link>
           
-          <Link to="/login" className="access-card">
+          <Link to="/professor/login" className="access-card">
+
             <div className="access-icon teacher"><GraduationCap size={32} /></div>
             <div className="access-info">
               <h3>Portal do Professor</h3>
@@ -98,7 +99,8 @@ const Landing = () => {
             <ChevronRight size={20} />
           </Link>
 
-          <Link to="/login" className="access-card">
+          <Link to="/professor/login" className="access-card">
+
             <div className="access-icon admin"><Shield size={32} /></div>
             <div className="access-info">
               <h3>Administração</h3>

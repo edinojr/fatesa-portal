@@ -10,6 +10,8 @@ import Landing from './pages/Landing'
 import Matricula from './pages/Matricula'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import ProfessorLogin from './pages/ProfessorLogin'
+
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
         <Route path="/book/:id" element={<SmartViewer />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/professor" element={<Professor />} />
+        <Route path="/professor/login" element={<ProfessorLogin />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
