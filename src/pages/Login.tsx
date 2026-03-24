@@ -207,6 +207,9 @@ const Login = () => {
 
         <div className="auth-footer" style={{ marginTop: '2.5rem', opacity: step === 1 ? 1 : 0, transition: 'opacity 0.3s' }}>
           Não possui acesso ativado? <Link to="/signup">Ative aqui</Link>
+          <p style={{ marginTop: '1rem', fontSize: '0.8rem', opacity: 0.8 }}>
+            Área do <Link to="/professor/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>Professor</Link> ou <Link to="/admin/login" style={{ color: 'var(--error)', fontWeight: 600 }}>Administrador</Link>
+          </p>
         </div>
       </div>
     </div>

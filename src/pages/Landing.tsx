@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { GraduationCap, BookOpen, Users, Clock, Mail, Phone, MapPin, ChevronRight, BookCheck, Award, Book, History, Shield, MessageCircle, Menu, XCircle } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { GraduationCap, BookOpen, Users, Clock, Mail, Phone, MapPin, ChevronRight, BookCheck, Award, Book, History, Shield, MessageCircle, Menu, XCircle, LogIn, ShieldAlert } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 const Landing = () => {
   const [showVilaLuzita, setShowVilaLuzita] = useState(false);
   const [sessionUser, setSessionUser] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showLoginMenu, setShowLoginMenu] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -49,9 +51,32 @@ const Landing = () => {
             <a href="#professores" onClick={() => setMobileMenuOpen(false)}>Patrono</a>
             <a href="#cursos" onClick={() => setMobileMenuOpen(false)}>Cursos</a>
             <a href="#contato" onClick={() => setMobileMenuOpen(false)}>Contato</a>
-            <Link to="/login" className="btn btn-primary btn-sm" onClick={() => setMobileMenuOpen(false)}>
-              {sessionUser ? "Meu Painel" : "Entrar"}
-            </Link>
+            <div className="login-dropdown-container">
+              <button 
+                className="btn btn-primary btn-sm" 
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                onClick={() => {
+                  if (sessionUser) navigate('/dashboard');
+                  else setShowLoginMenu(!showLoginMenu);
+                }}
+              >
+                {sessionUser ? <><Users size={18} /> Meu Painel</> : <><LogIn size={18} /> Entrar</>}
+              </button>
+              
+              {!sessionUser && showLoginMenu && (
+                <div className="login-dropdown">
+                  <Link to="/login" className="login-dropdown-item" onClick={() => { setShowLoginMenu(false); setMobileMenuOpen(false); }}>
+                    <Users size={18} /> Portal do Aluno
+                  </Link>
+                  <Link to="/professor/login" className="login-dropdown-item" onClick={() => { setShowLoginMenu(false); setMobileMenuOpen(false); }}>
+                    <GraduationCap size={18} /> Portal do Professor
+                  </Link>
+                  <Link to="/admin/login" className="login-dropdown-item" onClick={() => { setShowLoginMenu(false); setMobileMenuOpen(false); }}>
+                    <ShieldAlert size={18} /> Portal Administrativo
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
           <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <XCircle size={32} /> : <Menu size={32} />}

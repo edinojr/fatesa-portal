@@ -11,6 +11,7 @@ import Matricula from './pages/Matricula'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ProfessorLogin from './pages/ProfessorLogin'
+import AdminLogin from './pages/AdminLogin'
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/professor" element={<Professor />} />
         <Route path="/professor/login" element={<ProfessorLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
