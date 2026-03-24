@@ -19,8 +19,8 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Configurando o worker do PDF.js
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Configurando o worker do PDF.js (usando .js para compatibilidade Safari iOS)
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const StandardContent = () => {
   const { id } = useParams();
@@ -31,6 +31,7 @@ const StandardContent = () => {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPseudoFullscreen, setIsPseudoFullscreen] = useState(false);
   const [viewMode, setViewMode] = useState<'pdf' | 'epub'>('pdf');
   const [rendition, setRendition] = useState<any>(null);
   const [containerWidth, setContainerWidth] = useState(window.innerWidth);
@@ -109,7 +110,11 @@ const StandardContent = () => {
       const table = isAula ? 'aulas' : 'livros';
       
       const { data, error } = await supabase.from(table).select('*').eq('id', id).single();
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching content data:', error);
+        throw error;
+      }
+      console.log('Content loaded successfully:', data);
       setBook(data);
       
       const hasPdf = data.pdf_url || data.arquivo_url || data.url;
@@ -148,14 +153,28 @@ const StandardContent = () => {
   };
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      viewerRef.current?.requestFullscreen().catch(err => {
-        console.error(`Error: ${err.message}`);
-      });
-      setIsFullscreen(true);
+    const elem = viewerRef.current as any;
+    if (!elem) return;
+
+    if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch((err: any) => console.error(err));
+        setIsFullscreen(true);
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        // Fallback para iPhone: Pseudo-Fullscreen
+        setIsPseudoFullscreen(true);
+      }
     } else {
-      document.exitFullscreen();
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if ((document as any).webkitExitFullscreen) {
+        (document as any).webkitExitFullscreen();
+      }
       setIsFullscreen(false);
+      setIsPseudoFullscreen(false);
     }
   };
 
@@ -215,8 +234,25 @@ const StandardContent = () => {
   }
 
   // 7. Renderização Principal
+  const isAnyFullscreen = isFullscreen || isPseudoFullscreen;
+
   return (
-    <div ref={viewerRef} style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0a0a0a', color: '#fff', overflow: 'hidden' }}>
+    <div 
+      ref={viewerRef} 
+      style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        height: isPseudoFullscreen ? '100vh' : '100dvh',
+        width: isPseudoFullscreen ? '100vw' : '100%',
+        position: isPseudoFullscreen ? 'fixed' : 'relative',
+        top: 0,
+        left: 0,
+        zIndex: isPseudoFullscreen ? 9999 : 1,
+        background: '#0a0a0a', 
+        color: '#fff', 
+        overflow: 'hidden' 
+      }}
+    >
       <header style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -242,7 +278,7 @@ const StandardContent = () => {
             Visualizador Protegido
           </span>
           <button onClick={toggleFullscreen} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', cursor: 'pointer', padding: '0.5rem', borderRadius: '8px' }}>
-            {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+            {isAnyFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
           </button>
           <button onClick={() => navigate(-1)} style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.5rem', borderRadius: '8px' }}>
             <X size={20} />
@@ -265,7 +301,7 @@ const StandardContent = () => {
                   <div key={`page_${index + 1}`} style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.7)', background: '#fff' }}>
                     <Page 
                       pageNumber={index + 1} 
-                      width={isFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
+                      width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
                       renderTextLayer={true} 
                       renderAnnotationLayer={false}
                     />

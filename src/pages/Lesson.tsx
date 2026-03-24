@@ -81,6 +81,20 @@ const Lesson = () => {
             })
           }
           setSubmitted(true);
+        } else {
+          // Check if user is staff (professor/admin) to show as "read-only gabarito"
+          const { data: profile } = await supabase.from('users').select('tipo').eq('id', user.id).single();
+          if (['admin', 'professor', 'suporte'].includes(profile?.tipo || '')) {
+            setSubmitted(true);
+            setReviewMode(true);
+            const gabarito: Record<string, any> = {};
+            (Array.isArray(lessonData.questionario) ? lessonData.questionario : []).forEach((q: any) => {
+              if (q.type === 'multiple_choice') gabarito[q.id] = q.correct;
+              else if (q.type === 'true_false') gabarito[q.id] = q.isTrue;
+            });
+            setAnswers(gabarito);
+            setResult({ score: 10, passed: true });
+          }
         }
       }
     } catch (err) {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { GraduationCap, ShieldCheck, Loader2, Trash2, UserPlus } from 'lucide-react'
+import { GraduationCap, ShieldCheck, Loader2, Trash2, UserPlus, Edit2 } from 'lucide-react'
 import Badge from '../ui/Badge'
 import LoadingSpinner from '../ui/LoadingSpinner'
 
@@ -13,6 +13,7 @@ interface UserManagementProps {
   handleToggleBlock: (userId: string, currentStatus: boolean) => Promise<void>
   handleToggleGratuidade: (userId: string, currentStatus: boolean) => Promise<void>
   handleUpdateUserNucleo: (userId: string, nucleoId: string) => Promise<void>
+  handleUpdateUserName: (userId: string, newName: string) => Promise<void>
   handleDeleteUser: (userId: string) => Promise<void>
   setShowAddAdmin: (val: boolean) => void
 }
@@ -27,6 +28,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   handleToggleBlock,
   handleToggleGratuidade,
   handleUpdateUserNucleo,
+  handleUpdateUserName,
   handleDeleteUser,
   setShowAddAdmin
 }) => {
@@ -92,7 +94,20 @@ const UserManagement: React.FC<UserManagementProps> = ({
                   .map((user: any) => (
                     <tr key={user.id}>
                       <td>
-                        <div style={{ fontWeight: 600 }}>{user.nome}</div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <div style={{ fontWeight: 600, marginRight: '0.5rem' }}>{user.nome}</div>
+                          <button 
+                            className="btn-icon" 
+                            style={{ padding: '2px', opacity: 0.5 }}
+                            onClick={() => {
+                              const newName = prompt('Novo nome para o usuário:', user.nome);
+                              if (newName && newName !== user.nome) handleUpdateUserName(user.id, newName);
+                            }}
+                            title="Editar Nome"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                        </div>
                         <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{user.email}</div>
                       </td>
                       <td>

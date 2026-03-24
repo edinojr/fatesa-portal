@@ -15,7 +15,8 @@ import {
   Users,
   ChevronLeft,
   Menu,
-  X
+  X,
+  Bell
 } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Course, Documento, Pagamento, UserProfile } from '../types/dashboard'
@@ -23,8 +24,9 @@ import CourseList from '../components/dashboard/CourseList'
 import DocumentUpload from '../components/dashboard/DocumentUpload'
 import FinancePanel from '../components/dashboard/FinancePanel'
 import GradesPanel from '../components/dashboard/GradesPanel'
+import NoticeBoard from '../components/dashboard/NoticeBoard'
 
-type Tab = 'cursos' | 'documentos' | 'financeiro' | 'boletim'
+type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<Tab>('cursos')
@@ -45,6 +47,8 @@ const Dashboard = () => {
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [avisos, setAvisos] = useState<any[]>([])
+  const [materiais, setMateriais] = useState<any[]>([])
 
   const navigate = useNavigate()
 
@@ -83,6 +87,10 @@ const Dashboard = () => {
 
       setProfile(profileData)
       
+      if (profileData.nucleo_id) {
+        fetchNoticeBoard(profileData.nucleo_id);
+      }
+      
       const isStaff = ['admin', 'professor', 'suporte'].includes(profileData.tipo || '');
       const exemptStatus = profileData.bolsista || isStaff;
 
@@ -118,15 +126,20 @@ const Dashboard = () => {
             livros (
               id,
               titulo,
+              professor_nome,
               capa_url,
               pdf_url,
+              epub_url,
               ordem,
+              ensino_tipo,
               aulas (
                 id,
                 titulo,
                 tipo,
                 parent_aula_id,
-                ordem
+                ordem,
+                arquivo_url,
+                video_url
               )
             )
           `)
@@ -144,58 +157,53 @@ const Dashboard = () => {
           }))
         }
       } else {
-        const { data: enrollments } = await supabase
-          .from('matriculas')
+        // Alunos: busca automática de todos os cursos, filtrando livros pelo tipo (Online/Presencial)
+        const { data: allCourses } = await supabase
+          .from('cursos')
           .select(`
-            curso_id,
-            cursos (
+            id,
+            nome,
+            livros (
               id,
-              nome,
-              livros (
+              titulo,
+              professor_nome,
+              capa_url,
+              pdf_url,
+              epub_url,
+              ordem,
+              ensino_tipo,
+              aulas (
                 id,
                 titulo,
-                professor_nome,
-                capa_url,
-                pdf_url,
-                epub_url,
+                tipo,
+                parent_aula_id,
                 ordem,
-                ensino_tipo,
-                aulas (
-                  id,
-                  titulo,
-                  tipo,
-                  parent_aula_id,
-                  ordem,
-                  arquivo_url
-                )
+                arquivo_url,
+                video_url
               )
             )
           `)
         
-        if (enrollments && enrollments.length > 0) {
-          mappedCourses = enrollments
-            .filter((e: any) => e.cursos)
-            .map((e: any) => {
-              const allLivros = e.cursos.livros || [];
-              const sortedLivros = [...allLivros].sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-              
-              return {
-                id: e.cursos.id,
-                nome: e.cursos.nome,
-                livros: sortedLivros.map((l: any) => ({
-                  ...l,
-                  progresso: 0, 
-                  isReleased: exemptStatus || (l.ordem || 1) <= releasedCount,
-                  isCurrent: !exemptStatus && (l.ordem || 1) === releasedCount
-                }))
-              }
-            })
+        if (allCourses && allCourses.length > 0) {
+          mappedCourses = allCourses.map((c: any) => {
+            // Acesso Global: Todos os usuários veem todos os livros do curso
+            const sortedLivros = (c.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+            
+            return {
+              id: c.id,
+              nome: c.nome,
+              livros: sortedLivros.map((l: any) => ({
+                ...l,
+                progresso: 0, 
+                isReleased: exemptStatus || (l.ordem || 1) <= releasedCount,
+                isCurrent: !exemptStatus && (l.ordem || 1) === releasedCount
+              }))
+            };
+          }).filter((c: any) => c.livros.length > 0); 
         }
       }
       
-      if (mappedCourses.length > 0) {
-        setCourses(mappedCourses)
-      }
+      setCourses(mappedCourses)
     } catch (err: any) {
       console.error("Critical Dashboard Error:", err);
       showToast("Erro no Dashboard: " + err.message, "error");
@@ -260,6 +268,26 @@ const Dashboard = () => {
     
     if (progData) {
       setProgressoAulas(progData)
+    }
+  }
+
+  const fetchNoticeBoard = async (nucleoId: string) => {
+    try {
+      const { data: avisosData } = await supabase
+        .from('avisos')
+        .select('*')
+        .eq('nucleo_id', nucleoId)
+        .order('created_at', { ascending: false });
+      setAvisos(avisosData || []);
+
+      const { data: materiaisData } = await supabase
+        .from('materiais_adicionais')
+        .select('*')
+        .eq('nucleo_id', nucleoId)
+        .order('created_at', { ascending: false });
+      setMateriais(materiaisData || []);
+    } catch (error) {
+      console.error('Error fetching notice board:', error);
     }
   }
 
@@ -393,7 +421,7 @@ const Dashboard = () => {
           )}
 
           {/* Abas Migradas */}
-          {(['cursos', 'documentos', 'financeiro', 'boletim'] as Tab[]).map(t => (
+          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[]).map(t => (
             <div 
               key={t} 
               className={`admin-nav-item ${activeTab === t ? 'active' : ''}`} 
@@ -403,10 +431,11 @@ const Dashboard = () => {
               }}
             >
               {t === 'cursos' && <BookOpen size={20} />}
+              {t === 'avisos' && <Bell size={20} />}
               {t === 'documentos' && <FileText size={20} />}
               {t === 'financeiro' && <CreditCard size={20} />}
               {t === 'boletim' && <Award size={20} />}
-              {t.charAt(0).toUpperCase() + t.slice(1)}
+              {t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}
             </div>
           ))}
 
@@ -426,6 +455,7 @@ const Dashboard = () => {
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
               {activeTab === 'cursos' && 'Meus Cursos'}
+              {activeTab === 'avisos' && 'Quadro de Avisos'}
               {activeTab === 'documentos' && 'Meus Documentos'}
               {activeTab === 'financeiro' && 'Financeiro e Matrícula'}
               {activeTab === 'boletim' && 'Boletim de Notas'}
@@ -446,6 +476,13 @@ const Dashboard = () => {
               setSelectedLessonType={setSelectedLessonType}
               atividades={atividades}
               progressoAulas={progressoAulas}
+            />
+          )}
+
+          {activeTab === 'avisos' && (
+            <NoticeBoard 
+              avisos={avisos} 
+              materiais={materiais} 
             />
           )}
 

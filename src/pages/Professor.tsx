@@ -16,8 +16,11 @@ import { Submission, Student, ProfessorCourse } from '../types/professor'
 import StudentsManagement from '../components/professor/StudentsManagement'
 import ProfessorContent from '../components/professor/ProfessorContent'
 import GradingPanel from '../components/professor/GradingPanel'
+import AvisosManagement from '../components/professor/AvisosManagement'
+import MateriaisManagement from '../components/professor/MateriaisManagement'
+import { AlertCircle, FileText } from 'lucide-react'
 
-type Tab = 'nucleos' | 'content' | 'students' | 'grading'
+type Tab = 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais'
 
 const Professor = () => {
   const [activeTab, setActiveTab] = useState<Tab>('nucleos')
@@ -366,6 +369,18 @@ const Professor = () => {
               </span>
             )}
           </div>
+          <div 
+            className={`admin-nav-item ${activeTab === 'avisos' ? 'active' : ''}`}
+            onClick={() => setActiveTab('avisos')}
+          >
+            <AlertCircle size={20} /> Quadro de Avisos
+          </div>
+          <div 
+            className={`admin-nav-item ${activeTab === 'materiais' ? 'active' : ''}`}
+            onClick={() => setActiveTab('materiais')}
+          >
+            <FileText size={20} /> Materiais Adicionais
+          </div>
           
           <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
             <div className="admin-nav-item" onClick={() => navigate('/professor')}>
@@ -388,6 +403,8 @@ const Professor = () => {
               {activeTab === 'nucleos' ? 'Gestão de Núcleos' : 
                activeTab === 'students' ? 'Gestão de Alunos' :
                activeTab === 'grading' ? 'Correção de Avaliações' : 
+               activeTab === 'avisos' ? 'Quadro de Avisos' :
+               activeTab === 'materiais' ? 'Materiais Adicionais' :
                'Conteúdo do Curso'}
             </h1>
             <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta, Professor.</p>
@@ -433,6 +450,14 @@ const Professor = () => {
             savingGrade={savingGrade}
             handleSaveGrade={handleSaveGrade}
           />
+        )}
+
+        {activeTab === 'avisos' && (
+          <AvisosManagement />
+        )}
+
+        {activeTab === 'materiais' && (
+          <MateriaisManagement />
         )}
       </main>
     </div>

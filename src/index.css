@@ -46,6 +46,7 @@ body {
 
 #root {
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
 }
@@ -70,6 +71,7 @@ body {
   border: 1px solid var(--glass-border);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -90,6 +92,7 @@ body {
   padding: 0.6rem 1.2rem;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   color: var(--text-main);
@@ -204,6 +207,24 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--primary);
 }
 
 .auth-footer {
@@ -582,6 +603,15 @@ body {
   border-bottom-right-radius: 12px;
 }
 
+/* Scrollbar personalizada para tabelas no Safari */
+.admin-table::-webkit-scrollbar {
+  height: 6px;
+}
+.admin-table::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
+}
+
 .file-upload-zone {
   border: 2px dashed var(--glass-border);
   border-radius: 16px;
@@ -602,6 +632,7 @@ body {
   inset: 0;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -772,6 +803,7 @@ body {
   z-index: 1000;
   background: rgba(8, 9, 10, 0.8);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border);
   padding: 1.875rem 0; /* Increased 1.5x */
   transition: all 0.3s ease;

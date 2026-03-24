@@ -393,6 +393,21 @@ const Admin = () => {
     }
   }
 
+  const handleUpdateUserName = async (userId: string, newName: string) => {
+    if (!newName.trim()) return;
+    setActionLoading(userId);
+    try {
+      const { error } = await supabase.from('users').update({ nome: newName }).eq('id', userId);
+      if (error) throw error;
+      setUsers(users.map(u => u.id === userId ? { ...u, nome: newName } : u));
+      showToast('Nome atualizado com sucesso!');
+    } catch (err: any) {
+      showToast('Erro ao atualizar nome: ' + err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'user' | 'content', id: string, table?: string, column?: string, title: string } | null>(null);
 
   const handleDeleteUser = async (userId: string) => {
@@ -703,6 +718,7 @@ const Admin = () => {
                 handleToggleBlock={handleToggleBlock}
                 handleToggleGratuidade={handleToggleGratuidade}
                 handleUpdateUserNucleo={handleUpdateUserNucleo}
+                handleUpdateUserName={handleUpdateUserName}
                 handleDeleteUser={async (userId: string) => setConfirmDelete({ type: 'user', id: userId, title: 'Tem certeza que deseja excluir este usuário?' })}
               />
             )}
