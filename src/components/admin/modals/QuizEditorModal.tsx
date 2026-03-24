@@ -43,7 +43,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 <div>
                   <strong style={{ fontSize: '1.2rem', color: 'var(--primary)', display: 'block' }}>Questão {qIdx + 1}</strong>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    {q.type === 'multiple_choice' ? 'Múltipla Escolha' : q.type === 'true_false' ? 'Verdadeiro ou Falso' : q.type === 'matching' ? 'Associação de Colunas (Ancoragem)' : q.type === 'discursive' ? 'Dissertativa' : 'Múltipla Escolha (Legado)'}
+                    {q.type === 'multiple_choice' ? 'Múltipla Escolha' : q.type === 'true_false' ? 'Verdadeiro ou Falso' : q.type === 'matching' ? 'Relacione as Colunas (Respectiva)' : q.type === 'discursive' ? 'Dissertativa' : 'Múltipla Escolha (Legado)'}
                   </span>
                 </div>
                 <button onClick={() => setQuizQuestions(quizQuestions.filter((_, i) => i !== qIdx))} style={{ color: 'var(--error)', background: 'rgba(244, 63, 94, 0.1)', border: 'none', cursor: 'pointer', padding: '0.5rem', borderRadius: '8px' }} title="Excluir Questão">
@@ -212,7 +212,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
               <select id="new-q-type" className="form-control" defaultValue="multiple_choice">
                 <option value="multiple_choice">Múltipla Escolha</option>
                 <option value="true_false">Verdadeiro ou Falso</option>
-                <option value="matching">Ancoragem (Associação de Colunas)</option>
+                <option value="matching">Relacione as Colunas (Respectiva)</option>
                 <option value="discursive">Dissertativa (Texto Livre)</option>
               </select>
             </div>

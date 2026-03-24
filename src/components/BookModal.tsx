@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, Loader2, ExternalLink, ZoomIn, ZoomOut, Maximize, Minimize, Search, Edit } from 'lucide-react';
-import HTMLFlipBook from 'react-pageflip';
+import { X, Loader2, ExternalLink, Maximize, Minimize, Search } from 'lucide-react';
+
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -23,8 +23,7 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isHighlighterActive, setIsHighlighterActive] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const bookRef = useRef<any>(null);
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   const toggleFullscreen = () => {
@@ -49,11 +48,7 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') {
-        bookRef.current?.pageFlip().flipNext();
-      } else if (e.key === 'ArrowLeft') {
-        bookRef.current?.pageFlip().flipPrev();
-      } else if (e.key === 'ArrowUp') {
+      if (e.key === 'ArrowUp') {
         setZoomLevel(prev => Math.min(prev + 0.1, 2));
         e.preventDefault();
       } else if (e.key === 'ArrowDown') {
@@ -114,20 +109,6 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
             <button className="btn btn-outline" style={{ width: 'auto', padding: '0.6rem', background: zoomLevel > 1 ? 'var(--primary)' : 'transparent', color: '#fff' }} onClick={toggleZoom} title="Zoom">
               <Search size={20} />
             </button>
-            <button 
-              className="btn btn-outline" 
-              style={{ 
-                width: 'auto', 
-                padding: '0.6rem', 
-                background: isHighlighterActive ? '#fbbf24' : 'transparent', 
-                color: isHighlighterActive ? '#000' : '#fff',
-                borderColor: isHighlighterActive ? '#fbbf24' : 'rgba(255,255,255,0.2)'
-              }} 
-              onClick={toggleHighlighter} 
-              title="Marca-texto"
-            >
-              <Edit size={20} />
-            </button>
             <button className="btn btn-outline" style={{ width: 'auto', padding: '0.6rem' }} onClick={toggleFullscreen} title="Tela Cheia">
               {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
             </button>
@@ -160,13 +141,7 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
             </div>
           )}
 
-          <button 
-            onClick={() => bookRef.current?.pageFlip().flipPrev()} 
-            style={{ position: 'fixed', left: '20px', top: '50%', zIndex: 1000, background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', padding: '1rem', cursor: 'pointer', color: '#fff', backdropFilter: 'blur(5px)', transition: 'all 0.2s' }}
-            className="nav-arrow-btn"
-          >
-            <ChevronLeft size={32} />
-          </button>
+
 
           <div className={isHighlighterActive ? 'highlighter-mode' : ''} style={{ 
             minWidth: '100%',
@@ -184,52 +159,30 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
               loading={<Loader2 className="spinner" size={32} />}
             >
               {numPages && (
-                // @ts-ignore
-                  <HTMLFlipBook 
-                    width={Math.round((isFullscreen ? 800 : 700) * zoomLevel)} 
-                    height={Math.round((isFullscreen ? 1100 : 1000) * zoomLevel)} 
-                    size="fixed"
-                    minWidth={200}
-                    maxWidth={2000}
-                    minHeight={300}
-                    maxHeight={3000}
-                    maxShadowOpacity={0.5}
-                    showCover={true}
-                    mobileScrollSupport={true}
-                    showPageCorners={false}
-                    disableFlipByClick={false}
-                    useMouseEvents={false} // Prevents "Cannot read properties of undefined (reading 'x')" crash
-                    usePortrait={true}
-                    startPage={currentPage}
-                    onFlip={(e: any) => setCurrentPage(e.data)}
-                    ref={bookRef}
-                    key={`${book.id}-${zoomLevel}-${isFullscreen}`}
-                    style={{ margin: '0 auto', boxShadow: '0 25px 70px rgba(0,0,0,0.9)' }}
-                    className="fatesa-flipbook-modal"
-                  >
-                  {Array.from(new Array(numPages), (el, index) => (
-                    <div key={`page_${index + 1}`} className="page" style={{ background: '#fff', overflow: 'hidden' }}>
-                      <Page 
-                        pageNumber={index + 1} 
-                        width={Math.round((isFullscreen ? 800 : 700) * zoomLevel)} 
-                        renderTextLayer={true} 
-                        renderAnnotationLayer={false}
-                        devicePixelRatio={2}
-                      />
-                    </div>
-                  ))}
-                </HTMLFlipBook>
-              )}
-            </Document>
-          </div>
-
-          <button 
-            onClick={() => bookRef.current?.pageFlip().flipNext()} 
-            style={{ position: 'fixed', right: '20px', top: '50%', zIndex: 1000, background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', padding: '1rem', cursor: 'pointer', color: '#fff', backdropFilter: 'blur(5px)', transition: 'all 0.2s' }}
-            className="nav-arrow-btn"
-          >
-            <ChevronRight size={32} />
-          </button>
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '2rem', 
+                  alignItems: 'center',
+                  width: '100%'
+                }}
+              >
+                {Array.from(new Array(numPages), (el, index) => (
+                  <div key={`page_${index + 1}`} style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.5)', background: '#fff' }}>
+                    <Page 
+                      pageNumber={index + 1} 
+                      width={Math.round((isFullscreen ? 900 : 700) * zoomLevel * (window.innerWidth < 800 ? 0.9 : 1))} 
+                      renderTextLayer={true} 
+                      renderAnnotationLayer={false}
+                      devicePixelRatio={2}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </Document>
+        </div>
         </div>
       </div>
     </div>

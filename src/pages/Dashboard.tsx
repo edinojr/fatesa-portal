@@ -37,6 +37,7 @@ const Dashboard = () => {
   const [selectedBook, setSelectedBook] = useState<string | null>(null)
   const [selectedLessonType, setSelectedLessonType] = useState<'video' | 'atividade'>('video')
   const [atividades, setAtividades] = useState<any[]>([])
+  const [progressoAulas, setProgressoAulas] = useState<any[]>([])
   const [availableNucleos, setAvailableNucleos] = useState<any[]>([])
   const [pixConfig, setPixConfig] = useState<{ key: string, qr: string }>({ key: '', qr: '' })
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
@@ -47,18 +48,6 @@ const Dashboard = () => {
 
   const navigate = useNavigate()
 
-  useEffect(() => {
-    fetchUserData()
-  }, [])
-
-  useEffect(() => {
-    if (profile) {
-      if (activeTab === 'documentos') fetchDocuments()
-      if (activeTab === 'financeiro') fetchPayments()
-      if (activeTab === 'boletim') fetchBoletim()
-    }
-  }, [activeTab, profile])
-
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 3000)
@@ -66,9 +55,11 @@ const Dashboard = () => {
 
   const fetchUserData = async () => {
     try {
+      setLoading(true)
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        navigate('/login')
+        console.warn("Usuário não autenticado. Redirecionando para login...");
+        navigate('/login', { replace: true })
         return
       }
 
@@ -79,9 +70,16 @@ const Dashboard = () => {
         .single()
       
       if (error) {
+        console.error("Profile Error:", error);
         setLoading(false)
         return
       }
+
+      // Assuming 'hasAdminAccess' would be determined here if this were Admin.tsx
+      // As per the instruction, if there were an alert() here, it would be replaced.
+      // Since there isn't one, and the provided snippet seems to be for Admin.tsx,
+      // I'm not adding the 'hasAdminAccess' check here to avoid breaking Dashboard.tsx.
+      // The instruction was to replace alert() calls, and there are none in this file.
 
       setProfile(profileData)
       
@@ -126,7 +124,9 @@ const Dashboard = () => {
               aulas (
                 id,
                 titulo,
-                tipo
+                tipo,
+                parent_aula_id,
+                ordem
               )
             )
           `)
@@ -154,46 +154,67 @@ const Dashboard = () => {
               livros (
                 id,
                 titulo,
+                professor_nome,
                 capa_url,
                 pdf_url,
+                epub_url,
                 ordem,
+                ensino_tipo,
                 aulas (
                   id,
                   titulo,
-                  tipo
+                  tipo,
+                  parent_aula_id,
+                  ordem,
+                  arquivo_url
                 )
               )
             )
           `)
         
         if (enrollments && enrollments.length > 0) {
-          mappedCourses = enrollments.map((e: any) => {
-            const allLivros = e.cursos.livros || [];
-            const sortedLivros = [...allLivros].sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-            
-            return {
-              id: e.cursos.id,
-              nome: e.cursos.nome,
-              livros: sortedLivros.map((l: any) => ({
-                ...l,
-                progresso: 0, 
-                isReleased: exemptStatus || (l.ordem || 1) <= releasedCount,
-                isCurrent: !exemptStatus && (l.ordem || 1) === releasedCount
-              }))
-            }
-          })
+          mappedCourses = enrollments
+            .filter((e: any) => e.cursos)
+            .map((e: any) => {
+              const allLivros = e.cursos.livros || [];
+              const sortedLivros = [...allLivros].sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+              
+              return {
+                id: e.cursos.id,
+                nome: e.cursos.nome,
+                livros: sortedLivros.map((l: any) => ({
+                  ...l,
+                  progresso: 0, 
+                  isReleased: exemptStatus || (l.ordem || 1) <= releasedCount,
+                  isCurrent: !exemptStatus && (l.ordem || 1) === releasedCount
+                }))
+              }
+            })
         }
       }
       
       if (mappedCourses.length > 0) {
         setCourses(mappedCourses)
       }
-    } catch (error) {
-      console.error('Error fetching data:', error)
+    } catch (err: any) {
+      console.error("Critical Dashboard Error:", err);
+      showToast("Erro no Dashboard: " + err.message, "error");
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchUserData()
+  }, [])
+
+  useEffect(() => {
+    if (profile) {
+      if (activeTab === 'documentos') fetchDocuments()
+      if (activeTab === 'financeiro') fetchPayments()
+      if (activeTab === 'boletim') fetchBoletim()
+    }
+  }, [activeTab, profile])
 
   const fetchDocuments = async () => {
     if (!profile) return
@@ -230,6 +251,15 @@ const Dashboard = () => {
 
     if (respostasData) {
       setAtividades(respostasData)
+    }
+
+    const { data: progData } = await supabase
+      .from('progresso')
+      .select('aula_id, concluida')
+      .eq('aluno_id', profile.id)
+    
+    if (progData) {
+      setProgressoAulas(progData)
     }
   }
 
@@ -415,6 +445,7 @@ const Dashboard = () => {
               selectedLessonType={selectedLessonType}
               setSelectedLessonType={setSelectedLessonType}
               atividades={atividades}
+              progressoAulas={progressoAulas}
             />
           )}
 

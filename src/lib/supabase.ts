@@ -38,9 +38,9 @@ if (!isConfigured) {
 
 // Usamos um fallback que não quebra o createClient mas sinaliza o erro
 export const supabase = createClient(
-  isConfigured ? supabaseUrl : 'https://placeholder-project.supabase.co',
+  isConfigured ? supabaseUrl : 'https://jhqnitdmdlbagnfwwrwx.supabase.co',
   isConfigured ? supabaseAnonKey : 'placeholder-key'
 )
 
-// Exportamos o estado para que a UI possa reagir se necessário
 export const isSupabaseConfigured = isConfigured
+export { supabaseUrl, supabaseAnonKey }

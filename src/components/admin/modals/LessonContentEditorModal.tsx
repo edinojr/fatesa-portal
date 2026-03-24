@@ -119,19 +119,34 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                         id={`img-upload-${idx}`} 
                         hidden 
                         accept="image/*" 
+                        multiple
                         onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
+                          const files = e.target.files;
+                          if (!files || files.length === 0) return;
                           setActionLoading(`upload-block-${idx}`);
                           try {
-                            const filePath = `lesson-elements/${Date.now()}_${file.name}`;
-                            const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
-                            if (uploadError) throw uploadError;
-                            const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
                             const newBlocks = [...lessonBlocks];
-                            newBlocks[idx].content = publicUrl;
+                            
+                            // Handle first file for the current block
+                            const firstFile = files[0];
+                            const firstPath = `lesson-elements/${Date.now()}_${firstFile.name}`;
+                            const { error: firstError } = await supabase.storage.from('livros').upload(firstPath, firstFile);
+                            if (firstError) throw firstError;
+                            const { data: { publicUrl: firstUrl } } = supabase.storage.from('livros').getPublicUrl(firstPath);
+                            newBlocks[idx].content = firstUrl;
+
+                            // Handle subsequent files by adding new blocks
+                            for (let i = 1; i < files.length; i++) {
+                              const file = files[i];
+                              const filePath = `lesson-elements/${Date.now()}_${file.name}`;
+                              const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                              if (uploadError) throw uploadError;
+                              const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+                              newBlocks.push({ type: 'image', content: publicUrl });
+                            }
+                            
                             setLessonBlocks(newBlocks);
-                            showToast('Imagem enviada!');
+                            showToast(`${files.length} imagem(ns) enviada(s)!`);
                           } catch (err: any) {
                             showToast('Erro: ' + err.message, 'error');
                           } finally {
@@ -189,17 +204,24 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                 type="file" 
                 id="mat-upload" 
                 hidden 
+                multiple
                 onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
+                  const files = e.target.files;
+                  if (!files || files.length === 0) return;
+                  
                   setActionLoading('upload-material');
                   try {
-                    const filePath = `materiais/${Date.now()}_${file.name}`;
-                    const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
-                    if (uploadError) throw uploadError;
-                    const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
-                    setLessonMaterials([...lessonMaterials, { name: file.name, url: publicUrl }]);
-                    showToast('Material adicionado!');
+                    const newMaterials = [...lessonMaterials];
+                    for (let i = 0; i < files.length; i++) {
+                      const file = files[i];
+                      const filePath = `materiais/${Date.now()}_${file.name}`;
+                      const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                      if (uploadError) throw uploadError;
+                      const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+                      newMaterials.push({ name: file.name, url: publicUrl });
+                    }
+                    setLessonMaterials(newMaterials);
+                    showToast(`${files.length} material(is) adicionado(s)!`);
                   } catch (err: any) {
                     showToast('Erro: ' + err.message, 'error');
                   } finally {
@@ -208,7 +230,7 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                 }} 
               />
               <label htmlFor="mat-upload" className="btn btn-primary" style={{ width: 'auto', cursor: 'pointer' }}>
-                {actionLoading === 'upload-material' ? <Loader2 className="spinner" /> : <><Upload size={18} /> Enviar Novo Material</>}
+                {actionLoading === 'upload-material' ? <Loader2 className="spinner" /> : <><Upload size={18} /> Enviar Materiais (Multi-seleção)</>}
               </label>
             </div>
           </div>

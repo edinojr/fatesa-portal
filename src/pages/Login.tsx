@@ -16,13 +16,13 @@ const Login = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data } = await supabase.from('users').select('tipo').eq('id', session.user.id).single();
-        if (data) {
-          if (data.tipo === 'professor') navigate('/professor');
-          else if (['admin', 'suporte'].includes(data.tipo)) navigate('/admin');
-          else navigate('/dashboard');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('users').select('tipo').eq('id', user.id).single();
+        if (data && ['admin', 'professor', 'suporte'].includes(data.tipo)) {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/dashboard', { replace: true });
         }
       }
     };

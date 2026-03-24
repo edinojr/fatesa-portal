@@ -3,7 +3,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Lesson from './pages/Lesson'
-import BookViewer from './pages/BookViewer'
+import StandardContent from './pages/StandardContent'
 import Admin from './pages/Admin'
 import Professor from './pages/Professor'
 import Landing from './pages/Landing'
@@ -23,7 +23,7 @@ function App() {
         <Route path="/matricula" element={<Matricula />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/lesson/:id" element={<Lesson />} />
-        <Route path="/book/:id" element={<BookViewer />} />
+        <Route path="/book/:id" element={<StandardContent />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/professor" element={<Professor />} />
         <Route path="*" element={<Navigate to="/" replace />} />

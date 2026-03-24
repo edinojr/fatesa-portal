@@ -40,8 +40,9 @@ import Badge from '../components/ui/Badge'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import LessonContentEditorModal from '../components/admin/modals/LessonContentEditorModal'
 import QuizEditorModal from '../components/admin/modals/QuizEditorModal'
-import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, EditItemModal, AddAdminModal } from '../components/admin/modals/ContentModals'
+import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, AddContentModal, EditItemModal, AddAdminModal } from '../components/admin/modals/ContentModals'
 import { QuizQuestion, QuestionType } from '../types/admin'
+import { supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 
 type Tab = 'home' | 'users' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance'
 
@@ -59,6 +60,7 @@ const Admin = () => {
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
   const [showAddTeacher, setShowAddTeacher] = useState(false)
   const [newTeacherEmail, setNewTeacherEmail] = useState('')
+  const [newTeacherNome, setNewTeacherNome] = useState('')
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
   const [showAddAdmin, setShowAddAdmin] = useState(false)
@@ -69,14 +71,17 @@ const Admin = () => {
   // CMS States
   const [selectedCourse, setSelectedCourse] = useState<any | null>(null)
   const [selectedBook, setSelectedBook] = useState<any | null>(null)
+  const [selectedLesson, setSelectedLesson] = useState<any | null>(null)
   const [books, setBooks] = useState<any[]>([])
   const [lessons, setLessons] = useState<any[]>([])
+  const [lessonItems, setLessonItems] = useState<any[]>([]) // Children of a lesson
   const [showAddCourse, setShowAddCourse] = useState(false)
   const [showAddBook, setShowAddBook] = useState(false)
   const [showAddLesson, setShowAddLesson] = useState(false)
+  const [showAddContent, setShowAddContent] = useState(false)
   
   const [allNucleos, setAllNucleos] = useState<any[]>([])
-  const [editingItem, setEditingItem] = useState<{ type: 'course' | 'book' | 'lesson', data: any } | null>(null)
+  const [editingItem, setEditingItem] = useState<{ type: 'course' | 'book' | 'lesson' | 'content', data: any } | null>(null)
   const [editingQuiz, setEditingQuiz] = useState<any | null>(null)
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
   const [addingLessonType, setAddingLessonType] = useState<string>('gravada')
@@ -168,7 +173,7 @@ const Admin = () => {
     try {
       // FIX: Ensure 'livros' bucket is used only for books. 
       // Fallback to 'documentos' if 'livros' is not ready (optional, but keep 'livros' as per migrations)
-      const bucket = table === 'livros' ? 'livros' : 'documentos'
+      const bucket = (table === 'livros' || table === 'aulas') ? 'livros' : 'documentos'
       const safeName = normalizeFileName(file.name)
       const folder = column === 'capa_url' ? 'capas' : (file.name.toLowerCase().endsWith('.epub') ? 'epubs' : 'pdfs')
       const filePath = `${folder}/${Date.now()}_${safeName}`
@@ -177,13 +182,16 @@ const Admin = () => {
 
       const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
       
-      const realId = id.replace('_pdf', '').replace('_epub', '')
-      const { error: updateError } = await supabase.from(table).update({ [column]: publicUrl }).eq('id', realId)
+      const { error: updateError } = await supabase.from(table).update({ [column]: publicUrl }).eq('id', id)
       if (updateError) throw updateError
 
       showToast('Arquivo enviado com sucesso!')
-      if (table === 'livros') fetchBooks(selectedCourse.id)
-      else if (selectedBook) fetchLessons(selectedBook.id)
+      if (table === 'livros') {
+        fetchBooks(selectedCourse.id)
+      } else if (table === 'aulas') {
+        if (selectedLesson) fetchLessonItems(selectedLesson.id)
+        if (selectedBook) fetchLessons(selectedBook.id)
+      }
     } catch (err: any) {
       showToast(err.message, 'error')
     } finally {
@@ -192,21 +200,13 @@ const Admin = () => {
   }
 
   const handleRemoveFile = async (table: 'livros' | 'aulas', id: string, column: string) => {
-    if (!confirm('Deseja realmente remover este arquivo?')) return
-    setActionLoading(`${id}_${column}_remove`)
-    try {
-      const { error } = await supabase.from(table).update({ [column]: null }).eq('id', id)
-      if (error) throw error
-      showToast('Arquivo removido com sucesso!')
-      
-      const realId = id.replace('_pdf', '').replace('_epub', '')
-      if (table === 'livros' && selectedCourse?.id) fetchBooks(selectedCourse.id)
-      else if (table === 'aulas' && selectedBook?.id) fetchLessons(selectedBook.id)
-    } catch (err: any) {
-      showToast('Erro ao remover: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-    }
+    setConfirmDelete({ 
+      type: 'content', 
+      id, 
+      table, 
+      column, 
+      title: 'Tem certeza que deseja remover este arquivo?' 
+    })
   }
 
   const fetchData = async () => {
@@ -259,29 +259,40 @@ const Admin = () => {
   }
 
   const fetchBooks = async (courseId: string) => {
-    const { data } = await supabase.from('livros').select('*').eq('curso_id', courseId).order('ordem')
+    const { data } = await supabase.from('livros').select('*, aulas(count)').eq('curso_id', courseId).order('ordem')
     if (data) setBooks(data)
   }
 
   const fetchLessons = async (bookId: string) => {
-    const { data } = await supabase.from('aulas').select('*').eq('livro_id', bookId).order('created_at')
+    setActionLoading('fetch-lessons')
+    const { data } = await supabase
+      .from('aulas')
+      .select('*, children:aulas(count)')
+      .eq('livro_id', bookId)
+      .eq('tipo', 'licao')
+      .order('ordem')
     if (data) setLessons(data)
+    setActionLoading(null)
+  }
+
+  const fetchLessonItems = async (lessonId: string) => {
+    setActionLoading('fetch-lesson-items')
+    const { data } = await supabase
+      .from('aulas')
+      .select('*')
+      .eq('parent_aula_id', lessonId)
+      .order('ordem')
+    if (data) setLessonItems(data)
+    setActionLoading(null)
   }
 
   const handleDelete = async (table: 'cursos' | 'livros' | 'aulas', id: string) => {
-    if (!confirm('Tem certeza que deseja excluir este item? Esta ação é irreversível.')) return
-    
-    setActionLoading(id)
-    const { error } = await supabase.from(table).delete().eq('id', id)
-    
-    if (error) showToast(error.message, 'error')
-    else {
-      showToast('Excluído com sucesso!')
-      if (table === 'cursos') fetchData()
-      else if (table === 'livros') fetchBooks(selectedCourse.id)
-      else fetchLessons(selectedBook.id)
-    }
-    setActionLoading(null)
+    setConfirmDelete({ 
+      type: 'content', 
+      id, 
+      table, 
+      title: 'Tem certeza que deseja excluir este item? Esta ação é irreversível.' 
+    })
   }
 
   const handleValidar = async (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado') => {
@@ -382,12 +393,13 @@ const Admin = () => {
     }
   }
 
+  const [confirmDelete, setConfirmDelete] = useState<{ type: 'user' | 'content', id: string, table?: string, column?: string, title: string } | null>(null);
+
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Tem certeza que deseja excluir permanentemente este usuário?')) return
     setActionLoading(userId)
     try {
-      // Direct delete from public.users (triggers should handle clean up if any)
-      const { error } = await supabase.from('users').delete().eq('id', userId)
+      // Use RPC to delete from auth.users (cascades to public.users)
+      const { error } = await supabase.rpc('delete_user_entirely', { target_user_id: userId })
       if (error) throw error
       
       setUsers(users.filter(u => u.id !== userId))
@@ -396,6 +408,28 @@ const Admin = () => {
       showToast('Erro ao excluir usuário: ' + err.message, 'error')
     } finally {
       setActionLoading(null)
+      setConfirmDelete(null)
+    }
+  }
+
+  const handleRemoveFileFinal = async (table: 'livros' | 'aulas', id: string, column: string) => {
+    setActionLoading(id + '_' + column)
+    try {
+      const { error } = await supabase.from(table).update({ [column]: null }).eq('id', id)
+      if (error) throw error
+      
+      showToast('Arquivo removido com sucesso!')
+      
+      if (table === 'livros' && selectedCourse?.id) fetchBooks(selectedCourse.id)
+      else if (table === 'aulas') {
+        if (selectedLesson?.id) fetchLessonItems(selectedLesson.id)
+        if (selectedBook?.id) fetchLessons(selectedBook.id)
+      }
+    } catch (err: any) {
+      showToast('Erro ao remover: ' + err.message, 'error')
+    } finally {
+      setActionLoading(null)
+      setConfirmDelete(null)
     }
   }
 
@@ -406,13 +440,15 @@ const Admin = () => {
       const { error } = await supabase
         .from('professores_autorizados')
         .insert({
-          email: newTeacherEmail
+          email: newTeacherEmail,
+          nome: newTeacherNome
         })
       
       if (error) throw error
       showToast('E-mail de professor autorizado! Ele poderá realizar o cadastro normalmente e será reconhecido como Professor.')
       setShowAddTeacher(false)
       setNewTeacherEmail('')
+      setNewTeacherNome('')
       fetchData()
     } catch (err: any) {
       showToast('Erro ao autorizar professor: ' + err.message, 'error')
@@ -446,9 +482,6 @@ const Admin = () => {
       }
 
       // 2. Create the user using a secondary client to avoid session conflict
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-      
       const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
           persistSession: false,
@@ -670,29 +703,35 @@ const Admin = () => {
                 handleToggleBlock={handleToggleBlock}
                 handleToggleGratuidade={handleToggleGratuidade}
                 handleUpdateUserNucleo={handleUpdateUserNucleo}
-                handleDeleteUser={handleDeleteUser}
+                handleDeleteUser={async (userId: string) => setConfirmDelete({ type: 'user', id: userId, title: 'Tem certeza que deseja excluir este usuário?' })}
               />
             )}
 
             {activeTab === 'content' && (
-              <ContentManagement 
+              <ContentManagement
                 courses={courses}
                 selectedCourse={selectedCourse}
                 setSelectedCourse={setSelectedCourse}
                 selectedBook={selectedBook}
                 setSelectedBook={setSelectedBook}
+                selectedLesson={selectedLesson}
+                setSelectedLesson={setSelectedLesson}
                 books={books}
                 lessons={lessons}
+                lessonItems={lessonItems}
                 userRole={userRole}
                 actionLoading={actionLoading}
                 fetchData={fetchData}
                 fetchBooks={fetchBooks}
                 fetchLessons={fetchLessons}
-                handleDelete={handleDelete as any}
+                fetchLessonItems={fetchLessonItems}
+                handleDelete={handleDelete}
+                handleRemoveFile={handleRemoveFileFinal}
                 handleFileUpload={handleFileUpload}
                 setShowAddCourse={setShowAddCourse}
                 setShowAddBook={setShowAddBook}
                 setShowAddLesson={setShowAddLesson}
+                setShowAddContent={setShowAddContent}
                 setAddingLessonType={setAddingLessonType}
                 setEditingItem={setEditingItem}
                 setEditingLessonContent={setEditingLessonContent}
@@ -701,7 +740,6 @@ const Admin = () => {
                 setEditingQuiz={setEditingQuiz}
                 setQuizQuestions={setQuizQuestions}
                 uploading={uploading}
-                handleRemoveFile={handleRemoveFile}
               />
             )}
 
@@ -738,6 +776,8 @@ const Admin = () => {
           setShowAddTeacher={setShowAddTeacher}
           newTeacherEmail={newTeacherEmail}
           setNewTeacherEmail={setNewTeacherEmail}
+          newTeacherNome={newTeacherNome}
+          setNewTeacherNome={setNewTeacherNome}
           handleAddTeacher={handleAddTeacher}
           actionLoading={actionLoading}
         />
@@ -768,13 +808,25 @@ const Admin = () => {
           showAddLesson={showAddLesson}
           setShowAddLesson={setShowAddLesson}
           selectedBook={selectedBook}
-          addingLessonType={addingLessonType}
-          setAddingLessonType={setAddingLessonType}
           actionLoading={actionLoading}
           setActionLoading={setActionLoading}
           supabase={supabase}
           fetchLessons={fetchLessons}
           showToast={showToast}
+          lessons={lessons}
+        />
+
+        <AddContentModal
+          showAddContent={showAddContent}
+          setShowAddContent={setShowAddContent}
+          selectedLesson={selectedLesson}
+          addingLessonType={addingLessonType}
+          actionLoading={actionLoading}
+          setActionLoading={setActionLoading}
+          supabase={supabase}
+          fetchLessonItems={fetchLessonItems}
+          showToast={showToast}
+          lessonItems={lessonItems}
         />
 
         <EditItemModal 
@@ -786,9 +838,13 @@ const Admin = () => {
           fetchData={fetchData}
           fetchBooks={fetchBooks}
           fetchLessons={fetchLessons}
+          fetchLessonItems={fetchLessonItems}
           selectedCourse={selectedCourse}
           selectedBook={selectedBook}
+          selectedLesson={selectedLesson}
           showToast={showToast}
+          lessons={lessons}
+          normalizeFileName={normalizeFileName}
         />
 
         <LessonContentEditorModal 
@@ -826,30 +882,110 @@ const Admin = () => {
           handleAddAdmin={handleAddAdmin}
         />
 
-        {/* Toast Notification */}
-        {toast && (
-          <div style={{
-            position: 'fixed',
-            bottom: '2rem',
-            right: '2rem',
-            padding: '1rem 2rem',
-            background: toast.type === 'success' ? 'var(--success)' : 'var(--error)',
-            color: '#fff',
-            borderRadius: '12px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-          }}>
-            {toast.type === 'success' ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
-            <span style={{ fontWeight: 600 }}>{toast.message}</span>
+        {confirmDelete && (
+          <div className="modal-overlay" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)' }}>
+            <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '2.5rem' }}>
+              <div style={{ width: '60px', height: '60px', background: 'rgba(255, 77, 77, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <Trash2 size={30} color="var(--error)" />
+              </div>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{confirmDelete.title}</h3>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Esta ação não pode ser desfeita.</p>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button className="btn btn-outline" onClick={() => setConfirmDelete(null)} disabled={!!actionLoading}>Cancelar</button>
+                <button 
+                  className="btn" 
+                  style={{ background: 'var(--error)', color: '#fff' }} 
+                  onClick={() => {
+                    if (confirmDelete.type === 'user') {
+                      handleDeleteUser(confirmDelete.id);
+                    } else if (confirmDelete.type === 'content' && confirmDelete.column) {
+                      handleRemoveFileFinal(confirmDelete.table as any, confirmDelete.id, confirmDelete.column as any);
+                    } else if (confirmDelete.type === 'content') {
+                      const table = confirmDelete.table as 'cursos' | 'livros' | 'aulas';
+                      const id = confirmDelete.id;
+                      setActionLoading(id);
+                      (async () => {
+                        try {
+                          const { error } = await supabase.from(table).delete().eq('id', id);
+                          if (error) {
+                            showToast(error.message, 'error');
+                          } else {
+                            showToast('Excluído com sucesso!');
+                            if (table === 'cursos') fetchData();
+                            else if (table === 'livros' && selectedCourse?.id) fetchBooks(selectedCourse.id);
+                            else if (table === 'aulas' && selectedBook?.id) fetchLessons(selectedBook.id);
+                          }
+                        } catch (err: any) {
+                          showToast('Erro: ' + err.message, 'error');
+                        } finally {
+                          setActionLoading(null);
+                          setConfirmDelete(null);
+                        }
+                      })();
+                    }
+                  }}
+                  disabled={!!actionLoading}
+                >
+                  {actionLoading ? <Loader2 className="spinner" size={18} /> : 'Excluir'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </main>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '2rem',
+          right: '2rem',
+          padding: '1rem 2rem',
+          background: toast.type === 'success' ? 'var(--success)' : 'var(--error)',
+          color: '#fff',
+          borderRadius: '12px',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}>
+          {toast.type === 'success' ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
+          <span style={{ fontWeight: 600 }}>{toast.message}</span>
+        </div>
+      )}
+
+      {/* CSS para Animações e Modais */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0,0,0,0.8);
+          backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 2000;
+        }
+        .modal-content {
+          background: var(--bg-card);
+          border: 1px solid var(--glass-border);
+          border-radius: 24px;
+          padding: 2.5rem;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          animation: fadeIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
-  )
-}
+  );
+};
 
 export default Admin

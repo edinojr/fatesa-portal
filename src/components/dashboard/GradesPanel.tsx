@@ -27,6 +27,15 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
       {profile?.nucleo_id && (
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Seu Polo Vinculado: <strong style={{ color: '#fff' }}>{profile.nucleos?.nome}</strong></p>
       )}
+
+      <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
+        <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--primary)' }}>Metodologia de Avaliação</h4>
+        <ul style={{ fontSize: '0.85rem', color: 'var(--text-muted)', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <li><strong>Atividades:</strong> Caráter formativo. Cálculo: <code style={{ color: 'var(--primary)' }}>(Acertos / Total) × 10</code>. Nota mínima para conclusão: 0.0.</li>
+          <li><strong>Provas Finais:</strong> Caráter somativo. Cálculo: <code style={{ color: 'var(--primary)' }}>(Acertos / Total) × 10</code>. Nota mínima para aprovação: 7.0.</li>
+          <li><strong>Tentativas:</strong> Você possui até 3 tentativas para realizar as provas finais.</li>
+        </ul>
+      </div>
           
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {atividades.map((a: any) => (

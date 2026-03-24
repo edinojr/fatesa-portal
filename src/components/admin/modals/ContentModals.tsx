@@ -6,6 +6,8 @@ interface AddTeacherModalProps {
   setShowAddTeacher: (val: boolean) => void
   newTeacherEmail: string
   setNewTeacherEmail: (val: string) => void
+  newTeacherNome: string
+  setNewTeacherNome: (val: string) => void
   handleAddTeacher: (e: React.FormEvent) => Promise<void>
   actionLoading: string | null
 }
@@ -15,6 +17,8 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
   setShowAddTeacher,
   newTeacherEmail,
   setNewTeacherEmail,
+  newTeacherNome,
+  setNewTeacherNome,
   handleAddTeacher,
   actionLoading
 }) => {
@@ -24,6 +28,17 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <h2 style={{ marginBottom: '1.5rem' }}>Autorizar Novo Professor</h2>
         <form onSubmit={handleAddTeacher}>
+          <div className="form-group">
+            <label>Nome do Professor</label>
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Nome Completo"
+              value={newTeacherNome}
+              onChange={e => setNewTeacherNome(e.target.value)}
+              required
+            />
+          </div>
           <div className="form-group">
             <label>E-mail do Professor</label>
             <input 
@@ -89,7 +104,7 @@ export const AddCourseModal: React.FC<AddCourseModalProps> = ({
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddCourse(false)}>Cancelar</button>
-            <button type="submit" className="btn btn-primary">Criar Curso</button>
+            <button type="submit" className="btn btn-primary">Enviar</button>
           </div>
         </form>
       </div>
@@ -126,21 +141,18 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
   return (
     <div className="modal-overlay" onClick={() => setShowAddBook(false)}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2 style={{ marginBottom: '1.5rem' }}>Novo Livro para {selectedCourse.nome}</h2>
+        <h2 style={{ marginBottom: '1.5rem' }}>Novo Módulo para {selectedCourse.nome}</h2>
         <form onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
           const titulo = formData.get('titulo') as string;
           const ordem = parseInt(formData.get('ordem') as string);
+          const ensino_tipo = formData.get('ensino_tipo') as string;
           const capaFile = formData.get('capa') as File | null;
-          const pdfFile = formData.get('pdf') as File | null;
-          const epubFile = formData.get('epub') as File | null;
           
           setActionLoading('add-book');
           try {
             let capa_url = null;
-            let pdf_url = null;
-            let epub_url = null;
 
             if (capaFile && capaFile.size > 0) {
               const safeName = normalizeFileName(capaFile.name);
@@ -150,33 +162,16 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
               capa_url = supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl;
             }
 
-            if (pdfFile && pdfFile.size > 0) {
-              const safeName = normalizeFileName(pdfFile.name);
-              const pdfPath = `pdfs/${Date.now()}_${safeName}`;
-              const { error: uploadError } = await supabase.storage.from('livros').upload(pdfPath, pdfFile);
-              if (uploadError) throw uploadError;
-              pdf_url = supabase.storage.from('livros').getPublicUrl(pdfPath).data.publicUrl;
-            }
-
-            if (epubFile && epubFile.size > 0) {
-              const safeName = normalizeFileName(epubFile.name);
-              const epubPath = `epubs/${Date.now()}_${safeName}`;
-              const { error: uploadError } = await supabase.storage.from('livros').upload(epubPath, epubFile);
-              if (uploadError) throw uploadError;
-              epub_url = supabase.storage.from('livros').getPublicUrl(epubPath).data.publicUrl;
-            }
-
             const { error } = await supabase.from('livros').insert({ 
               curso_id: selectedCourse.id, 
               titulo, 
               ordem,
-              capa_url,
-              pdf_url,
-              epub_url
+              ensino_tipo,
+              capa_url
             });
             
             if (error) throw error;
-            showToast('Livro adicionado!');
+            showToast('Módulo adicionado!');
             setShowAddBook(false);
             fetchBooks(selectedCourse.id);
           } catch (err: any) {
@@ -186,29 +181,30 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
           }
         }}>
           <div className="form-group">
-            <label>Título do Livro</label>
-            <input name="titulo" type="text" className="form-control" required />
+            <label>Título do Módulo</label>
+            <input name="titulo" type="text" className="form-control" required placeholder="Ex: Módulo 1 - Introdução" />
           </div>
+
+          <div className="form-group">
+            <label>Modalidade de Ensino</label>
+            <select name="ensino_tipo" className="form-control" required defaultValue="online">
+              <option value="online">Online (Com Progressão)</option>
+              <option value="presencial">Presencial (Lista de Conteúdos)</option>
+            </select>
+          </div>
+
           <div className="form-group">
             <label>Ordem (Sequência)</label>
             <input name="ordem" type="number" className="form-control" defaultValue={books.length + 1} required />
           </div>
           <div className="form-group">
-            <label>Capa do Livro (Imagem)</label>
+            <label>Capa do Módulo (Imagem Opcional)</label>
             <input name="capa" type="file" accept="image/*" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label>Arquivo do Livro (PDF)</label>
-            <input name="pdf" type="file" accept=".pdf" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label>Arquivo do Livro (EPUB)</label>
-            <input name="epub" type="file" accept=".epub" className="form-control" />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddBook(false)}>Cancelar</button>
             <button type="submit" className="btn btn-primary" disabled={actionLoading === 'add-book'}>
-              {actionLoading === 'add-book' ? <Loader2 className="spinner" /> : 'Criar Livro'}
+              {actionLoading === 'add-book' ? <Loader2 className="spinner" /> : 'Criar Módulo'}
             </button>
           </div>
         </form>
@@ -221,78 +217,216 @@ interface AddLessonModalProps {
   showAddLesson: boolean
   setShowAddLesson: (val: boolean) => void
   selectedBook: any
-  addingLessonType: string
-  setAddingLessonType: (val: string) => void
   actionLoading: string | null
   setActionLoading: (val: string | null) => void
   supabase: any
   fetchLessons: (bookId: string) => Promise<void>
   showToast: (msg: string, type?: 'success' | 'error') => void
+  lessons: any[]
 }
 
 export const AddLessonModal: React.FC<AddLessonModalProps> = ({
   showAddLesson,
   setShowAddLesson,
   selectedBook,
-  addingLessonType,
-  setAddingLessonType,
   actionLoading,
   setActionLoading,
   supabase,
   fetchLessons,
-  showToast
+  showToast,
+  lessons
 }) => {
   if (!showAddLesson || !selectedBook) return null;
   return (
     <div className="modal-overlay" onClick={() => setShowAddLesson(false)}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2 style={{ marginBottom: '1.5rem' }}>Nova {addingLessonType === 'prova' ? 'Prova' : addingLessonType === 'atividade' ? 'Atividade' : 'Aula'} para {selectedBook.titulo}</h2>
+        <h2 style={{ marginBottom: '1.5rem' }}>Nova Lição para {selectedBook.titulo}</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Uma lição é um agrupamento de vídeos, atividades e materiais.</p>
         <form onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
           const titulo = formData.get('titulo') as string;
-          const video_url = (addingLessonType === 'gravada' || addingLessonType === 'ao_vivo') ? formData.get('video_url') as string : null;
-          const tipo = addingLessonType;
+          const ordem = parseInt(formData.get('ordem') as string);
           
           setActionLoading('add-lesson');
           const { error } = await supabase.from('aulas').insert({ 
             livro_id: selectedBook.id, 
             titulo, 
-            video_url, 
-            tipo 
+            tipo: 'licao',
+            ordem: ordem
           });
           
           if (error) showToast(error.message, 'error');
           else {
-            showToast(addingLessonType === 'prova' ? 'Prova adicionada!' : addingLessonType === 'atividade' ? 'Atividade adicionada!' : 'Aula adicionada!');
+            showToast('Lição criada!');
             setShowAddLesson(false);
             fetchLessons(selectedBook.id);
           }
           setActionLoading(null);
         }}>
           <div className="form-group">
-            <label>Título {addingLessonType === 'prova' ? 'da Prova' : addingLessonType === 'atividade' ? 'da Atividade' : 'da Aula'}</label>
-            <input name="titulo" type="text" className="form-control" required />
+            <label>Título da Lição</label>
+            <input name="titulo" type="text" className="form-control" required placeholder="Ex: Lição 01 - Anatomia Humana" />
           </div>
-          {(addingLessonType === 'gravada' || addingLessonType === 'ao_vivo') && (
-            <>
-              <div className="form-group">
-                <label>Vídeo URL (YouTube/Vimeo)</label>
-                <input name="video_url" type="text" className="form-control" placeholder="https://..." />
-              </div>
-              <div className="form-group">
-                <label>Tipo de Mídia</label>
-                <select name="tipo" className="form-control" value={addingLessonType} onChange={(e) => setAddingLessonType(e.target.value)} required>
-                  <option value="gravada">Vídeo Aula (Gravada)</option>
-                  <option value="ao_vivo">Aula ao Vivo</option>
-                </select>
-              </div>
-            </>
-          )}
+          <div className="form-group">
+            <label>Ordem na Sequência</label>
+            <input name="ordem" type="number" className="form-control" defaultValue={lessons.length + 1} required />
+          </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddLesson(false)}>Cancelar</button>
             <button type="submit" className="btn btn-primary" disabled={actionLoading === 'add-lesson'}>
-              {actionLoading === 'add-lesson' ? <Loader2 className="spinner" /> : 'Criar Item'}
+              {actionLoading === 'add-lesson' ? <Loader2 className="spinner" /> : 'Criar Lição'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+interface AddContentModalProps {
+  showAddContent: boolean
+  setShowAddContent: (val: boolean) => void
+  selectedLesson: any
+  addingLessonType: string
+  actionLoading: string | null
+  setActionLoading: (val: string | null) => void
+  supabase: any
+  fetchLessonItems: (lessonId: string) => Promise<void>
+  showToast: (msg: string, type?: 'success' | 'error') => void
+  lessonItems: any[]
+}
+
+export const AddContentModal: React.FC<AddContentModalProps> = ({
+  showAddContent,
+  setShowAddContent,
+  selectedLesson,
+  addingLessonType,
+  actionLoading,
+  setActionLoading,
+  supabase,
+  fetchLessonItems,
+  showToast,
+  lessonItems
+}) => {
+  if (!showAddContent || !selectedLesson) return null;
+  
+  return (
+    <div className="modal-overlay" onClick={() => setShowAddContent(false)}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <h2 style={{ marginBottom: '1.5rem' }}>Novo Item ({addingLessonType === 'gravada' ? 'Vídeo' : addingLessonType === 'atividade' ? 'Atividade' : addingLessonType === 'prova' ? 'Prova' : 'Material'})</h2>
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+          const titulo = formData.get('titulo') as string;
+          const video_url = formData.get('video_url') as string || null;
+          const min_grade = formData.get('min_grade') ? parseFloat(formData.get('min_grade') as string) : 0;
+          const ordem = parseInt(formData.get('ordem') as string);
+          
+          setActionLoading('add-content');
+          
+          try {
+            if (addingLessonType === 'material') {
+              const files = (e.currentTarget.querySelector('input[name="files"]') as HTMLInputElement)?.files;
+              if (files && files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                  const file = files[i];
+                  const filePath = `materiais/${Date.now()}_${file.name}`;
+                  const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                  if (uploadError) throw uploadError;
+                  const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+                  
+                  const { error: insertError } = await supabase.from('aulas').insert({
+                    livro_id: selectedLesson.livro_id,
+                    parent_aula_id: selectedLesson.id,
+                    titulo: files.length > 1 ? `${titulo} - ${file.name}` : titulo,
+                    tipo: 'material',
+                    arquivo_url: publicUrl,
+                    ordem: ordem + i
+                  });
+                  if (insertError) throw insertError;
+                }
+                showToast(`${files.length} materiais adicionados!`);
+                setShowAddContent(false);
+                fetchLessonItems(selectedLesson.id);
+              } else {
+                showToast('Selecione pelo menos um arquivo.', 'error');
+              }
+            } else {
+              const file = (e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0];
+              let arquivo_url = null;
+
+              if (file) {
+                const filePath = `conteudo/${Date.now()}_${file.name}`;
+                const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                if (uploadError) throw uploadError;
+                const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+                arquivo_url = publicUrl;
+              }
+
+              const { error } = await supabase.from('aulas').insert({ 
+                livro_id: selectedLesson.livro_id,
+                parent_aula_id: selectedLesson.id,
+                titulo, 
+                tipo: addingLessonType,
+                video_url,
+                arquivo_url,
+                min_grade,
+                ordem
+              });
+              
+              if (error) throw error;
+              showToast('Conteúdo adicionado!');
+              setShowAddContent(false);
+              fetchLessonItems(selectedLesson.id);
+            }
+          } catch (err: any) {
+            showToast(err.message, 'error');
+          } finally {
+            setActionLoading(null);
+          }
+        }}>
+          <div className="form-group">
+            <label>Título</label>
+            <input name="titulo" type="text" className="form-control" required />
+          </div>
+
+          {(addingLessonType === 'gravada' || addingLessonType === 'ao_vivo') && (
+            <div className="form-group">
+            <label>Vídeo URL</label>
+              <input name="video_url" type="text" className="form-control" placeholder="YouTube/Vimeo link" />
+            </div>
+          )}
+
+          {addingLessonType === 'material' ? (
+            <div className="form-group">
+              <label>Arquivos PDF (Múltiplos)</label>
+              <input name="files" type="file" className="form-control" accept=".pdf" multiple required />
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Cada arquivo selecionado criará um item de conteúdo individual.</p>
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>Arquivo Complementar (Opcional)</label>
+              <input name="file" type="file" className="form-control" accept=".pdf" />
+            </div>
+          )}
+
+          {addingLessonType === 'prova' && (
+            <div className="form-group">
+              <label>Nota Mínima (0-10)</label>
+              <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={7} min={0} max={10} required />
+            </div>
+          )}
+
+          <div className="form-group">
+            <label>Ordem</label>
+            <input name="ordem" type="number" className="form-control" defaultValue={lessonItems.length + 1} required />
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+            <button type="button" className="btn btn-outline" onClick={() => setShowAddContent(false)}>Cancelar</button>
+            <button type="submit" className="btn btn-primary" disabled={actionLoading === 'add-content'}>
+              {actionLoading === 'add-content' ? <Loader2 className="spinner" /> : 'Adicionar'}
             </button>
           </div>
         </form>
@@ -302,7 +436,7 @@ export const AddLessonModal: React.FC<AddLessonModalProps> = ({
 };
 
 interface EditItemModalProps {
-  editingItem: { type: 'course' | 'book' | 'lesson', data: any } | null
+  editingItem: { type: 'course' | 'book' | 'lesson' | 'content', data: any } | null
   setEditingItem: (val: any) => void
   actionLoading: string | null
   setActionLoading: (val: string | null) => void
@@ -310,9 +444,13 @@ interface EditItemModalProps {
   fetchData: () => Promise<void>
   fetchBooks: (courseId: string) => Promise<void>
   fetchLessons: (bookId: string) => Promise<void>
+  fetchLessonItems: (lessonId: string) => Promise<void>
   selectedCourse: any
   selectedBook: any
+  selectedLesson: any
   showToast: (msg: string, type?: 'success' | 'error') => void
+  lessons: any[]
+  normalizeFileName?: (name: string) => string
 }
 
 export const EditItemModal: React.FC<EditItemModalProps> = ({
@@ -324,61 +462,138 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   fetchData,
   fetchBooks,
   fetchLessons,
+  fetchLessonItems,
   selectedCourse,
   selectedBook,
-  showToast
+  selectedLesson,
+  showToast,
+  lessons,
+  normalizeFileName
 }) => {
   if (!editingItem) return null;
   return (
     <div className="modal-overlay" onClick={() => setEditingItem(null)}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <h2>Editar {editingItem.type === 'course' ? 'Curso' : editingItem.type === 'book' ? 'Livro' : 'Aula'}</h2>
+        <h2>Editar {editingItem.type === 'course' ? 'Curso' : editingItem.type === 'book' ? 'Módulo' : editingItem.type === 'lesson' ? 'Lição' : 'Item de Conteúdo'}</h2>
         <form onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
           const table = editingItem.type === 'course' ? 'cursos' : editingItem.type === 'book' ? 'livros' : 'aulas';
           
           const updates: any = {};
-          formData.forEach((val, key) => {
-            if (key === 'ordem') updates[key] = parseInt(val as string);
-            else updates[key] = val;
-          });
+          if (editingItem.type === 'course') {
+            updates.nome = formData.get('nome') as string;
+          } else {
+            updates.titulo = formData.get('titulo') as string;
+          }
+
+          if (editingItem.type === 'book') {
+            updates.ordem = parseInt(formData.get('ordem') as string);
+            updates.ensino_tipo = formData.get('ensino_tipo') as string;
+          }
+
+          if (editingItem.type === 'lesson' || editingItem.type === 'content') {
+            updates.ordem = parseInt(formData.get('ordem') as string);
+            if (editingItem.type === 'content') {
+              updates.video_url = formData.get('video_url') as string || null;
+              if (editingItem.data.tipo === 'prova') {
+                updates.min_grade = parseFloat(formData.get('min_grade') as string) || 7;
+              }
+            }
+          }
 
           setActionLoading('edit-item');
-          const { error } = await supabase.from(table).update(updates).eq('id', editingItem.data.id);
-          
-          if (error) showToast(error.message, 'error');
-          else {
+          try {
+            if (editingItem.type === 'book') {
+              const capaFile = formData.get('capa') as File | null;
+              if (capaFile && capaFile.size > 0 && normalizeFileName) {
+                const safeName = normalizeFileName(capaFile.name);
+                const capaPath = `capas/${Date.now()}_${safeName}`;
+                const { error: uploadError } = await supabase.storage.from('livros').upload(capaPath, capaFile);
+                if (uploadError) throw uploadError;
+                updates.capa_url = supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl;
+              }
+            }
+
+            const file = (e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0];
+            if (file) {
+              const filePath = `conteudo/${Date.now()}_${file.name}`;
+              const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+              if (uploadError) throw uploadError;
+              const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+              updates.arquivo_url = publicUrl;
+            }
+
+            const { error } = await supabase.from(table).update(updates).eq('id', editingItem.data.id);
+            
+            if (error) throw error;
             showToast('Atualizado com sucesso!');
             setEditingItem(null);
             if (editingItem.type === 'course') fetchData();
             else if (editingItem.type === 'book') fetchBooks(selectedCourse.id);
             else if (editingItem.type === 'lesson') fetchLessons(selectedBook.id);
+            else if (editingItem.type === 'content') fetchLessonItems(selectedLesson.id);
+          } catch (err: any) {
+            showToast(err.message, 'error');
+          } finally {
+            setActionLoading(null);
           }
-          setActionLoading(null);
         }}>
           <div className="form-group">
             <label>Título / Nome</label>
             <input name={editingItem.type === 'course' ? 'nome' : 'titulo'} type="text" className="form-control" defaultValue={editingItem.type === 'course' ? editingItem.data.nome : editingItem.data.titulo} required />
           </div>
           
-          {(editingItem.type === 'book' || editingItem.type === 'lesson') && (
+          {editingItem.type === 'book' && (
             <div className="form-group">
-              <label>Ordem / Sequência</label>
-              <input name="ordem" type="number" className="form-control" defaultValue={editingItem.data.ordem || 1} />
+              <label>Modalidade de Ensino</label>
+              <select name="ensino_tipo" className="form-control" defaultValue={editingItem.data.ensino_tipo || 'online'}>
+                <option value="online">Online (Com Progressão)</option>
+                <option value="presencial">Presencial (Lista de Conteúdos)</option>
+              </select>
             </div>
           )}
 
-          {editingItem.type === 'lesson' && (
+          {editingItem.type === 'book' && (
+            <div className="form-group">
+              <label>Capa do Módulo (Imagem)</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {editingItem.data.capa_url && (
+                  <img src={editingItem.data.capa_url} alt="Capa atual" style={{ width: '60px', height: '85px', objectFit: 'cover', borderRadius: '8px' }} />
+                )}
+                <input name="capa" type="file" accept="image/*" className="form-control" />
+              </div>
+            </div>
+          )}
+
+          {(editingItem.type === 'book' || editingItem.type === 'lesson' || editingItem.type === 'content') && (
+            <div className="form-group">
+              <label>Ordem / Sequência</label>
+              <input name="ordem" type="number" className="form-control" defaultValue={editingItem.data.ordem || 1} required />
+            </div>
+          )}
+
+          {editingItem.type === 'content' && (
             <>
-            <div className="form-group">
-              <label>Vídeo URL (YouTube/Vimeo)</label>
-              <input name="video_url" type="text" className="form-control" defaultValue={editingItem.data.video_url || ''} />
-            </div>
-            <div className="form-group">
-              <label>Descrição da Aula</label>
-              <textarea name="descricao" className="form-control" rows={3} defaultValue={editingItem.data.descricao || ''}></textarea>
-            </div>
+              {(editingItem.data.tipo === 'gravada' || editingItem.data.tipo === 'ao_vivo') && (
+                <div className="form-group">
+                  <label>Vídeo URL</label>
+                  <input name="video_url" type="text" className="form-control" defaultValue={editingItem.data.video_url || ''} />
+                </div>
+              )}
+              {editingItem.data.tipo === 'prova' && (
+                <div className="form-group">
+                  <label>Nota Mínima</label>
+                  <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={editingItem.data.min_grade || 7} min={0} max={10} required />
+                </div>
+              )}
+              <div className="form-group">
+                <label>Arquivo Complementar (PDF)</label>
+                <input name="file" type="file" className="form-control" accept=".pdf" />
+                {editingItem.data.arquivo_url && (
+                  <p style={{ fontSize: '0.75rem', color: 'var(--success)', marginTop: '0.5rem' }}>✓ Arquivo já vinculado</p>
+                )}
+              </div>
             </>
           )}
 
