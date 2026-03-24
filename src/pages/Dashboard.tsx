@@ -380,7 +380,10 @@ const Dashboard = () => {
         <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1rem', flex: 1 }}>
           <div>
             <GraduationCap size={40} color="var(--primary)" />
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '1rem' }}>Portal do Aluno</h2>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              Portal do Aluno
+              <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: 'var(--primary)', color: '#fff', borderRadius: '4px', opacity: 0.8 }}>v1.1</span>
+            </h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all' }}>{profile?.email}</p>
           </div>
           <button 
