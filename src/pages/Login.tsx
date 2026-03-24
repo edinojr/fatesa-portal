@@ -114,9 +114,6 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      <Link to="/" className="back-nav-btn">
-        <ChevronLeft size={18} /> Voltar à Home
-      </Link>
       <div className={`auth-card ${step === 2 ? 'step-2-active' : ''}`} style={{ position: 'relative', overflow: 'hidden' }}>
         <div className="auth-header" style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>

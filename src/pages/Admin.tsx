@@ -579,9 +579,6 @@ const Admin = () => {
 
   return (
     <div className="admin-layout">
-      <Link to="/" className="back-nav-btn">
-        <ChevronLeft size={18} /> Voltar à Home
-      </Link>
 
       {/* Sidebar */}
       <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>

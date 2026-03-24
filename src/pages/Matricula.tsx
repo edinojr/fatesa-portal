@@ -122,9 +122,6 @@ const Matricula = () => {
 
   return (
     <div className="auth-container" style={{ padding: '4rem 1rem' }}>
-      <Link to="/" className="back-nav-btn">
-        <ChevronLeft size={18} /> Voltar à Home
-      </Link>
       <div className="auth-card" style={{ maxWidth: '700px', padding: '4rem' }}>
         <div className="auth-header" style={{ marginBottom: '4rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>

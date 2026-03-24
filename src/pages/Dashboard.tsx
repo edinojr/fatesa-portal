@@ -280,9 +280,6 @@ const Dashboard = () => {
 
   return (
     <div className="admin-layout">
-      <Link to="/" className="back-nav-btn">
-        <ChevronLeft size={18} /> Voltar à Home
-      </Link>
       
       {toast && (
         <div style={{
@@ -356,7 +353,6 @@ const Dashboard = () => {
           ))}
 
           <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
-            {isTemp && <div className="admin-nav-item" style={{ color: 'var(--error)' }}><AlertCircle size={20} />{daysRemaining} dias restantes</div>}
             <div className="admin-nav-item" style={{ color: 'var(--error)' }} onClick={() => signOut()}>
               <LogOut size={20} /> Sair
             </div>

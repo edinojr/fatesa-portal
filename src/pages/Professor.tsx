@@ -293,9 +293,6 @@ const Professor = () => {
 
   return (
     <div className="admin-layout">
-      <Link to="/" className="back-nav-btn">
-        <ChevronLeft size={18} /> Voltar à Home
-      </Link>
 
       <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
         <div style={{ marginBottom: '2rem' }}>

@@ -115,9 +115,6 @@ const Signup = () => {
 
   return (
     <div className="auth-container">
-      <Link to="/" className="back-nav-btn">
-        <ChevronLeft size={18} /> Voltar à Home
-      </Link>
       <div className="auth-card">
         <div className="auth-header">
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>

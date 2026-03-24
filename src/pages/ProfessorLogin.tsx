@@ -105,9 +105,6 @@ const ProfessorLogin = () => {
 
   return (
     <div className="auth-container" style={{ background: 'linear-gradient(135deg, #1a0f1a 0%, #0a0a0a 100%)', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Link to="/" className="back-nav-btn" style={{ position: 'absolute', top: '2rem', left: '2rem' }}>
-        <ChevronLeft size={18} /> Voltar à Home
-      </Link>
       <div className={`auth-card ${step === 2 ? 'step-2-active' : ''}`} style={{ borderColor: 'rgba(168, 85, 247, 0.2)', maxWidth: '450px', width: '100%' }}>
         <div className="auth-header" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', position: 'relative' }}>
