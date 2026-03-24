@@ -7,7 +7,6 @@ import {
   GraduationCap, 
   FileText, 
   CreditCard, 
-  History,
   AlertCircle,
   CheckCircle2,
   XCircle,
@@ -19,25 +18,24 @@ import {
   Bell
 } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Course, Documento, Pagamento, UserProfile } from '../types/dashboard'
+import { Course, Documento, Pagamento } from '../types/dashboard'
 import CourseList from '../components/dashboard/CourseList'
 import DocumentUpload from '../components/dashboard/DocumentUpload'
 import FinancePanel from '../components/dashboard/FinancePanel'
 import GradesPanel from '../components/dashboard/GradesPanel'
 import NoticeBoard from '../components/dashboard/NoticeBoard'
+import { useProfile } from '../hooks/useProfile'
 
 type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
 
 const Dashboard = () => {
+  const { profile, loading: profileLoading, signOut } = useProfile();
   const [activeTab, setActiveTab] = useState<Tab>('cursos')
   const [courses, setCourses] = useState<Course[]>([])
   const [documents, setDocuments] = useState<Documento[]>([])
   const [payments, setPayments] = useState<Pagamento[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState<string | null>(null)
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [selectedBook, setSelectedBook] = useState<string | null>(null)
-  const [selectedLessonType, setSelectedLessonType] = useState<'video' | 'atividade'>('video')
   const [atividades, setAtividades] = useState<any[]>([])
   const [progressoAulas, setProgressoAulas] = useState<any[]>([])
   const [availableNucleos, setAvailableNucleos] = useState<any[]>([])
@@ -52,62 +50,42 @@ const Dashboard = () => {
 
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (!profileLoading && profile) {
+      fetchDashboardData();
+    }
+  }, [profileLoading, profile]);
+
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 3000)
   }
 
-  const fetchUserData = async () => {
+  const fetchDashboardData = async () => {
+    if (!profile) return;
     try {
-      setLoading(true)
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        console.warn("Usuário não autenticado. Redirecionando para login...");
-        navigate('/login', { replace: true })
-        return
-      }
-
-      const { data: profileData, error } = await supabase
-        .from('users')
-        .select('*, nucleos(nome)')
-        .eq('id', user.id)
-        .single()
+      setLoading(true);
       
-      if (error) {
-        console.error("Profile Error:", error);
-        setLoading(false)
-        return
-      }
-
-      // Assuming 'hasAdminAccess' would be determined here if this were Admin.tsx
-      // As per the instruction, if there were an alert() here, it would be replaced.
-      // Since there isn't one, and the provided snippet seems to be for Admin.tsx,
-      // I'm not adding the 'hasAdminAccess' check here to avoid breaking Dashboard.tsx.
-      // The instruction was to replace alert() calls, and there are none in this file.
-
-      setProfile(profileData)
-      
-      if (profileData.nucleo_id) {
-        fetchNoticeBoard(profileData.nucleo_id);
+      if (profile.nucleo_id) {
+        fetchNoticeBoard(profile.nucleo_id);
       }
       
-      const isStaff = ['admin', 'professor', 'suporte'].includes(profileData.tipo || '');
-      const exemptStatus = profileData.bolsista || isStaff;
+      const isStaff = ['admin', 'professor', 'suporte'].includes(profile.tipo || '');
+      const exemptStatus = profile.bolsista || isStaff;
 
       let releasedCount = 999;
-
       if (!exemptStatus) {
         const { data: payRecords } = await supabase
           .from('pagamentos')
           .select('status')
-          .eq('user_id', user.id)
-          .eq('status', 'pago')
+          .eq('user_id', profile.id)
+          .eq('status', 'pago');
         releasedCount = (payRecords?.length || 0) + 1;
       }
 
       // Check for multiple roles
-      const roles = profileData.caminhos_acesso || []
-      if (user.email === 'edi.ben.jr@gmail.com') {
+      const roles = profile.caminhos_acesso || []
+      if (profile.email === 'edi.ben.jr@gmail.com') {
         if (!roles.includes('aluno')) roles.push('aluno')
         if (!roles.includes('professor')) roles.push('professor')
         if (!roles.includes('suporte')) roles.push('suporte')
@@ -115,106 +93,55 @@ const Dashboard = () => {
       if (roles.length > 1) setAvailableRoles(roles)
 
       // Fetch Courses
-      let mappedCourses: Course[] = [];
-
-      if (isStaff) {
-        const { data: allCourses } = await supabase
-          .from('cursos')
-          .select(`
+      const { data: allCourses } = await supabase
+        .from('cursos')
+        .select(`
+          id,
+          nome,
+          livros (
             id,
-            nome,
-            livros (
+            titulo,
+            professor_nome,
+            capa_url,
+            pdf_url,
+            epub_url,
+            ordem,
+            ensino_tipo,
+            aulas (
               id,
               titulo,
-              professor_nome,
-              capa_url,
-              pdf_url,
-              epub_url,
+              tipo,
+              parent_aula_id,
               ordem,
-              ensino_tipo,
-              aulas (
-                id,
-                titulo,
-                tipo,
-                parent_aula_id,
-                ordem,
-                arquivo_url,
-                video_url
-              )
+              arquivo_url,
+              video_url
             )
-          `)
-        
-        if (allCourses) {
-          mappedCourses = allCourses.map((c: any) => ({
+          )
+        `);
+      
+      if (allCourses) {
+        const mappedCourses: Course[] = allCourses.map((c: any) => {
+          const sortedLivros = (c.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+          return {
             id: c.id,
             nome: c.nome,
-            livros: (c.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0)).map((l: any) => ({
+            livros: sortedLivros.map((l: any) => ({
               ...l,
-              progresso: 100, 
-              isReleased: true,
-              isCurrent: false
+              progresso: isStaff ? 100 : 0, 
+              isReleased: isStaff || exemptStatus || (l.ordem || 1) <= releasedCount,
+              isCurrent: !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount
             }))
-          }))
-        }
-      } else {
-        // Alunos: busca automática de todos os cursos, filtrando livros pelo tipo (Online/Presencial)
-        const { data: allCourses } = await supabase
-          .from('cursos')
-          .select(`
-            id,
-            nome,
-            livros (
-              id,
-              titulo,
-              professor_nome,
-              capa_url,
-              pdf_url,
-              epub_url,
-              ordem,
-              ensino_tipo,
-              aulas (
-                id,
-                titulo,
-                tipo,
-                parent_aula_id,
-                ordem,
-                arquivo_url,
-                video_url
-              )
-            )
-          `)
-        
-        if (allCourses && allCourses.length > 0) {
-          mappedCourses = allCourses.map((c: any) => {
-            // Acesso Global: Todos os usuários veem todos os livros do curso
-            const sortedLivros = (c.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
-            
-            return {
-              id: c.id,
-              nome: c.nome,
-              livros: sortedLivros.map((l: any) => ({
-                ...l,
-                progresso: 0, 
-                isReleased: exemptStatus || (l.ordem || 1) <= releasedCount,
-                isCurrent: !exemptStatus && (l.ordem || 1) === releasedCount
-              }))
-            };
-          }).filter((c: any) => c.livros.length > 0); 
-        }
+          };
+        }).filter((c: any) => c.livros.length > 0);
+        setCourses(mappedCourses);
       }
-      
-      setCourses(mappedCourses)
     } catch (err: any) {
-      console.error("Critical Dashboard Error:", err);
-      showToast("Erro no Dashboard: " + err.message, "error");
+      console.error("Dashboard Error:", err);
+      showToast("Erro ao carregar dados", "error");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
-  useEffect(() => {
-    fetchUserData()
-  }, [])
+  };
 
   useEffect(() => {
     if (profile) {
@@ -257,18 +184,14 @@ const Dashboard = () => {
       .eq('aluno_id', profile.id)
       .order('created_at', { ascending: false })
 
-    if (respostasData) {
-      setAtividades(respostasData)
-    }
+    if (respostasData) setAtividades(respostasData)
 
     const { data: progData } = await supabase
       .from('progresso')
       .select('aula_id, concluida')
       .eq('aluno_id', profile.id)
     
-    if (progData) {
-      setProgressoAulas(progData)
-    }
+    if (progData) setProgressoAulas(progData)
   }
 
   const fetchNoticeBoard = async (nucleoId: string) => {
@@ -287,7 +210,7 @@ const Dashboard = () => {
         .order('created_at', { ascending: false });
       setMateriais(materiaisData || []);
     } catch (error) {
-      console.error('Error fetching notice board:', error);
+      console.error('Notice Board Error:', error);
     }
   }
 
@@ -297,7 +220,7 @@ const Dashboard = () => {
       const { error } = await supabase.rpc('update_user_nucleo', { p_nucleo_id: nucleoId })
       if (error) throw error
       showToast('Núcleo atualizado!')
-      fetchUserData()
+      fetchDashboardData();
     } catch(err: any) {
       showToast(err.message, 'error')
     }
@@ -331,12 +254,7 @@ const Dashboard = () => {
     }
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/login')
-  }
-
-  if (loading) return <div className="auth-container"><Loader2 className="spinner" /> Carregando...</div>
+  if (profileLoading || loading) return <div className="auth-container"><Loader2 className="spinner" /> Carregando...</div>
 
   const isTemp = profile && !profile.acesso_definitivo
   const expiration = profile?.data_expiracao_temp ? new Date(profile.data_expiracao_temp) : null
@@ -349,7 +267,7 @@ const Dashboard = () => {
         <div className="auth-card text-center" style={{ textAlign: 'center', maxWidth: '600px' }}>
           <AlertCircle size={80} color="var(--error)" style={{ margin: '0 auto 2rem' }} />
           <h1>Acesso Expirado</h1>
-          <button onClick={handleLogout} className="btn btn-outline">Sair</button>
+          <button onClick={() => signOut()} className="btn btn-outline">Sair</button>
         </div>
       </div>
     )
@@ -375,7 +293,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Sidebar Unificada */}
       <aside className="admin-sidebar" style={{ paddingTop: '5rem' }}>
         <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1rem', flex: 1 }}>
           <div>
@@ -386,17 +303,12 @@ const Dashboard = () => {
             </h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', wordBreak: 'break-all' }}>{profile?.email}</p>
           </div>
-          <button 
-            className="mobile-menu-btn" 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle Navigation"
-          >
+          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
         <nav className={isMobileMenuOpen ? 'mobile-open' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {/* Role Switcher */}
           {availableRoles.length > 1 && (
             <div style={{ marginBottom: '1rem', padding: '0 1.25rem' }}>
               <button 
@@ -423,7 +335,6 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Abas Migradas */}
           {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[]).map(t => (
             <div 
               key={t} 
@@ -442,17 +353,15 @@ const Dashboard = () => {
             </div>
           ))}
 
-          {/* Rodapé da Sidebar */}
           <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
             {isTemp && <div className="admin-nav-item" style={{ color: 'var(--error)' }}><AlertCircle size={20} />{daysRemaining} dias restantes</div>}
-            <div className="admin-nav-item" style={{ color: 'var(--error)' }} onClick={handleLogout}>
+            <div className="admin-nav-item" style={{ color: 'var(--error)' }} onClick={() => signOut()}>
               <LogOut size={20} /> Sair
             </div>
           </div>
         </nav>
       </aside>
 
-      {/* Conteúdo Principal Unificado */}
       <main className="admin-main" style={{ paddingTop: '5rem' }}>
         <header className="mobile-col-flex" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>

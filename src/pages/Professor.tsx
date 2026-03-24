@@ -20,9 +20,12 @@ import AvisosManagement from '../components/professor/AvisosManagement'
 import MateriaisManagement from '../components/professor/MateriaisManagement'
 import { AlertCircle, FileText } from 'lucide-react'
 
+import { useProfile } from '../hooks/useProfile'
+
 type Tab = 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais'
 
 const Professor = () => {
+  const { profile, loading: profileLoading, signOut } = useProfile();
   const [activeTab, setActiveTab] = useState<Tab>('nucleos')
   const [loading, setLoading] = useState(true)
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
@@ -48,42 +51,32 @@ const Professor = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    checkAccess()
-  }, [])
+    if (!profileLoading) {
+      if (!profile) {
+        navigate('/login');
+        return;
+      }
+      
+      const roles = profile.caminhos_acesso || []
+      if (profile.email === 'edi.ben.jr@gmail.com') {
+        if (!roles.includes('aluno')) roles.push('aluno')
+        if (!roles.includes('professor')) roles.push('professor')
+        if (!roles.includes('suporte')) roles.push('suporte')
+      }
+      if (roles.length > 1) setAvailableRoles(roles)
 
-  const checkAccess = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      navigate('/login')
-      return
+      const isProfessor = profile.tipo === 'professor' || roles.includes('professor') || profile.email === 'edi.ben.jr@gmail.com'
+
+      if (!isProfessor) {
+        navigate('/dashboard')
+        return
+      }
+
+      setCurrentUserEmail(profile.email);
+      fetchData();
+      setLoading(false);
     }
-    setCurrentUserEmail(user.email ?? null)
-
-    const { data: profile } = await supabase
-      .from('users')
-      .select('tipo, caminhos_acesso')
-      .eq('id', user.id)
-      .single()
-
-    const roles = profile?.caminhos_acesso || []
-    if (user.email === 'edi.ben.jr@gmail.com') {
-      if (!roles.includes('aluno')) roles.push('aluno')
-      if (!roles.includes('professor')) roles.push('professor')
-      if (!roles.includes('suporte')) roles.push('suporte')
-    }
-    if (roles.length > 1) setAvailableRoles(roles)
-
-    const isProfessor = profile?.tipo === 'professor' || roles.includes('professor') || user.email === 'edi.ben.jr@gmail.com'
-
-    if (!isProfessor) {
-      alert('Acesso restrito a professores.')
-      navigate('/dashboard')
-      return
-    }
-
-    fetchData()
-    setLoading(false)
-  }
+  }, [profile, profileLoading]);
 
   const fetchData = async () => {
     const { data: cData } = await supabase

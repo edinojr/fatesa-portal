@@ -44,10 +44,13 @@ import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, AddConte
 import { QuizQuestion, QuestionType } from '../types/admin'
 import { supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 
+import { useProfile } from '../hooks/useProfile'
+
 type Tab = 'home' | 'users' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance'
 
 
 const Admin = () => {
+  const { profile, loading: profileLoading, signOut } = useProfile();
   const [activeTab, setActiveTab] = useState<Tab>('home')
   const [userRole, setUserRole] = useState<string | null>(null)
   const [users, setUsers] = useState<any[]>([])
@@ -98,8 +101,17 @@ const Admin = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    checkAccess()
-  }, [])
+    if (!profileLoading) {
+      if (!profile || !['admin', 'suporte'].includes(profile.tipo || '')) {
+        navigate('/dashboard');
+        return;
+      }
+      setUserRole(profile.tipo);
+      setCurrentUserEmail(profile.email);
+      setAvailableRoles(profile.caminhos_acesso || []);
+      setLoading(false);
+    }
+  }, [profile, profileLoading]);
 
   useEffect(() => {
     if (userRole) {

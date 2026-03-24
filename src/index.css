@@ -785,6 +785,25 @@ body {
     overflow-x: auto;
     white-space: nowrap;
   }
+
+  .quiz-section {
+    padding: 1.5rem !important;
+    border-radius: 24px !important;
+  }
+
+  .course-card {
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+  }
+
+  .auth-card {
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+  }
+
+  .viewer-header-desktop-only {
+    display: none !important;
+  }
 }
 
 /* Landing Page Styles */
