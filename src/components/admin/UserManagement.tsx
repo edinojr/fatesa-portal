@@ -16,6 +16,7 @@ interface UserManagementProps {
   handleUpdateUserName: (userId: string, newName: string) => Promise<void>
   handleDeleteUser: (userId: string) => Promise<void>
   setShowAddAdmin: (val: boolean) => void
+  onAddNucleo?: () => void
 }
 
 const STAFF_TYPES = ['professor', 'admin', 'suporte']
@@ -198,7 +199,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   users, allNucleos, searchTerm, actionLoading,
   handleTypeChange, handleApproveAccess, handleToggleBlock,
   handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName,
-  handleDeleteUser, setShowAddAdmin
+  handleDeleteUser, setShowAddAdmin, onAddNucleo
 }) => {
   const filteredUsers = users.filter(u =>
     u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -223,7 +224,14 @@ const UserManagement: React.FC<UserManagementProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+        <button
+          className="btn btn-outline"
+          onClick={onAddNucleo}
+          style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass)' }}
+        >
+          <GraduationCap size={18} /> Adicionar Núcleo
+        </button>
         <button
           className="btn btn-primary"
           onClick={() => setShowAddAdmin(true)}

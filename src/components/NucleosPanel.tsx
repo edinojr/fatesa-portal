@@ -4,9 +4,11 @@ import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapP
 
 interface NucleoPanelProps {
   userRole?: string
+  autoOpenAddModal?: boolean
+  onModalClose?: () => void
 }
 
-const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) => {
+const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', autoOpenAddModal, onModalClose }) => {
   const [nucleos, setNucleos] = useState<any[]>([]) // All available
   const [myNucleos, setMyNucleos] = useState<any[]>([]) // Tied to teacher
   const [selectedNucleo, setSelectedNucleo] = useState<any | null>(null)
@@ -31,6 +33,12 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
   useEffect(() => {
     fetchInitialData()
   }, [userRole])
+
+  useEffect(() => {
+    if (autoOpenAddModal) {
+      setShowAddModal(true)
+    }
+  }, [autoOpenAddModal])
 
   const fetchInitialData = async () => {
     setLoading(true)
@@ -467,6 +475,79 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor' }) =>
           <Plus size={20} /> {isAdmin ? 'Criar / Vincular Núcleo' : 'Adicionar Núcleo'}
         </button>
       </div>
+
+      {showAddModal && (
+        <div className="modal-overlay" onClick={() => { setShowAddModal(false); if (onModalClose) onModalClose(); }}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', width: '95%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+              <h2>{isAdmin ? 'Criar / Vincular Novo Núcleo' : 'Vincular-se a um Núcleo'}</h2>
+              <button className="btn-icon" onClick={() => { setShowAddModal(false); if (onModalClose) onModalClose(); }}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
+            </div>
+            {isAdmin ? (
+              <>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Crie um novo núcleo ou vincule um professor existente a um núcleo já cadastrado.</p>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <button className={`btn ${showCreateForm ? 'btn-primary' : 'btn-outline'}`} onClick={() => setShowCreateForm(true)}>Criar Novo Núcleo</button>
+                  <button className={`btn ${!showCreateForm ? 'btn-primary' : 'btn-outline'}`} onClick={() => setShowCreateForm(false)}>Vincular Professor</button>
+                </div>
+
+                {showCreateForm ? (
+                  <form onSubmit={handleCreateNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <input type="text" name="nome" placeholder="Nome do Núcleo (Ex: Polo Centro)" className="form-control" required />
+                    <input type="text" name="professor_responsavel" placeholder="Nome do Professor Responsável" className="form-control" />
+                    <input type="text" name="horario_aulas" placeholder="Horário das Aulas (Ex: Terças e Quintas, 19h-21h)" className="form-control" />
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input type="text" name="cep" placeholder="CEP" className="form-control" style={{ flex: 1 }} value={cep} onChange={(e) => setCep(e.target.value)} onBlur={handleCepBlur} />
+                      <button type="button" className="btn btn-outline" onClick={handleCepBlur} disabled={cepLoading} style={{ width: 'auto' }}>
+                        {cepLoading ? <Loader2 className="spinner" size={16} /> : 'Buscar CEP'}
+                      </button>
+                    </div>
+                    <input type="text" name="logradouro" placeholder="Logradouro" className="form-control" value={endereco.logradouro} onChange={(e) => setEndereco({ ...endereco, logradouro: e.target.value })} />
+                    <input type="text" name="numero" placeholder="Número" className="form-control" value={endereco.numero} onChange={(e) => setEndereco({ ...endereco, numero: e.target.value })} />
+                    <input type="text" name="bairro" placeholder="Bairro" className="form-control" value={endereco.bairro} onChange={(e) => setEndereco({ ...endereco, bairro: e.target.value })} />
+                    <input type="text" name="cidade" placeholder="Cidade" className="form-control" value={endereco.cidade} onChange={(e) => setEndereco({ ...endereco, cidade: e.target.value })} />
+                    <input type="text" name="estado" placeholder="Estado" className="form-control" value={endereco.estado} onChange={(e) => setEndereco({ ...endereco, estado: e.target.value })} />
+                    <button type="submit" className="btn btn-primary" disabled={actionLoading === 'create_nuc'}>
+                      {actionLoading === 'create_nuc' ? <Loader2 className="spinner" /> : 'Criar Núcleo'}
+                    </button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleLinkProfessorToNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <select name="nucleo_id" className="form-control" required>
+                      <option value="">Selecione um Núcleo</option>
+                      {nucleos.map(nuc => (
+                        <option key={nuc.id} value={nuc.id}>{nuc.nome}</option>
+                      ))}
+                    </select>
+                    <select name="professor_id" className="form-control" required>
+                      <option value="">Selecione um Professor</option>
+                      {professors.map(prof => (
+                        <option key={prof.id} value={prof.id}>{prof.nome} ({prof.email})</option>
+                      ))}
+                    </select>
+                    <button type="submit" className="btn btn-primary" disabled={actionLoading === 'link_prof'}>
+                      {actionLoading === 'link_prof' ? <Loader2 className="spinner" /> : 'Vincular Professor'}
+                    </button>
+                  </form>
+                )}
+              </>
+            ) : (
+              <form onSubmit={handleRequestNucleoAccess} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Selecione o núcleo ao qual você deseja se vincular. Um administrador precisará aprovar sua solicitação.</p>
+                <select name="nucleo_id" className="form-control" required>
+                  <option value="">Selecione seu Núcleo</option>
+                  {nucleos.map(nuc => (
+                    <option key={nuc.id} value={nuc.id}>{nuc.nome} {nuc.cidade ? `(${nuc.cidade} - ${nuc.estado})` : ''}</option>
+                  ))}
+                </select>
+                <button type="submit" className="btn btn-primary" disabled={actionLoading === 'request_nuc'}>
+                  {actionLoading === 'request_nuc' ? <Loader2 className="spinner" /> : 'Solicitar Acesso ao Núcleo'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {!selectedNucleo ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>

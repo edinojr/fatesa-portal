@@ -103,6 +103,7 @@ const Admin = () => {
   const [uploading, setUploading] = useState<string | null>(null)
   const [viewingBook, setViewingBook] = useState<any | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [nucleosAutoOpenAdd, setNucleosAutoOpenAdd] = useState(false)
   
   const navigate = useNavigate()
 
@@ -754,6 +755,7 @@ const Admin = () => {
                 handleUpdateUserNucleo={handleUpdateUserNucleo}
                 handleUpdateUserName={handleUpdateUserName}
                 handleDeleteUser={async (userId: string) => setConfirmDelete({ type: 'user', id: userId, title: 'Tem certeza que deseja excluir este usuário?' })}
+                onAddNucleo={() => { setActiveTab('nucleos'); setNucleosAutoOpenAdd(true); }}
               />
             )}
 
@@ -804,7 +806,11 @@ const Admin = () => {
             )}
 
             {activeTab === 'nucleos' && (
-              <NucleosPanel userRole={userRole || 'admin'} />
+              <NucleosPanel 
+                userRole={userRole || 'professor'} 
+                autoOpenAddModal={nucleosAutoOpenAdd}
+                onModalClose={() => setNucleosAutoOpenAdd(false)}
+              />
             )}
 
             {activeTab === 'settings' && userRole === 'admin' && (
