@@ -109,16 +109,7 @@ const Dashboard = () => {
             epub_url,
             ordem,
             ensino_tipo,
-            aulas (
-              id,
-              titulo,
-              tipo,
-              parent_aula_id,
-              ordem,
-              arquivo_url,
-              video_url,
-              nucleo_id
-            )
+            aulas (*)
           )
         `);
       
@@ -130,7 +121,10 @@ const Dashboard = () => {
             nome: c.nome,
             livros: sortedLivros.map((l: any) => ({
               ...l,
-              aulas: (l.aulas || []).filter((a: any) => !a.nucleo_id || a.nucleo_id === profile?.nucleo_id),
+              aulas: (l.aulas || []).filter((a: any) => {
+                if (isStaff) return true;
+                return !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
+              }),
               progresso: isStaff ? 100 : 0, 
               isReleased: isStaff || exemptStatus || (l.ordem || 1) <= releasedCount,
               isCurrent: !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount
