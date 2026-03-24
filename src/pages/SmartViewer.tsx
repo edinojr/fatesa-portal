@@ -37,6 +37,7 @@ const StandardContent = () => {
   const [containerWidth, setContainerWidth] = useState(window.innerWidth);
   const [nextLesson, setNextLesson] = useState<any>(null);
   const [relatedActivities, setRelatedActivities] = useState<any[]>([]);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   // Otimização v1.4
   const [viewType, setViewType] = useState<'scroll' | 'single'>('single'); // Padrão single para ser leve
@@ -80,10 +81,14 @@ const StandardContent = () => {
       if ((e.key === 'f' || e.key === 'F') && viewerRef.current) {
         toggleFullscreen();
       }
+      if (viewType === 'single' && !loading) {
+        if (e.key === 'ArrowRight') handlePageNext();
+        if (e.key === 'ArrowLeft') handlePagePrev();
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen]);
+  }, [isFullscreen, viewType, loading, pageNumber, numPages]);
 
   useEffect(() => {
     if (viewMode === 'epub' && data?.epub_url) {
@@ -190,6 +195,25 @@ const StandardContent = () => {
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
+  };
+
+  const handlePageNext = () => setPageNumber(p => Math.min(numPages, p + 1));
+  const handlePagePrev = () => setPageNumber(p => Math.max(1, p - 1));
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+
+    if (Math.abs(diff) > 50) { // Limiar de 50px para o swipe
+      if (diff > 0) handlePageNext();
+      else handlePagePrev();
+    }
+    setTouchStartX(null);
   };
 
   if (loading) {
@@ -357,7 +381,12 @@ const StandardContent = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="pdf-page-shadow">
+                    <div 
+                      className="pdf-page-shadow"
+                      onTouchStart={handleTouchStart}
+                      onTouchEnd={handleTouchEnd}
+                      style={{ cursor: viewType === 'single' ? 'grab' : 'default' }}
+                    >
                       <Page 
                         pageNumber={pageNumber} 
                         width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
