@@ -295,7 +295,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      <aside className="admin-sidebar" style={{ paddingTop: '5rem' }}>
+      <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
         <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1rem', flex: 1 }}>
           <div>
             <GraduationCap size={40} color="var(--primary)" />
@@ -364,7 +364,7 @@ const Dashboard = () => {
         </nav>
       </aside>
 
-      <main className="admin-main" style={{ paddingTop: '5rem' }}>
+      <main className="admin-main" style={{ paddingTop: '2rem' }}>
         <header className="mobile-col-flex" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>

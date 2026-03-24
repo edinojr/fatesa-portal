@@ -824,7 +824,7 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border);
-  padding: 1.875rem 0; /* Increased 1.5x */
+  padding: 1rem 0; /* Reduced from 1.875rem */
   transition: all 0.3s ease;
 }
 
@@ -865,7 +865,7 @@ body {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
+  gap: 1.5rem; /* Reduced from 2.5rem */
 }
 
 .nav-links a {
@@ -1717,9 +1717,10 @@ select.form-control option {
     height: 100vh;
     background: #0a0a0a;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    gap: 2rem;
+    gap: 1.25rem;
+    padding-top: 5rem;
     transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 1050;
     box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
@@ -1844,12 +1845,12 @@ select.form-control option {
   }
   .admin-sidebar {
     width: 100%;
-    padding: 2rem 1.5rem 2rem !important;
+    padding: 1rem 1.5rem 1.5rem !important;
     border-right: none;
     border-bottom: 1px solid var(--glass-border);
   }
   .admin-main {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   .dashboard-header {
     flex-direction: column;

@@ -297,7 +297,7 @@ const Professor = () => {
         <ChevronLeft size={18} /> Voltar à Home
       </Link>
 
-      <aside className="admin-sidebar" style={{ paddingTop: '6rem' }}>
+      <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
             <GraduationCap size={32} color="var(--primary)" />
@@ -389,7 +389,7 @@ const Professor = () => {
         </nav>
       </aside>
 
-      <main className="admin-main" style={{ paddingTop: '5rem' }}>
+      <main className="admin-main" style={{ paddingTop: '2rem' }}>
         <header className="mobile-col-flex" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>

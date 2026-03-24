@@ -584,7 +584,7 @@ const Admin = () => {
       </Link>
 
       {/* Sidebar */}
-      <aside className="admin-sidebar" style={{ paddingTop: '5rem' }}>
+      <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
         <div style={{ marginBottom: '3rem' }}>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--primary)', letterSpacing: '-0.02em' }}>Fatesa Admin</h1>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700 }}>{userRole}</p>
