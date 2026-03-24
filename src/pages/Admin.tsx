@@ -97,6 +97,7 @@ const Admin = () => {
   const [pixQrUrl, setPixQrUrl] = useState('')
   const [uploading, setUploading] = useState<string | null>(null)
   const [viewingBook, setViewingBook] = useState<any | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
   const navigate = useNavigate()
 
@@ -581,13 +582,18 @@ const Admin = () => {
     <div className="admin-layout">
 
       {/* Sidebar */}
-      <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
-        <div style={{ marginBottom: '3rem' }}>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--primary)', letterSpacing: '-0.02em' }}>Fatesa Admin</h1>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700 }}>{userRole}</p>
+      <aside className="admin-sidebar" style={{ paddingTop: '1rem' }}>
+        <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--primary)', letterSpacing: '-0.02em', margin: 0 }}>Fatesa Admin</h1>
+            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700 }}>{userRole}</p>
+          </div>
+          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <nav className={isMobileMenuOpen ? 'mobile-open' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {availableRoles.length > 1 && (
             <div style={{ marginBottom: '1.5rem' }}>
               <button 
@@ -604,7 +610,7 @@ const Admin = () => {
                       key={r} 
                       className="admin-nav-item" 
                       style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
-                      onClick={() => navigate(r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin')}
+                      onClick={() => { navigate(r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'); setIsMobileMenuOpen(false); }}
                     >
                       {r === 'aluno' ? 'Portal do Aluno' : r === 'professor' ? 'Painel do Professor' : r === 'suporte' ? 'Painel de Suporte' : 'Administração'}
                     </button>
@@ -615,34 +621,34 @@ const Admin = () => {
           )}
 
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-            <button onClick={() => navigate(-1)} className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem' }}>
+            <button onClick={() => { navigate(-1); setIsMobileMenuOpen(false); }} className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem' }}>
               Voltar
             </button>
-            <button onClick={() => navigate('/admin')} className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem' }}>
+            <button onClick={() => { navigate('/admin'); setIsMobileMenuOpen(false); }} className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem' }}>
               Início
             </button>
           </div>
           
           {userRole !== 'aluno' && (
-            <div className={`admin-nav-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}>
+            <div className={`admin-nav-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }}>
               <LayoutDashboard size={20} /> Painel Inicial
             </div>
           )}
 
           {userRole === 'admin' && (
-            <div className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
+            <div className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => { setActiveTab('users'); setIsMobileMenuOpen(false); }}>
               <Users size={20} /> Usuários
             </div>
           )}
           {(userRole === 'admin' || userRole === 'professor' || userRole === 'suporte') && (
-            <div className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`} onClick={() => setActiveTab('nucleos')}>
+            <div className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`} onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}>
               <GraduationCap size={20} /> {userRole === 'admin' || userRole === 'suporte' ? 'Todos os Núcleos' : 'Minhas Turmas'}
             </div>
           )}
-          <div className={`admin-nav-item ${activeTab === 'content' ? 'active' : ''}`} onClick={() => setActiveTab('content')}>
+          <div className={`admin-nav-item ${activeTab === 'content' ? 'active' : ''}`} onClick={() => { setActiveTab('content'); setIsMobileMenuOpen(false); }}>
             <BookOpen size={20} /> Conteúdo
           </div>
-          <div className={`admin-nav-item ${activeTab === 'validation' ? 'active' : ''}`} onClick={() => setActiveTab('validation')}>
+          <div className={`admin-nav-item ${activeTab === 'validation' ? 'active' : ''}`} onClick={() => { setActiveTab('validation'); setIsMobileMenuOpen(false); }}>
             <ShieldCheck size={20} /> Validação
             {(pendingDocs.length + pendingPays.length) > 0 && (
               <span style={{ marginLeft: 'auto', background: 'var(--error)', color: '#fff', fontSize: '0.7rem', padding: '2px 6px', borderRadius: '10px' }}>
@@ -651,7 +657,7 @@ const Admin = () => {
             )}
           </div>
           {userRole === 'admin' && (
-            <div className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')}>
+            <div className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }}>
               <Settings size={20} /> Configurações
             </div>
           )}
@@ -664,14 +670,22 @@ const Admin = () => {
       </aside>
 
       <main className="admin-main">
-        <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4rem' }}>
+        <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div className="logo-section" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <GraduationCap size={48} color="var(--primary)" />
             <div>
-              <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.03em' }}>
+              <h1 style={{ 
+                fontSize: '2.2rem', 
+                fontWeight: 900, 
+                letterSpacing: '-0.04em',
+                background: 'linear-gradient(135deg, var(--text) 0%, var(--primary) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                marginBottom: '0.25rem'
+              }}>
                 {activeTab === 'home' ? 'Painel Administrativo' : activeTab === 'users' ? 'Gestão de Usuários' : activeTab === 'content' ? 'Gestão de Conteúdo' : 'Validação de Acesso'}
               </h1>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
                 {activeTab === 'home' ? 'Visão geral do sistema e atalhos rápidos.' : activeTab === 'users' ? 'Administre os perfis, bloqueios e acessos.' : activeTab === 'content' ? 'Gerencie as matérias, livros e atividades.' : 'Verifique envios dos alunos.'}
               </p>
             </div>
