@@ -69,6 +69,7 @@ const Admin = () => {
   const [showAddTeacher, setShowAddTeacher] = useState(false)
   const [newTeacherEmail, setNewTeacherEmail] = useState('')
   const [newTeacherNome, setNewTeacherNome] = useState('')
+  const [newTeacherPassword, setNewTeacherPassword] = useState('')
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
   const [showAddAdmin, setShowAddAdmin] = useState(false)
@@ -476,21 +477,45 @@ const Admin = () => {
     e.preventDefault()
     setActionLoading('add-teacher')
     try {
-      const { error } = await supabase
+      // 1. Authorize the email
+      const { error: authError } = await supabase
         .from('professores_autorizados')
         .insert({
           email: newTeacherEmail,
           nome: newTeacherNome
         })
       
-      if (error) throw error
-      showToast('E-mail de professor autorizado! Ele poderá realizar o cadastro normalmente e será reconhecido como Professor.')
+      if (authError && !authError.message.includes('unique constraint')) {
+        throw authError
+      }
+
+      // 2. Create the user immediately
+      const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+      })
+
+      const { error: signUpError } = await tempClient.auth.signUp({
+        email: newTeacherEmail,
+        password: newTeacherPassword,
+        options: {
+          data: {
+            nome: newTeacherNome,
+            tipo: 'professor',
+            acesso_definitivo: true
+          }
+        }
+      })
+
+      if (signUpError) throw signUpError
+
+      showToast('Professor cadastrado e autorizado com sucesso!')
       setShowAddTeacher(false)
       setNewTeacherEmail('')
       setNewTeacherNome('')
+      setNewTeacherPassword('')
       fetchData()
     } catch (err: any) {
-      showToast('Erro ao autorizar professor: ' + err.message, 'error')
+      showToast('Erro ao cadastrar professor: ' + err.message, 'error')
     } finally {
       setActionLoading(null)
     }
@@ -834,6 +859,8 @@ const Admin = () => {
           setNewTeacherEmail={setNewTeacherEmail}
           newTeacherNome={newTeacherNome}
           setNewTeacherNome={setNewTeacherNome}
+          newTeacherPassword={newTeacherPassword}
+          setNewTeacherPassword={setNewTeacherPassword}
           handleAddTeacher={handleAddTeacher}
           actionLoading={actionLoading}
         />

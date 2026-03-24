@@ -8,6 +8,8 @@ interface AddTeacherModalProps {
   setNewTeacherEmail: (val: string) => void
   newTeacherNome: string
   setNewTeacherNome: (val: string) => void
+  newTeacherPassword: string
+  setNewTeacherPassword: (val: string) => void
   handleAddTeacher: (e: React.FormEvent) => Promise<void>
   actionLoading: string | null
 }
@@ -19,9 +21,12 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
   setNewTeacherEmail,
   newTeacherNome,
   setNewTeacherNome,
+  newTeacherPassword,
+  setNewTeacherPassword,
   handleAddTeacher,
   actionLoading
 }) => {
+  const [showPass, setShowPass] = useState(false);
   if (!showAddTeacher) return null;
   return (
     <div className="modal-overlay" onClick={() => setShowAddTeacher(false)}>
@@ -50,8 +55,28 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
               required
             />
             <p className="field-hint">
-              O e-mail será adicionado à lista de autorizados. O professor deve realizar o cadastro via "Ativar Acesso" na página de login.
+              O e-mail será adicionado à lista de autorizados e a conta será criada imediatamente.
             </p>
+          </div>
+          <div className="form-group">
+            <label>Senha para o Professor</label>
+            <div style={{ position: 'relative' }}>
+              <input 
+                type={showPass ? "text" : "password"} 
+                className="form-control" 
+                placeholder="********"
+                value={newTeacherPassword}
+                onChange={e => setNewTeacherPassword(e.target.value)}
+                required
+              />
+              <button 
+                type="button" 
+                onClick={() => setShowPass(!showPass)}
+                style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+              >
+                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddTeacher(false)}>Cancelar</button>
