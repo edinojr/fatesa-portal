@@ -94,6 +94,7 @@ const Admin = () => {
   const [editingQuiz, setEditingQuiz] = useState<any | null>(null)
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
   const [addingLessonType, setAddingLessonType] = useState<string>('gravada')
+  const [addingBloco, setAddingBloco] = useState<number | null>(null)
   const [editingLessonContent, setEditingLessonContent] = useState<any | null>(null)
   const [lessonBlocks, setLessonBlocks] = useState<any[]>([])
   const [lessonMaterials, setLessonMaterials] = useState<any[]>([])
@@ -228,6 +229,62 @@ const Admin = () => {
       title: 'Tem certeza que deseja remover este arquivo?' 
     })
   }
+
+  const handleReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void) => {
+    const idx = items.findIndex(i => i.id === id)
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (swapIdx < 0 || swapIdx >= items.length) return
+
+    const current = items[idx]
+    const swap = items[swapIdx]
+
+    try {
+      await Promise.all([
+        supabase.from('aulas').update({ ordem: swap.ordem }).eq('id', current.id),
+        supabase.from('aulas').update({ ordem: current.ordem }).eq('id', swap.id)
+      ])
+      fetchFn()
+    } catch (err: any) {
+      showToast('Erro ao reordenar: ' + err.message, 'error')
+    }
+  }
+
+  const handleMoveTo = async (id: string, targetId: string, items: any[], fetchFn: () => void) => {
+    if (id === targetId) return;
+    
+    const newItems = [...items];
+    const dragIdx = newItems.findIndex(i => i.id === id);
+    const targetIdx = newItems.findIndex(i => i.id === targetId);
+    
+    if (dragIdx === -1 || targetIdx === -1) return;
+    
+    // Remove from old position and insert at new
+    const [draggedItem] = newItems.splice(dragIdx, 1);
+    newItems.splice(targetIdx, 0, draggedItem);
+    
+    // Create update batch
+    const updates = newItems.map((item, index) => ({
+      id: item.id,
+      ordem: index + 1 // Simple re-indexing 1..N
+    }));
+
+    try {
+      setActionLoading('reorder-all');
+      for (const update of updates) {
+        // Find if order actually changed to minimize DB calls
+        const original = items.find(i => i.id === update.id);
+        if (original && original.ordem !== update.ordem) {
+          await supabase.from('aulas').update({ ordem: update.ordem }).eq('id', update.id);
+        }
+      }
+      fetchFn();
+    } catch (err: any) {
+      showToast('Erro ao mover: ' + err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
 
   const fetchData = async () => {
     setLoading(true)
@@ -827,11 +884,14 @@ const Admin = () => {
                 handleDelete={handleDelete}
                 handleRemoveFile={handleRemoveFileFinal}
                 handleFileUpload={handleFileUpload}
+                handleReorder={handleReorder}
+                handleMoveTo={handleMoveTo}
                 setShowAddCourse={setShowAddCourse}
                 setShowAddBook={setShowAddBook}
                 setShowAddLesson={setShowAddLesson}
                 setShowAddContent={setShowAddContent}
                 setAddingLessonType={setAddingLessonType}
+                setAddingBloco={setAddingBloco}
                 setEditingItem={setEditingItem}
                 setEditingLessonContent={setEditingLessonContent}
                 setLessonBlocks={setLessonBlocks}
@@ -932,6 +992,7 @@ const Admin = () => {
           fetchLessonItems={fetchLessonItems}
           showToast={showToast}
           lessonItems={lessonItems}
+          addingBloco={addingBloco}
         />
 
         <EditItemModal 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Loader2, Plus, Eye, EyeOff } from 'lucide-react'
+import { Loader2, Plus, Eye, EyeOff, Upload } from 'lucide-react'
 
 interface AddTeacherModalProps {
   showAddTeacher: boolean
@@ -278,7 +278,8 @@ export const AddLessonModal: React.FC<AddLessonModalProps> = ({
             livro_id: selectedBook.id, 
             titulo, 
             tipo: 'licao',
-            ordem: ordem
+            ordem: ordem,
+            bloco_id: formData.get('bloco_id') ? parseInt(formData.get('bloco_id') as string) : null
           });
           
           if (error) showToast(error.message, 'error');
@@ -296,6 +297,10 @@ export const AddLessonModal: React.FC<AddLessonModalProps> = ({
           <div className="form-group">
             <label>Ordem na Sequência</label>
             <input name="ordem" type="number" className="form-control" defaultValue={lessons.length + 1} required />
+          </div>
+          <div className="form-group">
+            <label>Bloco ID (Opcional)</label>
+            <input name="bloco_id" type="number" className="form-control" placeholder="Ex: 1" />
           </div>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddLesson(false)}>Cancelar</button>
@@ -320,6 +325,7 @@ interface AddContentModalProps {
   fetchLessonItems: (lessonId: string) => Promise<void>
   showToast: (msg: string, type?: 'success' | 'error') => void
   lessonItems: any[]
+  addingBloco: number | null
 }
 
 export const AddContentModal: React.FC<AddContentModalProps> = ({
@@ -332,7 +338,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
   supabase,
   fetchLessonItems,
   showToast,
-  lessonItems
+  lessonItems,
+  addingBloco
 }) => {
   if (!showAddContent || !selectedLesson) return null;
   
@@ -367,7 +374,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                     titulo: files.length > 1 ? `${titulo} - ${file.name}` : titulo,
                     tipo: 'material',
                     arquivo_url: publicUrl,
-                    ordem: ordem + i
+                    ordem: ordem + i,
+                    bloco_id: addingBloco
                   });
                   if (insertError) throw insertError;
                 }
@@ -397,7 +405,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 video_url,
                 arquivo_url,
                 min_grade,
-                ordem
+                ordem,
+                bloco_id: addingBloco
               });
               
               if (error) throw error;
@@ -424,10 +433,19 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
           )}
 
           {addingLessonType === 'material' ? (
-            <div className="form-group">
-              <label>Arquivos PDF (Múltiplos)</label>
-              <input name="files" type="file" className="form-control" accept=".pdf" multiple required />
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Cada arquivo selecionado criará um item de conteúdo individual.</p>
+            <div className="form-group" style={{ background: 'rgba(var(--primary-rgb), 0.05)', padding: '1.5rem', borderRadius: '16px', border: '1px dashed var(--glass-border)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
+                <Upload size={18} color="var(--primary)" /> Selecionar Arquivos PDF (Múltiplos)
+              </label>
+              <input name="files" type="file" className="form-control" accept=".pdf" multiple required style={{ marginTop: '0.75rem' }} />
+              <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
+                  <strong>Atenção:</strong> Cada arquivo selecionado será criado como um item individual.
+                </p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                  O título acima será usado como prefixo para cada arquivo.
+                </p>
+              </div>
             </div>
           ) : (
             <div className="form-group">
@@ -446,6 +464,11 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
           <div className="form-group">
             <label>Ordem</label>
             <input name="ordem" type="number" className="form-control" defaultValue={lessonItems.length + 1} required />
+          </div>
+
+          <div className="form-group">
+            <label>Bloco ID (Opcional)</label>
+            <input name="bloco_id" type="number" className="form-control" defaultValue={addingBloco || ''} placeholder="Ex: 1" />
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
@@ -519,6 +542,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
           if (editingItem.type === 'lesson' || editingItem.type === 'content') {
             updates.ordem = parseInt(formData.get('ordem') as string);
+            updates.bloco_id = formData.get('bloco_id') ? parseInt(formData.get('bloco_id') as string) : null;
             if (editingItem.type === 'content') {
               updates.video_url = formData.get('video_url') as string || null;
               if (editingItem.data.tipo === 'prova') {
@@ -595,6 +619,13 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
             <div className="form-group">
               <label>Ordem / Sequência</label>
               <input name="ordem" type="number" className="form-control" defaultValue={editingItem.data.ordem || 1} required />
+            </div>
+          )}
+
+          {(editingItem.type === 'lesson' || editingItem.type === 'content') && (
+            <div className="form-group">
+              <label>Bloco ID</label>
+              <input name="bloco_id" type="number" className="form-control" defaultValue={editingItem.data.bloco_id || ''} placeholder="Ex: 1" />
             </div>
           )}
 

@@ -65,45 +65,126 @@ const Lesson = () => {
       if (user) {
         setUserProfile(user)
 
-        const { data: subData } = await supabase
-          .from('respostas_aulas')
-          .select('*')
-          .eq('aula_id', id)
-          .eq('aluno_id', user.id)
-          .maybeSingle()
-        
-        if (subData) {
-          setExistingSubmission(subData)
-          setAnswers(subData.respostas || {})
-          
-          if (subData.nota !== null) {
-            setResult({ 
-              score: subData.nota, 
-              passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), 
-              pendingReview: subData.status === 'pendente',
-              scoreOriginal: subData.nota_original
-            })
-          }
-          setSubmitted(true);
-        } else {
-          // Check if user is staff (professor/admin) to show as "read-only gabarito"
+        // Check for block access (Strict for videos)
+        if ((lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') && lessonData.bloco_id) {
+          // Check if user is staff first
           const { data: profile } = await supabase.from('users').select('tipo').eq('id', user.id).single();
-          if (['admin', 'professor', 'suporte'].includes(profile?.tipo || '')) {
-            setSubmitted(true);
-            setReviewMode(true);
-            const gabarito: Record<string, any> = {};
-            (Array.isArray(lessonData.questionario) ? lessonData.questionario : []).forEach((q: any) => {
-              if (q.type === 'multiple_choice' || !q.type) gabarito[q.id] = q.correct;
-              else if (q.type === 'true_false') gabarito[q.id] = q.isTrue;
-              else if (q.type === 'matching') {
-                const pairs: Record<string, string> = {};
-                q.matchingPairs?.forEach((_: any, idx: number) => { pairs[idx] = String(idx); });
-                gabarito[q.id] = pairs;
+          const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '');
+          
+          if (!isStaff) {
+            // Fetch progress for this block
+            const { data: bItems } = await supabase
+              .from('aulas')
+              .select('id, tipo')
+              .eq('bloco_id', lessonData.bloco_id)
+              .not('tipo', 'in', '("gravada","ao_vivo")');
+            
+            if (bItems && bItems.length > 0) {
+              const [{ data: resData }, { data: pData }] = await Promise.all([
+                supabase.from('respostas_aulas').select('aula_id').eq('aluno_id', user.id),
+                supabase.from('progresso_aulas').select('aula_id, concluida').eq('aluno_id', user.id)
+              ]);
+
+              const unfinished = bItems.some(item => {
+                if (item.tipo === 'atividade' || item.tipo === 'prova') {
+                  return !resData?.some(r => r.aula_id === item.id);
+                }
+                return !pData?.some(p => p.aula_id === item.id && p.concluida);
+              });
+
+              if (unfinished) {
+                alert('Você precisa concluir as lições e exercícios do bloco antes de acessar este vídeo.');
+                navigate('/dashboard');
+                return;
               }
-              else if (q.type === 'discursive') gabarito[q.id] = q.expectedAnswer;
-            });
-            setAnswers(gabarito);
-            setResult({ score: 10, passed: true });
+            }
+          }
+        }
+
+        // If it's a material and has a bloco_id, fetch the matching activity in the same block
+        if (lessonData.tipo === 'material' && lessonData.bloco_id) {
+          const { data: blockItems } = await supabase
+            .from('aulas')
+            .select('*')
+            .eq('bloco_id', lessonData.bloco_id)
+            .eq('livro_id', lessonData.livro_id)
+            .eq('tipo', 'atividade')
+            .limit(1);
+          
+          if (blockItems && blockItems.length > 0) {
+            const linkedActivity = blockItems[0];
+            // Fetch submission for this linked activity
+            const { data: linkedSub } = await supabase
+              .from('respostas_aulas')
+              .select('*')
+              .eq('aula_id', linkedActivity.id)
+              .eq('aluno_id', user.id)
+              .maybeSingle();
+
+            // We augment the lesson data with this linked activity for rendering
+            (lessonData as any).linkedActivity = linkedActivity;
+            (lessonData as any).linkedSubmission = linkedSub;
+            
+            // If the activity has questions, merge or set for display
+            if (Array.isArray(linkedActivity.questionario)) {
+              setQuestions(linkedActivity.questionario);
+            }
+            
+            if (linkedSub) {
+              setAnswers(linkedSub.respostas || {});
+              if (linkedSub.nota !== null) {
+                setResult({ 
+                  score: linkedSub.nota, 
+                  passed: linkedSub.nota >= (linkedActivity.min_grade || 0), 
+                  pendingReview: linkedSub.status === 'pendente',
+                  scoreOriginal: linkedSub.nota_original
+                });
+              }
+              setSubmitted(true);
+            }
+          }
+        } else {
+          // Standard fetching for direct quiz page
+          const { data: subData } = await supabase
+            .from('respostas_aulas')
+            .select('*')
+            .eq('aula_id', id)
+            .eq('aluno_id', user.id)
+            .maybeSingle()
+          
+          if (subData) {
+            setExistingSubmission(subData)
+            setAnswers(subData.respostas || {})
+            
+            if (subData.nota !== null) {
+              setResult({ 
+                score: subData.nota, 
+                passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), 
+                pendingReview: subData.status === 'pendente',
+                scoreOriginal: subData.nota_original
+              })
+            }
+            setSubmitted(true);
+          } else {
+            // Check if user is staff (professor/admin) to show as "read-only gabarito"
+            const { data: profile } = await supabase.from('users').select('tipo').eq('id', user.id).single();
+            if (['admin', 'professor', 'suporte'].includes(profile?.tipo || '')) {
+              setSubmitted(true);
+              setReviewMode(true);
+              const gabarito: Record<string, any> = {};
+              (Array.isArray(lessonData.questionario) ? lessonData.questionario : []).forEach((q: any) => {
+                if (q.type === 'multiple_choice' || !q.type) gabarito[q.id] = q.correct;
+                else if (q.type === 'true_false') gabarito[q.id] = q.isTrue;
+                else if (q.type === 'matching') {
+                  const pairs: Record<string, string> = {};
+                  q.matchingPairs?.forEach((_: any, idx: number) => { pairs[idx] = String(idx); });
+                  gabarito[q.id] = pairs;
+                }
+                else if (q.type === 'discursive') gabarito[q.id] = q.expectedAnswer;
+              });
+              setAnswers(gabarito);
+              setResult({ score: 10, passed: true });
+            }
           }
         }
       }
@@ -149,20 +230,21 @@ const Lesson = () => {
       const finalScore = total > 0 ? (score / total) * 10 : 10
       const hasDiscursive = questions.some(q => q.type === 'discursive')
       
-      const minGradeNeeded = lesson.tipo === 'prova' ? 7 : 0;
+      const targetAulaId = (lesson as any).linkedActivity?.id || id;
+      const minGradeNeeded = (lesson as any).linkedActivity?.min_grade || (lesson.tipo === 'prova' ? 7 : 0);
       const passed = hasDiscursive ? false : finalScore >= minGradeNeeded;
-      const scoreToSave = existingSubmission?.nota_original != null ? existingSubmission.nota_original : (hasDiscursive ? null : finalScore);
+      const scoreToSave = (lesson as any).linkedSubmission?.nota_original != null ? (lesson as any).linkedSubmission.nota_original : (hasDiscursive ? null : finalScore);
       
       const { error } = await supabase
         .from('respostas_aulas')
         .upsert({
           aluno_id: user.id,
-          aula_id: id,
+          aula_id: targetAulaId,
           respostas: answers,
           nota: scoreToSave,
           nota_original: scoreToSave,
           status: hasDiscursive ? 'pendente' : (passed ? 'concluido' : 'reprovado'),
-          tentativas: (existingSubmission?.tentativas || 0) + 1,
+          tentativas: ((lesson as any).linkedSubmission?.tentativas || 0) + 1,
           updated_at: new Date().toISOString()
         })
 
@@ -173,12 +255,28 @@ const Lesson = () => {
       
       // Auto-mark as completed in progress table if passed
       if (passed && !hasDiscursive) {
-        await supabase.from('progresso_aulas').upsert({
-          aluno_id: user.id,
-          aula_id: id,
-          concluida: true,
-          updated_at: new Date().toISOString()
-        });
+        // If it's a linked activity, mark both activity and the parent material as complete
+        const markPromises = [
+          supabase.from('progresso_aulas').upsert({
+            aluno_id: user.id,
+            aula_id: targetAulaId,
+            concluida: true,
+            updated_at: new Date().toISOString()
+          })
+        ];
+
+        if ((lesson as any).linkedActivity) {
+          markPromises.push(
+            supabase.from('progresso_aulas').upsert({
+              aluno_id: user.id,
+              aula_id: id, // This is the material id
+              concluida: true,
+              updated_at: new Date().toISOString()
+            })
+          );
+        }
+
+        await Promise.all(markPromises);
       }
 
     } catch (err) {
@@ -455,8 +553,8 @@ const Lesson = () => {
         <div className="quiz-section" style={{ background: 'var(--glass)', padding: '3rem', borderRadius: '24px', border: '1px solid var(--glass-border)', marginBottom: '4rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
             <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.8rem' }}>
-              {lesson.tipo === 'prova' ? <Award size={32} color="#EAB308" /> : <ClipboardList size={32} color="var(--success)" />}
-              {lesson.tipo === 'prova' ? 'Prova Final' : 'Atividade / Questionário'}
+              {(lesson as any).linkedActivity ? <ClipboardList size={32} color="var(--success)" /> : (lesson.tipo === 'prova' ? <Award size={32} color="#EAB308" /> : <ClipboardList size={32} color="var(--success)" />)}
+              {(lesson as any).linkedActivity ? `Exercício: ${(lesson as any).linkedActivity.titulo}` : (lesson.tipo === 'prova' ? 'Prova Final' : 'Atividade / Questionário')}
             </h2>
             {submitted && (
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>

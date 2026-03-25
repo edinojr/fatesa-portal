@@ -1,6 +1,6 @@
-import React from 'react'
-import { BookOpen, Edit, Trash2, ChevronRight, Plus, ClipboardList, Award, PlayCircle, Eye, FileText, Upload, CheckCircle2, Loader2 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { BookOpen, Edit, Trash2, ChevronRight, Plus, ClipboardList, Award, PlayCircle, Eye, FileText, Upload, CheckCircle2, Loader2, ChevronUp, ChevronDown, Layers, GripVertical } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 interface ContentManagementProps {
   courses: any[]
@@ -22,11 +22,14 @@ interface ContentManagementProps {
   handleDelete: (table: 'cursos' | 'livros' | 'aulas', id: string) => Promise<void>
   handleRemoveFile: (table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
+  handleReorder: (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void) => Promise<void>
+  handleMoveTo: (id: string, targetId: string, items: any[], fetchFn: () => void) => Promise<void>
   setShowAddCourse: (val: boolean) => void
   setShowAddBook: (val: boolean) => void
   setShowAddLesson: (val: boolean) => void
   setShowAddContent: (val: boolean) => void
   setAddingLessonType: (val: string) => void
+  setAddingBloco: (val: number | null) => void
   setEditingItem: (val: { type: 'course' | 'book' | 'lesson' | 'content', data: any } | null) => void
   setEditingLessonContent: (val: any) => void
   setLessonBlocks: (val: any[]) => void
@@ -34,6 +37,38 @@ interface ContentManagementProps {
   setEditingQuiz: (val: any) => void
   setQuizQuestions: (val: any[]) => void
   uploading: string | null
+}
+
+const groupByBloco = (items: any[]): Map<number, any[]> => {
+  const map = new Map<number, any[]>()
+  for (const item of items) {
+    const key = item.bloco_id ?? 0
+    if (!map.has(key)) map.set(key, [])
+    map.get(key)!.push(item)
+  }
+  map.forEach((arr) => arr.sort((a, b) => (a.ordem || 0) - (b.ordem || 0)))
+  return map
+}
+
+const tipoLabel = (tipo: string) => {
+  switch (tipo) {
+    case 'gravada': return 'Vídeo Aula'
+    case 'ao_vivo': return 'Aula ao Vivo'
+    case 'atividade': return 'Exercício'
+    case 'prova': return 'Prova Final'
+    case 'material': return 'Lição/Material'
+    default: return tipo
+  }
+}
+
+const tipoIcon = (tipo: string, size = 20) => {
+  switch (tipo) {
+    case 'gravada': return <PlayCircle size={size} color="var(--primary)" />
+    case 'ao_vivo': return <PlayCircle size={size} color="#38bdf8" />
+    case 'atividade': return <ClipboardList size={size} color="var(--success)" />
+    case 'prova': return <Award size={size} color="#EAB308" />
+    default: return <FileText size={size} color="var(--text-muted)" />
+  }
 }
 
 const ContentManagement: React.FC<ContentManagementProps> = ({
@@ -56,11 +91,14 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   handleDelete,
   handleRemoveFile,
   handleFileUpload,
+  handleReorder,
+  handleMoveTo,
   setShowAddCourse,
   setShowAddBook,
   setShowAddLesson,
   setShowAddContent,
   setAddingLessonType,
+  setAddingBloco,
   setEditingItem,
   setEditingLessonContent,
   setLessonBlocks,
@@ -69,48 +107,87 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   setQuizQuestions,
   uploading
 }) => {
-  const navigate = useNavigate();
+  const [reorderLoading, setReorderLoading] = useState<string | null>(null)
+  const [draggedId, setDraggedId] = useState<string | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
+
+  const canEdit = userRole === 'admin' || userRole === 'suporte' || userRole === 'professor'
+
+  const nextBloco = lessonItems.length > 0
+    ? Math.max(...lessonItems.map(i => i.bloco_id ?? 0)) + 1
+    : 1
+
+  const handleAddToBloco = (tipo: string, bloco: number) => {
+    setAddingLessonType(tipo)
+    setAddingBloco(bloco)
+    setShowAddContent(true)
+  }
+
+  const doReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void) => {
+    setReorderLoading(id + direction)
+    await handleReorder(id, direction, items, fetchFn)
+    setReorderLoading(null)
+  }
+
+  // HTML5 Drag and Drop Handlers
+  const onDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedId(id)
+    e.dataTransfer.setData('text/plain', id)
+    e.dataTransfer.effectAllowed = 'move'
+    // Optional: cursor feedback
+    const ghost = e.currentTarget.cloneNode(true) as HTMLElement
+    ghost.style.opacity = '0.5'
+  }
+
+  const onDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault()
+    if (id !== dragOverId) setDragOverId(id)
+  }
+
+  const onDrop = async (e: React.DragEvent, targetId: string, items: any[], fetchFn: () => void) => {
+    e.preventDefault()
+    setDragOverId(null)
+    const id = e.dataTransfer.getData('text/plain')
+    if (id === targetId) return
+    
+    setReorderLoading(id + 'drag')
+    await handleMoveTo(id, targetId, items, fetchFn)
+    setReorderLoading(null)
+    setDraggedId(null)
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-      {/* Header for Content Tab */}
+      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {selectedCourse && (
-            <button 
-              className="btn btn-outline" 
-              style={{ width: 'auto', padding: '0.5rem' }} 
-              onClick={() => { setSelectedCourse(null); setSelectedBook(null); setSelectedLesson(null); }}
-            >
+            <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }}
+              onClick={() => { setSelectedCourse(null); setSelectedBook(null); setSelectedLesson(null); }}>
               <ChevronRight style={{ transform: 'rotate(180deg)' }} /> Voltar Cursos
             </button>
           )}
           {selectedBook && (
-            <button 
-              className="btn btn-outline" 
-              style={{ width: 'auto', padding: '0.5rem' }} 
-              onClick={() => { setSelectedBook(null); setSelectedLesson(null); }}
-            >
+            <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }}
+              onClick={() => { setSelectedBook(null); setSelectedLesson(null); }}>
               <ChevronRight style={{ transform: 'rotate(180deg)' }} /> Voltar Livros
             </button>
           )}
           {selectedLesson && (
-            <button 
-              className="btn btn-outline" 
-              style={{ width: 'auto', padding: '0.5rem' }} 
-              onClick={() => setSelectedLesson(null)}
-            >
+            <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }}
+              onClick={() => setSelectedLesson(null)}>
               <ChevronRight style={{ transform: 'rotate(180deg)' }} /> Voltar Lições
             </button>
           )}
           <h3 style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-            {!selectedCourse ? 'Todos os Cursos' : 
-             !selectedBook ? `Livros de ${selectedCourse.nome}` : 
-             !selectedLesson ? `Lições de ${selectedBook.titulo}` : 
+            {!selectedCourse ? 'Todos os Cursos' :
+             !selectedBook ? `Livros de ${selectedCourse.nome}` :
+             !selectedLesson ? `Lições de ${selectedBook.titulo}` :
              `Conteúdo de ${selectedLesson.titulo}`}
           </h3>
         </div>
-        {(userRole === 'admin' || userRole === 'suporte' || userRole === 'professor') && (
+
+        {canEdit && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {!selectedCourse ? (
               <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => setShowAddCourse(true)}>
@@ -121,39 +198,32 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                 <Plus size={20} /> Novo Livro
               </button>
             ) : !selectedLesson ? (
-              <button className="btn btn-primary" style={{ width: 'auto', background: 'var(--primary)' }} onClick={() => setShowAddLesson(true)}>
+              <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => setShowAddLesson(true)}>
                 <Plus size={18} /> Nova Lição
               </button>
             ) : (
-              <>
-                <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setAddingLessonType('gravada'); setShowAddContent(true); }}>
-                  <Plus size={18} /> Novo Vídeo
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button className="btn btn-outline" style={{ width: 'auto', gap: '0.4rem', color: 'var(--primary)' }}
+                  onClick={() => { setAddingBloco(null); setAddingLessonType('material'); setShowAddContent(true); }}
+                  title="Upload de Múltiplos Arquivos">
+                  <Upload size={16} /> Upload Múltiplo
                 </button>
-                <button className="btn btn-primary" style={{ width: 'auto', background: 'var(--success)' }} onClick={() => { setAddingLessonType('atividade'); setShowAddContent(true); }}>
-                  <ClipboardList size={18} /> Nova Atividade
+                <button className="btn btn-primary" style={{ width: 'auto', gap: '0.4rem' }}
+                  onClick={() => { setAddingBloco(nextBloco); setAddingLessonType('material'); setShowAddContent(true); }}
+                  title="Adicionar novo bloco">
+                  <Layers size={16} /> Novo Bloco #{nextBloco}
                 </button>
-                <button className="btn btn-primary" style={{ width: 'auto', background: 'var(--accent)' }} onClick={() => { setAddingLessonType('prova'); setShowAddContent(true); }}>
-                  <Award size={18} /> Nova Prova
-                </button>
-                <button className="btn btn-primary" style={{ width: 'auto', background: 'var(--text-muted)' }} onClick={() => { setAddingLessonType('material'); setShowAddContent(true); }}>
-                  <FileText size={18} /> Novo Material
-                </button>
-              </>
+              </div>
             )}
           </div>
         )}
       </div>
-      
-      {/* Conditional Rendering of Lists */}
+
+      {/* ── Courses ── */}
       {!selectedCourse ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
           {courses.map(course => (
-            <div key={course.id} className="course-card" style={{ 
-              padding: '2.5rem', 
-              background: 'var(--glass)', 
-              border: '1px solid var(--glass-border)',
-              borderRadius: '24px'
-            }}>
+            <div key={course.id} className="course-card" style={{ padding: '2.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 700 }}>{course.nome}</h3>
                 {(userRole === 'admin' || userRole === 'suporte') && (
@@ -165,47 +235,35 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
               </div>
               <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '16px', marginBottom: '2rem' }}>
                 <p style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <BookOpen size={18} color="var(--primary)" /> 
-                  <strong>{course.livros?.[0]?.count || 0} Livros</strong>
+                  <BookOpen size={18} color="var(--primary)" /> <strong>{course.livros?.[0]?.count || 0} Livros</strong>
                 </p>
               </div>
               <button className="btn btn-primary" onClick={() => { setSelectedCourse(course); fetchBooks(course.id); }}>Gerenciar Conteúdo</button>
             </div>
           ))}
         </div>
+
+      /* ── Books ── */
       ) : !selectedBook ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
           {books.map(book => (
-            <div key={book.id} className="course-card" style={{ 
-              padding: '2rem', 
-              background: 'var(--glass)', 
-              border: '1px solid var(--glass-border)',
-              borderRadius: '20px'
-            }}>
+            <div key={book.id} className="course-card" style={{ padding: '2rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                   {book.capa_url ? (
-                    <img 
-                      src={book.capa_url} 
-                      alt="Capa" 
-                      style={{ width: '50px', height: '70px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer', border: '1px solid var(--glass-border)' }} 
-                      onClick={() => setEditingItem({ type: 'book', data: book })}
-                      title="Clique para editar capa"
-                    />
+                    <img src={book.capa_url} alt="Capa" style={{ width: '50px', height: '70px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer', border: '1px solid var(--glass-border)' }}
+                      onClick={() => setEditingItem({ type: 'book', data: book })} title="Clique para editar capa" />
                   ) : (
-                    <div 
-                      style={{ width: '50px', height: '70px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '1px dashed var(--glass-border)' }}
-                      onClick={() => setEditingItem({ type: 'book', data: book })}
-                      title="Clique para adicionar capa"
-                    >
+                    <div style={{ width: '50px', height: '70px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '1px dashed var(--glass-border)' }}
+                      onClick={() => setEditingItem({ type: 'book', data: book })} title="Clique para adicionar capa">
                       <BookOpen size={20} color="var(--primary)" />
                     </div>
                   )}
                   <h4 style={{ fontSize: '1.25rem', marginBottom: 0 }}>{book.titulo}</h4>
                 </div>
-                {(userRole === 'admin' || userRole === 'suporte' || userRole === 'professor') && (
+                {canEdit && (
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'book', data: book })} title="Editar Livro"><Edit size={16} /></button>
+                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'book', data: book })}><Edit size={16} /></button>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} onClick={() => handleDelete('livros', book.id)}><Trash2 size={16} /></button>
                   </div>
                 )}
@@ -213,26 +271,31 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
                 Ordem: {book.ordem} • {book.aulas?.[0]?.count || 0} Lições
               </p>
-              
               <button className="btn btn-primary" onClick={() => { setSelectedBook(book); fetchLessons(book.id); }}>Gerenciar Lições</button>
             </div>
           ))}
           {books.length === 0 && <p style={{ textAlign: 'center', gridColumn: '1/-1', color: 'var(--text-muted)' }}>Nenhum livro cadastrado para este curso.</p>}
         </div>
+
+      /* ── Lessons ── */
       ) : !selectedLesson ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-          {lessons.map(lesson => (
-            <div key={lesson.id} className="course-card" style={{ 
-              padding: '2rem', 
-              background: 'var(--glass)', 
-              border: '1px solid var(--glass-border)',
-              borderRadius: '20px'
-            }}>
+          {lessons.map((lesson, idx) => (
+            <div key={lesson.id} className="course-card" style={{ padding: '2rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <h4 style={{ fontSize: '1.25rem', marginBottom: 0 }}>{lesson.titulo}</h4>
-                {(userRole === 'admin' || userRole === 'suporte' || userRole === 'professor') && (
+                {canEdit && (
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'lesson', data: lesson })} title="Editar Lição"><Edit size={16} /></button>
+                    {/* Reorder arrows */}
+                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem' }} disabled={idx === 0}
+                      onClick={() => doReorder(lesson.id, 'up', lessons, () => fetchLessons(selectedBook.id))}>
+                      {reorderLoading === lesson.id + 'up' ? <Loader2 size={14} className="spinner" /> : <ChevronUp size={14} />}
+                    </button>
+                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem' }} disabled={idx === lessons.length - 1}
+                      onClick={() => doReorder(lesson.id, 'down', lessons, () => fetchLessons(selectedBook.id))}>
+                      {reorderLoading === lesson.id + 'down' ? <Loader2 size={14} className="spinner" /> : <ChevronDown size={14} />}
+                    </button>
+                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'lesson', data: lesson })}><Edit size={16} /></button>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} onClick={() => handleDelete('aulas', lesson.id)}><Trash2 size={16} /></button>
                   </div>
                 )}
@@ -240,87 +303,176 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
                 Ordem: {lesson.ordem} • {lesson.children?.[0]?.count || 0} Itens de Conteúdo
               </p>
-              
               <button className="btn btn-primary" onClick={() => { setSelectedLesson(lesson); fetchLessonItems(lesson.id); }}>Ver Conteúdo</button>
             </div>
           ))}
           {lessons.length === 0 && <p style={{ textAlign: 'center', gridColumn: '1/-1', color: 'var(--text-muted)' }}>Nenhuma lição cadastrada para este livro.</p>}
         </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {lessonItems.map(item => (
-            <div key={item.id} style={{ 
-              padding: '1.5rem', 
-              background: 'var(--glass)', 
-              border: '1px solid var(--glass-border)',
-              borderRadius: '16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ 
-                  width: '48px', 
-                  height: '48px', 
-                  borderRadius: '12px', 
-                  background: 'rgba(255,255,255,0.05)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: 'var(--primary)'
-                }}>
-                  {item.tipo === 'gravada' ? <PlayCircle size={24} /> : 
-                   item.tipo === 'atividade' ? <ClipboardList size={24} /> : 
-                   item.tipo === 'prova' ? <Award size={24} /> : 
-                   item.tipo === 'material' ? <FileText size={24} /> : <FileText size={24} />}
-                </div>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '1.1rem' }}>{item.titulo}</h4>
-                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    {item.tipo === 'gravada' ? 'Vídeo Aula' : 
-                     item.tipo === 'atividade' ? 'Atividade' : 
-                     item.tipo === 'prova' ? 'Prova Final' : 
-                     item.tipo === 'material' ? 'Material de Apoio' : item.tipo}
-                    {item.ordem && ` • Ordem: ${item.ordem}`}
-                  </p>
-                </div>
-              </div>
-              
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <div style={{ marginRight: '1rem' }}>
-                  <label className="btn btn-outline" style={{ width: 'auto', fontSize: '0.8rem', padding: '0.5rem 1rem', cursor: 'pointer' }}>
-                    {uploading === item.id ? <Loader2 className="spinner" /> : <Upload size={14} />} {item.arquivo_url ? 'Alterar PDF' : 'Enviar PDF'}
-                    <input type="file" hidden accept=".pdf" onChange={(e) => handleFileUpload(e, 'aulas', item.id, 'arquivo_url')} />
-                  </label>
-                </div>
-                
-                {(item.tipo === 'gravada' || item.tipo === 'ao_vivo') && (
-                  <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => {
-                    setEditingLessonContent(item);
-                    setLessonBlocks(Array.isArray(item.conteudo) ? item.conteudo : []);
-                    setLessonMaterials(Array.isArray(item.materiais) ? item.materiais : []);
-                  }} title="Editar Conteúdo"><FileText size={18} /></button>
-                )}
-                
-                {(item.tipo === 'prova' || item.tipo === 'atividade') && (
-                  <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => { setEditingQuiz(item); setQuizQuestions(item.questionario || []); }} title="Editar Questões"><ClipboardList size={18} /></button>
-                )}
 
-                <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'content', data: item })} title="Editar Detalhes"><Edit size={18} /></button>
-                <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} onClick={() => handleDelete('aulas', item.id)} title="Excluir"><Trash2 size={18} /></button>
-              </div>
-            </div>
-          ))}
-          {lessonItems.length === 0 && (
+      /* ── Lesson Items grouped by Bloco ── */
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {lessonItems.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '4rem', background: 'var(--glass)', borderRadius: '24px', border: '1px dashed var(--glass-border)' }}>
-              <p style={{ color: 'var(--text-muted)' }}>Nenhum conteúdo adicionado a esta lição.</p>
-              <button className="btn btn-primary" style={{ width: 'auto', marginTop: '1rem' }} onClick={() => { setAddingLessonType('gravada'); setShowAddContent(true); }}>Adicionar Primeiro Item</button>
+              <Layers size={40} color="var(--primary)" style={{ marginBottom: '1rem', opacity: 0.5 }} />
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Nenhum conteúdo adicionado. Crie o primeiro bloco.</p>
+              <button className="btn btn-primary" style={{ width: 'auto' }}
+                onClick={() => { setAddingBloco(1); setAddingLessonType('material'); setShowAddContent(true); }}>
+                <Plus size={18} /> Criar Bloco 1
+              </button>
             </div>
+          ) : (
+            (() => {
+              const grouped = groupByBloco(lessonItems)
+              const sortedBlocoKeys = Array.from(grouped.keys()).sort((a, b) => a - b)
+
+              return sortedBlocoKeys.map(blocoKey => {
+                const items = grouped.get(blocoKey)!
+                const hasVideo = items.some(i => i.tipo === 'gravada' || i.tipo === 'ao_vivo')
+                const lessonsCount = items.filter(i => i.tipo === 'material' || (!['gravada','ao_vivo','atividade','prova'].includes(i.tipo))).length
+                const exercisesCount = items.filter(i => i.tipo === 'atividade' || i.tipo === 'prova').length
+                const videosCount = items.filter(i => i.tipo === 'gravada' || i.tipo === 'ao_vivo').length
+
+                return (
+                  <div key={blocoKey} style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '20px', overflow: 'hidden' }}>
+                    {/* Block Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', background: blocoKey === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(var(--primary-rgb), 0.08)', borderBottom: '1px solid var(--glass-border)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <Layers size={18} color="var(--primary)" />
+                        <span style={{ fontWeight: 700, fontSize: '1rem' }}>
+                          {blocoKey === 0 ? 'Sem Bloco Atribuído' : `Bloco ${blocoKey}`}
+                        </span>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '10px' }}>
+                          {lessonsCount} lição(ões) · {exercisesCount} exercício(s) · {videosCount} vídeo(s)
+                        </span>
+                      </div>
+                      {canEdit && blocoKey !== 0 && (
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.7rem', fontSize: '0.75rem' }}
+                            onClick={() => handleAddToBloco('material', blocoKey)} title="Adicionar lição/material a este bloco">
+                            <Plus size={14} /> Lição
+                          </button>
+                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.7rem', fontSize: '0.75rem', color: 'var(--success)' }}
+                            onClick={() => handleAddToBloco('atividade', blocoKey)} title="Adicionar exercício a este bloco">
+                            <Plus size={14} /> Exercício
+                          </button>
+                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.7rem', fontSize: '0.75rem', color: 'var(--primary)' }}
+                            onClick={() => handleAddToBloco('gravada', blocoKey)} title="Adicionar vídeo-aula a este bloco">
+                            <Plus size={14} /> Vídeo
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Items list */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                      {items.map((item, idx) => (
+                        <div 
+                          key={item.id} 
+                          draggable={canEdit}
+                          onDragStart={(e) => onDragStart(e, item.id)}
+                          onDragOver={(e) => onDragOver(e, item.id)}
+                          onDrop={(e) => onDrop(e, item.id, lessonItems, () => fetchLessonItems(selectedLesson.id))}
+                          style={{
+                            padding: '1rem 1.5rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            borderBottom: idx < items.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                            transition: 'all 0.2s ease',
+                            borderTop: dragOverId === item.id ? '2px solid var(--primary)' : 'none',
+                            opacity: draggedId === item.id ? 0.4 : 1,
+                            background: item.tipo === 'gravada' || item.tipo === 'ao_vivo'
+                              ? 'rgba(var(--primary-rgb), 0.04)'
+                              : item.tipo === 'atividade' || item.tipo === 'prova'
+                              ? 'rgba(16,185,129,0.03)'
+                              : 'transparent'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            {canEdit && (
+                              <div style={{ cursor: 'grab', color: 'var(--text-muted)', opacity: 0.5, display: 'flex', alignItems: 'center' }} title="Clique e arraste para reordenar">
+                                <GripVertical size={20} />
+                              </div>
+                            )}
+
+                            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              {tipoIcon(item.tipo, 18)}
+                            </div>
+                            <div>
+                              <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600 }}>{item.titulo}</h4>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '2px' }}>
+                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{tipoLabel(item.tipo)}</span>
+                                {item.tipo === 'gravada' && (
+                                  <span style={{ fontSize: '0.65rem', background: 'rgba(var(--primary-rgb),0.15)', color: 'var(--primary)', padding: '1px 6px', borderRadius: '6px' }}>
+                                    🔓 Auto-liberado ao concluir o bloco
+                                  </span>
+                                )}
+                                {(item.tipo === 'atividade' || item.tipo === 'prova') && (
+                                  <span style={{ fontSize: '0.65rem', background: 'rgba(16,185,129,0.1)', color: 'var(--success)', padding: '1px 6px', borderRadius: '6px' }}>
+                                    🔐 Liberado pelo professor
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <label className="btn btn-outline" style={{ width: 'auto', fontSize: '0.75rem', padding: '0.4rem 0.7rem', cursor: 'pointer' }}>
+                              {uploading === item.id ? <Loader2 size={12} className="spinner" /> : <Upload size={12} />} {item.arquivo_url ? 'Alterar' : 'Enviar PDF'}
+                              <input type="file" hidden accept=".pdf" onChange={(e) => handleFileUpload(e, 'aulas', item.id, 'arquivo_url')} />
+                            </label>
+
+                            {(item.tipo === 'gravada' || item.tipo === 'ao_vivo') && (
+                              <button className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem' }}
+                                onClick={() => { setEditingLessonContent(item); setLessonBlocks(Array.isArray(item.conteudo) ? item.conteudo : []); setLessonMaterials(Array.isArray(item.materiais) ? item.materiais : []); }}
+                                title="Editar Conteúdo">
+                                <FileText size={14} />
+                              </button>
+                            )}
+
+                            {(item.tipo === 'prova' || item.tipo === 'atividade') && (
+                              <button className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem' }}
+                                onClick={() => { setEditingQuiz(item); setQuizQuestions(item.questionario || []); }}
+                                title="Editar Questões">
+                                <ClipboardList size={14} />
+                              </button>
+                            )}
+
+                            <Link to={`/lesson/${item.id}`} className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem', textDecoration: 'none', color: 'inherit', display: 'flex' }} title="Visualizar">
+                              <Eye size={14} />
+                            </Link>
+
+                            <button className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem' }} onClick={() => setEditingItem({ type: 'content', data: item })} title="Editar"><Edit size={14} /></button>
+                            <button className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem', color: 'var(--error)' }} onClick={() => handleDelete('aulas', item.id)} title="Excluir"><Trash2 size={14} /></button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Block legend */}
+                    {blocoKey !== 0 && (
+                      <div style={{ padding: '0.75rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.04)', background: 'rgba(255,255,255,0.01)', display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.7rem', color: lessonsCount >= 2 ? 'var(--success)' : 'var(--text-muted)' }}>
+                          {lessonsCount >= 2 ? '✓' : '○'} {lessonsCount}/2 lições
+                        </span>
+                        <span style={{ fontSize: '0.7rem', color: exercisesCount >= 2 ? 'var(--success)' : 'var(--text-muted)' }}>
+                          {exercisesCount >= 2 ? '✓' : '○'} {exercisesCount}/2 exercícios
+                        </span>
+                        <span style={{ fontSize: '0.7rem', color: hasVideo ? 'var(--primary)' : 'var(--text-muted)' }}>
+                          {hasVideo ? '✓' : '○'} {videosCount}/1 vídeo-aula
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )
+              })
+            })()
           )}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ContentManagement;
+export default ContentManagement

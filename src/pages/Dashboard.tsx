@@ -127,6 +127,23 @@ const Dashboard = () => {
       const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
       const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
 
+      // Fetch Grades and Progress FIRST so we can use them to unlock/lock block videos
+      const [{ data: respostasData }, { data: progData }] = await Promise.all([
+        supabase
+          .from('respostas_aulas')
+          .select('id, status, nota, tentativas, primeira_correcao_at, aula_id, aulas(titulo, tipo)')
+          .eq('aluno_id', profile.id),
+        supabase
+          .from('progresso')
+          .select('aula_id, concluida')
+          .eq('aluno_id', profile.id)
+      ]);
+      
+      const resData = respostasData || [];
+      const pData = progData || [];
+      setAtividades(resData);
+      setProgressoAulas(pData);
+
       // Fetch Courses
       const { data: allCourses } = await supabase
         .from('cursos')
@@ -155,8 +172,22 @@ const Dashboard = () => {
             livros: sortedLivros.map((l: any) => {
               const paymentReleased = isStaff || exemptStatus || (l.ordem || 1) <= releasedCount;
               const professorReleased = isStaff || releasedModulos.includes(l.id);
-              
               const isCurrent = !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount;
+
+              // Helper for block completion
+              const allBlockItemsFinished = (blocoId: number, currentAulas: any[]) => {
+                const blockItems = currentAulas.filter(a => a.bloco_id === blocoId && a.tipo !== 'gravada' && a.tipo !== 'ao_vivo');
+                if (blockItems.length === 0) return true;
+                
+                return blockItems.every(item => {
+                  if (item.tipo === 'atividade' || item.tipo === 'prova') {
+                    // Check if exercise is completed (exists and maybe approved/passed)
+                    return resData.some(r => r.aula_id === item.id);
+                  }
+                  // Check if material/lesson is completed
+                  return pData.some(p => p.aula_id === item.id && p.concluida);
+                });
+              };
 
               return {
                 ...l,
@@ -170,16 +201,19 @@ const Dashboard = () => {
                   // Structural items (licao containers) always show if module is released
                   if (a.tipo === 'licao') return professorReleased;
 
-                  // Video and material aulas are released automatically when the module is released by professor
-                  const isAutoReleasedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'material';
-                  if (isAutoReleasedType) return professorReleased;
+                  // Exercises and Provas require explicit release by professor
+                  const isExercise = a.tipo === 'atividade' || a.tipo === 'prova';
+                  if (isExercise) return releasedAtividades.includes(a.id);
 
-                  // If it's a PDF lesson without explicit tipo, release automatically (as long as module is released)
-                  const isPdfLesson = (a.tipo !== 'atividade' && a.tipo !== 'prova') && (a.pdf_url || a.arquivo_url);
-                  if (isPdfLesson) return professorReleased;
+                  // Video Aulas with bloco_id: strict auto-unlock logic (All students)
+                  if ((a.tipo === 'gravada' || a.tipo === 'ao_vivo') && a.bloco_id) {
+                    if (isStaff) return true;
+                    if (!professorReleased) return false;
+                    return allBlockItemsFinished(a.bloco_id, l.aulas);
+                  }
 
-                  // Activities and provas require explicit release
-                  return releasedAtividades.includes(a.id);
+                  // Other items (material, video without block) release automatically when module is released
+                  return professorReleased;
                 }),
                 progresso: isStaff ? 100 : 0, 
                 isReleased: paymentReleased && professorReleased,
@@ -189,20 +223,6 @@ const Dashboard = () => {
           };
         }).filter((c: any) => c.livros.length > 0);
         setCourses(mappedCourses);
-
-        // Fetch Grades and Progress for Archiving logic
-        const { data: respostasData } = await supabase
-          .from('respostas_aulas')
-          .select('id, status, nota, tentativas, primeira_correcao_at, aula_id, aulas(titulo, tipo)')
-          .eq('aluno_id', profile.id)
-          .order('created_at', { ascending: false });
-        if (respostasData) setAtividades(respostasData);
-
-        const { data: progData } = await supabase
-          .from('progresso')
-          .select('aula_id, concluida')
-          .eq('aluno_id', profile.id);
-        if (progData) setProgressoAulas(progData);
       }
     } catch (err: any) {
       console.error("Dashboard Error:", err);
