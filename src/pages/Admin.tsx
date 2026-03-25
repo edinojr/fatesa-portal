@@ -124,6 +124,7 @@ const Admin = () => {
 
   useEffect(() => {
     if (userRole) {
+      console.log("Fatesa Portal v1.6.1 - Sanitização de upload ativa");
       fetchData()
       if (userRole === 'admin') fetchNucleosGlobal()
     }
