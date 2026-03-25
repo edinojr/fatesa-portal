@@ -117,6 +117,16 @@ const Dashboard = () => {
       }
       if (roles.length > 1) setAvailableRoles(roles)
 
+      // Fetch Releases for this Nucleo
+      const { data: releases } = await supabase
+        .from('liberacoes_nucleo')
+        .select('item_id, item_type')
+        .eq('nucleo_id', profile.nucleo_id)
+        .eq('liberado', true);
+
+      const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
+      const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
+
       // Fetch Courses
       const { data: allCourses } = await supabase
         .from('cursos')
@@ -142,19 +152,50 @@ const Dashboard = () => {
           return {
             id: c.id,
             nome: c.nome,
-            livros: sortedLivros.map((l: any) => ({
-              ...l,
-              aulas: (l.aulas || []).filter((a: any) => {
-                if (isStaff) return true;
-                return !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
-              }),
-              progresso: isStaff ? 100 : 0, 
-              isReleased: isStaff || exemptStatus || (l.ordem || 1) <= releasedCount,
-              isCurrent: !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount
-            }))
+            livros: sortedLivros.map((l: any) => {
+              const paymentReleased = isStaff || exemptStatus || (l.ordem || 1) <= releasedCount;
+              const professorReleased = isStaff || releasedModulos.includes(l.id);
+              
+              const isCurrent = !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount;
+
+              return {
+                ...l,
+                aulas: (l.aulas || []).filter((a: any) => {
+                  if (isStaff) return true;
+                  
+                  // Filter by Nucleo assignment first
+                  const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
+                  if (!matchesNucleo) return false;
+
+                  // If it's a PDF lesson, release automatically (as long as module is released)
+                  const isPdfLesson = (a.tipo !== 'atividade' && a.tipo !== 'prova') && (a.pdf_url || a.arquivo_url);
+                  if (isPdfLesson) return true;
+
+                  // Activities and non-PDF lessons require manual release
+                  return releasedAtividades.includes(a.id);
+                }),
+                progresso: isStaff ? 100 : 0, 
+                isReleased: paymentReleased && professorReleased,
+                isCurrent: isCurrent && professorReleased
+              };
+            })
           };
         }).filter((c: any) => c.livros.length > 0);
         setCourses(mappedCourses);
+
+        // Fetch Grades and Progress for Archiving logic
+        const { data: respostasData } = await supabase
+          .from('respostas_aulas')
+          .select('id, status, nota, tentativas, primeira_correcao_at, aula_id, aulas(titulo, tipo)')
+          .eq('aluno_id', profile.id)
+          .order('created_at', { ascending: false });
+        if (respostasData) setAtividades(respostasData);
+
+        const { data: progData } = await supabase
+          .from('progresso')
+          .select('aula_id, concluida')
+          .eq('aluno_id', profile.id);
+        if (progData) setProgressoAulas(progData);
       }
     } catch (err: any) {
       console.error("Dashboard Error:", err);
@@ -198,21 +239,6 @@ const Dashboard = () => {
     if (!profile) return
     const { data: nucs } = await supabase.from('nucleos').select('id, nome, cidade, estado').order('nome')
     if (nucs) setAvailableNucleos(nucs)
-
-    const { data: respostasData } = await supabase
-      .from('respostas_aulas')
-      .select('id, status, nota, tentativas, primeira_correcao_at, aulas(titulo, tipo)')
-      .eq('aluno_id', profile.id)
-      .order('created_at', { ascending: false })
-
-    if (respostasData) setAtividades(respostasData)
-
-    const { data: progData } = await supabase
-      .from('progresso')
-      .select('aula_id, concluida')
-      .eq('aluno_id', profile.id)
-    
-    if (progData) setProgressoAulas(progData)
   }
 
   const fetchNoticeBoard = async (nucleoId: string) => {

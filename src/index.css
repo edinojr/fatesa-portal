@@ -666,12 +666,21 @@ body {
 }
 
 /* Scrollbar personalizada para tabelas no Safari */
-.admin-table::-webkit-scrollbar {
-  height: 6px;
+.admin-table-scrollbar::-webkit-scrollbar {
+  height: 12px; /* Aumentado conforme solicitado */
+  width: 12px;
 }
-.admin-table::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
+.admin-table-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 10px;
+}
+.admin-table-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+  border: 3px solid var(--bg-card); /* Efeito de separação */
+}
+.admin-table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #AB47BC;
 }
 
 .file-upload-zone {

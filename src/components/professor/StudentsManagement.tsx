@@ -1,14 +1,21 @@
 import React from 'react'
-import { Users } from 'lucide-react'
+import { Users, Trash2, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { Student } from '../../types/professor'
 
 interface StudentsManagementProps {
   allStudents: Student[]
   searchTerm: string
   setSearchTerm: (val: string) => void
+  actionLoading: string | null
+  handleApproveAccess: (userId: string) => Promise<void>
+  handleRejectAccess: (userId: string) => Promise<void>
+  handleDeleteUser: (userId: string) => Promise<void>
 }
 
-const StudentsManagement: React.FC<StudentsManagementProps> = ({ allStudents, searchTerm, setSearchTerm }) => {
+export default function StudentsManagement({ 
+  allStudents, searchTerm, setSearchTerm, actionLoading,
+  handleApproveAccess, handleRejectAccess, handleDeleteUser
+}: StudentsManagementProps) {
   const filteredStudents = allStudents.filter(s => 
     s.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
     s.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -55,16 +62,17 @@ const StudentsManagement: React.FC<StudentsManagementProps> = ({ allStudents, se
                 borderLeft: '4px solid var(--primary)'
               }}>
                 <Users size={20} color="var(--primary)" />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>{nucleoName} <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 400 }}>({nucleoStudents.length} alunos)</span></h3>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>{nucleoName} <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 400 }}>({nucleoStudents.length} alunos)</span></h3>
               </div>
 
-              <div className="data-card">
-                <table className="admin-table">
+              <div className="admin-table-scrollbar" style={{ width: '100%', overflowX: 'auto', marginBottom: '1rem', paddingBottom: '0.5rem' }}>
+                <table className="admin-table" style={{ minWidth: '900px' }}>
                   <thead>
                     <tr>
                       <th>Nome</th>
                       <th>E-mail</th>
                       <th>Status</th>
+                      <th style={{ textAlign: 'right' }}>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -74,7 +82,48 @@ const StudentsManagement: React.FC<StudentsManagementProps> = ({ allStudents, se
                         <tr key={student.id}>
                           <td style={{ fontWeight: 600 }}>{student.nome}</td>
                           <td>{student.email}</td>
-                          <td><span className={`admin-badge status-${student.status_nucleo || 'pendente'}`}>{student.status_nucleo || 'pendente'}</span></td>
+                          <td>
+                            <span className={`admin-badge status-${student.status_nucleo || 'pendente'}`}>
+                              {student.status_nucleo || 'pendente'}
+                            </span>
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                              {student.status_nucleo !== 'aprovado' && (
+                                <button 
+                                  className="btn btn-primary"
+                                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', width: 'auto' }}
+                                  onClick={() => handleApproveAccess(student.id)}
+                                  disabled={actionLoading === student.id}
+                                  title="Aprovar Aluno"
+                                >
+                                  {actionLoading === student.id ? <Loader2 className="spinner" size={14} /> : <CheckCircle size={14} />}
+                                  <span style={{ marginLeft: '4px' }}>Aprovar</span>
+                                </button>
+                              )}
+                              {student.status_nucleo !== 'recusado' && (
+                                <button 
+                                  className="btn"
+                                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', width: 'auto', background: 'rgba(255,255,255,0.05)', color: 'var(--text-main)', border: '1px solid var(--glass-border)' }}
+                                  onClick={() => handleRejectAccess(student.id)}
+                                  disabled={actionLoading === student.id}
+                                  title="Recusar Acesso"
+                                >
+                                  <XCircle size={14} />
+                                  <span style={{ marginLeft: '4px' }}>Recusar</span>
+                                </button>
+                              )}
+                              <button 
+                                className="btn"
+                                style={{ padding: '0.4rem', fontSize: '0.75rem', width: 'auto', background: 'rgba(255, 77, 77, 0.1)', color: 'var(--error)', border: '1px solid rgba(255, 77, 77, 0.2)' }}
+                                onClick={() => handleDeleteUser(student.id)}
+                                disabled={actionLoading === student.id}
+                                title="Excluir Aluno Permanentemente"
+                              >
+                                {actionLoading === student.id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
+                              </button>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                   </tbody>
@@ -91,5 +140,3 @@ const StudentsManagement: React.FC<StudentsManagementProps> = ({ allStudents, se
     </div>
   )
 }
-
-export default StudentsManagement

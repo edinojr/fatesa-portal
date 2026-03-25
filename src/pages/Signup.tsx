@@ -21,7 +21,7 @@ const Signup = () => {
   const [isProfessor, setIsProfessor] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [checkingEmail, setCheckingEmail] = useState(false)
-  const [preRegistered, setPreRegistered] = useState<{nome: string, tipo: string, nucleo: string} | null>(null)
+  const [preRegistered, setPreRegistered] = useState<{nome: string, tipo: string, nucleo: string, nucleo_id?: string} | null>(null)
   const [availableNucleos, setAvailableNucleos] = useState<{id: string, nome: string}[]>([])
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const Signup = () => {
           setPreRegistered(reg);
           setNome(reg.nome);
           setTipo(reg.tipo === 'admin' || reg.tipo === 'professor' ? 'online' : reg.tipo);
-          setNucleo(reg.nucleo || '');
+          setNucleo(reg.nucleo_id || reg.nucleo || '');
         } else {
           setPreRegistered(null);
         }
@@ -113,7 +113,8 @@ const Signup = () => {
           data: {
             full_name: nome,
             student_type: tipo,
-            nucleo: nucleo
+            nucleo: availableNucleos.find(n => n.id === nucleo)?.nome || (nucleo.includes('-') ? '' : nucleo),
+            nucleo_id: nucleo.includes('-') ? nucleo : null
           }
         }
       })
@@ -200,7 +201,7 @@ const Signup = () => {
               >
                 <option value="">Selecione seu núcleo...</option>
                 {availableNucleos.map(n => (
-                  <option key={n.id} value={n.nome}>{n.nome}</option>
+                  <option key={n.id} value={n.id}>{n.nome}</option>
                 ))}
               </select>
             </div>

@@ -168,29 +168,36 @@ const SubTable: React.FC<SubTableProps> = ({ title, icon, color, users, allNucle
         <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color }}>{title}</h4>
         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 400 }}>({users.length})</span>
       </div>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Nome / Email</th>
-            <th>Tipo</th>
-            <th>Polo / Núcleo</th>
-            <th>Status Acesso</th>
-            <th>Financeiro</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[...users].sort((a, b) => a.nome.localeCompare(b.nome)).map((user: any) => (
-            <UserRow
-              key={user.id}
-              user={user}
-              allNucleos={allNucleos}
-              actionLoading={actionLoading}
-              {...handlers}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className="admin-table-scrollbar" style={{ 
+        width: '100%', 
+        overflowX: 'auto', 
+        marginBottom: '1.5rem',
+        paddingBottom: '1rem'
+      }}>
+        <table className="admin-table" style={{ minWidth: '1000px' }}>
+          <thead>
+            <tr>
+              <th>Nome / Email</th>
+              <th>Tipo</th>
+              <th>Polo / Núcleo</th>
+              <th>Status Acesso</th>
+              <th>Financeiro</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...users].sort((a, b) => a.nome.localeCompare(b.nome)).map((user: any) => (
+              <UserRow
+                key={user.id}
+                user={user}
+                allNucleos={allNucleos}
+                actionLoading={actionLoading}
+                {...handlers}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

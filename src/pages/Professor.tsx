@@ -43,6 +43,7 @@ const Professor = () => {
 
   const [allStudents, setAllStudents] = useState<Student[]>([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [professorNucleos, setProfessorNucleos] = useState<any[]>([])
   
   // Grading state
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -50,6 +51,7 @@ const Professor = () => {
   const [gradeInput, setGradeInput] = useState<string>('')
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
   const [savingGrade, setSavingGrade] = useState(false)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -100,6 +102,8 @@ const Professor = () => {
             titulo,
             tipo,
             video_url,
+            pdf_url,
+            arquivo_url,
             created_at,
             nucleo_id
           )
@@ -114,6 +118,9 @@ const Professor = () => {
       const isAdmin = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.caminhos_acesso?.includes('admin') || user.email === 'edi.ben.jr@gmail.com'
 
       if (isAdmin) {
+        const { data: nData } = await supabase.from('nucleos').select('id, nome').order('nome')
+        if (nData) setProfessorNucleos(nData)
+
         const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').order('nome')
         if (sData) setAllStudents(sData)
 
@@ -133,8 +140,15 @@ const Professor = () => {
           .order('updated_at', { ascending: false })
         if (subData) setSubmissions(subData as any)
       } else {
-        const { data: myNucs } = await supabase.from('professor_nucleo').select('nucleo_id').eq('professor_id', user.id)
-        if (myNucs && myNucs.length > 0) {
+        const { data: myNucs } = await supabase
+          .from('professor_nucleo')
+          .select('nucleo_id, nucleos(id, nome)')
+          .eq('professor_id', user.id)
+        
+        if (myNucs) {
+          const nucs = myNucs.filter((n: any) => n.nucleos).map((n: any) => n.nucleos)
+          setProfessorNucleos(nucs)
+          
           const nucIds = myNucs.map(n => n.nucleo_id)
           const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').in('nucleo_id', nucIds).order('nome')
           if (sData) {
@@ -290,6 +304,61 @@ const Professor = () => {
     setLessons(sortedLessons)
   }
 
+  const handleApproveAccess = async (userId: string) => {
+    setActionLoading(userId)
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          status_nucleo: 'aprovado',
+          acesso_definitivo: true 
+        })
+        .eq('id', userId)
+      
+      if (error) throw error
+      setAllStudents(prev => prev.map(s => s.id === userId ? { ...s, status_nucleo: 'aprovado', acesso_definitivo: true } : s))
+      alert('Acesso aprovado com sucesso!')
+    } catch (err: any) {
+      alert('Erro: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleRejectAccess = async (userId: string) => {
+    if (!confirm('Deseja realmente recusar o acesso deste aluno?')) return
+    setActionLoading(userId)
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ status_nucleo: 'recusado' })
+        .eq('id', userId)
+      
+      if (error) throw error
+      setAllStudents(prev => prev.map(s => s.id === userId ? { ...s, status_nucleo: 'recusado' } : s))
+      alert('Acesso recusado.')
+    } catch (err: any) {
+      alert('Erro: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm('Deseja realmente EXCLUIR este aluno permanentemente? Esta ação não pode ser desfeita.')) return
+    setActionLoading(userId)
+    try {
+      const { error } = await supabase.rpc('delete_user_entirely', { target_user_id: userId })
+      if (error) throw error
+      setAllStudents(prev => prev.filter(s => s.id !== userId))
+      alert('Aluno excluído com sucesso.')
+    } catch (err: any) {
+      alert('Erro ao excluir: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   const handleLogout = async () => {
     await supabase.auth.signOut()
     navigate('/login')
@@ -422,6 +491,10 @@ const Professor = () => {
             allStudents={allStudents}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
+            actionLoading={actionLoading}
+            handleApproveAccess={handleApproveAccess}
+            handleRejectAccess={handleRejectAccess}
+            handleDeleteUser={handleDeleteUser}
           />
         )}
 
@@ -437,6 +510,7 @@ const Professor = () => {
             fetchBooks={fetchBooks}
             selectBookAndShowLessons={selectBookAndShowLessons}
             profile={profile}
+            professorNucleos={professorNucleos}
           />
         )}
 
