@@ -19,7 +19,10 @@ const Login = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data } = await supabase.from('users').select('tipo').eq('id', user.id).single();
-        if (data && ['admin', 'professor', 'suporte'].includes(data.tipo)) {
+        const userType = data?.tipo || '';
+        const isStaff = ['admin', 'professor', 'suporte'].includes(userType);
+        
+        if (isStaff) {
           navigate('/admin', { replace: true });
         } else {
           navigate('/dashboard', { replace: true });
@@ -87,9 +90,12 @@ const Login = () => {
         setStep(2)
       } else {
         const userType = data.tipo as any
-        if (userType === 'aluno') {
+        const isStudent = ['aluno', 'presencial', 'online'].includes(userType)
+        const isStaff = ['admin', 'professor', 'suporte'].includes(userType)
+
+        if (isStudent) {
           navigate('/dashboard')
-        } else if (userType === 'admin' || userType === 'professor' || userType === 'suporte') {
+        } else if (isStaff) {
           navigate('/admin')
         } else {
           setError('Tipo de usuário não reconhecido para redirecionamento.')

@@ -26,13 +26,14 @@ const isConfigured = isValidUrl(supabaseUrl) && supabaseAnonKey && supabaseAnonK
 
 if (!isConfigured) {
   console.error(
-    'ERRO CRÍTICO: Variáveis de ambiente do Supabase não encontradas ou inválidas!\n' +
-    'URL tratada: ' + (supabaseUrl || 'vazia') + '\n' +
-    'Se você estiver vendo isso no GitHub Pages, certifique-se de que os SECRETS ' +
-    '(VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY) estão configurados corretamente nas ' +
-    'configurações do repositório (Settings > Secrets and variables > Actions).\n' +
-    'IMPORTANTE: No valor do Secret, coloque APENAS o link (ex: https://abc.supabase.co), ' +
-    'NÃO coloque "VITE_SUPABASE_URL=" junto.'
+    '🚨 ERRO DE CONFIGURAÇÃO SUPABASE:\n' +
+    'As variáveis VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não foram encontradas no arquivo .env ou no ambiente.\n\n' +
+    'URL detectada: ' + (supabaseUrl || '(vazia)') + '\n' +
+    'Anon Key: ' + (supabaseAnonKey ? '********' : '(vazia)') + '\n\n' +
+    'AÇÕES REQUERIDAS:\n' +
+    '1. Verifique se o arquivo .env existe na raiz do projeto.\n' +
+    '2. Certifique-se de que os nomes das variáveis estão corretos.\n' +
+    '3. Reinicie o servidor de desenvolvimento (npm run dev).\n'
   )
 }
 
