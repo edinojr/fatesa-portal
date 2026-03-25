@@ -21,6 +21,7 @@ const Matricula = () => {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [availableNucleos, setAvailableNucleos] = useState<{id: string, nome: string}[]>([])
   
   // Form State
   const [formData, setFormData] = useState({
@@ -41,6 +42,14 @@ const Matricula = () => {
   })
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchNucleos = async () => {
+      const { data } = await supabase.from('nucleos').select('id, nome').order('nome');
+      if (data) setAvailableNucleos(data);
+    };
+    fetchNucleos();
+  }, []);
 
   // Via CEP Integration
   const handleCEPBlur = async () => {
@@ -228,7 +237,9 @@ const Matricula = () => {
                       <label>Escolha o Núcleo</label>
                       <select name="nucleo" className="form-control" value={formData.nucleo} onChange={handleInputChange} required>
                         <option value="">Selecione um núcleo...</option>
-                        <option value="Vila Luzita">Núcleo Vila Luzita (Sto André)</option>
+                        {availableNucleos.map(n => (
+                          <option key={n.id} value={n.nome}>{n.nome}</option>
+                        ))}
                       </select>
                     </div>
 

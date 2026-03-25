@@ -12,6 +12,7 @@ import {
   XCircle,
   Loader2,
   Users,
+  LayoutDashboard,
   ChevronLeft,
   Menu,
   X,
@@ -298,7 +299,17 @@ const Dashboard = () => {
 
   return (
     <div className="admin-layout">
-      
+
+      {/* Floating Menu Toggle Button */}
+      <button className="floating-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Menu Backdrop */}
+      {isMobileMenuOpen && (
+        <div className="menu-backdrop" onClick={() => setIsMobileMenuOpen(false)} />
+      )}
+
       {toast && (
         <div style={{
           position: 'fixed', bottom: '2rem', right: '2rem', padding: '1rem 2rem', 
@@ -310,41 +321,40 @@ const Dashboard = () => {
         </div>
       )}
 
-      <aside className="admin-sidebar" style={{ paddingTop: '1rem' }}>
-        <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
+        <div className="logo-section" style={{ padding: '0 0.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <GraduationCap size={40} color="var(--primary)" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              Portal do Aluno
-              <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: 'var(--primary)', color: '#fff', borderRadius: '4px', opacity: 0.8 }}>v1.4</span>
-            </h2>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', opacity: 0.8 }}>{profile?.email}</p>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--primary)', margin: 0 }}>FATESA</h1>
+            <p style={{ fontSize: '0.8rem', opacity: 0.6 }}>Portal do Aluno</p>
           </div>
-          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={24} />
           </button>
         </div>
 
-        <nav className={isMobileMenuOpen ? 'mobile-open' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {availableRoles.length > 1 && (
-            <div style={{ marginBottom: '1rem', padding: '0 1.25rem' }}>
+            <div style={{ position: 'relative' }}>
               <button 
-                className="btn btn-outline" 
-                style={{ width: '100%', padding: '0.5rem', fontSize: '0.8rem', gap: '0.5rem' }}
+                className="admin-nav-item" 
+                style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', gap: '0.5rem' }}
                 onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
               >
-                <Users size={16} /> Alternar Painel
+                <Users size={16} /> Alternar
               </button>
               {showRoleSwitcher && (
-                <div style={{ marginTop: '0.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem' }}>
+                <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '180px' }}>
                   {availableRoles.filter(r => r !== 'aluno').map(r => (
                     <button 
                       key={r} 
                       className="admin-nav-item" 
                       style={{ width: '100%', justifyContent: 'flex-start', padding: '0.5rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
-                      onClick={() => navigate(r === 'professor' ? '/professor' : '/admin')}
+                      onClick={() => {
+                        navigate(r === 'professor' ? '/professor' : '/admin');
+                        setIsMobileMenuOpen(false);
+                      }}
                     >
-                      {r === 'professor' ? 'Painel do Professor' : r === 'suporte' ? 'Painel de Suporte' : 'Administração'}
+                      {r === 'professor' ? 'Portal do Professor' : r === 'suporte' ? 'Painel de Suporte' : 'Administração'}
                     </button>
                   ))}
                 </div>
@@ -364,21 +374,20 @@ const Dashboard = () => {
                   setIsMobileMenuOpen(false);
                 }}
                 style={{ opacity: isDisabledForBlocked ? 0.35 : 1, cursor: isDisabledForBlocked ? 'not-allowed' : 'pointer' }}
-                title={isDisabledForBlocked ? 'Acesso restrito — regularize seu pagamento' : undefined}
               >
                 {t === 'cursos' && <BookOpen size={20} />}
                 {t === 'avisos' && <Bell size={20} />}
                 {t === 'documentos' && <FileText size={20} />}
                 {t === 'financeiro' && <CreditCard size={20} />}
                 {t === 'boletim' && <Award size={20} />}
-                {t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}
+                <span>{t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
               </div>
             );
           })}
 
-          <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
-            <div className="admin-nav-item" style={{ color: 'var(--error)' }} onClick={() => signOut()}>
-              <LogOut size={20} /> Sair
+          <div style={{ marginLeft: 'auto', paddingLeft: '0.5rem' }}>
+            <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent' }} onClick={() => signOut()}>
+              <LogOut size={18} />
             </div>
           </div>
         </nav>
@@ -468,6 +477,15 @@ const Dashboard = () => {
               atividades={atividades}
             />
           )}
+        </div>
+
+        <div className="bottom-nav-footer">
+          <button onClick={() => navigate(-1)} className="btn btn-outline">
+            <ChevronLeft size={20} /> Voltar
+          </button>
+          <button onClick={() => navigate('/dashboard')} className="btn btn-primary">
+            <LayoutDashboard size={20} /> Início
+          </button>
         </div>
       </main>
     </div>

@@ -588,10 +588,21 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  height: 100vh;
   position: sticky;
   top: 0;
   overflow-y: auto;
+  z-index: 1000; /* Ensure sidebar is above main content */
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 .admin-main {
@@ -755,67 +766,127 @@ body {
     gap: 1.5rem;
   }
 
-  .admin-sidebar {
-    width: 100%;
-    min-height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--glass-border);
-    padding: 4rem 1rem 0 1rem !important; /* preserves space for back button on top */
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  /* Make the logo container a flex row */
-  .admin-sidebar > div:first-child {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem !important;
-  }
-
-  /* Vertical dropdown navigation */
-  .admin-sidebar nav {
+  /* Dashboard Mobile Header - Floating Flip Menu */
+  .admin-sidebar, .professor-sidebar, .dashboard-sidebar {
+    position: fixed !important;
+    top: 1.5rem !important;
+    right: 1.5rem !important;
+    left: auto !important;
+    width: 260px !important;
+    height: auto !important;
+    max-height: 80vh !important;
+    min-height: auto !important;
     flex-direction: column !important;
-    display: none !important;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: var(--bg-card);
-    padding: 1rem;
-    border-bottom: 1px solid var(--glass-border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    z-index: 101;
-    gap: 0.5rem !important;
+    background: var(--bg-card) !important;
+    backdrop-filter: blur(25px) !important;
+    z-index: 3500 !important;
+    padding: 1.5rem !important;
+    border-radius: 24px !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+    
+    /* Flip Transition */
+    transform-origin: top right !important;
+    transform: perspective(1000px) rotateY(90deg) scale(0) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    pointer-events: none !important;
+    
+    /* Absolute removal from flow */
+    margin: 0 !important;
+    padding: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
   }
 
-  .admin-sidebar nav.mobile-open {
+  .admin-sidebar.mobile-open, 
+  .professor-sidebar.mobile-open,
+  .dashboard-sidebar.mobile-open {
+    transform: perspective(1000px) rotateY(0deg) scale(1) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    max-height: 80vh !important;
+    padding: 1.5rem !important;
+  }
+
+  /* Floating Menu Toggle Button */
+  .floating-menu-btn {
     display: flex !important;
+    position: fixed !important;
+    top: 1.5rem !important;
+    right: 1.5rem !important;
+    width: 50px !important;
+    height: 50px !important;
+    background: var(--primary) !important;
+    color: #fff !important;
+    border-radius: 16px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 3600 !important;
+    border: none !important;
+    box-shadow: 0 8px 16px var(--primary-glow) !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
   }
 
-  /* Role Switcher adjustments for inline row */
-  .admin-sidebar nav > div:first-child {
-    margin-bottom: 0 !important;
-    width: 100%;
+  .floating-menu-btn:active {
+    transform: scale(0.9);
+  }
+
+  /* Hide the fixed top bar */
+  .mobile-top-bar {
+    display: none !important;
+  }
+
+  /* Sidebar Inner Elements on Mobile */
+  .admin-sidebar > div:first-child {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 1.5rem !important;
+    width: 100% !important;
+  }
+
+  .admin-sidebar h1 {
+    font-size: 1.2rem !important;
+    margin: 0 !important;
+  }
+  
+  .admin-sidebar p { display: none !important; }
+
+  .admin-sidebar nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+    width: 100% !important;
   }
 
   .admin-nav-item {
-    font-size: 0.9rem;
-    padding: 0.75rem 1rem;
-    gap: 0.75rem;
-    white-space: normal;
-    width: 100%;
-    justify-content: flex-start;
+    width: 100% !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 0.85rem !important;
+    justify-content: flex-start !important;
+    background: var(--glass) !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--glass-border) !important;
+  }
+  
+  .admin-main, .dashboard-container {
+    padding-top: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
 
-  .admin-nav-item svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .admin-main {
-    padding: 1.5rem 1rem !important;
+  /* Backdrop for Menu */
+  .menu-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.6) !important;
+    backdrop-filter: blur(4px) !important;
+    z-index: 2900 !important;
+    animation: fadeIn 0.3s ease-out;
   }
 
   /* Structural Safety Classes */
@@ -837,17 +908,7 @@ body {
     white-space: nowrap;
   }
 
-  .quiz-section {
-    padding: 1.5rem !important;
-    border-radius: 24px !important;
-  }
-
-  .course-card {
-    padding: 1.5rem !important;
-    border-radius: 20px !important;
-  }
-
-  .auth-card {
+  .quiz-section, .course-card, .auth-card {
     padding: 1.5rem !important;
     border-radius: 20px !important;
   }
@@ -870,8 +931,8 @@ body {
 .landing-nav {
   position: sticky;
   top: 0;
-  z-index: 1000;
-  background: rgba(8, 9, 10, 0.8);
+  z-index: 1100; /* Higher than other content elements */
+  background: rgba(8, 9, 10, 0.9); /* Increased opacity for better readability */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border);
@@ -885,7 +946,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 0.5rem; /* Shifting left */
+  padding: 0 1rem;
+  overflow: visible !important;
 }
 
 .logo-section {
@@ -944,6 +1006,14 @@ body {
   text-align: center;
   overflow: hidden;
   background: radial-gradient(circle at 50% -20%, rgba(156, 39, 176, 0.15), transparent 70%);
+  padding: 3rem 0 10rem; /* Reduced top padding to eliminate large gap under nav */
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 60vh;
+    padding: 2rem 0 6rem; /* Even tighter for mobile */
+  }
 }
 
 /* Faculty Section */
@@ -1425,7 +1495,6 @@ body {
 @media (max-width: 640px) {
   .hero-content h1 { font-size: 2.75rem; }
   .hero-btns { flex-direction: column; }
-  .nav-links { display: none; }
 }
 /* Main Dashboard Tabs */
 .dashboard-tabs {
@@ -1555,10 +1624,16 @@ body {
 
 /* Responsive Dashboard */
 @media (max-width: 768px) {
-  .dashboard-container { padding: 1.5rem; }
-  .dashboard-header { flex-direction: column; align-items: flex-start; gap: 2rem; }
-  .dashboard-tabs { overflow-x: auto; padding-bottom: 0.5rem; }
-  .data-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .dashboard-container { padding: 5rem 1rem 1.5rem !important; }
+  .dashboard-tabs { 
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    display: flex !important;
+    gap: 1rem !important;
+    padding: 0.5rem 0 !important;
+    margin-bottom: 2rem !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+  }
 }
 
 /* Top Subjects Banner */
@@ -1761,37 +1836,48 @@ select.form-control option {
 
 @media (max-width: 1024px) {
   .nav-links {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 80%;
-    height: 100vh;
-    background: #0a0a0a;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 1.25rem;
-    padding-top: 5rem;
-    transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 1050;
-    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(20px);
+    display: flex !important;
+    position: relative !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    right: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 1.25rem !important;
+    padding: 0.75rem 0 !important;
+    background: transparent !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    box-shadow: none !important;
+    z-index: 100 !important;
   }
 
-  .nav-links.active {
-    right: 0;
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 100px;
   }
 
   .mobile-menu-toggle {
-    display: block;
+    display: none !important;
   }
   
-  .access-grid {
-    margin-top: 2rem;
-  }
-
   .hero-content h1 {
     font-size: 3.5rem;
+  }
+
+  .access-grid {
+    margin-top: -4rem; /* Reduced overlap for tablets */
   }
 }
 
@@ -1803,8 +1889,11 @@ select.form-control option {
   .section-grid { grid-template-columns: 1fr; gap: 3rem; }
   
   .stats-section, .about-section, .courses-section, .faculty-section {
-    padding: 6rem 1.5rem;
+    padding: 3rem 1.5rem; /* Reduced from 6rem */
   }
+
+  .hero-content h1 { font-size: 2.5rem; } /* Slightly smaller for mobile */
+  .access-grid { margin-top: 0; } /* No overlap on mobile to avoid layout issues */
 }
 
 .lesson-image-container:hover .zoom-overlay {
@@ -1875,8 +1964,9 @@ select.form-control option {
 /* Adjustments for panels with sidebar */
 .admin-layout .back-nav-btn,
 .professor-layout .back-nav-btn {
-  top: 1rem;
-  left: 1rem;
+  top: 1.5rem;
+  left: 320px; /* Move it outside the 300px sidebar */
+  z-index: 1001; /* Above main content but doesn't overlap sidebar menu */
 }
 
 /* Base Structural Responsiveness */
@@ -1889,16 +1979,21 @@ select.form-control option {
     margin-bottom: 2rem;
   }
   .dashboard-container {
-    padding-top: 2rem !important;
+    padding-top: 1rem !important;
   }
   .admin-layout {
     flex-direction: column;
   }
   .admin-sidebar {
     width: 100%;
-    padding: 1rem 1.5rem 1.5rem !important;
-    border-right: none;
+    height: auto !important;
+    min-height: auto !important;
     border-bottom: 1px solid var(--glass-border);
+    position: sticky !important;
+    top: 0;
+    z-index: 2000;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
   }
   .admin-main {
     padding: 1rem;
@@ -1984,5 +2079,30 @@ select.form-control option {
 
   .desktop-nav {
     display: none !important;
+  }
+}
+
+/* Bottom Navigation Footer for Dashboards */
+.bottom-nav-footer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--glass-border);
+}
+
+.bottom-nav-footer .btn {
+  width: auto;
+  min-width: 140px;
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .bottom-nav-footer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .bottom-nav-footer .btn {
+    width: 100%;
   }
 }

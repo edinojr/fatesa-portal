@@ -13,12 +13,25 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
   const [myNucleos, setMyNucleos] = useState<any[]>([]) // Tied to teacher
   const [selectedNucleo, setSelectedNucleo] = useState<any | null>(null)
   const [students, setStudents] = useState<any[]>([])
+  const [professors, setProfessors] = useState<any[]>([])
   
   const [showAddModal, setShowAddModal] = useState(false)
   const [showStudentModal, setShowStudentModal] = useState<any | null>(null)
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [cepLoading, setCepLoading] = useState(false)
+
+  // Schedule builder state
+  const [schedules, setSchedules] = useState([{ day: '', start: '', end: '' }])
+  const [showCreateForm, setShowCreateForm] = useState(false)
+
+  const addSchedule = () => setSchedules([...schedules, { day: '', start: '', end: '' }])
+  const removeSchedule = (index: number) => setSchedules(schedules.filter((_, i) => i !== index))
+  const updateSchedule = (index: number, field: string, value: string) => {
+    const newSchedules = [...schedules]
+    ;(newSchedules[index] as any)[field] = value
+    setSchedules(newSchedules)
+  }
 
   const [atividades, setAtividades] = useState<any[]>([])
   const [notas, setNotas] = useState<any[]>([])
@@ -56,6 +69,12 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     
     if (resMy.data) {
       setMyNucleos(resMy.data.map((d: any) => d.nucleos).filter(Boolean))
+    }
+
+    // All Professors (Admin only)
+    if (isAdmin) {
+      const { data: profs } = await supabase.from('users').select('*').eq('tipo', 'professor').order('nome')
+      if (profs) setProfessors(profs)
     }
     
     setLoading(false)
@@ -120,6 +139,31 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     }
   }
 
+  const handleLinkProfessorToNucleo = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const professorId = formData.get('professor_id') as string
+    const nucleoId = formData.get('nucleo_id') as string
+
+    if (!professorId || !nucleoId) return
+
+    setActionLoading('link_prof')
+    try {
+      const { error } = await supabase.from('professor_nucleo').upsert({
+        professor_id: professorId,
+        nucleo_id: nucleoId
+      })
+      if (error) throw error
+      alert('Professor vinculado ao núcleo com sucesso!')
+      setShowAddModal(false)
+      fetchInitialData()
+    } catch (err: any) {
+      alert('Erro ao vincular: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   const handleCreateNucleo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setActionLoading('create_nuc')
@@ -137,8 +181,18 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       horario_aulas: formData.get('horario_aulas') as string,
     }
     
+    const horarioStr = schedules
+      .filter(s => s.day && s.start && s.end)
+      .map(s => `${s.day} (${s.start} - ${s.end})`)
+      .join(', ')
+
+    const finalNucleoData = {
+      ...nucleoData,
+      horario_aulas: horarioStr || nucleoData.horario_aulas
+    }
+    
     try {
-      const { data, error } = await supabase.from('nucleos').insert(nucleoData).select().single()
+      const { data, error } = await supabase.from('nucleos').insert(finalNucleoData).select().single()
       if (error) throw error
       
       // Automatically link teacher to it (even if Admin creates it, link the creator)
@@ -476,78 +530,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
         </button>
       </div>
 
-      {showAddModal && (
-        <div className="modal-overlay" onClick={() => { setShowAddModal(false); if (onModalClose) onModalClose(); }}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', width: '95%' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-              <h2>{isAdmin ? 'Criar / Vincular Novo Núcleo' : 'Vincular-se a um Núcleo'}</h2>
-              <button className="btn-icon" onClick={() => { setShowAddModal(false); if (onModalClose) onModalClose(); }}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
-            </div>
-            {isAdmin ? (
-              <>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Crie um novo núcleo ou vincule um professor existente a um núcleo já cadastrado.</p>
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-                  <button className={`btn ${showCreateForm ? 'btn-primary' : 'btn-outline'}`} onClick={() => setShowCreateForm(true)}>Criar Novo Núcleo</button>
-                  <button className={`btn ${!showCreateForm ? 'btn-primary' : 'btn-outline'}`} onClick={() => setShowCreateForm(false)}>Vincular Professor</button>
-                </div>
-
-                {showCreateForm ? (
-                  <form onSubmit={handleCreateNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <input type="text" name="nome" placeholder="Nome do Núcleo (Ex: Polo Centro)" className="form-control" required />
-                    <input type="text" name="professor_responsavel" placeholder="Nome do Professor Responsável" className="form-control" />
-                    <input type="text" name="horario_aulas" placeholder="Horário das Aulas (Ex: Terças e Quintas, 19h-21h)" className="form-control" />
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <input type="text" name="cep" placeholder="CEP" className="form-control" style={{ flex: 1 }} value={cep} onChange={(e) => setCep(e.target.value)} onBlur={handleCepBlur} />
-                      <button type="button" className="btn btn-outline" onClick={handleCepBlur} disabled={cepLoading} style={{ width: 'auto' }}>
-                        {cepLoading ? <Loader2 className="spinner" size={16} /> : 'Buscar CEP'}
-                      </button>
-                    </div>
-                    <input type="text" name="logradouro" placeholder="Logradouro" className="form-control" value={endereco.logradouro} onChange={(e) => setEndereco({ ...endereco, logradouro: e.target.value })} />
-                    <input type="text" name="numero" placeholder="Número" className="form-control" value={endereco.numero} onChange={(e) => setEndereco({ ...endereco, numero: e.target.value })} />
-                    <input type="text" name="bairro" placeholder="Bairro" className="form-control" value={endereco.bairro} onChange={(e) => setEndereco({ ...endereco, bairro: e.target.value })} />
-                    <input type="text" name="cidade" placeholder="Cidade" className="form-control" value={endereco.cidade} onChange={(e) => setEndereco({ ...endereco, cidade: e.target.value })} />
-                    <input type="text" name="estado" placeholder="Estado" className="form-control" value={endereco.estado} onChange={(e) => setEndereco({ ...endereco, estado: e.target.value })} />
-                    <button type="submit" className="btn btn-primary" disabled={actionLoading === 'create_nuc'}>
-                      {actionLoading === 'create_nuc' ? <Loader2 className="spinner" /> : 'Criar Núcleo'}
-                    </button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleLinkProfessorToNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <select name="nucleo_id" className="form-control" required>
-                      <option value="">Selecione um Núcleo</option>
-                      {nucleos.map(nuc => (
-                        <option key={nuc.id} value={nuc.id}>{nuc.nome}</option>
-                      ))}
-                    </select>
-                    <select name="professor_id" className="form-control" required>
-                      <option value="">Selecione um Professor</option>
-                      {professors.map(prof => (
-                        <option key={prof.id} value={prof.id}>{prof.nome} ({prof.email})</option>
-                      ))}
-                    </select>
-                    <button type="submit" className="btn btn-primary" disabled={actionLoading === 'link_prof'}>
-                      {actionLoading === 'link_prof' ? <Loader2 className="spinner" /> : 'Vincular Professor'}
-                    </button>
-                  </form>
-                )}
-              </>
-            ) : (
-              <form onSubmit={handleRequestNucleoAccess} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Selecione o núcleo ao qual você deseja se vincular. Um administrador precisará aprovar sua solicitação.</p>
-                <select name="nucleo_id" className="form-control" required>
-                  <option value="">Selecione seu Núcleo</option>
-                  {nucleos.map(nuc => (
-                    <option key={nuc.id} value={nuc.id}>{nuc.nome} {nuc.cidade ? `(${nuc.cidade} - ${nuc.estado})` : ''}</option>
-                  ))}
-                </select>
-                <button type="submit" className="btn btn-primary" disabled={actionLoading === 'request_nuc'}>
-                  {actionLoading === 'request_nuc' ? <Loader2 className="spinner" /> : 'Solicitar Acesso ao Núcleo'}
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
+      {/* ShowAddModal #1 removed to consolidate at the bottom */}
 
       {!selectedNucleo ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
@@ -972,107 +955,224 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       {showAddModal && (
         <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', width: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ marginBottom: '1rem' }}>Gerenciar Núcleos</h2>
-            
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem' }}>
-              <h4 style={{ marginBottom: '1rem', color: 'var(--primary)' }}>Vincule-se a um núcleo existente</h4>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <select id="nuc_select" className="form-control" style={{ flex: 1 }}>
-                  {nucleos.length === 0 && <option value="">Nenhum núcleo encontrado...</option>}
-                  {nucleos.map(n => (
-                    <option key={n.id} value={n.id}>{n.nome} {n.cidade ? `(${n.cidade})` : ''}</option>
-                  ))}
-                </select>
-                <button 
-                  className="btn btn-primary" 
-                  style={{ width: 'auto' }}
-                  disabled={actionLoading === 'link_nuc'}
-                  onClick={() => {
-                    const sel = document.getElementById('nuc_select') as HTMLSelectElement
-                    if(sel.value) handleLinkNucleo(sel.value)
-                  }}
-                >
-                  {actionLoading === 'link_nuc' ? <Loader2 className="spinner" size={18} /> : 'Vincular a Mim'}
-                </button>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ margin: 0 }}>{isAdmin ? 'Gerenciar Núcleos' : 'Adicionar Núcleo'}</h2>
+              <button className="btn-icon" onClick={() => setShowAddModal(false)}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
             </div>
-
-            <hr style={{ borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', margin: '2rem 0' }} />
-
-            <h4 style={{ marginBottom: '1rem', color: 'var(--success)' }}>Ou crie um NOVO Núcleo/Pólo do zero</h4>
-            <form onSubmit={handleCreateNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label>Nome do Núcleo *</label>
-                <input type="text" name="nome" placeholder="Ex: Pólo Presencial - Vila Luzita" className="form-control" required />
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                  <label>Professor Responsável</label>
-                  <input type="text" name="professor_responsavel" placeholder="Ex: Pr. João" className="form-control" />
-                </div>
-                <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                  <label>Horário das Aulas</label>
-                  <input type="text" name="horario_aulas" placeholder="Ex: 19:30h às 22:00h (Terça)" className="form-control" />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                  <label>CEP (Digite para buscar) *</label>
-                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <input 
-                      type="text" 
-                      name="cep" 
-                      placeholder="00000-000" 
-                      className="form-control" 
-                      maxLength={9}
-                      onBlur={handleCepBlur}
-                      required 
-                    />
-                    {cepLoading && <Loader2 className="spinner" size={20} color="var(--primary)" />}
-                  </div>
-                </div>
-                <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
-                  <label>Logradouro / Endereço</label>
-                  <input type="text" name="logradouro" id="form_logradouro" placeholder="Avenida / Rua..." className="form-control" required />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                  <label>Número *</label>
-                  <input type="text" name="numero" id="form_numero" placeholder="Ex: 123" className="form-control" required />
-                </div>
-                <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
-                  <label>Bairro</label>
-                  <input type="text" name="bairro" id="form_bairro" placeholder="Nome do Bairro" className="form-control" required />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
-                  <label>Cidade</label>
-                  <input type="text" name="cidade" id="form_cidade" className="form-control" required />
-                </div>
-                <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                  <label>UF</label>
-                  <input type="text" name="estado" id="form_estado" className="form-control" maxLength={2} required />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="btn btn-outline" onClick={() => setShowAddModal(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary" disabled={actionLoading === 'create_nuc'}>
-                  {actionLoading === 'create_nuc' ? <Loader2 className="spinner" size={20} /> : 'Criar e Vincular Polo'}
+            
+            {isAdmin && (
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                <button 
+                  className={`btn ${showCreateForm ? 'btn-primary' : 'btn-outline'}`} 
+                  onClick={() => setShowCreateForm(true)}
+                  style={{ flex: 1 }}
+                >
+                  <Plus size={18} /> Criar Novo Núcleo
+                </button>
+                <button 
+                  className={`btn ${!showCreateForm ? 'btn-primary' : 'btn-outline'}`} 
+                  onClick={() => setShowCreateForm(false)}
+                  style={{ flex: 1 }}
+                >
+                  <Users size={18} /> Vincular Professor
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+            )}
+
+            {isAdmin && !showCreateForm ? (
+              <form onSubmit={handleLinkProfessorToNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Selecione um professor e um núcleo para criar o vínculo.</p>
+                <div className="form-group">
+                  <label>Professor</label>
+                  <select name="professor_id" className="form-control" required>
+                    <option value="">-- Selecione o Professor --</option>
+                    {professors.map(p => (
+                      <option key={p.id} value={p.id}>{p.nome} ({p.email})</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Núcleo</label>
+                  <select name="nucleo_id" className="form-control" required>
+                    <option value="">-- Selecione o Núcleo --</option>
+                    {nucleos.map(n => (
+                      <option key={n.id} value={n.id}>{n.nome}</option>
+                    ))}
+                  </select>
+                </div>
+                <button type="submit" className="btn btn-primary" disabled={actionLoading === 'link_prof'}>
+                  {actionLoading === 'link_prof' ? <Loader2 className="spinner" size={20} /> : 'Efetuar Vínculo'}
+                </button>
+              </form>
+            ) : (
+              <>
+                {!isAdmin && (
+                  <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem' }}>
+                    <h4 style={{ marginBottom: '1rem', color: 'var(--primary)' }}>Vincule-se a um núcleo existente</h4>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <select id="nuc_select" className="form-control" style={{ flex: 1 }}>
+                        {nucleos.length === 0 && <option value="">Nenhum núcleo encontrado...</option>}
+                        {nucleos.map(n => (
+                          <option key={n.id} value={n.id}>{n.nome} {n.cidade ? `(${n.cidade})` : ''}</option>
+                        ))}
+                      </select>
+                      <button 
+                        className="btn btn-primary" 
+                        style={{ width: 'auto' }}
+                        disabled={actionLoading === 'link_nuc'}
+                        onClick={() => {
+                          const sel = document.getElementById('nuc_select') as HTMLSelectElement
+                          if(sel.value) handleLinkNucleo(sel.value)
+                        }}
+                      >
+                        {actionLoading === 'link_nuc' ? <Loader2 className="spinner" size={18} /> : 'Vincular a Mim'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <h4 style={{ marginBottom: '1.25rem', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Plus size={20} /> {isAdmin ? 'Ou crie um NOVO Núcleo' : 'Ou cadastre um NOVO Núcleo/Pólo'}
+                </h4>
+                <form onSubmit={handleCreateNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  
+                  {/* LINHA 1: NOME DO NÚCLEO */}
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Nome do Núcleo *</label>
+                    <input type="text" name="nome" placeholder="Ex: Pólo Presencial - Vila Luzita" className="form-control" style={{ padding: '0.8rem' }} required />
+                  </div>
+
+                  {/* LINHA 2: PROFESSOR RESPONSÁVEL (OPCIONAL) */}
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Professor Responsável (Opcional)</label>
+                    <input type="text" name="professor_responsavel" placeholder="Ex: Pr. João" className="form-control" style={{ padding: '0.8rem' }} />
+                  </div>
+
+                  {/* LINHA 3: CRONOGRAMA DE AULAS */}
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Cronograma de Aulas (Dias e Horários)</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      {schedules.map((sch, index) => (
+                        <div key={index} className="mobile-wrap-flex" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                          <div style={{ flex: 2 }}>
+                            <select 
+                              className="form-control" 
+                              style={{ width: '100%', padding: '0.6rem' }} 
+                              value={sch.day} 
+                              onChange={(e) => updateSchedule(index, 'day', e.target.value)}
+                            >
+                              <option value="">-- Escolha o Dia --</option>
+                              <option value="Segunda">Segunda-feira</option>
+                              <option value="Terça">Terça-feira</option>
+                              <option value="Quarta">Quarta-feira</option>
+                              <option value="Quinta">Quinta-feira</option>
+                              <option value="Sexta">Sexta-feira</option>
+                              <option value="Sábado">Sábado</option>
+                              <option value="Domingo">Domingo</option>
+                            </select>
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flex: 3 }}>
+                            <input 
+                              type="text" 
+                              placeholder="Início (00:00)" 
+                              className="form-control" 
+                              style={{ flex: 1, textAlign: 'center', padding: '0.6rem' }} 
+                              value={sch.start} 
+                              onChange={(e) => updateSchedule(index, 'start', e.target.value)} 
+                            />
+                            <span style={{ opacity: 0.5 }}>até</span>
+                            <input 
+                              type="text" 
+                              placeholder="Fim (00:00)" 
+                              className="form-control" 
+                              style={{ flex: 1, textAlign: 'center', padding: '0.6rem' }} 
+                              value={sch.end} 
+                              onChange={(e) => updateSchedule(index, 'end', e.target.value)} 
+                            />
+                          </div>
+                          {schedules.length > 1 && (
+                            <button type="button" className="btn-icon" style={{ color: 'var(--error)', padding: '0.5rem' }} onClick={() => removeSchedule(index)} title="Remover este horário">
+                              <Trash2 size={18} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <button 
+                        type="button" 
+                        className="btn btn-outline" 
+                        style={{ width: 'auto', fontSize: '0.85rem', padding: '0.5rem 1rem', marginTop: '0.5rem', alignSelf: 'flex-start' }}
+                        onClick={addSchedule}
+                      >
+                        <Plus size={16} /> Adicionar outro dia/horário
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* LINHA 4: LOCALIZAÇÃO (VIA CEP) */}
+                  <div style={{ padding: '1.25rem', background: 'rgba(3, 169, 244, 0.03)', borderRadius: '12px', border: '1px solid rgba(3, 169, 244, 0.1)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <MapPin size={18} /> Endereço do Núcleo
+                    </h4>
+                    
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.3rem', display: 'block' }}>CEP (Para busca automática) *</label>
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                        <input 
+                          type="text" 
+                          name="cep" 
+                          placeholder="00000-000" 
+                          className="form-control" 
+                          style={{ maxWidth: '150px', padding: '0.7rem' }}
+                          maxLength={9}
+                          onBlur={handleCepBlur}
+                          required 
+                        />
+                        {cepLoading && <Loader2 className="spinner" size={20} color="var(--primary)" />}
+                        <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>← Preencha para carregar</span>
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Logradouro / Avenida / Rua</label>
+                      <input type="text" name="logradouro" id="form_logradouro" placeholder="Avenida Brasil..." className="form-control" required style={{ padding: '0.7rem' }} />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem' }} className="mobile-wrap-flex">
+                      <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Número *</label>
+                        <input type="text" name="numero" id="form_numero" placeholder="Ex: 500" className="form-control" required style={{ padding: '0.7rem' }} />
+                      </div>
+                      <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
+                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Bairro</label>
+                        <input type="text" name="bairro" id="form_bairro" placeholder="Nome do Bairro" className="form-control" required style={{ padding: '0.7rem' }} />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem' }} className="mobile-wrap-flex">
+                      <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
+                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Cidade</label>
+                        <input type="text" name="cidade" id="form_cidade" className="form-control" required style={{ padding: '0.7rem' }} />
+                      </div>
+                      <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>UF / Estado</label>
+                        <input type="text" name="estado" id="form_estado" className="form-control" maxLength={2} required style={{ padding: '0.7rem', textAlign: 'center' }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                    <button type="button" className="btn btn-outline" style={{ width: 'auto', padding: '0.6rem 1.25rem' }} onClick={() => setShowAddModal(false)}>Cancelar</button>
+                    <button type="submit" className="btn btn-primary" style={{ width: 'auto', padding: '0.6rem 2rem', fontSize: '0.95rem', fontWeight: 700 }} disabled={actionLoading === 'create_nuc'}>
+                      {actionLoading === 'create_nuc' ? <Loader2 className="spinner" size={18} /> : '(salvar)'}
+                    </button>
+                  </div>
+                </form>
+          </>
+        )}
+      </div>
     </div>
+  )}
+</div>
   )
 }
 

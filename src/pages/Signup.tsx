@@ -21,6 +21,8 @@ const Signup = () => {
   const [isProfessor, setIsProfessor] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [checkingEmail, setCheckingEmail] = useState(false)
+  const [preRegistered, setPreRegistered] = useState<{nome: string, tipo: string, nucleo: string} | null>(null)
+  const [availableNucleos, setAvailableNucleos] = useState<{id: string, nome: string}[]>([])
 
   useEffect(() => {
     const checkSession = async () => {
@@ -41,18 +43,30 @@ const Signup = () => {
     const checkProfessor = async () => {
       if (!email || !email.includes('@')) {
         setIsProfessor(false);
+        setPreRegistered(null);
         return;
       }
 
       setCheckingEmail(true);
       try {
-        const [profRes, adminRes] = await Promise.all([
+        const [profRes, adminRes, regRes] = await Promise.all([
           supabase.from('professores_autorizados').select('email').eq('email', email.toLowerCase().trim()).maybeSingle(),
-          supabase.from('admins_autorizados').select('email').eq('email', email.toLowerCase().trim()).maybeSingle()
+          supabase.from('admins_autorizados').select('email').eq('email', email.toLowerCase().trim()).maybeSingle(),
+          supabase.rpc('get_registration_details', { p_email: email.toLowerCase().trim() })
         ]);
         
         setIsProfessor(!!profRes.data);
         setIsAdmin(!!adminRes.data);
+
+        if (regRes.data && regRes.data.length > 0) {
+          const reg = regRes.data[0];
+          setPreRegistered(reg);
+          setNome(reg.nome);
+          setTipo(reg.tipo === 'admin' || reg.tipo === 'professor' ? 'online' : reg.tipo);
+          setNucleo(reg.nucleo || '');
+        } else {
+          setPreRegistered(null);
+        }
       } catch (err) {
         console.error('Erro ao verificar autorização:', err);
       } finally {
@@ -63,6 +77,14 @@ const Signup = () => {
     const timer = setTimeout(checkProfessor, 500);
     return () => clearTimeout(timer);
   }, [email]);
+
+  useEffect(() => {
+    const fetchNucleos = async () => {
+      const { data } = await supabase.from('nucleos').select('id, nome').order('nome');
+      if (data) setAvailableNucleos(data);
+    };
+    fetchNucleos();
+  }, []);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -137,12 +159,14 @@ const Signup = () => {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               required
+              readOnly={!!preRegistered}
+              style={{ opacity: preRegistered ? 0.7 : 1 }}
             />
           </div>
 
           <div className="form-group">
             <label>Tipo de Aluno</label>
-            <div className="select-group">
+            <div className="select-group" style={{ opacity: preRegistered ? 0.7 : 1, pointerEvents: preRegistered ? 'none' : 'auto' }}>
               <label className="select-option">
                 <input 
                   type="radio" 
@@ -172,9 +196,12 @@ const Signup = () => {
                 value={nucleo}
                 onChange={(e) => setNucleo(e.target.value)}
                 required
+                disabled={!!preRegistered && !!preRegistered.nucleo}
               >
                 <option value="">Selecione seu núcleo...</option>
-                <option value="Vila Luzita">Núcleo Vila Luzita (Sto André)</option>
+                {availableNucleos.map(n => (
+                  <option key={n.id} value={n.nome}>{n.nome}</option>
+                ))}
               </select>
             </div>
           )}

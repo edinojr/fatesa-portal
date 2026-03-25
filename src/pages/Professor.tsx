@@ -300,40 +300,52 @@ const Professor = () => {
   return (
     <div className="admin-layout">
 
-      <aside className="admin-sidebar" style={{ paddingTop: '2.5rem' }}>
-        <div className="logo-section" style={{ padding: '0 1.25rem', marginBottom: '1rem', flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Floating Menu Toggle Button */}
+      <button className="floating-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Menu Backdrop */}
+      {isMobileMenuOpen && (
+        <div className="menu-backdrop" onClick={() => setIsMobileMenuOpen(false)} />
+      )}
+
+      <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
+        <div className="logo-section" style={{ padding: '0 0.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-              <GraduationCap size={32} color="var(--primary)" />
-              <h2 style={{ fontSize: '1.1rem', fontWeight: 800, lineHeight: 1.2 }}>Painel do Professor</h2>
-            </div>
-            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', opacity: 0.8, paddingLeft: '2.75rem' }}>{currentUserEmail}</p>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--primary)', margin: 0 }}>FATESA</h1>
+            <p style={{ fontSize: '0.8rem', opacity: 0.6 }}>Painel do Professor</p>
           </div>
-          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={24} />
           </button>
         </div>
 
-        <nav className={isMobileMenuOpen ? 'mobile-open' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+
           {availableRoles.length > 1 && (
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ position: 'relative' }}>
               <button 
-                className="btn btn-outline" 
-                style={{ width: '100%', padding: '0.5rem', fontSize: '0.8rem', gap: '0.5rem' }}
+                className="admin-nav-item" 
+                style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem' }}
                 onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
               >
-                <Users size={16} /> Alternar Painel
+                <Users size={16} /> <span className="mobile-hide">Alternar</span>
               </button>
               {showRoleSwitcher && (
-                <div style={{ marginTop: '0.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem' }}>
+                <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '180px' }}>
                   {availableRoles.filter(r => r !== 'professor').map(r => (
                     <button 
                       key={r} 
                       className="admin-nav-item" 
-                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.5rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
-                      onClick={() => navigate(r === 'aluno' ? '/dashboard' : r === 'suporte' || r === 'admin' ? '/admin' : '/professor')}
+                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
+                      onClick={() => { 
+                        navigate(r === 'aluno' ? '/dashboard' : r === 'admin' ? '/admin' : '/professor'); 
+                        setShowRoleSwitcher(false); 
+                        setIsMobileMenuOpen(false);
+                      }}
                     >
-                      {r === 'aluno' ? 'Portal do Aluno' : r === 'suporte' ? 'Painel de Suporte' : 'Administração'}
+                      {r === 'aluno' ? 'Portal do Aluno' : r === 'admin' ? 'Painel Administrativo' : r === 'suporte' ? 'Painel de Suporte' : 'Professor'}
                     </button>
                   ))}
                 </div>
@@ -341,31 +353,28 @@ const Professor = () => {
             </div>
           )}
 
-            <div 
-              className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}
-            >
-            <Users size={20} /> Meus Núcleos
+          <div className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`} onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}>
+            <Users size={18} /> <span className="mobile-hide">Núcleos</span>
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'students' ? 'active' : ''}`}
             onClick={() => { setActiveTab('students'); setIsMobileMenuOpen(false); }}
           >
-            <LayoutDashboard size={20} /> Gestão de Alunos
+            <LayoutDashboard size={18} /> <span className="mobile-hide">Alunos</span>
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'content' ? 'active' : ''}`}
             onClick={() => { setActiveTab('content'); setIsMobileMenuOpen(false); }}
           >
-            <BookOpen size={20} /> Ver Conteúdo
+            <BookOpen size={18} /> <span className="mobile-hide">Conteúdo</span>
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'grading' ? 'active' : ''}`}
             onClick={() => { setActiveTab('grading'); setSelectedSubmission(null); setIsMobileMenuOpen(false); }}
           >
-            <CheckCircle size={20} /> Correção de Provas
+            <CheckCircle size={18} /> <span className="mobile-hide">Provas</span>
             {submissions.filter(s => s.status === 'pendente').length > 0 && (
-              <span style={{ background: 'var(--error)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', marginLeft: 'auto' }}>
+              <span style={{ background: 'var(--error)', padding: '1px 5px', borderRadius: '10px', fontSize: '0.6rem', marginLeft: '4px' }}>
                 {submissions.filter(s => s.status === 'pendente').length}
               </span>
             )}
@@ -374,31 +383,25 @@ const Professor = () => {
             className={`admin-nav-item ${activeTab === 'avisos' ? 'active' : ''}`}
             onClick={() => { setActiveTab('avisos'); setIsMobileMenuOpen(false); }}
           >
-            <AlertCircle size={20} /> Quadro de Avisos
+            <AlertCircle size={18} /> <span className="mobile-hide">Avisos</span>
           </div>
           <div 
             className={`admin-nav-item ${activeTab === 'materiais' ? 'active' : ''}`}
             onClick={() => { setActiveTab('materiais'); setIsMobileMenuOpen(false); }}
           >
-            <FileText size={20} /> Materiais Adicionais
+            <FileText size={18} /> <span className="mobile-hide">Materiais</span>
           </div>
           
-          <div style={{ marginTop: 'auto', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem' }}>
-            <div className="admin-nav-item" onClick={() => navigate('/professor')}>
-              <LayoutDashboard size={20} /> Início
-            </div>
-            <div className="admin-nav-item" onClick={() => navigate('/dashboard')}>
-              <GraduationCap size={20} /> Ir para Portal do Aluno
-            </div>
-            <div className="admin-nav-item" style={{ color: 'var(--error)' }} onClick={handleLogout}>
-              <LogOut size={20} /> Sair
+          <div style={{ marginLeft: 'auto', paddingLeft: '0.5rem' }}>
+            <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent' }} onClick={handleLogout}>
+              <LogOut size={18} />
             </div>
           </div>
         </nav>
       </aside>
 
-      <main className="admin-main" style={{ paddingTop: '2rem' }}>
-        <header className="mobile-col-flex" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <main className="admin-main" style={{ paddingTop: '1rem' }}>
+        <header className="mobile-col-flex" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
               {activeTab === 'nucleos' ? 'Gestão de Núcleos' : 
@@ -461,6 +464,15 @@ const Professor = () => {
         {activeTab === 'materiais' && (
           <MateriaisManagement />
         )}
+
+        <div className="bottom-nav-footer">
+          <button onClick={() => navigate(-1)} className="btn btn-outline">
+            <ChevronLeft size={20} /> Voltar
+          </button>
+          <button onClick={() => navigate('/professor')} className="btn btn-primary">
+            <LayoutDashboard size={20} /> Início
+          </button>
+        </div>
       </main>
     </div>
   )
