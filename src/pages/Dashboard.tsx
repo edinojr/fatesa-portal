@@ -167,11 +167,18 @@ const Dashboard = () => {
                   const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
                   if (!matchesNucleo) return false;
 
-                  // If it's a PDF lesson, release automatically (as long as module is released)
-                  const isPdfLesson = (a.tipo !== 'atividade' && a.tipo !== 'prova') && (a.pdf_url || a.arquivo_url);
-                  if (isPdfLesson) return true;
+                  // Structural items (licao containers) always show if module is released
+                  if (a.tipo === 'licao') return professorReleased;
 
-                  // Activities and non-PDF lessons require manual release
+                  // Video and material aulas are released automatically when the module is released by professor
+                  const isAutoReleasedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'material';
+                  if (isAutoReleasedType) return professorReleased;
+
+                  // If it's a PDF lesson without explicit tipo, release automatically (as long as module is released)
+                  const isPdfLesson = (a.tipo !== 'atividade' && a.tipo !== 'prova') && (a.pdf_url || a.arquivo_url);
+                  if (isPdfLesson) return professorReleased;
+
+                  // Activities and provas require explicit release
                   return releasedAtividades.includes(a.id);
                 }),
                 progresso: isStaff ? 100 : 0, 

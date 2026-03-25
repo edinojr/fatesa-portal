@@ -721,13 +721,13 @@ const Admin = () => {
       </aside>
 
       <main className="admin-main">
-        <button 
-          onClick={() => navigate('/dashboard')} 
+        <Link 
+          to="/dashboard" 
           className="btn btn-outline" 
-          style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ width: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', textDecoration: 'none', color: 'inherit' }}
         >
           <ChevronLeft size={16} /> Voltar ao Dashboard
-        </button>
+        </Link>
         <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div className="logo-section" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <GraduationCap size={40} color="var(--primary)" />

@@ -1,6 +1,6 @@
 import React from 'react'
 import { BookOpen, PlayCircle, ClipboardList, Award, CheckCircle2, FileText } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Course } from '../../types/dashboard'
 
 interface CourseListProps {
@@ -187,15 +187,9 @@ const CourseList: React.FC<CourseListProps> = ({
                                               : watchedIds.includes(child.id);
                                             
                                             return (
-                                              <div 
+                                              <Link 
                                                 key={child.id} 
-                                                onClick={() => {
-                                                  if (child.arquivo_url || child.pdf_url) {
-                                                    navigate(`/book/${child.id}?type=aula`);
-                                                  } else {
-                                                    navigate(`/lesson/${child.id}`);
-                                                  }
-                                                }}
+                                                to={ (child.arquivo_url || child.pdf_url) ? `/book/${child.id}?type=aula` : `/lesson/${child.id}`}
                                                 style={{ 
                                                   padding: '0.5rem 0.75rem', 
                                                   background: 'rgba(255,255,255,0.02)', 
@@ -204,7 +198,9 @@ const CourseList: React.FC<CourseListProps> = ({
                                                   display: 'flex',
                                                   alignItems: 'center',
                                                   justifyContent: 'space-between',
-                                                  border: isChildCompleted ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(255,255,255,0.03)'
+                                                  border: isChildCompleted ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(255,255,255,0.03)',
+                                                  textDecoration: 'none',
+                                                  color: 'inherit'
                                                 }}
                                                 className="lesson-link-card"
                                               >
@@ -216,7 +212,7 @@ const CourseList: React.FC<CourseListProps> = ({
                                                   <span style={{ fontSize: '0.8rem' }}>{child.titulo}</span>
                                                 </div>
                                                 {isChildCompleted && <CheckCircle2 size={14} color="var(--success)" />}
-                                              </div>
+                                              </Link>
                                             );
                                           })}
                                         </div>
@@ -225,15 +221,9 @@ const CourseList: React.FC<CourseListProps> = ({
                                   }
 
                                   return (
-                                    <div 
+                                    <Link 
                                       key={aula.id} 
-                                      onClick={() => {
-                                        if (aula.arquivo_url || aula.pdf_url) {
-                                          navigate(`/book/${aula.id}?type=aula`);
-                                        } else {
-                                          navigate(`/lesson/${aula.id}`);
-                                        }
-                                      }}
+                                      to={ (aula.arquivo_url || aula.pdf_url) ? `/book/${aula.id}?type=aula` : `/lesson/${aula.id}`}
                                       className="lesson-link-card" 
                                       style={{ 
                                         padding: '0.75rem 1rem', 
@@ -243,7 +233,9 @@ const CourseList: React.FC<CourseListProps> = ({
                                         display: 'flex', 
                                         alignItems: 'center', 
                                         justifyContent: 'space-between', 
-                                        border: isCompleted ? '1px solid var(--success)' : (aula.tipo === 'prova' ? '1px solid rgba(234, 179, 8, 0.1)' : '1px solid rgba(255,255,255,0.03)') 
+                                        border: isCompleted ? '1px solid var(--success)' : (aula.tipo === 'prova' ? '1px solid rgba(234, 179, 8, 0.1)' : '1px solid rgba(255,255,255,0.03)'),
+                                        textDecoration: 'none',
+                                        color: 'inherit'
                                       }}
                                     >
                                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -254,7 +246,7 @@ const CourseList: React.FC<CourseListProps> = ({
                                         <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{aula.titulo}</span>
                                       </div>
                                       {isCompleted && <CheckCircle2 size={16} color="var(--success)" />}
-                                    </div>
+                                    </Link>
                                   );
                                 })}
                               </>
@@ -287,9 +279,10 @@ const CourseList: React.FC<CourseListProps> = ({
                     {archivedBooks.map(b => {
                       const stats = getBookStats(b);
                       return (
-                        <div 
+                        <Link 
                           key={b.id} 
                           className="course-card archived"
+                          to={`/book/${b.id}`}
                           style={{ 
                             cursor: 'pointer', 
                             padding: '1.5rem', 
@@ -297,9 +290,10 @@ const CourseList: React.FC<CourseListProps> = ({
                             borderRadius: '20px',
                             border: '1px solid rgba(16, 185, 129, 0.1)',
                             position: 'relative',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            textDecoration: 'none',
+                            color: 'inherit'
                           }}
-                          onClick={() => navigate(`/book/${b.id}`)}
                         >
                           <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '60px', height: '60px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <CheckCircle2 size={24} color="var(--success)" style={{ marginTop: '10px', marginRight: '10px' }} />
@@ -312,7 +306,7 @@ const CourseList: React.FC<CourseListProps> = ({
                             </div>
                             <button className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.8rem' }}>Revisar</button>
                           </div>
-                        </div>
+                        </Link>
                       );
                     })}
                   </div>

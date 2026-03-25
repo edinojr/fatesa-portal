@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../types/professor'
 
 interface ProfessorContentProps {
@@ -160,7 +160,14 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => selectBookAndShowLessons(book)}>Aulas</button>
-                  <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/book/${book.id}`)} title="Ver Módulo como Aluno"><Eye size={18} /></button>
+                  <Link 
+                    className="btn btn-outline" 
+                    style={{ width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
+                    to={`/book/${book.id}`} 
+                    title="Ver Módulo como Aluno"
+                  >
+                    <Eye size={18} />
+                  </Link>
                 </div>
               </div>
             )
@@ -220,7 +227,13 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               })()}
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/lesson/${lesson.id}`)}><Eye size={18} /> Ver Aula</button>
+                <Link 
+                  className="btn btn-outline" 
+                  style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: 'inherit' }} 
+                  to={`/lesson/${lesson.id}`}
+                >
+                  <Eye size={18} /> Ver Aula
+                </Link>
               </div>
             </div>
           ))}
