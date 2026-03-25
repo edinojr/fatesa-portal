@@ -993,6 +993,7 @@ const Admin = () => {
           showToast={showToast}
           lessonItems={lessonItems}
           addingBloco={addingBloco}
+          normalizeFileName={normalizeFileName}
         />
 
         <EditItemModal 
@@ -1026,6 +1027,7 @@ const Admin = () => {
           showToast={showToast}
           fetchLessons={fetchLessons}
           selectedBook={selectedBook}
+          normalizeFileName={normalizeFileName}
         />
 
         <QuizEditorModal 

@@ -14,6 +14,7 @@ interface LessonContentEditorModalProps {
   showToast: (msg: string, type?: 'success' | 'error') => void
   fetchLessons: (bookId: string) => Promise<void>
   selectedBook: any
+  normalizeFileName: (name: string) => string
 }
 
 const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
@@ -28,7 +29,8 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
   supabase,
   showToast,
   fetchLessons,
-  selectedBook
+  selectedBook,
+  normalizeFileName
 }) => {
   if (!editingLessonContent) return null;
 
@@ -129,7 +131,8 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                             
                             // Handle first file for the current block
                             const firstFile = files[0];
-                            const firstPath = `lesson-elements/${Date.now()}_${firstFile.name}`;
+                            const firstSafeName = normalizeFileName(firstFile.name);
+                            const firstPath = `lesson-elements/${Date.now()}_${firstSafeName}`;
                             const { error: firstError } = await supabase.storage.from('livros').upload(firstPath, firstFile);
                             if (firstError) throw firstError;
                             const { data: { publicUrl: firstUrl } } = supabase.storage.from('livros').getPublicUrl(firstPath);
@@ -138,7 +141,8 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                             // Handle subsequent files by adding new blocks
                             for (let i = 1; i < files.length; i++) {
                               const file = files[i];
-                              const filePath = `lesson-elements/${Date.now()}_${file.name}`;
+                              const safeName = normalizeFileName(file.name);
+                              const filePath = `lesson-elements/${Date.now()}_${safeName}`;
                               const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
                               if (uploadError) throw uploadError;
                               const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
@@ -214,7 +218,8 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                     const newMaterials = [...lessonMaterials];
                     for (let i = 0; i < files.length; i++) {
                       const file = files[i];
-                      const filePath = `materiais/${Date.now()}_${file.name}`;
+                      const safeName = normalizeFileName(file.name);
+                      const filePath = `materiais/${Date.now()}_${safeName}`;
                       const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
                       if (uploadError) throw uploadError;
                       const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);

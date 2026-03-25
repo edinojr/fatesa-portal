@@ -326,6 +326,7 @@ interface AddContentModalProps {
   showToast: (msg: string, type?: 'success' | 'error') => void
   lessonItems: any[]
   addingBloco: number | null
+  normalizeFileName: (name: string) => string
 }
 
 export const AddContentModal: React.FC<AddContentModalProps> = ({
@@ -339,7 +340,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
   fetchLessonItems,
   showToast,
   lessonItems,
-  addingBloco
+  addingBloco,
+  normalizeFileName
 }) => {
   if (!showAddContent || !selectedLesson) return null;
   
@@ -363,7 +365,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
               if (files && files.length > 0) {
                 for (let i = 0; i < files.length; i++) {
                   const file = files[i];
-                  const filePath = `materiais/${Date.now()}_${file.name}`;
+                  const safeName = normalizeFileName(file.name);
+                  const filePath = `materiais/${Date.now()}_${safeName}`;
                   const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
                   if (uploadError) throw uploadError;
                   const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
@@ -390,7 +393,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
               let arquivo_url = null;
 
               if (file) {
-                const filePath = `conteudo/${Date.now()}_${file.name}`;
+                const safeName = normalizeFileName(file.name);
+                const filePath = `conteudo/${Date.now()}_${safeName}`;
                 const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
                 if (uploadError) throw uploadError;
                 const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
@@ -566,7 +570,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
             const file = (e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0];
             if (file) {
-              const filePath = `conteudo/${Date.now()}_${file.name}`;
+              const safeName = normalizeFileName ? normalizeFileName(file.name) : file.name;
+              const filePath = `conteudo/${Date.now()}_${safeName}`;
               const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
               if (uploadError) throw uploadError;
               const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
