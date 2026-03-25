@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BookOpen, Eye, PlayCircle } from 'lucide-react'
+import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import { ProfessorCourse } from '../../types/professor'
@@ -16,6 +16,7 @@ interface ProfessorContentProps {
   selectBookAndShowLessons: (book: any) => void
   profile: any
   professorNucleos: any[]
+  submissions?: any[] // Added to track completions
 }
 
 const ProfessorContent: React.FC<ProfessorContentProps> = ({
@@ -29,7 +30,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   fetchBooks,
   selectBookAndShowLessons,
   profile,
-  professorNucleos
+  professorNucleos,
+  submissions = []
 }) => {
   const navigate = useNavigate()
   const [releases, setReleases] = useState<any[]>([])
@@ -68,19 +70,35 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     }
   }
 
+  // Count how many students passed/finished this book
+  const getBookCompletionStats = (book: any) => {
+    const bookLessonIds = (book.aulas || []).map((l: any) => l.id)
+    const finishedCount = (submissions || []).filter(sub => {
+      const aulaId = sub.aulas?.id || sub.aula_id
+      return bookLessonIds.includes(aulaId) && sub.status === 'corrigida' && (sub.nota || 0) >= 7.0
+    }).length
+    return finishedCount
+  }
+
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-        {selectedCourse && (
-          <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => { setSelectedCourse(null); setSelectedBook(null); }}>
-            Voltar para Cursos
-          </button>
-        )}
-        {selectedBook && (
-          <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => setSelectedBook(null)}>
-            Voltar para Livros
-          </button>
-        )}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          {selectedCourse && (
+            <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => { setSelectedCourse(null); setSelectedBook(null); }}>
+              Voltar para Cursos
+            </button>
+          )}
+          {selectedBook && (
+            <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => setSelectedBook(null)}>
+              Voltar para Livros
+            </button>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem 1rem', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+          <ShieldCheck size={16} color="var(--success)" />
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--success)', textTransform: 'uppercase' }}>Visualização Protegida</span>
+        </div>
       </div>
 
       {!selectedCourse ? (
@@ -98,51 +116,64 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
           ))}
         </div>
       ) : !selectedBook ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
-          {books.map(book => (
-            <div key={book.id} className="course-card" style={{ padding: '1.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '16px' }}>
-              <h4 style={{ marginBottom: '1rem' }}>{book.titulo}</h4>
-              
-              <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)' }}>
-                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Liberação por Núcleo</p>
-                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                  {professorNucleos.map(n => {
-                    const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo');
-                    return (
-                      <button 
-                        key={n.id} 
-                        onClick={(e) => { e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }}
-                        style={{ 
-                          fontSize: '0.65rem', 
-                          padding: '3px 8px', 
-                          borderRadius: '8px',
-                          background: isReleased ? 'rgba(168, 85, 247, 0.2)' : 'transparent',
-                          border: `1px solid ${isReleased ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
-                          color: isReleased ? '#fff' : 'rgba(255,255,255,0.4)',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {n.nome}
-                      </button>
-                    )
-                  })}
-                  {professorNucleos.length === 0 && <p style={{ fontSize: '0.7rem', color: 'var(--error)' }}>Nenhum núcleo vinculado.</p>}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          {books.map(book => {
+            const completionCount = getBookCompletionStats(book)
+            return (
+              <div key={book.id} className="course-card" style={{ padding: '1.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '16px', display: 'flex', flexDirection: 'column' }}>
+                <h4 style={{ marginBottom: '0.5rem' }}>{book.titulo}</h4>
+                
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                  <div style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <CheckSquare size={12} /> {completionCount} Alunos Finalizados
+                  </div>
+                </div>
+
+                <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)', flexGrow: 1 }}>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Ativar para Núcleo:</p>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    {professorNucleos.map(n => {
+                      const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo');
+                      return (
+                        <button 
+                          key={n.id} 
+                          onClick={(e) => { e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }}
+                          style={{ 
+                            fontSize: '0.65rem', 
+                            padding: '4px 10px', 
+                            borderRadius: '8px',
+                            background: isReleased ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                            border: `1px solid ${isReleased ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
+                            color: isReleased ? '#fff' : 'rgba(255,255,255,0.4)',
+                            cursor: 'pointer',
+                            fontWeight: isReleased ? 600 : 400,
+                            transition: 'all 0.2s'
+                          }}
+                          title={isReleased ? 'Desativar Módulo' : 'Ativar Módulo'}
+                        >
+                          {n.nome}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => selectBookAndShowLessons(book)}>Aulas</button>
+                  <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/book/${book.id}`)} title="Ver Módulo como Aluno"><Eye size={18} /></button>
                 </div>
               </div>
-
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => selectBookAndShowLessons(book)}>Aulas</button>
-                <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/book/${book.id}`)}><Eye size={18} /></button>
-              </div>
-            </div>
-          ))}
+            )
+          })}
           {books.length === 0 && <p style={{ gridColumn: '1/-1', textAlign: 'center', color: 'var(--text-muted)' }}>Nenhum livro neste curso.</p>}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '12px', borderLeft: '4px solid var(--primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h4 style={{ color: 'var(--primary)', margin: 0 }}>Aulas de {selectedBook.titulo}</h4>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Clock size={16} /> {lessons.length} aulas disponíveis
+            </div>
           </div>
           {lessons.map(lesson => (
             <div key={lesson.id} style={{ padding: '1.25rem', background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -154,14 +185,13 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                 </div>
               </div>
 
-              {/* Release Management for Non-PDF Content */}
               {(() => {
                 const isAutoReleased = (lesson.tipo !== 'atividade' && lesson.tipo !== 'prova') && (lesson.pdf_url || lesson.arquivo_url);
                 if (isAutoReleased) return null;
 
                 return (
                   <div style={{ flex: 1, margin: '0 2rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.01)' }}>
-                    <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>Liberar para:</p>
+                    <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>Ativar p/:</p>
                     <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
                       {professorNucleos.map(n => {
                         const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === lesson.id && r.item_type === 'atividade');
@@ -171,12 +201,13 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                             onClick={() => toggleRelease(n.id, lesson.id, 'atividade')}
                             style={{ 
                               fontSize: '0.6rem', 
-                              padding: '2px 6px', 
+                              padding: '3px 7px', 
                               borderRadius: '6px',
-                              background: isReleased ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              background: isReleased ? 'var(--success)' : 'transparent',
                               border: `1px solid ${isReleased ? 'var(--success)' : 'rgba(255,255,255,0.05)'}`,
                               color: isReleased ? '#fff' : 'rgba(255,255,255,0.3)',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              fontWeight: isReleased ? 600 : 400
                             }}
                           >
                             {n.nome}
@@ -189,7 +220,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               })()}
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/lesson/${lesson.id}`)}><Eye size={18} /> Ver</button>
+                <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => navigate(`/lesson/${lesson.id}`)}><Eye size={18} /> Ver Aula</button>
               </div>
             </div>
           ))}

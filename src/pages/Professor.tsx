@@ -102,10 +102,8 @@ const Professor = () => {
             titulo,
             tipo,
             video_url,
-            pdf_url,
             arquivo_url,
-            created_at,
-            nucleo_id
+            created_at
           )
         )
       `)
@@ -470,6 +468,13 @@ const Professor = () => {
       </aside>
 
       <main className="admin-main" style={{ paddingTop: '1rem' }}>
+        <button 
+          onClick={() => navigate('/dashboard')} 
+          className="btn btn-outline" 
+          style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
+        >
+          <ChevronLeft size={16} /> Voltar ao Dashboard
+        </button>
         <header className="mobile-col-flex" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
@@ -511,6 +516,7 @@ const Professor = () => {
             selectBookAndShowLessons={selectBookAndShowLessons}
             profile={profile}
             professorNucleos={professorNucleos}
+            submissions={submissions}
           />
         )}
 
