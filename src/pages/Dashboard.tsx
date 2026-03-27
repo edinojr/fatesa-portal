@@ -16,7 +16,8 @@ import {
   ChevronLeft,
   Menu,
   X,
-  Bell
+  Bell,
+  MessageSquare
 } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Course, Documento, Pagamento } from '../types/dashboard'
@@ -27,12 +28,14 @@ import GradesPanel from '../components/dashboard/GradesPanel'
 import NoticeBoard from '../components/dashboard/NoticeBoard'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
+import ForumPanel from '../components/forum/ForumPanel'
 
-type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
+type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
 
 const Dashboard = () => {
   const { profile, loading: profileLoading, signOut } = useProfile();
   const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+  const isRestricted = ['super_visitante', 'ex_aluno', 'colaborador'].includes(profile?.tipo || '');
   
   const [activeTab, setActiveTab] = useState<Tab>('cursos')
   const [courses, setCourses] = useState<Course[]>([])
@@ -253,6 +256,11 @@ const Dashboard = () => {
 
                   // Blocked by failure logic
                   if (a.tipo === 'prova' && isExamBlockedByFailure(a.id)) return false;
+
+                  // Restriction for external/ex-students/colleagues: ONLY video-aulas
+                  if (isRestricted) {
+                    return a.tipo === 'gravada' || a.tipo === 'ao_vivo';
+                  }
 
                   // Structural items (licao containers) always show if module is released
                   if (a.tipo === 'licao') return professorReleased;
@@ -476,8 +484,11 @@ const Dashboard = () => {
             </div>
           )}
 
-          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
-            .filter(t => isStaff ? t !== 'financeiro' : true)
+          {(['cursos', 'forum', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
+            .filter(t => {
+              if (isRestricted) return ['cursos', 'forum', 'avisos'].includes(t);
+              return isStaff ? t !== 'financeiro' : true;
+            })
             .map(t => {
               const isDisabledForBlocked = isBlocked && t !== 'financeiro';
               return (
@@ -492,6 +503,7 @@ const Dashboard = () => {
                   style={{ opacity: isDisabledForBlocked ? 0.35 : 1, cursor: isDisabledForBlocked ? 'not-allowed' : 'pointer' }}
                 >
                   {t === 'cursos' && <BookOpen size={20} />}
+                  {t === 'forum' && <MessageSquare size={20} />}
                   {t === 'avisos' && <Bell size={20} />}
                   {t === 'documentos' && <FileText size={20} />}
                   {t === 'financeiro' && <CreditCard size={20} />}
@@ -518,6 +530,7 @@ const Dashboard = () => {
               {activeTab === 'documentos' && 'Meus Documentos'}
               {activeTab === 'financeiro' && 'Financeiro e Matrícula'}
               {activeTab === 'boletim' && 'Boletim de Notas'}
+              {activeTab === 'forum' && 'Fórum da Comunidade'}
             </h1>
             <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta, Aluno.</p>
           </div>
@@ -594,6 +607,10 @@ const Dashboard = () => {
               handleChangeNucleo={handleChangeNucleo}
               atividades={atividades}
             />
+          )}
+
+          {activeTab === 'forum' && (
+            <ForumPanel userProfile={profile} />
           )}
         </div>
 

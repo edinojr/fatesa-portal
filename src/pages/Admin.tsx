@@ -30,7 +30,8 @@ import {
   LayoutDashboard,
   X,
   Menu,
-  ClipboardList
+  ClipboardList,
+  MessageSquare
 } from 'lucide-react'
 import NucleosPanel from '../components/NucleosPanel'
 import UserManagement from '../components/admin/UserManagement'
@@ -47,7 +48,9 @@ import { QuizQuestion, QuestionType } from '../types/admin'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
 
-type Tab = 'home' | 'users' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance'
+import ForumPanel from '../components/forum/ForumPanel'
+
+type Tab = 'home' | 'users' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum'
 
 
 const Admin = () => {
@@ -742,6 +745,9 @@ const Admin = () => {
           <div className={`admin-nav-item ${activeTab === 'content' ? 'active' : ''}`} onClick={() => { setActiveTab('content'); setIsMobileMenuOpen(false); }}>
             <BookOpen size={18} /> <span className="mobile-hide">Conteúdo</span>
           </div>
+          <div className={`admin-nav-item ${activeTab === 'forum' ? 'active' : ''}`} onClick={() => { setActiveTab('forum'); setIsMobileMenuOpen(false); }}>
+            <MessageSquare size={18} /> <span className="mobile-hide">Fórum</span>
+          </div>
           <div className={`admin-nav-item ${activeTab === 'validation' ? 'active' : ''}`} onClick={() => { setActiveTab('validation'); setIsMobileMenuOpen(false); }}>
             <ShieldCheck size={18} /> <span className="mobile-hide">Validação</span>
             {(pendingDocs.length + pendingPays.length) > 0 && (
@@ -784,7 +790,7 @@ const Admin = () => {
                 WebkitTextFillColor: 'transparent',
                 marginBottom: '0.25rem'
               }}>
-                {activeTab === 'home' ? 'Painel Administrativo' : activeTab === 'users' ? 'Gestão de Usuários' : activeTab === 'content' ? 'Gestão de Conteúdo' : 'Validação de Acesso'}
+                {activeTab === 'home' ? 'Painel Administrativo' : activeTab === 'users' ? 'Gestão de Usuários' : activeTab === 'content' ? 'Gestão de Conteúdo' : activeTab === 'forum' ? 'Fórum da Comunidade' : 'Validação de Acesso'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
                 {activeTab === 'home' ? 'Visão geral do sistema e atalhos rápidos.' : activeTab === 'users' ? 'Administre os perfis, bloqueios e acessos.' : activeTab === 'content' ? 'Gerencie as matérias, livros e atividades.' : 'Verifique envios dos alunos.'}
@@ -915,6 +921,10 @@ const Admin = () => {
                 handleUploadQrCode={handleUploadQrCode}
                 actionLoading={actionLoading}
               />
+            )}
+
+            {activeTab === 'forum' && (
+              <ForumPanel userProfile={profile} />
             )}
           </>
         )}
