@@ -189,9 +189,7 @@ const Lesson = () => {
 
       // Even if not passed, we mark as 'complete' in terms of progression for the next module
       // if it was the first attempt of a block final exam.
-      if (lesson.is_bloco_final && (existingSubmission?.tentativas || 0) === 0) {
-        await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true });
-      } else if (!lesson.is_bloco_final && pass) {
+      if (pass) {
         await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true });
       }
     } catch (err) { console.error(err); }

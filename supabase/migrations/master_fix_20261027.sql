@@ -1,30 +1,41 @@
 
--- ==========================================
--- MASTER FIX - FATESA PORTAL (VERSION 2)
--- ==========================================
+-- ========================================================
+-- MASTER FIX V3 - FATESA PORTAL (AUDITED & SECURED)
+-- ========================================================
 
--- 1. ADD NEW ROLES TO ENUM (Individually)
--- PostgreSQL does not allow adding enum values inside a transaction block (DO $$).
--- Run these lines one by one if needed.
+-- 1. SECURITY & ENUMS (Run each one outside of transactions)
 ALTER TYPE user_tipo ADD VALUE IF NOT EXISTS 'super_visitante';
 ALTER TYPE user_tipo ADD VALUE IF NOT EXISTS 'ex_aluno';
 ALTER TYPE user_tipo ADD VALUE IF NOT EXISTS 'colaborador';
 ALTER TYPE user_tipo ADD VALUE IF NOT EXISTS 'suporte';
 
--- 2. ENSURE TABLES AND COLUMNS (Safe block)
+-- 2. ENABLE RLS AND POLICIES (Security Audit Fix)
+ALTER TABLE public.admins_autorizados ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.professores_autorizados ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.registros_alumni ENABLE ROW LEVEL SECURITY;
+
+-- Admins handle the authorization lists
+DROP POLICY IF EXISTS "Admins can manage admins_autorizados" ON public.admins_autorizados;
+CREATE POLICY "Admins can manage admins_autorizados" ON public.admins_autorizados
+FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo = 'admin'));
+
+DROP POLICY IF EXISTS "Admins can manage professores_autorizados" ON public.professores_autorizados;
+CREATE POLICY "Admins can manage professores_autorizados" ON public.professores_autorizados
+FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo = 'admin'));
+
+-- Admins and Staff handle Alumni
+DROP POLICY IF EXISTS "Admins and staff can manage alumni records" ON public.registros_alumni;
+CREATE POLICY "Admins and staff can manage alumni records" ON public.registros_alumni
+FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor', 'suporte')));
+
+-- 3. ENSURE COLUMNS EXIST (Divergence Audit)
 DO $$
 BEGIN
-    -- Public Users structure
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'acesso_definitivo') THEN
-        ALTER TABLE public.users ADD COLUMN acesso_definitivo BOOLEAN NOT NULL DEFAULT FALSE;
-    END IF;
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'nucleo_id') THEN
         ALTER TABLE public.users ADD COLUMN nucleo_id UUID;
     END IF;
-    
-    -- Exam Versioning structure
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'aulas' AND column_name = 'versao') THEN
-        ALTER TABLE public.aulas ADD COLUMN versao INTEGER DEFAULT 1;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'acesso_definitivo') THEN
+        ALTER TABLE public.users ADD COLUMN acesso_definitivo BOOLEAN DEFAULT FALSE;
     END IF;
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'respostas_aulas' AND column_name = 'start_time') THEN
         ALTER TABLE public.respostas_aulas ADD COLUMN start_time TIMESTAMP WITH TIME ZONE;
@@ -32,7 +43,7 @@ BEGIN
 END
 $$;
 
--- 3. DROP AND RECREATE ROBUST REGISTRATION TRIGGER
+-- 4. FINAL ROBUST REGISTRATION TRIGGER (Source of Truth)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -43,15 +54,15 @@ DECLARE
   meta_type TEXT;
   meta_nome TEXT;
 BEGIN
-  -- A. Detect roles from auth tables
+  -- A. Determine identity via email
   SELECT EXISTS (SELECT 1 FROM public.professores_autorizados WHERE LOWER(email) = LOWER(NEW.email)) INTO is_teacher;
   SELECT EXISTS (SELECT 1 FROM public.admins_autorizados WHERE LOWER(email) = LOWER(NEW.email)) INTO is_admin;
   
-  -- B. Extract Metadata (Highly compatible search)
+  -- B. Metadata extraction (Supports both Public and Admin panel formats)
   meta_type := COALESCE(NEW.raw_user_meta_data->>'student_type', NEW.raw_user_meta_data->>'tipo');
   meta_nome := COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'nome', split_part(NEW.email, '@', 1));
 
-  -- C. Set Role logic
+  -- C. Set final role and access paths
   IF is_admin THEN
     final_tipo := 'admin'::user_tipo;
     final_caminhos := ARRAY['admin', 'suporte', 'professor', 'aluno'];
@@ -59,7 +70,6 @@ BEGIN
     final_tipo := 'professor'::user_tipo;
     final_caminhos := ARRAY['professor', 'aluno'];
   ELSE
-    -- Safe mapping for student types
     CASE COALESCE(meta_type, 'online')
       WHEN 'presencial'      THEN final_tipo := 'presencial'::user_tipo;
       WHEN 'super_visitante' THEN final_tipo := 'super_visitante'::user_tipo;
@@ -73,7 +83,7 @@ BEGIN
     final_caminhos := ARRAY['aluno'];
   END IF;
 
-  -- D. Secure Insert into public.users with cast checking
+  -- D. Upsert into public.users with safe UUID and boolean casts
   INSERT INTO public.users (
     id, nome, email, tipo, caminhos_acesso, 
     nucleo, nucleo_id, acesso_definitivo
@@ -101,8 +111,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 4. Re-attach trigger
+-- 5. RE-ATTACH TRIGGER
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- COMPLETED MASTER FIX V3

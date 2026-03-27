@@ -124,9 +124,9 @@ const Dashboard = () => {
         
         const { data: examSubmissions } = await supabase
           .from('respostas_aulas')
-          .select('aula_id, aulas(livro_id)')
+          .select('aula_id, status, nota, aulas(livro_id)')
           .eq('aluno_id', profile.id)
-          .gte('tentativas', 1);
+          .gte('nota', 7);
         
         const submittedBookIds = new Set((examSubmissions || []).map(s => (s.aulas as any)?.livro_id).filter(id => !!id));
         
@@ -269,6 +269,14 @@ const Dashboard = () => {
                   const isExercise = a.tipo === 'atividade' || a.tipo === 'prova';
                   if (isExercise) {
                     if (a.tipo === 'prova') {
+                      // Check if student already PASSED any version of this book's exam
+                      const anyPassed = resData.some(r => 
+                        (r.aulas as any).livro_id === l.id && 
+                        (r.aulas as any).tipo === 'prova' && 
+                        (r.nota || 0) >= 7
+                      );
+                      if (anyPassed) return false;
+
                       // V1, V2, V3 Logic
                       const v = a.versao || 1;
                       if (v === 1) return releasedAtividades.includes(a.id);
