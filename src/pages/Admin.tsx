@@ -549,9 +549,7 @@ const Admin = () => {
         password: newTeacherPassword,
         options: {
           data: {
-            nome: newTeacherNome,
             full_name: newTeacherNome,
-            tipo: 'professor',
             student_type: 'professor',
             acesso_definitivo: true
           }
@@ -611,11 +609,10 @@ const Admin = () => {
         password,
         options: {
           data: {
-            nome: nome,
             full_name: nome,
-            tipo: tipo,
             student_type: tipo,
-            acesso_definitivo: true
+            acesso_definitivo: true,
+            nucleo_id: formData.get('nucleo_id') || null
           }
         }
       })
@@ -1065,6 +1062,7 @@ const Admin = () => {
           setShowAddAdmin={setShowAddAdmin}
           actionLoading={actionLoading}
           handleAddAdmin={handleAddAdmin}
+          availableNucleos={availableNucleos}
         />
 
         {confirmDelete && (

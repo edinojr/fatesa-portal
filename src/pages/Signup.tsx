@@ -113,9 +113,7 @@ const Signup = () => {
         options: {
           data: {
             full_name: nome,
-            nome: nome,
             student_type: tipo,
-            tipo: tipo,
             nucleo: availableNucleos.find(n => n.id === nucleo)?.nome || (nucleo.includes('-') ? '' : nucleo),
             nucleo_id: nucleo.includes('-') ? nucleo : null
           }

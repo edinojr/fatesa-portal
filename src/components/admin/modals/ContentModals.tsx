@@ -715,13 +715,15 @@ interface AddAdminModalProps {
   setShowAddAdmin: (val: boolean) => void
   actionLoading: string | null
   handleAddAdmin: (e: React.FormEvent) => Promise<void>
+  availableNucleos: any[]
 }
 
 export const AddAdminModal: React.FC<AddAdminModalProps> = ({
   showAddAdmin,
   setShowAddAdmin,
   actionLoading,
-  handleAddAdmin
+  handleAddAdmin,
+  availableNucleos
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   if (!showAddAdmin) return null;
@@ -750,6 +752,15 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
           <div className="form-group">
             <label>E-mail</label>
             <input name="email" type="email" className="form-control" required placeholder="admin@fatesa.edu" />
+          </div>
+          <div className="form-group">
+            <label>Núcleo (Polo/Ponto)</label>
+            <select name="nucleo_id" className="form-control">
+              <option value="">Nenhum / Global</option>
+              {availableNucleos.map(n => (
+                <option key={n.id} value={n.id}>{n.nome}</option>
+              ))}
+            </select>
           </div>
           <div className="form-group">
             <label>Senha</label>
