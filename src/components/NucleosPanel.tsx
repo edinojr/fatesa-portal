@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapPin, Clock, ShieldCheck } from 'lucide-react'
+import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapPin, Clock, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react'
 
 interface NucleoPanelProps {
   userRole?: string
@@ -36,6 +36,14 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
   const [allCourses, setAllCourses] = useState<any[]>([])
   const [releasedItems, setReleasedItems] = useState<Record<string, boolean>>({})
   const [editingQuestionnaire, setEditingQuestionnaire] = useState<any | null>(null)
+  
+  // Missing states causing build errors
+  const [atividades, setAtividades] = useState<any[]>([])
+  const [notas, setNotas] = useState<any[]>([])
+  const [courseSubmissions, setCourseSubmissions] = useState<any[]>([])
+  const [expandedSub, setExpandedSub] = useState<string | null>(null)
+  const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
+  const [autoGrade, setAutoGrade] = useState<string>('0.0')
 
   const isAdmin = userRole === 'admin'
   const isProfessor = userRole === 'professor'
@@ -160,7 +168,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       
       allCourses.forEach(course => {
         (course.livros || []).forEach((livro: any) => {
-          itemsToProcess.push({ item_id: livro.id, item_type: 'modulo' })
+          itemsToProcess.push({ item_id: livro.id, item_type: 'modulo' });
           (livro.aulas || []).forEach((aula: any) => {
             if (aula.tipo === 'atividade' || aula.tipo === 'prova') {
               itemsToProcess.push({ item_id: aula.id, item_type: 'atividade' })
@@ -1396,9 +1404,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                     </button>
                   </div>
                 </form>
-          </>
-        )}
-      </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
       {/* MODAL EDIT QUESTIONNAIRE */}
       {editingQuestionnaire && (
         <div className="modal-overlay" onClick={() => setEditingQuestionnaire(null)}>
@@ -1550,8 +1560,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
         </div>
       )}
     </div>
-  )}
-</div>
   )
 }
 
