@@ -10,9 +10,8 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'vendor-react';
-            if (id.includes('supabase')) return 'vendor-supabase';
             if (id.includes('pdfjs-dist') || id.includes('react-pdf')) return 'vendor-pdf';
+            if (id.includes('@supabase')) return 'vendor-supabase';
             return 'vendor';
           }
         }

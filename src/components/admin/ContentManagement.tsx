@@ -22,8 +22,8 @@ interface ContentManagementProps {
   handleDelete: (table: 'cursos' | 'livros' | 'aulas', id: string) => Promise<void>
   handleRemoveFile: (table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
-  handleReorder: (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void) => Promise<void>
-  handleMoveTo: (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null) => Promise<void>
+  handleReorder: (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas') => Promise<void>
+  handleMoveTo: (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null, table: 'livros' | 'aulas') => Promise<void>
   setShowAddCourse: (val: boolean) => void
   setShowAddBook: (val: boolean) => void
   setShowAddLesson: (val: boolean) => void
@@ -123,9 +123,9 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
     setShowAddContent(true)
   }
 
-  const doReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void) => {
+  const doReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas') => {
     setReorderLoading(id + direction)
-    await handleReorder(id, direction, items, fetchFn)
+    await handleReorder(id, direction, items, fetchFn, table)
     setReorderLoading(null)
   }
 
@@ -144,14 +144,14 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
     if (id !== dragOverId) setDragOverId(id)
   }
 
-  const onDrop = async (e: React.DragEvent, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null) => {
+  const onDrop = async (e: React.DragEvent, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null, table: 'livros' | 'aulas' = 'aulas') => {
     e.preventDefault()
     setDragOverId(null)
     const id = e.dataTransfer.getData('text/plain')
     if (id === targetId && targetBlocoId === undefined) return
     
     setReorderLoading(id + 'drag')
-    await handleMoveTo(id, targetId, items, fetchFn, targetBlocoId)
+    await handleMoveTo(id, targetId, items, fetchFn, targetBlocoId, table)
     setReorderLoading(null)
     setDraggedId(null)
   }
@@ -263,6 +263,17 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                 </div>
                 {canEdit && (
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {/* Reorder arrows for books */}
+                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem' }} 
+                      disabled={books.findIndex(b => b.id === book.id) === 0}
+                      onClick={() => doReorder(book.id, 'up', books, () => fetchBooks(selectedCourse.id), 'livros')}>
+                      {reorderLoading === book.id + 'up' ? <Loader2 size={14} className="spinner" /> : <ChevronUp size={14} />}
+                    </button>
+                    <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem' }} 
+                      disabled={books.findIndex(b => b.id === book.id) === books.length - 1}
+                      onClick={() => doReorder(book.id, 'down', books, () => fetchBooks(selectedCourse.id), 'livros')}>
+                      {reorderLoading === book.id + 'down' ? <Loader2 size={14} className="spinner" /> : <ChevronDown size={14} />}
+                    </button>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'book', data: book })}><Edit size={16} /></button>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} onClick={() => handleDelete('livros', book.id)}><Trash2 size={16} /></button>
                   </div>
@@ -288,11 +299,11 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     {/* Reorder arrows */}
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem' }} disabled={idx === 0}
-                      onClick={() => doReorder(lesson.id, 'up', lessons, () => fetchLessons(selectedBook.id))}>
+                      onClick={() => doReorder(lesson.id, 'up', lessons, () => fetchLessons(selectedBook.id), 'aulas')}>
                       {reorderLoading === lesson.id + 'up' ? <Loader2 size={14} className="spinner" /> : <ChevronUp size={14} />}
                     </button>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem' }} disabled={idx === lessons.length - 1}
-                      onClick={() => doReorder(lesson.id, 'down', lessons, () => fetchLessons(selectedBook.id))}>
+                      onClick={() => doReorder(lesson.id, 'down', lessons, () => fetchLessons(selectedBook.id), 'aulas')}>
                       {reorderLoading === lesson.id + 'down' ? <Loader2 size={14} className="spinner" /> : <ChevronDown size={14} />}
                     </button>
                     <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} onClick={() => setEditingItem({ type: 'lesson', data: lesson })}><Edit size={16} /></button>
@@ -339,7 +350,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                     {/* Block Header */}
                     <div 
                       onDragOver={(e) => onDragOver(e, 'bloco-' + blocoKey)}
-                      onDrop={(e) => onDrop(e, null, lessonItems, () => fetchLessonItems(selectedLesson.id), blocoKey)}
+                      onDrop={(e) => onDrop(e, null, lessonItems, () => fetchLessonItems(selectedLesson.id), blocoKey, 'aulas')}
                       style={{ 
                         display: 'flex', 
                         justifyContent: 'space-between', 
@@ -384,7 +395,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                           draggable={canEdit}
                           onDragStart={(e) => onDragStart(e, item.id)}
                           onDragOver={(e) => onDragOver(e, item.id)}
-                          onDrop={(e) => onDrop(e, item.id, lessonItems, () => fetchLessonItems(selectedLesson.id))}
+                          onDrop={(e) => onDrop(e, item.id, lessonItems, () => fetchLessonItems(selectedLesson.id), undefined, 'aulas')}
                           style={{
                             padding: '1rem 1.5rem',
                             display: 'flex',

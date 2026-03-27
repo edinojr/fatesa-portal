@@ -194,7 +194,7 @@ const Admin = () => {
     })
   }
 
-  const handleReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void) => {
+  const handleReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas') => {
     const idx = items.findIndex(i => i.id === id)
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
     if (swapIdx < 0 || swapIdx >= items.length) return
@@ -204,8 +204,8 @@ const Admin = () => {
 
     try {
       await Promise.all([
-        supabase.from('aulas').update({ ordem: swap.ordem }).eq('id', current.id),
-        supabase.from('aulas').update({ ordem: current.ordem }).eq('id', swap.id)
+        supabase.from(table).update({ ordem: swap.ordem }).eq('id', current.id),
+        supabase.from(table).update({ ordem: current.ordem }).eq('id', swap.id)
       ])
       fetchFn()
     } catch (err: any) {
@@ -213,7 +213,7 @@ const Admin = () => {
     }
   }
 
-  const handleMoveTo = async (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null) => {
+  const handleMoveTo = async (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null, table: 'livros' | 'aulas' = 'aulas') => {
     if (id === targetId) return;
     
     const newItems = [...items];
@@ -239,11 +239,11 @@ const Admin = () => {
     }
     
     // Create update batch preserving all original fields
+    // SANITIZATION: Remove virtual fields and metadata that aren't in the DB schema
     const updates = newItems.map((item, index) => {
-      // Remove 'children' if it's the joined count object/count to avoid DB errors
-      const { children, ...dbItem } = item;
+      const { children, count, professores, nucleos, ...rest } = item;
       return {
-        ...dbItem,
+        ...rest,
         ordem: index + 1,
         bloco_id: item.bloco_id
       };
@@ -252,14 +252,14 @@ const Admin = () => {
     try {
       setActionLoading('reorder-all');
       
-      // Perform parallel updates using the full object to satisfy all constraints
-      // This ensures that libro_id and other NOT NULL columns are never sent as null
-      const updatePromises = updates.map(update => 
-        supabase
-          .from('aulas')
-          .update(update)
-          .eq('id', update.id)
-      );
+      const updatePromises = updates.map(update => {
+        // EXCLUDE 'id' from the update payload to avoid Primary Key update errors
+        const { id: itemId, ...payload } = update;
+        return supabase
+          .from(table)
+          .update(payload)
+          .eq('id', itemId);
+      });
 
       const results = await Promise.all(updatePromises);
       const firstError = results.find(r => r.error)?.error;
