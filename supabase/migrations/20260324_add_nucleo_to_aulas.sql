@@ -9,3 +9,14 @@ COMMENT ON COLUMN public.aulas.nucleo_id IS 'Specific center this activity/lesso
 -- Update RLS for aulas (allowing professors to manage their nucleo's activities)
 -- Note: existing RLS might already allow insert/update if handle with care, but let's be explicit if needed.
 -- Assuming admins manage global, and professors manage their own.
+DROP POLICY IF EXISTS "Professores gerenciam aulas de seus nucleos" ON public.aulas;
+CREATE POLICY "Professores gerenciam aulas de seus nucleos" ON public.aulas
+FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo = 'admin')
+  OR
+  (
+    EXISTS (SELECT 1 FROM public.professor_nucleo WHERE professor_id = auth.uid() AND nucleo_id = public.aulas.nucleo_id)
+    OR
+    (public.aulas.nucleo_id IS NULL AND EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo = 'professor'))
+  )
+);

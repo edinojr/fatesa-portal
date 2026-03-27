@@ -23,7 +23,7 @@ interface ContentManagementProps {
   handleRemoveFile: (table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleReorder: (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void) => Promise<void>
-  handleMoveTo: (id: string, targetId: string, items: any[], fetchFn: () => void) => Promise<void>
+  handleMoveTo: (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null) => Promise<void>
   setShowAddCourse: (val: boolean) => void
   setShowAddBook: (val: boolean) => void
   setShowAddLesson: (val: boolean) => void
@@ -144,14 +144,14 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
     if (id !== dragOverId) setDragOverId(id)
   }
 
-  const onDrop = async (e: React.DragEvent, targetId: string, items: any[], fetchFn: () => void) => {
+  const onDrop = async (e: React.DragEvent, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null) => {
     e.preventDefault()
     setDragOverId(null)
     const id = e.dataTransfer.getData('text/plain')
-    if (id === targetId) return
+    if (id === targetId && targetBlocoId === undefined) return
     
     setReorderLoading(id + 'drag')
-    await handleMoveTo(id, targetId, items, fetchFn)
+    await handleMoveTo(id, targetId, items, fetchFn, targetBlocoId)
     setReorderLoading(null)
     setDraggedId(null)
   }
@@ -322,7 +322,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
               </button>
             </div>
           ) : (
-            (() => {
+            <>
+              {(() => {
               const grouped = groupByBloco(lessonItems)
               const sortedBlocoKeys = Array.from(grouped.keys()).sort((a, b) => a - b)
 
@@ -336,7 +337,18 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                 return (
                   <div key={blocoKey} style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', borderRadius: '20px', overflow: 'hidden' }}>
                     {/* Block Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', background: blocoKey === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(var(--primary-rgb), 0.08)', borderBottom: '1px solid var(--glass-border)' }}>
+                    <div 
+                      onDragOver={(e) => onDragOver(e, 'bloco-' + blocoKey)}
+                      onDrop={(e) => onDrop(e, null, lessonItems, () => fetchLessonItems(selectedLesson.id), blocoKey)}
+                      style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        padding: '1rem 1.5rem', 
+                        background: blocoKey === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(var(--primary-rgb), 0.08)', 
+                        borderBottom: '1px solid var(--glass-border)',
+                        borderTop: dragOverId === 'bloco-' + blocoKey ? '2px solid var(--primary)' : 'none'
+                      }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <Layers size={18} color="var(--primary)" />
                         <span style={{ fontWeight: 700, fontSize: '1rem' }}>
@@ -366,7 +378,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
 
                     {/* Items list */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                      {items.map((item, idx) => (
+                      {items.filter(i => !i.is_bloco_final).map((item, idx) => (
                         <div 
                           key={item.id} 
                           draggable={canEdit}
@@ -400,7 +412,14 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                               {tipoIcon(item.tipo, 18)}
                             </div>
                             <div>
-                              <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600 }}>{item.titulo}</h4>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600 }}>{item.titulo}</h4>
+                                {item.is_bloco_final && (
+                                  <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: '#EAB308', color: '#000', borderRadius: '4px', fontWeight: 900, textTransform: 'uppercase' }}>
+                                    Avaliação Final
+                                  </span>
+                                )}
+                              </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '2px' }}>
                                 <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{tipoLabel(item.tipo)}</span>
                                 {item.tipo === 'gravada' && (
@@ -467,7 +486,53 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                   </div>
                 )
               })
-            })()
+              })()}
+
+              {/* Dedicated Final Assessment Section at the bottom */}
+              {canEdit && (
+                <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(234, 179, 8, 0.05)', border: '2px dashed #EAB308', borderRadius: '24px', textAlign: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                    <Award size={40} color="#EAB308" />
+                    <div>
+                      <h3 style={{ margin: 0, color: '#EAB308', fontSize: '1.25rem', fontWeight: 800 }}>AVALIAÇÃO FINAL DO MÓDULO</h3>
+                      <p style={{ margin: '0.5rem 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                        Esta prova será exibida ao aluno somente após a conclusão de todos os blocos acima.
+                      </p>
+                    </div>
+                    
+                    {lessonItems.find(i => i.is_bloco_final) ? (
+                      <div style={{ width: '100%', maxWidth: '600px', background: 'var(--glass)', padding: '1rem', borderRadius: '16px', border: '1px solid #EAB308', marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', textAlign: 'left' }}>
+                          <div style={{ width: '40px', height: '40px', background: 'rgba(234, 179, 8, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Award size={20} color="#EAB308" />
+                          </div>
+                          <div>
+                            <strong style={{ display: 'block' }}>{lessonItems.find(i => i.is_bloco_final).titulo}</strong>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Nota Mínima: {lessonItems.find(i => i.is_bloco_final).min_grade || 7}</span>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} 
+                            onClick={() => { const item = lessonItems.find(i => i.is_bloco_final); setEditingQuiz(item); setQuizQuestions(item.questionario || []); }}
+                            title="Questões"><ClipboardList size={16} /></button>
+                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} 
+                            onClick={() => setEditingItem({ type: 'content', data: lessonItems.find(i => i.is_bloco_final) })}
+                            title="Editar"><Edit size={16} /></button>
+                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} 
+                            onClick={() => handleDelete('aulas', lessonItems.find(i => i.is_bloco_final).id)}
+                            title="Excluir"><Trash2 size={16} /></button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button className="btn btn-primary" style={{ width: 'auto', background: '#EAB308', color: '#000', marginTop: '1rem' }}
+                        onClick={() => { setAddingBloco(nextBloco); setAddingLessonType('prova'); setShowAddContent(true); }}>
+                        <Plus size={20} /> Criar Prova Final
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

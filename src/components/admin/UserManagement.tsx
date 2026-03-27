@@ -269,7 +269,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
             </div>
 
             <SubTable
-              title="Professores"
+              title="Equipe / Docentes"
               icon={<BookOpen size={16} color="var(--primary)" />}
               color="var(--primary)"
               users={groups.professors}

@@ -94,9 +94,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
         studentsData.map(async (student: any) => {
           const { data: pays } = await supabase
             .from('pagamentos')
-            .select('status, comprovante_url, data_pagamento')
+            .select('status, comprovante_url, updated_at')
             .eq('user_id', student.id)
-            .order('created_at', { ascending: false })
+            .order('updated_at', { ascending: false })
             .limit(1)
           return { ...student, pagamento: pays?.[0] || null }
         })
@@ -124,10 +124,13 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
 
     setActionLoading('link_nuc')
     try {
-      const { error } = await supabase.from('professor_nucleo').insert({
-        professor_id: session.user.id,
-        nucleo_id: nucleoId
-      })
+      const { error } = await supabase.from('professor_nucleo').upsert(
+        {
+          professor_id: session.user.id,
+          nucleo_id: nucleoId
+        },
+        { onConflict: 'professor_id, nucleo_id' }
+      )
       if (error) throw error
       alert('Núcleo vinculado com sucesso!')
       setShowAddModal(false)
@@ -149,10 +152,13 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
 
     setActionLoading('link_prof')
     try {
-      const { error } = await supabase.from('professor_nucleo').upsert({
-        professor_id: professorId,
-        nucleo_id: nucleoId
-      })
+      const { error } = await supabase.from('professor_nucleo').upsert(
+        {
+          professor_id: professorId,
+          nucleo_id: nucleoId
+        },
+        { onConflict: 'professor_id, nucleo_id' }
+      )
       if (error) throw error
       alert('Professor vinculado ao núcleo com sucesso!')
       setShowAddModal(false)
@@ -199,7 +205,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         // Ignora erros caso o admin já tenha vínculo, usa upsert ou ignora falha via try/catch
-        await supabase.from('professor_nucleo').upsert({ professor_id: session.user.id, nucleo_id: data.id })
+        await supabase.from('professor_nucleo').upsert(
+          { professor_id: session.user.id, nucleo_id: data.id },
+          { onConflict: 'professor_id, nucleo_id' }
+        )
       }
       
       alert('Núcleo criado com sucesso!')
@@ -498,8 +507,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
         {
           user_id: aluno.id,
           status: 'pago',
-          data_pagamento: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
           descricao: 'Pago manualmente pelo administrador',
+          valor: 0, // Need a value since it's NOT NULL in schema
+          data_vencimento: new Date().toISOString().split('T')[0] // Need a value since it's NOT NULL in schema
         },
         { onConflict: 'user_id' }
       )

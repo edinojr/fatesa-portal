@@ -25,6 +25,7 @@ import AvisosManagement from '../components/professor/AvisosManagement'
 import MateriaisManagement from '../components/professor/MateriaisManagement'
 
 import { useProfile } from '../hooks/useProfile'
+import Logo from '../components/common/Logo'
 
 type Tab = 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais'
 
@@ -49,6 +50,7 @@ const Professor = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
   const [gradeInput, setGradeInput] = useState<string>('')
+  const [avaliacaoComentario, setAvaliacaoComentario] = useState<string>('')
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
   const [savingGrade, setSavingGrade] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -178,6 +180,7 @@ const Professor = () => {
 
   const handleSelectSubmission = (sub: Submission) => {
     setSelectedSubmission(sub);
+    setAvaliacaoComentario(sub.comentario_professor || '');
     
     const initialEvals: Record<string, boolean> = {};
     const questionnaire = (sub.aulas?.questionario || []).filter((q: any) => q && q.id && q.text);
@@ -258,11 +261,15 @@ const Professor = () => {
   }
 
   const handleSaveGrade = async () => {
-    if(!selectedSubmission || gradeInput === '') return
+    if(!selectedSubmission || gradeInput === '' || !avaliacaoComentario.trim()) {
+      alert('A avaliação (comentário) e a nota são obrigatórias.')
+      return
+    }
     setSavingGrade(true)
     try {
       const updateData: any = {
         nota: parseFloat(gradeInput),
+        comentario_professor: avaliacaoComentario,
         status: 'corrigida'
       }
 
@@ -277,6 +284,7 @@ const Professor = () => {
       alert('Nota salva com sucesso!')
       setSelectedSubmission(null)
       setGradeInput('')
+      setAvaliacaoComentario('')
       fetchData() 
     } catch(err) {
       console.error(err)
@@ -378,12 +386,9 @@ const Professor = () => {
       )}
 
       <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
-        <div className="logo-section" style={{ padding: '0 0.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--primary)', margin: 0 }}>FATESA</h1>
-            <p style={{ fontSize: '0.8rem', opacity: 0.6 }}>Painel do Professor</p>
-          </div>
-          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(false)}>
+        <div className="logo-section" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center', width: '100%', position: 'relative' }}>
+          <Logo size={200} />
+          <button className="mobile-menu-btn" style={{ position: 'absolute', right: '0.5rem', top: '0.5rem' }} onClick={() => setIsMobileMenuOpen(false)}>
             <X size={24} />
           </button>
         </div>
@@ -530,6 +535,8 @@ const Professor = () => {
             handleDeleteSubmission={handleDeleteSubmission}
             gradeInput={gradeInput}
             setGradeInput={setGradeInput}
+            avaliacaoComentario={avaliacaoComentario}
+            setAvaliacaoComentario={setAvaliacaoComentario}
             questionEvaluations={questionEvaluations}
             toggleEvaluation={toggleEvaluation}
             savingGrade={savingGrade}

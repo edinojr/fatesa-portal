@@ -11,10 +11,14 @@ interface GradingPanelProps {
   handleDeleteSubmission: (id: string) => void
   gradeInput: string
   setGradeInput: (val: string) => void
+  avaliacaoComentario: string
+  setAvaliacaoComentario: (val: string) => void
   questionEvaluations: Record<string, boolean>
   toggleEvaluation: (id: string, correct: boolean) => void
   savingGrade: boolean
   handleSaveGrade: () => void
+  avaliacaoComentario: string
+  setAvaliacaoComentario: (val: string) => void
 }
 
 const GradingPanel: React.FC<GradingPanelProps> = ({
@@ -26,6 +30,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   handleDeleteSubmission,
   gradeInput,
   setGradeInput,
+  avaliacaoComentario,
+  setAvaliacaoComentario,
   questionEvaluations,
   toggleEvaluation,
   savingGrade,
@@ -230,7 +236,30 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 onChange={e => setGradeInput(e.target.value)}
                 placeholder="Ex: 8.5"
               />
-              <button className="btn btn-primary" style={{ width: 'auto', padding: '1rem 3rem' }} disabled={savingGrade || gradeInput === ''} onClick={handleSaveGrade}>
+            </div>
+            
+            <div style={{ marginTop: '2rem', textAlign: 'left' }}>
+              <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 700, color: 'var(--success)', fontSize: '0.9rem', textTransform: 'uppercase' }}>
+                Avaliação / Feedback (Obrigatório)
+              </label>
+              <textarea 
+                className="form-control" 
+                rows={4} 
+                style={{ background: '#000', borderRadius: '12px', border: '1px solid var(--success)', resize: 'vertical' }}
+                value={avaliacaoComentario}
+                onChange={e => setAvaliacaoComentario(e.target.value)}
+                placeholder="Escreva sua avaliação detalhada sobre a prova do aluno..."
+                required
+              ></textarea>
+            </div>
+
+            <div style={{ marginTop: '2rem' }}>
+              <button 
+                className="btn btn-primary" 
+                style={{ width: 'auto', padding: '1rem 3rem' }} 
+                disabled={savingGrade || gradeInput === '' || !avaliacaoComentario.trim()} 
+                onClick={handleSaveGrade}
+              >
                 {savingGrade ? <Loader2 className="spinner" /> : 'Salvar Nota e Finalizar'}
               </button>
             </div>

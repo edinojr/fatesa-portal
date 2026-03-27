@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Lock, Loader2, CheckCircle2, Eye, EyeOff, GraduationCap } from 'lucide-react';
+import { Lock, Loader2, CheckCircle2, AlertCircle, ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import Logo from '../components/common/Logo';
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -79,7 +80,7 @@ const ResetPassword = () => {
       <div className="auth-card">
         <div className="auth-header" style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <GraduationCap size={64} color="var(--primary)" />
+            <Logo size={80} />
           </div>
           <h1 style={{ fontSize: '2rem' }}>Sua Nova Senha</h1>
           <p>Digite e confirme a sua nova credencial de acesso impenetrável à plataforma educacional FATESA.</p>

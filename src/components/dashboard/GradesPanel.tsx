@@ -41,9 +41,12 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
         {atividades.map((a: any) => (
           <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
             <div>
-              <div style={{ fontWeight: 600 }}>{a.aulas?.titulo || 'Atividade Excluída'}</div>
+              <div style={{ fontWeight: 600 }}>
+                {a.aulas?.livro?.titulo && <span style={{ color: 'var(--primary)', opacity: 0.8, fontSize: '0.85rem' }}>{a.aulas.livro.titulo} - </span>}
+                {a.aulas?.titulo || 'Atividade Excluída'}
+              </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                {a.aulas?.tipo === 'prova' ? 'Prova' : 'Atividade'}
+                {a.aulas?.tipo === 'prova' ? 'Prova Final' : 'Atividade Formativa'}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { Mail, Loader2, ArrowLeft, CheckCircle2, GraduationCap } from 'lucide-react';
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { Mail, Loader2, ChevronLeft, CheckCircle2 } from 'lucide-react'
+import Logo from '../components/common/Logo'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -45,13 +46,10 @@ const ForgotPassword = () => {
 
   return (
     <div className="auth-container">
-      <Link to="/login" className="back-nav-btn">
-        <ArrowLeft size={18} /> Voltar
-      </Link>
       <div className="auth-card">
         <div className="auth-header" style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <GraduationCap size={64} color="var(--primary)" />
+            <Logo size={80} />
           </div>
           <h1 style={{ fontSize: '2rem' }}>Recuperar Senha</h1>
           <p>Insira seu e-mail institucional para receber um link de redefinição seguro.</p>

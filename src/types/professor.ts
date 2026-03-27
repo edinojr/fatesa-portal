@@ -2,6 +2,8 @@ export interface Submission {
   id: string
   respostas: any
   nota: number | null
+  comentario_professor: string | null
+  bloqueio_final: boolean
   status: 'pendente' | 'corrigida'
   created_at: string
   tentativas: number

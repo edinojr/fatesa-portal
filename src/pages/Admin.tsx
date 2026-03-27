@@ -45,6 +45,7 @@ import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, AddConte
 import { QuizQuestion, QuestionType } from '../types/admin'
 
 import { useProfile } from '../hooks/useProfile'
+import Logo from '../components/common/Logo'
 
 type Tab = 'home' | 'users' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance'
 
@@ -135,44 +136,6 @@ const Admin = () => {
     if (data) setAllNucleos(data)
   }
 
-  const checkAccess = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      navigate('/professor/login')
-      return
-    }
-    setCurrentUserEmail(user.email ?? null)
-
-    const { data: profile } = await supabase
-      .from('users')
-      .select('tipo, caminhos_acesso')
-      .eq('id', user.id)
-      .single()
-
-    const roles = profile?.caminhos_acesso || []
-    if (user.email === 'edi.ben.jr@gmail.com') {
-      if (!roles.includes('aluno')) roles.push('aluno')
-      if (!roles.includes('professor')) roles.push('professor')
-      if (!roles.includes('suporte')) roles.push('suporte')
-    }
-    setAvailableRoles(roles)
-
-    const hasAdminAccess = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || roles.includes('admin') || roles.includes('suporte') || user.email === 'edi.ben.jr@gmail.com'
-
-    if (!hasAdminAccess) {
-      alert('Acesso restrito ao painel administrativo.')
-      navigate('/dashboard')
-      return
-    }
-
-    setUserRole(profile?.tipo || (roles.includes('admin') ? 'admin' : 'suporte'))
-
-    if (profile?.tipo === 'professor') {
-      setActiveTab('content')
-    } else {
-      setActiveTab('home')
-    }
-  }
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type })
@@ -250,34 +213,45 @@ const Admin = () => {
     }
   }
 
-  const handleMoveTo = async (id: string, targetId: string, items: any[], fetchFn: () => void) => {
+  const handleMoveTo = async (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null) => {
     if (id === targetId) return;
     
     const newItems = [...items];
     const dragIdx = newItems.findIndex(i => i.id === id);
-    const targetIdx = newItems.findIndex(i => i.id === targetId);
-    
-    if (dragIdx === -1 || targetIdx === -1) return;
-    
-    // Remove from old position and insert at new
+    if (dragIdx === -1) return;
+
     const [draggedItem] = newItems.splice(dragIdx, 1);
-    newItems.splice(targetIdx, 0, draggedItem);
+    
+    if (targetBlocoId !== undefined) {
+      // Direct drop on a block header or empty block
+      draggedItem.bloco_id = targetBlocoId;
+      newItems.push(draggedItem); // Append to end of book/lesson list
+    } else if (targetId) {
+      // Drop on another item
+      const targetIdx = newItems.findIndex(i => i.id === targetId);
+      if (targetIdx !== -1) {
+        const targetItem = newItems[targetIdx];
+        newItems.splice(targetIdx, 0, draggedItem);
+        draggedItem.bloco_id = targetItem.bloco_id;
+      } else {
+        newItems.push(draggedItem);
+      }
+    }
     
     // Create update batch
     const updates = newItems.map((item, index) => ({
       id: item.id,
-      ordem: index + 1 // Simple re-indexing 1..N
+      ordem: index + 1,
+      bloco_id: item.bloco_id
     }));
 
     try {
       setActionLoading('reorder-all');
-      for (const update of updates) {
-        // Find if order actually changed to minimize DB calls
-        const original = items.find(i => i.id === update.id);
-        if (original && original.ordem !== update.ordem) {
-          await supabase.from('aulas').update({ ordem: update.ordem }).eq('id', update.id);
-        }
-      }
+      const { error } = await supabase
+        .from('aulas')
+        .upsert(updates, { onConflict: 'id' });
+        
+      if (error) throw error;
       fetchFn();
     } catch (err: any) {
       showToast('Erro ao mover: ' + err.message, 'error');
@@ -688,12 +662,9 @@ const Admin = () => {
       {/* Sidebar */}
       {/* Sidebar / Mobile Slim Nav */}
       <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
-        <div className="logo-section" style={{ padding: '0 0.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--primary)', margin: 0 }}>FATESA</h1>
-            <p style={{ fontSize: '0.8rem', opacity: 0.6 }}>Administração</p>
-          </div>
-          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(false)}>
+        <div className="logo-section" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center', width: '100%', position: 'relative' }}>
+          <Logo size={200} />
+          <button className="mobile-menu-btn" style={{ position: 'absolute', right: '0.5rem', top: '0.5rem' }} onClick={() => setIsMobileMenuOpen(false)}>
             <X size={24} />
           </button>
         </div>
@@ -787,8 +758,8 @@ const Admin = () => {
           <ChevronLeft size={16} /> Voltar ao Dashboard
         </Link>
         <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <div className="logo-section" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <GraduationCap size={40} color="var(--primary)" />
+          <div className="logo-section" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <Logo size={120} />
             <div>
               <h1 style={{ 
                 fontSize: '2.2rem', 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { LogIn, Loader2, GraduationCap, Eye, EyeOff, ChevronLeft, ShieldCheck } from 'lucide-react'
+import Logo from '../components/common/Logo'
 
 const ProfessorLogin = () => {
   const [email, setEmail] = useState('')
@@ -108,8 +109,7 @@ const ProfessorLogin = () => {
       <div className={`auth-card ${step === 2 ? 'step-2-active' : ''}`} style={{ borderColor: 'rgba(168, 85, 247, 0.2)', maxWidth: '450px', width: '100%' }}>
         <div className="auth-header" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', position: 'relative' }}>
-            <GraduationCap size={64} color="var(--primary)" />
-            <ShieldCheck size={24} color="var(--success)" style={{ position: 'absolute', bottom: 0, right: '40%' }} />
+            <Logo size={220} />
           </div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Portal do Professor</h1>
           <p style={{ color: 'var(--text-muted)' }}>Acesso restrito ao Corpo Docente</p>

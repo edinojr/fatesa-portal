@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { UserPlus, Loader2, GraduationCap, Eye, EyeOff, ChevronLeft, ShieldCheck } from 'lucide-react'
+import { UserPlus, Loader2, Eye, EyeOff, ChevronLeft, ShieldCheck } from 'lucide-react'
+import Logo from '../components/common/Logo'
 
 const Signup = () => {
   const location = useLocation()
@@ -12,7 +13,7 @@ const Signup = () => {
   const [email, setEmail] = useState(initialEmail)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [tipo, setTipo] = useState<'presencial' | 'online'>('online')
+  const [tipo, setTipo] = useState<'presencial' | 'online'>('presencial')
   const [nucleo, setNucleo] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -141,7 +142,7 @@ const Signup = () => {
       <div className="auth-card">
         <div className="auth-header">
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <GraduationCap size={64} color="var(--primary)" />
+            <Logo size={220} />
           </div>
           <h1>Ativar Acesso</h1>
           <p>Exclusivo para alunos já matriculados na FATESA</p>
@@ -165,29 +166,25 @@ const Signup = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Tipo de Aluno</label>
-            <div className="select-group" style={{ opacity: preRegistered ? 0.7 : 1, pointerEvents: preRegistered ? 'none' : 'auto' }}>
-              <label className="select-option">
-                <input 
-                  type="radio" 
-                  name="tipo" 
-                  checked={tipo === 'presencial'} 
-                  onChange={() => setTipo('presencial')} 
-                />
-                <div className="box">Presencial</div>
-              </label>
-              <label className="select-option">
-                <input 
-                  type="radio" 
-                  name="tipo" 
-                  checked={tipo === 'online'} 
-                  onChange={() => setTipo('online')} 
-                />
-                <div className="box">On-line</div>
-              </label>
+          {!(isProfessor || isAdmin || (preRegistered && (preRegistered.tipo === 'professor' || preRegistered.tipo === 'admin'))) && (
+            <div className="form-group">
+              <label>Tipo de Aluno</label>
+              <div className="select-group" style={{ opacity: 0.7, pointerEvents: 'none' }}>
+                <label className="select-option">
+                  <input 
+                    type="radio" 
+                    name="tipo" 
+                    checked={true} 
+                    readOnly
+                  />
+                  <div className="box">Presencial (Obrigatório)</div>
+                </label>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                O acesso on-line é ativado automaticamente apenas para alunos em regimes especiais autorizados.
+              </p>
             </div>
-          </div>
+          )}
 
           {tipo === 'presencial' && (
             <div className="form-group">

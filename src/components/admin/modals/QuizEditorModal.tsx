@@ -11,7 +11,7 @@ interface QuizEditorModalProps {
   setActionLoading: (val: string | null) => void
   supabase: any
   showToast: (msg: string, type?: 'success' | 'error') => void
-  fetchLessons: (bookId: string) => Promise<void>
+  fetchLessons: (bookId?: any) => Promise<void>
   selectedBook: any
 }
 
@@ -27,14 +27,75 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
   fetchLessons,
   selectedBook
 }) => {
+  const [currentVersion, setCurrentVersion] = React.useState<'v1' | 'v2' | 'v3'>('v1');
+  
+  // React to version change to load correct initial data
+  React.useEffect(() => {
+    if (editingQuiz) {
+      if (currentVersion === 'v1') setQuizQuestions(Array.isArray(editingQuiz.questionario) ? editingQuiz.questionario : []);
+      else if (currentVersion === 'v2') setQuizQuestions(Array.isArray(editingQuiz.questionario_v2) ? editingQuiz.questionario_v2 : []);
+      else if (currentVersion === 'v3') setQuizQuestions(Array.isArray(editingQuiz.questionario_v3) ? editingQuiz.questionario_v3 : []);
+    }
+  }, [currentVersion, editingQuiz?.id]);
+
   if (!editingQuiz) return null;
 
   return (
     <div className="modal-overlay" onClick={() => setEditingQuiz(null)}>
       <div className="modal-content" style={{ maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
-        <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <Award color="var(--primary)" /> Atividades: {editingQuiz.titulo}
+        <h2 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Award color="var(--primary)" /> {editingQuiz.is_bloco_final ? 'Avaliação Final de Bloco' : 'Atividade'}: {editingQuiz.titulo}
         </h2>
+        
+        {editingQuiz.is_bloco_final && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', background: 'rgba(var(--primary-rgb), 0.05)', padding: '1rem', borderRadius: '12px' }}>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                className={`btn ${currentVersion === 'v1' ? 'btn-primary' : 'btn-outline'}`} 
+                style={{ width: 'auto', padding: '0.5rem 1rem' }}
+                onClick={() => setCurrentVersion('v1')}
+              >
+                Versão 1
+              </button>
+              <button 
+                className={`btn ${currentVersion === 'v2' ? 'btn-primary' : 'btn-outline'}`} 
+                style={{ width: 'auto', padding: '0.5rem 1rem' }}
+                onClick={() => setCurrentVersion('v2')}
+              >
+                Versão 2
+              </button>
+              <button 
+                className={`btn ${currentVersion === 'v3' ? 'btn-primary' : 'btn-outline'}`} 
+                style={{ width: 'auto', padding: '0.5rem 1rem' }}
+                onClick={() => setCurrentVersion('v3')}
+              >
+                Versão 3
+              </button>
+            </div>
+            
+            <button 
+              className="btn btn-outline" 
+              style={{ width: 'auto', border: '1px solid var(--primary)', color: 'var(--primary)', background: 'rgba(var(--primary-rgb), 0.05)' }}
+              onClick={() => {
+                const template: QuizQuestion[] = [];
+                // 10 True/False
+                for(let i=0; i<10; i++) template.push({ id: `tf-${i}`, type: 'true_false', text: '', isTrue: true });
+                // 2 Discursive
+                for(let i=0; i<2; i++) template.push({ id: `dis-${i}`, type: 'discursive', text: '' });
+                // 2 Multiple Choice
+                for(let i=0; i<2; i++) template.push({ id: `mc-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 });
+                // 6 Matching
+                for(let i=0; i<6; i++) template.push({ id: `mat-${i}`, type: 'matching', text: '', matchingPairs: [{left: '', right: ''}, {left: '', right: ''}] });
+                
+                if (window.confirm('Isso substituirá as questões atuais pelo template padrão de 20 questões (10 V/F, 2 Dissert., 2 M.C., 6 Colunas). Deseja continuar?')) {
+                  setQuizQuestions(template);
+                }
+              }}
+            >
+              Carregar Template (20 Questões)
+            </button>
+          </div>
+        )}
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {quizQuestions.map((q, qIdx) => (
@@ -245,17 +306,34 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
             <button className="btn btn-outline" onClick={() => setEditingQuiz(null)}>Cancelar e Voltar</button>
             <button className="btn btn-primary" onClick={async () => {
+              // Validation for Final Assesment
+              if (editingQuiz.is_bloco_final) {
+                const tfCount = quizQuestions.filter(q => q.type === 'true_false').length;
+                const disCount = quizQuestions.filter(q => q.type === 'discursive').length;
+                const mcCount = quizQuestions.filter(q => q.type === 'multiple_choice' || !q.type).length;
+                const matCount = quizQuestions.filter(q => q.type === 'matching').length;
+                
+                if (tfCount !== 10 || disCount !== 2 || mcCount !== 2 || matCount !== 6) {
+                  if (!window.confirm(`ESTRUTURA INCORRETA: Provas Finais devem ter 10 V/F, 2 Dissert., 2 M.C. e 6 Colunas (Total 20).\n\nAtual:\n- V/F: ${tfCount}\n- Dissert.: ${disCount}\n- M.C.: ${mcCount}\n- Colunas: ${matCount}\n\nDeseja salvar assim mesmo?`)) {
+                    return;
+                  }
+                }
+              }
+
               setActionLoading('save-quiz');
-              const { error } = await supabase.from('aulas').update({ questionario: quizQuestions }).eq('id', editingQuiz.id);
+              const field = currentVersion === 'v1' ? 'questionario' : currentVersion === 'v2' ? 'questionario_v2' : 'questionario_v3';
+              const { error } = await supabase.from('aulas').update({ [field]: quizQuestions }).eq('id', editingQuiz.id);
               if (error) showToast(error.message, 'error');
               else {
-                showToast('Atividade salva com sucesso!');
+                showToast(`Versão ${currentVersion === 'v1' ? '1' : currentVersion === 'v2' ? '2' : '3'} salva com sucesso!`);
+                // If not block final, we close. If it is, maybe stay to allow editing other versions?
+                // For safety, let's close and refresh.
                 setEditingQuiz(null);
-                fetchLessons(selectedBook.id);
+                fetchLessons(selectedBook.id); // This call remains valid as bookId is now optional
               }
               setActionLoading(null);
             }} disabled={actionLoading === 'save-quiz'}>
-              {actionLoading === 'save-quiz' ? <Loader2 className="spinner" /> : 'Salvar Todas as Atividades'}
+              {actionLoading === 'save-quiz' ? <Loader2 className="spinner" /> : `Salvar Versão ${currentVersion === 'v1' ? '1' : currentVersion === 'v2' ? '2' : '3'}`}
             </button>
           </div>
         </div>

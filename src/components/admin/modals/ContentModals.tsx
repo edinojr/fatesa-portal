@@ -410,7 +410,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 arquivo_url,
                 min_grade,
                 ordem,
-                bloco_id: addingBloco
+                bloco_id: addingBloco,
+                is_bloco_final: formData.get('is_bloco_final') === 'on'
               });
               
               if (error) throw error;
@@ -458,11 +459,19 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
             </div>
           )}
 
-          {addingLessonType === 'prova' && (
-            <div className="form-group">
-              <label>Nota Mínima (0-10)</label>
-              <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={7} min={0} max={10} required />
-            </div>
+          {(addingLessonType === 'prova' || addingLessonType === 'atividade') && (
+            <>
+              {addingLessonType === 'prova' && (
+                <div className="form-group">
+                  <label>Nota Mínima (0-10)</label>
+                  <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={7} min={0} max={10} required />
+                </div>
+              )}
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
+                <input name="is_bloco_final" type="checkbox" id="is_bloco_final_add" style={{ width: '20px', height: '20px' }} />
+                <label htmlFor="is_bloco_final_add" style={{ margin: 0, cursor: 'pointer' }}>Avaliação Final do Bloco (Liberação Automática)</label>
+              </div>
+            </>
           )}
 
           <div className="form-group">
@@ -551,6 +560,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               updates.video_url = formData.get('video_url') as string || null;
               if (editingItem.data.tipo === 'prova') {
                 updates.min_grade = parseFloat(formData.get('min_grade') as string) || 7;
+                updates.is_bloco_final = formData.get('is_bloco_final') === 'on';
               }
             }
           }
@@ -642,11 +652,19 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                   <input name="video_url" type="text" className="form-control" defaultValue={editingItem.data.video_url || ''} />
                 </div>
               )}
-              {editingItem.data.tipo === 'prova' && (
-                <div className="form-group">
-                  <label>Nota Mínima</label>
-                  <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={editingItem.data.min_grade || 7} min={0} max={10} required />
-                </div>
+              {(editingItem.data.tipo === 'prova' || editingItem.data.tipo === 'atividade') && (
+                <>
+                  {editingItem.data.tipo === 'prova' && (
+                    <div className="form-group">
+                      <label>Nota Mínima</label>
+                      <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={editingItem.data.min_grade || 7} min={0} max={10} required />
+                    </div>
+                  )}
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
+                    <input name="is_bloco_final" type="checkbox" id="is_bloco_final_edit" defaultChecked={editingItem.data.is_bloco_final} style={{ width: '20px', height: '20px' }} />
+                    <label htmlFor="is_bloco_final_edit" style={{ margin: 0, cursor: 'pointer' }}>Avaliação Final do Bloco (Liberação Automática)</label>
+                  </div>
+                </>
               )}
               <div className="form-group">
                 <label>Arquivo Complementar (PDF)</label>

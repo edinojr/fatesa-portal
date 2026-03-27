@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { LogIn, Loader2, GraduationCap, Eye, EyeOff, ChevronLeft } from 'lucide-react'
+import Logo from '../components/common/Logo'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -123,7 +124,7 @@ const Login = () => {
       <div className={`auth-card ${step === 2 ? 'step-2-active' : ''}`} style={{ position: 'relative', overflow: 'hidden' }}>
         <div className="auth-header" style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <GraduationCap size={64} color="var(--primary)" />
+            <Logo size={220} />
           </div>
           <h1>Portal do Aluno</h1>
           <p>Seja bem-vindo à FATESA</p>

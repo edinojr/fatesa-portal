@@ -26,11 +26,14 @@ import FinancePanel from '../components/dashboard/FinancePanel'
 import GradesPanel from '../components/dashboard/GradesPanel'
 import NoticeBoard from '../components/dashboard/NoticeBoard'
 import { useProfile } from '../hooks/useProfile'
+import Logo from '../components/common/Logo'
 
 type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
 
 const Dashboard = () => {
   const { profile, loading: profileLoading, signOut } = useProfile();
+  const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+  
   const [activeTab, setActiveTab] = useState<Tab>('cursos')
   const [courses, setCourses] = useState<Course[]>([])
   const [documents, setDocuments] = useState<Documento[]>([])
@@ -71,9 +74,8 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      // Check if student is blocked — only applies to students, never to staff/professors
-      const profileIsStaff = ['admin', 'professor', 'suporte'].includes(profile.tipo || '');
-      if (profile.bloqueado && !profileIsStaff) {
+      // Check if student is blocked
+      if (profile.bloqueado && !isStaff) {
         setIsBlocked(true);
         setLoading(false);
         return;
@@ -82,8 +84,6 @@ const Dashboard = () => {
       if (profile.nucleo_id) {
         fetchNoticeBoard(profile.nucleo_id);
       }
-      
-      const isStaff = ['admin', 'professor', 'suporte'].includes(profile.tipo || '');
 
       // Check if user's nucleus is fully exempt (e.g. Epístolas aos Hebreus)
       let nucleoIsento = false;
@@ -98,18 +98,68 @@ const Dashboard = () => {
 
       const exemptStatus = profile.bolsista || isStaff || nucleoIsento;
 
-      let releasedCount = 999;
-      if (!exemptStatus) {
+      let releasedCount = 1;
+      
+      // Fetch all books for this course to calculate progression
+      const { data: courseBooks } = await supabase
+        .from('livros')
+        .select('id, ordem')
+        .eq('curso_id', profile.curso_id || '')
+        .order('ordem', { ascending: true });
+
+      if (exemptStatus) {
+        releasedCount = 999;
+      } else {
         const { data: payRecords } = await supabase
           .from('pagamentos')
           .select('status')
           .eq('user_id', profile.id)
           .eq('status', 'pago');
-        releasedCount = (payRecords?.length || 0) + 1;
+        
+        const paidCount = payRecords?.length || 0;
+        
+        const { data: examSubmissions } = await supabase
+          .from('respostas_aulas')
+          .select('aula_id, aulas(livro_id)')
+          .eq('aluno_id', profile.id)
+          .gte('tentativas', 1);
+        
+        const submittedBookIds = new Set((examSubmissions || []).map(s => (s.aulas as any)?.livro_id).filter(id => !!id));
+        
+        // The released count is the highest 'ordem' that has a submission + 1
+        let maxSubmittedOrdem = 0;
+        if (courseBooks) {
+          courseBooks.forEach(b => {
+            if (submittedBookIds.has(b.id) && b.ordem > maxSubmittedOrdem) {
+              maxSubmittedOrdem = b.ordem;
+            }
+          });
+        }
+
+        // Logic combines payments OR exam submission (whichever is higher)
+        releasedCount = Math.max(paidCount + 1, maxSubmittedOrdem + 1);
+
+        // Check if we need to initiate a new payment record...
+        const { data: openPays } = await supabase
+          .from('pagamentos')
+          .select('id')
+          .eq('user_id', profile.id)
+          .eq('status', 'aberto');
+
+        if ((openPays?.length || 0) === 0) {
+          await supabase.from('pagamentos').insert({
+            user_id: profile.id,
+            valor: 70,
+            status: 'aberto',
+            data_vencimento: new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString().split('T')[0],
+            descricao: `Mensalidade Módulo ${releasedCount}`
+          });
+        }
       }
 
       // Check for multiple roles
       const roles = profile.caminhos_acesso || []
+      
       if (profile.email === 'edi.ben.jr@gmail.com') {
         if (!roles.includes('aluno')) roles.push('aluno')
         if (!roles.includes('professor')) roles.push('professor')
@@ -131,7 +181,7 @@ const Dashboard = () => {
       const [{ data: respostasData }, { data: progData }] = await Promise.all([
         supabase
           .from('respostas_aulas')
-          .select('id, status, nota, tentativas, primeira_correcao_at, aula_id, aulas(titulo, tipo)')
+          .select('id, status, nota, tentativas, primeira_correcao_at, aula_id, aulas(titulo, tipo, livro:livros(titulo))')
           .eq('aluno_id', profile.id),
         supabase
           .from('progresso')
@@ -141,8 +191,8 @@ const Dashboard = () => {
       
       const resData = respostasData || [];
       const pData = progData || [];
-      setAtividades(resData);
-      setProgressoAulas(pData);
+      setAtividades(resData as any);
+      setProgressoAulas(pData as any);
 
       // Fetch Courses
       const { data: allCourses } = await supabase
@@ -170,22 +220,24 @@ const Dashboard = () => {
             id: c.id,
             nome: c.nome,
             livros: sortedLivros.map((l: any) => {
-              const paymentReleased = isStaff || exemptStatus || (l.ordem || 1) <= releasedCount;
               const professorReleased = isStaff || releasedModulos.includes(l.id);
               const isCurrent = !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount;
 
-              // Helper for block completion
-              const allBlockItemsFinished = (blocoId: number, currentAulas: any[]) => {
-                const blockItems = currentAulas.filter(a => a.bloco_id === blocoId && a.tipo !== 'gravada' && a.tipo !== 'ao_vivo');
-                if (blockItems.length === 0) return true;
+              // Helper for modular block logic
+              // A failed exam (3 attempts) only unlocks if ALL SUBSEQUENT modules are finished
+              const isExamBlockedByFailure = (aulaId: string) => {
+                const sub = resData.find(r => r.aula_id === aulaId);
+                if (!sub || !(sub as any).bloqueio_final) return false;
                 
-                return blockItems.every(item => {
-                  if (item.tipo === 'atividade' || item.tipo === 'prova') {
-                    // Check if exercise is completed (exists and maybe approved/passed)
-                    return resData.some(r => r.aula_id === item.id);
-                  }
-                  // Check if material/lesson is completed
-                  return pData.some(p => p.aula_id === item.id && p.concluida);
+                // Check if all books with higher ordem are finished
+                if (!courseBooks) return true;
+                const higherOrdemBooks = courseBooks.filter(b => b.ordem > (l.ordem || 0));
+                if (higherOrdemBooks.length === 0) return false; // No subsequent books
+
+                return !higherOrdemBooks.every(b => {
+                  // A book is "finished" if its final exam has a passing grade (>= 7)
+                  const bookExamSub = resData.find(r => (r.aulas as any)?.livro_id === b.id && (r.aulas as any)?.tipo === 'prova');
+                  return bookExamSub && (bookExamSub.nota || 0) >= 7;
                 });
               };
 
@@ -198,6 +250,9 @@ const Dashboard = () => {
                   const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
                   if (!matchesNucleo) return false;
 
+                  // Blocked by failure logic
+                  if (a.tipo === 'prova' && isExamBlockedByFailure(a.id)) return false;
+
                   // Structural items (licao containers) always show if module is released
                   if (a.tipo === 'licao') return professorReleased;
 
@@ -209,14 +264,16 @@ const Dashboard = () => {
                   if ((a.tipo === 'gravada' || a.tipo === 'ao_vivo') && a.bloco_id) {
                     if (isStaff) return true;
                     if (!professorReleased) return false;
-                    return allBlockItemsFinished(a.bloco_id, l.aulas);
+                    // For Modular mode, we allow video access even if exercises are not finished
+                    // but we still follow the professor release.
+                    return true;
                   }
 
                   // Other items (material, video without block) release automatically when module is released
                   return professorReleased;
                 }),
                 progresso: isStaff ? 100 : 0, 
-                isReleased: paymentReleased && professorReleased,
+                isReleased: (isStaff || exemptStatus || (l.ordem || 1) <= releasedCount) && professorReleased,
                 isCurrent: isCurrent && professorReleased
               };
             })
@@ -335,7 +392,7 @@ const Dashboard = () => {
   const isExpired = isTemp && expiration && expiration < new Date()
   const daysRemaining = isTemp && expiration ? Math.max(0, Math.ceil((expiration.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))) : null
 
-  if (isExpired) {
+  if (isExpired && !isStaff) {
     return (
       <div className="auth-container">
         <div className="auth-card text-center" style={{ textAlign: 'center', maxWidth: '600px' }}>
@@ -347,7 +404,6 @@ const Dashboard = () => {
     )
   }
 
-  const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '');
   const isExempt = profile?.bolsista || isStaff;
 
   return (
@@ -375,12 +431,9 @@ const Dashboard = () => {
       )}
 
       <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
-        <div className="logo-section" style={{ padding: '0 0.5rem', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--primary)', margin: 0 }}>FATESA</h1>
-            <p style={{ fontSize: '0.8rem', opacity: 0.6 }}>Portal do Aluno</p>
-          </div>
-          <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(false)}>
+        <div className="logo-section" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center', width: '100%', position: 'relative' }}>
+          <Logo size={200} />
+          <button className="mobile-menu-btn" style={{ position: 'absolute', right: '0.5rem', top: '0.5rem' }} onClick={() => setIsMobileMenuOpen(false)}>
             <X size={24} />
           </button>
         </div>
@@ -415,28 +468,30 @@ const Dashboard = () => {
             </div>
           )}
 
-          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[]).map(t => {
-            const isDisabledForBlocked = isBlocked && t !== 'financeiro';
-            return (
-              <div
-                key={t}
-                className={`admin-nav-item ${activeTab === t ? 'active' : ''} ${isDisabledForBlocked ? 'disabled' : ''}`}
-                onClick={() => {
-                  if (isDisabledForBlocked) return;
-                  setActiveTab(t);
-                  setIsMobileMenuOpen(false);
-                }}
-                style={{ opacity: isDisabledForBlocked ? 0.35 : 1, cursor: isDisabledForBlocked ? 'not-allowed' : 'pointer' }}
-              >
-                {t === 'cursos' && <BookOpen size={20} />}
-                {t === 'avisos' && <Bell size={20} />}
-                {t === 'documentos' && <FileText size={20} />}
-                {t === 'financeiro' && <CreditCard size={20} />}
-                {t === 'boletim' && <Award size={20} />}
-                <span>{t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
-              </div>
-            );
-          })}
+          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
+            .filter(t => isStaff ? t !== 'financeiro' : true)
+            .map(t => {
+              const isDisabledForBlocked = isBlocked && t !== 'financeiro';
+              return (
+                <div
+                  key={t}
+                  className={`admin-nav-item ${activeTab === t ? 'active' : ''} ${isDisabledForBlocked ? 'disabled' : ''}`}
+                  onClick={() => {
+                    if (isDisabledForBlocked) return;
+                    setActiveTab(t);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  style={{ opacity: isDisabledForBlocked ? 0.35 : 1, cursor: isDisabledForBlocked ? 'not-allowed' : 'pointer' }}
+                >
+                  {t === 'cursos' && <BookOpen size={20} />}
+                  {t === 'avisos' && <Bell size={20} />}
+                  {t === 'documentos' && <FileText size={20} />}
+                  {t === 'financeiro' && <CreditCard size={20} />}
+                  {t === 'boletim' && <Award size={20} />}
+                  <span>{t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
+                </div>
+              );
+            })}
 
           <div style={{ marginLeft: 'auto', paddingLeft: '0.5rem' }}>
             <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent' }} onClick={() => signOut()}>

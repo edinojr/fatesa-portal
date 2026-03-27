@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { 
-  UserPlus, 
-  Loader2, 
-  CheckCircle2, 
-  GraduationCap, 
-  MapPin, 
-  Phone, 
-  Mail, 
+import {
+  UserPlus,
+  Loader2,
+  CheckCircle2,
+  MapPin,
+  Phone,
+  Mail,
   CreditCard,
   AlertTriangle,
   ArrowRight,
-  Search,
-  ChevronLeft
+  ChevronLeft,
+  Search
 } from 'lucide-react'
+import Logo from '../components/common/Logo'
 
 const Matricula = () => {
   const [step, setStep] = useState(1)
@@ -134,7 +134,7 @@ const Matricula = () => {
       <div className="auth-card" style={{ maxWidth: '700px', padding: '4rem' }}>
         <div className="auth-header" style={{ marginBottom: '4rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-            <GraduationCap size={80} color="var(--primary)" />
+            <Logo size={220} />
           </div>
           <h1 style={{ fontSize: '3rem', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: '1rem' }}>Sua Matrícula</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Preencha seus dados para iniciar sua jornada na FATESA.</p>
@@ -213,8 +213,6 @@ const Matricula = () => {
                 <select name="curso_opcao" className="form-control" value={formData.curso_opcao} onChange={handleInputChange}>
                   <option>Básico em Teologia</option>
                   <option>Médio em Teologia</option>
-                  <option>Bacharel em Teologia</option>
-                  <option>Pós-Graduação</option>
                 </select>
               </div>
 
