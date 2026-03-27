@@ -238,29 +238,26 @@ const Admin = () => {
       }
     }
     
-    // Create update batch with necessary columns for constraint validation
-    const updates = newItems.map((item, index) => ({
-      id: item.id,
-      ordem: index + 1,
-      bloco_id: item.bloco_id,
-      livro_id: item.livro_id,
-      parent_aula_id: item.parent_aula_id
-    }));
+    // Create update batch preserving all original fields
+    const updates = newItems.map((item, index) => {
+      // Remove 'children' if it's the joined count object/count to avoid DB errors
+      const { children, ...dbItem } = item;
+      return {
+        ...dbItem,
+        ordem: index + 1,
+        bloco_id: item.bloco_id
+      };
+    });
 
     try {
       setActionLoading('reorder-all');
       
-      // Perform parallel updates for all items to ensure order and block integrity
-      // Explicitly include libro_id and parent_aula_id to avoid constraint violations
+      // Perform parallel updates using the full object to satisfy all constraints
+      // This ensures that libro_id and other NOT NULL columns are never sent as null
       const updatePromises = updates.map(update => 
         supabase
           .from('aulas')
-          .update({ 
-            ordem: update.ordem, 
-            bloco_id: update.bloco_id,
-            livro_id: update.livro_id,
-            parent_aula_id: update.parent_aula_id
-          })
+          .update(update)
           .eq('id', update.id)
       );
 
