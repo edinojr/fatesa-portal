@@ -247,11 +247,23 @@ const Admin = () => {
 
     try {
       setActionLoading('reorder-all');
-      const { error } = await supabase
-        .from('aulas')
-        .upsert(updates, { onConflict: 'id' });
-        
-      if (error) throw error;
+      
+      // Perform parallel updates for all items to ensure order and block integrity
+      const updatePromises = updates.map(update => 
+        supabase
+          .from('aulas')
+          .update({ 
+            ordem: update.ordem, 
+            bloco_id: update.bloco_id 
+          })
+          .eq('id', update.id)
+      );
+
+      const results = await Promise.all(updatePromises);
+      const firstError = results.find(r => r.error)?.error;
+      
+      if (firstError) throw firstError;
+      
       fetchFn();
     } catch (err: any) {
       showToast('Erro ao mover: ' + err.message, 'error');
