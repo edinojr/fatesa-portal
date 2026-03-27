@@ -238,23 +238,28 @@ const Admin = () => {
       }
     }
     
-    // Create update batch
+    // Create update batch with necessary columns for constraint validation
     const updates = newItems.map((item, index) => ({
       id: item.id,
       ordem: index + 1,
-      bloco_id: item.bloco_id
+      bloco_id: item.bloco_id,
+      livro_id: item.livro_id,
+      parent_aula_id: item.parent_aula_id
     }));
 
     try {
       setActionLoading('reorder-all');
       
       // Perform parallel updates for all items to ensure order and block integrity
+      // Explicitly include libro_id and parent_aula_id to avoid constraint violations
       const updatePromises = updates.map(update => 
         supabase
           .from('aulas')
           .update({ 
             ordem: update.ordem, 
-            bloco_id: update.bloco_id 
+            bloco_id: update.bloco_id,
+            livro_id: update.livro_id,
+            parent_aula_id: update.parent_aula_id
           })
           .eq('id', update.id)
       );
