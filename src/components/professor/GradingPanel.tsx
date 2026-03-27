@@ -17,8 +17,6 @@ interface GradingPanelProps {
   toggleEvaluation: (id: string, correct: boolean) => void
   savingGrade: boolean
   handleSaveGrade: () => void
-  avaliacaoComentario: string
-  setAvaliacaoComentario: (val: string) => void
 }
 
 const GradingPanel: React.FC<GradingPanelProps> = ({
