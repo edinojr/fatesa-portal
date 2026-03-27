@@ -23,7 +23,7 @@ interface ContentManagementProps {
   handleRemoveFile: (table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleReorder: (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas') => Promise<void>
-  handleMoveTo: (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null, table: 'livros' | 'aulas') => Promise<void>
+  handleMoveTo: (id: string, targetId: string | null, items: any[], fetchFn: () => void, table: 'livros' | 'aulas', targetBlocoId?: number | null) => Promise<void>
   setShowAddCourse: (val: boolean) => void
   setShowAddBook: (val: boolean) => void
   setShowAddLesson: (val: boolean) => void
@@ -144,14 +144,14 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
     if (id !== dragOverId) setDragOverId(id)
   }
 
-  const onDrop = async (e: React.DragEvent, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null, table: 'livros' | 'aulas' = 'aulas') => {
+  const onDrop = async (e: React.DragEvent, targetId: string | null, items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas', targetBlocoId?: number | null) => {
     e.preventDefault()
     setDragOverId(null)
     const id = e.dataTransfer.getData('text/plain')
     if (id === targetId && targetBlocoId === undefined) return
     
     setReorderLoading(id + 'drag')
-    await handleMoveTo(id, targetId, items, fetchFn, targetBlocoId, table)
+    await handleMoveTo(id, targetId, items, fetchFn, table, targetBlocoId)
     setReorderLoading(null)
     setDraggedId(null)
   }
@@ -350,7 +350,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                     {/* Block Header */}
                     <div 
                       onDragOver={(e) => onDragOver(e, 'bloco-' + blocoKey)}
-                      onDrop={(e) => onDrop(e, null, lessonItems, () => fetchLessonItems(selectedLesson.id), blocoKey, 'aulas')}
+                      onDrop={(e) => onDrop(e, null, lessonItems, () => fetchLessonItems(selectedLesson.id), 'aulas', blocoKey)}
                       style={{ 
                         display: 'flex', 
                         justifyContent: 'space-between', 
@@ -395,7 +395,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                           draggable={canEdit}
                           onDragStart={(e) => onDragStart(e, item.id)}
                           onDragOver={(e) => onDragOver(e, item.id)}
-                          onDrop={(e) => onDrop(e, item.id, lessonItems, () => fetchLessonItems(selectedLesson.id), undefined, 'aulas')}
+                          onDrop={(e) => onDrop(e, item.id, lessonItems, () => fetchLessonItems(selectedLesson.id), 'aulas')}
                           style={{
                             padding: '1rem 1.5rem',
                             display: 'flex',

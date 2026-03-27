@@ -213,7 +213,7 @@ const Admin = () => {
     }
   }
 
-  const handleMoveTo = async (id: string, targetId: string | null, items: any[], fetchFn: () => void, targetBlocoId?: number | null, table: 'livros' | 'aulas' = 'aulas') => {
+  const handleMoveTo = async (id: string, targetId: string | null, items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas', targetBlocoId?: number | null) => {
     if (id === targetId) return;
     
     const newItems = [...items];
