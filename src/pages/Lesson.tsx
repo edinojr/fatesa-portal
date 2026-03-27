@@ -103,63 +103,30 @@ const Lesson = () => {
           setAnswers(subData.respostas || {});
           if (subData.nota !== null) setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
           
-          // Timer check
-          if (lessonData.is_bloco_final && subData.start_time && subData.status === 'liberado') {
+          // Persistent Timer logic (40 minutes = 2400 seconds)
+          if (lessonData.tipo === 'prova' && subData.start_time && subData.status === 'liberado') {
             const startTime = new Date(subData.start_time).getTime();
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
             if (elapsed < 2400) { 
               setTimeLeft(2400 - elapsed); 
               setIsExamStarted(true); 
             } else { 
+              // Auto-submit if time ran out
               setSubmitted(true); 
               setIsExamStarted(false);
-              // Auto-submit if time ran out while away
               if (subData.status === 'liberado') handleSubmit();
             }
           }
           if (subData.status !== 'liberado') setSubmitted(true);
         }
 
-        // Enhanced Deadline & Version Logic
-        if (lessonData.is_bloco_final) {
-          const currentSub = subData;
-          if (currentSub?.data_liberacao) {
-            const libDate = new Date(currentSub.data_liberacao);
-            const now = new Date();
-            const min = lessonData.min_grade || 7;
-            
-            // Step 1: 7 days (Attempt 1)
-            let stage = 1;
-            let deadline = new Date(libDate.getTime() + 7 * 24 * 3600 * 1000);
-            
-            // Step 2: 10 days (Additional)
-            const attempt1Failed = currentSub.tentativas >= 1 && currentSub.nota < min;
-            const attempt1Expired = now > deadline && currentSub.tentativas === 0;
-            
-            if (attempt1Failed || attempt1Expired) {
-              stage = 2;
-              deadline = new Date(deadline.getTime() + 10 * 24 * 3600 * 1000);
-            }
-            
-            // Step 3: 13 days (Additional)
-            const attempt2Failed = currentSub.tentativas >= 2 && currentSub.nota < min;
-            const attempt3Expired = now > deadline && currentSub.tentativas < 2;
-            
-            if (stage === 2 && (attempt2Failed || attempt3Expired)) {
-              stage = 3;
-              deadline = new Date(deadline.getTime() + 13 * 24 * 3600 * 1000);
-            }
-
-            const expired = now > deadline;
-            setDeadlineInfo({ deadline, stage, expired });
-
-            // Swap questions based on current stage
-            if (stage === 2) {
-              setQuestions(Array.isArray(lessonData.questionario_v2) ? lessonData.questionario_v2 : []);
-            } else if (stage === 3) {
-              setQuestions(Array.isArray(lessonData.questionario_v3) ? lessonData.questionario_v3 : []);
-            }
-          }
+        // Information regarding the current opportunity
+        if (lessonData.tipo === 'prova') {
+          setDeadlineInfo({ 
+            deadline: new Date(Date.now() + 30 * 24 * 3600 * 1000), // Placeholder or calculated
+            stage: lessonData.versao || 1, 
+            expired: false 
+          });
         }
       }
     } catch (err) { console.error(err); }
@@ -282,7 +249,9 @@ const Lesson = () => {
 
       <div style={{ marginBottom: '3rem' }}>
         <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{book?.titulo}</div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{lesson.titulo}</h1>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
+          {lesson.titulo} {lesson.tipo === 'prova' && `(V${lesson.versao || 1})`}
+        </h1>
       </div>
 
       {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
@@ -317,9 +286,8 @@ const Lesson = () => {
           {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode ? (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
               <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
-              <h3>Prova do Bloco {lesson.bloco_id}</h3>
-              <p>Duração: 40 minutos | Tentativa: {deadlineInfo?.stage || 1}</p>
-              <p>Prazo: {deadlineInfo?.deadline.toLocaleDateString()}</p>
+              <h3>Prova do Módulo: {book?.titulo}</h3>
+              <p>Duração: 40 minutos | Oportunidade: {lesson.versao || 1}</p>
               {deadlineInfo?.expired && userProfile?.profile_tipo === 'aluno' && !userProfile?.isStaff ? <p style={{color:'var(--error)'}}>Prazo Expirado</p> : (
                 <button className="btn btn-primary" onClick={handleStartExam} style={{width:'auto', marginTop:'1rem'}}>
                   {userProfile?.isStaff ? 'Pré-visualizar Prova' : 'Começar Agora'}

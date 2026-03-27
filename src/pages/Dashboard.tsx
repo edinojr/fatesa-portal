@@ -185,7 +185,7 @@ const Dashboard = () => {
       const [{ data: respostasData }, { data: progData }] = await Promise.all([
         supabase
           .from('respostas_aulas')
-          .select('id, status, nota, tentativas, primeira_correcao_at, aula_id, aulas(titulo, tipo, livro:livros(titulo))')
+          .select('id, status, nota, tentativas, primeira_correcao_at, created_at, aula_id, aulas(id, titulo, tipo, versao, livro_id)')
           .eq('aluno_id', profile.id),
         supabase
           .from('progresso')
@@ -267,7 +267,34 @@ const Dashboard = () => {
 
                   // Exercises and Provas require explicit release by professor
                   const isExercise = a.tipo === 'atividade' || a.tipo === 'prova';
-                  if (isExercise) return releasedAtividades.includes(a.id);
+                  if (isExercise) {
+                    if (a.tipo === 'prova') {
+                      // V1, V2, V3 Logic
+                      const v = a.versao || 1;
+                      if (v === 1) return releasedAtividades.includes(a.id);
+                      
+                      // For V2 and V3, we check the V1 submission
+                      const v1Sub = resData.find(r => (r.aulas as any).livro_id === l.id && (r.aulas as any).versao === 1);
+                      if (!v1Sub) return false;
+                      
+                      const v1Date = new Date(v1Sub.created_at || v1Sub.primeira_correcao_at).getTime();
+                      const now = Date.now();
+                      const diffDays = Math.floor((now - v1Date) / (1000 * 3600 * 24));
+                      
+                      // 30-day absolute limit
+                      if (diffDays > 30) return false;
+
+                      if (v === 2) {
+                        return (v1Sub.nota < 7) && (diffDays >= 7);
+                      }
+                      
+                      if (v === 3) {
+                        const v2Sub = resData.find(r => (r.aulas as any).livro_id === l.id && (r.aulas as any).versao === 2);
+                        return v2Sub && (v2Sub.nota < 7) && (diffDays >= 21);
+                      }
+                    }
+                    return releasedAtividades.includes(a.id);
+                  }
 
                   // Video Aulas with bloco_id: strict auto-unlock logic (All students)
                   if ((a.tipo === 'gravada' || a.tipo === 'ao_vivo') && a.bloco_id) {

@@ -13,7 +13,7 @@ const Signup = () => {
   const [email, setEmail] = useState(initialEmail)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [tipo, setTipo] = useState<'presencial' | 'online'>('presencial')
+  const [tipo, setTipo] = useState<'presencial' | 'online' | 'super_visitante' | 'ex_aluno' | 'colaborador'>('presencial')
   const [nucleo, setNucleo] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -113,7 +113,9 @@ const Signup = () => {
         options: {
           data: {
             full_name: nome,
+            nome: nome,
             student_type: tipo,
+            tipo: tipo,
             nucleo: availableNucleos.find(n => n.id === nucleo)?.nome || (nucleo.includes('-') ? '' : nucleo),
             nucleo_id: nucleo.includes('-') ? nucleo : null
           }
@@ -168,20 +170,21 @@ const Signup = () => {
 
           {!(isProfessor || isAdmin || (preRegistered && (preRegistered.tipo === 'professor' || preRegistered.tipo === 'admin'))) && (
             <div className="form-group">
-              <label>Tipo de Aluno</label>
-              <div className="select-group" style={{ opacity: 0.7, pointerEvents: 'none' }}>
-                <label className="select-option">
-                  <input 
-                    type="radio" 
-                    name="tipo" 
-                    checked={true} 
-                    readOnly
-                  />
-                  <div className="box">Presencial (Obrigatório)</div>
-                </label>
-              </div>
+              <label>Tipo de Cadastro</label>
+              <select 
+                className="form-control" 
+                value={tipo} 
+                onChange={(e) => setTipo(e.target.value as any)}
+                required
+                disabled={!!preRegistered}
+              >
+                <option value="presencial">Aluno Presencial (Já Matriculado)</option>
+                <option value="super_visitante">Super Visitante (Acesso Vídeos)</option>
+                <option value="ex_aluno">Ex-Aluno (Acesso Conteúdo)</option>
+                <option value="colaborador">Colaborador / Parceiro</option>
+              </select>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                O acesso on-line é ativado automaticamente apenas para alunos em regimes especiais autorizados.
+                {tipo === 'presencial' ? 'Obrigatório selecionar seu núcleo de origem.' : 'Seu perfil terá acesso imediato aos conteúdos liberados para sua categoria.'}
               </p>
             </div>
           )}

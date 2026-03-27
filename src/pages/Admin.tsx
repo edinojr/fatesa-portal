@@ -35,6 +35,7 @@ import {
 } from 'lucide-react'
 import NucleosPanel from '../components/NucleosPanel'
 import UserManagement from '../components/admin/UserManagement'
+import AlumniManagement from '../components/admin/AlumniManagement'
 import ContentManagement from '../components/admin/ContentManagement'
 import ValidationPanel from '../components/admin/ValidationPanel'
 import SettingsPanel from '../components/admin/SettingsPanel'
@@ -50,7 +51,7 @@ import Logo from '../components/common/Logo'
 
 import ForumPanel from '../components/forum/ForumPanel'
 
-type Tab = 'home' | 'users' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum'
+type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum'
 
 
 const Admin = () => {
@@ -549,7 +550,9 @@ const Admin = () => {
         options: {
           data: {
             nome: newTeacherNome,
+            full_name: newTeacherNome,
             tipo: 'professor',
+            student_type: 'professor',
             acesso_definitivo: true
           }
         }
@@ -609,7 +612,9 @@ const Admin = () => {
         options: {
           data: {
             nome: nome,
+            full_name: nome,
             tipo: tipo,
+            student_type: tipo,
             acesso_definitivo: true
           }
         }
@@ -733,9 +738,14 @@ const Admin = () => {
           )}
 
           {userRole === 'admin' && (
-            <div className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => { setActiveTab('users'); setIsMobileMenuOpen(false); }}>
-              <Users size={18} /> <span className="mobile-hide">Usuários</span>
-            </div>
+            <>
+              <div className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => { setActiveTab('users'); setIsMobileMenuOpen(false); }}>
+                <Users size={18} /> <span className="mobile-hide">Usuários</span>
+              </div>
+              <div className={`admin-nav-item ${activeTab === 'alumni' ? 'active' : ''}`} onClick={() => { setActiveTab('alumni'); setIsMobileMenuOpen(false); }}>
+                <GraduationCap size={18} /> <span className="mobile-hide">Alumni / Formados</span>
+              </div>
+            </>
           )}
           {(userRole === 'admin' || userRole === 'professor' || userRole === 'suporte') && (
             <div className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`} onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}>
@@ -790,10 +800,19 @@ const Admin = () => {
                 WebkitTextFillColor: 'transparent',
                 marginBottom: '0.25rem'
               }}>
-                {activeTab === 'home' ? 'Painel Administrativo' : activeTab === 'users' ? 'Gestão de Usuários' : activeTab === 'content' ? 'Gestão de Conteúdo' : activeTab === 'forum' ? 'Fórum da Comunidade' : 'Validação de Acesso'}
+                {activeTab === 'home' ? 'Painel Administrativo' : 
+                 activeTab === 'users' ? 'Gestão de Usuários' : 
+                 activeTab === 'alumni' ? 'Base de Formados (Alumni)' :
+                 activeTab === 'content' ? 'Gestão de Conteúdo' : 
+                 activeTab === 'forum' ? 'Fórum da Comunidade' : 
+                 'Validação de Acesso'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
-                {activeTab === 'home' ? 'Visão geral do sistema e atalhos rápidos.' : activeTab === 'users' ? 'Administre os perfis, bloqueios e acessos.' : activeTab === 'content' ? 'Gerencie as matérias, livros e atividades.' : 'Verifique envios dos alunos.'}
+                {activeTab === 'home' ? 'Visão geral do sistema e atalhos rápidos.' : 
+                 activeTab === 'users' ? 'Administre os perfis, bloqueios e acessos.' : 
+                 activeTab === 'alumni' ? 'Gerencie o banco de dados histórico de alunos formados.' :
+                 activeTab === 'content' ? 'Gerencie as matérias, livros e atividades.' : 
+                 'Verifique envios dos alunos.'}
               </p>
             </div>
           </div>
@@ -835,6 +854,8 @@ const Admin = () => {
                 </div>
               </div>
             )}
+            
+            {activeTab === 'alumni' && <AlumniManagement />}
             
             {activeTab === 'users' && (
               <UserManagement 

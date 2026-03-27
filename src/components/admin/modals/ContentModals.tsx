@@ -411,6 +411,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 min_grade,
                 ordem,
                 bloco_id: addingBloco,
+                versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
                 is_bloco_final: formData.get('is_bloco_final') === 'on'
               });
               
@@ -462,10 +463,20 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
           {(addingLessonType === 'prova' || addingLessonType === 'atividade') && (
             <>
               {addingLessonType === 'prova' && (
-                <div className="form-group">
-                  <label>Nota Mínima (0-10)</label>
-                  <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={7} min={0} max={10} required />
-                </div>
+                <>
+                  <div className="form-group">
+                    <label>Versão da Avaliação</label>
+                    <select name="versao" className="form-control" defaultValue={1} required>
+                      <option value={1}>Versão 1 (1ª Oportunidade)</option>
+                      <option value={2}>Versão 2 (2ª Oportunidade)</option>
+                      <option value={3}>Versão 3 (3ª Oportunidade)</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Nota Mínima (0-10)</label>
+                    <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={7} min={0} max={10} required />
+                  </div>
+                </>
               )}
               <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
                 <input name="is_bloco_final" type="checkbox" id="is_bloco_final_add" style={{ width: '20px', height: '20px' }} />
@@ -560,6 +571,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               updates.video_url = formData.get('video_url') as string || null;
               if (editingItem.data.tipo === 'prova') {
                 updates.min_grade = parseFloat(formData.get('min_grade') as string) || 7;
+                updates.versao = parseInt(formData.get('versao') as string) || 1;
                 updates.is_bloco_final = formData.get('is_bloco_final') === 'on';
               }
             }
@@ -655,10 +667,20 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               {(editingItem.data.tipo === 'prova' || editingItem.data.tipo === 'atividade') && (
                 <>
                   {editingItem.data.tipo === 'prova' && (
-                    <div className="form-group">
-                      <label>Nota Mínima</label>
-                      <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={editingItem.data.min_grade || 7} min={0} max={10} required />
-                    </div>
+                    <>
+                      <div className="form-group">
+                        <label>Versão da Avaliação</label>
+                        <select name="versao" className="form-control" defaultValue={editingItem.data.versao || 1} required>
+                          <option value={1}>Versão 1 (1ª Oportunidade)</option>
+                          <option value={2}>Versão 2 (2ª Oportunidade)</option>
+                          <option value={3}>Versão 3 (3ª Oportunidade)</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label>Nota Mínima</label>
+                        <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={editingItem.data.min_grade || 7} min={0} max={10} required />
+                      </div>
+                    </>
                   )}
                   <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
                     <input name="is_bloco_final" type="checkbox" id="is_bloco_final_edit" defaultChecked={editingItem.data.is_bloco_final} style={{ width: '20px', height: '20px' }} />

@@ -13,5 +13,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type t JOIN pg_enum e ON t.oid = e.enumtypid WHERE t.typname = 'user_tipo' AND e.enumlabel = 'colaborador') THEN
         ALTER TYPE user_tipo ADD VALUE 'colaborador';
     END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type t JOIN pg_enum e ON t.oid = e.enumtypid WHERE t.typname = 'user_tipo' AND e.enumlabel = 'suporte') THEN
+        ALTER TYPE user_tipo ADD VALUE 'suporte';
+    END IF;
 END
 $$;
