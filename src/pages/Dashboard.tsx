@@ -53,6 +53,7 @@ const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [avisos, setAvisos] = useState<any[]>([])
   const [materiais, setMateriais] = useState<any[]>([])
+  const [poloAtividades, setPoloAtividades] = useState<any[]>([])
   const [isBlocked, setIsBlocked] = useState(false)
 
   const navigate = useNavigate()
@@ -340,6 +341,13 @@ const Dashboard = () => {
         .eq('nucleo_id', nucleoId)
         .order('created_at', { ascending: false });
       setMateriais(materiaisData || []);
+
+      const { data: atvData } = await supabase
+        .from('atividades')
+        .select('*, respostas_atividades_extra(id, status, nota)')
+        .eq('nucleo_id', nucleoId)
+        .order('created_at', { ascending: false });
+      setPoloAtividades(atvData || []);
     } catch (error) {
       console.error('Notice Board Error:', error);
     }
@@ -555,6 +563,8 @@ const Dashboard = () => {
             <NoticeBoard 
               avisos={avisos} 
               materiais={materiais} 
+              atividades={poloAtividades}
+              onRefresh={() => profile?.nucleo_id && fetchNoticeBoard(profile.nucleo_id)}
             />
           )}
 

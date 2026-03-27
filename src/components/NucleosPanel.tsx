@@ -33,12 +33,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     setSchedules(newSchedules)
   }
 
-  const [atividades, setAtividades] = useState<any[]>([])
-  const [notas, setNotas] = useState<any[]>([])
-  const [courseSubmissions, setCourseSubmissions] = useState<any[]>([])
-  const [expandedSub, setExpandedSub] = useState<string | null>(null)
-  const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({}) // true = correct, false = incorrect
-  const [autoGrade, setAutoGrade] = useState<string | null>(null)
+  const [allCourses, setAllCourses] = useState<any[]>([])
+  const [releasedItems, setReleasedItems] = useState<Record<string, boolean>>({})
+  const [editingQuestionnaire, setEditingQuestionnaire] = useState<any | null>(null)
 
   const isAdmin = userRole === 'admin'
   const isProfessor = userRole === 'professor'
@@ -107,8 +104,127 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     // Fetch atividades for this nucleo
     const resAtv = await supabase.from('atividades').select('*').eq('nucleo_id', nuc.id).order('created_at', { ascending: false })
     if (resAtv.data) setAtividades(resAtv.data)
+
+    // Fetch All Courses/Livros/Aulas for release management
+    const resAll = await supabase.from('cursos').select('id, nome, livros(id, titulo, aulas(id, titulo, tipo, ordem))')
+    if (resAll.data) setAllCourses(resAll.data)
+
+    // Fetch existing releases
+    const resRel = await supabase.from('liberacoes_nucleo').select('*').eq('nucleo_id', nuc.id).eq('liberado', true)
+    if (resRel.data) {
+      const mapped: Record<string, boolean> = {}
+      resRel.data.forEach(r => mapped[`${r.item_type}:${r.item_id}`] = true)
+      setReleasedItems(mapped)
+    }
     
     setLoading(false)
+  }
+
+  const handleToggleRelease = async (itemId: string, itemType: 'modulo' | 'atividade', currentStatus: boolean) => {
+    if (!selectedNucleo) return
+    const newStatus = !currentStatus
+    const key = `${itemType}:${itemId}`
+
+    setActionLoading(`release_${key}`)
+    try {
+      if (newStatus) {
+        await supabase.from('liberacoes_nucleo').upsert({
+          nucleo_id: selectedNucleo.id,
+          item_id: itemId,
+          item_type: itemType,
+          liberado: true
+        }, { onConflict: 'nucleo_id, item_id, item_type' })
+      } else {
+        await supabase.from('liberacoes_nucleo').delete().match({
+          nucleo_id: selectedNucleo.id,
+          item_id: itemId,
+          item_type: itemType
+        })
+      }
+      setReleasedItems({ ...releasedItems, [key]: newStatus })
+    } catch (err: any) {
+      alert('Erro ao alterar liberação: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleBulkRelease = async (release: boolean) => {
+    if (!selectedNucleo) return
+    const actionName = release ? 'Liberar' : 'Bloquear'
+    if (!confirm(`Deseja realmente ${actionName} TODO o conteúdo (livros e provas) de todos os cursos para este núcleo?`)) return
+
+    setActionLoading('bulk_release')
+    try {
+      const itemsToProcess: { item_id: string; item_type: 'modulo' | 'atividade' }[] = []
+      
+      allCourses.forEach(course => {
+        (course.livros || []).forEach((livro: any) => {
+          itemsToProcess.push({ item_id: livro.id, item_type: 'modulo' })
+          (livro.aulas || []).forEach((aula: any) => {
+            if (aula.tipo === 'atividade' || aula.tipo === 'prova') {
+              itemsToProcess.push({ item_id: aula.id, item_type: 'atividade' })
+            }
+          })
+        })
+      })
+
+      if (release) {
+        // Bulk upsert for release
+        const chunks = []
+        for (let i = 0; i < itemsToProcess.length; i += 100) {
+          chunks.push(itemsToProcess.slice(i, i + 100))
+        }
+
+        for (const chunk of chunks) {
+          const payload = chunk.map(it => ({
+            nucleo_id: selectedNucleo.id,
+            item_id: it.item_id,
+            item_type: it.item_type,
+            liberado: true
+          }))
+          const { error } = await supabase.from('liberacoes_nucleo').upsert(payload, { onConflict: 'nucleo_id, item_id, item_type' })
+          if (error) throw error
+        }
+      } else {
+        // Bulk delete for block
+        const { error } = await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', selectedNucleo.id)
+        if (error) throw error
+      }
+
+      // Sync local state
+      const newReleased: Record<string, boolean> = {}
+      if (release) {
+        itemsToProcess.forEach(it => newReleased[`${it.item_type}:${it.item_id}`] = true)
+      }
+      setReleasedItems(newReleased)
+      alert(`Conteúdo ${release ? 'liberado' : 'bloqueado'} com sucesso!`)
+    } catch (err: any) {
+      alert('Erro na ação em massa: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleSaveQuestionnaire = async (atividadeId: string, questionnaireData: any[]) => {
+    setActionLoading('save_q')
+    try {
+      const { error } = await supabase
+        .from('atividades')
+        .update({ questionario: questionnaireData })
+        .eq('id', atividadeId)
+      
+      if (error) throw error
+      alert('Questionário salvo com sucesso!')
+      
+      // Update local state
+      setAtividades(prev => prev.map(a => a.id === atividadeId ? { ...a, questionario: questionnaireData } : a))
+      setEditingQuestionnaire(null)
+    } catch (err: any) {
+      alert('Erro ao salvar: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
   }
 
   const handleLinkNucleo = async (nucleoId: string) => {
@@ -715,13 +831,50 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
             </div>
 
             <div style={{ flex: '1 1 350px' }}>
-              <div className="data-card">
+              {/* Content Release Toggle Section */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                <h3 style={{ margin: 0, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Award size={20} /> Liberação de Conteúdo</h3>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button 
+                    className="btn" 
+                    style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', width: 'auto', background: 'rgba(34,197,94,0.1)', color: 'var(--success)', border: '1px solid rgba(34,197,94,0.2)' }}
+                    onClick={() => handleBulkRelease(true)}
+                    disabled={actionLoading === 'bulk_release'}
+                  >
+                    {actionLoading === 'bulk_release' ? <Loader2 className="spinner" size={14} /> : <CheckCircle2 size={14} style={{ marginRight: '0.3rem' }} />} Liberar Tudo
+                  </button>
+                  <button 
+                    className="btn" 
+                    style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', width: 'auto', background: 'rgba(239,68,68,0.1)', color: 'var(--error)', border: '1px solid rgba(239,68,68,0.2)' }}
+                    onClick={() => handleBulkRelease(false)}
+                    disabled={actionLoading === 'bulk_release'}
+                  >
+                    <XCircle size={14} style={{ marginRight: '0.3rem' }} /> Bloquear Tudo
+                  </button>
+                </div>
+              </div>
+              
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '1rem' }}>Ative ou desative o acesso dos alunos aos módulos e aulas exclusivas deste núcleo.</p>
+              <div className="data-card" style={{ marginBottom: '2rem' }}>
                 <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BookOpen size={20} /> Atividades da Turma</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '400px', overflowY: 'auto', paddingRight: '0.5rem' }}>
                   {atividades.map(atv => (
-                    <div key={atv.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--primary)' }}>
-                      <h4 style={{ fontSize: '0.95rem' }}>{atv.titulo}</h4>
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{atv.descricao}</p>
+                    <div key={atv.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--primary)', position: 'relative' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <h4 style={{ fontSize: '0.95rem' }}>{atv.titulo}</h4>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{atv.descricao}</p>
+                        </div>
+                        {isProfessor && (
+                          <button 
+                            className="btn btn-outline" 
+                            style={{ width: 'auto', padding: '0.3rem 0.6rem', fontSize: '0.75rem', border: '1px solid var(--primary)', color: 'var(--primary)' }}
+                            onClick={() => setEditingQuestionnaire(atv)}
+                          >
+                            <Plus size={14} style={{ marginRight: '0.3rem' }} /> Questões
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                   {atividades.length === 0 && <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhuma atividade registrada.</p>}
@@ -740,6 +893,71 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                     </form>
                   </>
                 )}
+              </div>
+
+              {/* NEW: PORTAL CONTENT RELEASE PANEL */}
+              <div className="data-card shadow-lg" style={{ border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
+                <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                   <ShieldCheck size={20} color="var(--primary)" /> Liberação de Conteúdo
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                  Controle o que os alunos deste núcleo podem visualizar no portal.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto' }}>
+                  {allCourses.map(course => (
+                    <div key={course.id}>
+                      <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary)', fontWeight: 800, marginBottom: '0.75rem', paddingLeft: '0.5rem' }}>
+                        {course.nome}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        {(course.livros || []).map((livro: any) => {
+                          const isLivroReleased = releasedItems[`modulo:${livro.id}`]
+                          return (
+                            <div key={livro.id} style={{ border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', overflow: 'hidden' }}>
+                              <div style={{ padding: '0.75rem 1rem', background: isLivroReleased ? 'rgba(34,197,94,0.05)' : 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{livro.titulo}</span>
+                                <div className="form-check form-switch">
+                                  <input 
+                                    className="form-check-input" 
+                                    type="checkbox" 
+                                    checked={isLivroReleased || false}
+                                    onChange={() => handleToggleRelease(livro.id, 'modulo', isLivroReleased)}
+                                    disabled={actionLoading === `release_modulo:${livro.id}`}
+                                  />
+                                </div>
+                              </div>
+                              
+                              {/* Exams / Activities inside the book */}
+                              {isLivroReleased && (
+                                <div style={{ padding: '0.5rem 1rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+                                  {(livro.aulas || []).filter((a: any) => a.tipo === 'atividade' || a.tipo === 'prova').sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0)).map((aula: any) => {
+                                    const isAulaReleased = releasedItems[`atividade:${aula.id}`]
+                                    return (
+                                      <div key={aula.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.5rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                          <Award size={14} color={aula.tipo === 'prova' ? '#EAB308' : 'var(--success)'} />
+                                          <span style={{ fontSize: '0.75rem', color: isAulaReleased ? 'var(--text)' : 'var(--text-muted)' }}>{aula.titulo}</span>
+                                        </div>
+                                        <input 
+                                          type="checkbox" 
+                                          style={{ width: '14px', height: '14px', cursor: 'pointer' }}
+                                          checked={isAulaReleased || false}
+                                          onChange={() => handleToggleRelease(aula.id, 'atividade', isAulaReleased)}
+                                          disabled={actionLoading === `release_atividade:${aula.id}`}
+                                        />
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -1181,6 +1399,156 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
           </>
         )}
       </div>
+      {/* MODAL EDIT QUESTIONNAIRE */}
+      {editingQuestionnaire && (
+        <div className="modal-overlay" onClick={() => setEditingQuestionnaire(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '800px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <div>
+                <h2 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>Editor de Avaliação Extra</h2>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{editingQuestionnaire.titulo}</p>
+              </div>
+              <button className="btn-icon" onClick={() => setEditingQuestionnaire(null)}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {(editingQuestionnaire.questionario || []).map((q: any, qIdx: number) => (
+                <div key={q.id || qIdx} style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '0.8rem', textTransform: 'uppercase' }}>Questão {qIdx + 1}</span>
+                    <button 
+                      className="btn-icon" 
+                      style={{ color: 'var(--error)' }} 
+                      onClick={() => {
+                        const newQ = [...(editingQuestionnaire.questionario || [])]
+                        newQ.splice(qIdx, 1)
+                        setEditingQuestionnaire({ ...editingQuestionnaire, questionario: newQ })
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Enunciado da Questão</label>
+                    <textarea 
+                      className="form-control" 
+                      rows={2} 
+                      value={q.text} 
+                      onChange={(e) => {
+                        const newQ = [...(editingQuestionnaire.questionario || [])]
+                        newQ[qIdx].text = e.target.value
+                        setEditingQuestionnaire({ ...editingQuestionnaire, questionario: newQ })
+                      }}
+                    ></textarea>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                    <div className="form-group">
+                      <label>Tipo de Resposta</label>
+                      <select 
+                        className="form-control"
+                        value={q.type}
+                        onChange={(e) => {
+                          const newQ = [...(editingQuestionnaire.questionario || [])]
+                          newQ[qIdx].type = e.target.value
+                          if (e.target.value === 'multiple_choice' && !newQ[qIdx].options) {
+                            newQ[qIdx].options = ['', '', '', '']
+                            newQ[qIdx].correctOption = 0
+                          }
+                          setEditingQuestionnaire({ ...editingQuestionnaire, questionario: newQ })
+                        }}
+                      >
+                        <option value="discursive">Dissertativa (Texto Livre)</option>
+                        <option value="multiple_choice">Múltipla Escolha</option>
+                        <option value="true_false">Verdadeiro ou Falso</option>
+                      </select>
+                    </div>
+
+                    {q.type === 'multiple_choice' && (
+                      <div className="form-group">
+                        <label>Alternativa Correta</label>
+                        <select 
+                          className="form-control"
+                          value={q.correctOption}
+                          onChange={(e) => {
+                            const newQ = [...(editingQuestionnaire.questionario || [])]
+                            newQ[qIdx].correctOption = parseInt(e.target.value)
+                            setEditingQuestionnaire({ ...editingQuestionnaire, questionario: newQ })
+                          }}
+                        >
+                          {(q.options || []).map((_: any, oIdx: number) => (
+                            <option key={oIdx} value={oIdx}>Alternativa {String.fromCharCode(65 + oIdx)}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {q.type === 'multiple_choice' && (
+                    <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      {(q.options || []).map((opt: string, oIdx: number) => (
+                        <div key={oIdx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontWeight: 700, opacity: 0.5 }}>{String.fromCharCode(65 + oIdx)})</span>
+                          <input 
+                            type="text" 
+                            className="form-control" 
+                            style={{ padding: '0.4rem' }} 
+                            value={opt} 
+                            onChange={(e) => {
+                              const newQ = [...(editingQuestionnaire.questionario || [])]
+                              newQ[qIdx].options[oIdx] = e.target.value
+                              setEditingQuestionnaire({ ...editingQuestionnaire, questionario: newQ })
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="form-group" style={{ marginTop: '1rem' }}>
+                    <label>Explicação / Gabarito (Opcional)</label>
+                    <input 
+                      type="text" 
+                      className="form-control" 
+                      placeholder="Dica ou resposta esperada..." 
+                      value={q.expectedAnswer || ''}
+                      onChange={(e) => {
+                        const newQ = [...(editingQuestionnaire.questionario || [])]
+                        newQ[qIdx].expectedAnswer = e.target.value
+                        setEditingQuestionnaire({ ...editingQuestionnaire, questionario: newQ })
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+
+              <button 
+                className="btn btn-outline" 
+                style={{ borderStyle: 'dashed', background: 'transparent' }}
+                onClick={() => {
+                  const newQ = [...(editingQuestionnaire.questionario || []), { id: Date.now().toString(), text: '', type: 'discursive' }]
+                  setEditingQuestionnaire({ ...editingQuestionnaire, questionario: newQ })
+                }}
+              >
+                <Plus size={18} /> Adicionar Pergunta
+              </button>
+
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'flex-end' }}>
+                <button className="btn btn-outline" style={{ width: 'auto' }} onClick={() => setEditingQuestionnaire(null)}>Cancelar</button>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ width: 'auto', padding: '0.6rem 2rem' }}
+                  onClick={() => handleSaveQuestionnaire(editingQuestionnaire.id, editingQuestionnaire.questionario)}
+                  disabled={actionLoading === 'save_q'}
+                >
+                  {actionLoading === 'save_q' ? <Loader2 className="spinner" size={20} /> : 'Salvar Questionário'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )}
 </div>

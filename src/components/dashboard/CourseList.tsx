@@ -26,6 +26,24 @@ const CourseList: React.FC<CourseListProps> = ({
 }) => {
   const navigate = useNavigate()
 
+  const isExamLocked = (aula: any, allAulas: any[], atividades: any[]) => {
+    if (aula.tipo !== 'prova') return false;
+    
+    // Get all exams in this module, sorted by their 'ordem'
+    const exams = allAulas
+      .filter((a: any) => a.tipo === 'prova')
+      .sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+    
+    const currentIndex = exams.findIndex(e => e.id === aula.id);
+    if (currentIndex <= 0) return false; // First exam always available
+    
+    const previousExam = exams[currentIndex - 1];
+    const prevSub = (atividades || []).find(at => at.aula_id === previousExam.id);
+    
+    // Is locked if NO submission exists OR if the submission is not graded ('corrigida')
+    return !prevSub || prevSub.status !== 'corrigida';
+  }
+
   return (
     <div className="courses-grid">
       {(courses || []).map(course => {
@@ -186,6 +204,33 @@ const CourseList: React.FC<CourseListProps> = ({
                                               ? submittedIds.includes(child.id) 
                                               : watchedIds.includes(child.id);
                                             
+                                            const locked = isExamLocked(child, allAulas, atividades);
+
+                                            if (locked) {
+                                              return (
+                                                <div 
+                                                  key={child.id}
+                                                  style={{ 
+                                                    padding: '0.5rem 0.75rem', 
+                                                    background: 'rgba(255,255,255,0.01)', 
+                                                    borderRadius: '8px', 
+                                                    cursor: 'not-allowed',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    border: '1px dashed rgba(255,255,255,0.1)',
+                                                    opacity: 0.5
+                                                  }}
+                                                >
+                                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                                    <Award size={14} color="var(--text-muted)" />
+                                                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{child.titulo} <span style={{ fontSize: '0.7rem', fontStyle: 'italic' }}>(Aguardando correção da anterior)</span></span>
+                                                  </div>
+                                                  <Award size={14} color="var(--text-muted)" />
+                                                </div>
+                                              );
+                                            }
+                                            
                                             return (
                                               <Link 
                                                 key={child.id} 
@@ -216,6 +261,33 @@ const CourseList: React.FC<CourseListProps> = ({
                                             );
                                           })}
                                         </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  const locked = isExamLocked(aula, allAulas, atividades);
+
+                                  if (locked) {
+                                    return (
+                                      <div 
+                                        key={aula.id} 
+                                        style={{ 
+                                          padding: '0.75rem 1rem', 
+                                          background: 'rgba(255,255,255,0.01)', 
+                                          borderRadius: '12px', 
+                                          cursor: 'not-allowed', 
+                                          display: 'flex', 
+                                          alignItems: 'center', 
+                                          justifyContent: 'space-between', 
+                                          border: '1px dashed rgba(255,255,255,0.1)',
+                                          opacity: 0.5
+                                        }}
+                                      >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                          <Award size={16} color="var(--text-muted)" />
+                                          <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>{aula.titulo} <span style={{ fontSize: '0.75rem', fontStyle: 'italic' }}>(Aguardando correção da anterior)</span></span>
+                                        </div>
+                                        <Award size={16} color="var(--text-muted)" />
                                       </div>
                                     );
                                   }
