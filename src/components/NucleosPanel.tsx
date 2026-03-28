@@ -128,7 +128,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     setLoading(false)
   }
 
-  const handleToggleRelease = async (itemId: string, itemType: 'modulo' | 'atividade', currentStatus: boolean) => {
+  const handleToggleRelease = async (itemId: string, itemType: 'modulo' | 'atividade' | 'video', currentStatus: boolean) => {
     if (!selectedNucleo) return
     const newStatus = !currentStatus
     const key = `${itemType}:${itemId}`
@@ -164,7 +164,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
 
     setActionLoading('bulk_release')
     try {
-      const itemsToProcess: { item_id: string; item_type: 'modulo' | 'atividade' }[] = []
+      const itemsToProcess: { item_id: string; item_type: 'modulo' | 'atividade' | 'video' }[] = []
       
       allCourses.forEach(course => {
         (course.livros || []).forEach((livro: any) => {
@@ -172,6 +172,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
           (livro.aulas || []).forEach((aula: any) => {
             if (aula.tipo === 'atividade' || aula.tipo === 'prova') {
               itemsToProcess.push({ item_id: aula.id, item_type: 'atividade' })
+            } else if (aula.tipo === 'gravada' || aula.tipo === 'ao_vivo') {
+              itemsToProcess.push({ item_id: aula.id, item_type: 'video' })
             }
           })
         })
@@ -939,20 +941,27 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                               {/* Exams / Activities inside the book */}
                               {isLivroReleased && (
                                 <div style={{ padding: '0.5rem 1rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
-                                  {(livro.aulas || []).filter((a: any) => a.tipo === 'atividade' || a.tipo === 'prova').sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0)).map((aula: any) => {
-                                    const isAulaReleased = releasedItems[`atividade:${aula.id}`]
+                                  {(livro.aulas || []).filter((a: any) => a.tipo === 'atividade' || a.tipo === 'prova' || a.tipo === 'gravada' || a.tipo === 'ao_vivo').sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0)).map((aula: any) => {
+                                    const itemType = (aula.tipo === 'atividade' || aula.tipo === 'prova') ? 'atividade' : 'video';
+                                    const isAulaReleased = releasedItems[`${itemType}:${aula.id}`]
+                                    const isVideo = itemType === 'video';
+                                    
                                     return (
                                       <div key={aula.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.5rem' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                          <Award size={14} color={aula.tipo === 'prova' ? '#EAB308' : 'var(--success)'} />
+                                          {isVideo ? (
+                                            <PlayCircle size={14} color="var(--primary)" />
+                                          ) : (
+                                            <Award size={14} color={aula.tipo === 'prova' ? '#EAB308' : 'var(--success)'} />
+                                          )}
                                           <span style={{ fontSize: '0.75rem', color: isAulaReleased ? 'var(--text)' : 'var(--text-muted)' }}>{aula.titulo}</span>
                                         </div>
                                         <input 
                                           type="checkbox" 
                                           style={{ width: '14px', height: '14px', cursor: 'pointer' }}
                                           checked={isAulaReleased || false}
-                                          onChange={() => handleToggleRelease(aula.id, 'atividade', isAulaReleased)}
-                                          disabled={actionLoading === `release_atividade:${aula.id}`}
+                                          onChange={() => handleToggleRelease(aula.id, itemType, isAulaReleased)}
+                                          disabled={actionLoading === `release_${itemType}:${aula.id}`}
                                         />
                                       </div>
                                     )

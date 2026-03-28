@@ -334,11 +334,13 @@ const Admin = () => {
   }
 
   const fetchBooks = async (courseId: string) => {
+    if (!courseId) return
     const { data } = await supabase.from('livros').select('*, aulas(count)').eq('curso_id', courseId).order('ordem')
     if (data) setBooks(data)
   }
 
   const fetchLessons = async (bookId: string) => {
+    if (!bookId) return
     setActionLoading('fetch-lessons')
     const { data } = await supabase
       .from('aulas')
@@ -351,6 +353,7 @@ const Admin = () => {
   }
 
   const fetchLessonItems = async (lessonId: string) => {
+    if (!lessonId) return
     setActionLoading('fetch-lesson-items')
     const { data } = await supabase
       .from('aulas')

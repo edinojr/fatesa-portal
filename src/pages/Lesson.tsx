@@ -22,6 +22,7 @@ const Lesson = () => {
   const [userProfile, setUserProfile] = useState<any>(null)
   const [showQuizEditor, setShowQuizEditor] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [isReleased, setIsReleased] = useState<boolean>(true)
   
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
@@ -53,11 +54,50 @@ const Lesson = () => {
 
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', user.id).single();
+        const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).single();
         const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
-        setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, isStaff });
+        setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, isStaff });
 
-        // Access Control
+        // Check Professor Release (liberacoes_nucleo)
+        if (!isStaff && profile?.nucleo_id) {
+          const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') ? 'video' : 
+                           (lessonData.tipo === 'atividade' || lessonData.tipo === 'prova') ? 'atividade' : 'modulo';
+          
+          if (itemType === 'video' || itemType === 'atividade') {
+            const { data: releaseData } = await supabase
+              .from('liberacoes_nucleo')
+              .select('id')
+              .eq('nucleo_id', profile.nucleo_id)
+              .eq('item_id', id)
+              .eq('item_type', itemType)
+              .eq('liberado', true)
+              .maybeSingle();
+            
+            if (!releaseData) {
+              setIsReleased(false);
+              setLoading(false);
+              return;
+            }
+          } else if (lessonData.livro_id) {
+            // Check if the module (livro) itself is released
+            const { data: moduleRelease } = await supabase
+              .from('liberacoes_nucleo')
+              .select('id')
+              .eq('nucleo_id', profile.nucleo_id)
+              .eq('item_id', lessonData.livro_id)
+              .eq('item_type', 'modulo')
+              .eq('liberado', true)
+              .maybeSingle();
+
+            if (!moduleRelease) {
+              setIsReleased(false);
+              setLoading(false);
+              return;
+            }
+          }
+        }
+
+        // Access Control (Block logic)
         if ((lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') && lessonData.bloco_id) {
           if (!isStaff) {
             const { data: bItems } = await supabase.from('aulas').select('id, tipo').eq('bloco_id', lessonData.bloco_id).not('tipo', 'in', '("gravada","ao_vivo")').eq('is_bloco_final', false);
@@ -103,30 +143,63 @@ const Lesson = () => {
           setAnswers(subData.respostas || {});
           if (subData.nota !== null) setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
           
-          // Persistent Timer logic (40 minutes = 2400 seconds)
-          if (lessonData.tipo === 'prova' && subData.start_time && subData.status === 'liberado') {
+          // Timer check
+          if (lessonData.is_bloco_final && subData.start_time && subData.status === 'liberado') {
             const startTime = new Date(subData.start_time).getTime();
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
             if (elapsed < 2400) { 
               setTimeLeft(2400 - elapsed); 
               setIsExamStarted(true); 
             } else { 
-              // Auto-submit if time ran out
               setSubmitted(true); 
               setIsExamStarted(false);
+              // Auto-submit if time ran out while away
               if (subData.status === 'liberado') handleSubmit();
             }
           }
           if (subData.status !== 'liberado') setSubmitted(true);
         }
 
-        // Information regarding the current opportunity
-        if (lessonData.tipo === 'prova') {
-          setDeadlineInfo({ 
-            deadline: new Date(Date.now() + 30 * 24 * 3600 * 1000), // Placeholder or calculated
-            stage: lessonData.versao || 1, 
-            expired: false 
-          });
+        // Enhanced Deadline & Version Logic
+        if (lessonData.is_bloco_final) {
+          const currentSub = subData;
+          if (currentSub?.data_liberacao) {
+            const libDate = new Date(currentSub.data_liberacao);
+            const now = new Date();
+            const min = lessonData.min_grade || 7;
+            
+            // Step 1: 7 days (Attempt 1)
+            let stage = 1;
+            let deadline = new Date(libDate.getTime() + 7 * 24 * 3600 * 1000);
+            
+            // Step 2: 10 days (Additional)
+            const attempt1Failed = currentSub.tentativas >= 1 && currentSub.nota < min;
+            const attempt1Expired = now > deadline && currentSub.tentativas === 0;
+            
+            if (attempt1Failed || attempt1Expired) {
+              stage = 2;
+              deadline = new Date(deadline.getTime() + 10 * 24 * 3600 * 1000);
+            }
+            
+            // Step 3: 13 days (Additional)
+            const attempt2Failed = currentSub.tentativas >= 2 && currentSub.nota < min;
+            const attempt3Expired = now > deadline && currentSub.tentativas < 2;
+            
+            if (stage === 2 && (attempt2Failed || attempt3Expired)) {
+              stage = 3;
+              deadline = new Date(deadline.getTime() + 13 * 24 * 3600 * 1000);
+            }
+
+            const expired = now > deadline;
+            setDeadlineInfo({ deadline, stage, expired });
+
+            // Swap questions based on current stage
+            if (stage === 2) {
+              setQuestions(Array.isArray(lessonData.questionario_v2) ? lessonData.questionario_v2 : []);
+            } else if (stage === 3) {
+              setQuestions(Array.isArray(lessonData.questionario_v3) ? lessonData.questionario_v3 : []);
+            }
+          }
         }
       }
     } catch (err) { console.error(err); }
@@ -189,7 +262,9 @@ const Lesson = () => {
 
       // Even if not passed, we mark as 'complete' in terms of progression for the next module
       // if it was the first attempt of a block final exam.
-      if (pass) {
+      if (lesson.is_bloco_final && (existingSubmission?.tentativas || 0) === 0) {
+        await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true });
+      } else if (!lesson.is_bloco_final && pass) {
         await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true });
       }
     } catch (err) { console.error(err); }
@@ -238,6 +313,25 @@ const Lesson = () => {
 
   if (loading) return <div className="auth-container"><Loader2 className="spinner" /></div>
 
+  if (!isReleased) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card text-center" style={{ textAlign: 'center', maxWidth: '500px', padding: '3rem' }}>
+          <Lock size={64} color="var(--primary)" style={{ margin: '0 auto 1.5rem', opacity: 0.5 }} />
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Conteúdo Bloqueado</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>
+            Esta aula ou atividade ainda não foi liberada para o seu núcleo. 
+            Por favor, entre em contato com seu professor ou coordenador do pólo para solicitar a liberação.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button onClick={() => navigate(-1)} className="btn btn-outline">Voltar</button>
+            <button onClick={() => navigate('/dashboard')} className="btn btn-primary">Ir para o Dashboard</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="lesson-container">
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', justifyContent: 'space-between' }}>
@@ -247,9 +341,7 @@ const Lesson = () => {
 
       <div style={{ marginBottom: '3rem' }}>
         <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{book?.titulo}</div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
-          {lesson.titulo} {lesson.tipo === 'prova' && `(V${lesson.versao || 1})`}
-        </h1>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{lesson.titulo}</h1>
       </div>
 
       {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
@@ -284,8 +376,9 @@ const Lesson = () => {
           {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode ? (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
               <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
-              <h3>Prova do Módulo: {book?.titulo}</h3>
-              <p>Duração: 40 minutos | Oportunidade: {lesson.versao || 1}</p>
+              <h3>Prova do Bloco {lesson.bloco_id}</h3>
+              <p>Duração: 40 minutos | Tentativa: {deadlineInfo?.stage || 1}</p>
+              <p>Prazo: {deadlineInfo?.deadline.toLocaleDateString()}</p>
               {deadlineInfo?.expired && userProfile?.profile_tipo === 'aluno' && !userProfile?.isStaff ? <p style={{color:'var(--error)'}}>Prazo Expirado</p> : (
                 <button className="btn btn-primary" onClick={handleStartExam} style={{width:'auto', marginTop:'1rem'}}>
                   {userProfile?.isStaff ? 'Pré-visualizar Prova' : 'Começar Agora'}

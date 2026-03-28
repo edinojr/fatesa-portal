@@ -462,12 +462,8 @@ const Landing = () => {
           </div>
 
           <div className="footer-contact">
-            <h4>Fale Conosco</h4>
+            <h4>Canais de Atendimento</h4>
             <div className="contact-item" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <a href="tel:1144013394" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', color: 'inherit', transition: 'color 0.3s' }} className="hover-primary">
-                <Phone size={18} color="var(--primary)" />
-                <span>(11) 4401-3394 <small style={{ opacity: 0.6 }}>(Administrativo)</small></span>
-              </a>
               <a href="https://wa.me/5511999720904" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', color: 'inherit', transition: 'color 0.3s' }} className="hover-primary">
                 <MessageCircle size={18} color="var(--primary)" />
                 <span>+55 11 99972-0904 <small style={{ opacity: 0.6 }}>(WhatsApp Adm)</small></span>
@@ -475,10 +471,6 @@ const Landing = () => {
               <a href="https://wa.me/5511939014534" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', color: 'inherit', transition: 'color 0.3s' }} className="hover-primary">
                 <MessageCircle size={18} color="var(--primary)" />
                 <span>+55 11 93901-4534 <small style={{ opacity: 0.6 }}>(Suporte Técnico)</small></span>
-              </a>
-              <a href="mailto:contato@fatesacasadosaber.education" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', color: 'inherit', transition: 'color 0.3s' }} className="hover-primary">
-                <Mail size={18} color="var(--primary)" />
-                <span>contato@fatesacasadosaber.education</span>
               </a>
             </div>
           </div>

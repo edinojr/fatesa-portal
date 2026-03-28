@@ -1,5 +1,5 @@
 import React from 'react'
-import { BookOpen, PlayCircle, ClipboardList, Award, CheckCircle2, FileText } from 'lucide-react'
+import { BookOpen, PlayCircle, ClipboardList, Award, CheckCircle2, FileText, Lock } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Course } from '../../types/dashboard'
 
@@ -204,9 +204,11 @@ const CourseList: React.FC<CourseListProps> = ({
                                               ? submittedIds.includes(child.id) 
                                               : watchedIds.includes(child.id);
                                             
-                                            const locked = isExamLocked(child, allAulas, atividades);
+                                            const examLocked = isExamLocked(child, allAulas, atividades);
+                                            const profLocked = child.lockedByProfessor;
+                                            const isLocked = examLocked || profLocked;
 
-                                            if (locked) {
+                                            if (isLocked) {
                                               return (
                                                 <div 
                                                   key={child.id}
@@ -223,10 +225,15 @@ const CourseList: React.FC<CourseListProps> = ({
                                                   }}
                                                 >
                                                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                                    <Award size={14} color="var(--text-muted)" />
-                                                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{child.titulo} <span style={{ fontSize: '0.7rem', fontStyle: 'italic' }}>(Aguardando correção da anterior)</span></span>
+                                                    <Lock size={14} color="var(--text-muted)" />
+                                                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                                      {child.titulo} 
+                                                      <span style={{ fontSize: '0.7rem', fontStyle: 'italic', marginLeft: '0.5rem' }}>
+                                                        {profLocked ? '(Aguardando liberação do professor)' : '(Aguardando correção da anterior)'}
+                                                      </span>
+                                                    </span>
                                                   </div>
-                                                  <Award size={14} color="var(--text-muted)" />
+                                                  <Lock size={14} color="var(--text-muted)" />
                                                 </div>
                                               );
                                             }
@@ -265,9 +272,11 @@ const CourseList: React.FC<CourseListProps> = ({
                                     );
                                   }
 
-                                  const locked = isExamLocked(aula, allAulas, atividades);
+                                  const examLocked = isExamLocked(aula, allAulas, atividades);
+                                  const profLocked = aula.lockedByProfessor;
+                                  const isLocked = examLocked || profLocked;
 
-                                  if (locked) {
+                                  if (isLocked) {
                                     return (
                                       <div 
                                         key={aula.id} 
@@ -284,10 +293,15 @@ const CourseList: React.FC<CourseListProps> = ({
                                         }}
                                       >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                          <Award size={16} color="var(--text-muted)" />
-                                          <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>{aula.titulo} <span style={{ fontSize: '0.75rem', fontStyle: 'italic' }}>(Aguardando correção da anterior)</span></span>
+                                          <Lock size={16} color="var(--text-muted)" />
+                                          <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                            {aula.titulo} 
+                                            <span style={{ fontSize: '0.75rem', fontStyle: 'italic', marginLeft: '0.5rem' }}>
+                                              {profLocked ? '(Aguardando liberação do professor)' : '(Aguardando correção da anterior)'}
+                                            </span>
+                                          </span>
                                         </div>
-                                        <Award size={16} color="var(--text-muted)" />
+                                        <Lock size={16} color="var(--text-muted)" />
                                       </div>
                                     );
                                   }

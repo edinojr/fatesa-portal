@@ -16,8 +16,7 @@ import {
   ChevronLeft,
   Menu,
   X,
-  Bell,
-  MessageSquare
+  Bell
 } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Course, Documento, Pagamento } from '../types/dashboard'
@@ -28,14 +27,12 @@ import GradesPanel from '../components/dashboard/GradesPanel'
 import NoticeBoard from '../components/dashboard/NoticeBoard'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
-import ForumPanel from '../components/forum/ForumPanel'
 
-type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
+type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
 
 const Dashboard = () => {
   const { profile, loading: profileLoading, signOut } = useProfile();
   const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
-  const isRestricted = ['super_visitante', 'ex_aluno', 'colaborador'].includes(profile?.tipo || '');
   
   const [activeTab, setActiveTab] = useState<Tab>('cursos')
   const [courses, setCourses] = useState<Course[]>([])
@@ -124,9 +121,9 @@ const Dashboard = () => {
         
         const { data: examSubmissions } = await supabase
           .from('respostas_aulas')
-          .select('aula_id, status, nota, aulas(livro_id)')
+          .select('aula_id, aulas(livro_id)')
           .eq('aluno_id', profile.id)
-          .gte('nota', 7);
+          .gte('tentativas', 1);
         
         const submittedBookIds = new Set((examSubmissions || []).map(s => (s.aulas as any)?.livro_id).filter(id => !!id));
         
@@ -180,12 +177,13 @@ const Dashboard = () => {
 
       const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
       const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
+      const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
 
       // Fetch Grades and Progress FIRST so we can use them to unlock/lock block videos
       const [{ data: respostasData }, { data: progData }] = await Promise.all([
         supabase
           .from('respostas_aulas')
-          .select('id, status, nota, tentativas, primeira_correcao_at, created_at, aula_id, aulas(id, titulo, tipo, versao, livro_id)')
+          .select('id, status, nota, tentativas, primeira_correcao_at, aula_id, aulas(titulo, tipo, livro:livros(titulo))')
           .eq('aluno_id', profile.id),
         supabase
           .from('progresso')
@@ -247,75 +245,28 @@ const Dashboard = () => {
 
               return {
                 ...l,
-                aulas: (l.aulas || []).filter((a: any) => {
-                  if (isStaff) return true;
+                aulas: (l.aulas || []).map((a: any) => {
+                  if (isStaff) return { ...a, lockedByProfessor: false };
                   
-                  // Filter by Nucleo assignment first
+                  // Filter by Nucleo assignment (Hidden if not matching)
                   const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
-                  if (!matchesNucleo) return false;
+                  if (!matchesNucleo) return { ...a, isHidden: true };
 
-                  // Blocked by failure logic
-                  if (a.tipo === 'prova' && isExamBlockedByFailure(a.id)) return false;
+                  // Provas blocked by failure logic (Traditional blocking)
+                  if (a.tipo === 'prova' && isExamBlockedByFailure(a.id)) return { ...a, isHidden: true };
 
-                  // Restriction for external/ex-students/colleagues: ONLY video-aulas
-                  if (isRestricted) {
-                    return a.tipo === 'gravada' || a.tipo === 'ao_vivo';
-                  }
-
-                  // Structural items (licao containers) always show if module is released
-                  if (a.tipo === 'licao') return professorReleased;
-
-                  // Exercises and Provas require explicit release by professor
+                  let lockedByProfessor = false;
                   const isExercise = a.tipo === 'atividade' || a.tipo === 'prova';
-                  if (isExercise) {
-                    if (a.tipo === 'prova') {
-                      // Check if student already PASSED any version of this book's exam
-                      const anyPassed = resData.some(r => 
-                        (r.aulas as any).livro_id === l.id && 
-                        (r.aulas as any).tipo === 'prova' && 
-                        (r.nota || 0) >= 7
-                      );
-                      if (anyPassed) return false;
+                  const isVideo = a.tipo === 'gravada' || a.tipo === 'ao_vivo';
 
-                      // V1, V2, V3 Logic
-                      const v = a.versao || 1;
-                      if (v === 1) return releasedAtividades.includes(a.id);
-                      
-                      // For V2 and V3, we check the V1 submission
-                      const v1Sub = resData.find(r => (r.aulas as any).livro_id === l.id && (r.aulas as any).versao === 1);
-                      if (!v1Sub) return false;
-                      
-                      const v1Date = new Date(v1Sub.created_at || v1Sub.primeira_correcao_at).getTime();
-                      const now = Date.now();
-                      const diffDays = Math.floor((now - v1Date) / (1000 * 3600 * 24));
-                      
-                      // 30-day absolute limit
-                      if (diffDays > 30) return false;
+                  if (isExercise) lockedByProfessor = !releasedAtividades.includes(a.id);
+                  if (isVideo) lockedByProfessor = !releasedVideos.includes(a.id);
+                  
+                  // If the whole module isn't released, everything within is locked
+                  if (!professorReleased) lockedByProfessor = true;
 
-                      if (v === 2) {
-                        return (v1Sub.nota < 7) && (diffDays >= 7);
-                      }
-                      
-                      if (v === 3) {
-                        const v2Sub = resData.find(r => (r.aulas as any).livro_id === l.id && (r.aulas as any).versao === 2);
-                        return v2Sub && (v2Sub.nota < 7) && (diffDays >= 21);
-                      }
-                    }
-                    return releasedAtividades.includes(a.id);
-                  }
-
-                  // Video Aulas with bloco_id: strict auto-unlock logic (All students)
-                  if ((a.tipo === 'gravada' || a.tipo === 'ao_vivo') && a.bloco_id) {
-                    if (isStaff) return true;
-                    if (!professorReleased) return false;
-                    // For Modular mode, we allow video access even if exercises are not finished
-                    // but we still follow the professor release.
-                    return true;
-                  }
-
-                  // Other items (material, video without block) release automatically when module is released
-                  return professorReleased;
-                }),
+                  return { ...a, lockedByProfessor };
+                }).filter((a: any) => !a.isHidden),
                 progresso: isStaff ? 100 : 0, 
                 isReleased: (isStaff || exemptStatus || (l.ordem || 1) <= releasedCount) && professorReleased,
                 isCurrent: isCurrent && professorReleased
@@ -519,11 +470,8 @@ const Dashboard = () => {
             </div>
           )}
 
-          {(['cursos', 'forum', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
-            .filter(t => {
-              if (isRestricted) return ['cursos', 'forum', 'avisos'].includes(t);
-              return isStaff ? t !== 'financeiro' : true;
-            })
+          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
+            .filter(t => isStaff ? t !== 'financeiro' : true)
             .map(t => {
               const isDisabledForBlocked = isBlocked && t !== 'financeiro';
               return (
@@ -538,7 +486,6 @@ const Dashboard = () => {
                   style={{ opacity: isDisabledForBlocked ? 0.35 : 1, cursor: isDisabledForBlocked ? 'not-allowed' : 'pointer' }}
                 >
                   {t === 'cursos' && <BookOpen size={20} />}
-                  {t === 'forum' && <MessageSquare size={20} />}
                   {t === 'avisos' && <Bell size={20} />}
                   {t === 'documentos' && <FileText size={20} />}
                   {t === 'financeiro' && <CreditCard size={20} />}
@@ -565,7 +512,6 @@ const Dashboard = () => {
               {activeTab === 'documentos' && 'Meus Documentos'}
               {activeTab === 'financeiro' && 'Financeiro e Matrícula'}
               {activeTab === 'boletim' && 'Boletim de Notas'}
-              {activeTab === 'forum' && 'Fórum da Comunidade'}
             </h1>
             <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta, Aluno.</p>
           </div>
@@ -642,10 +588,6 @@ const Dashboard = () => {
               handleChangeNucleo={handleChangeNucleo}
               atividades={atividades}
             />
-          )}
-
-          {activeTab === 'forum' && (
-            <ForumPanel userProfile={profile} />
           )}
         </div>
 

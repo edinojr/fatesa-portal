@@ -1,0 +1,823 @@
+[
+  {
+    "id": "d4a2e466-7bdf-4e11-b78c-463c430f66bf",
+    "nome": "Valquíria Maria da Silva Pereira ",
+    "email": "vmlq04922@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T19:51:20.881Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "c03be7a3-0b73-48bb-9df7-bcc5edddc036",
+    "nome": "Aparecida Panisso",
+    "email": "ap.panisso@gmail.com",
+    "tipo": "admin",
+    "created_at": "2026-03-22T17:09:17.475Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": true,
+    "nucleo_id": null,
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "40d094da-15d0-403f-bb84-63462b961faa",
+    "nome": "Marcos Oliveira dos Santos ",
+    "email": "marcos.mos.2015@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T20:33:58.474Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "0c8c59a4-2b08-43b3-abff-1ae20b53b5e8",
+    "nome": "Ademar Benedicto",
+    "email": "ademarbenedicto@terra.com.br",
+    "tipo": "professor",
+    "created_at": "2026-03-25T04:18:27.732Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "717face1-c330-4964-8241-1cad576e1664",
+    "nome": "Valmir Rodrigues dos Santos",
+    "email": "valmir_santos21@hotmail.com",
+    "tipo": "professor",
+    "created_at": "2026-03-25T03:23:30.715Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "a354e098-a6c9-42cc-b7ae-616d273e0a2a",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "36f3488f-fdd8-4947-9d09-0628bd009537",
+    "nome": "Cristiane Felicio Bento",
+    "email": "pr.crisbento@gmail.com",
+    "tipo": "professor",
+    "created_at": "2026-03-25T12:54:43.822Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "c4bd8989-947f-41de-ab73-3cd8d80c2457",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "4ab793ec-7a3d-4438-bcb7-d80fc7d05fea",
+    "nome": "Edino Junior",
+    "email": "edi.ben.jr@gmail.com",
+    "tipo": "admin",
+    "created_at": "2026-03-24T19:53:08.675Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "admin",
+      "professor",
+      "estudante",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "d021a984-a86d-4d64-96b8-4148cae780a7",
+    "nome": "Rosângela de Melo Cremon ",
+    "email": "rodangelamello@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T01:34:48.256Z",
+    "bloqueado": false,
+    "caminhos_acesso": [],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "c79df46f-44ab-4746-a51a-7ca67388ebfe",
+    "nome": "Ingrid Tenheri Milani",
+    "email": "ingrid_tenheri@hotmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-25T13:00:45.396Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": "Vila Luzita"
+  },
+  {
+    "id": "7eaca1c8-e0da-4adc-8f37-65ac63480abe",
+    "nome": "William Tadeu Churai ",
+    "email": "william_churai@hotmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T02:06:45.604Z",
+    "bloqueado": false,
+    "caminhos_acesso": [],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "2c5f080a-33ba-4e2b-899c-b6f092f7690e",
+    "nome": "Danielly Planet Triana",
+    "email": "moises_dh@yahoo.com.br",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T00:45:06.244Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "6df059a1-c22c-4010-bdca-d7812bf836e9",
+    "status_nucleo": "aprovado",
+    "nucleo": "Polo Príncipe de Gales"
+  },
+  {
+    "id": "1e6565a6-82f1-4618-854e-64fd9eb703e6",
+    "nome": "Rodolfo Teixeira",
+    "email": "rodolfo12rdf@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T02:44:50.010Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "4d21b003-795f-4140-8ab0-2b9e1aad9735",
+    "status_nucleo": "aprovado",
+    "nucleo": "Polo Bagnara - Mauá-SP"
+  },
+  {
+    "id": "c01769f1-c7fc-4b27-848a-f8b47b3cdb86",
+    "nome": "Sergio Levi Fernandes de Souza",
+    "email": "sergio.levi@hotmail.com",
+    "tipo": "professor",
+    "created_at": "2026-03-26T16:44:11.229Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "27b12376-9c53-4658-9f28-002157f5e8cd",
+    "nome": "Elizeu de Oliveira Rebouças",
+    "email": "elizeureboucas@gmail.com",
+    "tipo": "professor",
+    "created_at": "2026-03-25T17:07:11.962Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "8f159455-dd69-4324-80b2-22f881b5d7f1",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "a90f835d-54bd-4eb7-be5f-6c9918ad4da2",
+    "nome": "Luciléia Pereira de Sousa Santos",
+    "email": "lucileiapereira1980@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T01:16:59.670Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "4d21b003-795f-4140-8ab0-2b9e1aad9735",
+    "status_nucleo": "aprovado",
+    "nucleo": "Polo Bagnara - Mauá-SP"
+  },
+  {
+    "id": "97edf610-584a-48ef-a5b3-dd89df526edb",
+    "nome": "Ligia Cristine Ribeiro Fernandes",
+    "email": "ligiacristine.fernandes@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T16:53:44.127Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "pendente",
+    "nucleo": ""
+  },
+  {
+    "id": "d6a5782e-a237-44df-9ecf-4dba0ed5f873",
+    "nome": "Cavalcante",
+    "email": "cavalcante@fatesa.com.br",
+    "tipo": "professor",
+    "created_at": "2026-03-26T20:18:28.782Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "da5f819c-d4ef-4358-8839-f151c4fe7065",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "aa0ae4d1-9505-4af4-86ab-f3d28e7b5b2d",
+    "nome": "Daniel Justino Ferreira",
+    "email": "dfjustino2008@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T10:06:39.405Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "df370c4f-79a5-4309-ac76-41189e2c791f",
+    "status_nucleo": "aprovado",
+    "nucleo": "Polo Sopro Divino"
+  },
+  {
+    "id": "23b42be3-358e-4626-9de0-673b9a3fc5b4",
+    "nome": "Marcelo Alves de Sousa",
+    "email": "marceloalves2210@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T01:33:17.211Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "df370c4f-79a5-4309-ac76-41189e2c791f",
+    "status_nucleo": "aprovado",
+    "nucleo": "Polo Sopro Divino"
+  },
+  {
+    "id": "43c15cd0-eb14-4a58-97fb-c61012a6f669",
+    "nome": "Henrique Mariano Silva de Santana",
+    "email": "santanna.h96@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T18:03:29.406Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "4f6ad107-0a9b-47fc-b5a6-162943c2880e",
+    "nome": "Lizandra Rodrigues Gonçalves ",
+    "email": "lizandra.gnc@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T18:03:29.406Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "e0fc56aa-d728-4481-a13b-6641651b622e",
+    "nome": "Marcel Milani",
+    "email": "marcel.milani@unilever.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T19:12:49.440Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "5abd2aa5-b04a-45ff-9bae-8441dc0048f7",
+    "nome": "Wesley Rodrigo Geronimo ",
+    "email": "wrgeronimo@hotmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T18:13:44.516Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "9ae8efaa-220b-43c5-bcbb-2b89ac8a1f6d",
+    "nome": "Renato da Silva Adriano",
+    "email": "silvarenato1206@gmail.com",
+    "tipo": "professor",
+    "created_at": "2026-03-26T00:14:05.005Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "4d21b003-795f-4140-8ab0-2b9e1aad9735",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "03cbe8e3-4f97-48e4-b1fb-e7d9db5fd6fa",
+    "nome": "ELIANDRO DE LIMA CONCEICAO",
+    "email": "eliandroecal@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T10:35:15.027Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "a354e098-a6c9-42cc-b7ae-616d273e0a2a",
+    "status_nucleo": "aprovado",
+    "nucleo": "Missão Evangélica do Brasil "
+  },
+  {
+    "id": "6b48cebb-58b2-4308-98e7-be1a5447faee",
+    "nome": "José de Moraes Junior",
+    "email": "jumelzimha90@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-25T20:34:34.724Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "a354e098-a6c9-42cc-b7ae-616d273e0a2a",
+    "status_nucleo": "aprovado",
+    "nucleo": "Missão Evangélica do Brasil "
+  },
+  {
+    "id": "72e30cb3-4fdf-4f1d-967b-a06fd40a73ec",
+    "nome": "Samuel Anastácio",
+    "email": "anastacio.samuel286@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T01:06:59.135Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "a354e098-a6c9-42cc-b7ae-616d273e0a2a",
+    "status_nucleo": "aprovado",
+    "nucleo": "Missão Evangélica do Brasil "
+  },
+  {
+    "id": "8c7d8e7f-7031-46d0-b168-9c1fe296b59d",
+    "nome": "Rian Deivide Gomes Almeida ",
+    "email": "ryan48328@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T02:48:21.961Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "a354e098-a6c9-42cc-b7ae-616d273e0a2a",
+    "status_nucleo": "aprovado",
+    "nucleo": "Missão Evangélica do Brasil "
+  },
+  {
+    "id": "fbce3de8-071c-467d-bcf7-81f3fe886d1d",
+    "nome": "CARLOS HENRIQUE DA SILVA",
+    "email": "carlosh86j@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T20:58:12.405Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "4d21b003-795f-4140-8ab0-2b9e1aad9735",
+    "status_nucleo": "aprovado",
+    "nucleo": "Polo Bagnara - Mauá-SP"
+  },
+  {
+    "id": "930a3ab2-b9ce-4d95-89dc-448d772554bf",
+    "nome": "Nome: Eliane da Conceição Oliveira Gama",
+    "email": "elianeoliveira8@hotmail.com",
+    "tipo": "professor",
+    "created_at": "2026-03-26T19:09:13.807Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "professor",
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "793963fb-b8b1-40b4-a512-7d1c6bb72a17",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "dcc38cf5-d4da-4d06-915f-7fdef890d18e",
+    "nome": "Everton Pereira de barros",
+    "email": "everton.jesuseocaminho@hotmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:13:31.372Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "cb50c742-1285-4269-a410-a4ed61255d81",
+    "nome": "Ana Paula Gimenez de Almeida Xavier ",
+    "email": "anaana0616@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:11:43.856Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "41bd4e98-e52c-4a65-82d1-ac3036f2a079",
+    "nome": "Everton Pereira de barros",
+    "email": "everton.pb@fatesa.edu",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:21:32.512Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "2dcea729-332c-4cde-9291-43ef8eee8bc1",
+    "nome": "Robert Rodrigues Martinez ",
+    "email": "tibertmartinez@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-26T22:37:10.769Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "c4bd8989-947f-41de-ab73-3cd8d80c2457",
+    "status_nucleo": "aprovado",
+    "nucleo": "AD Palavra de Vida "
+  },
+  {
+    "id": "951776f3-44fb-48e5-80cd-1b34a43302ec",
+    "nome": "Daniel Bueno",
+    "email": "danielbueno828@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:19:31.469Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": ""
+  },
+  {
+    "id": "f39ec602-b51e-4cee-9b67-dc3883da8d82",
+    "nome": "José Junior",
+    "email": "jumelzinha90@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-24T02:26:12.711Z",
+    "bloqueado": false,
+    "caminhos_acesso": [],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "b03d548f-90aa-45bc-9385-1e248745fb45",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "658528ca-a0fa-47e4-9649-0a6edddb16e9",
+    "nome": "Davidson Mauricio Correa",
+    "email": "dmauricio2@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:11:21.243Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "92f70031-027b-4773-9111-1346ed824488",
+    "nome": "Lídia Cristiane Oliveira",
+    "email": "lidia.cristiane@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:17:11.466Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": true,
+    "nucleo_id": "b931bb5d-baf4-49b4-8bd9-9d8f8afdee74",
+    "status_nucleo": "pendente",
+    "nucleo": "Parque João Ramalho"
+  },
+  {
+    "id": "dbc811ea-97f4-42af-8b45-54705b666bcb",
+    "nome": "José Silva",
+    "email": "josesilva@fatesa.com.br",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T12:28:52.581Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "fce41fbf-0cc9-41af-8bd1-2206782219bb",
+    "nome": "Nunis da Silva Santos ",
+    "email": "barbosanunisam@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:32:20.776Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "a354e098-a6c9-42cc-b7ae-616d273e0a2a",
+    "status_nucleo": "pendente",
+    "nucleo": "Missão Evangélica do Brasil "
+  },
+  {
+    "id": "8bf422c4-a6fc-4954-b9de-3ad67ff266f2",
+    "nome": "Emerson Mendes Silva ",
+    "email": "emsduda19@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T14:22:33.787Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "a354e098-a6c9-42cc-b7ae-616d273e0a2a",
+    "status_nucleo": "pendente",
+    "nucleo": "Missão Evangélica do Brasil "
+  },
+  {
+    "id": "97fa837d-eedd-4321-b3ef-2e68151e21e4",
+    "nome": "Luiz Carlos Soares Silva ",
+    "email": "lucasosi@hotmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T15:13:21.425Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "3b4244fd-4293-41eb-93fc-f7f61a21fe9c",
+    "nome": "Aparecida Panisso",
+    "email": "apanisso@fatesa.com.br",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T11:41:09.096Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": true,
+    "nucleo_id": "6c1eeee0-8220-4885-b33d-6ca31fa8c27c",
+    "status_nucleo": "aprovado",
+    "nucleo": null
+  },
+  {
+    "id": "be405c15-9a39-4210-881e-2787c2d76286",
+    "nome": "Maria Carolina Soares da Silva ",
+    "email": "caroli_naso@hotmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:19:53.177Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": ""
+  },
+  {
+    "id": "0ce4f272-3b48-4672-9fa0-809f049b856a",
+    "nome": "Alexandra Galvão de Oliveira Santos ",
+    "email": "alexandragos@hotmail.com.br",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:08:32.221Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "d935abe0-fae9-413b-8d04-84f1acc6b52b",
+    "nome": "Jonas Pacheco",
+    "email": "jonaspacheco40@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:38:41.099Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "0cb04fb0-9634-4bc5-bdf4-9e5d8b7a6b8b",
+    "nome": "Vanilda Francisca da Rocha Coról ",
+    "email": "vanirocha32@yahoo.com.br",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:40:31.260Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "a5184693-cc68-4ec3-bb5c-cda9a7d406a5",
+    "nome": "Lucas Ferreira Ponte Aguilar",
+    "email": "aguilar.lucasferreira@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T01:59:06.398Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "2ffb744a-9b98-4973-8ea1-4d2cb2911551",
+    "nome": "Adriano Ferreira",
+    "email": "adrianoferrira775@gmail.com",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T03:10:33.182Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "1288ce9a-aba0-4011-9f22-150ee2dc4b07",
+    "nome": "Adriano Ferreira da Silva ",
+    "email": "adrianoferreira@fatesa.edu",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T03:27:08.195Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  },
+  {
+    "id": "6fda8ae6-f166-4ebd-9700-9a64db3a5516",
+    "nome": "Adriano Ferreira",
+    "email": "adrianoferreiradasilva@fatesa.edu",
+    "tipo": "presencial",
+    "created_at": "2026-03-27T10:28:05.176Z",
+    "bloqueado": false,
+    "caminhos_acesso": [
+      "aluno"
+    ],
+    "acesso_definitivo": true,
+    "bolsista": false,
+    "nucleo_id": "961e4c16-b663-4295-8bc1-5e924727190b",
+    "status_nucleo": "aprovado",
+    "nucleo": "SEDE - ADSA"
+  }
+]
