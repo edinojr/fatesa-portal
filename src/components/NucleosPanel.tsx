@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapPin, Clock, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react'
+import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapPin, Clock, ShieldCheck, CheckCircle2, XCircle, PlayCircle } from 'lucide-react'
 
 interface NucleoPanelProps {
   userRole?: string

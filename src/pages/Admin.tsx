@@ -1065,7 +1065,7 @@ const Admin = () => {
           setShowAddAdmin={setShowAddAdmin}
           actionLoading={actionLoading}
           handleAddAdmin={handleAddAdmin}
-          availableNucleos={availableNucleos}
+          availableNucleos={allNucleos}
         />
 
         {confirmDelete && (
