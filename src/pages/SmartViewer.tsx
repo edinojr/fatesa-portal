@@ -8,18 +8,14 @@ import {
   Loader2, 
   Maximize, 
   Minimize, 
-  CheckCircle2,
-  Award,
-  ClipboardList,
-  BookOpen,
-  CreditCard
+  BookOpen
 } from 'lucide-react';
 
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-const StandardContent = () => {
+const SmartViewer = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,7 +28,6 @@ const StandardContent = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPseudoFullscreen, setIsPseudoFullscreen] = useState(false);
   const [viewMode, setViewMode] = useState<'pdf' | 'epub'>('pdf');
-  const [rendition, setRendition] = useState<any>(null);
   const [containerWidth, setContainerWidth] = useState(window.innerWidth);
   const [nextLesson, setNextLesson] = useState<any>(null);
   const [relatedActivities, setRelatedActivities] = useState<any[]>([]);
@@ -103,7 +98,6 @@ const StandardContent = () => {
             manager: "default"
           });
           rend.display();
-          setRendition(rend);
         }
       };
       document.head.appendChild(script);
@@ -405,4 +399,4 @@ const StandardContent = () => {
   );
 };
 
-export default StandardContent;
+export default SmartViewer;

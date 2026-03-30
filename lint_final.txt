@@ -1,0 +1,142 @@
+
+> fatesa-portal@1.6.0 lint
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
+
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\components\BookModal.tsx
+  45:9  error  'toggleHighlighter' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\components\NucleosPanel.tsx
+   11:95  error  'onModalClose' is defined but never used        @typescript-eslint/no-unused-vars
+   46:10  error  'autoGrade' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  499:9   error  Unnecessary semicolon                           no-extra-semi
+  500:9   error  Unnecessary semicolon                           no-extra-semi
+  501:9   error  Unnecessary semicolon                           no-extra-semi
+  502:9   error  Unnecessary semicolon                           no-extra-semi
+  612:7   error  Unnecessary semicolon                           no-extra-semi
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\components\common\Logo.tsx
+  10:65  error  'showText' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  10:83  error  'white' is assigned a value but never used     @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\communication\components\AvisosManagement.tsx
+  11:3  error  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\communication\components\ExtraAssessmentModal.tsx
+  3:24  error  'Save' is defined but never used         @typescript-eslint/no-unused-vars
+  3:33  error  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\communication\components\MateriaisManagement.tsx
+  8:11  error  'LinkIcon' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\communication\components\NoticeBoard.tsx
+   5:3  error  'ExternalLink' is defined but never used   @typescript-eslint/no-unused-vars
+   8:3  error  'ChevronRight' is defined but never used   @typescript-eslint/no-unused-vars
+  11:3  error  'ClipboardList' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\courses\components\ContentManagement.tsx
+   2:111  error  'CheckCircle2' is defined but never used      @typescript-eslint/no-unused-vars
+  86:3    error  'actionLoading' is defined but never used     @typescript-eslint/no-unused-vars
+  87:3    error  'fetchData' is defined but never used         @typescript-eslint/no-unused-vars
+  92:3    error  'handleRemoveFile' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\courses\components\CourseList.tsx
+  27:9  error  'navigate' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\courses\components\GradesPanel.tsx
+    2:17  error  'Loader2' is defined but never used           @typescript-eslint/no-unused-vars
+    2:63  error  'XCircle' is defined but never used           @typescript-eslint/no-unused-vars
+    2:79  error  'Info' is defined but never used              @typescript-eslint/no-unused-vars
+   57:17  error  'exams' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  123:31  error  'lastSub' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\courses\components\ProfessorContent.tsx
+  32:3   error  'profile' is defined but never used                   @typescript-eslint/no-unused-vars
+  36:9   error  'navigate' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  38:10  error  'loadingReleases' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\courses\components\modals\ContentModals.tsx
+    2:19  error  'Plus' is defined but never used           @typescript-eslint/no-unused-vars
+  105:3   error  'actionLoading' is defined but never used  @typescript-eslint/no-unused-vars
+  542:3   error  'lessons' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\courses\hooks\useProfessorCourses.ts
+  2:10  error  'supabase' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\finance\components\FinancePanel.tsx
+  25:3  error  'isPastDue' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\forum\components\ForumPanel.tsx
+   13:3   error  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+   14:3   error  'Hash' is defined but never used         @typescript-eslint/no-unused-vars
+  349:33  error  'index' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\features\users\components\AlumniManagement.tsx
+   3:3  error  'Users' is defined but never used     @typescript-eslint/no-unused-vars
+   9:3  error  'Download' is defined but never used  @typescript-eslint/no-unused-vars
+  13:3  error  'X' is defined but never used         @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\hooks\useAdminManagement.ts
+   26:10  error  'currentUserEmail' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  181:15  error  'children' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  181:25  error  'count' is assigned a value but never used             @typescript-eslint/no-unused-vars
+  181:32  error  'professores' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  181:45  error  'nucleos' is assigned a value but never used           @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\AdminLogin.tsx
+  4:26  error  'ShieldAlert' is defined but never used  @typescript-eslint/no-unused-vars
+  4:65  error  'ShieldCheck' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\Dashboard.tsx
+  74:10  error  'availableRoles' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  74:26  error  'setAvailableRoles' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  75:10  error  'showRoleSwitcher' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  75:28  error  'setShowRoleSwitcher' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  81:10  error  'reproveAlert' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  81:24  error  'setReproveAlert' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\ForgotPassword.tsx
+  4:25  error  'ChevronLeft' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\Landing.tsx
+  3:49  error  'Mail' is defined but never used   @typescript-eslint/no-unused-vars
+  3:55  error  'Phone' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\Lesson.tsx
+   1:38  error  'useMemo' is defined but never used                 @typescript-eslint/no-unused-vars
+   4:61  error  'CheckCircle2' is defined but never used            @typescript-eslint/no-unused-vars
+  24:22  error  'setReviewMode' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\Login.tsx
+   4:26  error  'GraduationCap' is defined but never used     @typescript-eslint/no-unused-vars
+   4:54  error  'ChevronLeft' is defined but never used       @typescript-eslint/no-unused-vars
+  12:16  error  'setRole' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\Matricula.tsx
+   9:3   error  'Phone' is defined but never used             @typescript-eslint/no-unused-vars
+  10:3   error  'Mail' is defined but never used              @typescript-eslint/no-unused-vars
+  14:3   error  'ChevronLeft' is defined but never used       @typescript-eslint/no-unused-vars
+  20:10  error  'step' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  20:16  error  'setStep' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\ProfessorLogin.tsx
+   4:26  error  'GraduationCap' is defined but never used     @typescript-eslint/no-unused-vars
+   4:54  error  'ChevronLeft' is defined but never used       @typescript-eslint/no-unused-vars
+   4:67  error  'ShieldCheck' is defined but never used       @typescript-eslint/no-unused-vars
+  12:10  error  'role' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  12:16  error  'setRole' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\ResetPassword.tsx
+   4:39  error  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+   4:52  error  'ChevronLeft' is defined but never used  @typescript-eslint/no-unused-vars
+  19:68  error  'session' is defined but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\Signup.tsx
+  4:42  error  'ChevronLeft' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\edino\OneDrive\├ürea de Trabalho\Fatesa\src\pages\SmartViewer.tsx
+  31:10  error  'rendition' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+Ô£û 78 problems (78 errors, 0 warnings)
+  5 errors and 0 warnings potentially fixable with the `--fix` option.
+

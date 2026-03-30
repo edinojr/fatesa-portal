@@ -11,9 +11,6 @@ import {
   CheckCircle2,
   XCircle,
   Loader2,
-  Users,
-  LayoutDashboard,
-  ChevronLeft,
   Menu,
   X,
   Bell
@@ -64,26 +61,21 @@ const Dashboard = () => {
     pixConfig,
     isBlockedDueToPayment,
     isPastDue,
-    loading: financeLoading,
     fetchPayments,
     requestExtension
   } = useFinanceControl(profile);
 
-  const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState<string | null>(null)
   const [selectedBook, setSelectedBook] = useState<string | null>(null)
   const [selectedLessonType, setSelectedLessonType] = useState<'video' | 'atividade'>('video')
   const [availableNucleos, setAvailableNucleos] = useState<any[]>([])
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
   const [showArchives, setShowArchives] = useState<Record<string, boolean>>({})
-  const [availableRoles, setAvailableRoles] = useState<string[]>([])
-  const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [avisos, setAvisos] = useState<any[]>([])
   const [materiais, setMateriais] = useState<any[]>([])
   const [poloAtividades, setPoloAtividades] = useState<any[]>([])
   const [isBlocked, setIsBlocked] = useState(false)
-  const [reproveAlert, setReproveAlert] = useState<{aula: string, modulo: string} | null>(null)
 
   useEffect(() => {
     if (!profileLoading && profile) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, CheckCircle2, X, AlertCircle, Lock, LogOut, ClipboardList, XCircle, Upload, Edit2, CreditCard, Copy, Info, ChevronRight } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -14,8 +14,6 @@ const Lesson = () => {
   const [submitting, setSubmitting] = useState(false)
   const [answers, setAnswers] = useState<Record<string, any>>({})
   const [result, setResult] = useState<{ score: number | null; passed: boolean; pendingReview?: boolean; scoreOriginal?: number | null } | null>(null)
-  const [reviewMode, setReviewMode] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [existingSubmission, setExistingSubmission] = useState<any | null>(null)
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
@@ -23,14 +21,14 @@ const Lesson = () => {
   const [showQuizEditor, setShowQuizEditor] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [isReleased, setIsReleased] = useState<boolean>(true)
+  const [reviewMode] = useState(false)
+  const [shuffledOptions, setShuffledOptions] = useState<Record<string, string[]>>({})
+  const [shuffledMatchingRows, setShuffledMatchingRows] = useState<Record<string, any[]>>({})
   
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [isExamStarted, setIsExamStarted] = useState(false)
   const [deadlineInfo, setDeadlineInfo] = useState<{ deadline: Date, stage: number, expired: boolean } | null>(null)
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [pixConfig, setPixConfig] = useState({ key: '', qr: '' })
-  const [uploading, setUploading] = useState<string | null>(null)
   const [relatedExercise, setRelatedExercise] = useState<any>(null)
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
 
@@ -211,15 +209,39 @@ const Lesson = () => {
     } catch (err) { console.error(err); }
     finally { 
       setLoading(false); 
-      // Fetch PIX config for modal
-      const { data: config } = await supabase.from('configuracoes').select('*');
-      if (config) {
-        const key = config.find((c: any) => c.chave === 'pix_key')?.valor || '';
-        const qr = config.find((c: any) => c.chave === 'pix_qr_url')?.valor || '';
-        setPixConfig({ key, qr });
-      }
     }
   }
+
+  // Shuffle effect for matching questions
+  useEffect(() => {
+    if (questions.length > 0) {
+      const newShuffledOpts: Record<string, string[]> = {};
+      const newShuffledRows: Record<string, any[]> = {};
+      
+      questions.forEach((q, qIdx) => {
+        const qKey = q.id || qIdx.toString();
+        if (q.type === 'matching' && q.matchingPairs) {
+          // Shuffle Right Options (Dropdown)
+          const rightOptions = q.matchingPairs.map(p => p.right).filter(Boolean);
+          for (let i = rightOptions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [rightOptions[i], rightOptions[j]] = [rightOptions[j], rightOptions[i]];
+          }
+          newShuffledOpts[qKey] = rightOptions;
+
+          // Shuffle Left Rows
+          const rows = [...q.matchingPairs];
+          for (let i = rows.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [rows[i], rows[j]] = [rows[j], rows[i]];
+          }
+          newShuffledRows[qKey] = rows;
+        }
+      });
+      setShuffledOptions(newShuffledOpts);
+      setShuffledMatchingRows(newShuffledRows);
+    }
+  }, [questions]);
 
   // Effect to find related exercise when lesson changes
   useEffect(() => {
@@ -272,52 +294,7 @@ const Lesson = () => {
       }
     }
     fetchRelated();
-  }, [lesson]);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !userProfile) return;
-    
-    setUploading('temp');
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${userProfile.id}_${Date.now()}.${fileExt}`;
-      const filePath = `comprovantes/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('portal-assets')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('portal-assets')
-        .getPublicUrl(filePath);
-
-      // Create a pending payment record or update latest open
-      const { data: openPays } = await supabase.from('pagamentos').select('id').eq('user_id', userProfile.id).eq('status', 'aberto').order('data_vencimento', { ascending: false }).limit(1);
-      
-      if (openPays && openPays.length > 0) {
-        await supabase.from('pagamentos').update({ comprovante_url: publicUrl, updated_at: new Date().toISOString() }).eq('id', openPays[0].id);
-      } else {
-        await supabase.from('pagamentos').insert({
-          user_id: userProfile.id,
-          valor: 75,
-          status: 'aberto',
-          comprovante_url: publicUrl,
-          data_vencimento: new Date().toISOString().split('T')[0],
-          descricao: 'Mensalidade - Upload via Aula'
-        });
-      }
-
-      alert('Comprovante enviado com sucesso! Aguarde a validação.');
-      setShowPaymentModal(false);
-    } catch (err: any) {
-      alert('Erro ao enviar: ' + err.message);
-    } finally {
-      setUploading(null);
-    }
-  };
+  }, [lesson, id]);
 
   const handleStartExam = async () => {
     if (!lesson || !userProfile) return;
@@ -389,6 +366,7 @@ const Lesson = () => {
     if (!items?.length) return;
     const { data: prog } = await supabase.from('progresso_aulas').select('aula_id').eq('aluno_id', aId).in('aula_id', items.map(i => i.id)).eq('concluida', true);
     if (prog?.length === items.length) {
+      // Logic for completion can be added here
     }
   }
 
@@ -404,7 +382,7 @@ const Lesson = () => {
   }
 
   const renderVideoPlayer = (url: string) => {
-    let vId = url.includes('v=') ? url.split('v=')[1]?.split('&')[0] : url.split('/').pop();
+    const vId = url.includes('v=') ? url.split('v=')[1]?.split('&')[0] : url.split('/').pop();
     if (url.includes('vimeo')) return <iframe src={`https://player.vimeo.com/video/${vId}`} width="100%" height="100%" allowFullScreen style={{ borderRadius: '16px' }}></iframe>
     return <iframe src={`https://www.youtube.com/embed/${vId}`} width="100%" height="100%" allowFullScreen style={{ borderRadius: '16px' }}></iframe>
   }
@@ -514,12 +492,14 @@ const Lesson = () => {
                     </div>
                   )}
 
-                  {q.type === 'matching' && q.matchingPairs?.map((pair, pIdx) => (
+                  {q.type === 'matching' && (shuffledMatchingRows[q.id || idx] || q.matchingPairs || []).map((pair, pIdx) => (
                     <div key={pIdx} style={{display:'flex', alignItems:'center', gap:'1rem', marginBottom:'0.5rem'}}>
                       <div style={{flex:1, padding:'0.75rem', background:'rgba(255,255,255,0.05)', borderRadius:'8px'}}>{pair.left}</div>
-                      <select className="form-control" style={{flex:1}} value={answers[q.id]?.[pair.left] || ''} onChange={e => setAnswers(p => ({...p, [q.id]: {...(p[q.id]||{}), [pair.left]: e.target.value}}))}>
+                      <select className="form-control" style={{flex:1}} value={answers[q.id]?.[pair.left] || ''} onChange={e => setAnswers(p => ({...p, [q.id]: {...(p[q.id]||{}), [pair.left]: e.target.value}}))} disabled={submitted}>
                         <option value="">Selecione...</option>
-                        {q.matchingPairs?.map((rp, rpIdx) => <option key={rpIdx} value={rp.right}>{rp.right}</option>)}
+                        {(shuffledOptions[q.id || idx] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
+                          <option key={roIdx} value={rightOpt}>{rightOpt}</option>
+                        ))}
                       </select>
                     </div>
                   ))}

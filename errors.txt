@@ -1,0 +1,2 @@
+src/pages/Lesson.tsx(451,70): error TS2304: Cannot find name 'reviewMode'.
+src/pages/Lesson.tsx(471,157): error TS2304: Cannot find name 'reviewMode'.
