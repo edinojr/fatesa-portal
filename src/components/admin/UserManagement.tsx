@@ -15,13 +15,14 @@ interface UserManagementProps {
   handleUpdateUserNucleo: (userId: string, nucleoId: string) => Promise<void>
   handleUpdateUserName: (userId: string, newName: string) => Promise<void>
   handleDeleteUser: (userId: string) => Promise<void>
+  handleManualPayment: (userId: string) => Promise<void>
   setShowAddAdmin: (val: boolean) => void
   onAddNucleo?: () => void
 }
 
 const STAFF_TYPES = ['professor', 'admin', 'suporte']
 
-const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleApproveAccess, handleToggleBlock, handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser }: any) => {
+const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleApproveAccess, handleToggleBlock, handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleManualPayment }: any) => {
   const isProf = STAFF_TYPES.includes(user.tipo)
   return (
     <tr>
@@ -109,13 +110,23 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
         ) : (
           <>
             <Badge variant="muted">Pagante (R$ 70)</Badge>
-            <button
-              className="btn btn-outline"
-              style={{ marginTop: '0.5rem', width: '100%', padding: '0.2rem 0', fontSize: '0.75rem', borderColor: 'rgba(255,255,255,0.1)' }}
-              onClick={() => handleToggleGratuidade(user.id, false)}
-            >
-              Dar Gratuidade
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.5rem' }}>
+              <button
+                className="btn btn-outline"
+                style={{ width: '100%', padding: '0.2rem 0', fontSize: '0.75rem', borderColor: 'rgba(255,255,255,0.1)' }}
+                onClick={() => handleToggleGratuidade(user.id, false)}
+              >
+                Dar Gratuidade
+              </button>
+              <button
+                className="btn"
+                style={{ width: '100%', padding: '0.4rem 0', fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', border: '1px solid rgba(16, 185, 129, 0.2)' }}
+                onClick={() => handleManualPayment(user.id)}
+                disabled={actionLoading === user.id}
+              >
+                {actionLoading === user.id ? <Loader2 className="spinner" size={12} /> : 'Registrar Pagamento'}
+              </button>
+            </div>
           </>
         )}
       </td>
@@ -209,7 +220,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   users, allNucleos, searchTerm, actionLoading,
   handleTypeChange, handleApproveAccess, handleToggleBlock,
   handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName,
-  handleDeleteUser, setShowAddAdmin, onAddNucleo
+  handleDeleteUser, handleManualPayment, setShowAddAdmin, onAddNucleo
 }) => {
   const filteredUsers = users.filter(u =>
     u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -229,7 +240,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
 
   const handlers = {
     handleTypeChange, handleApproveAccess, handleToggleBlock,
-    handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser
+    handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleManualPayment
   }
 
   return (

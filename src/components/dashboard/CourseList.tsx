@@ -154,6 +154,11 @@ const CourseList: React.FC<CourseListProps> = ({
                         <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                           {(() => {
                             const allAulas = currentBook.aulas || [];
+                            // Top level items: everything that doesn't have a parent OR videos (even if they have a parent that is a licao, we show them at top level now based on request)
+                            // Actually, better: things with no parent_aula_id are top level.
+                            // If a video has a parent_aula_id, we'll check if we should still show it at top level.
+                            // User: "videos somente no bloco e não nas lições" -> if parent is a 'licao', it should NOT be in that licao.
+                            
                             const topLevelAulas = allAulas
                               .filter((a: any) => !a.parent_aula_id)
                               .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));

@@ -526,6 +526,53 @@ const Admin = () => {
     }
   }
 
+  const handleManualPayment = async (userId: string) => {
+    if (!window.confirm('Deseja registrar o pagamento manual para este aluno? Isso liberará o acesso caso ele esteja bloqueado.')) return;
+    
+    setActionLoading(userId);
+    try {
+      // 1. Find the latest open payment
+      const { data: openPays } = await supabase
+        .from('pagamentos')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('status', 'aberto')
+        .order('data_vencimento', { ascending: false })
+        .limit(1);
+
+      if (openPays && openPays.length > 0) {
+        const { error } = await supabase
+          .from('pagamentos')
+          .update({ 
+            status: 'pago',
+            feedback: 'Registrado manualmente pela administração'
+          })
+          .eq('id', openPays[0].id);
+
+        if (error) throw error;
+        showToast('Pagamento registrado com sucesso!');
+      } else {
+        // Create a new paid record if none open
+        const { error } = await supabase.from('pagamentos').insert({
+          user_id: userId,
+          valor: 70,
+          status: 'pago',
+          data_vencimento: new Date().toISOString().split('T')[0],
+          descricao: 'Pagamento Manual (Avulso)',
+          feedback: 'Registrado manualmente pela administração'
+        });
+        if (error) throw error;
+        showToast('Novo pagamento registrado com sucesso!');
+      }
+      
+      fetchData();
+    } catch (err: any) {
+      showToast('Erro ao registrar pagamento: ' + err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   const handleAddTeacher = async (e: React.FormEvent) => {
     e.preventDefault()
     setActionLoading('add-teacher')
@@ -712,7 +759,7 @@ const Admin = () => {
               </button>
               {showRoleSwitcher && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '180px' }}>
-                  {availableRoles.filter(r => r !== userRole).map(r => (
+                  {availableRoles.filter(r => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map(r => (
                     <button 
                       key={r} 
                       className="admin-nav-item" 
@@ -723,7 +770,7 @@ const Admin = () => {
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      {r === 'aluno' ? 'Portal do Aluno' : r === 'professor' ? 'Painel do Professor' : r === 'suporte' ? 'Painel de Suporte' : 'Administração'}
+                      {r === 'aluno' ? 'Portal do Aluno' : r === 'professor' ? 'Painel do Professor' : 'Administração'}
                     </button>
                   ))}
                 </div>
@@ -872,6 +919,7 @@ const Admin = () => {
                 handleUpdateUserNucleo={handleUpdateUserNucleo}
                 handleUpdateUserName={handleUpdateUserName}
                 handleDeleteUser={async (userId: string) => setConfirmDelete({ type: 'user', id: userId, title: 'Tem certeza que deseja excluir este usuário?' })}
+                handleManualPayment={handleManualPayment}
                 onAddNucleo={() => { setActiveTab('nucleos'); setNucleosAutoOpenAdd(true); }}
               />
             )}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { CreditCard, CheckCircle2, AlertCircle, Upload } from 'lucide-react'
+import { CreditCard, CheckCircle2, AlertCircle, Upload, Copy, Info, ShieldAlert, QrCode, Loader2, ClipboardList } from 'lucide-react'
 import { Pagamento } from '../../types/dashboard'
 
 interface FinancePanelProps {
@@ -9,88 +9,243 @@ interface FinancePanelProps {
   uploading: string | null
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, type: 'pay', id?: string) => void
   showToast: (msg: string) => void
+  isBlockedDueToPayment?: boolean
+  isPastDue?: boolean
+  handleRequestExtension: () => Promise<void>
 }
 
-const FinancePanel: React.FC<FinancePanelProps> = ({ isExempt, pixConfig, payments, uploading, handleFileUpload, showToast }) => {
+const FinancePanel: React.FC<FinancePanelProps> = ({ 
+  isExempt, 
+  pixConfig, 
+  payments, 
+  uploading, 
+  handleFileUpload, 
+  showToast,
+  isBlockedDueToPayment,
+  isPastDue,
+  handleRequestExtension
+}) => {
   return (
-    <div className="data-card">
-      <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><CreditCard /> Financeiro e Mensalidades</h3>
+    <div className="data-card" style={{ background: 'transparent', border: 'none', padding: 0 }}>
       
-      {isExempt ? (
-        <div style={{ padding: '2rem', background: 'rgba(34, 197, 94, 0.05)', borderRadius: '16px', border: '1px solid rgba(34, 197, 94, 0.1)', textAlign: 'center' }}>
-          <CheckCircle2 color="var(--success)" size={32} style={{ marginBottom: '1rem' }} />
-          <p style={{ fontWeight: 600, color: 'var(--success)' }}>Você possui isenção ou gratuidade ativa.</p>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Nenhum pagamento é necessário no momento.</p>
+      {/* URGENT BLOCK BANNER */}
+      {isBlockedDueToPayment && (
+        <div style={{
+          marginBottom: '2rem',
+          padding: '1.5rem 2rem',
+          background: 'rgba(244, 63, 94, 0.1)',
+          border: '1px solid var(--error)',
+          borderRadius: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1.5rem',
+          animation: 'pulse-border 2s infinite'
+        }}>
+          <ShieldAlert size={40} color="var(--error)" />
+          <div style={{ flex: 1 }}>
+            <h3 style={{ color: 'var(--error)', margin: 0, fontSize: '1.2rem' }}>Acesso Suspenso</h3>
+            <p style={{ fontSize: '0.95rem', margin: '0.25rem 0 0', opacity: 0.9 }}>
+              Seu acesso foi bloqueado automaticamente por falta de pagamento ou envio de comprovante (vencimento dia 12). 
+              <strong> Realize o pagamento ou solicite o desbloqueio de emergência abaixo.</strong>
+            </p>
+          </div>
+          <button 
+            className="btn btn-primary" 
+            style={{ width: 'auto', padding: '0.75rem 1.5rem', background: 'var(--error)', boxShadow: '0 4px 15px rgba(244, 63, 94, 0.4)' }}
+            onClick={handleRequestExtension}
+          >
+            Liberar 3 Dias
+          </button>
         </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          {(pixConfig.key || pixConfig.qr) && (
-            <div style={{ padding: '1.5rem', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
-                <div style={{ flex: 1, minWidth: '250px' }}>
-                  <h4 style={{ color: 'var(--primary)', marginBottom: '1rem', fontSize: '1rem' }}>Pagamento via PIX</h4>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Utilize a chave abaixo ou o QR Code ao lado para realizar o pagamento. Após concluir, anexe o comprovante na mensalidade correspondente abaixo.</p>
-                  
-                  {pixConfig.key && (
-                    <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px dashed var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <code style={{ fontSize: '1rem', color: '#fff', letterSpacing: '1px' }}>{pixConfig.key}</code>
-                      <button 
-                        className="btn btn-outline" 
-                        style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}
-                        onClick={() => {
-                          navigator.clipboard.writeText(pixConfig.key);
-                          showToast('Chave PIX copiada!');
-                        }}
-                      >Copiar Chave</button>
-                    </div>
-                  )}
-                </div>
-                
-                {pixConfig.qr && (
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '12px', width: '130px', height: '130px', margin: '0 auto 0.5rem' }}>
-                      <img src={pixConfig.qr} alt="QR Code PIX" style={{ width: '100%', height: '100%' }} />
-                    </div>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>QR Code do Polo</span>
-                  </div>
-                )}
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+        
+        {/* PIX MASTER CARD */}
+        <div className="glass-card" style={{ 
+          padding: '2.5rem', 
+          borderRadius: '24px', 
+          background: 'linear-gradient(135deg, rgba(156, 39, 176, 0.15) 0%, rgba(20, 20, 20, 0.8) 100%)',
+          border: '1px solid var(--glass-border)',
+          position: 'relative'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            <div style={{ padding: '0.6rem', background: 'var(--primary)', borderRadius: '12px' }}>
+              <CreditCard size={24} color="#fff" />
+            </div>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 800 }}>Chave PIX</h3>
+          </div>
+
+          <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
+            O pagamento deve ser realizado entre os dias <strong>01 e 12</strong> de cada mês para garantir o acesso.
+          </p>
+
+          {pixConfig.key ? (
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ 
+                background: 'rgba(0,0,0,0.4)', 
+                padding: '1.2rem', 
+                borderRadius: '16px', 
+                border: '1px solid var(--glass-border)', 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                gap: '1rem',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
+              }}>
+                <code style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fff', letterSpacing: '1px', wordBreak: 'break-all' }}>{pixConfig.key}</code>
+                <button 
+                  className="btn-icon" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(pixConfig.key);
+                    showToast('Chave PIX copiada!');
+                  }}
+                  style={{ background: 'var(--primary)', color: '#fff', padding: '0.75rem', borderRadius: '12px' }}
+                >
+                  <Copy size={20} />
+                </button>
               </div>
+            </div>
+          ) : (
+            <div style={{ padding: '1.5rem', background: 'rgba(255, 77, 77, 0.05)', borderRadius: '16px', border: '1px solid rgba(255, 77, 77, 0.1)', textAlign: 'center', marginBottom: '1.5rem' }}>
+              <p style={{ color: 'var(--error)' }}>Chave PIX não configurada.</p>
             </div>
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h4 style={{ fontSize: '1rem', opacity: 0.8 }}>Minhas Mensalidades</h4>
-            {payments.map(p => (
-              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  {p.status === 'pago' ? <CheckCircle2 color="var(--success)" size={20} /> : <AlertCircle color="#EAB308" size={20} />}
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>R$ {p.valor.toFixed(2)}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Vencimento: {new Date(p.data_vencimento).toLocaleDateString()}</div>
-                  </div>
-                </div>
-                
-                <div style={{ textAlign: 'right' }}>
-                  {p.status === 'pago' ? (
-                    <div className="status-badge status-approved">Pago</div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      <div className="status-badge status-pending" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#EAB308', border: '1px solid rgba(234, 179, 8, 0.2)' }}>Em Aberto</div>
-                      <label className="btn btn-outline" style={{ fontSize: '0.7rem', padding: '0.4rem 0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <Upload size={14} /> {uploading === p.id ? 'Enviando...' : 'Anexar Comprovante'}
-                        <input type="file" style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, 'pay', p.id)} />
-                      </label>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            {payments.length === 0 && (
-              <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Nenhuma mensalidade registrada até o momento.</p>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '1rem', background: 'rgba(156, 39, 176, 0.05)', borderRadius: '12px' }}>
+            <Info size={18} color="var(--primary)" />
+            <span style={{ fontSize: '0.85rem' }}>Copie a chave e utilize o App do seu banco.</span>
           </div>
         </div>
-      )}
+
+        {/* QR CODE & INSTANT UPLOAD */}
+        <div className="glass-card" style={{ 
+          padding: '2.5rem', 
+          borderRadius: '24px', 
+          background: 'var(--bg-card)', 
+          border: '1px solid var(--glass-border)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center'
+        }}>
+          {pixConfig.qr ? (
+             <>
+               <div style={{ background: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 40px rgba(0,0,0,0.4)', marginBottom: '1.5rem' }}>
+                  <img src={pixConfig.qr} alt="QR Code PIX" style={{ width: '140px', height: '140px' }} />
+               </div>
+               <span style={{ fontSize: '0.8rem', fontWeight: 800, opacity: 0.5, letterSpacing: '1px' }}>QR CODE PARA PAGAMENTO</span>
+             </>
+          ) : (
+            <div style={{ padding: '2rem' }}>
+              <QrCode size={64} opacity={0.1} />
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>QR Code Indisponível</p>
+            </div>
+          )}
+          
+          <div style={{ width: '100%', height: '1px', background: 'var(--glass-border)', margin: '2rem 0' }}></div>
+          
+          <h4 style={{ marginBottom: '1rem' }}>Já pagou?</h4>
+          <label className="btn btn-primary" style={{ width: '100%', padding: '1rem', borderRadius: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+            {uploading === 'pay' || uploading === 'general' ? <Loader2 className="spinner" size={20} /> : <Upload size={20} />}
+            {uploading ? 'Enviando...' : 'Enviar Comprovante Agora'}
+            <input type="file" style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, 'pay')} />
+          </label>
+        </div>
+      </div>
+
+      {/* BILLING LIST */}
+      <div className="data-card" style={{ padding: '2.5rem', borderRadius: '28px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--glass-border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h4 style={{ fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <ClipboardList size={22} color="var(--primary)" /> Histórico Financeiro
+          </h4>
+        </div>
+        
+        {isExempt ? (
+          <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'rgba(16, 185, 129, 0.03)', borderRadius: '24px', border: '1px dashed var(--success)' }}>
+            <CheckCircle2 color="var(--success)" size={56} style={{ marginBottom: '1.5rem', opacity: 0.8 }} />
+            <h3 style={{ fontSize: '1.5rem', color: 'var(--success)', marginBottom: '0.5rem' }}>Bolsista / Isento</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Sua conta possui isenção de mensalidades.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {payments.length === 0 ? (
+              <div style={{ padding: '4rem', textAlign: 'center', opacity: 0.3 }}>
+                <CreditCard size={48} style={{ marginBottom: '1rem' }} />
+                <p>Nenhuma movimentação financeira encontrada.</p>
+              </div>
+            ) : (
+              payments.map(p => (
+                <div key={p.id} style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  padding: '1.75rem', 
+                  background: 'rgba(255,255,255,0.02)', 
+                  borderRadius: '20px', 
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  flexWrap: 'wrap',
+                  gap: '1.5rem',
+                  transition: 'transform 0.2s'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                    <div style={{ 
+                      width: '56px', 
+                      height: '56px', 
+                      borderRadius: '16px', 
+                      background: p.status === 'pago' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center' 
+                    }}>
+                      {p.status === 'pago' ? <CheckCircle2 color="var(--success)" size={28} /> : <AlertCircle color="#EAB308" size={28} />}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '1.35rem', letterSpacing: '-0.5px' }}>R$ {p.valor.toFixed(2)}</div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                        {p.descricao || 'Mensalidade'} • Vencimento: {new Date(p.data_vencimento).toLocaleDateString('pt-BR')}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    {p.status === 'pago' ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)', fontWeight: 700, fontSize: '0.9rem', background: 'rgba(16, 185, 129, 0.1)', padding: '0.6rem 1.25rem', borderRadius: '50px' }}>
+                        <CheckCircle2 size={16} /> VALIDADO
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <div className="status-badge" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#EAB308', border: '1px solid rgba(234, 179, 8, 0.2)', padding: '0.6rem 1rem' }}>PENDENTE</div>
+                        <label className="btn btn-primary" style={{ padding: '0.6rem 1.25rem', borderRadius: '12px', fontSize: '0.85rem', cursor: 'pointer', width: 'auto' }}>
+                          <Upload size={16} /> {uploading === p.id ? 'Sincronizando...' : 'Anexar Comprovante'}
+                          <input type="file" style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, 'pay', p.id)} />
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        @keyframes pulse-border {
+          0% { border-color: var(--error); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4); }
+          70% { border-color: var(--error); box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+          100% { border-color: var(--error); box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+        }
+        .status-badge {
+          font-weight: 700;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-radius: 50px;
+        }
+      `}</style>
     </div>
   )
 }

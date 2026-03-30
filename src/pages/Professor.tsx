@@ -406,7 +406,7 @@ const Professor = () => {
               </button>
               {showRoleSwitcher && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '180px' }}>
-                  {availableRoles.filter(r => r !== 'professor').map(r => (
+                  {availableRoles.filter(r => ['aluno', 'admin', 'professor'].includes(r) && r !== 'professor').map(r => (
                     <button 
                       key={r} 
                       className="admin-nav-item" 
@@ -417,7 +417,7 @@ const Professor = () => {
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      {r === 'aluno' ? 'Portal do Aluno' : r === 'admin' ? 'Painel Administrativo' : r === 'suporte' ? 'Painel de Suporte' : 'Professor'}
+                      {r === 'aluno' ? 'Portal do Aluno' : r === 'admin' ? 'Painel Administrativo' : 'Professor'}
                     </button>
                   ))}
                 </div>

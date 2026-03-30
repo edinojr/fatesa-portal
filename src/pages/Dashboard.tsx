@@ -28,13 +28,20 @@ import NoticeBoard from '../components/dashboard/NoticeBoard'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
 
-type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
+type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'avaliacoes'
 
 const Dashboard = () => {
-  const { profile, loading: profileLoading, signOut } = useProfile();
+  const { profile, loading: profileLoading, signOut, refreshProfile } = useProfile();
   const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
   
-  const [activeTab, setActiveTab] = useState<Tab>('cursos')
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const saved = localStorage.getItem('activeTab') as Tab;
+    if (saved && ['cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'avaliacoes'].includes(saved)) {
+      localStorage.removeItem('activeTab');
+      return saved;
+    }
+    return 'cursos';
+  });
   const [courses, setCourses] = useState<Course[]>([])
   const [documents, setDocuments] = useState<Documento[]>([])
   const [payments, setPayments] = useState<Pagamento[]>([])
@@ -55,6 +62,10 @@ const Dashboard = () => {
   const [materiais, setMateriais] = useState<any[]>([])
   const [poloAtividades, setPoloAtividades] = useState<any[]>([])
   const [isBlocked, setIsBlocked] = useState(false)
+  const [isPastDue, setIsPastDue] = useState(false)
+  const [isBlockedDueToPayment, setIsBlockedDueToPayment] = useState(false)
+  const [currentDayMod, setCurrentDayMod] = useState(new Date().getDate())
+  const [reproveAlert, setReproveAlert] = useState<{aula: string, modulo: string} | null>(null)
 
   const navigate = useNavigate()
 
@@ -193,8 +204,23 @@ const Dashboard = () => {
       
       const resData = respostasData || [];
       const pData = progData || [];
-      setAtividades(resData as any);
       setProgressoAulas(pData as any);
+
+      // Check for recent reprove (less than 24h since correction OR show if unread)
+      const recentReprove = resData.find((at: any) => 
+        at.status === 'corrigida' && 
+        at.nota !== null && 
+        at.nota < 7 && 
+        at.aulas?.tipo === 'prova' &&
+        (!at.alerta_lido) // Assuming we might add this or just check correction date
+      );
+
+      if (recentReprove) {
+        setReproveAlert({
+          aula: (recentReprove.aulas as any)?.titulo || 'Prova Final',
+          modulo: (recentReprove.aulas as any)?.livro?.titulo || 'Módulo'
+        });
+      }
 
       // Fetch Courses
       const { data: allCourses } = await supabase
@@ -301,7 +327,32 @@ const Dashboard = () => {
   const fetchPayments = async () => {
     if (!profile) return
     const { data } = await supabase.from('pagamentos').select('*').eq('user_id', profile.id).order('data_vencimento', { ascending: false })
-    if (data && data.length > 0) setPayments(data)
+    const pays = data || []
+    setPayments(pays)
+
+    // PAYMENT BLOCK LOGIC
+    // Rules:
+    // 1. If any payment is 'aberto' AND day > 12 -> check for extension
+    // 2. Extension is valid until profile.extensao_pagamento_ate
+    // 3. Absolute block after day 15 regardless of extension (unless specifically allowed)
+    const hasOpenPayment = pays.some(p => p.status === 'aberto');
+    const day = new Date().getDate();
+    const todayStr = new Date().toISOString().split('T')[0];
+    const extensionDate = profile?.extensao_pagamento_ate;
+    
+    const isUnderExtension = extensionDate && todayStr <= extensionDate && day <= 15;
+
+    if (hasOpenPayment) {
+      if (day > 12 && !isUnderExtension) {
+        setIsBlockedDueToPayment(true);
+        setActiveTab('financeiro');
+      } else if (day >= 10 || (day > 12 && isUnderExtension)) {
+        setIsPastDue(true);
+      }
+    } else {
+      setIsBlockedDueToPayment(false);
+      setIsPastDue(false);
+    }
 
     const { data: config } = await supabase.from('configuracoes').select('*')
     if (config) {
@@ -376,7 +427,19 @@ const Dashboard = () => {
         await supabase.from('documentos').upsert({ user_id: profile.id, tipo: docType as any, url: publicUrl, status: 'pendente' })
         fetchDocuments()
       } else {
-        await supabase.from('pagamentos').update({ comprovante_url: publicUrl, status: 'pago' }).eq('id', id)
+        if (id && id !== 'general' && id !== 'pay') {
+          await supabase.from('pagamentos').update({ comprovante_url: publicUrl, status: 'pago' }).eq('id', id)
+        } else {
+          // Novo pagamento avulso
+          await supabase.from('pagamentos').insert({
+            user_id: profile.id,
+            valor: 75,
+            status: 'pago',
+            comprovante_url: publicUrl,
+            data_vencimento: new Date().toISOString().split('T')[0],
+            descricao: 'Mensalidade - Enviada pelo Aluno'
+          })
+        }
         fetchPayments()
       }
       showToast('Upload realizado!')
@@ -386,6 +449,44 @@ const Dashboard = () => {
       setUploading(null)
     }
   }
+
+  const handleRequestExtension = async () => {
+    if (!profile) return;
+    const day = new Date().getDate();
+    if (day > 15) {
+      showToast('O prazo máximo para extensão (dia 15) já expirou.', 'error');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Extension is always until day 15 or +3 days, whichever is smaller, 
+      // but the user said "mais 3 dias e bloqueio dia 15".
+      // So we set it to MIN(today + 3, day 15 of current month).
+      const exp = new Date();
+      exp.setDate(exp.getDate() + 3);
+      
+      const day15 = new Date();
+      day15.setDate(15);
+      
+      const finalExp = exp > day15 ? day15 : exp;
+      const finalExpStr = finalExp.toISOString().split('T')[0];
+
+      const { error } = await supabase
+        .from('users')
+        .update({ extensao_pagamento_ate: finalExpStr })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+      showToast('Acesso de emergência liberado!');
+      await refreshProfile();
+      fetchDashboardData();
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (profileLoading || loading) return <div className="auth-container"><Loader2 className="spinner" /> Carregando...</div>
 
@@ -452,7 +553,7 @@ const Dashboard = () => {
               </button>
               {showRoleSwitcher && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '180px' }}>
-                  {availableRoles.filter(r => r !== 'aluno').map(r => (
+                  {availableRoles.filter(r => ['admin', 'professor'].includes(r)).map(r => (
                     <button 
                       key={r} 
                       className="admin-nav-item" 
@@ -462,7 +563,7 @@ const Dashboard = () => {
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      {r === 'professor' ? 'Portal do Professor' : r === 'suporte' ? 'Painel de Suporte' : 'Administração'}
+                      {r === 'professor' ? 'Portal do Professor' : 'Administração'}
                     </button>
                   ))}
                 </div>
@@ -470,7 +571,7 @@ const Dashboard = () => {
             </div>
           )}
 
-          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
+          {(['cursos', 'avisos', 'documentos', 'financeiro', 'avaliacoes', 'boletim'] as Tab[])
             .filter(t => isStaff ? t !== 'financeiro' : true)
             .map(t => {
               const isDisabledForBlocked = isBlocked && t !== 'financeiro';
@@ -479,25 +580,59 @@ const Dashboard = () => {
                   key={t}
                   className={`admin-nav-item ${activeTab === t ? 'active' : ''} ${isDisabledForBlocked ? 'disabled' : ''}`}
                   onClick={() => {
-                    if (isDisabledForBlocked) return;
+                    const isDisabledForPayment = isBlockedDueToPayment && t !== 'financeiro';
+                    const isDisabledForBlocked = isBlocked && t !== 'financeiro';
+                    const finalDisabled = isDisabledForPayment || isDisabledForBlocked;
+
+                    if (finalDisabled) return;
                     setActiveTab(t);
                     setIsMobileMenuOpen(false);
                   }}
-                  style={{ opacity: isDisabledForBlocked ? 0.35 : 1, cursor: isDisabledForBlocked ? 'not-allowed' : 'pointer' }}
+                  style={{ opacity: (isBlockedDueToPayment || isBlocked) && t !== 'financeiro' ? 0.35 : 1, cursor: (isBlockedDueToPayment || isBlocked) && t !== 'financeiro' ? 'not-allowed' : 'pointer' }}
                 >
                   {t === 'cursos' && <BookOpen size={20} />}
                   {t === 'avisos' && <Bell size={20} />}
                   {t === 'documentos' && <FileText size={20} />}
                   {t === 'financeiro' && <CreditCard size={20} />}
                   {t === 'boletim' && <Award size={20} />}
-                  <span>{t === 'avisos' ? 'Avisos' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
+                  {t === 'avaliacoes' && <GraduationCap size={20} />}
+                  <span>{t === 'avisos' ? 'Avisos' : t === 'financeiro' ? 'Pagamentos' : t === 'boletim' ? 'Boletim' : t === 'avaliacoes' ? 'Avaliações' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
                 </div>
               );
             })}
 
-          <div style={{ marginLeft: 'auto', paddingLeft: '0.5rem' }}>
+          <div style={{ padding: '1rem', marginTop: 'auto' }}>
+            <button 
+              className="btn btn-primary" 
+              style={{ 
+                width: '100%', 
+                padding: '1rem', 
+                borderRadius: '16px',
+                background: 'linear-gradient(135deg, var(--primary) 0%, #7B1FA2 100%)',
+                boxShadow: '0 4px 15px rgba(156, 39, 176, 0.4)',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.75rem',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                letterSpacing: '0.5px'
+              }}
+              onClick={() => {
+                setActiveTab('financeiro');
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              <CreditCard size={20} /> 
+              Realizar Pagamento
+            </button>
+          </div>
+
+          <div style={{ padding: '0.5rem 1rem' }}>
             <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent' }} onClick={() => signOut()}>
               <LogOut size={18} />
+              <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Sair</span>
             </div>
           </div>
         </nav>
@@ -510,8 +645,9 @@ const Dashboard = () => {
               {activeTab === 'cursos' && 'Meus Cursos'}
               {activeTab === 'avisos' && 'Quadro de Avisos'}
               {activeTab === 'documentos' && 'Meus Documentos'}
-              {activeTab === 'financeiro' && 'Financeiro e Matrícula'}
-              {activeTab === 'boletim' && 'Boletim de Notas'}
+              {activeTab === 'financeiro' && 'Meus Pagamentos'}
+              {activeTab === 'boletim' && 'Meu Boletim'}
+              {activeTab === 'avaliacoes' && 'Avaliações e Provas'}
             </h1>
             <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta, Aluno.</p>
           </div>
@@ -578,16 +714,41 @@ const Dashboard = () => {
               uploading={uploading}
               handleFileUpload={handleFileUpload}
               showToast={(msg) => showToast(msg)}
+              isBlockedDueToPayment={isBlockedDueToPayment}
+              isPastDue={isPastDue}
+              handleRequestExtension={handleRequestExtension}
             />
           )}
 
-          {activeTab === 'boletim' && (
+          {activeTab === 'avaliacoes' && (
             <GradesPanel 
               profile={profile}
               availableNucleos={availableNucleos}
               handleChangeNucleo={handleChangeNucleo}
               atividades={atividades}
+              courses={courses}
             />
+          )}
+
+          {activeTab === 'boletim' && (
+            <div className="data-card">
+              <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><Award color="var(--primary)" /> Boletim de Notas</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {atividades.map((a: any) => (
+                  <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{a.aulas?.livro?.titulo} - {a.aulas?.titulo}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{a.aulas?.tipo === 'prova' ? 'Prova Final' : 'Atividade'}</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: (a.nota || 0) >= 7 ? 'var(--success)' : 'var(--error)' }}>
+                        {a.nota !== null ? a.nota.toFixed(1) : 'Em Correção'}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 
@@ -599,6 +760,21 @@ const Dashboard = () => {
             <LayoutDashboard size={20} /> Início
           </button>
         </div>
+
+        {reproveAlert && (
+          <div className="modal-overlay" style={{display:'flex', alignItems:'center', justifyContent:'center', zIndex:10000}}>
+            <div className="modal-content" style={{maxWidth:'450px', textAlign:'center', padding:'2.5rem', background:'var(--bg-card)', borderRadius:'24px', border:'1px solid var(--error)'}}>
+              <XCircle size={64} color="var(--error)" style={{marginBottom:'1rem'}}/>
+              <h2 style={{fontSize:'1.8rem', fontWeight:800, marginBottom:'1rem'}}>Necessário Refazer</h2>
+              <p style={{color:'var(--text-muted)', marginBottom:'2rem'}}>
+                Infelizmente você não atingiu a nota mínima na avaliação **{reproveAlert.aula}** do módulo **{reproveAlert.modulo}**.
+                <br/><br/>
+                Não desanime! Verifique as correções do professor na aba **Avaliações** e realize a nova tentativa (V2 ou V3).
+              </p>
+              <button className="btn btn-primary" style={{width:'100%'}} onClick={() => setReproveAlert(null)}>Entendido, vou refazer</button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )

@@ -11,14 +11,13 @@ import {
   CheckCircle2,
   Award,
   ClipboardList,
-  BookOpen
+  BookOpen,
+  CreditCard
 } from 'lucide-react';
 
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-
-// Worker is pre-configured in src/main.tsx for v1.3
 
 const StandardContent = () => {
   const { id } = useParams();
@@ -40,11 +39,13 @@ const StandardContent = () => {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   // Otimização v1.4
-  const [viewType, setViewType] = useState<'scroll' | 'single'>('single'); // Padrão single para ser leve
+  const [viewType, setViewType] = useState<'scroll' | 'single'>('single'); 
 
   // 2. Refs
   const viewerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const epubContainerRef = useRef<HTMLDivElement>(null);
+  const [inputPage, setInputPage] = useState<string>('1');
 
   // 3. Memos e Variáveis Calculadas
   const pageWidth = Math.floor(containerWidth * 0.95);
@@ -61,15 +62,12 @@ const StandardContent = () => {
 
   const pdfUrl = useMemo(() => {
     if (!data) return null;
-    const url = data.pdf_url || data.arquivo_url || data.url;
-    console.log('PDF URL resolved:', url);
-    return url;
+    return data.pdf_url || data.arquivo_url || data.url;
   }, [data]);
 
 
   // 4. Effects
   useEffect(() => {
-    console.log('Fatesa StandardContent v1.4 Init (Production Mode)');
     fetchBook();
     const handleResize = () => setContainerWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
@@ -121,7 +119,6 @@ const StandardContent = () => {
   // 5. Handlers
   const fetchBook = async () => {
     try {
-      // Suporte robusto a BrowserRouter e HashRouter legado
       const searchStr = location.search || window.location.search || window.location.hash.split('?')[1] || "";
       const searchParams = new URLSearchParams(searchStr);
       const isAula = searchParams.get('type') === 'aula';
@@ -138,16 +135,31 @@ const StandardContent = () => {
       }
 
       if (isAula) {
-        // Atividades relacionadas
-        const { data: acts } = await supabase
+        // Correct Linkage Logic: Priority 1 - Children
+        const { data: children } = await supabase
           .from('aulas')
           .select('*')
-          .eq('parent_aula_id', res.parent_aula_id)
-          .in('tipo', ['atividade', 'prova'])
-          .order('ordem', { ascending: true });
-        setRelatedActivities(acts || []);
+          .eq('parent_aula_id', res.id)
+          .eq('tipo', 'atividade')
+          .order('ordem', { ascending: true })
+          .limit(1);
 
-        // Próxima aula - Usando filtros individuais para evitar erro 400
+        if (children && children.length > 0) {
+          setRelatedActivities(children);
+        } else {
+          // Priority 2: Next immediate exercise
+          const { data: nextEx } = await supabase
+            .from('aulas')
+            .select('*')
+            .eq('livro_id', res.livro_id)
+            .gt('ordem', res.ordem || 0)
+            .eq('tipo', 'atividade')
+            .order('ordem', { ascending: true })
+            .limit(1);
+          setRelatedActivities(nextEx || []);
+        }
+
+        // Próxima aula
         const { data: next } = await supabase
           .from('aulas')
           .select('*')
@@ -155,7 +167,6 @@ const StandardContent = () => {
           .gt('ordem', res.ordem || 0)
           .neq('tipo', 'atividade')
           .neq('tipo', 'prova')
-          .neq('tipo', 'licao')
           .order('ordem', { ascending: true })
           .limit(1)
           .maybeSingle();
@@ -197,8 +208,27 @@ const StandardContent = () => {
     setNumPages(numPages);
   };
 
-  const handlePageNext = () => setPageNumber(p => Math.min(numPages, p + 1));
-  const handlePagePrev = () => setPageNumber(p => Math.max(1, p - 1));
+  const handlePageNext = () => {
+    const next = Math.min(numPages, pageNumber + 1);
+    setPageNumber(next);
+    setInputPage(next.toString());
+    if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const handlePagePrev = () => {
+    const prev = Math.max(1, pageNumber - 1);
+    setPageNumber(prev);
+    setInputPage(prev.toString());
+    if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePageInput = (val: string) => {
+    setInputPage(val);
+    const num = parseInt(val);
+    if (!isNaN(num) && num >= 1 && num <= numPages) {
+      setPageNumber(num);
+      if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.targetTouches[0].clientX);
@@ -209,7 +239,7 @@ const StandardContent = () => {
     const touchEndX = e.changedTouches[0].clientX;
     const diff = touchStartX - touchEndX;
 
-    if (Math.abs(diff) > 50) { // Limiar de 50px para o swipe
+    if (Math.abs(diff) > 50) {
       if (diff > 0) handlePageNext();
       else handlePagePrev();
     }
@@ -229,12 +259,12 @@ const StandardContent = () => {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0a0a0a', color: '#fff', overflow: 'hidden' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1.5rem', background: '#0f0f0f', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button onClick={() => navigate('/dashboard')} className="btn-back">
+            <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <ChevronLeft size={18} /> Painel
             </button>
             <h3 style={{ margin: 0, fontSize: '1rem' }}>{data?.titulo || 'Módulo'}</h3>
           </div>
-          <button onClick={() => navigate(-1)} style={{ color: '#ef4444' }}><X size={20} /></button>
+          <button onClick={() => navigate(-1)} style={{ color: '#ef4444', background:'none', border:'none' }}><X size={20} /></button>
         </header>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
           <div className="glass-card" style={{ padding: '3rem', borderRadius: '24px', maxWidth: '600px', textAlign: 'center' }}>
@@ -282,36 +312,17 @@ const StandardContent = () => {
           <div className="viewer-header-desktop-only" style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '2px' }}>
             <button 
               onClick={() => setViewType('single')} 
-              style={{ 
-                padding: '4px 12px', 
-                fontSize: '0.75rem', 
-                borderRadius: '6px', 
-                background: viewType === 'single' ? 'var(--primary)' : 'transparent',
-                color: viewType === 'single' ? '#fff' : 'rgba(255,255,255,0.6)',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
+              style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', background: viewType === 'single' ? 'var(--primary)' : 'transparent', color: viewType === 'single' ? '#fff' : 'rgba(255,255,255,0.6)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
             >
               Página
             </button>
             <button 
               onClick={() => setViewType('scroll')} 
-              style={{ 
-                padding: '4px 12px', 
-                fontSize: '0.75rem', 
-                borderRadius: '6px', 
-                background: viewType === 'scroll' ? 'var(--primary)' : 'transparent',
-                color: viewType === 'scroll' ? '#fff' : 'rgba(255,255,255,0.6)',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
+              style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', background: viewType === 'scroll' ? 'var(--primary)' : 'transparent', color: viewType === 'scroll' ? '#fff' : 'rgba(255,255,255,0.6)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
             >
               Scroll
             </button>
           </div>
-          
           <button onClick={toggleFullscreen} className="btn-icon">
             {isAnyFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
           </button>
@@ -319,81 +330,21 @@ const StandardContent = () => {
         </div>
       </header>
 
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div ref={scrollContainerRef} style={{ flex: 1, overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 1rem' }}>
           {viewMode === 'pdf' && pdfUrl ? (
             <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              {viewType === 'single' && numPages > 0 && (
-                <div style={{ 
-                  position: 'sticky', 
-                  top: '1rem', 
-                  zIndex: 10, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '1rem', 
-                  background: 'rgba(0,0,0,0.8)', 
-                  padding: '0.5rem 1rem', 
-                  borderRadius: '100px', 
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  marginBottom: '2rem'
-                }}>
-                  <button 
-                    onClick={() => setPageNumber(p => Math.max(1, p - 1))}
-                    disabled={pageNumber <= 1}
-                    className="btn-icon"
-                    style={{ opacity: pageNumber <= 1 ? 0.3 : 1 }}
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600, minWidth: '80px', textAlign: 'center' }}>
-                    {pageNumber} / {numPages}
-                  </span>
-                  <button 
-                    onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
-                    disabled={pageNumber >= numPages}
-                    className="btn-icon"
-                    style={{ opacity: pageNumber >= numPages ? 0.3 : 1 }}
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
-              )}
-
-              <Document 
-                file={pdfUrl} 
-                onLoadSuccess={onDocumentLoadSuccess} 
-                onLoadError={(e) => console.error('PDF Error:', e)}
-                loading={<Loader2 className="spinner" />}
-                options={pdfOptions}
-              >
+              <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess} onLoadError={(e) => console.error('PDF Error:', e)} loading={<Loader2 className="spinner" />} options={pdfOptions}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', alignItems: 'center' }}>
                   {viewType === 'scroll' ? (
                     Array.from(new Array(numPages || 0), (_, index) => (
                       <div key={`page_${index + 1}`} className="pdf-page-shadow" style={{ minHeight: pageWidth * 1.3 }}>
-                        <Page 
-                          pageNumber={index + 1} 
-                          width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
-                          renderTextLayer={true} 
-                          renderAnnotationLayer={false}
-                          loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>}
-                        />
+                        <Page pageNumber={index + 1} width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} renderTextLayer={true} renderAnnotationLayer={false} loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>} />
                       </div>
                     ))
                   ) : (
-                    <div 
-                      className="pdf-page-shadow"
-                      onTouchStart={handleTouchStart}
-                      onTouchEnd={handleTouchEnd}
-                      style={{ cursor: viewType === 'single' ? 'grab' : 'default' }}
-                    >
-                      <Page 
-                        pageNumber={pageNumber} 
-                        width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
-                        renderTextLayer={true} 
-                        renderAnnotationLayer={false}
-                        loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>}
-                      />
+                    <div className="pdf-page-shadow" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ cursor: viewType === 'single' ? 'grab' : 'default' }}>
+                      <Page pageNumber={pageNumber} width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} renderTextLayer={true} renderAnnotationLayer={false} loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>} />
                     </div>
                   )}
                 </div>
@@ -403,38 +354,53 @@ const StandardContent = () => {
             <div id="epub-viewer" ref={epubContainerRef} style={{ width: '100%', height: 'calc(100vh - 120px)', background: '#fff' }}></div>
           )}
         </div>
+      </div>
 
-        <div className="content-footer" style={{ maxWidth: '900px', margin: '0 auto 4rem auto', padding: '2rem', textAlign: 'center' }}>
-          <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
-            <CheckCircle2 color="var(--success)" size={28} /> Aula Finalizada!
-          </h2>
+      <footer style={{ background: '#0f0f0f', borderTop: '1px solid rgba(255,255,255,0.1)', padding: '1rem 2rem', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '3rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button onClick={handlePagePrev} disabled={pageNumber <= 1} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px', opacity: pageNumber <= 1 ? 0.3 : 1 }}>
+            <ChevronLeft size={20} style={{ marginRight: '0.5rem' }} /> Anterior
+          </button>
           
-          <div style={{ display: 'grid', gridTemplateColumns: relatedActivities.length > 0 ? '1fr 1fr' : '1fr', gap: '2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', padding: '0.2rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Pág</span>
+            <input type="number" value={inputPage} onChange={(e) => handlePageInput(e.target.value)} min={1} max={numPages} style={{ background: 'transparent', border: 'none', color: '#fff', width: '40px', textAlign: 'center', fontSize: '1rem', fontWeight: 700, outline: 'none' }} />
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>/ {numPages}</span>
+          </div>
+
+          <button onClick={handlePageNext} disabled={pageNumber >= numPages} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px', opacity: pageNumber >= numPages ? 0.3 : 1 }}>
+            Próxima <ChevronRight size={20} style={{ marginLeft: '0.5rem' }} />
+          </button>
+        </div>
+
+        {(pageNumber >= numPages || viewType === 'scroll') && (
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             {relatedActivities.length > 0 && (
-              <div style={{ textAlign: 'left' }}>
-                <p className="footer-label">Exercícios Relacionados</p>
-                {relatedActivities.map(act => (
-                  <button key={act.id} onClick={() => navigate(`/lesson/${act.id}`)} className="btn-nav-wide">
-                    {act.tipo === 'prova' ? <Award size={18} color="#EAB308" /> : <ClipboardList size={18} color="var(--success)" />}
-                    <span>{act.titulo}</span>
-                  </button>
-                ))}
-              </div>
+              <button 
+                onClick={() => navigate(`/lesson/${relatedActivities[0].id}`)} 
+                className="btn btn-primary"
+                style={{ width: 'auto', padding: '0.6rem 2rem', borderRadius: '50px', background: 'var(--success)', border: 'none' }}
+              >
+                Atividade da Lição <ChevronRight size={18} style={{ marginLeft:'0.5rem' }} />
+              </button>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <p className="footer-label">Próxima Aula</p>
-              {nextLesson ? (
-                <button onClick={() => { setLoading(true); navigate(`/book/${nextLesson.id}?type=aula`); window.location.reload(); }} className="btn btn-primary w-full">
-                  {nextLesson.titulo} <ChevronRight size={20} />
-                </button>
-              ) : (
-                <button onClick={() => navigate('/dashboard')} className="btn btn-outline w-full">Fim do Livro</button>
-              )}
-            </div>
+            {nextLesson ? (
+              <button 
+                onClick={() => { setLoading(true); navigate(`/book/${nextLesson.id}?type=aula`); window.location.reload(); }} 
+                className="btn btn-primary"
+                style={{ width: 'auto', padding: '0.6rem 2.5rem', borderRadius: '50px' }}
+              >
+                Próxima Lição: {nextLesson.titulo} <ChevronRight size={20} style={{ marginLeft:'0.5rem' }} />
+              </button>
+            ) : (
+              <button onClick={() => navigate('/dashboard')} className="btn btn-outline" style={{ border:'none', width: 'auto', borderRadius: '50px' }}>
+                Fim do Material - Voltar ao Painel
+              </button>
+            )}
           </div>
-        </div>
-      </div>
+        )}
+      </footer>
     </div>
   );
 };

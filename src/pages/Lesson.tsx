@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, CheckCircle2, X, AlertCircle, Lock, LogOut, ClipboardList, XCircle, Upload, Edit2 } from 'lucide-react'
+import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, CheckCircle2, X, AlertCircle, Lock, LogOut, ClipboardList, XCircle, Upload, Edit2, CreditCard, Copy, Info, ChevronRight } from 'lucide-react'
 import QuizEditorModal from '../components/admin/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -28,9 +28,15 @@ const Lesson = () => {
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [isExamStarted, setIsExamStarted] = useState(false)
   const [deadlineInfo, setDeadlineInfo] = useState<{ deadline: Date, stage: number, expired: boolean } | null>(null)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [pixConfig, setPixConfig] = useState({ key: '', qr: '' })
+  const [uploading, setUploading] = useState<string | null>(null)
+  const [relatedExercise, setRelatedExercise] = useState<any>(null)
+  const [nextLessonId, setNextLessonId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchLessonData()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [id])
 
   const fetchLessonData = async () => {
@@ -203,8 +209,115 @@ const Lesson = () => {
         }
       }
     } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+    finally { 
+      setLoading(false); 
+      // Fetch PIX config for modal
+      const { data: config } = await supabase.from('configuracoes').select('*');
+      if (config) {
+        const key = config.find((c: any) => c.chave === 'pix_key')?.valor || '';
+        const qr = config.find((c: any) => c.chave === 'pix_qr_url')?.valor || '';
+        setPixConfig({ key, qr });
+      }
+    }
   }
+
+  // Effect to find related exercise when lesson changes
+  useEffect(() => {
+    const fetchRelated = async () => {
+      if (lesson) {
+        // Priority 1: Direct child of this lesson (sub-activity)
+        const { data: children } = await supabase
+          .from('aulas')
+          .select('*')
+          .eq('parent_aula_id', lesson.id)
+          .eq('tipo', 'atividade')
+          .order('ordem', { ascending: true })
+          .limit(1);
+
+        if (children && children.length > 0) {
+          setRelatedExercise(children[0]);
+        } else {
+          // Priority 2: Next immediate exercise in the sequence
+          const { data: nextExer } = await supabase
+            .from('aulas')
+            .select('*')
+            .eq('livro_id', lesson.livro_id)
+            .gt('ordem', lesson.ordem || 0)
+            .eq('tipo', 'atividade')
+            .order('ordem', { ascending: true })
+            .limit(1);
+          
+          if (nextExer && nextExer.length > 0) {
+            setRelatedExercise(nextExer[0]);
+          } else {
+            setRelatedExercise(null);
+          }
+        }
+        
+        // Next lesson for navigation (ignore activities/exams)
+        const { data: nxt } = await supabase
+          .from('aulas')
+          .select('id')
+          .eq('livro_id', lesson.livro_id)
+          .gt('ordem', lesson.ordem || 0)
+          .neq('tipo', 'atividade')
+          .neq('tipo', 'prova')
+          .order('ordem', { ascending: true })
+          .limit(1);
+        
+        setNextLessonId(nxt && nxt.length > 0 ? nxt[0].id : null);
+      } else {
+        setRelatedExercise(null);
+        setNextLessonId(null);
+      }
+    }
+    fetchRelated();
+  }, [lesson]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userProfile) return;
+    
+    setUploading('temp');
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userProfile.id}_${Date.now()}.${fileExt}`;
+      const filePath = `comprovantes/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('portal-assets')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('portal-assets')
+        .getPublicUrl(filePath);
+
+      // Create a pending payment record or update latest open
+      const { data: openPays } = await supabase.from('pagamentos').select('id').eq('user_id', userProfile.id).eq('status', 'aberto').order('data_vencimento', { ascending: false }).limit(1);
+      
+      if (openPays && openPays.length > 0) {
+        await supabase.from('pagamentos').update({ comprovante_url: publicUrl, updated_at: new Date().toISOString() }).eq('id', openPays[0].id);
+      } else {
+        await supabase.from('pagamentos').insert({
+          user_id: userProfile.id,
+          valor: 75,
+          status: 'aberto',
+          comprovante_url: publicUrl,
+          data_vencimento: new Date().toISOString().split('T')[0],
+          descricao: 'Mensalidade - Upload via Aula'
+        });
+      }
+
+      alert('Comprovante enviado com sucesso! Aguarde a validação.');
+      setShowPaymentModal(false);
+    } catch (err: any) {
+      alert('Erro ao enviar: ' + err.message);
+    } finally {
+      setUploading(null);
+    }
+  };
 
   const handleStartExam = async () => {
     if (!lesson || !userProfile) return;
@@ -276,13 +389,6 @@ const Lesson = () => {
     if (!items?.length) return;
     const { data: prog } = await supabase.from('progresso_aulas').select('aula_id').eq('aluno_id', aId).in('aula_id', items.map(i => i.id)).eq('concluida', true);
     if (prog?.length === items.length) {
-      const { data: final } = await supabase.from('aulas').select('id').eq('bloco_id', bId).eq('livro_id', lId).eq('is_bloco_final', true).maybeSingle();
-      if (final) {
-        // Professor release check: check if it already exists in respostas_aulas with some status
-        // If not, we don't automatically liberate it, as the professor must release it.
-        // However, we can create the row with 'liberado' if the professor already released it via nucleation.
-        // For now, let's keep it manual as requested: "quem libera a prova é o professor".
-      }
     }
   }
 
@@ -335,8 +441,9 @@ const Lesson = () => {
   return (
     <div className="lesson-container">
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', justifyContent: 'space-between' }}>
-        <button onClick={() => navigate(-1)} className="btn btn-outline" style={{width:'auto'}}><ChevronLeft size={20}/> Voltar</button>
-        <button onClick={() => navigate('/dashboard')} className="btn btn-primary" style={{width:'auto'}}>Dashboard</button>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button onClick={() => navigate('/dashboard')} className="btn btn-outline" style={{width:'auto'}}>Dashboard</button>
+        </div>
       </div>
 
       <div style={{ marginBottom: '3rem' }}>
@@ -434,6 +541,31 @@ const Lesson = () => {
           )}
         </div>
       )}
+
+      {relatedExercise && (
+        <div style={{marginTop: '3rem', padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px', border: '1px solid var(--glass-border)', textAlign: 'center'}}>
+          <p style={{color: 'var(--text-muted)', marginBottom: '1rem', fontSize:'0.85rem'}}>Pratique agora o que você aprendeu:</p>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => navigate(`/lesson/${relatedExercise.id}`)}
+            style={{width:'auto', padding:'0.75rem 2rem'}}
+          >
+            Realizar Exercício da Lição <ArrowRight size={18} style={{marginLeft:'0.5rem'}}/>
+          </button>
+        </div>
+      )}
+
+      <div style={{ marginTop: '4rem', padding: '2rem 0', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'center', gap: '2rem' }}>
+        <button onClick={() => navigate(-1)} className="btn btn-outline" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Voltar">
+          <ChevronLeft size={24} style={{marginRight:'0.5rem'}}/> Aula Anterior
+        </button>
+        
+        {nextLessonId && (
+          <button onClick={() => navigate(`/lesson/${nextLessonId}`)} className="btn btn-primary" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Próxima Aula">
+            Próxima Aula <ChevronRight size={24} style={{marginLeft:'0.5rem'}}/>
+          </button>
+        )}
+      </div>
 
       {showQuizEditor && (
         <QuizEditorModal 
