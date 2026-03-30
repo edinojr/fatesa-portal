@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Submission, Student, ProfessorCourse } from '../types/professor'
 import { useProfile } from './useProfile'
+
+// Modular Feature Hooks
+import { useProfessorCourses } from '../features/courses/hooks/useProfessorCourses'
+import { useProfessorStudents } from '../features/users/hooks/useProfessorStudents'
+import { useProfessorGrading } from '../features/courses/hooks/useProfessorGrading'
 
 export type Tab = 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais'
 
@@ -13,28 +17,15 @@ export const useProfessorManagement = () => {
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
-  const [courses, setCourses] = useState<ProfessorCourse[]>([])
-  const [selectedCourse, setSelectedCourse] = useState<any | null>(null)
-  const [books, setBooks] = useState<any[]>([])
-  const [selectedBook, setSelectedBook] = useState<any | null>(null)
-  const [lessons, setLessons] = useState<any[]>([])
-
-  const [allStudents, setAllStudents] = useState<Student[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
   const [professorNucleos, setProfessorNucleos] = useState<any[]>([])
-  
-  // Grading state
-  const [submissions, setSubmissions] = useState<Submission[]>([])
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
-  const [gradeInput, setGradeInput] = useState<string>('')
-  const [avaliacaoComentario, setAvaliacaoComentario] = useState<string>('')
-  const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
-  const [savingGrade, setSavingGrade] = useState(false)
-  const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [deleting, setDeleting] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const navigate = useNavigate()
+
+  // Composition of modular hooks
+  const courseHook = useProfessorCourses()
+  const studentHook = useProfessorStudents()
+  const gradingHook = useProfessorGrading()
 
   useEffect(() => {
     if (!profileLoading) {
@@ -71,6 +62,7 @@ export const useProfessorManagement = () => {
   }, [profile, profileLoading]);
 
   const fetchData = async () => {
+    // 1. Fetch Courses
     const { data: cData } = await supabase
       .from('cursos')
       .select(`
@@ -94,7 +86,7 @@ export const useProfessorManagement = () => {
         )
       `)
       .order('nome')
-    if (cData) setCourses(cData)
+    if (cData) courseHook.setCourses(cData)
 
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
@@ -106,7 +98,7 @@ export const useProfessorManagement = () => {
         if (nData) setProfessorNucleos(nData)
 
         const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').order('nome')
-        if (sData) setAllStudents(sData)
+        if (sData) studentHook.setAllStudents(sData)
 
         const { data: subData } = await supabase
           .from('respostas_aulas')
@@ -122,7 +114,7 @@ export const useProfessorManagement = () => {
             users:aluno_id ( id, nome, email )
           `)
           .order('updated_at', { ascending: false })
-        if (subData) setSubmissions(subData as any)
+        if (subData) gradingHook.setSubmissions(subData as any)
       } else {
         const { data: myNucs } = await supabase
           .from('professor_nucleo')
@@ -131,12 +123,13 @@ export const useProfessorManagement = () => {
         
         if (myNucs) {
           const nucs = myNucs.filter((n: any) => n.nucleos).map((n: any) => n.nucleos)
-          setProfessorNucleos(nucs)
+          // Sort nucleus by name
+          setProfessorNucleos([...nucs].sort((a,b) => (a.nome || '').localeCompare(b.nome || '')))
           
           const nucIds = myNucs.map(n => n.nucleo_id)
           const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').in('nucleo_id', nucIds).order('nome')
           if (sData) {
-            setAllStudents(sData)
+            studentHook.setAllStudents(sData)
             const studentIds = sData.map(s => s.id)
             if (studentIds.length > 0) {
               const { data: subData } = await supabase
@@ -154,197 +147,11 @@ export const useProfessorManagement = () => {
                 `)
                 .in('aluno_id', studentIds)
                 .order('updated_at', { ascending: false })
-              if (subData) setSubmissions(subData as any)
+              if (subData) gradingHook.setSubmissions(subData as any)
             }
           }
         }
       }
-    }
-  }
-
-  const handleSelectSubmission = (sub: Submission) => {
-    setSelectedSubmission(sub);
-    setAvaliacaoComentario(sub.comentario_professor || '');
-    
-    const initialEvals: Record<string, boolean> = {};
-    const questionnaire = (sub.aulas?.questionario || []).filter((q: any) => q && q.id && q.text);
-    
-    if (questionnaire.length > 0) {
-      questionnaire.forEach((q: any) => {
-        const studentAns = sub.respostas?.[q.id];
-        const correctOpt = q.correctOption !== undefined ? q.correctOption : q.correct;
-
-        if (q.type === 'multiple_choice' || !q.type) {
-          const isCorrect = studentAns !== undefined && studentAns !== null && String(studentAns) === String(correctOpt);
-          initialEvals[q.id] = isCorrect;
-        } else if (q.type === 'true_false') {
-          const isCorrect = studentAns === q.correctAnswer;
-          initialEvals[q.id] = !!isCorrect;
-        } else if (q.type === 'matching') {
-          let allCorrect = true;
-          if (!studentAns || Object.keys(studentAns).length === 0) {
-            allCorrect = false;
-          } else {
-            const answerMap = studentAns as Record<string, string>;
-            q.matchingPairs?.forEach((_: any, idx: number) => {
-              if (String(answerMap[idx]) !== String(idx)) allCorrect = false;
-            });
-          }
-          initialEvals[q.id] = allCorrect;
-        }
-      });
-    }
-    
-    setQuestionEvaluations(initialEvals);
-    
-    const totalQuestions = questionnaire.length;
-    
-    if (totalQuestions > 0) {
-      const correctCount = questionnaire.reduce((acc: number, q: any) => {
-        return acc + (initialEvals[q.id] === true ? 1 : 0);
-      }, 0);
-      const initialGrade = (correctCount / totalQuestions) * 10;
-      setGradeInput(initialGrade.toFixed(1));
-    } else {
-      setGradeInput('10.0'); 
-    }
-  }
-
-  const toggleEvaluation = (questionId: string, isCorrect: boolean) => {
-    const newEvals = { ...questionEvaluations, [questionId]: isCorrect };
-    setQuestionEvaluations(newEvals);
-    
-    const questionnaire = (selectedSubmission?.aulas?.questionario || []).filter((q: any) => q && q.id && q.text);
-    const totalQuestions = questionnaire.length;
-    
-    if (totalQuestions > 0) {
-      const correctCount = questionnaire.reduce((acc: number, q: any) => {
-        return acc + (newEvals[q.id] === true ? 1 : 0);
-      }, 0);
-      
-      const calculatedGrade = (correctCount / totalQuestions) * 10;
-      setGradeInput(calculatedGrade.toFixed(1));
-    }
-  }
-
-  const handleDeleteSubmission = async (subId: string) => {
-    if (!confirm('Deseja realmente excluir esta atividade do aluno? Isso permitirá que ele refaça a atividade novamente do zero.')) return
-    
-    setDeleting(subId)
-    try {
-      const { error } = await supabase.from('respostas_aulas').delete().eq('id', subId)
-      if (error) throw error
-      alert('Atividade excluída com sucesso. O aluno já pode refazer.')
-      fetchData() 
-    } catch(err: any) {
-      alert('Erro ao excluir: ' + err.message)
-    } finally {
-      setDeleting(null)
-    }
-  }
-
-  const handleSaveGrade = async () => {
-    if(!selectedSubmission || gradeInput === '' || !avaliacaoComentario.trim()) {
-      alert('A avaliação (comentário) e a nota são obrigatórias.')
-      return
-    }
-    setSavingGrade(true)
-    try {
-      const updateData: any = {
-        nota: parseFloat(gradeInput),
-        comentario_professor: avaliacaoComentario,
-        status: 'corrigida'
-      }
-
-      if (!selectedSubmission.primeira_correcao_at) {
-        updateData.primeira_correcao_at = new Date().toISOString()
-      }
-
-      const { error } = await supabase.from('respostas_aulas').update(updateData).eq('id', selectedSubmission.id)
-      
-      if(error) throw error
-      
-      alert('Nota salva com sucesso!')
-      setSelectedSubmission(null)
-      setGradeInput('')
-      setAvaliacaoComentario('')
-      fetchData() 
-    } catch(err) {
-      console.error(err)
-      alert('Erro ao salvar nota.')
-    } finally {
-      setSavingGrade(false)
-    }
-  }
-
-  const fetchBooks = async (courseId: string) => {
-    const course = courses.find((c: any) => c.id === courseId)
-    if (course) {
-      const sortedBooks = [...(course.livros || [])].sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
-      setBooks(sortedBooks)
-    }
-  }
-
-  const selectBookAndShowLessons = (book: any) => {
-    setSelectedBook(book)
-    const sortedLessons = [...(book.aulas || [])].sort((a: any, b: any) => 
-      (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' })
-    )
-    setLessons(sortedLessons)
-  }
-
-  const handleApproveAccess = async (userId: string) => {
-    setActionLoading(userId)
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({ 
-          status_nucleo: 'aprovado',
-          acesso_definitivo: true 
-        })
-        .eq('id', userId)
-      
-      if (error) throw error
-      setAllStudents(prev => prev.map(s => s.id === userId ? { ...s, status_nucleo: 'aprovado', acesso_definitivo: true } : s))
-      alert('Acesso aprovado com sucesso!')
-    } catch (err: any) {
-      alert('Erro: ' + err.message)
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleRejectAccess = async (userId: string) => {
-    if (!confirm('Deseja realmente recusar o acesso deste aluno?')) return
-    setActionLoading(userId)
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({ status_nucleo: 'recusado' })
-        .eq('id', userId)
-      
-      if (error) throw error
-      setAllStudents(prev => prev.map(s => s.id === userId ? { ...s, status_nucleo: 'recusado' } : s))
-      alert('Acesso recusado.')
-    } catch (err: any) {
-      alert('Erro: ' + err.message)
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Deseja realmente EXCLUIR este aluno permanentemente? Esta ação não pode ser desfeita.')) return
-    setActionLoading(userId)
-    try {
-      const { error } = await supabase.rpc('delete_user_entirely', { target_user_id: userId })
-      if (error) throw error
-      setAllStudents(prev => prev.filter(s => s.id !== userId))
-      alert('Aluno excluído com sucesso.')
-    } catch (err: any) {
-      alert('Erro ao excluir: ' + err.message)
-    } finally {
-      setActionLoading(null)
     }
   }
 
@@ -362,40 +169,21 @@ export const useProfessorManagement = () => {
     availableRoles,
     showRoleSwitcher,
     setShowRoleSwitcher,
-    courses,
-    selectedCourse,
-    setSelectedCourse,
-    books,
-    selectedBook,
-    setSelectedBook,
-    lessons,
-    allStudents,
-    searchTerm,
-    setSearchTerm,
     professorNucleos,
-    submissions,
-    selectedSubmission,
-    setSelectedSubmission,
-    gradeInput,
-    setGradeInput,
-    avaliacaoComentario,
-    setAvaliacaoComentario,
-    questionEvaluations,
-    toggleEvaluation,
-    savingGrade,
-    actionLoading,
-    deleting,
     isMobileMenuOpen,
     setIsMobileMenuOpen,
-    handleSaveGrade,
-    handleDeleteSubmission,
-    handleSelectSubmission,
-    handleApproveAccess,
-    handleRejectAccess,
-    handleDeleteUser,
     handleLogout,
-    fetchBooks,
-    selectBookAndShowLessons,
-    navigate
+    navigate,
+    // Delegated Course State & Actions
+    ...courseHook,
+    // Delegated Student State & Actions
+    ...studentHook,
+    handleApproveAccess: (id: string) => studentHook.handleApproveAccess(id, fetchData),
+    handleRejectAccess: (id: string) => studentHook.handleRejectAccess(id, fetchData),
+    handleDeleteUser: (id: string) => studentHook.handleDeleteUser(id, fetchData),
+    // Delegated Grading State & Actions
+    ...gradingHook,
+    handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),
+    handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData)
   }
 }

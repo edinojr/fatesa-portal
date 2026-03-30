@@ -51,7 +51,7 @@ const MateriaisManagement = () => {
         .from('materiais_adicionais')
         .select('*, nucleos(nome)')
         .in('nucleo_id', myNucleos.map((n: any) => n.id))
-        .order('created_at', { ascending: false });
+        .order('titulo', { ascending: true }); // Alterado para ordem alfabética por título
       
       setMateriais(materiaisData || []);
     } catch (error) {
