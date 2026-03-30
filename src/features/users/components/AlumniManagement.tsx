@@ -12,7 +12,7 @@ import {
   MapPin,
   X
 } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../../lib/supabase'
 
 interface AlumniRecord {
   id: string

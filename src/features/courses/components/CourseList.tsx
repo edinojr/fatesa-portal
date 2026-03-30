@@ -1,7 +1,7 @@
 import React from 'react'
 import { BookOpen, PlayCircle, ClipboardList, Award, CheckCircle2, FileText, Lock } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Course } from '../../types/dashboard'
+import { Course } from '../../../types/dashboard'
 
 interface CourseListProps {
   courses: Course[]

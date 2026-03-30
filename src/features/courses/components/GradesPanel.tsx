@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Award, Loader2, ChevronDown, ChevronUp, CheckCircle, XCircle, Clock, Info } from 'lucide-react'
-import { UserProfile } from '../../types/dashboard'
+import { UserProfile } from '../../../types/dashboard'
 import { useNavigate } from 'react-router-dom'
 
 interface GradesPanelProps {

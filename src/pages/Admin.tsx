@@ -1,723 +1,166 @@
-import React, { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
-import { useNavigate, Link } from 'react-router-dom'
-import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase'
+import React from 'react'
+import { Link } from 'react-router-dom'
 import { 
   Users, 
   BookOpen, 
-  Upload, 
   FileText, 
   Settings, 
-  MoreVertical, 
-  Search, 
-  Filter,
   Plus,
-  Edit,
   Trash2,
-  ExternalLink,
   CheckCircle2,
   ShieldCheck,
   XCircle,
-  Eye, 
-  Award,
   Loader2, 
-  CreditCard, 
   GraduationCap,
-  ChevronRight,
-  PlayCircle,
-  LogOut,
   ChevronLeft,
   LayoutDashboard,
   X,
   Menu,
-  ClipboardList,
-  MessageSquare
+  MessageSquare,
+  LogOut
 } from 'lucide-react'
+
+// Features Components
+import UserManagement from '../features/users/components/UserManagement'
+import AlumniManagement from '../features/users/components/AlumniManagement'
+import ContentManagement from '../features/courses/components/ContentManagement'
+import ValidationPanel from '../features/finance/components/ValidationPanel'
+import SettingsPanel from '../features/finance/components/SettingsPanel'
+
+// Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
-import UserManagement from '../components/admin/UserManagement'
-import AlumniManagement from '../components/admin/AlumniManagement'
-import ContentManagement from '../components/admin/ContentManagement'
-import ValidationPanel from '../components/admin/ValidationPanel'
-import SettingsPanel from '../components/admin/SettingsPanel'
-import Badge from '../components/ui/Badge'
-import LoadingSpinner from '../components/ui/LoadingSpinner'
-import LessonContentEditorModal from '../components/admin/modals/LessonContentEditorModal'
-import QuizEditorModal from '../components/admin/modals/QuizEditorModal'
-import { AddTeacherModal, AddCourseModal, AddBookModal, AddLessonModal, AddContentModal, EditItemModal, AddAdminModal } from '../components/admin/modals/ContentModals'
-import { QuizQuestion, QuestionType } from '../types/admin'
-
-import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
+import LoadingSpinner from '../components/ui/LoadingSpinner'
+import ForumPanel from '../features/forum/components/ForumPanel'
 
-import ForumPanel from '../components/forum/ForumPanel'
+// Modals
+import LessonContentEditorModal from '../features/courses/components/modals/LessonContentEditorModal'
+import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
+import { 
+  AddTeacherModal, 
+  AddCourseModal, 
+  AddBookModal, 
+  AddLessonModal, 
+  AddContentModal, 
+  EditItemModal, 
+  AddAdminModal 
+} from '../features/courses/components/modals/ContentModals'
 
-type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum'
-
+// Hook
+import { useAdminManagement } from '../hooks/useAdminManagement'
+import { supabase } from '../lib/supabase'
 
 const Admin = () => {
-  const { profile, loading: profileLoading, signOut } = useProfile();
-  const [activeTab, setActiveTab] = useState<Tab>('home')
-  const [userRole, setUserRole] = useState<string | null>(null)
-  const [users, setUsers] = useState<any[]>([])
-  const [courses, setCourses] = useState<any[]>([])
-  const [pendingDocs, setPendingDocs] = useState<any[]>([])
-  const [pendingPays, setPendingPays] = useState<any[]>([])
+  const {
+    profile,
+    activeTab,
+    setActiveTab,
+    userRole,
+    users,
+    courses,
+    pendingDocs,
+    pendingPays,
+    userCount,
+    courseCount,
+    pendingCount,
+    loading,
+    actionLoading,
+    setActionLoading,
+    searchTerm,
+    setSearchTerm,
+    showAddTeacher,
+    setShowAddTeacher,
+    newTeacherEmail,
+    setNewTeacherEmail,
+    newTeacherNome,
+    setNewTeacherNome,
+    newTeacherPassword,
+    setNewTeacherPassword,
+    availableRoles,
+    showRoleSwitcher,
+    setShowRoleSwitcher,
+    showAddAdmin,
+    setShowAddAdmin,
+    toast,
+    selectedCourse,
+    setSelectedCourse,
+    selectedBook,
+    setSelectedBook,
+    selectedLesson,
+    setSelectedLesson,
+    books,
+    lessons,
+    lessonItems,
+    showAddCourse,
+    setShowAddCourse,
+    showAddBook,
+    setShowAddBook,
+    showAddLesson,
+    setShowAddLesson,
+    showAddContent,
+    setShowAddContent,
+    allNucleos,
+    editingItem,
+    setEditingItem,
+    editingQuiz,
+    setEditingQuiz,
+    quizQuestions,
+    setQuizQuestions,
+    addingLessonType,
+    setAddingLessonType,
+    addingBloco,
+    setAddingBloco,
+    editingLessonContent,
+    setEditingLessonContent,
+    lessonBlocks,
+    setLessonBlocks,
+    lessonMaterials,
+    setLessonMaterials,
+    pixKey,
+    setPixKey,
+    pixQrUrl,
+    uploading,
+    isMobileMenuOpen,
+    setIsMobileMenuOpen,
+    nucleosAutoOpenAdd,
+    setNucleosAutoOpenAdd,
+    confirmDelete,
+    setConfirmDelete,
+    fetchData,
+    showToast,
+    handleFileUpload,
+    handleReorder,
+    handleMoveTo,
+    fetchBooks,
+    fetchLessons,
+    fetchLessonItems,
+    handleValidar,
+    handleTypeChange,
+    handleApproveAccess,
+    handleToggleBlock,
+    handleToggleGratuidade,
+    handleUpdateUserNucleo,
+    handleUpdateUserName,
+    handleDeleteUser,
+    handleRemoveFileFinal,
+    handleManualPayment,
+    handleAddTeacher,
+    handleAddAdmin,
+    handleSaveSettings,
+    handleUploadQrCode,
+    normalizeFileName
+  } = useAdminManagement()
 
-  const [userCount, setUserCount] = useState(0)
-  const [courseCount, setCourseCount] = useState(0)
-  const [pendingCount, setPendingCount] = useState(0)
-
-  const [loading, setLoading] = useState(true)
-  const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
-  const [showAddTeacher, setShowAddTeacher] = useState(false)
-  const [newTeacherEmail, setNewTeacherEmail] = useState('')
-  const [newTeacherNome, setNewTeacherNome] = useState('')
-  const [newTeacherPassword, setNewTeacherPassword] = useState('')
-  const [availableRoles, setAvailableRoles] = useState<string[]>([])
-  const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
-  const [showAddAdmin, setShowAddAdmin] = useState(false)
-  
-  // Toast State
-  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
-  
-  // CMS States
-  const [selectedCourse, setSelectedCourse] = useState<any | null>(null)
-  const [selectedBook, setSelectedBook] = useState<any | null>(null)
-  const [selectedLesson, setSelectedLesson] = useState<any | null>(null)
-  const [books, setBooks] = useState<any[]>([])
-  const [lessons, setLessons] = useState<any[]>([])
-  const [lessonItems, setLessonItems] = useState<any[]>([]) // Children of a lesson
-  const [showAddCourse, setShowAddCourse] = useState(false)
-  const [showAddBook, setShowAddBook] = useState(false)
-  const [showAddLesson, setShowAddLesson] = useState(false)
-  const [showAddContent, setShowAddContent] = useState(false)
-  
-  const [allNucleos, setAllNucleos] = useState<any[]>([])
-  const [editingItem, setEditingItem] = useState<{ type: 'course' | 'book' | 'lesson' | 'content', data: any } | null>(null)
-  const [editingQuiz, setEditingQuiz] = useState<any | null>(null)
-  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
-  const [addingLessonType, setAddingLessonType] = useState<string>('gravada')
-  const [addingBloco, setAddingBloco] = useState<number | null>(null)
-  const [editingLessonContent, setEditingLessonContent] = useState<any | null>(null)
-  const [lessonBlocks, setLessonBlocks] = useState<any[]>([])
-  const [lessonMaterials, setLessonMaterials] = useState<any[]>([])
-  
-  // Settings States
-  const [pixKey, setPixKey] = useState('')
-  const [pixQrUrl, setPixQrUrl] = useState('')
-  const [uploading, setUploading] = useState<string | null>(null)
-  const [viewingBook, setViewingBook] = useState<any | null>(null)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [nucleosAutoOpenAdd, setNucleosAutoOpenAdd] = useState(false)
-  
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (!profileLoading) {
-      if (!profile || !['admin', 'suporte'].includes(profile.tipo || '')) {
-        navigate('/dashboard');
-        return;
-      }
-      setUserRole(profile.tipo);
-      setCurrentUserEmail(profile.email);
-      setAvailableRoles(profile.caminhos_acesso || []);
-      setLoading(false);
-    }
-  }, [profile, profileLoading]);
-
-  useEffect(() => {
-    if (userRole) {
-      console.log("Fatesa Portal v1.6.1 - Sanitização de upload ativa");
-      fetchData()
-      if (userRole === 'admin') fetchNucleosGlobal()
-    }
-  }, [activeTab, userRole])
-
-  const fetchNucleosGlobal = async () => {
-    const { data } = await supabase.from('nucleos').select('*')
-    if (data) setAllNucleos(data)
-  }
-
-
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ message, type })
-    setTimeout(() => setToast(null), 3500)
-  }
-
-  const normalizeFileName = (name: string) => {
-    return name
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, "") // Remove accents
-      .replace(/[^\w.-]/g, '_') // Replace non-word chars (except . and -) with _
-      .replace(/\s+/g, '_'); // Replace spaces with _
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setUploading(id)
-    try {
-      // FIX: Ensure 'livros' bucket is used only for books. 
-      // Fallback to 'documentos' if 'livros' is not ready (optional, but keep 'livros' as per migrations)
-      const bucket = (table === 'livros' || table === 'aulas') ? 'livros' : 'documentos'
-      const safeName = normalizeFileName(file.name)
-      const folder = column === 'capa_url' ? 'capas' : (file.name.toLowerCase().endsWith('.epub') ? 'epubs' : 'pdfs')
-      const filePath = `${folder}/${Date.now()}_${safeName}`
-      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file)
-      if (uploadError) throw uploadError
-
-      const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
-      
-      const { error: updateError } = await supabase.from(table).update({ [column]: publicUrl }).eq('id', id)
-      if (updateError) throw updateError
-
-      showToast('Arquivo enviado com sucesso!')
-      if (table === 'livros') {
-        fetchBooks(selectedCourse.id)
-      } else if (table === 'aulas') {
-        if (selectedLesson) fetchLessonItems(selectedLesson.id)
-        if (selectedBook) fetchLessons(selectedBook.id)
-      }
-    } catch (err: any) {
-      showToast(err.message, 'error')
-    } finally {
-      setUploading(null)
-    }
-  }
-
-  const handleRemoveFile = async (table: 'livros' | 'aulas', id: string, column: string) => {
-    setConfirmDelete({ 
-      type: 'content', 
-      id, 
-      table, 
-      column, 
-      title: 'Tem certeza que deseja remover este arquivo?' 
-    })
-  }
-
-  const handleReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas') => {
-    const idx = items.findIndex(i => i.id === id)
-    const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    if (swapIdx < 0 || swapIdx >= items.length) return
-
-    const current = items[idx]
-    const swap = items[swapIdx]
-
-    try {
-      await Promise.all([
-        supabase.from(table).update({ ordem: swap.ordem }).eq('id', current.id),
-        supabase.from(table).update({ ordem: current.ordem }).eq('id', swap.id)
-      ])
-      fetchFn()
-    } catch (err: any) {
-      showToast('Erro ao reordenar: ' + err.message, 'error')
-    }
-  }
-
-  const handleMoveTo = async (id: string, targetId: string | null, items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas', targetBlocoId?: number | null) => {
-    if (id === targetId) return;
-    
-    const newItems = [...items];
-    const dragIdx = newItems.findIndex(i => i.id === id);
-    if (dragIdx === -1) return;
-
-    const [draggedItem] = newItems.splice(dragIdx, 1);
-    
-    if (targetBlocoId !== undefined) {
-      // Direct drop on a block header or empty block
-      draggedItem.bloco_id = targetBlocoId;
-      newItems.push(draggedItem); // Append to end of book/lesson list
-    } else if (targetId) {
-      // Drop on another item
-      const targetIdx = newItems.findIndex(i => i.id === targetId);
-      if (targetIdx !== -1) {
-        const targetItem = newItems[targetIdx];
-        newItems.splice(targetIdx, 0, draggedItem);
-        draggedItem.bloco_id = targetItem.bloco_id;
-      } else {
-        newItems.push(draggedItem);
-      }
-    }
-    
-    // Create update batch preserving all original fields
-    // SANITIZATION: Remove virtual fields and metadata that aren't in the DB schema
-    const updates = newItems.map((item, index) => {
-      const { children, count, professores, nucleos, ...rest } = item;
-      return {
-        ...rest,
-        ordem: index + 1,
-        bloco_id: item.bloco_id
-      };
-    });
-
-    try {
-      setActionLoading('reorder-all');
-      
-      const updatePromises = updates.map(update => {
-        // EXCLUDE 'id' from the update payload to avoid Primary Key update errors
-        const { id: itemId, ...payload } = update;
-        return supabase
-          .from(table)
-          .update(payload)
-          .eq('id', itemId);
-      });
-
-      const results = await Promise.all(updatePromises);
-      const firstError = results.find(r => r.error)?.error;
-      
-      if (firstError) throw firstError;
-      
-      fetchFn();
-    } catch (err: any) {
-      showToast('Erro ao mover: ' + err.message, 'error');
-    } finally {
-      setActionLoading(null);
-    }
-  }
-
-
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      if (activeTab === 'home') {
-        const [usersCount, coursesCount, docsCount, paysCount] = await Promise.all([
-          supabase.from('users').select('id', { count: 'exact', head: true }),
-          supabase.from('cursos').select('id', { count: 'exact', head: true }),
-          supabase.from('documentos').select('id', { count: 'exact', head: true }).eq('status', 'pendente'),
-          supabase.from('pagamentos').select('id', { count: 'exact', head: true }).eq('status', 'pago')
-        ]);
-        
-        setUserCount(usersCount.count || 0);
-        setCourseCount(coursesCount.count || 0);
-        setPendingCount((docsCount.count || 0) + (userRole === 'admin' ? (paysCount.count || 0) : 0));
-        
-        // Reset lists when on home to avoid rendering undefined items if tab changes
-        setUsers([]);
-        setCourses([]);
-        setPendingDocs([]);
-        setPendingPays([]);
-      } else if (activeTab === 'users') {
-        const { data } = await supabase.from('users').select('*, nucleos(nome)')
-        if (data) setUsers(data)
-      } else if (activeTab === 'content') {
-        const { data } = await supabase.from('cursos').select('*, livros(count)')
-        if (data) setCourses(data)
-      } else if (activeTab === 'validation') {
-        const { data: docs } = await supabase
-          .from('documentos')
-          .select('*, users(nome, email)')
-          .eq('status', 'pendente')
-        const { data: pays } = await supabase
-          .from('pagamentos')
-          .select('*, users(nome, email)')
-          .eq('status', 'pago') 
-        
-        if (docs) setPendingDocs(docs)
-        if (pays) setPendingPays(pays)
-      } else if (activeTab === 'settings' && userRole === 'admin') {
-        const { data } = await supabase.from('configuracoes').select('*');
-        if (data) {
-          data.forEach(item => {
-            if (item.chave === 'pix_key') setPixKey(item.valor);
-            if (item.chave === 'pix_qr_url') setPixQrUrl(item.valor);
-          });
-        }
-      }
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchBooks = async (courseId: string) => {
-    if (!courseId) return
-    const { data } = await supabase.from('livros').select('*, aulas(count)').eq('curso_id', courseId).order('ordem')
-    if (data) setBooks(data)
-  }
-
-  const fetchLessons = async (bookId: string) => {
-    if (!bookId) return
-    setActionLoading('fetch-lessons')
-    const { data } = await supabase
-      .from('aulas')
-      .select('*, children:aulas(count)')
-      .eq('livro_id', bookId)
-      .eq('tipo', 'licao')
-      .order('ordem')
-    if (data) setLessons(data)
-    setActionLoading(null)
-  }
-
-  const fetchLessonItems = async (lessonId: string) => {
-    if (!lessonId) return
-    setActionLoading('fetch-lesson-items')
-    const { data } = await supabase
-      .from('aulas')
-      .select('*')
-      .eq('parent_aula_id', lessonId)
-      .order('ordem')
-    if (data) setLessonItems(data)
-    setActionLoading(null)
-  }
-
-  const handleDelete = async (table: 'cursos' | 'livros' | 'aulas', id: string) => {
-    setConfirmDelete({ 
-      type: 'content', 
-      id, 
-      table, 
-      title: 'Tem certeza que deseja excluir este item? Esta ação é irreversível.' 
-    })
-  }
-
-  const handleValidar = async (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado') => {
-    const feedback = status === 'rejeitado' ? prompt('Motivo da rejeição:') : null
-    if (status === 'rejeitado' && !feedback) return
-
-    setActionLoading(id)
-    try {
-      const table = target === 'doc' ? 'documentos' : 'pagamentos'
-      const { error } = await supabase
-        .from(table)
-        .update({ 
-          status: status === 'aprovado' ? (target === 'doc' ? 'aprovado' : 'pago') : 'rejeitado',
-          feedback 
-        })
-        .eq('id', id)
-
-      if (error) throw error
-      showToast(`${target === 'doc' ? 'Documento' : 'Pagamento'} ${status} com sucesso!`)
-      fetchData()
-    } catch (err: any) {
-      showToast('Erro: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleTypeChange = async (userId: string, newType: string) => {
-    if (userRole !== 'admin') {
-      alert('Apenas administradores podem alterar tipos de usuário.')
-      return
-    }
-    await supabase.from('users').update({ tipo: newType }).eq('id', userId)
-    setUsers(users.map(u => u.id === userId ? { ...u, tipo: newType } : u))
-  }
-
-  const handleApproveAccess = async (userId: string) => {
-    setActionLoading(userId)
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({ acesso_definitivo: true })
-        .eq('id', userId)
-      
-      if (error) throw error
-      setUsers(users.map(u => u.id === userId ? { ...u, acesso_definitivo: true } : u))
-      showToast('Acesso definitivo concedido com sucesso!')
-    } catch (err: any) {
-      showToast('Erro: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleToggleBlock = async (userId: string, currentStatus: boolean) => {
-    setActionLoading(userId)
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({ bloqueado: !currentStatus })
-        .eq('id', userId)
-      
-      if (error) throw error
-      setUsers(users.map(u => u.id === userId ? { ...u, bloqueado: !currentStatus } : u))
-      showToast(`Usuário ${!currentStatus ? 'bloqueado' : 'desbloqueado'} com sucesso!`)
-    } catch (err: any) {
-      showToast('Erro: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleToggleGratuidade = async (userId: string, currentStatus: boolean) => {
-    setActionLoading(userId)
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({ bolsista: !currentStatus })
-        .eq('id', userId)
-      
-      if (error) throw error
-      setUsers(users.map(u => u.id === userId ? { ...u, bolsista: !currentStatus } : u))
-      showToast(`Gratuidade ${!currentStatus ? 'ativada' : 'revogada'} com sucesso!`)
-    } catch (err: any) {
-      showToast('Erro: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleUpdateUserNucleo = async (userId: string, nucleoId: string) => {
-    try {
-      const { error } = await supabase.from('users').update({ nucleo_id: nucleoId || null }).eq('id', userId)
-      if (error) throw error
-      setUsers(users.map(u => u.id === userId ? { ...u, nucleo_id: nucleoId || null } : u))
-    } catch(err: any) {
-      alert('Erro: ' + err.message)
-    }
-  }
-
-  const handleUpdateUserName = async (userId: string, newName: string) => {
-    if (!newName.trim()) return;
-    setActionLoading(userId);
-    try {
-      const { error } = await supabase.from('users').update({ nome: newName }).eq('id', userId);
-      if (error) throw error;
-      setUsers(users.map(u => u.id === userId ? { ...u, nome: newName } : u));
-      showToast('Nome atualizado com sucesso!');
-    } catch (err: any) {
-      showToast('Erro ao atualizar nome: ' + err.message, 'error');
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
-  const [confirmDelete, setConfirmDelete] = useState<{ type: 'user' | 'content', id: string, table?: string, column?: string, title: string } | null>(null);
-
-  const handleDeleteUser = async (userId: string) => {
-    setActionLoading(userId)
-    try {
-      // Use RPC to delete from auth.users (cascades to public.users)
-      const { error } = await supabase.rpc('delete_user_entirely', { target_user_id: userId })
-      if (error) throw error
-      
-      setUsers(users.filter(u => u.id !== userId))
-      showToast('Usuário excluído com sucesso!')
-    } catch (err: any) {
-      showToast('Erro ao excluir usuário: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-      setConfirmDelete(null)
-    }
-  }
-
-  const handleRemoveFileFinal = async (table: 'livros' | 'aulas', id: string, column: string) => {
-    setActionLoading(id + '_' + column)
-    try {
-      const { error } = await supabase.from(table).update({ [column]: null }).eq('id', id)
-      if (error) throw error
-      
-      showToast('Arquivo removido com sucesso!')
-      
-      if (table === 'livros' && selectedCourse?.id) fetchBooks(selectedCourse.id)
-      else if (table === 'aulas') {
-        if (selectedLesson?.id) fetchLessonItems(selectedLesson.id)
-        if (selectedBook?.id) fetchLessons(selectedBook.id)
-      }
-    } catch (err: any) {
-      showToast('Erro ao remover: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-      setConfirmDelete(null)
-    }
-  }
-
-  const handleManualPayment = async (userId: string) => {
-    if (!window.confirm('Deseja registrar o pagamento manual para este aluno? Isso liberará o acesso caso ele esteja bloqueado.')) return;
-    
-    setActionLoading(userId);
-    try {
-      // 1. Find the latest open payment
-      const { data: openPays } = await supabase
-        .from('pagamentos')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('status', 'aberto')
-        .order('data_vencimento', { ascending: false })
-        .limit(1);
-
-      if (openPays && openPays.length > 0) {
-        const { error } = await supabase
-          .from('pagamentos')
-          .update({ 
-            status: 'pago',
-            feedback: 'Registrado manualmente pela administração'
-          })
-          .eq('id', openPays[0].id);
-
-        if (error) throw error;
-        showToast('Pagamento registrado com sucesso!');
-      } else {
-        // Create a new paid record if none open
-        const { error } = await supabase.from('pagamentos').insert({
-          user_id: userId,
-          valor: 70,
-          status: 'pago',
-          data_vencimento: new Date().toISOString().split('T')[0],
-          descricao: 'Pagamento Manual (Avulso)',
-          feedback: 'Registrado manualmente pela administração'
-        });
-        if (error) throw error;
-        showToast('Novo pagamento registrado com sucesso!');
-      }
-      
-      fetchData();
-    } catch (err: any) {
-      showToast('Erro ao registrar pagamento: ' + err.message, 'error');
-    } finally {
-      setActionLoading(null);
-    }
-  }
-
-  const handleAddTeacher = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setActionLoading('add-teacher')
-    try {
-      // 1. Authorize the email
-      const { error: authError } = await supabase
-        .from('professores_autorizados')
-        .insert({
-          email: newTeacherEmail,
-          nome: newTeacherNome
-        })
-      
-      if (authError && !authError.message.includes('unique constraint')) {
-        throw authError
-      }
-
-      // 2. Create the user immediately
-      const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
-        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
-      })
-
-      const { error: signUpError } = await tempClient.auth.signUp({
-        email: newTeacherEmail,
-        password: newTeacherPassword,
-        options: {
-          data: {
-            full_name: newTeacherNome,
-            student_type: 'professor',
-            acesso_definitivo: true
-          }
-        }
-      })
-
-      if (signUpError) throw signUpError
-
-      showToast('Professor cadastrado e autorizado com sucesso!')
-      setShowAddTeacher(false)
-      setNewTeacherEmail('')
-      setNewTeacherNome('')
-      setNewTeacherPassword('')
-      fetchData()
-    } catch (err: any) {
-      showToast('Erro ao cadastrar professor: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleAddAdmin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget as HTMLFormElement)
-    const nome = formData.get('nome') as string
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
-    const tipo = formData.get('tipo') as string || 'admin'
-
-    setActionLoading('add-admin')
-    try {
-      // 1. Pre-authorize based on role
-      let authError;
-      if (tipo === 'admin') {
-        const { error } = await supabase.from('admins_autorizados').insert({ email })
-        authError = error
-      } else if (tipo === 'professor') {
-        const { error } = await supabase.from('professores_autorizados').insert({ email, nome })
-        authError = error
-      }
-      
-      if (authError && !authError.message.includes('unique constraint')) {
-        throw authError
-      }
-
-      // 2. Create the user using a secondary client to avoid session conflict
-      const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-          detectSessionInUrl: false
-        }
-      })
-
-      const { data: signUpData, error: signUpError } = await tempClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: nome,
-            student_type: tipo,
-            acesso_definitivo: true,
-            nucleo_id: formData.get('nucleo_id') || null
-          }
-        }
-      })
-
-      if (signUpError) throw signUpError
-
-      showToast('Administrador cadastrado com sucesso!')
-      setShowAddAdmin(false)
-      fetchData()
-    } catch (err: any) {
-      showToast('Erro ao cadastrar administrador: ' + err.message, 'error')
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const handleSaveSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setActionLoading('save-settings');
-    try {
-      await supabase.from('configuracoes').upsert({ chave: 'pix_key', valor: pixKey });
-      showToast('Configuração salva!');
-    } catch(err:any) {
-      showToast('Erro: ' + err.message, 'error');
-    } finally {
-      setActionLoading(null);
-    }
-  }
-
-  const handleUploadQrCode = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setActionLoading('save-settings');
-    try {
-      const ext = file.name.split('.').pop();
-      const safeName = normalizeFileName(file.name.replace(`.${ext}`, ''));
-      const fileName = `qrcode_${Date.now()}_${safeName}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from('livros').upload(`assets/${fileName}`, file);
-      if (uploadError) throw uploadError;
-      
-      const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(`assets/${fileName}`);
-      
-      await supabase.from('configuracoes').upsert({ chave: 'pix_qr_url', valor: publicUrl });
-      setPixQrUrl(publicUrl);
-      showToast('QR Code atualizado com sucesso!');
-    } catch(err:any) {
-      showToast('Erro ao fazer upload do QR Code: ' + err.message, 'error');
-    } finally {
-      setActionLoading(null)
-    }
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg)' }}>
+        <LoadingSpinner size={48} label="Validando credenciais..." />
+      </div>
+    )
   }
 
   return (
     <div className="admin-layout">
-
       {/* Floating Menu Toggle Button */}
       <button className="floating-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -729,7 +172,6 @@ const Admin = () => {
       )}
 
       {/* Sidebar */}
-      {/* Sidebar / Mobile Slim Nav */}
       <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
         <div className="logo-section" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center', width: '100%', position: 'relative' }}>
           <Logo size={200} />
@@ -740,10 +182,10 @@ const Admin = () => {
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div style={{ display: 'flex', gap: '0.4rem' }}>
-            <button onClick={() => navigate(-1)} className="admin-nav-item" style={{ background: 'transparent', border: 'none' }}>
+            <button onClick={() => window.history.back()} className="admin-nav-item" style={{ background: 'transparent', border: 'none' }}>
               <ChevronLeft size={18} />
             </button>
-            <button onClick={() => navigate('/admin')} className="admin-nav-item" style={{ background: 'transparent', border: 'none' }}>
+            <button onClick={() => setActiveTab('home')} className="admin-nav-item" style={{ background: 'transparent', border: 'none' }}>
               <LayoutDashboard size={18} />
             </button>
           </div>
@@ -760,29 +202,27 @@ const Admin = () => {
               {showRoleSwitcher && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '180px' }}>
                   {availableRoles.filter(r => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map(r => (
-                    <button 
+                    <Link 
                       key={r} 
+                      to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'}
                       className="admin-nav-item" 
-                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
+                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none', textDecoration: 'none', color: 'inherit' }}
                       onClick={() => { 
-                        navigate(r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'); 
                         setShowRoleSwitcher(false); 
                         setIsMobileMenuOpen(false);
                       }}
                     >
                       {r === 'aluno' ? 'Portal do Aluno' : r === 'professor' ? 'Painel do Professor' : 'Administração'}
-                    </button>
+                    </Link>
                   ))}
                 </div>
               )}
             </div>
           )}
           
-          {userRole !== 'aluno' && (
-            <div className={`admin-nav-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }}>
-              <LayoutDashboard size={18} /> <span className="mobile-hide">Início</span>
-            </div>
-          )}
+          <div className={`admin-nav-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }}>
+            <LayoutDashboard size={18} /> <span className="mobile-hide">Início</span>
+          </div>
 
           {userRole === 'admin' && (
             <>
@@ -794,17 +234,19 @@ const Admin = () => {
               </div>
             </>
           )}
-          {(userRole === 'admin' || userRole === 'professor' || userRole === 'suporte') && (
-            <div className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`} onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}>
-              <GraduationCap size={18} /> <span className="mobile-hide">Núcleos</span>
-            </div>
-          )}
+
+          <div className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`} onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}>
+            <GraduationCap size={18} /> <span className="mobile-hide">Núcleos</span>
+          </div>
+
           <div className={`admin-nav-item ${activeTab === 'content' ? 'active' : ''}`} onClick={() => { setActiveTab('content'); setIsMobileMenuOpen(false); }}>
             <BookOpen size={18} /> <span className="mobile-hide">Conteúdo</span>
           </div>
+
           <div className={`admin-nav-item ${activeTab === 'forum' ? 'active' : ''}`} onClick={() => { setActiveTab('forum'); setIsMobileMenuOpen(false); }}>
             <MessageSquare size={18} /> <span className="mobile-hide">Fórum</span>
           </div>
+
           <div className={`admin-nav-item ${activeTab === 'validation' ? 'active' : ''}`} onClick={() => { setActiveTab('validation'); setIsMobileMenuOpen(false); }}>
             <ShieldCheck size={18} /> <span className="mobile-hide">Validação</span>
             {(pendingDocs.length + pendingPays.length) > 0 && (
@@ -813,13 +255,15 @@ const Admin = () => {
               </span>
             )}
           </div>
+
           {userRole === 'admin' && (
             <div className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }}>
               <Settings size={18} /> <span className="mobile-hide">Config</span>
             </div>
           )}
+
           <div style={{ marginLeft: 'auto', paddingLeft: '0.5rem' }}>
-            <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent' }} onClick={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
+            <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}>
               <LogOut size={18} />
             </div>
           </div>
@@ -834,6 +278,7 @@ const Admin = () => {
         >
           <ChevronLeft size={16} /> Voltar ao Dashboard
         </Link>
+
         <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div className="logo-section" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Logo size={120} />
@@ -852,6 +297,7 @@ const Admin = () => {
                  activeTab === 'alumni' ? 'Base de Formados (Alumni)' :
                  activeTab === 'content' ? 'Gestão de Conteúdo' : 
                  activeTab === 'forum' ? 'Fórum da Comunidade' : 
+                 activeTab === 'nucleos' ? 'Gestão de Núcleos' :
                  'Validação de Acesso'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
@@ -859,6 +305,8 @@ const Admin = () => {
                  activeTab === 'users' ? 'Administre os perfis, bloqueios e acessos.' : 
                  activeTab === 'alumni' ? 'Gerencie o banco de dados histórico de alunos formados.' :
                  activeTab === 'content' ? 'Gerencie as matérias, livros e atividades.' : 
+                 activeTab === 'forum' ? 'Acompanhe as discussões da comunidade.' :
+                 activeTab === 'nucleos' ? 'Gerencie polos e núcleos de ensino.' :
                  'Verifique envios dos alunos.'}
               </p>
             </div>
@@ -876,126 +324,118 @@ const Admin = () => {
           </div>
         </header>
 
-        {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
-            <LoadingSpinner size={48} label="Carregando..." />
+        {activeTab === 'home' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+            <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.2) 0%, rgba(var(--primary-rgb), 0.05) 100%)', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
+              <Users size={32} style={{ marginBottom: '1rem', color: 'var(--primary)' }} />
+              <h3 style={{ fontSize: '2rem', margin: 0 }}>{userCount}</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Usuários Cadastrados</p>
+            </div>
+            <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.05) 100%)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+              <BookOpen size={32} style={{ marginBottom: '1rem', color: 'var(--success)' }} />
+              <h3 style={{ fontSize: '2rem', margin: 0 }}>{courseCount}</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Cursos Ativos</p>
+            </div>
+            <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.05) 100%)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+              <FileText size={32} style={{ marginBottom: '1rem', color: 'var(--warning)' }} />
+              <h3 style={{ fontSize: '2rem', margin: 0 }}>{pendingCount}</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Pendências de Validação</p>
+            </div>
           </div>
-        ) : (
-          <>
-            {activeTab === 'home' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-                <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.2) 0%, rgba(var(--primary-rgb), 0.05) 100%)', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
-                  <Users size={32} style={{ marginBottom: '1rem', color: 'var(--primary)' }} />
-                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{userCount}</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Usuários Cadastrados</p>
-                </div>
-                <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.05) 100%)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
-                  <BookOpen size={32} style={{ marginBottom: '1rem', color: 'var(--success)' }} />
-                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{courseCount}</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Cursos Ativos</p>
-                </div>
-                <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.05) 100%)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
-                  <FileText size={32} style={{ marginBottom: '1rem', color: 'var(--warning)' }} />
-                  <h3 style={{ fontSize: '2rem', margin: 0 }}>{pendingCount}</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Pendências de Validação</p>
-                </div>
-              </div>
-            )}
-            
-            {activeTab === 'alumni' && <AlumniManagement />}
-            
-            {activeTab === 'users' && (
-              <UserManagement 
-                users={users}
-                allNucleos={allNucleos}
-                searchTerm={searchTerm}
-                userRole={userRole}
-                actionLoading={actionLoading}
-                setShowAddAdmin={setShowAddAdmin}
-                handleTypeChange={handleTypeChange}
-                handleApproveAccess={handleApproveAccess}
-                handleToggleBlock={handleToggleBlock}
-                handleToggleGratuidade={handleToggleGratuidade}
-                handleUpdateUserNucleo={handleUpdateUserNucleo}
-                handleUpdateUserName={handleUpdateUserName}
-                handleDeleteUser={async (userId: string) => setConfirmDelete({ type: 'user', id: userId, title: 'Tem certeza que deseja excluir este usuário?' })}
-                handleManualPayment={handleManualPayment}
-                onAddNucleo={() => { setActiveTab('nucleos'); setNucleosAutoOpenAdd(true); }}
-              />
-            )}
+        )}
+        
+        {activeTab === 'alumni' && <AlumniManagement />}
+        
+        {activeTab === 'users' && (
+          <UserManagement 
+            users={users}
+            allNucleos={allNucleos}
+            searchTerm={searchTerm}
+            userRole={userRole}
+            actionLoading={actionLoading}
+            setShowAddAdmin={setShowAddAdmin}
+            handleTypeChange={handleTypeChange}
+            handleApproveAccess={handleApproveAccess}
+            handleToggleBlock={handleToggleBlock}
+            handleToggleGratuidade={handleToggleGratuidade}
+            handleUpdateUserNucleo={handleUpdateUserNucleo}
+            handleUpdateUserName={handleUpdateUserName}
+            handleDeleteUser={async (userId: string) => setConfirmDelete({ type: 'user', id: userId, title: 'Tem certeza que deseja excluir este usuário?' })}
+            handleManualPayment={handleManualPayment}
+            onAddNucleo={() => { setActiveTab('nucleos'); setNucleosAutoOpenAdd(true); }}
+          />
+        )}
 
-            {activeTab === 'content' && (
-              <ContentManagement
-                courses={courses}
-                selectedCourse={selectedCourse}
-                setSelectedCourse={setSelectedCourse}
-                selectedBook={selectedBook}
-                setSelectedBook={setSelectedBook}
-                selectedLesson={selectedLesson}
-                setSelectedLesson={setSelectedLesson}
-                books={books}
-                lessons={lessons}
-                lessonItems={lessonItems}
-                userRole={userRole}
-                actionLoading={actionLoading}
-                fetchData={fetchData}
-                fetchBooks={fetchBooks}
-                fetchLessons={fetchLessons}
-                fetchLessonItems={fetchLessonItems}
-                handleDelete={handleDelete}
-                handleRemoveFile={handleRemoveFileFinal}
-                handleFileUpload={handleFileUpload}
-                handleReorder={handleReorder}
-                handleMoveTo={handleMoveTo}
-                setShowAddCourse={setShowAddCourse}
-                setShowAddBook={setShowAddBook}
-                setShowAddLesson={setShowAddLesson}
-                setShowAddContent={setShowAddContent}
-                setAddingLessonType={setAddingLessonType}
-                setAddingBloco={setAddingBloco}
-                setEditingItem={setEditingItem}
-                setEditingLessonContent={setEditingLessonContent}
-                setLessonBlocks={setLessonBlocks}
-                setLessonMaterials={setLessonMaterials}
-                setEditingQuiz={setEditingQuiz}
-                setQuizQuestions={setQuizQuestions}
-                uploading={uploading}
-              />
-            )}
+        {activeTab === 'content' && (
+          <ContentManagement
+            courses={courses}
+            selectedCourse={selectedCourse}
+            setSelectedCourse={setSelectedCourse}
+            selectedBook={selectedBook}
+            setSelectedBook={setSelectedBook}
+            selectedLesson={selectedLesson}
+            setSelectedLesson={setSelectedLesson}
+            books={books}
+            lessons={lessons}
+            lessonItems={lessonItems}
+            userRole={userRole}
+            actionLoading={actionLoading}
+            fetchData={fetchData}
+            fetchBooks={fetchBooks}
+            fetchLessons={fetchLessons}
+            fetchLessonItems={fetchLessonItems}
+            handleDelete={(table: any, id: string) => setConfirmDelete({ type: 'content', id, table, title: 'Tem certeza que deseja excluir este item?' })}
+            handleRemoveFile={handleRemoveFileFinal}
+            handleFileUpload={handleFileUpload}
+            handleReorder={handleReorder}
+            handleMoveTo={handleMoveTo}
+            setShowAddCourse={setShowAddCourse}
+            setShowAddBook={setShowAddBook}
+            setShowAddLesson={setShowAddLesson}
+            setShowAddContent={setShowAddContent}
+            setAddingLessonType={setAddingLessonType}
+            setAddingBloco={setAddingBloco}
+            setEditingItem={setEditingItem}
+            setEditingLessonContent={setEditingLessonContent}
+            setLessonBlocks={setLessonBlocks}
+            setLessonMaterials={setLessonMaterials}
+            setEditingQuiz={setEditingQuiz}
+            setQuizQuestions={setQuizQuestions}
+            uploading={uploading}
+          />
+        )}
 
-            {activeTab === 'validation' && (
-              <ValidationPanel 
-                pendingDocs={pendingDocs}
-                pendingPays={pendingPays}
-                userRole={userRole}
-                actionLoading={actionLoading}
-                handleValidar={handleValidar}
-              />
-            )}
+        {activeTab === 'validation' && (
+          <ValidationPanel 
+            pendingDocs={pendingDocs}
+            pendingPays={pendingPays}
+            userRole={userRole}
+            actionLoading={actionLoading}
+            handleValidar={handleValidar}
+          />
+        )}
 
-            {activeTab === 'nucleos' && (
-              <NucleosPanel 
-                userRole={userRole || 'professor'} 
-                autoOpenAddModal={nucleosAutoOpenAdd}
-                onModalClose={() => setNucleosAutoOpenAdd(false)}
-              />
-            )}
+        {activeTab === 'nucleos' && (
+          <NucleosPanel 
+            userRole={userRole || 'professor'} 
+            autoOpenAddModal={nucleosAutoOpenAdd}
+            onModalClose={() => setNucleosAutoOpenAdd(false)}
+          />
+        )}
 
-            {activeTab === 'settings' && userRole === 'admin' && (
-              <SettingsPanel 
-                pixKey={pixKey}
-                setPixKey={setPixKey}
-                pixQrUrl={pixQrUrl}
-                handleSaveSettings={handleSaveSettings}
-                handleUploadQrCode={handleUploadQrCode}
-                actionLoading={actionLoading}
-              />
-            )}
+        {activeTab === 'settings' && userRole === 'admin' && (
+          <SettingsPanel 
+            pixKey={pixKey}
+            setPixKey={setPixKey}
+            pixQrUrl={pixQrUrl}
+            handleSaveSettings={handleSaveSettings}
+            handleUploadQrCode={handleUploadQrCode}
+            actionLoading={actionLoading}
+          />
+        )}
 
-            {activeTab === 'forum' && (
-              <ForumPanel userProfile={profile} />
-            )}
-          </>
+        {activeTab === 'forum' && (
+          <ForumPanel userProfile={profile} />
         )}
 
         {/* Modals */}
@@ -1168,10 +608,10 @@ const Admin = () => {
         )}
 
         <div className="bottom-nav-footer">
-          <button onClick={() => navigate(-1)} className="btn btn-outline">
+          <button onClick={() => window.history.back()} className="btn btn-outline">
             <ChevronLeft size={20} /> Voltar
           </button>
-          <button onClick={() => navigate('/admin')} className="btn btn-primary">
+          <button onClick={() => setActiveTab('home')} className="btn btn-primary">
             <LayoutDashboard size={20} /> Início
           </button>
         </div>
@@ -1199,7 +639,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* CSS para Animações e Modais */}
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }

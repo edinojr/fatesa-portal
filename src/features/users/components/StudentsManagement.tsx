@@ -1,6 +1,6 @@
 import React from 'react'
 import { Users, Trash2, Loader2, CheckCircle, XCircle } from 'lucide-react'
-import { Student } from '../../types/professor'
+import { Student } from '../../../types/professor'
 
 interface StudentsManagementProps {
   allStudents: Student[]

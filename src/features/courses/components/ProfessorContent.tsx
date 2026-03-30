@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../../lib/supabase'
 import { useNavigate, Link } from 'react-router-dom'
-import { ProfessorCourse } from '../../types/professor'
+import { ProfessorCourse } from '../../../types/professor'
 
 interface ProfessorContentProps {
   courses: ProfessorCourse[]
@@ -48,7 +48,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     setLoadingReleases(false)
   }
 
-  const toggleRelease = async (nucleoId: string, itemId: string, itemType: 'modulo' | 'atividade') => {
+  const toggleRelease = async (nucleoId: string, itemId: string, itemType: 'modulo' | 'atividade' | 'video') => {
     const existing = releases.find(r => r.nucleo_id === nucleoId && r.item_id === itemId && r.item_type === itemType)
     
     try {
@@ -132,29 +132,31 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                 <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)', flexGrow: 1 }}>
                   <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Ativar para Núcleo:</p>
                   <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                    {professorNucleos.map(n => {
-                      const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo');
-                      return (
-                        <button 
-                          key={n.id} 
-                          onClick={(e) => { e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }}
-                          style={{ 
-                            fontSize: '0.65rem', 
-                            padding: '4px 10px', 
-                            borderRadius: '8px',
-                            background: isReleased ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                            border: `1px solid ${isReleased ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}`,
-                            color: isReleased ? '#fff' : 'rgba(255,255,255,0.4)',
-                            cursor: 'pointer',
-                            fontWeight: isReleased ? 600 : 400,
-                            transition: 'all 0.2s'
-                          }}
-                          title={isReleased ? 'Desativar Módulo' : 'Ativar Módulo'}
-                        >
-                          {n.nome}
-                        </button>
-                      )
-                    })}
+                      {professorNucleos.map(n => {
+                        const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo');
+                        return (
+                          <div key={n.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(0,0,0,0.2)', padding: '0.25rem 0.25rem 0.25rem 0.75rem', borderRadius: '8px', border: `1px solid ${isReleased ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255,255,255,0.1)'}` }}>
+                            <span style={{ fontSize: '0.7rem', fontWeight: 600, color: isReleased ? '#fff' : 'rgba(255,255,255,0.5)' }}>{n.nome}</span>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }}
+                              style={{ 
+                                fontSize: '0.6rem', 
+                                padding: '4px 8px', 
+                                borderRadius: '6px',
+                                background: isReleased ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                                border: `1px solid ${isReleased ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`,
+                                color: isReleased ? 'var(--error)' : 'var(--success)',
+                                cursor: 'pointer',
+                                fontWeight: 700,
+                                textTransform: 'uppercase'
+                              }}
+                              title={isReleased ? 'Desativar Módulo' : 'Ativar Módulo'}
+                            >
+                              {isReleased ? 'Desativar' : 'Ativar'}
+                            </button>
+                          </div>
+                        )
+                      })}
                   </div>
                 </div>
 
@@ -193,32 +195,34 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               </div>
 
               {(() => {
-                const isAutoReleased = (lesson.tipo !== 'atividade' && lesson.tipo !== 'prova') && (lesson.pdf_url || lesson.arquivo_url);
-                if (isAutoReleased) return null;
+                const itemType = (lesson.tipo === 'atividade' || lesson.tipo === 'prova') ? 'atividade' : 'video';
 
                 return (
-                  <div style={{ flex: 1, margin: '0 2rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.01)' }}>
-                    <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>Ativar p/:</p>
-                    <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, margin: '0 1rem', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Controle de Acesso ({itemType === 'video' ? 'Vídeo' : 'Avaliação'}):</p>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {professorNucleos.map(n => {
-                        const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === lesson.id && r.item_type === 'atividade');
+                        const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === lesson.id && r.item_type === itemType);
                         return (
-                          <button 
-                            key={n.id} 
-                            onClick={() => toggleRelease(n.id, lesson.id, 'atividade')}
-                            style={{ 
-                              fontSize: '0.6rem', 
-                              padding: '3px 7px', 
-                              borderRadius: '6px',
-                              background: isReleased ? 'var(--success)' : 'transparent',
-                              border: `1px solid ${isReleased ? 'var(--success)' : 'rgba(255,255,255,0.05)'}`,
-                              color: isReleased ? '#fff' : 'rgba(255,255,255,0.3)',
-                              cursor: 'pointer',
-                              fontWeight: isReleased ? 600 : 400
-                            }}
-                          >
-                            {n.nome}
-                          </button>
+                          <div key={n.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.25rem 0.25rem 0.25rem 0.75rem', borderRadius: '8px', border: `1px solid ${isReleased ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255,255,255,0.1)'}` }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isReleased ? '#fff' : 'rgba(255,255,255,0.5)' }}>{n.nome}</span>
+                            <button 
+                              onClick={() => toggleRelease(n.id, lesson.id, itemType)}
+                              style={{ 
+                                fontSize: '0.65rem', 
+                                padding: '4px 8px', 
+                                borderRadius: '6px',
+                                background: isReleased ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                                border: `1px solid ${isReleased ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`,
+                                color: isReleased ? 'var(--error)' : 'var(--success)',
+                                cursor: 'pointer',
+                                fontWeight: 700,
+                                textTransform: 'uppercase'
+                              }}
+                            >
+                              {isReleased ? 'Desativar' : 'Ativar'}
+                            </button>
+                          </div>
                         )
                       })}
                     </div>

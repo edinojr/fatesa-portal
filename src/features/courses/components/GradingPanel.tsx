@@ -1,8 +1,9 @@
 import React from 'react'
 import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2 } from 'lucide-react'
-import { Submission } from '../../types/professor'
+import { Submission } from '../../../types/professor'
 
 interface GradingPanelProps {
+  courses?: any[]
   submissions: Submission[]
   selectedSubmission: Submission | null
   setSelectedSubmission: (sub: Submission | null) => void
@@ -20,6 +21,7 @@ interface GradingPanelProps {
 }
 
 const GradingPanel: React.FC<GradingPanelProps> = ({
+  courses = [],
   submissions,
   selectedSubmission,
   setSelectedSubmission,
@@ -35,11 +37,22 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   savingGrade,
   handleSaveGrade
 }) => {
+  const [showGabaritosModal, setShowGabaritosModal] = React.useState(false);
+
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
       {!selectedSubmission ? (
         <div className="data-card">
-          <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><AlertCircle color="var(--primary)" /> Submissões Pendentes</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}><AlertCircle color="var(--primary)" /> Submissões Pendentes</h3>
+            <button 
+              className="btn btn-outline" 
+              style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+              onClick={() => setShowGabaritosModal(true)}
+            >
+              📖 Ver Gabaritos (Banco de Questões)
+            </button>
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {submissions.filter(s => s.status === 'pendente').map(sub => (
               <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -169,12 +182,37 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                   </h4>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {q.type === 'discursive' && q.expectedAnswer && (
-                      <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderLeft: '4px solid var(--primary)', borderRadius: '12px', fontSize: '0.85rem' }}>
-                        <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.4rem', letterSpacing: '1px' }}>Gabarito Sugerido / Palavras-chave:</div>
-                        <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5' }}>{q.expectedAnswer}</p>
+                    {/* Exibição do Gabarito para o Professor */}
+                    <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderLeft: '4px solid var(--primary)', borderRadius: '12px', fontSize: '0.85rem' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        Gabarito Correto
                       </div>
-                    )}
+                      <div style={{ color: 'rgba(255,255,255,0.9)', lineHeight: '1.5' }}>
+                        {q.type === 'multiple_choice' || !q.type ? (
+                          q.options?.[q.correct] ? (
+                            <span><strong style={{color: 'var(--primary)'}}>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>
+                          ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
+                        ) : q.type === 'true_false' ? (
+                          q.isTrue !== undefined ? (
+                            <strong style={{color: q.isTrue ? 'var(--success)' : 'var(--error)'}}>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
+                          ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
+                        ) : q.type === 'matching' ? (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
+                            {q.matchingPairs?.map((pair: any, pIdx: number) => (
+                              <React.Fragment key={pIdx}>
+                                <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
+                                <div style={{ color: 'var(--primary)', opacity: 0.5 }}><ChevronRight size={14} /></div>
+                                <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', fontSize: '0.8rem', color: '#fff' }}>{pair.right}</div>
+                              </React.Fragment>
+                            ))}
+                          </div>
+                        ) : q.type === 'discursive' ? (
+                          q.expectedAnswer ? (
+                            <p style={{ margin: 0 }}>{q.expectedAnswer}</p>
+                          ) : <span style={{ opacity: 0.5 }}>Palavras-chave não definidas para esta questão. Avaliação manual necessária.</span>
+                        ) : null}
+                      </div>
+                    </div>
 
                     <div style={{ padding: '1.25rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '14px', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
                       <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px' }}>Resposta do Aluno:</div>
@@ -259,6 +297,99 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 onClick={handleSaveGrade}
               >
                 {savingGrade ? <Loader2 className="spinner" /> : 'Salvar Nota e Finalizar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL BANCO DE GABARITOS */}
+      {showGabaritosModal && (
+        <div className="modal-overlay" onClick={() => setShowGabaritosModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '800px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>📖 Banco de Gabaritos</h2>
+              <button className="btn-icon" onClick={() => setShowGabaritosModal(false)}>
+                <span style={{ fontSize: '1.5rem', lineHeight: 1 }}>&times;</span>
+              </button>
+            </div>
+            
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+              Consulte as respostas esperadas para as atividades e provas deste portal. Selecione um módulo abaixo:
+            </p>
+
+            {courses.length === 0 && <p style={{ color: 'var(--text-muted)' }}>Nenhum conteúdo carregado.</p>}
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              {courses.map(c => (
+                <div key={c.id}>
+                  <h3 style={{ fontSize: '1.2rem', color: 'var(--primary)', marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                    {c.nome}
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {c.livros?.map((l: any) => {
+                      const avaliacoes = (l.aulas || []).filter((a: any) => (a.tipo === 'atividade' || a.tipo === 'prova') && a.questionario?.length > 0);
+                      if (avaliacoes.length === 0) return null;
+                      
+                      return (
+                        <div key={l.id} style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                          <h4 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Módulo: {l.titulo}</h4>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {avaliacoes.map((av: any) => (
+                              <details key={av.id} style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px' }}>
+                                <summary style={{ cursor: 'pointer', fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  <CheckCircle size={16} color="var(--success)" /> {av.titulo} ({av.tipo === 'prova' ? 'Prova' : 'Atividade'})
+                                </summary>
+                                <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                  {av.questionario.map((q: any, idx: number) => (
+                                    <div key={idx} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', borderLeft: '3px solid var(--primary)' }}>
+                                      <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.75rem', color: 'rgba(255,255,255,0.9)' }}>
+                                        <span style={{ opacity: 0.5, marginRight: '0.5rem' }}>{idx + 1}.</span> {q.text}
+                                      </div>
+                                      
+                                      <div style={{ padding: '0.75rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '6px', fontSize: '0.85rem' }}>
+                                        <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                                          Gabarito:
+                                        </div>
+                                        {q.type === 'multiple_choice' || !q.type ? (
+                                          q.options?.[q.correct] ? (
+                                            <span><strong style={{color: 'var(--primary)'}}>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>
+                                          ) : <span style={{ opacity: 0.5 }}>Não definido</span>
+                                        ) : q.type === 'true_false' ? (
+                                          q.isTrue !== undefined ? (
+                                            <strong style={{color: q.isTrue ? 'var(--success)' : 'var(--error)'}}>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
+                                          ) : <span style={{ opacity: 0.5 }}>Não definido</span>
+                                        ) : q.type === 'matching' ? (
+                                          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, 1fr) auto minmax(100px, 1fr)', gap: '0.5rem', alignItems: 'center' }}>
+                                            {q.matchingPairs?.map((pair: any, pIdx: number) => (
+                                              <React.Fragment key={pIdx}>
+                                                <div style={{ textAlign: 'right', fontWeight: 600 }}>{pair.left}</div>
+                                                <div style={{ color: 'var(--primary)', opacity: 0.5 }}>&rarr;</div>
+                                                <div style={{ color: 'var(--success)' }}>{pair.right}</div>
+                                              </React.Fragment>
+                                            ))}
+                                          </div>
+                                        ) : q.type === 'discursive' ? (
+                                          <p style={{ margin: 0 }}>{q.expectedAnswer || <span style={{ opacity: 0.5 }}>Sem gabarito sugerido. Avaliação manual.</span>}</p>
+                                        ) : null}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </details>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1.5rem' }} onClick={() => setShowGabaritosModal(false)}>
+                Fechar
               </button>
             </div>
           </div>

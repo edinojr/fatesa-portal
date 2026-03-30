@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { PlayCircle, Award, ChevronLeft, ArrowRight, RefreshCcw, Loader2, BookOpen, FileText, Search, CheckCircle, CheckCircle2, X, AlertCircle, Lock, LogOut, ClipboardList, XCircle, Upload, Edit2, CreditCard, Copy, Info, ChevronRight } from 'lucide-react'
-import QuizEditorModal from '../components/admin/modals/QuizEditorModal'
+import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
 const Lesson = () => {
@@ -572,7 +572,7 @@ const Lesson = () => {
           editingQuiz={lesson} setEditingQuiz={() => setShowQuizEditor(false)}
           quizQuestions={questions} setQuizQuestions={setQuestions}
           actionLoading={actionLoading} setActionLoading={setActionLoading}
-          supabase={supabase} showToast={(m) => alert(m)}
+          supabase={supabase} showToast={(m: string) => alert(m)}
           fetchLessons={async () => fetchLessonData()} selectedBook={book}
         />
       )}

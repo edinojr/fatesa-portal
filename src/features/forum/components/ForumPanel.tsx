@@ -13,7 +13,7 @@ import {
   AlertCircle,
   Hash
 } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../../lib/supabase'
 
 interface ForumPanelProps {
   userProfile: any

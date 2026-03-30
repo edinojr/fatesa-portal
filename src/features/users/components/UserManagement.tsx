@@ -1,6 +1,6 @@
 import React from 'react'
 import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen } from 'lucide-react'
-import Badge from '../ui/Badge'
+import Badge from '../../../components/ui/Badge'
 
 interface UserManagementProps {
   users: any[]

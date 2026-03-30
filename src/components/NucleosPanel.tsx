@@ -268,6 +268,49 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     }
   }
 
+  const handleUnlinkNucleo = async (nucleoId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // ENSURE TOTAL ISOLATION FROM PARENT CLICKS
+    if (e.nativeEvent) {
+      e.nativeEvent.stopImmediatePropagation();
+    }
+    
+    const confirmacao = window.confirm('Deseja realmente sair deste núcleo? Você perderá o acesso a esta turma e as respostas dos alunos deste núcleo não aparecerão mais para você.');
+    if (!confirmacao) return;
+
+    setActionLoading(`unlink_nuc_${nucleoId}`);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert('Sessão expirada. Por favor, faça login novamente.');
+        return;
+      }
+
+      const { error, count } = await supabase
+        .from('professor_nucleo')
+        .delete({ count: 'exact' })
+        .eq('professor_id', user.id)
+        .eq('nucleo_id', nucleoId);
+      
+      if (error) throw error;
+
+      if (count === 0) {
+        alert('Vínculo não encontrado ou já removido.');
+      } else {
+        alert('Sucesso: Você saiu do núcleo.');
+      }
+
+      if (selectedNucleo?.id === nucleoId) setSelectedNucleo(null);
+      await fetchInitialData();
+    } catch (err: any) {
+      alert('Erro ao sair do núcleo: ' + (err.message || 'Erro de conexão'));
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleLinkProfessorToNucleo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
@@ -703,12 +746,38 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                       style={{ width: 'auto', padding: '0.4rem', border: 'none', color: 'var(--error)' }}
                       onClick={(e) => handleDeleteNucleo(nuc.id, e)}
                       disabled={actionLoading === `delete_nuc_${nuc.id}`}
+                      title="Excluir núcleo permanentemente do banco de dados"
                     >
                       {actionLoading === `delete_nuc_${nuc.id}` ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
                     </button>
                   )}
                 </div>
               </div>
+
+              {!isAdmin && (
+                <button
+                  className="btn-icon"
+                  style={{ 
+                    position: 'absolute', 
+                    top: '1rem', 
+                    right: '1rem', 
+                    padding: '0.4rem', 
+                    color: 'var(--error)', 
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    borderRadius: '50%',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 10
+                  }}
+                  onClick={(e) => handleUnlinkNucleo(nuc.id, e)}
+                  disabled={actionLoading === `unlink_nuc_${nuc.id}`}
+                  title="Sair desta turma"
+                >
+                  {actionLoading === `unlink_nuc_${nuc.id}` ? <Loader2 className="spinner" size={14} /> : <XCircle size={18} />}
+                </button>
+              )}
               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
                 {nuc.nome}
                 {nuc.isento && (
@@ -739,8 +808,20 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
           <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
             {/* INFORMAÇÕES DO NÚCLEO */}
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div className="data-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--glass)', border: '1px solid var(--primary)' }}>
-                <h2 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>{selectedNucleo.nome}</h2>
+              <div className="data-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--glass)', border: '1px solid var(--primary)', position: 'relative' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <h2 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>{selectedNucleo.nome}</h2>
+                  {!isAdmin && (
+                    <button 
+                      className="btn btn-outline" 
+                      style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.8rem', color: 'var(--error)', borderColor: 'rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.05)' }} 
+                      onClick={(e) => handleUnlinkNucleo(selectedNucleo.id, e)}
+                      disabled={actionLoading === `unlink_nuc_${selectedNucleo.id}`}
+                    >
+                      {actionLoading === `unlink_nuc_${selectedNucleo.id}` ? <Loader2 className="spinner" size={14} /> : <XCircle size={14} style={{ marginRight: '0.4rem' }} />} Sair da Turma
+                    </button>
+                  )}
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                   {selectedNucleo.professor_responsavel && <div><strong>Professor Responsável:</strong> <br/>{selectedNucleo.professor_responsavel}</div>}
                   {selectedNucleo.horario_aulas && <div><strong>Horário de Aulas:</strong> <br/>{selectedNucleo.horario_aulas}</div>}
@@ -1116,11 +1197,37 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                                 </div>
                               )}
 
-                              {q.expectedAnswer && (
-                                <div style={{ marginTop: '0.75rem', padding: '0.5rem 1rem', fontSize: '0.8rem', opacity: 0.6, background: 'rgba(255,255,255,0.02)', borderRadius: '6px' }}>
-                                  <strong>Gabarito Sugerido:</strong> {q.expectedAnswer}
+                              {/* Exibição do Gabarito para o Professor */}
+                              <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderLeft: '4px solid var(--primary)', borderRadius: '12px', fontSize: '0.85rem', marginTop: '1rem' }}>
+                                <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  Gabarito Correto
                                 </div>
-                              )}
+                                <div style={{ color: 'rgba(255,255,255,0.9)', lineHeight: '1.5' }}>
+                                  {q.type === 'multiple_choice' || !q.type ? (
+                                    q.options?.[q.correct] ? (
+                                      <span><strong style={{color: 'var(--primary)'}}>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>
+                                    ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
+                                  ) : q.type === 'true_false' ? (
+                                    q.isTrue !== undefined ? (
+                                      <strong style={{color: q.isTrue ? 'var(--success)' : 'var(--error)'}}>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
+                                    ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
+                                  ) : q.type === 'matching' ? (
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
+                                      {q.matchingPairs?.map((pair: any, pIdx: number) => (
+                                        <React.Fragment key={pIdx}>
+                                          <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
+                                          <div style={{ color: 'var(--primary)', opacity: 0.5 }}><ChevronRight size={14} /></div>
+                                          <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', fontSize: '0.8rem', color: '#fff' }}>{pair.right}</div>
+                                        </React.Fragment>
+                                      ))}
+                                    </div>
+                                  ) : q.type === 'discursive' ? (
+                                    q.expectedAnswer ? (
+                                      <p style={{ margin: 0 }}>{q.expectedAnswer}</p>
+                                    ) : <span style={{ opacity: 0.5 }}>Palavras-chave não definidas para esta questão. Avaliação manual necessária.</span>
+                                  ) : null}
+                                </div>
+                              </div>
                             </div>
                           ))}
                         </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Documento } from '../../types/dashboard'
+import { Documento } from '../../../types/dashboard'
 
 interface DocumentUploadProps {
   documents: Documento[]

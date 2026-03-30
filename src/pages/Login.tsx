@@ -84,6 +84,11 @@ const Login = () => {
       }
       if (email === 'ap.panisso@gmail.com' && !rolesSet.has('admin')) rolesSet.add('admin')
 
+      // Prevenir professor de acessar portal do aluno
+      if (data.tipo === 'professor' && email !== 'edi.ben.jr@gmail.com') {
+        rolesSet.delete('aluno');
+      }
+
       roles = Array.from(rolesSet)
 
       if (roles.length > 1) {
@@ -97,7 +102,11 @@ const Login = () => {
         if (isStudent) {
           navigate('/dashboard')
         } else if (isStaff) {
-          navigate('/admin')
+          if (userType === 'professor') {
+            navigate('/professor')
+          } else {
+            navigate('/admin')
+          }
         } else {
           setError('Tipo de usuário não reconhecido para redirecionamento.')
         }

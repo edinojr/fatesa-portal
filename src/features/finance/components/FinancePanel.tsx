@@ -1,10 +1,10 @@
 import React from 'react'
 import { CreditCard, CheckCircle2, AlertCircle, Upload, Copy, Info, ShieldAlert, QrCode, Loader2, ClipboardList } from 'lucide-react'
-import { Pagamento } from '../../types/dashboard'
+import { Pagamento } from '../../../types/dashboard'
 
 interface FinancePanelProps {
   isExempt: boolean
-  pixConfig: { key: string, qr: string }
+  pixConfig: { pixKey: string, pixQrUrl: string }
   payments: Pagamento[]
   uploading: string | null
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, type: 'pay', id?: string) => void
@@ -80,7 +80,7 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
             O pagamento deve ser realizado entre os dias <strong>01 e 12</strong> de cada mês para garantir o acesso.
           </p>
 
-          {pixConfig.key ? (
+          {pixConfig.pixKey ? (
             <div style={{ marginBottom: '1.5rem' }}>
               <div style={{ 
                 background: 'rgba(0,0,0,0.4)', 
@@ -93,11 +93,11 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
                 gap: '1rem',
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
               }}>
-                <code style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fff', letterSpacing: '1px', wordBreak: 'break-all' }}>{pixConfig.key}</code>
+                <code style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fff', letterSpacing: '1px', wordBreak: 'break-all' }}>{pixConfig.pixKey}</code>
                 <button 
                   className="btn-icon" 
                   onClick={() => {
-                    navigator.clipboard.writeText(pixConfig.key);
+                    navigator.clipboard.writeText(pixConfig.pixKey);
                     showToast('Chave PIX copiada!');
                   }}
                   style={{ background: 'var(--primary)', color: '#fff', padding: '0.75rem', borderRadius: '12px' }}
@@ -130,10 +130,10 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
           justifyContent: 'center',
           textAlign: 'center'
         }}>
-          {pixConfig.qr ? (
+          {pixConfig.pixQrUrl ? (
              <>
                <div style={{ background: '#fff', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 40px rgba(0,0,0,0.4)', marginBottom: '1.5rem' }}>
-                  <img src={pixConfig.qr} alt="QR Code PIX" style={{ width: '140px', height: '140px' }} />
+                  <img src={pixConfig.pixQrUrl} alt="QR Code PIX" style={{ width: '140px', height: '140px' }} />
                </div>
                <span style={{ fontSize: '0.8rem', fontWeight: 800, opacity: 0.5, letterSpacing: '1px' }}>QR CODE PARA PAGAMENTO</span>
              </>

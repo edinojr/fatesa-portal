@@ -1,6 +1,6 @@
 import React from 'react'
 import { Award, Trash2, X, Plus, CheckCircle2, XCircle, ChevronRight, Loader2 } from 'lucide-react'
-import { QuizQuestion, QuestionType } from '../../../types/admin'
+import { QuizQuestion, QuestionType } from '../../../../types/admin'
 
 interface QuizEditorModalProps {
   editingQuiz: any

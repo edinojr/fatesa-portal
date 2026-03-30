@@ -19,8 +19,8 @@ interface ContentManagementProps {
   fetchBooks: (courseId: string) => Promise<void>
   fetchLessons: (bookId: string) => Promise<void>
   fetchLessonItems: (lessonId: string) => Promise<void>
-  handleDelete: (table: 'cursos' | 'livros' | 'aulas', id: string) => Promise<void>
-  handleRemoveFile: (table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
+  handleDelete: (table: 'cursos' | 'livros' | 'aulas', id: string) => void
+  handleRemoveFile: (table: 'livros' | 'aulas', id: string, column: string) => void
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => Promise<void>
   handleReorder: (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas') => Promise<void>
   handleMoveTo: (id: string, targetId: string | null, items: any[], fetchFn: () => void, table: 'livros' | 'aulas', targetBlocoId?: number | null) => Promise<void>
