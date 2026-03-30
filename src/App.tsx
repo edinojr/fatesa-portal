@@ -6,8 +6,6 @@ import Landing from './pages/Landing'
 import Matricula from './pages/Matricula'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
-import ProfessorLogin from './pages/ProfessorLogin'
-import AdminLogin from './pages/AdminLogin'
 import ProtectedRoute from './components/ProtectedRoute'
 
 // Optimized Lazy Imports
@@ -33,8 +31,8 @@ function App() {
           <Route path="/book/:id" element={<SmartViewer />} />
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
-          <Route path="/professor/login" element={<ProfessorLogin />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/professor/login" element={<Login />} />
+          <Route path="/admin/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

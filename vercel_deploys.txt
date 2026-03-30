@@ -1,0 +1,46 @@
+Fetching deployments in edino-juniors-projects
+> Deployments [299ms]
+
+  Age     Project                                  Deployment                                                            Status      Environment     Duration     Username     
+  7m      edino-juniors-projects/fatesa-portal     https://fatesa-portal-aoxcj1hhv-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      21s          edinojr      
+  2h      edino-juniors-projects/fatesa-portal     https://fatesa-portal-c1a9e097y-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      22s          edinojr      
+  3h      edino-juniors-projects/fatesa-portal     https://fatesa-portal-it2jdvjxr-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      22s          edinojr      
+  17h     edino-juniors-projects/fatesa-portal     https://fatesa-portal-oiyuozi7o-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      22s          edinojr      
+https://fatesa-portal-aoxcj1hhv-edino-juniors-projects.vercel.app
+https://fatesa-portal-c1a9e097y-edino-juniors-projects.vercel.app
+https://fatesa-portal-it2jdvjxr-edino-juniors-projects.vercel.app
+https://fatesa-portal-oiyuozi7o-edino-juniors-projects.vercel.app
+https://fatesa-portal-apjcymypt-edino-juniors-projects.vercel.app
+https://fatesa-portal-en3v3evnt-edino-juniors-projects.vercel.app
+https://fatesa-portal-leygeitkq-edino-juniors-projects.vercel.app
+https://fatesa-portal-3bzf6kvnc-edino-juniors-projects.vercel.app
+https://fatesa-portal-dkqgtaym3-edino-juniors-projects.vercel.app
+https://fatesa-portal-l73x5mzut-edino-juniors-projects.vercel.app
+https://fatesa-portal-16m17b86t-edino-juniors-projects.vercel.app
+https://fatesa-portal-mg6ctekoj-edino-juniors-projects.vercel.app
+https://fatesa-portal-906k2l4by-edino-juniors-projects.vercel.app
+https://fatesa-portal-3sqbmkm80-edino-juniors-projects.vercel.app
+https://fatesa-portal-9s0knn32s-edino-juniors-projects.vercel.app
+https://fatesa-portal-c2fb12jyt-edino-juniors-projects.vercel.app
+https://fatesa-portal-6oz9x8rwm-edino-juniors-projects.vercel.app
+https://fatesa-portal-1fl5mrp3p-edino-juniors-projects.vercel.app
+https://fatesa-portal-ci55hgxpx-edino-juniors-projects.vercel.app
+https://fatesa-portal-f7hwngiiv-edino-juniors-projects.vercel.app
+  17h     edino-juniors-projects/fatesa-portal     https://fatesa-portal-apjcymypt-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      20s          edinojr      
+  17h     edino-juniors-projects/fatesa-portal     https://fatesa-portal-en3v3evnt-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      13s          edinojr      
+  2d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-leygeitkq-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      20s          edinojr      
+  2d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-3bzf6kvnc-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      18s          edinojr      
+  2d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-dkqgtaym3-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      19s          edinojr      
+  2d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-l73x5mzut-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      14s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-16m17b86t-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      15s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-mg6ctekoj-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      13s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-906k2l4by-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      21s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-3sqbmkm80-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      21s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-9s0knn32s-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      21s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-c2fb12jyt-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      22s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-6oz9x8rwm-edino-juniors-projects.vercel.app     ÔùÅ Ready     Production      20s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-1fl5mrp3p-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      19s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-ci55hgxpx-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      14s          edinojr      
+  3d      edino-juniors-projects/fatesa-portal     https://fatesa-portal-f7hwngiiv-edino-juniors-projects.vercel.app     ÔùÅ Error     Production      15s          edinojr      
+
+> To display the next page, run `vercel ls --next 1774620816833`

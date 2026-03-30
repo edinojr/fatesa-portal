@@ -61,13 +61,7 @@ const Landing = () => {
               {!sessionUser && showLoginMenu && (
                 <div className="login-dropdown">
                   <Link to="/login" className="login-dropdown-item" onClick={() => { setShowLoginMenu(false); setMobileMenuOpen(false); }}>
-                    <Users size={18} /> Portal do Aluno
-                  </Link>
-                  <Link to="/professor/login" className="login-dropdown-item" onClick={() => { setShowLoginMenu(false); setMobileMenuOpen(false); }}>
-                    <GraduationCap size={18} /> Portal do Professor
-                  </Link>
-                  <Link to="/admin/login" className="login-dropdown-item" onClick={() => { setShowLoginMenu(false); setMobileMenuOpen(false); }}>
-                    <ShieldAlert size={18} /> Portal Administrativo
+                    <LogIn size={18} /> Acesso ao Portal
                   </Link>
                 </div>
               )}
@@ -98,34 +92,14 @@ const Landing = () => {
 
       {/* Access Portal Section */}
       <section id="acesso" className="access-portal-section">
-        <div className="access-grid">
-          <Link to="/login" className="access-card">
-            <div className="access-icon student"><Users size={32} /></div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Link to="/login" className="access-card" style={{ maxWidth: '600px', width: '100%', justifyContent: 'center', gap: '2rem' }}>
+            <div className="access-icon student"><LogIn size={32} /></div>
             <div className="access-info">
-              <h3>Portal do Aluno</h3>
-              <p>Acesse suas aulas, livos e notas.</p>
+              <h3 style={{ fontSize: '1.5rem' }}>Acesso ao Portal</h3>
+              <p>Área exclusiva para Alunos, Professores e Administração.</p>
             </div>
-            <ChevronRight size={20} />
-          </Link>
-          
-          <Link to="/professor/login" className="access-card">
-
-            <div className="access-icon teacher"><GraduationCap size={32} /></div>
-            <div className="access-info">
-              <h3>Portal do Professor</h3>
-              <p>Gerencie seus alunos e conteúdos.</p>
-            </div>
-            <ChevronRight size={20} />
-          </Link>
-
-          <Link to="/professor/login" className="access-card">
-
-            <div className="access-icon admin"><Shield size={32} /></div>
-            <div className="access-info">
-              <h3>Administração</h3>
-              <p>Painel de controle do sistema.</p>
-            </div>
-            <ChevronRight size={20} />
+            <ChevronRight size={24} />
           </Link>
         </div>
       </section>

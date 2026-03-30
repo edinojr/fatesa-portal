@@ -8,9 +8,6 @@ const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [step, setStep] = useState(1) // 1: email + password, 2: role selection
-  const [role, setRole] = useState<'aluno' | 'professor' | 'admin' | 'suporte'>('aluno')
-  const [availableRoles, setAvailableRoles] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
@@ -72,44 +69,28 @@ const Login = () => {
         return
       }
 
-      // 3. Handle roles
-      let roles = data.caminhos_acesso || []
+      // 3. Handle roles & Automatic Redirection
+      const roles = data.caminhos_acesso || []
       const rolesSet = new Set(roles)
 
-      // Add specific roles based on email for testing/special access
+      // Special access logic
       if (email === 'edi.ben.jr@gmail.com') {
-        if (!rolesSet.has('suporte')) rolesSet.add('suporte')
-        if (!rolesSet.has('professor')) rolesSet.add('professor')
-        if (!rolesSet.has('aluno')) rolesSet.add('aluno')
+        ['suporte', 'professor', 'aluno'].forEach(r => rolesSet.add(r))
       }
-      if (email === 'ap.panisso@gmail.com' && !rolesSet.has('admin')) rolesSet.add('admin')
+      if (email === 'ap.panisso@gmail.com') rolesSet.add('admin')
 
-      // Prevenir professor de acessar portal do aluno
-      if (data.tipo === 'professor' && email !== 'edi.ben.jr@gmail.com') {
-        rolesSet.delete('aluno');
-      }
+      const finalRoles = Array.from(rolesSet)
+      const userType = (data.tipo || '') as string
+      
+      const isAdmin = finalRoles.some((r: any) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType)
+      const isProfessor = finalRoles.some((r: any) => r === 'professor') || userType === 'professor'
 
-      roles = Array.from(rolesSet)
-
-      if (roles.length > 1) {
-        setAvailableRoles(roles)
-        setStep(2)
+      if (isAdmin) {
+        navigate('/admin')
+      } else if (isProfessor) {
+        navigate('/professor')
       } else {
-        const userType = data.tipo as any
-        const isStudent = ['aluno', 'presencial', 'online'].includes(userType)
-        const isStaff = ['admin', 'professor', 'suporte'].includes(userType)
-
-        if (isStudent) {
-          navigate('/dashboard')
-        } else if (isStaff) {
-          if (userType === 'professor') {
-            navigate('/professor')
-          } else {
-            navigate('/admin')
-          }
-        } else {
-          setError('Tipo de usuário não reconhecido para redirecionamento.')
-        }
+        navigate('/dashboard')
       }
     } catch (err: any) {
       setError(err.message === 'Invalid login credentials' ? 'Credenciais incorretas para este e-mail.' : err.message)
@@ -130,102 +111,63 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      <div className={`auth-card ${step === 2 ? 'step-2-active' : ''}`} style={{ position: 'relative', overflow: 'hidden' }}>
+      <div className="auth-card" style={{ position: 'relative', overflow: 'hidden' }}>
         <div className="auth-header" style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
             <Logo size={220} />
           </div>
-          <h1>Portal do Aluno</h1>
+          <h1>Acesso ao Portal</h1>
           <p>Seja bem-vindo à FATESA</p>
         </div>
 
-        <div className="auth-form-container" style={{ position: 'relative', overflow: 'hidden' }}>
-            <div className="auth-form-wrapper" style={{ 
-              display: 'flex', 
-              width: '200%', 
-              transition: 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
-              transform: step === 1 ? 'translateX(0)' : 'translateX(-50%)'
-            }}>
-            {/* Step 1: Email + Senha */}
-            <div style={{ width: '50%', padding: '0 1rem' }}>
-              <form onSubmit={handleLogin}>
-                <div className="form-group">
-                  <label>E-mail Institucional</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="aluno@fatesa.edu"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <label style={{ margin: 0 }}>Senha de Acesso</label>
-                    <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>Esqueceu a senha?</Link>
-                  </div>
-                  <div className="password-field">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      className="form-control"
-                      placeholder="Sua senha"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button 
-                      type="button" 
-                      className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </div>
-
-                {error && <div className="error-msg" style={{ marginBottom: '1.5rem' }}>{error}</div>}
-
-                <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? <Loader2 className="spinner" /> : <><LogIn size={20} /> Entrar</>}
-                </button>
-              </form>
+        <div className="auth-form-container">
+          <form onSubmit={handleLogin}>
+            <div className="form-group">
+              <label>E-mail Institucional</label>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="usuario@fatesa.edu.br"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
-
-            {/* Step 2: Role Selection (conditional for multi-role users) */}
-            <div style={{ width: '50%', padding: '0 1rem' }}>
-              <h3 style={{ marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.1rem' }}>Como deseja acessar?</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {availableRoles.map((r: any) => (
-                  <button 
-                    key={r}
-                    type="button" 
-                    className={`btn ${role === r ? 'btn-primary' : 'btn-outline'}`}
-                    onClick={() => handleRoleSelection(r)}
-                    style={{ textTransform: 'capitalize' }}
-                  >
-                    {r === 'aluno' ? 'Portal do Aluno' : r === 'professor' ? 'Painel do Professor' : r === 'suporte' ? 'Painel de Suporte' : 'Administração do Site'}
-                  </button>
-                ))}
+            
+            <div className="form-group">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <label style={{ margin: 0 }}>Senha de Acesso</label>
+                <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>Esqueceu a senha?</Link>
               </div>
-              <button 
-                type="button" 
-                className="btn btn-link" 
-                onClick={async () => { await supabase.auth.signOut(); setStep(1); }}
-                style={{ marginTop: '1.5rem', color: 'var(--text-muted)' }}
-              >
-                Cancelar
-              </button>
+              <div className="password-field">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="form-control"
+                  placeholder="Sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button 
+                  type="button" 
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
-          </div>
+
+            {error && <div className="error-msg" style={{ marginBottom: '1.5rem' }}>{error}</div>}
+
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? <Loader2 className="spinner" /> : <><LogIn size={20} /> Entrar</>}
+            </button>
+          </form>
         </div>
 
-        <div className="auth-footer" style={{ marginTop: '2.5rem', opacity: step === 1 ? 1 : 0, transition: 'opacity 0.3s' }}>
+        <div className="auth-footer" style={{ marginTop: '2.5rem' }}>
           Não possui acesso ativado? <Link to="/signup">Ative aqui</Link>
-          <p style={{ marginTop: '1rem', fontSize: '0.8rem', opacity: 0.8 }}>
-            Área do <Link to="/professor/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>Professor</Link> ou <Link to="/admin/login" style={{ color: 'var(--error)', fontWeight: 600 }}>Administrador</Link>
-          </p>
         </div>
       </div>
     </div>
