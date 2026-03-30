@@ -431,7 +431,7 @@ const Landing = () => {
             <a href="#professores">Patrono</a>
             <a href="#cursos">Nossos Cursos</a>
             <Link to="/login">
-              {sessionUser ? "Meu Painel" : "Portal do Aluno"}
+              {sessionUser ? "Meu Painel" : "Acesso ao Portal"}
             </Link>
           </div>
 

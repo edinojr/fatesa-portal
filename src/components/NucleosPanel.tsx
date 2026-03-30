@@ -1072,7 +1072,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
             </div>
             
             <div style={{ marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-              <h4 style={{ marginBottom: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BookOpen size={18} /> Fichário (Portal do Aluno)</h4>
+              <h4 style={{ marginBottom: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BookOpen size={18} /> Fichário (Painel do Aluno)</h4>
               {courseSubmissions.length === 0 ? <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sem atividades do portal enviadas ainda.</p> : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {courseSubmissions.map(sub => (
@@ -1268,7 +1268,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                       <optgroup label="Atividades do Pólo (Manuais)">
                         {atividades.map(a => <option key={a.id} value={a.id}>{a.titulo}</option>)}
                       </optgroup>
-                      <optgroup label="Fichário (Portal do Aluno)">
+                      <optgroup label="Fichário (Painel do Aluno)">
                         {courseSubmissions.map(s => (
                           <option key={s.id} value={`course:${s.aulas?.id}`}>
                             {s.aulas?.titulo} (Enviado em {new Date(s.created_at).toLocaleDateString()})

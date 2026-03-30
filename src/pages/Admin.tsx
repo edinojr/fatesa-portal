@@ -212,7 +212,7 @@ const Admin = () => {
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      {r === 'aluno' ? 'Portal do Aluno' : r === 'professor' ? 'Painel do Professor' : 'Administração'}
+                      {r === 'aluno' ? 'Painel do Aluno' : r === 'professor' ? 'Painel do Professor' : 'Administração'}
                     </Link>
                   ))}
                 </div>

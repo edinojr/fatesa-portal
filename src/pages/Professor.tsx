@@ -115,7 +115,7 @@ const Professor = () => {
                         setIsMobileMenuOpen(false);
                       }}
                     >
-                      {r === 'aluno' ? 'Portal do Aluno' : r === 'admin' ? 'Painel Administrativo' : 'Professor'}
+                      {r === 'aluno' ? 'Painel do Aluno' : r === 'admin' ? 'Painel Administrativo' : 'Professor'}
                     </button>
                   ))}
                 </div>

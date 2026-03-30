@@ -33,7 +33,7 @@ const SmartViewer = () => {
   const [relatedActivities, setRelatedActivities] = useState<any[]>([]);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  // Otimização v1.4
+  // Otimização v1.6.0
   const [viewType, setViewType] = useState<'scroll' | 'single'>('single'); 
 
   // 2. Refs
