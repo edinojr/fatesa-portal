@@ -39,6 +39,7 @@ export interface Pagamento {
   data_vencimento: string
   comprovante_url?: string
   feedback?: string
+  descricao?: string
 }
 
 export interface UserProfile {
