@@ -312,6 +312,7 @@ const Lesson = () => {
     
     const now = new Date().toISOString();
     const { error } = await supabase.from('respostas_aulas').upsert({ 
+      id: existingSubmission?.id, // Garantir update se já existir registro (ex: reinício)
       aluno_id: userProfile.id, 
       aula_id: id, 
       start_time: now, 
@@ -319,7 +320,10 @@ const Lesson = () => {
       updated_at: now 
     });
     
-    if (error) return alert(error.message);
+    if (error) {
+      console.error('Error starting exam:', error);
+      return alert('Não foi possível iniciar a prova: ' + error.message);
+    }
     setTimeLeft(2400); 
     setIsExamStarted(true);
   }
@@ -342,6 +346,7 @@ const Lesson = () => {
       const pass = hasD ? false : finalS >= (lesson.min_grade || 7);
 
       const { error } = await supabase.from('respostas_aulas').upsert({
+        id: (lesson as any).linkedSubmission?.id || existingSubmission?.id,
         aluno_id: userProfile.id, aula_id: targetId, respostas: answers, 
         nota: finalS, nota_original: finalS, status: 'pendente',
         tentativas: (existingSubmission?.tentativas || 0) + 1, updated_at: new Date().toISOString()
@@ -357,7 +362,10 @@ const Lesson = () => {
       } else if (!lesson.is_bloco_final && pass) {
         await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true });
       }
-    } catch (err) { console.error(err); }
+    } catch (err: any) { 
+      console.error(err);
+      alert('Erro ao enviar avaliação: ' + (err.message || 'Tente novamente.'));
+    }
     finally { setSubmitting(false); }
   }
 

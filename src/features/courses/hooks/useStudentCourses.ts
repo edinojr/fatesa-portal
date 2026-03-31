@@ -37,8 +37,16 @@ export const useStudentCourses = (profile: any) => {
         const { data: payRecords } = await supabase.from('pagamentos').select('status').eq('user_id', profile.id).eq('status', 'pago');
         const paidCount = payRecords?.length || 0;
         
-        const { data: examSubmissions } = await supabase.from('respostas_aulas').select('aula_id, aulas(livro_id)').eq('aluno_id', profile.id).gte('tentativas', 1);
-        const submittedBookIds = new Set((examSubmissions || []).map(s => (s.aulas as any)?.livro_id).filter(id => !!id));
+        const { data: resExamSubmissions } = await supabase.from('respostas_aulas').select('aula_id, aulas(livro_id)').eq('aluno_id', profile.id).gte('tentativas', 1);
+        const examSubmissions = (resExamSubmissions || []) as any[];
+        const submittedBookIds = new Set(
+          examSubmissions
+            .map(s => {
+              const aula = Array.isArray(s.aulas) ? s.aulas[0] : s.aulas;
+              return aula?.livro_id;
+            })
+            .filter(id => !!id)
+        );
         
         let maxSubmittedOrdem = 0;
         if (courseBooks) {
