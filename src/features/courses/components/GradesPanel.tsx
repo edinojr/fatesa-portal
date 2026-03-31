@@ -143,12 +143,18 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                               </div>
                             ))}
 
-                            {/* Current Actionable Exam - Hide if waiting for correction or already approved */}
+                            {/* Current Actionable Exam - Hide if waiting for correction, approved, or exhausted */}
                             {isWaitingCorrection ? (
                               <div style={{ padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', borderRadius: '16px', border: '1px solid var(--warning)', textAlign: 'center' }}>
                                 <Clock size={32} color="var(--warning)" style={{marginBottom:'0.5rem', display:'inline-block'}}/>
                                 <h4 style={{margin:0, color:'var(--warning)'}}>Correção em Andamento</h4>
                                 <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem'}}>O professor está avaliando sua última tentativa. Aguarde o feedback para liberar a próxima versão, caso necessário.</p>
+                              </div>
+                            ) : submissions.length >= 2 ? (
+                              <div style={{ padding: '1.5rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '16px', border: '1px solid var(--error)', textAlign: 'center' }}>
+                                <XCircle size={32} color="var(--error)" style={{marginBottom:'0.5rem', display:'inline-block'}}/>
+                                <h4 style={{margin:0, color:'var(--error)'}}>Tentativas Esgotadas</h4>
+                                <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem'}}>Você não atingiu a nota mínima nas 2 avaliações permitidas. Por favor, entre em contato com a coordenação para solicitar uma nova chance.</p>
                               </div>
                             ) : (
                               <div style={{ padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '16px', border: '1px solid var(--primary)', position: 'relative' }}>
@@ -166,7 +172,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                                   style={{ width: '100%', fontWeight: 700 }}
                                   onClick={() => navigate(`/lesson/${activeExam.id}`)}
                                 >
-                                  {submissions.length > 0 ? 'Tentar Novamente' : 'Iniciar Avaliação Final'}
+                                  {submissions.length > 0 ? 'Tentar Novamente (Recuperação)' : 'Iniciar Avaliação Final'}
                                 </button>
                               </div>
                             )}
