@@ -25,11 +25,16 @@ export const useStudentCourses = (profile: any) => {
 
       // Cálculo de liberação (Pagamentos + Provas)
       let releasedCount = 1;
-      const { data: courseBooks } = await supabase
-        .from('livros')
-        .select('id, ordem')
-        .eq('curso_id', profile.curso_id || '')
-        .order('ordem', { ascending: true });
+      let courseBooks: any[] = [];
+      
+      if (profile.curso_id) {
+        const { data: cb } = await supabase
+          .from('livros')
+          .select('id, ordem')
+          .eq('curso_id', profile.curso_id)
+          .order('ordem', { ascending: true });
+        courseBooks = cb || [];
+      }
 
       if (exemptStatus) {
         releasedCount = 999;

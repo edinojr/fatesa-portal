@@ -340,15 +340,15 @@ const Lesson = () => {
           if (q.matchingPairs?.every(p => uA[p.left] === p.right)) score++;
         }
       });
-      const finalS = (score / questions.length) * 10;
+      const finalS = questions.length > 0 ? (score / questions.length) * 10 : 0;
       const hasD = questions.some(q => q.type === 'discursive');
       const targetId = (lesson as any).linkedActivity?.id || id;
-      const pass = hasD ? false : finalS >= (lesson.min_grade || 7);
+      const pass = hasD ? false : (finalS || 0) >= (lesson.min_grade || 7);
 
       const { error } = await supabase.from('respostas_aulas').upsert({
         id: (lesson as any).linkedSubmission?.id || existingSubmission?.id,
         aluno_id: userProfile.id, aula_id: targetId, respostas: answers, 
-        nota: finalS, nota_original: finalS, status: 'pendente',
+        nota: finalS || 0, nota_original: finalS || 0, status: 'pendente',
         tentativas: (existingSubmission?.tentativas || 0) + 1, updated_at: new Date().toISOString()
       });
       if (error) throw error;
