@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, ShieldCheck, CheckCircle2, XCircle, Clock, MapPin } from 'lucide-react'
+import { Users, Plus, Award, ChevronRight, Loader2, Save, Trash2, XCircle, Clock, MapPin } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import StudentRow from '../features/nucleos/components/StudentRow'
 import NucleoSolicitacoes from '../features/nucleos/components/NucleoSolicitacoes'
@@ -19,12 +19,14 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
   const [selectedNucleo, setSelectedNucleo] = useState<any | null>(null)
   const [students, setStudents] = useState<any[]>([])
   const [professors, setProfessors] = useState<any[]>([])
+  const [linkedProfessors, setLinkedProfessors] = useState<any[]>([])
   
   const [showAddModal, setShowAddModal] = useState(false)
   const [showStudentModal, setShowStudentModal] = useState<any | null>(null)
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [cepLoading, setCepLoading] = useState(false)
+  const [editingNucleo, setEditingNucleo] = useState<any | null>(null)
 
   // Schedule builder state
   const [schedules, setSchedules] = useState([{ day: '', start: '', end: '' }])
@@ -124,10 +126,20 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
 
     // Fetch existing releases
     const resRel = await supabase.from('liberacoes_nucleo').select('*').eq('nucleo_id', nuc.id).eq('liberado', true)
+    const mapped: Record<string, boolean> = {}
     if (resRel.data) {
-      const mapped: Record<string, boolean> = {}
       resRel.data.forEach((r: any) => mapped[`${r.item_type}:${r.item_id}`] = true)
-      setReleasedItems(mapped)
+    }
+    setReleasedItems(mapped)
+
+    // Fetch linked professors
+    const { data: lpData } = await supabase
+      .from('professor_nucleo')
+      .select('professor_id, users(*)')
+      .eq('nucleo_id', nuc.id);
+    
+    if (lpData) {
+      setLinkedProfessors(lpData.map((d: any) => d.users).filter(Boolean));
     }
     
     setLoading(false)
@@ -315,12 +327,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       setActionLoading(null);
     }
   };
-
   const handleLinkProfessorToNucleo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const professorId = formData.get('professor_id') as string
-    const nucleoId = formData.get('nucleo_id') as string
+    const nucleoId = formData.get('nucleo_id') as string || selectedNucleo?.id
 
     if (!professorId || !nucleoId) return
 
@@ -337,6 +348,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       alert('Professor vinculado ao núcleo com sucesso!')
       setShowAddModal(false)
       fetchInitialData()
+      if (selectedNucleo?.id === nucleoId) {
+        selectNucleo(selectedNucleo);
+      }
     } catch (err: any) {
       alert('Erro ao vincular: ' + err.message)
     } finally {
@@ -344,22 +358,44 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     }
   }
 
+  const handleRemoveProfessor = async (professorId: string) => {
+    if (!selectedNucleo) return;
+    if (!confirm('Deseja realmente remover o vínculo deste professor com este núcleo?')) return;
+
+    setActionLoading(`remove_prof_${professorId}`);
+    try {
+      const { error } = await supabase
+        .from('professor_nucleo')
+        .delete()
+        .eq('professor_id', professorId)
+        .eq('nucleo_id', selectedNucleo.id);
+      
+      if (error) throw error;
+      alert('Vínculo removido com sucesso.');
+      selectNucleo(selectedNucleo); // Refresh
+    } catch (err: any) {
+      alert('Erro ao remover vínculo: ' + err.message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  const parseScheduleString = (str: string) => {
+    if (!str) return [{ day: '', start: '', end: '' }];
+    const parts = str.split(', ').map(p => {
+      const match = p.match(/(.+) \((.+) - (.+)\)/);
+      return match ? { day: match[1], start: match[2], end: match[3] } : null;
+    }).filter(Boolean);
+    return parts.length > 0 ? parts : [{ day: '', start: '', end: '' }];
+  }
+
   const handleCreateNucleo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setActionLoading('create_nuc')
+    const isEditing = !!editingNucleo
+    setActionLoading(isEditing ? 'update_nuc' : 'create_nuc')
     const formData = new FormData(e.currentTarget)
     
-    const nucleoData = {
-      nome: formData.get('nome') as string,
-      cep: formData.get('cep') as string,
-      logradouro: formData.get('logradouro') as string,
-      numero: formData.get('numero') as string,
-      bairro: formData.get('bairro') as string,
-      cidade: formData.get('cidade') as string,
-      estado: formData.get('estado') as string,
-      professor_responsavel: formData.get('professor_responsavel') as string,
-      horario_aulas: formData.get('horario_aulas') as string,
-    }
+    const nucleoData = Object.fromEntries(formData.entries()) as any;
     
     const horarioStr = schedules
       .filter((s: any) => s.day && s.start && s.end)
@@ -368,28 +404,40 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
 
     const finalNucleoData = {
       ...nucleoData,
-      horario_aulas: horarioStr || nucleoData.horario_aulas
+      horario_aulas: horarioStr || (formData.get('horario_aulas') as string)
     }
     
     try {
-      const { data, error } = await supabase.from('nucleos').insert(finalNucleoData).select().single()
-      if (error) throw error
-      
-      // Automatically link teacher to it (even if Admin creates it, link the creator)
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        // Ignora erros caso o admin já tenha vínculo, usa upsert ou ignora falha via try/catch
-        await supabase.from('professor_nucleo').upsert(
-          { professor_id: session.user.id, nucleo_id: data.id },
-          { onConflict: 'professor_id, nucleo_id' }
-        )
+      if (isEditing) {
+        const { error } = await supabase
+          .from('nucleos')
+          .update(finalNucleoData)
+          .eq('id', editingNucleo.id)
+        if (error) throw error
+        alert('Núcleo atualizado com sucesso!')
+      } else {
+        const { data, error } = await supabase.from('nucleos').insert(finalNucleoData).select().single()
+        if (error) throw error
+        
+        // Automatically link teacher to it (even if Admin creates it, link the creator)
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session) {
+          await supabase.from('professor_nucleo').upsert(
+            { professor_id: session.user.id, nucleo_id: data.id },
+            { onConflict: 'professor_id, nucleo_id' }
+          )
+        }
+        alert('Núcleo criado com sucesso!')
       }
       
-      alert('Núcleo criado com sucesso!')
       setShowAddModal(false)
+      setEditingNucleo(null)
       fetchInitialData()
+      if (selectedNucleo?.id === editingNucleo?.id) {
+        setSelectedNucleo({ ...selectedNucleo, ...finalNucleoData })
+      }
     } catch(err: any) {
-      alert('Erro ao criar núcleo: ' + err.message)
+      alert('Erro: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -744,10 +792,24 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                       style={{ width: 'auto', padding: '0.4rem 0.7rem', border: 'none', color: nuc.isento ? 'var(--success)' : 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700 }}
                       onClick={(e) => handleToggleNucleoIsento(nuc, e)}
                       disabled={actionLoading === `isento_nuc_${nuc.id}`}
-                      title={nuc.isento ? 'Clique para remover isenção' : 'Clique para isentar este núcleo'}
+                      title={nuc.isento ? 'Remover isenção' : 'Isentar núcleo'}
                     >
-                      {actionLoading === `isento_nuc_${nuc.id}` ? <Loader2 className="spinner" size={14} /> : <ShieldCheck size={14} />}
-                      {nuc.isento ? ' Isento' : ' Isentar'}
+                      {actionLoading === `isento_nuc_${nuc.id}` ? <Loader2 className="spinner" size={14} /> : (nuc.isento ? 'Isento' : 'Isentar')}
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      className="btn btn-outline"
+                      style={{ width: 'auto', padding: '0.4rem', border: 'none', color: 'var(--primary)' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSchedules(parseScheduleString(nuc.horario_aulas));
+                        setEditingNucleo(nuc);
+                        setShowAddModal(true);
+                      }}
+                      title="Editar núcleo"
+                    >
+                      <Plus size={16} />
                     </button>
                   )}
                   {isAdmin && (
@@ -756,7 +818,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
                       style={{ width: 'auto', padding: '0.4rem', border: 'none', color: 'var(--error)' }}
                       onClick={(e) => handleDeleteNucleo(nuc.id, e)}
                       disabled={actionLoading === `delete_nuc_${nuc.id}`}
-                      title="Excluir núcleo permanentemente do banco de dados"
+                      title="Excluir núcleo"
                     >
                       {actionLoading === `delete_nuc_${nuc.id}` ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
                     </button>
@@ -821,22 +883,80 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
               <div className="data-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--glass)', border: '1px solid var(--primary)', position: 'relative' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <h2 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>{selectedNucleo.nome}</h2>
-                  {!isAdmin && (
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
                     <button 
-                      className="btn btn-outline" 
-                      style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.8rem', color: 'var(--error)', borderColor: 'rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.05)' }} 
-                      onClick={(e) => handleUnlinkNucleo(selectedNucleo.id, e)}
-                      disabled={actionLoading === `unlink_nuc_${selectedNucleo.id}`}
+                      className="btn btn-primary" 
+                      style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
+                      onClick={() => {
+                        setSchedules(parseScheduleString(selectedNucleo.horario_aulas));
+                        setEditingNucleo(selectedNucleo);
+                        setShowAddModal(true);
+                      }}
                     >
-                      {actionLoading === `unlink_nuc_${selectedNucleo.id}` ? <Loader2 className="spinner" size={14} /> : <XCircle size={14} style={{ marginRight: '0.4rem' }} />} Sair da Turma
+                      <Save size={14} style={{ marginRight: '0.4rem' }} /> Editar Dados
                     </button>
-                  )}
+                    {!isAdmin && (
+                      <button 
+                        className="btn btn-outline" 
+                        style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.8rem', color: 'var(--error)', borderColor: 'rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.05)' }} 
+                        onClick={(e) => handleUnlinkNucleo(selectedNucleo.id, e)}
+                        disabled={actionLoading === `unlink_nuc_${selectedNucleo.id}`}
+                      >
+                        {actionLoading === `unlink_nuc_${selectedNucleo.id}` ? <Loader2 className="spinner" size={14} /> : <XCircle size={14} style={{ marginRight: '0.4rem' }} />} Sair da Turma
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                   {selectedNucleo.professor_responsavel && <div><strong>Professor Responsável:</strong> <br/>{selectedNucleo.professor_responsavel}</div>}
                   {selectedNucleo.horario_aulas && <div><strong>Horário de Aulas:</strong> <br/>{selectedNucleo.horario_aulas}</div>}
                   {selectedNucleo.logradouro && <div><strong>Endereço:</strong> <br/>{selectedNucleo.logradouro}, {selectedNucleo.numero} - {selectedNucleo.bairro}<br/>{selectedNucleo.cidade} / {selectedNucleo.estado} - {selectedNucleo.cep}</div>}
                 </div>
+              </div>
+
+              {/* CORPO DOCENTE (PROFESSORES VINCULADOS) */}
+              <div className="data-card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0 }}><Award size={20} /> Corpo Docente</h3>
+                  {isAdmin && (
+                    <button 
+                      className="btn btn-outline" 
+                      style={{ width: 'auto', padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
+                      onClick={() => {
+                        setShowAddModal(true);
+                        setShowCreateForm(false);
+                      }}
+                    >
+                      <Plus size={14} /> Vincular Professor
+                    </button>
+                  )}
+                </div>
+                
+                {linkedProfessors.length === 0 ? (
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Nenhum professor vinculado além do responsável.</p>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                    {linkedProfessors.map((prof) => (
+                      <div key={prof.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{prof.nome}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{prof.email}</div>
+                        </div>
+                        {isAdmin && (
+                          <button 
+                            className="btn-icon" 
+                            style={{ color: 'var(--error)', padding: '0.3rem' }}
+                            onClick={() => handleRemoveProfessor(prof.id)}
+                            disabled={actionLoading === `remove_prof_${prof.id}`}
+                            title="Remover vínculo"
+                          >
+                            {actionLoading === `remove_prof_${prof.id}` ? <Loader2 className="spinner" size={14} /> : <Trash2 size={14} />}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -908,7 +1028,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       {/* MODAL ADD NUCLEO */}
       {showAddModal && (
         <AddNucleoModal 
-          onClose={() => setShowAddModal(false)}
+          onClose={() => {
+            setShowAddModal(false);
+            setEditingNucleo(null);
+            setSchedules([{ day: '', start: '', end: '' }]);
+          }}
           isAdmin={isAdmin}
           showCreateForm={showCreateForm}
           setShowCreateForm={setShowCreateForm}
@@ -924,6 +1048,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
           updateSchedule={updateSchedule}
           cepLoading={cepLoading}
           handleCepBlur={handleCepBlur}
+          initialData={editingNucleo}
         />
       )}
       {/* MODAL EDIT QUESTIONNAIRE */}

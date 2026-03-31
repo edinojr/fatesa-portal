@@ -20,6 +20,8 @@ interface AddNucleoModalProps {
   // CEP logic
   cepLoading: boolean;
   handleCepBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  // Edit mode
+  initialData?: any;
 }
 
 const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
@@ -38,17 +40,21 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
   removeSchedule,
   updateSchedule,
   cepLoading,
-  handleCepBlur
+  handleCepBlur,
+  initialData
 }) => {
+  const isEditing = !!initialData;
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', width: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ margin: 0 }}>{isAdmin ? 'Gerenciar Núcleos' : 'Adicionar Núcleo'}</h2>
+          <h2 style={{ margin: 0 }}>
+            {isEditing ? `Editar Núcleo: ${initialData.nome}` : (isAdmin ? 'Gerenciar Núcleos' : 'Adicionar Núcleo')}
+          </h2>
           <button className="btn-icon" onClick={onClose}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
         </div>
         
-        {isAdmin && (
+        {isAdmin && !isEditing && (
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
             <button 
               className={`btn ${showCreateForm ? 'btn-primary' : 'btn-outline'}`} 
@@ -67,7 +73,7 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
           </div>
         )}
 
-        {isAdmin && !showCreateForm ? (
+        {(isAdmin || isEditing) && !showCreateForm && !isEditing ? (
           <form onSubmit={handleLinkProfessorToNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Selecione um professor e um núcleo para criar o vínculo.</p>
             <div className="form-group">
@@ -94,7 +100,7 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
           </form>
         ) : (
           <>
-            {!isAdmin && (
+            {!isAdmin && !isEditing && (
               <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem' }}>
                 <h4 style={{ marginBottom: '1rem', color: 'var(--primary)' }}>Vincule-se a um núcleo existente</h4>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -119,21 +125,23 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
               </div>
             )}
 
-            <h4 style={{ marginBottom: '1.25rem', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Plus size={20} /> {isAdmin ? 'Ou crie um NOVO Núcleo' : 'Ou cadastre um NOVO Núcleo/Pólo'}
-            </h4>
+            {!isEditing && (
+              <h4 style={{ marginBottom: '1.25rem', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Plus size={20} /> {isAdmin ? 'Ou crie um NOVO Núcleo' : 'Ou cadastre um NOVO Núcleo/Pólo'}
+              </h4>
+            )}
             <form onSubmit={handleCreateNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               
               {/* LINHA 1: NOME DO NÚCLEO */}
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Nome do Núcleo *</label>
-                <input type="text" name="nome" placeholder="Ex: Pólo Presencial - Vila Luzita" className="form-control" style={{ padding: '0.8rem' }} required />
+                <input type="text" name="nome" defaultValue={initialData?.nome} placeholder="Ex: Pólo Presencial - Vila Luzita" className="form-control" style={{ padding: '0.8rem' }} required />
               </div>
 
               {/* LINHA 2: PROFESSOR RESPONSÁVEL (OPCIONAL) */}
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Professor Responsável (Opcional)</label>
-                <input type="text" name="professor_responsavel" placeholder="Ex: Pr. João" className="form-control" style={{ padding: '0.8rem' }} />
+                <input type="text" name="professor_responsavel" defaultValue={initialData?.professor_responsavel} placeholder="Ex: Pr. João" className="form-control" style={{ padding: '0.8rem' }} />
               </div>
 
               {/* LINHA 3: CRONOGRAMA DE AULAS */}
@@ -208,6 +216,7 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
                     <input 
                       type="text" 
                       name="cep" 
+                      defaultValue={initialData?.cep}
                       placeholder="00000-000" 
                       className="form-control" 
                       style={{ maxWidth: '150px', padding: '0.7rem' }}
@@ -216,34 +225,34 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
                       required 
                     />
                     {cepLoading && <Loader2 className="spinner" size={20} color="var(--primary)" />}
-                    <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>← Preencha para carregar</span>
+                    {!isEditing && <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>← Preencha para carregar</span>}
                   </div>
                 </div>
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: '0.85rem', opacity: 70 }}>Logradouro / Avenida / Rua</label>
-                  <input type="text" name="logradouro" id="form_logradouro" placeholder="Avenida Brasil..." className="form-control" required style={{ padding: '0.7rem' }} />
+                  <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Logradouro / Avenida / Rua</label>
+                  <input type="text" name="logradouro" id="form_logradouro" defaultValue={initialData?.logradouro} placeholder="Avenida Brasil..." className="form-control" required style={{ padding: '0.7rem' }} />
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem' }} className="mobile-wrap-flex">
                   <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
                     <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Número *</label>
-                    <input type="text" name="numero" id="form_numero" placeholder="Ex: 500" className="form-control" required style={{ padding: '0.7rem' }} />
+                    <input type="text" name="numero" id="form_numero" defaultValue={initialData?.numero} placeholder="Ex: 500" className="form-control" required style={{ padding: '0.7rem' }} />
                   </div>
                   <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
                     <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Bairro</label>
-                    <input type="text" name="bairro" id="form_bairro" placeholder="Nome do Bairro" className="form-control" required style={{ padding: '0.7rem' }} />
+                    <input type="text" name="bairro" id="form_bairro" defaultValue={initialData?.bairro} placeholder="Nome do Bairro" className="form-control" required style={{ padding: '0.7rem' }} />
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem' }} className="mobile-wrap-flex">
                   <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
                     <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Cidade</label>
-                    <input type="text" name="cidade" id="form_cidade" className="form-control" required style={{ padding: '0.7rem' }} />
+                    <input type="text" name="cidade" id="form_cidade" defaultValue={initialData?.cidade} className="form-control" required style={{ padding: '0.7rem' }} />
                   </div>
                   <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
                     <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>UF / Estado</label>
-                    <input type="text" name="estado" id="form_estado" className="form-control" maxLength={2} required style={{ padding: '0.7rem', textAlign: 'center' }} />
+                    <input type="text" name="estado" id="form_estado" defaultValue={initialData?.estado} className="form-control" maxLength={2} required style={{ padding: '0.7rem', textAlign: 'center' }} />
                   </div>
                 </div>
               </div>
@@ -251,7 +260,7 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
               <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-outline" style={{ width: 'auto', padding: '0.6rem 1.25rem' }} onClick={onClose}>Cancelar</button>
                 <button type="submit" className="btn btn-primary" style={{ width: 'auto', padding: '0.6rem 2rem', fontSize: '0.95rem', fontWeight: 700 }} disabled={actionLoading === 'create_nuc'}>
-                  {actionLoading === 'create_nuc' ? <Loader2 className="spinner" size={18} /> : '(salvar)'}
+                  {actionLoading === 'create_nuc' ? <Loader2 className="spinner" size={18} /> : (isEditing ? 'Atualizar Dados' : 'Criar Núcleo')}
                 </button>
               </div>
             </form>
