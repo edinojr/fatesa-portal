@@ -5,11 +5,8 @@ import './index.css'
 
 import { pdfjs } from 'react-pdf'
 
-// Pre-configure PDF.js worker using Vite's URL pattern (compatible with Vercel/Production)
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString();
+// Configurando o worker do PDF.js (v4.4.168+ requer .mjs para funcionar corretamente em todos os ambientes)
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.mjs';
 
 
 

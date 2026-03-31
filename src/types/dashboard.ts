@@ -1,8 +1,14 @@
 export interface Lesson {
   id: string
   titulo: string
-  tipo: 'gravada' | 'ao_vivo' | 'atividade' | 'prova'
+  tipo: 'gravada' | 'ao_vivo' | 'atividade' | 'prova' | 'licao' | 'video' | 'aula'
   concluida?: boolean
+  arquivo_url?: string
+  pdf_url?: string
+  lockedByProfessor?: boolean
+  parent_aula_id?: string
+  parent_id?: string
+  ordem?: number
 }
 
 export interface Book {

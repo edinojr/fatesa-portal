@@ -546,8 +546,10 @@ const Lesson = () => {
                                   q.type === 'true_false' ? studentAns === q.isTrue :
                                   q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
                 
-                // O gabarito agora só é mostrado no modo de revisão (GradesPanel) ou se for prova já corrigida
-                const showGabarito = reviewMode || ((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && existingSubmission?.status === 'corrigida');
+                // O gabarito agora é mostrado no modo de revisão, se for ATIVIDADE já enviada, ou PROVA corrigida
+                const showGabarito = reviewMode || 
+                                     (lesson?.tipo === 'atividade' && (submitted || !!existingSubmission)) ||
+                                     ((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && existingSubmission?.status === 'corrigida');
 
                 return (
                   <div key={qKey} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: showGabarito && submitted ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)' }}>

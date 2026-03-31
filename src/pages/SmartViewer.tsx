@@ -15,6 +15,9 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
+// Configurando o worker do PDF.js (v4.4.168+ requer .mjs para garantir que lições carreguem corretamente)
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.mjs';
+
 const SmartViewer = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -118,7 +121,7 @@ const SmartViewer = () => {
       const isAula = searchParams.get('type') === 'aula';
       const table = isAula ? 'aulas' : 'livros';
       
-      const { data: res, error } = await supabase.from(table).select('id, titulo, pdf_url, arquivo_url, url, epub_url, livro_id, ordem').eq('id', id).single();
+      const { data: res, error } = await supabase.from(table).select('*').eq('id', id).single();
       if (error) throw error;
       
       setData(res);

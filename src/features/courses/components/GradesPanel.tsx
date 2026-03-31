@@ -131,13 +131,13 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                               <div key={sub.id} style={{ padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: sub.status === 'pendente' ? 1 : 0.6 }}>
                                 <div style={{ fontSize: '0.8rem' }}>Tentativa {idx + 1} ({sub.aulas?.titulo})</div>
                                 <div style={{ fontWeight: 700, color: sub.status === 'pendente' ? 'var(--warning)' : (sub.nota && sub.nota >= 7 ? 'var(--success)' : 'var(--error)'), display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                  {sub.status === 'pendente' ? 'Em Correção' : sub.nota?.toFixed(1)}
+                                  {sub.status === 'pendente' ? 'Em Correção' : (sub.aulas?.tipo === 'prova' ? sub.nota?.toFixed(1) : 'Concluído')}
                                   <button 
                                     className="btn btn-outline" 
                                     style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}
                                     onClick={(e) => { e.stopPropagation(); setReviewSub(sub); }}
                                   >
-                                    Ver Correção
+                                    {sub.aulas?.tipo === 'prova' ? 'Ver Correção' : 'Ver Gabarito'}
                                   </button>
                                 </div>
                               </div>
@@ -150,11 +150,11 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                                 <h4 style={{margin:0, color:'var(--warning)'}}>Correção em Andamento</h4>
                                 <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem'}}>O professor está avaliando sua última tentativa. Aguarde o feedback para liberar a próxima versão, caso necessário.</p>
                               </div>
-                            ) : submissions.length >= 2 ? (
+                            ) : submissions.length >= 3 ? (
                               <div style={{ padding: '1.5rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '16px', border: '1px solid var(--error)', textAlign: 'center' }}>
                                 <XCircle size={32} color="var(--error)" style={{marginBottom:'0.5rem', display:'inline-block'}}/>
                                 <h4 style={{margin:0, color:'var(--error)'}}>Tentativas Esgotadas</h4>
-                                <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem'}}>Você não atingiu a nota mínima nas 2 avaliações permitidas. Por favor, entre em contato com a coordenação para solicitar uma nova chance.</p>
+                                <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem'}}>Você não atingiu a nota mínima nas 3 avaliações disponíveis (V1, Recuperação 1 e Recuperação 2). Este módulo ficará pendente para você refazer ao final do seu curso.</p>
                               </div>
                             ) : (
                               <div style={{ padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '16px', border: '1px solid var(--primary)', position: 'relative' }}>
@@ -348,3 +348,4 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
 };
 
 export default GradesPanel
+
