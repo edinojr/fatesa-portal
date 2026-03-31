@@ -54,11 +54,12 @@ const CourseList: React.FC<CourseListProps> = ({
 
         const getBookStats = (l: any) => {
           const allAulas = l.aulas || [];
-          const totalItems = allAulas.length;
+          const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'prova');
+          const totalItems = itemsForProgress.length;
           if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 0, isFinished: false, isApproved: true };
           
-          const completedItems = allAulas.filter((a: any) => 
-            (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
+          const completedItems = itemsForProgress.filter((a: any) => 
+            a.tipo === 'atividade' ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
           ).length;
           
           const bookGrades = (atividades || []).filter((at: any) => 
@@ -75,7 +76,7 @@ const CourseList: React.FC<CourseListProps> = ({
           if (finalExam) {
             const examResult = bookGrades.find(g => g.aula_id === finalExam.id);
             const minGrade = finalExam.min_grade || 7.0;
-            isApproved = examResult ? (examResult.nota >= minGrade) : false;
+            isApproved = examResult ? (examResult.status === 'corrigida' && examResult.nota >= minGrade) : false;
           }
           
           return {
@@ -159,9 +160,18 @@ const CourseList: React.FC<CourseListProps> = ({
                             // If a video has a parent_aula_id, we'll check if we should still show it at top level.
                             // User: "videos somente no bloco e não nas lições" -> if parent is a 'licao', it should NOT be in that licao.
                             
+                            const isCompleted = (aula: any) => (aula.tipo === 'atividade' || aula.tipo === 'prova') 
+                              ? submittedIds.includes(aula.id) 
+                              : watchedIds.includes(aula.id);
+
                             const topLevelAulas = allAulas
                               .filter((a: any) => !a.parent_aula_id)
-                              .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+                              .sort((a: any, b: any) => {
+                                const compA = isCompleted(a);
+                                const compB = isCompleted(b);
+                                if (compA !== compB) return compA ? 1 : -1;
+                                return (a.ordem || 0) - (b.ordem || 0);
+                              });
 
                             return (
                               <>
@@ -173,7 +183,12 @@ const CourseList: React.FC<CourseListProps> = ({
                                   if (aula.tipo === 'licao') {
                                     const children = allAulas
                                       .filter((a: any) => a.parent_aula_id === aula.id)
-                                      .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+                                      .sort((a: any, b: any) => {
+                                        const compA = (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id);
+                                        const compB = (b.tipo === 'atividade' || b.tipo === 'prova') ? submittedIds.includes(b.id) : watchedIds.includes(b.id);
+                                        if (compA !== compB) return compA ? 1 : -1;
+                                        return (a.ordem || 0) - (b.ordem || 0)
+                                      });
                                     
                                     const isAllCompleted = children.length > 0 && children.every((c: any) => 
                                       (c.tipo === 'atividade' || c.tipo === 'prova') ? submittedIds.includes(c.id) : watchedIds.includes(c.id)

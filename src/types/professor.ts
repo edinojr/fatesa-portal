@@ -12,6 +12,8 @@ export interface Submission {
     id: string
     titulo: string
     questionario: any[]
+    tipo?: string
+    is_bloco_final?: boolean
   }
   users: {
     id: string

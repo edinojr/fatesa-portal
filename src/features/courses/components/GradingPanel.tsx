@@ -15,6 +15,8 @@ interface GradingPanelProps {
   avaliacaoComentario: string
   setAvaliacaoComentario: (val: string) => void
   questionEvaluations: Record<string, boolean>
+  questionComments: Record<string, string>
+  setQuestionComments: React.Dispatch<React.SetStateAction<Record<string, string>>>
   toggleEvaluation: (id: string, correct: boolean) => void
   savingGrade: boolean
   handleSaveGrade: () => void
@@ -33,6 +35,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   avaliacaoComentario,
   setAvaliacaoComentario,
   questionEvaluations,
+  questionComments,
+  setQuestionComments,
   toggleEvaluation,
   savingGrade,
   handleSaveGrade
@@ -138,7 +142,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '3rem' }}>
             {Array.isArray(selectedSubmission.aulas?.questionario) && selectedSubmission.aulas.questionario.map((q: any, idx: number) => {
-              const studentAnswer = selectedSubmission.respostas?.[q.id];
+              const studentAnswer = selectedSubmission.respostas?.[q.id || idx];
               let displayAnswer: React.ReactNode = <em style={{ color: 'var(--text-muted)' }}>Sem resposta</em>;
 
               if (studentAnswer !== undefined && studentAnswer !== null && studentAnswer !== '') {
@@ -179,7 +183,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               }
 
               return (
-                <div key={q.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '20px' }}>
+                <div key={q.id || idx} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '20px' }}>
                   <h4 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: 700 }}>
                     <span style={{ opacity: 0.3, marginRight: '0.5rem' }}>{idx + 1}.</span> {q.text}
                   </h4>
@@ -220,38 +224,54 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                     <div style={{ padding: '1.25rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '14px', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
                       <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px' }}>Resposta do Aluno:</div>
                       <div style={{ fontSize: '1.05rem', color: '#fff' }}>{displayAnswer}</div>
-                      {q.type === 'discursive' && (
-                        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
-                          <button 
-                            className="btn" 
-                            style={{ 
-                              width: 'auto', 
-                              padding: '0.4rem 1rem', 
-                              fontSize: '0.75rem', 
-                              background: questionEvaluations[q.id] === true ? 'var(--success)' : 'rgba(255,255,255,0.05)',
-                              color: '#fff',
-                              border: 'none',
-                              opacity: questionEvaluations[q.id] === true ? 1 : 0.6
-                            }}
-                            onClick={() => toggleEvaluation(q.id, true)}
-                          >
-                            {questionEvaluations[q.id] === true ? '✓ Correta' : 'Certa'}
-                          </button>
-                          <button 
-                            className="btn" 
-                            style={{ 
-                              width: 'auto', 
-                              padding: '0.4rem 1rem', 
-                              fontSize: '0.75rem', 
-                              background: questionEvaluations[q.id] === false ? 'var(--error)' : 'rgba(255,255,255,0.05)',
-                              color: '#fff',
-                              border: 'none',
-                              opacity: questionEvaluations[q.id] === false ? 1 : 0.6
-                            }}
-                            onClick={() => toggleEvaluation(q.id, false)}
-                          >
-                            {questionEvaluations[q.id] === false ? '✗ Incorreta' : 'Errada'}
-                          </button>
+                      
+                      {/* Seção de Correção Manual e Justificativa */}
+                      {((q.type === 'discursive') || (selectedSubmission?.aulas?.tipo === 'prova' || selectedSubmission?.aulas?.is_bloco_final)) && (
+                        <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
+                          <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button 
+                              className="btn" 
+                              style={{ 
+                                width: 'auto', 
+                                padding: '0.4rem 1rem', 
+                                fontSize: '0.75rem', 
+                                background: questionEvaluations[q.id || idx] === true ? 'var(--success)' : 'rgba(255,255,255,0.05)',
+                                color: '#fff',
+                                border: 'none',
+                                opacity: questionEvaluations[q.id || idx] === true ? 1 : 0.6
+                              }}
+                              onClick={() => toggleEvaluation(q.id || idx, true)}
+                            >
+                              {questionEvaluations[q.id || idx] === true ? '✓ Correta' : 'Certa'}
+                            </button>
+                            <button 
+                              className="btn" 
+                              style={{ 
+                                width: 'auto', 
+                                padding: '0.4rem 1rem', 
+                                fontSize: '0.75rem', 
+                                background: questionEvaluations[q.id || idx] === false ? 'var(--error)' : 'rgba(255,255,255,0.05)',
+                                color: '#fff',
+                                border: 'none',
+                                opacity: questionEvaluations[q.id || idx] === false ? 1 : 0.6
+                              }}
+                              onClick={() => toggleEvaluation(q.id || idx, false)}
+                            >
+                              {questionEvaluations[q.id || idx] === false ? '✗ Incorreta' : 'Errada'}
+                            </button>
+                          </div>
+
+                          <div style={{ marginTop: '1rem' }}>
+                            <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'block', fontWeight: 700 }}>Justificativa / Comentário (Opcional)</label>
+                            <textarea 
+                              className="form-control" 
+                              rows={2} 
+                              value={questionComments[q.id || idx] || ''} 
+                              onChange={(e) => setQuestionComments(p => ({ ...p, [q.id || idx]: e.target.value }))}
+                              placeholder="Justificativa para esta correção..."
+                              style={{ background: 'rgba(255,255,255,0.03)', fontSize: '0.85rem' }}
+                            />
+                          </div>
                         </div>
                       )}
                     </div>

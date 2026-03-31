@@ -271,7 +271,7 @@ const Matricula = () => {
               {loading ? <Loader2 className="spinner" /> : <><UserPlus size={22} /> Solicitar Matrícula</>}
             </button>
             <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-              Ao solicitar, você concorda com nossos <Link to="#">Termos e Privacidade</Link>.
+              Ao solicitar, você concorda com nossos <Link to="/">Termos e Privacidade</Link>.
             </p>
           </div>
         </form>

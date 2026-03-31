@@ -118,7 +118,7 @@ const SmartViewer = () => {
       const isAula = searchParams.get('type') === 'aula';
       const table = isAula ? 'aulas' : 'livros';
       
-      const { data: res, error } = await supabase.from(table).select('*').eq('id', id).single();
+      const { data: res, error } = await supabase.from(table).select('id, titulo, pdf_url, arquivo_url, url, epub_url, livro_id, ordem').eq('id', id).single();
       if (error) throw error;
       
       setData(res);
@@ -132,7 +132,7 @@ const SmartViewer = () => {
         // Correct Linkage Logic: Priority 1 - Children
         const { data: children } = await supabase
           .from('aulas')
-          .select('*')
+          .select('id')
           .eq('parent_aula_id', res.id)
           .eq('tipo', 'atividade')
           .order('ordem', { ascending: true })
@@ -144,7 +144,7 @@ const SmartViewer = () => {
           // Priority 2: Next immediate exercise
           const { data: nextEx } = await supabase
             .from('aulas')
-            .select('*')
+            .select('id')
             .eq('livro_id', res.livro_id)
             .gt('ordem', res.ordem || 0)
             .eq('tipo', 'atividade')
@@ -156,7 +156,7 @@ const SmartViewer = () => {
         // Próxima aula
         const { data: next } = await supabase
           .from('aulas')
-          .select('*')
+          .select('id, titulo')
           .eq('livro_id', res.livro_id)
           .gt('ordem', res.ordem || 0)
           .neq('tipo', 'atividade')

@@ -18,7 +18,7 @@ const ResetPassword = () => {
     // Escutar por mudanças de hash da recuperação de senha no momento que o componente carrega.
     const listener = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
-        console.log("Fluxo de Recuperação PKCE ativado com sucesso via URL.");
+        // Fluxo de Recuperação PKCE ativado com sucesso via URL.
       }
     });
     

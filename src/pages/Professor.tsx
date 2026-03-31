@@ -51,6 +51,8 @@ const Professor = () => {
     avaliacaoComentario,
     setAvaliacaoComentario,
     questionEvaluations,
+    questionComments,
+    setQuestionComments,
     toggleEvaluation,
     savingGrade,
     actionLoading,
@@ -233,6 +235,8 @@ const Professor = () => {
             avaliacaoComentario={avaliacaoComentario}
             setAvaliacaoComentario={setAvaliacaoComentario}
             questionEvaluations={questionEvaluations}
+            questionComments={questionComments}
+            setQuestionComments={setQuestionComments}
             toggleEvaluation={toggleEvaluation}
             savingGrade={savingGrade}
             handleSaveGrade={handleSaveGrade}

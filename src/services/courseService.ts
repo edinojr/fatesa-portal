@@ -7,7 +7,7 @@ export const courseService = {
   async getCourses() {
     const { data, error } = await supabase
       .from('cursos')
-      .select('*, livros(count)');
+      .select('id, nome, descricao, created_at, livros(count)');
     if (error) throw error;
     return data;
   },
@@ -18,7 +18,7 @@ export const courseService = {
   async getBooksByCourse(courseId: string) {
     const { data, error } = await supabase
       .from('livros')
-      .select('*, aulas(count)')
+      .select('id, titulo, descricao, curso_id, ordem, imagem_url, aulas(count)')
       .eq('curso_id', courseId)
       .order('ordem');
     if (error) throw error;
@@ -31,7 +31,7 @@ export const courseService = {
   async getLessonsByBook(bookId: string) {
     const { data, error } = await supabase
       .from('aulas')
-      .select('*, children:aulas(count)')
+      .select('id, titulo, descricao, livro_id, ordem, tipo, children:aulas(count)')
       .eq('livro_id', bookId)
       .eq('tipo', 'licao')
       .order('ordem');
@@ -45,7 +45,7 @@ export const courseService = {
   async getLessonItems(lessonId: string) {
     const { data, error } = await supabase
       .from('aulas')
-      .select('*')
+      .select('id, titulo, tipo, ordem, parent_aula_id, video_url, video_provider, duration, questionario')
       .eq('parent_aula_id', lessonId)
       .order('ordem');
     if (error) throw error;

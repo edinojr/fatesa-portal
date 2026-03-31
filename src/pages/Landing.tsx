@@ -426,10 +426,10 @@ const Landing = () => {
           
           <div className="footer-links">
             <h4>Navegação</h4>
-            <a href="#home">Início</a>
-            <a href="#sobre">Instituição</a>
-            <a href="#professores">Patrono</a>
-            <a href="#cursos">Nossos Cursos</a>
+            <a href="/#home">Início</a>
+            <a href="/#sobre">Instituição</a>
+            <a href="/#professores">Patrono</a>
+            <a href="/#cursos">Nossos Cursos</a>
             <Link to="/login">
               {sessionUser ? "Meu Painel" : "Acesso ao Portal"}
             </Link>

@@ -31,8 +31,6 @@ function App() {
           <Route path="/book/:id" element={<SmartViewer />} />
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
-          <Route path="/professor/login" element={<Login />} />
-          <Route path="/admin/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

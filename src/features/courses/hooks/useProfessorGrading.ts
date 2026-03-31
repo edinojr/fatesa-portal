@@ -8,6 +8,7 @@ export const useProfessorGrading = () => {
   const [gradeInput, setGradeInput] = useState<string>('')
   const [avaliacaoComentario, setAvaliacaoComentario] = useState<string>('')
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
+  const [questionComments, setQuestionComments] = useState<Record<string, string>>({})
   const [savingGrade, setSavingGrade] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
 
@@ -25,41 +26,55 @@ export const useProfessorGrading = () => {
     setAvaliacaoComentario(sub.comentario_professor || '');
     
     const initialEvals: Record<string, boolean> = {};
-    const questionnaire = (sub.aulas?.questionario || []).filter((q: any) => q && q.id && q.text);
+    const questionnaire = sub.aulas?.questionario;
     
-    if (questionnaire.length > 0) {
-      questionnaire.forEach((q: any) => {
-        const studentAns = sub.respostas?.[q.id];
+    if (Array.isArray(questionnaire) && questionnaire.length > 0) {
+      questionnaire.forEach((q: any, qIdx: number) => {
+        const qKey = q.id || qIdx;
+        const studentAns = sub.respostas?.[qKey];
         const correctOpt = q.correctOption !== undefined ? q.correctOption : q.correct;
 
         if (q.type === 'multiple_choice' || !q.type) {
           const isCorrect = studentAns !== undefined && studentAns !== null && String(studentAns) === String(correctOpt);
-          initialEvals[q.id] = isCorrect;
+          initialEvals[qKey] = isCorrect;
         } else if (q.type === 'true_false') {
           const isCorrect = studentAns === q.correctAnswer;
-          initialEvals[q.id] = !!isCorrect;
+          initialEvals[qKey] = !!isCorrect;
         } else if (q.type === 'matching') {
           let allCorrect = true;
           if (!studentAns || Object.keys(studentAns).length === 0) {
             allCorrect = false;
           } else {
             const answerMap = studentAns as Record<string, string>;
-            q.matchingPairs?.forEach((_: any, idx: number) => {
-              if (String(answerMap[idx]) !== String(idx)) allCorrect = false;
+            q.matchingPairs?.forEach((_: any, mIdx: number) => {
+              if (String(answerMap[mIdx]) !== String(mIdx)) allCorrect = false;
             });
           }
-          initialEvals[q.id] = allCorrect;
+          initialEvals[qKey] = allCorrect;
         }
       });
     }
     
     setQuestionEvaluations(initialEvals);
+
+    const initialComments: Record<string, string> = {};
+    if (sub.respostas) {
+      Object.entries(sub.respostas).forEach(([key, val]) => {
+        if (key.endsWith('_comentario') && typeof val === 'string') {
+          initialComments[key.replace('_comentario', '')] = val;
+        }
+      });
+    }
+    setQuestionComments(initialComments);
     
-    const totalQuestions = questionnaire.length;
+    const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
+    const totalQuestions = validQuestions.length;
     
     if (totalQuestions > 0) {
-      const correctCount = questionnaire.reduce((acc: number, q: any) => {
-        return acc + (initialEvals[q.id] === true ? 1 : 0);
+      const correctCount = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
+        if (!q || !q.text) return acc;
+        const qKey = q.id || qIdx;
+        return acc + (initialEvals[qKey] === true ? 1 : 0);
       }, 0);
       const initialGrade = (correctCount / totalQuestions) * 10;
       setGradeInput(initialGrade.toFixed(1));
@@ -72,12 +87,15 @@ export const useProfessorGrading = () => {
     const newEvals = { ...questionEvaluations, [questionId]: isCorrect };
     setQuestionEvaluations(newEvals);
     
-    const questionnaire = (selectedSubmission?.aulas?.questionario || []).filter((q: any) => q && q.id && q.text);
-    const totalQuestions = questionnaire.length;
+    const questionnaire = selectedSubmission?.aulas?.questionario;
+    const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
+    const totalQuestions = validQuestions.length;
     
     if (totalQuestions > 0) {
-      const correctCount = questionnaire.reduce((acc: number, q: any) => {
-        return acc + (newEvals[q.id] === true ? 1 : 0);
+      const correctCount = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
+        if (!q || !q.text) return acc;
+        const qKey = q.id || qIdx;
+        return acc + (newEvals[qKey] === true ? 1 : 0);
       }, 0);
       
       const calculatedGrade = (correctCount / totalQuestions) * 10;
@@ -108,9 +126,17 @@ export const useProfessorGrading = () => {
     }
     setSavingGrade(true)
     try {
+      // Mesclar comentários de questão no objeto de respostas
+      const updatedRespostas = { ...(selectedSubmission.respostas || {}) };
+      Object.entries(questionComments).forEach(([qId, comment]) => {
+        if (comment.trim()) updatedRespostas[`${qId}_comentario`] = comment;
+        else delete updatedRespostas[`${qId}_comentario`];
+      });
+
       const updateData: any = {
         nota: parseFloat(gradeInput),
         comentario_professor: avaliacaoComentario,
+        respostas: updatedRespostas,
         status: 'corrigida'
       }
 
@@ -122,10 +148,12 @@ export const useProfessorGrading = () => {
       
       if(error) throw error
       
-      alert('Nota salva com sucesso!')
+      const moduloNome = (selectedSubmission as any).aulas?.livros?.titulo || 'Módulo';
+      alert(`Nota [${gradeInput}] do módulo [${moduloNome}] salva com sucesso!`)
       setSelectedSubmission(null)
       setGradeInput('')
       setAvaliacaoComentario('')
+      setQuestionComments({})
       if (onSuccess) onSuccess()
     } catch(err) {
       console.error(err)
@@ -145,6 +173,8 @@ export const useProfessorGrading = () => {
     avaliacaoComentario,
     setAvaliacaoComentario,
     questionEvaluations,
+    questionComments,
+    setQuestionComments,
     toggleEvaluation,
     savingGrade,
     deleting,

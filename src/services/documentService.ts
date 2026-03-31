@@ -7,7 +7,7 @@ export const documentService = {
   async getDocumentsByUserId(userId: string) {
     const { data, error } = await supabase
       .from('documentos')
-      .select('*')
+      .select('id, tipo, url, status, feedback, created_at')
       .eq('user_id', userId);
     if (error) throw error;
     return data;
@@ -19,7 +19,7 @@ export const documentService = {
   async getPendingDocuments() {
     const { data, error } = await supabase
       .from('documentos')
-      .select('*, users(nome, email)')
+      .select('id, tipo, url, status, created_at, users(id, nome, email)')
       .eq('status', 'pendente');
     if (error) throw error;
     return data;

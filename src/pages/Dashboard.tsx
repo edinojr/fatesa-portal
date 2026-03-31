@@ -30,7 +30,7 @@ import FinancePanel from '../features/finance/components/FinancePanel'
 import GradesPanel from '../features/courses/components/GradesPanel'
 import NoticeBoard from '../features/communication/components/NoticeBoard'
 
-type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'avaliacoes'
+type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
 
 const Dashboard = () => {
   const { profile, loading: profileLoading, signOut, refreshProfile } = useProfile();
@@ -38,7 +38,7 @@ const Dashboard = () => {
   
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const saved = localStorage.getItem('activeTab') as Tab;
-    if (saved && ['cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'avaliacoes'].includes(saved)) {
+    if (saved && ['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'].includes(saved)) {
       localStorage.removeItem('activeTab');
       return saved;
     }
@@ -119,10 +119,10 @@ const Dashboard = () => {
 
   const fetchNoticeBoard = async (nucleoId: string) => {
     try {
-      const { data: avisosData } = await supabase.from('avisos').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      const { data: avisosData } = await supabase.from('avisos').select('id, titulo, texto, created_at, prioridade').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
       setAvisos(avisosData || []);
 
-      const { data: materiaisData } = await supabase.from('materiais_adicionais').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      const { data: materiaisData } = await supabase.from('materiais_adicionais').select('id, titulo, descricao, arquivo_url, created_at').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
       setMateriais(materiaisData || []);
 
       const { data: atvData } = await supabase.from('atividades').select('*, respostas_atividades_extra(id, status, nota)').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
@@ -214,7 +214,7 @@ const Dashboard = () => {
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {(['cursos', 'avisos', 'documentos', 'financeiro', 'avaliacoes', 'boletim'] as Tab[])
+          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
             .filter(t => isStaff ? t !== 'financeiro' : true)
             .map(t => {
               const isDisabled = (isBlocked || isBlockedDueToPayment) && t !== 'financeiro';
@@ -234,8 +234,7 @@ const Dashboard = () => {
                   {t === 'documentos' && <FileText size={20} />}
                   {t === 'financeiro' && <CreditCard size={20} />}
                   {t === 'boletim' && <Award size={20} />}
-                  {t === 'avaliacoes' && <GraduationCap size={20} />}
-                  <span>{t === 'avisos' ? 'Avisos' : t === 'financeiro' ? 'Pagamentos' : t === 'boletim' ? 'Boletim' : t === 'avaliacoes' ? 'Avaliações' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
+                  <span>{t === 'avisos' ? 'Avisos' : t === 'financeiro' ? 'Pagamentos' : t === 'boletim' ? 'Boletim' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
                 </div>
               );
             })}
@@ -263,7 +262,6 @@ const Dashboard = () => {
               {activeTab === 'documentos' && 'Meus Documentos'}
               {activeTab === 'financeiro' && 'Meus Pagamentos'}
               {activeTab === 'boletim' && 'Meu Boletim'}
-              {activeTab === 'avaliacoes' && 'Avaliações e Provas'}
             </h1>
             <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta, {profile?.nome || 'Aluno'}.</p>
           </div>
@@ -336,10 +334,13 @@ const Dashboard = () => {
           )}
 
           {activeTab === 'boletim' && (
-            <div className="data-card">
-              <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><Award color="var(--primary)" /> Boletim de Notas</h3>
-              <p style={{ color: 'var(--text-muted)' }}>Visualize suas notas e desempenho nas avaliações através da aba Avaliações.</p>
-            </div>
+            <GradesPanel 
+              profile={profile}
+              availableNucleos={availableNucleos}
+              handleChangeNucleo={() => {}} 
+              courses={courses}
+              atividades={atividades}
+            />
           )}
         </div>
       </main>

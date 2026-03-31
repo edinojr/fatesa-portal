@@ -42,10 +42,17 @@ export const useStudentCourses = (profile: any) => {
         const { data: payRecords } = await supabase.from('pagamentos').select('status').eq('user_id', profile.id).eq('status', 'pago');
         const paidCount = payRecords?.length || 0;
         
-        const { data: resExamSubmissions } = await supabase.from('respostas_aulas').select('aula_id, aulas(livro_id)').eq('aluno_id', profile.id).gte('tentativas', 1);
+        // Release count based on Exams (tipo 'prova')
+        const { data: resExamSubmissions } = await supabase
+          .from('respostas_aulas')
+          .select('aula_id, aulas(tipo, livro_id)')
+          .eq('aluno_id', profile.id)
+          .gte('tentativas', 1);
+        
         const examSubmissions = (resExamSubmissions || []) as any[];
-        const submittedBookIds = new Set(
+        const submittedExamBookIds = new Set(
           examSubmissions
+            .filter(s => (Array.isArray(s.aulas) ? s.aulas[0]?.tipo : s.aulas?.tipo) === 'prova') // Only count exams for module release
             .map(s => {
               const aula = Array.isArray(s.aulas) ? s.aulas[0] : s.aulas;
               return aula?.livro_id;
@@ -53,13 +60,13 @@ export const useStudentCourses = (profile: any) => {
             .filter(id => !!id)
         );
         
-        let maxSubmittedOrdem = 0;
+        let maxExamOrdem = 0;
         if (courseBooks) {
           courseBooks.forEach(b => {
-            if (submittedBookIds.has(b.id) && b.ordem > maxSubmittedOrdem) maxSubmittedOrdem = b.ordem;
+            if (submittedExamBookIds.has(b.id) && b.ordem > maxExamOrdem) maxExamOrdem = b.ordem;
           });
         }
-        releasedCount = Math.max(paidCount + 1, maxSubmittedOrdem + 1);
+        releasedCount = Math.max(paidCount + 1, maxExamOrdem + 1);
       }
 
       // Liberações por Núcleo (Professor releases)
@@ -70,8 +77,8 @@ export const useStudentCourses = (profile: any) => {
 
       // Progresso e Notas
       const [{ data: respostasData }, { data: progData }] = await Promise.all([
-        supabase.from('respostas_aulas').select('id, status, nota, tentativas, aula_id, aulas(titulo, tipo, livro:livros(titulo, ordem))').eq('aluno_id', profile.id),
-        supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id)
+        supabase.from('respostas_aulas').select('id, status, nota, tentativas, aula_id, aulas(titulo, tipo, livro:livros(id, titulo, ordem))').eq('aluno_id', profile.id),
+        supabase.from('progresso_aulas').select('aula_id, concluida').eq('aluno_id', profile.id)
       ]);
       
       const resData = respostasData || [];

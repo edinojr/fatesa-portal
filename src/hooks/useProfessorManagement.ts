@@ -30,7 +30,7 @@ export const useProfessorManagement = () => {
   useEffect(() => {
     if (!profileLoading) {
       if (!profile) {
-        navigate('/professor/login');
+        navigate('/login');
         return;
       }
       
@@ -110,7 +110,7 @@ export const useProfessorManagement = () => {
             created_at, 
             tentativas,
             primeira_correcao_at,
-            aulas:aula_id ( id, titulo, questionario ), 
+            aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
             users:aluno_id ( id, nome, email )
           `)
           .order('updated_at', { ascending: false })
@@ -142,7 +142,7 @@ export const useProfessorManagement = () => {
                   created_at, 
                   tentativas,
                   primeira_correcao_at,
-                  aulas:aula_id ( id, titulo, questionario ), 
+                  aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
                   users:aluno_id ( id, nome, email )
                 `)
                 .in('aluno_id', studentIds)

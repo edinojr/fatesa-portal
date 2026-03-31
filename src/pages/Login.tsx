@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { LogIn, Loader2, GraduationCap, Eye, EyeOff, ChevronLeft } from 'lucide-react'
+import { LogIn, Loader2, Eye, EyeOff } from 'lucide-react'
 import Logo from '../components/common/Logo'
 
 const Login = () => {
@@ -99,15 +99,7 @@ const Login = () => {
     }
   }
 
-  const handleRoleSelection = (selectedRole: string) => {
-    if (selectedRole === 'aluno') {
-      navigate('/dashboard')
-    } else if (selectedRole === 'professor') {
-      navigate('/professor')
-    } else {
-      navigate('/admin')
-    }
-  }
+
 
   return (
     <div className="auth-container">

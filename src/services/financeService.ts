@@ -7,7 +7,7 @@ export const financeService = {
   async getPaymentsByUserId(userId: string) {
     const { data, error } = await supabase
       .from('pagamentos')
-      .select('*')
+      .select('id, valor, status, data_vencimento, data_pagamento, comprovante_url, feedback')
       .eq('user_id', userId)
       .order('data_vencimento', { ascending: false });
     if (error) throw error;
@@ -20,7 +20,7 @@ export const financeService = {
   async getPendingPayments() {
     const { data, error } = await supabase
       .from('pagamentos')
-      .select('*, users(nome, email)')
+      .select('id, valor, status, data_vencimento, comprovante_url, users(id, nome, email)')
       .eq('status', 'pago'); // No contexto deste sistema, 'pago' significa 'comprovante enviado, aguardando validação'
     if (error) throw error;
     return data;
@@ -75,7 +75,7 @@ export const financeService = {
    * Busca configurações de PIX (Chave e QR Code)
    */
   async getPixConfig() {
-    const { data, error } = await supabase.from('configuracoes').select('*');
+    const { data, error } = await supabase.from('configuracoes').select('chave, valor');
     if (error) throw error;
     
     const config = { pixKey: '', pixQrUrl: '' };

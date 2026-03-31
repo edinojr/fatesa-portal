@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, ShieldCheck, CheckCircle2, XCircle, Clock, MapPin } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { Users, Plus, Award, ChevronRight, BookOpen, Loader2, Save, Trash2, MapPin, Clock, ShieldCheck, CheckCircle2, XCircle, PlayCircle } from 'lucide-react'
+import StudentRow from '../features/nucleos/components/StudentRow'
+import NucleoSolicitacoes from '../features/nucleos/components/NucleoSolicitacoes'
+import NucleoReleaseManager from '../features/nucleos/components/NucleoReleaseManager'
+import StudentDetailsModal from '../features/nucleos/components/StudentDetailsModal'
+import AddNucleoModal from '../features/nucleos/components/AddNucleoModal'
 
 interface NucleoPanelProps {
   userRole?: string
@@ -26,7 +31,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
   const [showCreateForm, setShowCreateForm] = useState(false)
 
   const addSchedule = () => setSchedules([...schedules, { day: '', start: '', end: '' }])
-  const removeSchedule = (index: number) => setSchedules(schedules.filter((_, i) => i !== index))
+  const removeSchedule = (index: number) => setSchedules(schedules.filter((_: any, i: number) => i !== index))
   const updateSchedule = (index: number, field: string, value: string) => {
     const newSchedules = [...schedules]
     ;(newSchedules[index] as any)[field] = value
@@ -121,7 +126,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     const resRel = await supabase.from('liberacoes_nucleo').select('*').eq('nucleo_id', nuc.id).eq('liberado', true)
     if (resRel.data) {
       const mapped: Record<string, boolean> = {}
-      resRel.data.forEach(r => mapped[`${r.item_type}:${r.item_id}`] = true)
+      resRel.data.forEach((r: any) => mapped[`${r.item_type}:${r.item_id}`] = true)
       setReleasedItems(mapped)
     }
     
@@ -166,7 +171,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     try {
       const itemsToProcess: { item_id: string; item_type: 'modulo' | 'atividade' | 'video' }[] = []
       
-      allCourses.forEach(course => {
+      allCourses.forEach((course: any) => {
         (course.livros || []).forEach((livro: any) => {
           itemsToProcess.push({ item_id: livro.id, item_type: 'modulo' });
           (livro.aulas || []).forEach((aula: any) => {
@@ -228,7 +233,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       alert('Questionário salvo com sucesso!')
       
       // Update local state
-      setAtividades(prev => prev.map(a => a.id === atividadeId ? { ...a, questionario: questionnaireData } : a))
+      setAtividades((prev: any[]) => prev.map((a: any) => a.id === atividadeId ? { ...a, questionario: questionnaireData } : a))
       setEditingQuestionnaire(null)
     } catch (err: any) {
       alert('Erro ao salvar: ' + err.message)
@@ -242,7 +247,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     if (!session) return
     
     // Check if already linked
-    if (myNucleos.some(mn => mn.id === nucleoId)) {
+    if (myNucleos.some((mn: any) => mn.id === nucleoId)) {
       alert('Você já está vinculado a este núcleo e já pode acessá-lo na sua tela inicial!')
       setShowAddModal(false)
       return
@@ -357,8 +362,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     }
     
     const horarioStr = schedules
-      .filter(s => s.day && s.start && s.end)
-      .map(s => `${s.day} (${s.start} - ${s.end})`)
+      .filter((s: any) => s.day && s.start && s.end)
+      .map((s: any) => `${s.day} (${s.start} - ${s.end})`)
       .join(', ')
 
     const finalNucleoData = {
@@ -387,6 +392,33 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       alert('Erro ao criar núcleo: ' + err.message)
     } finally {
       setActionLoading(null)
+    }
+  }
+
+  const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const cep = e.target.value.replace(/\D/g, '')
+    if (cep.length !== 8) return
+
+    setCepLoading(true)
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      const data = await res.json()
+      if (!data.erro) {
+        // Find inputs by ID since they are in a sub-component form
+        const logradouro = document.getElementById('form_logradouro') as HTMLInputElement
+        const bairro = document.getElementById('form_bairro') as HTMLInputElement
+        const cidade = document.getElementById('form_cidade') as HTMLInputElement
+        const estado = document.getElementById('form_estado') as HTMLInputElement
+        
+        if (logradouro) logradouro.value = data.logradouro
+        if (bairro) bairro.value = data.bairro
+        if (cidade) cidade.value = data.localidade
+        if (estado) estado.value = data.uf
+      }
+    } catch (err) {
+      console.error('Erro ao buscar CEP:', err)
+    } finally {
+      setCepLoading(false)
     }
   }
 
@@ -487,29 +519,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     }
   }
 
-  const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
-    const cep = e.target.value.replace(/\D/g, '')
-    if (cep.length !== 8) return
-    
-    setCepLoading(true)
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
-      const data = await response.json()
-      if (!data.erro) {
-        ;(document.getElementById('form_logradouro') as HTMLInputElement).value = data.logradouro || '';
-        ;(document.getElementById('form_bairro') as HTMLInputElement).value = data.bairro || '';
-        ;(document.getElementById('form_cidade') as HTMLInputElement).value = data.localidade || '';
-        ;(document.getElementById('form_estado') as HTMLInputElement).value = data.uf || '';
-        document.getElementById('form_numero')?.focus();
-      } else {
-        alert('CEP não encontrado!')
-      }
-    } catch (err) {
-      console.error('ViaCEP Error:', err)
-    } finally {
-      setCepLoading(false)
-    }
-  }
+
 
   const handleDeleteNucleo = async (nucleoId: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -540,7 +550,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       // Fetch course submissions (Fichário)
       const { data: sData } = await supabase
         .from('respostas_aulas')
-        .select('*, aulas(id, titulo, questionario)')
+        .select('*, aulas(id, titulo, questionario, tipo, is_bloco_final)')
         .eq('aluno_id', student.id)
         .order('created_at', { ascending: false })
       
@@ -716,7 +726,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
           {displayNucleos.length === 0 && <p style={{ color: 'var(--text-muted)', gridColumn: '1 / -1' }}>Nenhum núcleo encontrado.</p>}
           
-          {displayNucleos.map(nuc => (
+          {displayNucleos.map((nuc: any) => (
             <div 
               key={nuc.id} 
               className="data-card" 
@@ -833,87 +843,29 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
             <div style={{ flex: '1 1 500px' }}>
               <div className="data-card" style={{ marginBottom: '2rem' }}>
                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Users size={20} /> Solicitações Pendentes</h3>
-                {students.filter(s => s.status_nucleo === 'pendente').length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Nenhuma nova solicitação de vínculo aguardando aprovação.</p>
-                ) : (
-                   <table className="admin-table">
-                     <thead><tr><th>Aluno</th><th>Ações</th></tr></thead>
-                     <tbody>
-                       {students.filter(s => s.status_nucleo === 'pendente').map(aluno => (
-                         <tr key={aluno.id}>
-                           <td>{aluno.nome} <div style={{ fontSize:'0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div></td>
-                           <td>
-                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                               <button className="btn btn-primary" style={{ padding: '0.3rem 0.6rem', width: 'auto', fontSize: '0.8rem' }} onClick={() => handleApproveStudent(aluno.id)} disabled={actionLoading === `approve_${aluno.id}`}>
-                                  {actionLoading === `approve_${aluno.id}` ? <Loader2 className="spinner" size={14} /> : 'Aprovar'}
-                               </button>
-                               <button className="btn btn-outline" style={{ padding: '0.3rem 0.6rem', width: 'auto', fontSize: '0.8rem', color: 'var(--error)' }} onClick={() => handleRejectStudent(aluno.id)} disabled={actionLoading === `reject_${aluno.id}`}>
-                                  {actionLoading === `reject_${aluno.id}` ? <Loader2 className="spinner" size={14} /> : 'Recusar'}
-                               </button>
-                             </div>
-                           </td>
-                         </tr>
-                       ))}
-                     </tbody>
-                   </table>
-                )}
+                <NucleoSolicitacoes 
+                  students={students}
+                  actionLoading={actionLoading}
+                  handleApproveStudent={handleApproveStudent}
+                  handleRejectStudent={handleRejectStudent}
+                />
               </div>
 
               <div className="data-card" style={{ marginBottom: '2rem' }}>
                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Users size={20} /> Alunos da Turma</h3>
-                {students.filter(s => s.status_nucleo !== 'pendente').length === 0 ? <p style={{ color: 'var(--text-muted)' }}>Nenhum aluno matriculado oficialmente ainda.</p> : (
+                {students.filter((s: any) => s.status_nucleo !== 'pendente').length === 0 ? <p style={{ color: 'var(--text-muted)' }}>Nenhum aluno matriculado oficialmente ainda.</p> : (
                   <table className="admin-table">
                     <thead><tr><th>Nome do Aluno</th><th>Pagamento</th><th>Ações</th></tr></thead>
                     <tbody>
-                      {students.filter(s => s.status_nucleo !== 'pendente').map(aluno => (
-                        <tr key={aluno.id}>
-                          <td>
-                            {aluno.nome}
-                            <div style={{ fontSize:'0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div>
-                          </td>
-                          <td>
-                            {aluno.pagamento?.status === 'pago' ? (
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.7rem', borderRadius: '20px', background: 'rgba(34,197,94,0.15)', color: 'var(--success)', fontSize: '0.78rem', fontWeight: 700 }}>
-                                  <span>✔</span> Pago
-                                </span>
-                                {aluno.pagamento?.comprovante_url && (
-                                  <a href={aluno.pagamento.comprovante_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.72rem', color: 'var(--primary)', textDecoration: 'underline' }}>Ver comprovante</a>
-                                )}
-                              </div>
-                            ) : aluno.pagamento?.comprovante_url ? (
-                              <a
-                                href={aluno.pagamento.comprovante_url}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.7rem', borderRadius: '20px', background: 'rgba(34,197,94,0.15)', color: 'var(--success)', fontSize: '0.78rem', fontWeight: 700, textDecoration: 'none' }}
-                              >
-                                <span>✔</span> Ver Comprovante
-                              </a>
-                            ) : (
-                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.7rem', borderRadius: '20px', background: 'rgba(255,77,77,0.12)', color: 'var(--error)', fontSize: '0.78rem', fontWeight: 700 }}>
-                                <span>⚠</span> Sem comprovante
-                              </span>
-                            )}
-                          </td>
-                          <td>
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              {isAdmin && aluno.pagamento?.status !== 'pago' && (
-                                <button
-                                  className="btn btn-primary"
-                                  style={{ padding: '0.4rem 0.8rem', width: 'auto', fontSize: '0.78rem' }}
-                                  onClick={(e) => handleMarkPago(aluno, e)}
-                                  disabled={actionLoading === `pago_${aluno.id}`}
-                                >
-                                  {actionLoading === `pago_${aluno.id}` ? <Loader2 className="spinner" size={14} /> : '✔ Pago'}
-                                </button>
-                              )}
-                              <button className="btn btn-outline" style={{ padding: '0.4rem 1rem', width: 'auto' }} onClick={() => openStudent(aluno)}>
-                                Ver Boletim <Award size={16} style={{ marginLeft: '0.5rem' }} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
+                      {students.filter((s: any) => s.status_nucleo !== 'pendente').map((aluno: any) => (
+                        <StudentRow 
+                          key={aluno.id}
+                          aluno={aluno}
+                          isAdmin={isAdmin}
+                          actionLoading={actionLoading}
+                          handleMarkPago={handleMarkPago}
+                          openStudent={openStudent}
+                        />
                       ))}
                     </tbody>
                   </table>
@@ -921,609 +873,58 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
               </div>
             </div>
 
-            <div style={{ flex: '1 1 350px' }}>
-              {/* Content Release Toggle Section */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                <h3 style={{ margin: 0, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Award size={20} /> Liberação de Conteúdo</h3>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button 
-                    className="btn" 
-                    style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', width: 'auto', background: 'rgba(34,197,94,0.1)', color: 'var(--success)', border: '1px solid rgba(34,197,94,0.2)' }}
-                    onClick={() => handleBulkRelease(true)}
-                    disabled={actionLoading === 'bulk_release'}
-                  >
-                    {actionLoading === 'bulk_release' ? <Loader2 className="spinner" size={14} /> : <CheckCircle2 size={14} style={{ marginRight: '0.3rem' }} />} Liberar Tudo
-                  </button>
-                  <button 
-                    className="btn" 
-                    style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem', width: 'auto', background: 'rgba(239,68,68,0.1)', color: 'var(--error)', border: '1px solid rgba(239,68,68,0.2)' }}
-                    onClick={() => handleBulkRelease(false)}
-                    disabled={actionLoading === 'bulk_release'}
-                  >
-                    <XCircle size={14} style={{ marginRight: '0.3rem' }} /> Bloquear Tudo
-                  </button>
-                </div>
-              </div>
-              
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '1rem' }}>Ative ou desative o acesso dos alunos aos módulos e aulas exclusivas deste núcleo.</p>
-              <div className="data-card" style={{ marginBottom: '2rem' }}>
-                <h3 style={{ marginBottom: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BookOpen size={20} /> Atividades da Turma</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '400px', overflowY: 'auto', paddingRight: '0.5rem' }}>
-                  {atividades.map(atv => (
-                    <div key={atv.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--primary)', position: 'relative' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                          <h4 style={{ fontSize: '0.95rem' }}>{atv.titulo}</h4>
-                          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>{atv.descricao}</p>
-                        </div>
-                        {isProfessor && (
-                          <button 
-                            className="btn btn-outline" 
-                            style={{ width: 'auto', padding: '0.3rem 0.6rem', fontSize: '0.75rem', border: '1px solid var(--primary)', color: 'var(--primary)' }}
-                            onClick={() => setEditingQuestionnaire(atv)}
-                          >
-                            <Plus size={14} style={{ marginRight: '0.3rem' }} /> Questões
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  {atividades.length === 0 && <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nenhuma atividade registrada.</p>}
-                </div>
-
-                {isProfessor && (
-                  <>
-                    <hr style={{ borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none', margin: '1.5rem 0' }} />
-                    <h4 style={{ marginBottom: '1rem', fontSize: '0.9rem' }}>Publicar Nova Atividade</h4>
-                    <form onSubmit={handleCreateAtividade} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      <input type="text" name="titulo" placeholder="Ex: Fichamento Livro 1" className="form-control" required />
-                      <textarea name="descricao" placeholder="Instruções da atividade..." className="form-control" rows={3}></textarea>
-                      <button type="submit" className="btn btn-primary" disabled={actionLoading === 'create_atv'}>
-                        {actionLoading === 'create_atv' ? <Loader2 className="spinner" /> : 'Publicar na Turma'}
-                      </button>
-                    </form>
-                  </>
-                )}
-              </div>
-
-              {/* NEW: PORTAL CONTENT RELEASE PANEL */}
-              <div className="data-card shadow-lg" style={{ border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
-                <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                   <ShieldCheck size={20} color="var(--primary)" /> Liberação de Conteúdo
-                </h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                  Controle o que os alunos deste núcleo podem visualizar no portal.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '600px', overflowY: 'auto' }}>
-                  {allCourses.map(course => (
-                    <div key={course.id}>
-                      <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary)', fontWeight: 800, marginBottom: '0.75rem', paddingLeft: '0.5rem' }}>
-                        {course.nome}
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        {(course.livros || []).map((livro: any) => {
-                          const isLivroReleased = releasedItems[`modulo:${livro.id}`]
-                          return (
-                            <div key={livro.id} style={{ border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', overflow: 'hidden' }}>
-                              <div style={{ padding: '0.75rem 1rem', background: isLivroReleased ? 'rgba(34,197,94,0.05)' : 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{livro.titulo}</span>
-                                <div className="form-check form-switch">
-                                  <input 
-                                    className="form-check-input" 
-                                    type="checkbox" 
-                                    checked={isLivroReleased || false}
-                                    onChange={() => handleToggleRelease(livro.id, 'modulo', isLivroReleased)}
-                                    disabled={actionLoading === `release_modulo:${livro.id}`}
-                                  />
-                                </div>
-                              </div>
-                              
-                              {/* Exams / Activities inside the book */}
-                              {isLivroReleased && (
-                                <div style={{ padding: '0.5rem 1rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
-                                  {(livro.aulas || []).filter((a: any) => a.tipo === 'atividade' || a.tipo === 'prova' || a.tipo === 'gravada' || a.tipo === 'ao_vivo').sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0)).map((aula: any) => {
-                                    const itemType = (aula.tipo === 'atividade' || aula.tipo === 'prova') ? 'atividade' : 'video';
-                                    const isAulaReleased = releasedItems[`${itemType}:${aula.id}`]
-                                    const isVideo = itemType === 'video';
-                                    
-                                    return (
-                                      <div key={aula.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.5rem' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                          {isVideo ? (
-                                            <PlayCircle size={14} color="var(--primary)" />
-                                          ) : (
-                                            <Award size={14} color={aula.tipo === 'prova' ? '#EAB308' : 'var(--success)'} />
-                                          )}
-                                          <span style={{ fontSize: '0.75rem', color: isAulaReleased ? 'var(--text)' : 'var(--text-muted)' }}>{aula.titulo}</span>
-                                        </div>
-                                        <input 
-                                          type="checkbox" 
-                                          style={{ width: '14px', height: '14px', cursor: 'pointer' }}
-                                          checked={isAulaReleased || false}
-                                          onChange={() => handleToggleRelease(aula.id, itemType, isAulaReleased)}
-                                          disabled={actionLoading === `release_${itemType}:${aula.id}`}
-                                        />
-                                      </div>
-                                    )
-                                  })}
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <NucleoReleaseManager 
+              allCourses={allCourses}
+              releasedItems={releasedItems}
+              actionLoading={actionLoading}
+              handleToggleRelease={handleToggleRelease}
+              handleBulkRelease={handleBulkRelease}
+            />
           </div>
         </div>
       )}
 
       {/* MODAL STUDENT EVALUATION */}
       {showStudentModal && (
-        <div className="modal-overlay" onClick={() => setShowStudentModal(null)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h2 style={{ fontSize: '1.4rem' }}>{showStudentModal.nome}</h2>
-              <span className="admin-badge">Boletim Escolar</span>
-            </div>
-            
-            <div style={{ marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-              <h4 style={{ marginBottom: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BookOpen size={18} /> Fichário (Painel do Aluno)</h4>
-              {courseSubmissions.length === 0 ? <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sem atividades do portal enviadas ainda.</p> : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  {courseSubmissions.map(sub => (
-                    <div key={sub.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', borderLeft: `4px solid ${sub.status === 'pendente' ? 'var(--primary)' : 'var(--success)'}` }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '1rem' }}>{sub.aulas?.titulo}</div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                            Data do envio: {new Date(sub.created_at).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <span className={`admin-badge status-${sub.status}`} style={{ display: 'block', marginBottom: '0.5rem' }}>
-                            {sub.status === 'pendente' ? 'Pendente' : 'Corrigida'}
-                          </span>
-                          <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
-                            <button 
-                              className="btn btn-outline" 
-                              style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', width: 'auto' }}
-                              onClick={() => handleExpandSub(sub)}
-                            >
-                              {expandedSub === sub.id ? 'Fechar' : 'Ver'}
-                            </button>
-                            <button 
-                              className="btn btn-outline" 
-                              style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', width: 'auto', border: 'none', color: 'var(--error)' }}
-                              onClick={() => handleDeleteSubmission(sub.id)}
-                              disabled={actionLoading === `delete_sub_${sub.id}`}
-                            >
-                              {actionLoading === `delete_sub_${sub.id}` ? <Loader2 className="spinner" size={14} /> : <Trash2 size={14} />}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {expandedSub === sub.id && (
-                        <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: 'rgba(0,0,0,0.3)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                          <h5 style={{ marginBottom: '1.5rem', fontSize: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Award size={18} /> Atividade Completa do Aluno
-                          </h5>
-                          {Array.isArray(sub.aulas?.questionario) && sub.aulas.questionario.map((q: any, idx: number) => (
-                            <div key={q.id} style={{ 
-                              marginBottom: '1rem', 
-                              padding: '1rem', 
-                              background: 'rgba(255,255,255,0.02)', 
-                              borderRadius: '12px',
-                              borderLeft: '4px solid rgba(255,255,255,0.1)' 
-                            }}>
-                              <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '1rem', color: 'rgba(255,255,255,0.9)' }}>
-                                <span style={{ opacity: 0.5, marginRight: '0.5rem' }}>Questão {idx + 1}:</span> {q.text}
-                              </div>
-                              
-                              <div style={{ 
-                                padding: '1rem', 
-                                background: 'rgba(34, 197, 94, 0.05)', 
-                                borderRadius: '10px',
-                                border: '1px solid rgba(34, 197, 94, 0.1)',
-                                position: 'relative'
-                              }}>
-                                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
-                                  Resposta do Aluno:
-                                </div>
-                                <div style={{ fontSize: '1rem', lineHeight: '1.6', color: '#fff', whiteSpace: 'pre-wrap' }}>
-                                  {q.type === 'discursive' ? (
-                                    sub.respostas[q.id] || '(O aluno não respondeu)'
-                                  ) : q.type === 'multiple_choice' ? (
-                                    q.options?.[sub.respostas[q.id]] || sub.respostas[q.id]
-                                  ) : q.type === 'true_false' ? (
-                                    sub.respostas[q.id] ? 'Verdadeiro' : 'Falso'
-                                  ) : q.type === 'matching' ? (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '0.75rem', alignItems: 'center', marginTop: '0.5rem' }}>
-                                      {q.matchingPairs?.map((pair: any, pIdx: number) => {
-                                        const studentAns = sub.respostas[q.id]?.[pIdx];
-                                        const studentMatched = q.matchingPairs?.[studentAns]?.right || '---';
-                                        return (
-                                          <React.Fragment key={pIdx}>
-                                            <div style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '6px', fontSize: '0.85rem', textAlign: 'right' }}>{pair.left}</div>
-                                            <div style={{ opacity: 0.3, fontSize: '0.7rem' }}>→</div>
-                                            <div style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--success)', fontWeight: 600 }}>{studentMatched}</div>
-                                          </React.Fragment>
-                                        );
-                                      })}
-                                    </div>
-                                  ) : (
-                                    JSON.stringify(sub.respostas[q.id])
-                                  )}
-                                </div>
-                              </div>
-
-                              {q.type === 'discursive' && (
-                                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-                                  <button 
-                                    className="btn" 
-                                    style={{ 
-                                      width: 'auto', 
-                                      padding: '0.4rem 1rem', 
-                                      fontSize: '0.75rem', 
-                                      background: questionEvaluations[q.id] === true ? 'var(--success)' : 'rgba(255,255,255,0.05)',
-                                      color: '#fff',
-                                      border: 'none',
-                                      opacity: questionEvaluations[q.id] === true ? 1 : 0.6
-                                    }}
-                                    onClick={() => toggleEvaluation(sub, q.id, true)}
-                                  >
-                                    {questionEvaluations[q.id] === true ? '✓ Correta' : 'Certa'}
-                                  </button>
-                                  <button 
-                                    className="btn" 
-                                    style={{ 
-                                      width: 'auto', 
-                                      padding: '0.4rem 1rem', 
-                                      fontSize: '0.75rem', 
-                                      background: questionEvaluations[q.id] === false ? 'var(--error)' : 'rgba(255,255,255,0.05)',
-                                      color: '#fff',
-                                      border: 'none',
-                                      opacity: questionEvaluations[q.id] === false ? 1 : 0.6
-                                    }}
-                                    onClick={() => toggleEvaluation(sub, q.id, false)}
-                                  >
-                                    {questionEvaluations[q.id] === false ? '✗ Incorreta' : 'Errada'}
-                                  </button>
-                                </div>
-                              )}
-
-                              {/* Exibição do Gabarito para o Professor */}
-                              <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderLeft: '4px solid var(--primary)', borderRadius: '12px', fontSize: '0.85rem', marginTop: '1rem' }}>
-                                <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                  Gabarito Correto
-                                </div>
-                                <div style={{ color: 'rgba(255,255,255,0.9)', lineHeight: '1.5' }}>
-                                  {q.type === 'multiple_choice' || !q.type ? (
-                                    q.options?.[q.correct] ? (
-                                      <span><strong style={{color: 'var(--primary)'}}>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>
-                                    ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
-                                  ) : q.type === 'true_false' ? (
-                                    q.isTrue !== undefined ? (
-                                      <strong style={{color: q.isTrue ? 'var(--success)' : 'var(--error)'}}>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
-                                    ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
-                                  ) : q.type === 'matching' ? (
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
-                                      {q.matchingPairs?.map((pair: any, pIdx: number) => (
-                                        <React.Fragment key={pIdx}>
-                                          <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
-                                          <div style={{ color: 'var(--primary)', opacity: 0.5 }}><ChevronRight size={14} /></div>
-                                          <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', fontSize: '0.8rem', color: '#fff' }}>{pair.right}</div>
-                                        </React.Fragment>
-                                      ))}
-                                    </div>
-                                  ) : q.type === 'discursive' ? (
-                                    q.expectedAnswer ? (
-                                      <p style={{ margin: 0 }}>{q.expectedAnswer}</p>
-                                    ) : <span style={{ opacity: 0.5 }}>Palavras-chave não definidas para esta questão. Avaliação manual necessária.</span>
-                                  ) : null}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div style={{ marginBottom: '2rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-              <h4 style={{ marginBottom: '1rem', color: '#03A9F4' }}>Notas Manuais do Pólo</h4>
-              {notas.length === 0 ? <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sem notas de atividades do pólo lançadas.</p> : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {notas.map(n => (
-                    <div key={n.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px' }}>
-                      <div>
-                        <strong>{n.atividades?.titulo}</strong>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{n.feedback}</div>
-                      </div>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 800, color: n.nota >= 7 ? 'var(--success)' : 'var(--error)' }}>
-                        {n.nota.toFixed(1)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {isProfessor ? (
-              <>
-                <h4 style={{ marginBottom: '1rem' }}>Lançar/Atualizar Nota</h4>
-                <form onSubmit={handleLancarNota}>
-                  <div className="form-group">
-                    <label>Selecione a Atividade</label>
-                    <select name="atividade_id" className="form-control" required>
-                      <option value="">-- Escolha --</option>
-                      <optgroup label="Atividades do Pólo (Manuais)">
-                        {atividades.map(a => <option key={a.id} value={a.id}>{a.titulo}</option>)}
-                      </optgroup>
-                      <optgroup label="Fichário (Painel do Aluno)">
-                        {courseSubmissions.map(s => (
-                          <option key={s.id} value={`course:${s.aulas?.id}`}>
-                            {s.aulas?.titulo} (Enviado em {new Date(s.created_at).toLocaleDateString()})
-                          </option>
-                        ))}
-                      </optgroup>
-                    </select>
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem' }}>
-                    <div className="form-group" style={{ flex: 1 }}>
-                      <label>Nota (0 a 10)</label>
-                      <input type="number" name="nota" max="10" min="0" step="0.1" className="form-control" required />
-                    </div>
-                    <div className="form-group" style={{ flex: 2 }}>
-                      <label>Feedback Adicional (Opcional)</label>
-                      <input type="text" name="feedback" className="form-control" placeholder="Muito bom!" />
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                    <button type="button" className="btn btn-outline" onClick={() => setShowStudentModal(null)}>Fechar</button>
-                    <button type="submit" className="btn btn-primary" disabled={actionLoading === 'lancar_nota' || atividades.length === 0}>
-                      <Save size={18} /> Salvar Avaliação
-                    </button>
-                  </div>
-                </form>
-              </>
-            ) : (
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                <button type="button" className="btn btn-outline" onClick={() => setShowStudentModal(null)}>Fechar</button>
-              </div>
-            )}
-          </div>
-        </div>
+        <StudentDetailsModal 
+          student={showStudentModal}
+          onClose={() => setShowStudentModal(null)}
+          atividades={atividades}
+          notas={notas}
+          courseSubmissions={courseSubmissions}
+          expandedSub={expandedSub}
+          setExpandedSub={setExpandedSub}
+          handleExpandSub={handleExpandSub}
+          questionEvaluations={questionEvaluations}
+          toggleEvaluation={toggleEvaluation}
+          handleLancarNota={handleLancarNota}
+          handleDeleteSubmission={handleDeleteSubmission}
+          actionLoading={actionLoading}
+          isProfessor={isProfessor}
+          isAdmin={isAdmin}
+        />
       )}
 
       {/* MODAL ADD NUCLEO */}
       {showAddModal && (
-        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', width: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ margin: 0 }}>{isAdmin ? 'Gerenciar Núcleos' : 'Adicionar Núcleo'}</h2>
-              <button className="btn-icon" onClick={() => setShowAddModal(false)}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
-            </div>
-            
-            {isAdmin && (
-              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-                <button 
-                  className={`btn ${showCreateForm ? 'btn-primary' : 'btn-outline'}`} 
-                  onClick={() => setShowCreateForm(true)}
-                  style={{ flex: 1 }}
-                >
-                  <Plus size={18} /> Criar Novo Núcleo
-                </button>
-                <button 
-                  className={`btn ${!showCreateForm ? 'btn-primary' : 'btn-outline'}`} 
-                  onClick={() => setShowCreateForm(false)}
-                  style={{ flex: 1 }}
-                >
-                  <Users size={18} /> Vincular Professor
-                </button>
-              </div>
-            )}
-
-            {isAdmin && !showCreateForm ? (
-              <form onSubmit={handleLinkProfessorToNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Selecione um professor e um núcleo para criar o vínculo.</p>
-                <div className="form-group">
-                  <label>Professor</label>
-                  <select name="professor_id" className="form-control" required>
-                    <option value="">-- Selecione o Professor --</option>
-                    {professors.map(p => (
-                      <option key={p.id} value={p.id}>{p.nome} ({p.email})</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Núcleo</label>
-                  <select name="nucleo_id" className="form-control" required>
-                    <option value="">-- Selecione o Núcleo --</option>
-                    {nucleos.map(n => (
-                      <option key={n.id} value={n.id}>{n.nome}</option>
-                    ))}
-                  </select>
-                </div>
-                <button type="submit" className="btn btn-primary" disabled={actionLoading === 'link_prof'}>
-                  {actionLoading === 'link_prof' ? <Loader2 className="spinner" size={20} /> : 'Efetuar Vínculo'}
-                </button>
-              </form>
-            ) : (
-              <>
-                {!isAdmin && (
-                  <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem' }}>
-                    <h4 style={{ marginBottom: '1rem', color: 'var(--primary)' }}>Vincule-se a um núcleo existente</h4>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <select id="nuc_select" className="form-control" style={{ flex: 1 }}>
-                        {nucleos.length === 0 && <option value="">Nenhum núcleo encontrado...</option>}
-                        {nucleos.map(n => (
-                          <option key={n.id} value={n.id}>{n.nome} {n.cidade ? `(${n.cidade})` : ''}</option>
-                        ))}
-                      </select>
-                      <button 
-                        className="btn btn-primary" 
-                        style={{ width: 'auto' }}
-                        disabled={actionLoading === 'link_nuc'}
-                        onClick={() => {
-                          const sel = document.getElementById('nuc_select') as HTMLSelectElement
-                          if(sel.value) handleLinkNucleo(sel.value)
-                        }}
-                      >
-                        {actionLoading === 'link_nuc' ? <Loader2 className="spinner" size={18} /> : 'Vincular a Mim'}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <h4 style={{ marginBottom: '1.25rem', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Plus size={20} /> {isAdmin ? 'Ou crie um NOVO Núcleo' : 'Ou cadastre um NOVO Núcleo/Pólo'}
-                </h4>
-                <form onSubmit={handleCreateNucleo} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  
-                  {/* LINHA 1: NOME DO NÚCLEO */}
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Nome do Núcleo *</label>
-                    <input type="text" name="nome" placeholder="Ex: Pólo Presencial - Vila Luzita" className="form-control" style={{ padding: '0.8rem' }} required />
-                  </div>
-
-                  {/* LINHA 2: PROFESSOR RESPONSÁVEL (OPCIONAL) */}
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Professor Responsável (Opcional)</label>
-                    <input type="text" name="professor_responsavel" placeholder="Ex: Pr. João" className="form-control" style={{ padding: '0.8rem' }} />
-                  </div>
-
-                  {/* LINHA 3: CRONOGRAMA DE AULAS */}
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Cronograma de Aulas (Dias e Horários)</label>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      {schedules.map((sch, index) => (
-                        <div key={index} className="mobile-wrap-flex" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                          <div style={{ flex: 2 }}>
-                            <select 
-                              className="form-control" 
-                              style={{ width: '100%', padding: '0.6rem' }} 
-                              value={sch.day} 
-                              onChange={(e) => updateSchedule(index, 'day', e.target.value)}
-                            >
-                              <option value="">-- Escolha o Dia --</option>
-                              <option value="Segunda">Segunda-feira</option>
-                              <option value="Terça">Terça-feira</option>
-                              <option value="Quarta">Quarta-feira</option>
-                              <option value="Quinta">Quinta-feira</option>
-                              <option value="Sexta">Sexta-feira</option>
-                              <option value="Sábado">Sábado</option>
-                              <option value="Domingo">Domingo</option>
-                            </select>
-                          </div>
-                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flex: 3 }}>
-                            <input 
-                              type="text" 
-                              placeholder="Início (00:00)" 
-                              className="form-control" 
-                              style={{ flex: 1, textAlign: 'center', padding: '0.6rem' }} 
-                              value={sch.start} 
-                              onChange={(e) => updateSchedule(index, 'start', e.target.value)} 
-                            />
-                            <span style={{ opacity: 0.5 }}>até</span>
-                            <input 
-                              type="text" 
-                              placeholder="Fim (00:00)" 
-                              className="form-control" 
-                              style={{ flex: 1, textAlign: 'center', padding: '0.6rem' }} 
-                              value={sch.end} 
-                              onChange={(e) => updateSchedule(index, 'end', e.target.value)} 
-                            />
-                          </div>
-                          {schedules.length > 1 && (
-                            <button type="button" className="btn-icon" style={{ color: 'var(--error)', padding: '0.5rem' }} onClick={() => removeSchedule(index)} title="Remover este horário">
-                              <Trash2 size={18} />
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                      <button 
-                        type="button" 
-                        className="btn btn-outline" 
-                        style={{ width: 'auto', fontSize: '0.85rem', padding: '0.5rem 1rem', marginTop: '0.5rem', alignSelf: 'flex-start' }}
-                        onClick={addSchedule}
-                      >
-                        <Plus size={16} /> Adicionar outro dia/horário
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* LINHA 4: LOCALIZAÇÃO (VIA CEP) */}
-                  <div style={{ padding: '1.25rem', background: 'rgba(3, 169, 244, 0.03)', borderRadius: '12px', border: '1px solid rgba(3, 169, 244, 0.1)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                    <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <MapPin size={18} /> Endereço do Núcleo
-                    </h4>
-                    
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.3rem', display: 'block' }}>CEP (Para busca automática) *</label>
-                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                        <input 
-                          type="text" 
-                          name="cep" 
-                          placeholder="00000-000" 
-                          className="form-control" 
-                          style={{ maxWidth: '150px', padding: '0.7rem' }}
-                          maxLength={9}
-                          onBlur={handleCepBlur}
-                          required 
-                        />
-                        {cepLoading && <Loader2 className="spinner" size={20} color="var(--primary)" />}
-                        <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>← Preencha para carregar</span>
-                      </div>
-                    </div>
-
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Logradouro / Avenida / Rua</label>
-                      <input type="text" name="logradouro" id="form_logradouro" placeholder="Avenida Brasil..." className="form-control" required style={{ padding: '0.7rem' }} />
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '1rem' }} className="mobile-wrap-flex">
-                      <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Número *</label>
-                        <input type="text" name="numero" id="form_numero" placeholder="Ex: 500" className="form-control" required style={{ padding: '0.7rem' }} />
-                      </div>
-                      <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
-                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Bairro</label>
-                        <input type="text" name="bairro" id="form_bairro" placeholder="Nome do Bairro" className="form-control" required style={{ padding: '0.7rem' }} />
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '1rem' }} className="mobile-wrap-flex">
-                      <div className="form-group" style={{ flex: 2, marginBottom: 0 }}>
-                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>Cidade</label>
-                        <input type="text" name="cidade" id="form_cidade" className="form-control" required style={{ padding: '0.7rem' }} />
-                      </div>
-                      <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
-                        <label style={{ fontSize: '0.85rem', opacity: 0.7 }}>UF / Estado</label>
-                        <input type="text" name="estado" id="form_estado" className="form-control" maxLength={2} required style={{ padding: '0.7rem', textAlign: 'center' }} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-                    <button type="button" className="btn btn-outline" style={{ width: 'auto', padding: '0.6rem 1.25rem' }} onClick={() => setShowAddModal(false)}>Cancelar</button>
-                    <button type="submit" className="btn btn-primary" style={{ width: 'auto', padding: '0.6rem 2rem', fontSize: '0.95rem', fontWeight: 700 }} disabled={actionLoading === 'create_nuc'}>
-                      {actionLoading === 'create_nuc' ? <Loader2 className="spinner" size={18} /> : '(salvar)'}
-                    </button>
-                  </div>
-                </form>
-              </>
-            )}
-          </div>
-        </div>
+        <AddNucleoModal 
+          onClose={() => setShowAddModal(false)}
+          isAdmin={isAdmin}
+          showCreateForm={showCreateForm}
+          setShowCreateForm={setShowCreateForm}
+          handleLinkProfessorToNucleo={handleLinkProfessorToNucleo}
+          handleCreateNucleo={handleCreateNucleo}
+          handleLinkNucleo={handleLinkNucleo}
+          professors={professors}
+          nucleos={nucleos}
+          actionLoading={actionLoading}
+          schedules={schedules}
+          addSchedule={addSchedule}
+          removeSchedule={removeSchedule}
+          updateSchedule={updateSchedule}
+          cepLoading={cepLoading}
+          handleCepBlur={handleCepBlur}
+        />
       )}
       {/* MODAL EDIT QUESTIONNAIRE */}
       {editingQuestionnaire && (

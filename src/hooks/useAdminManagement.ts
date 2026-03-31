@@ -248,7 +248,7 @@ export const useAdminManagement = () => {
         if (docs) setPendingDocs(docs)
         if (pays) setPendingPays(pays)
       } else if (activeTab === 'settings' && userRole === 'admin') {
-        const { data } = await supabase.from('configuracoes').select('*');
+        const { data } = await supabase.from('configuracoes').select('chave, valor');
         if (data) {
           data.forEach(item => {
             if (item.chave === 'pix_key') setPixKey(item.valor);

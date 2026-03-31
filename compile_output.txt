@@ -1,0 +1,3 @@
+src/features/courses/components/GradingPanel.tsx(229,82): error TS2339: Property 'tipo' does not exist on type '{ id: string; titulo: string; questionario: any[]; }'.
+src/features/courses/components/GradingPanel.tsx(229,129): error TS2339: Property 'is_bloco_final' does not exist on type '{ id: string; titulo: string; questionario: any[]; }'.
+src/features/nucleos/components/StudentDetailsModal.tsx(55,80): error TS2304: Cannot find name 'handleExpandSub'.

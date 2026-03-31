@@ -14,6 +14,7 @@ interface GradesPanelProps {
 const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, handleChangeNucleo, atividades, courses }) => {
   const navigate = useNavigate();
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
+  const [reviewSub, setReviewSub] = useState<any>(null);
 
   // Group activities by Module (Livro)
   const modulesMap: Record<string, { title: string, id: string, items: any[] }> = {};
@@ -103,8 +104,8 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                         let currentVersionIndex = 0;
                         const submissions = m.items.filter(i => i.aulas?.tipo === 'prova').sort((a,b) => (a.tentativas || 1) - (b.tentativas || 1));
                         
-                        // Check if any previous was approved
-                        const approved = submissions.find(s => s.nota >= 7);
+                        // Check if any previous attempt was approved by the teacher
+                        const approved = submissions.find(s => s.status === 'corrigida' && s.nota && s.nota >= 7);
                         if (approved) {
                           return (
                             <div style={{ padding: '1.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '16px', border: '1px solid var(--success)', textAlign: 'center' }}>
@@ -121,36 +122,54 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
 
                         const activeExam = allExams[currentVersionIndex];
                         const lastSub = submissions[submissions.length - 1];
+                        const isWaitingCorrection = lastSub && lastSub.status === 'pendente';
 
                         return (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {/* Previous failing attempts (History) */}
                             {submissions.map((sub, idx) => (
-                              <div key={sub.id} style={{ padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: 0.6 }}>
+                              <div key={sub.id} style={{ padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: sub.status === 'pendente' ? 1 : 0.6 }}>
                                 <div style={{ fontSize: '0.8rem' }}>Tentativa {idx + 1} ({sub.aulas?.titulo})</div>
-                                <div style={{ fontWeight: 700, color: 'var(--error)' }}>{sub.nota?.toFixed(1)}</div>
+                                <div style={{ fontWeight: 700, color: sub.status === 'pendente' ? 'var(--warning)' : (sub.nota && sub.nota >= 7 ? 'var(--success)' : 'var(--error)'), display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                  {sub.status === 'pendente' ? 'Em Correção' : sub.nota?.toFixed(1)}
+                                  <button 
+                                    className="btn btn-outline" 
+                                    style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}
+                                    onClick={(e) => { e.stopPropagation(); setReviewSub(sub); }}
+                                  >
+                                    Ver Correção
+                                  </button>
+                                </div>
                               </div>
                             ))}
 
-                            {/* Current Actionable Exam */}
-                            <div style={{ padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '16px', border: '1px solid var(--primary)', position: 'relative' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-                                <div>
-                                  <h4 style={{ margin: 0, color: '#fff' }}>{activeExam.titulo}</h4>
-                                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0.25rem 0' }}>Disponível para realização imediata.</p>
-                                </div>
-                                <div style={{ background: 'var(--primary)', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 700 }}>
-                                  V{currentVersionIndex + 1}
-                                </div>
+                            {/* Current Actionable Exam - Hide if waiting for correction or already approved */}
+                            {isWaitingCorrection ? (
+                              <div style={{ padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', borderRadius: '16px', border: '1px solid var(--warning)', textAlign: 'center' }}>
+                                <Clock size={32} color="var(--warning)" style={{marginBottom:'0.5rem', display:'inline-block'}}/>
+                                <h4 style={{margin:0, color:'var(--warning)'}}>Correção em Andamento</h4>
+                                <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem'}}>O professor está avaliando sua última tentativa. Aguarde o feedback para liberar a próxima versão, caso necessário.</p>
                               </div>
-                              <button 
-                                className="btn btn-primary" 
-                                style={{ width: '100%', fontWeight: 700 }}
-                                onClick={() => navigate(`/lesson/${activeExam.id}`)}
-                              >
-                                {submissions.length > 0 ? 'Tentar Novamente' : 'Iniciar Avaliação Final'}
-                              </button>
-                            </div>
+                            ) : (
+                              <div style={{ padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '16px', border: '1px solid var(--primary)', position: 'relative' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+                                  <div>
+                                    <h4 style={{ margin: 0, color: '#fff' }}>{activeExam.titulo}</h4>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0.25rem 0' }}>Disponível para realização imediata.</p>
+                                  </div>
+                                  <div style={{ background: 'var(--primary)', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 700 }}>
+                                    V{currentVersionIndex + 1}
+                                  </div>
+                                </div>
+                                <button 
+                                  className="btn btn-primary" 
+                                  style={{ width: '100%', fontWeight: 700 }}
+                                  onClick={() => navigate(`/lesson/${activeExam.id}`)}
+                                >
+                                  {submissions.length > 0 ? 'Tentar Novamente' : 'Iniciar Avaliação Final'}
+                                </button>
+                              </div>
+                            )}
                           </div>
                         );
                       })()}
@@ -166,7 +185,18 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                       {formative.map((f) => (
                         <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '10px' }}>
                           <span style={{ fontSize: '0.85rem' }}>{f.aulas?.titulo || 'Atividade'}</span>
-                          <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{f.nota?.toFixed(1) || '10.0'}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <span style={{ fontWeight: 700, color: f.status === 'pendente' ? 'var(--warning)' : 'var(--success)' }}>
+                              {f.status === 'pendente' ? 'Em Correção' : 'Concluída'}
+                            </span>
+                            <button 
+                              className="btn btn-outline" 
+                              style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}
+                              onClick={() => setReviewSub(f)}
+                            >
+                              Ver Gabarito
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -178,15 +208,113 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
           );
         })}
 
-        {modules.length === 0 && (
-          <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'var(--glass)', borderRadius: '24px' }}>
-            <Award size={48} color="var(--text-muted)" style={{ marginBottom: '1rem', opacity: 0.3 }} />
-            <p style={{ color: 'var(--text-muted)' }}>Você ainda não iniciou nenhuma avaliação.</p>
-          </div>
-        )}
       </div>
+
+      {/* Modal de Revisão de Gabarito */}
+      {reviewSub && (
+        <div className="modal-overlay" style={{ zIndex: 1000, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setReviewSub(null)}>
+          <div className="modal-content" style={{ maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', background: '#111', borderRadius: '24px', padding: '2.5rem', border: '1px solid var(--glass-border)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', position: 'relative' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem' }}>
+              <div>
+                <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 800 }}>Correção Detalhada</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
+                  {reviewSub.aulas?.titulo || 'Atividade'} • {reviewSub.aulas?.tipo === 'prova' ? 
+                    <>Nota Final: <strong style={{color: 'var(--primary)'}}>{reviewSub.nota?.toFixed(1) || (reviewSub.status === 'pendente' ? 'Aguardando' : '10.0')}</strong></> : 
+                    <strong style={{color: 'var(--success)'}}>{reviewSub.status === 'pendente' ? 'Em Correção' : 'Status: Concluída'}</strong>
+                  }
+                </p>
+              </div>
+              <button 
+                className="btn btn-outline" 
+                style={{ width: 'auto', padding: '0.6rem 1.2rem', borderRadius: '12px' }} 
+                onClick={() => setReviewSub(null)}
+              >
+                Fechar
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              {Array.isArray(reviewSub.aulas?.questionario) ? reviewSub.aulas.questionario.map((q: any, idx: number) => {
+                const qKey = q.id || idx;
+                const studentAns = reviewSub.respostas?.[qKey];
+                const comment = reviewSub.respostas?.[`${qKey}_comentario`];
+                
+                let isCorrect = q.type === 'multiple_choice' || !q.type ? String(studentAns) === String(q.correct) :
+                                q.type === 'true_false' ? studentAns === q.isTrue :
+                                q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
+                
+                const isManualCorrect = reviewSub.respostas?.[`${qKey}_avaliacao`];
+                if (isManualCorrect !== undefined) isCorrect = isManualCorrect === true;
+
+                const showOfficialGabarito = reviewSub.status === 'corrigida' || reviewSub.aulas?.tipo === 'atividade';
+
+                return (
+                  <div key={qKey} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: showOfficialGabarito ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)', position: 'relative' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                      <h4 style={{ margin: 0, fontSize: '1.2rem', flex: 1, fontWeight: 700 }}>
+                        <span style={{ opacity: 0.3, marginRight: '0.6rem' }}>{idx + 1}.</span> {q.text}
+                      </h4>
+                      {showOfficialGabarito ? (
+                        <div style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', display: 'flex', alignItems: 'center', gap: '0.6rem', fontWeight: 800, fontSize: '0.9rem', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding: '0.4rem 1rem', borderRadius: '10px', height: 'fit-content' }}>
+                          {isCorrect ? <CheckCircle size={20}/> : <XCircle size={20}/>}
+                          {isCorrect ? 'CORRETO' : 'INCORRETO'}
+                        </div>
+                      ) : (
+                        <div style={{ color: 'var(--warning)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600 }}>
+                          <Clock size={16}/> Em correção pelo professor
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.6rem', fontWeight: 800, letterSpacing: '1px' }}>Sua Resposta:</div>
+                      <div style={{ background: 'rgba(255,255,255,0.04)', padding: '1.2rem', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '1.05rem' }}>
+                        {q.type === 'multiple_choice' ? (
+                          <span style={{fontWeight: 600}}>{q.options?.[studentAns] || <span style={{opacity: 0.5}}>Sem resposta</span>}</span>
+                        ) : q.type === 'true_false' ? (
+                          <span style={{fontWeight: 600}}>{studentAns === true ? 'Verdadeiro' : studentAns === false ? 'Falso' : <span style={{opacity: 0.5}}>Sem resposta</span>}</span>
+                        ) : q.type === 'discursive' ? (
+                          <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{studentAns || <span style={{opacity: 0.5}}>Sem resposta</span>}</div>
+                        ) : q.type === 'matching' ? (
+                          <div style={{fontSize: '0.9rem', opacity: 0.8}}>Associações realizadas através do sistema de colunas.</div>
+                        ) : studentAns}
+                      </div>
+                    </div>
+
+                    {showOfficialGabarito && (
+                      <div style={{ marginTop: '1rem', padding: '1.2rem', background: isCorrect ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)', borderRadius: '14px', borderLeft: `5px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 800, color: isCorrect ? 'var(--success)' : 'var(--error)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px' }}>Gabarito Oficial:</div>
+                        <div style={{ fontSize: '1.05rem', fontWeight: 600 }}>
+                           {q.type === 'multiple_choice' ? q.options?.[q.correct] : 
+                            q.type === 'true_false' ? (q.isTrue ? 'Verdadeiro' : 'Falso') :
+                            q.type === 'discursive' ? (q.expectedAnswer || 'Esta questão exige avaliação qualitativa do professor.') :
+                            'Consulte o material de estudo.'}
+                        </div>
+                      </div>
+                    )}
+
+                    {comment && (
+                      <div style={{ marginTop: '1.5rem', padding: '1.2rem', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '16px', border: '1px solid var(--primary)', position: 'relative' }}>
+                        <div style={{ position: 'absolute', top: '-10px', left: '20px', background: 'var(--primary)', color: '#fff', fontSize: '0.7rem', padding: '0.2rem 0.6rem', borderRadius: '4px', fontWeight: 900, letterSpacing: '1px' }}>FEEDBACK DO PROFESSOR</div>
+                        <div style={{ fontStyle: 'italic', color: '#fff', fontSize: '1rem', lineHeight: 1.6, marginTop: '0.3rem' }}>
+                          "{comment}"
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              }) : (
+                <div style={{ padding: '3rem', textAlign: 'center', opacity: 0.5 }}>
+                  <Info size={48} style={{ marginBottom: '1rem' }} />
+                  <p>Detalhes do questionário vinculados a uma versão anterior.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default GradesPanel

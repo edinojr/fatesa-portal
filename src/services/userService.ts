@@ -12,7 +12,7 @@ export const userService = {
   async getCurrentProfile(userId: string) {
     const { data, error } = await supabase
       .from('users')
-      .select('*, nucleos(nome)')
+      .select('id, email, nome, tipo, nucleo_id, created_at, phone, profile_image, nucleos(id, nome)')
       .eq('id', userId)
       .single();
     if (error) throw error;
@@ -25,7 +25,7 @@ export const userService = {
   async getAllUsers() {
     const { data, error } = await supabase
       .from('users')
-      .select('*, nucleos(nome)');
+      .select('id, email, nome, tipo, nucleo_id, created_at, phone, nucleos(id, nome)');
     if (error) throw error;
     return data;
   },
@@ -86,7 +86,7 @@ export const userService = {
    * Busca todos os núcleos disponíveis
    */
   async getAllNucleos() {
-    const { data, error } = await supabase.from('nucleos').select('*');
+    const { data, error } = await supabase.from('nucleos').select('id, nome');
     if (error) throw error;
     return data;
   }

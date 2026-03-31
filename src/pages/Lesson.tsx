@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, AlertCircle, Clock, LayoutDashboard } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -15,6 +15,7 @@ const Lesson = () => {
   const [answers, setAnswers] = useState<Record<string, any>>({})
   const [result, setResult] = useState<{ score: number | null; passed: boolean; pendingReview?: boolean; scoreOriginal?: number | null } | null>(null)
   const [submitted, setSubmitted] = useState(false)
+  const [complete, setComplete] = useState(false)
   const [existingSubmission, setExistingSubmission] = useState<any | null>(null)
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
   const [userProfile, setUserProfile] = useState<any>(null)
@@ -25,6 +26,8 @@ const Lesson = () => {
   const [shuffledOptions, setShuffledOptions] = useState<Record<string, string[]>>({})
   const [shuffledMatchingRows, setShuffledMatchingRows] = useState<Record<string, any[]>>({})
   
+
+
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [isExamStarted, setIsExamStarted] = useState(false)
@@ -43,6 +46,11 @@ const Lesson = () => {
       return
     }
     setLoading(true)
+    setAnswers({})
+    setQuestions([])
+    setResult(null)
+    setSubmitted(false)
+    setExistingSubmission(null)
     try {
       const { data: lessonData, error: lessonError } = await supabase
         .from('aulas')
@@ -110,6 +118,7 @@ const Lesson = () => {
                 supabase.from('respostas_aulas').select('aula_id').eq('aluno_id', user.id),
                 supabase.from('progresso_aulas').select('aula_id, concluida').eq('aluno_id', user.id)
               ]);
+              if (pData?.some(p => p.aula_id === id && p.concluida)) setComplete(true);
               const unfinished = bItems.some(item => {
                 if (item.tipo === 'atividade' || item.tipo === 'prova') return !resData?.some(r => r.aula_id === item.id);
                 return !pData?.some(p => p.aula_id === item.id && p.concluida);
@@ -125,10 +134,10 @@ const Lesson = () => {
 
         // Linked Activity logic (for materials)
         if (lessonData.tipo === 'material' && lessonData.bloco_id) {
-          const { data: blockItems } = await supabase.from('aulas').select('*').eq('bloco_id', lessonData.bloco_id).eq('livro_id', lessonData.livro_id).eq('tipo', 'atividade').limit(1);
+          const { data: blockItems } = await supabase.from('aulas').select('id, min_grade, questionario, tipo, is_bloco_final').eq('bloco_id', lessonData.bloco_id).eq('livro_id', lessonData.livro_id).eq('tipo', 'atividade').limit(1);
           if (blockItems?.length) {
             const linked = blockItems[0];
-            const { data: linkedSub } = await supabase.from('respostas_aulas').select('*').eq('aula_id', linked.id).eq('aluno_id', user.id).maybeSingle();
+            const { data: linkedSub } = await supabase.from('respostas_aulas').select('id, respostas, nota, status, tentativas').eq('aula_id', linked.id).eq('aluno_id', user.id).maybeSingle();
             (lessonData as any).linkedActivity = linked;
             (lessonData as any).linkedSubmission = linkedSub;
             if (Array.isArray(linked.questionario)) setQuestions(linked.questionario);
@@ -137,11 +146,13 @@ const Lesson = () => {
               if (linkedSub.nota !== null) setResult({ score: linkedSub.nota, passed: linkedSub.nota >= (linked.min_grade || 0), pendingReview: linkedSub.status === 'pendente' });
               setSubmitted(true);
             }
+            const { data: pData } = await supabase.from('progresso_aulas').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
+            if (pData?.concluida) setComplete(true);
           }
         }
 
         // Main submission fetch
-        const { data: subData } = await supabase.from('respostas_aulas').select('*').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
+        const { data: subData } = await supabase.from('respostas_aulas').select('id, respostas, nota, status, start_time, data_liberacao, tentativas').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
         if (subData) {
           setExistingSubmission(subData);
           setAnswers(subData.respostas || {});
@@ -163,6 +174,8 @@ const Lesson = () => {
           }
           if (subData.status !== 'liberado') setSubmitted(true);
         }
+        const { data: progData } = await supabase.from('progresso_aulas').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
+        if (progData?.concluida) setComplete(true);
 
         // Enhanced Deadline & Version Logic
         if (lessonData.is_bloco_final) {
@@ -250,7 +263,7 @@ const Lesson = () => {
         // Priority 1: Direct child of this lesson (sub-activity)
         const { data: children } = await supabase
           .from('aulas')
-          .select('*')
+          .select('id, titulo, tipo, ordem')
           .eq('parent_aula_id', lesson.id)
           .eq('tipo', 'atividade')
           .order('ordem', { ascending: true })
@@ -262,7 +275,7 @@ const Lesson = () => {
           // Priority 2: Next immediate exercise in the sequence
           const { data: nextExer } = await supabase
             .from('aulas')
-            .select('*')
+            .select('id, titulo, tipo, ordem')
             .eq('livro_id', lesson.livro_id)
             .gt('ordem', lesson.ordem || 0)
             .eq('tipo', 'atividade')
@@ -333,10 +346,14 @@ const Lesson = () => {
     setSubmitting(true)
     try {
       let score = 0; questions.forEach((q, idx) => {
-        if (q.type === 'multiple_choice' && answers[q.id] === q.correct) score++;
-        else if (q.type === 'true_false' && answers[q.id] === q.isTrue) score++;
+        const qKey = q.id || idx;
+        const studentAns = answers[qKey];
+        if (q.type === 'multiple_choice' || !q.type) {
+          if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score++;
+        }
+        else if (q.type === 'true_false' && studentAns === q.isTrue) score++;
         else if (q.type === 'matching') {
-          const uA = answers[q.id || idx] || {};
+          const uA = studentAns || {};
           // No novo formato, uA[index_esq] armazena o index_dir selecionado
           if (q.matchingPairs?.every((_, mIdx) => String(uA[mIdx]) === String(mIdx))) {
             score++;
@@ -346,24 +363,58 @@ const Lesson = () => {
       const finalS = questions.length > 0 ? (score / questions.length) * 10 : 0;
       const hasD = questions.some(q => q.type === 'discursive');
       const targetId = (lesson as any).linkedActivity?.id || id;
-      const pass = hasD ? false : (finalS || 0) >= (lesson.min_grade || 7);
 
-      const { error } = await supabase.from('respostas_aulas').upsert({
-        id: (lesson as any).linkedSubmission?.id || existingSubmission?.id,
-        aluno_id: userProfile.id, aula_id: targetId, respostas: answers, 
-        nota: finalS || 0, status: 'pendente',
-        tentativas: (existingSubmission?.tentativas || 0) + 1, updated_at: new Date().toISOString()
-      });
+      // Determine correct reference for current attempt count
+      const currentSub = (lesson as any).linkedActivity ? (lesson as any).linkedSubmission : existingSubmission;
+      const targetLesson = (lesson as any).linkedActivity || lesson;
+
+      // Rule: Provas and final assessments are ALWAYS manual/teacher-corrected.
+      const isFinal = targetLesson.tipo === 'prova' || targetLesson.is_bloco_final;
+      const status = (!isFinal && !hasD) ? 'corrigida' : 'pendente';
+      const pass = isFinal ? false : (hasD ? false : (finalS || 0) >= (targetLesson.min_grade || 7));
+
+      const payload: any = {
+        aluno_id: userProfile.id, 
+        aula_id: targetId, 
+        respostas: answers, 
+        nota: finalS || 0, // Recorded but not yet definitive/official for finals
+        status: status,
+        tentativas: (currentSub?.tentativas || 0) + 1, 
+        updated_at: new Date().toISOString()
+      };
+      if (currentSub?.id) payload.id = currentSub.id;
+
+      const { error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
       if (error) throw error;
-      setResult({ score: finalS, passed: pass, pendingReview: true });
-      setSubmitted(true); setIsExamStarted(false); setTimeLeft(null);
 
-      // Even if not passed, we mark as 'complete' in terms of progression for the next module
-      // if it was the first attempt of a block final exam.
-      if (lesson.is_bloco_final && (existingSubmission?.tentativas || 0) === 0) {
-        await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true });
-      } else if (!lesson.is_bloco_final && pass) {
-        await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true });
+      // Pop-ups based on lesson type
+      if (isFinal) {
+        alert('Prova enviada com sucesso! O professor corrigirá todas as questões manualmente com base no gabarito oficial.');
+      } else {
+        alert('Exercício finalizado! Progresso registrado.');
+      }
+
+      setResult({ score: finalS, passed: pass, pendingReview: status === 'pendente' });
+      setSubmitted(true); setIsExamStarted(false); setTimeLeft(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Official Progress tracking: 
+      // Activities (exercícios/vídeos) fill the progress bar.
+      // Exams (provas) unlock the next module but NOT the progress bar.
+      if (!isFinal) {
+        // Regular activity or content
+        await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true }, { onConflict: 'aluno_id,aula_id' });
+        setComplete(true);
+      } else {
+        // This is a Prova (isFinal is true).
+        // It DOES NOT record progress (concluida: true) in progresso_aulas, 
+        // because evaluations don't fill the progress bar as per user request.
+        if (targetLesson.is_bloco_final && pass) {
+          // Special scroll for module completion
+          setTimeout(() => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          }, 500);
+        }
       }
     } catch (err: any) { 
       console.error(err);
@@ -385,8 +436,9 @@ const Lesson = () => {
     if (!lesson || !userProfile) return
     setSubmitting(true)
     try {
-      await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: id, concluida: true });
-      setSubmitted(true); setResult({ score: 10, passed: true });
+      await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: id, concluida: true }, { onConflict: 'aluno_id,aula_id' });
+      setComplete(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       if (lesson.bloco_id) await checkBlockCompletion(userProfile.id, lesson.bloco_id, lesson.livro_id);
     } catch (err) { console.error(err); }
     finally { setSubmitting(false); }
@@ -445,7 +497,7 @@ const Lesson = () => {
           <div className="video-wrapper" style={{ aspectRatio: '16/9', background: '#000', borderRadius: '24px', overflow: 'hidden' }}>
             {lesson.video_url ? renderVideoPlayer(lesson.video_url) : <div style={{height:'100%', display:'flex', alignItems:'center', justifyContent:'center'}}>Vídeo Indisponível</div>}
           </div>
-          {!submitted && <button className="btn btn-primary" onClick={handleMarkAsComplete} style={{marginTop:'2rem', width:'auto', margin:'2rem auto', display:'block'}}>Marcar como Concluída</button>}
+          {!complete && <button className="btn btn-primary" onClick={handleMarkAsComplete} style={{marginTop:'2rem', width:'auto', margin:'2rem auto', display:'block'}}>Marcar como Concluída</button>}
         </div>
       )}
 
@@ -454,7 +506,7 @@ const Lesson = () => {
           <FileText size={80} color="var(--primary)" style={{marginBottom:'1rem'}}/>
           <h2>Material de Estudo</h2>
           <button className="btn btn-primary" onClick={() => navigate(`/book/${lesson.id}?type=aula`)} style={{width:'auto', marginTop:'1rem'}}>Ver Conteúdo</button>
-          {!submitted && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto', marginTop:'1rem', marginLeft:'1rem'}}>Concluir Leitura</button>}
+          {!complete && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto', marginTop:'1rem', marginLeft:'1rem'}}>Concluir Leitura</button>}
         </div>
       )}
 
@@ -483,71 +535,167 @@ const Lesson = () => {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {questions.map((q, idx) => (
-                <div key={q.id || idx} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
-                  <p style={{fontWeight:600, fontSize:'1.1rem', marginBottom:'1.5rem'}}>{idx + 1}. {q.text}</p>
-                  
-                  {q.type === 'multiple_choice' && q.options?.map((opt, oIdx) => (
-                    <label key={oIdx} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderRadius: '12px', background: answers[q.id] === oIdx ? 'rgba(var(--primary-rgb), 0.1)' : 'transparent', border: '1px solid var(--glass-border)', cursor: 'pointer', marginBottom:'0.5rem' }}>
-                      <input type="radio" checked={answers[q.id] === oIdx} onChange={() => setAnswers(p => ({...p, [q.id]: oIdx}))} disabled={submitted && !reviewMode} /> {opt}
-                    </label>
-                  ))}
+              {questions.map((q, idx) => {
+                const qKey = q.id || idx;
+                const studentAns = answers[qKey];
+                const isCorrect = q.type === 'multiple_choice' || !q.type ? String(studentAns) === String(q.correct) :
+                                  q.type === 'true_false' ? studentAns === q.isTrue :
+                                  q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
+                
+                // O gabarito agora só é mostrado no modo de revisão (GradesPanel) ou se for prova já corrigida
+                const showGabarito = reviewMode || ((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && existingSubmission?.status === 'corrigida');
 
-                  {q.type === 'true_false' && (
-                    <div style={{display:'flex', gap:'1rem'}}>
-                      {[true, false].map(v => (
-                        <button key={v.toString()} className={`btn ${answers[q.id] === v ? 'btn-primary' : 'btn-outline'}`} onClick={() => setAnswers(p => ({...p, [q.id]: v}))} style={{width:'auto'}}>
-                          {v ? 'Verdadeiro' : 'Falso'}
-                        </button>
-                      ))}
+                return (
+                  <div key={qKey} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: showGabarito && submitted ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)' }}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                      <p style={{fontWeight:600, fontSize:'1.1rem', marginBottom:'1.5rem', flex: 1}}>{idx + 1}. {q.text}</p>
+                      {showGabarito && submitted && (
+                        <div style={{color: isCorrect ? 'var(--success)' : 'var(--error)', display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.85rem', whiteSpace:'nowrap', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding:'0.4rem 0.8rem', borderRadius:'8px', marginLeft:'1rem'}}>
+                          {isCorrect ? <CheckCircle size={16}/> : <XCircle size={16}/>}
+                          {isCorrect ? 'Correto' : 'Resposta Incorreta'}
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  {q.type === 'matching' && (shuffledMatchingRows[q.id || idx] || q.matchingPairs || []).map((pair, pIdx) => {
-                    const qKey = q.id || idx;
-                    const originalLeftIdx = q.matchingPairs?.findIndex(mp => mp.left === pair.left);
-                    const currentAnswerIdx = answers[qKey]?.[originalLeftIdx !== -1 ? originalLeftIdx! : pIdx];
                     
-                    return (
-                      <div key={pIdx} style={{display:'flex', alignItems:'center', gap:'1rem', marginBottom:'0.5rem'}}>
-                        <div style={{flex:1, padding:'0.75rem', background:'rgba(255,255,255,0.05)', borderRadius:'8px'}}>{pair.left}</div>
-                        <select 
-                          className="form-control" 
-                          style={{flex:1}} 
-                          value={currentAnswerIdx !== undefined ? q.matchingPairs?.[parseInt(currentAnswerIdx)]?.right || '' : ''} 
-                          onChange={e => {
-                            const selectedRightIdx = q.matchingPairs?.findIndex(mp => mp.right === e.target.value);
-                            const leftIdx = originalLeftIdx !== -1 ? originalLeftIdx! : pIdx;
-                            setAnswers(p => ({
-                              ...p, 
-                              [qKey]: {
-                                ...(typeof p[qKey] === 'object' ? p[qKey] : {}), 
-                                [leftIdx]: selectedRightIdx !== -1 ? String(selectedRightIdx) : ''
-                              }
-                            }));
-                          }} 
-                          disabled={submitted}
-                        >
-                          <option value="">Selecione...</option>
-                          {(shuffledOptions[q.id || idx] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
-                            <option key={roIdx} value={rightOpt}>{rightOpt}</option>
-                          ))}
-                        </select>
-                      </div>
-                    );
-                  })}
+                    {(q.type === 'multiple_choice' || !q.type) && q.options?.map((opt, oIdx) => (
+                      <label key={oIdx} style={{ 
+                        display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderRadius: '12px', 
+                        background: answers[qKey] === oIdx ? 'rgba(var(--primary-rgb), 0.1)' : 'transparent', 
+                        border: showGabarito && submitted && q.correct === oIdx ? '1px solid var(--success)' : (showGabarito && submitted && answers[qKey] === oIdx && !isCorrect ? '1px solid var(--error)' : '1px solid var(--glass-border)'), 
+                        cursor: 'pointer', marginBottom:'0.5rem' 
+                      }}>
+                        <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={submitted && !reviewMode} /> 
+                        <span style={{flex:1}}>{opt}</span>
+                        {showGabarito && submitted && q.correct === oIdx && <CheckCircle size={16} color="var(--success)"/>}
+                        {showGabarito && submitted && answers[qKey] === oIdx && !isCorrect && <XCircle size={16} color="var(--error)"/>}
+                      </label>
+                    ))}
 
-                  {q.type === 'discursive' && (
-                    <textarea className="form-control" rows={4} value={answers[q.id] || ''} onChange={e => setAnswers(p => ({...p, [q.id]: e.target.value}))} placeholder="Sua resposta..."></textarea>
-                  )}
-                </div>
-              ))}
+                    {q.type === 'true_false' && (
+                      <div style={{display:'flex', gap:'1rem'}}>
+                        {[true, false].map(v => (
+                          <button 
+                            key={v.toString()} 
+                            className={`btn ${answers[qKey] === v ? 'btn-primary' : 'btn-outline'}`} 
+                            onClick={() => setAnswers(p => ({...p, [qKey]: v}))} 
+                            style={{
+                              width:'auto',
+                              border: showGabarito && submitted && q.isTrue === v ? '2px solid var(--success)' : (showGabarito && submitted && answers[qKey] === v && !isCorrect ? '2px solid var(--error)' : '')
+                            }}
+                            disabled={submitted}
+                          >
+                            {v ? 'Verdadeiro' : 'Falso'}
+                            {showGabarito && submitted && q.isTrue === v && <CheckCircle size={14} style={{marginLeft:'0.5rem'}}/>}
+                            {showGabarito && submitted && answers[qKey] === v && !isCorrect && <XCircle size={14} style={{marginLeft:'0.5rem'}}/>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {q.type === 'matching' && (shuffledMatchingRows[qKey] || q.matchingPairs || []).map((pair, pIdx) => {
+                      const originalLeftIdx = q.matchingPairs?.findIndex(mp => mp.left === pair.left);
+                      const currentAnswerIdxStr = answers[qKey]?.[originalLeftIdx !== -1 ? originalLeftIdx! : pIdx];
+                      const currentAnswerIdx = currentAnswerIdxStr !== undefined && currentAnswerIdxStr !== '' ? parseInt(currentAnswerIdxStr) : undefined;
+                      const isRowCorrect = currentAnswerIdx === (originalLeftIdx !== -1 ? originalLeftIdx : pIdx);
+                      
+                      return (
+                        <div key={pIdx} style={{display:'flex', alignItems:'center', gap:'1rem', marginBottom:'0.5rem'}}>
+                          <div style={{flex:1, padding:'0.75rem', background:'rgba(255,255,255,0.05)', borderRadius:'8px'}}>{pair.left}</div>
+                          <select 
+                            className="form-control" 
+                            style={{
+                              flex:1,
+                              border: showGabarito && submitted ? (isRowCorrect ? '1px solid var(--success)' : '1px solid var(--error)') : ''
+                            }} 
+                            value={currentAnswerIdx !== undefined ? q.matchingPairs?.[currentAnswerIdx]?.right || '' : ''} 
+                            onChange={e => {
+                              const selectedRightIdx = q.matchingPairs?.findIndex(mp => mp.right === e.target.value);
+                              const leftIdx = originalLeftIdx !== -1 ? originalLeftIdx! : pIdx;
+                              setAnswers(p => ({
+                                ...p, 
+                                [qKey]: {
+                                  ...(typeof p[qKey] === 'object' ? p[qKey] : {}), 
+                                  [leftIdx]: selectedRightIdx !== -1 ? String(selectedRightIdx) : ''
+                                }
+                              }));
+                            }} 
+                            disabled={submitted}
+                          >
+                            <option value="">Selecione...</option>
+                            {(shuffledOptions[qKey] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
+                              <option key={roIdx} value={rightOpt}>{rightOpt}</option>
+                            ))}
+                          </select>
+                          {showGabarito && submitted && (isRowCorrect ? <CheckCircle size={18} color="var(--success)"/> : <XCircle size={18} color="var(--error)"/>)}
+                        </div>
+                      );
+                    })}
+
+                    {q.type === 'discursive' && (
+                      <div style={{display:'flex', flexDirection:'column', gap:'0.5rem'}}>
+                        <textarea className="form-control" rows={4} value={answers[qKey] || ''} onChange={e => setAnswers(p => ({...p, [qKey]: e.target.value}))} placeholder="Sua resposta..." disabled={submitted}></textarea>
+                        {showGabarito && submitted && q.expectedAnswer && (
+                          <div style={{marginTop:'1rem', padding:'1rem', background:'rgba(var(--primary-rgb), 0.1)', borderRadius:'12px', fontSize:'0.9rem'}}>
+                            <strong style={{color:'var(--primary)', display:'block', marginBottom:'0.5rem'}}>Gabarito sugerido:</strong>
+                            {q.expectedAnswer}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
               {!submitted && <button className="btn btn-primary" onClick={handleSubmit} disabled={submitting}>{submitting ? <Loader2 className="spinner"/> : 'Finalizar e Enviar'}</button>}
               {submitted && result && (
-                <div style={{textAlign:'center', marginTop:'2rem', padding:'2rem', background:'var(--glass)', borderRadius:'16px'}}>
-                  <h3>Resultado: {result.score?.toFixed(1)} / 10</h3>
-                  <p>{result.passed ? 'Parabéns! Você atingiu a nota mínima.' : 'Infelizmente você não atingiu a nota mínima.'}</p>
-                  <button className="btn btn-outline" onClick={() => navigate('/dashboard')} style={{width:'auto'}}>Voltar ao Painel</button>
+                <div style={{textAlign:'center', marginTop:'2rem', padding:'2rem', background:'var(--glass)', borderRadius:'16px', border: '1px solid var(--glass-border)'}}>
+                  {((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && (existingSubmission?.status !== 'corrigida' && result.pendingReview)) ? (
+                    <>
+                      <Clock size={48} color="var(--warning)" style={{marginBottom:'1rem'}}/>
+                      <h3>Avaliação Enviada!</h3>
+                      <p style={{color:'var(--text-muted)'}}>Sua prova foi enviada para correção. Por favor, aguarde o feedback do professor no seu boletim.</p>
+                    </>
+                  ) : (
+                    <>
+                      {(lesson.tipo === 'prova' || lesson.is_bloco_final) && result.pendingReview ? (
+                        <>
+                          <Clock size={40} color="var(--warning)" style={{marginBottom:'1rem'}}/>
+                          <h2 style={{ color: 'var(--warning)', fontWeight: 800, marginBottom: '0.5rem' }}>Prova em Correção</h2>
+                          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Sua avaliação foi enviada e será corrigida manualmente pelo professor.</p>
+                        </>
+                      ) : (
+                        <>
+                          <Award size={40} color="var(--primary)" style={{marginBottom:'1rem'}}/>
+                          {lesson.is_bloco_final && result.passed && (
+                            <>
+                              <h2 style={{ color: 'var(--success)', fontWeight: 800, marginBottom: '0.5rem' }}>Módulo Completo!</h2>
+                              <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)' }}>
+                                <div style={{ height: '100%', width: '100%', background: 'linear-gradient(90deg, var(--success) 0%, #10b981 100%)', boxShadow: '0 0 10px rgba(16, 185, 129, 0.4)' }}></div>
+                              </div>
+                            </>
+                          )}
+                          {lesson.is_bloco_final && !result.passed && (
+                            <h2 style={{ color: 'var(--error)', fontWeight: 800, marginBottom: '1rem' }}>Refazer o Módulo</h2>
+                          )}
+                          <h3>Resultado: {result.score?.toFixed(1)} / 10</h3>
+                          {result.passed ? (
+                            <p>Parabéns! Você atingiu a nota mínima.</p>
+                          ) : (
+                            <h2 style={{ color: 'var(--error)', fontWeight: 800, marginTop: '1rem' }}>Refazer o Módulo</h2>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
+                  <div style={{display:'flex', gap:'1rem', justifyContent:'center', marginTop:'2rem'}}>
+                    <button className="btn btn-outline" onClick={() => navigate('/dashboard')} style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}>
+                      <LayoutDashboard size={18}/> Voltar ao Painel
+                    </button>
+                    {nextLessonId && (
+                      <button className="btn btn-primary" onClick={() => navigate(`/lesson/${nextLessonId}`)} style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}>
+                        Próxima Aula <ChevronRight size={18}/>
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
