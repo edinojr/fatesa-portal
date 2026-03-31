@@ -13,4 +13,5 @@ export interface QuizQuestion {
   matchingPairs?: { left: string; right: string }[];
   // Discursive Specific
   expectedAnswer?: string;
+  explanation?: string; // New field for feedback/gabarito
 }
