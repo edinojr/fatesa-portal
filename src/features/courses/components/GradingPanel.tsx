@@ -154,7 +154,10 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '1rem', alignItems: 'center' }}>
                         {q.matchingPairs?.map((pair: any, pIdx: number) => {
                           const selectedRightIdx = answerMap[pIdx];
-                          const selectedRight = selectedRightIdx !== undefined && selectedRightIdx !== '' ? q.matchingPairs[parseInt(selectedRightIdx)].right : '---';
+                          const idxNum = parseInt(selectedRightIdx);
+                          const selectedRight = (!isNaN(idxNum) && q.matchingPairs?.[idxNum]) 
+                            ? q.matchingPairs[idxNum].right 
+                            : (selectedRightIdx && typeof selectedRightIdx === 'string' && selectedRightIdx !== '' ? selectedRightIdx : '---');
                           return (
                             <React.Fragment key={pIdx}>
                               <div style={{ padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', fontSize: '0.9rem', textAlign: 'right', fontWeight: 600, border: '1px solid rgba(255,255,255,0.05)' }}>

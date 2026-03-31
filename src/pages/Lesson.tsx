@@ -336,8 +336,11 @@ const Lesson = () => {
         if (q.type === 'multiple_choice' && answers[q.id] === q.correct) score++;
         else if (q.type === 'true_false' && answers[q.id] === q.isTrue) score++;
         else if (q.type === 'matching') {
-          const uA = answers[q.id] || {};
-          if (q.matchingPairs?.every(p => uA[p.left] === p.right)) score++;
+          const uA = answers[q.id || idx] || {};
+          // No novo formato, uA[index_esq] armazena o index_dir selecionado
+          if (q.matchingPairs?.every((_, mIdx) => String(uA[mIdx]) === String(mIdx))) {
+            score++;
+          }
         }
       });
       const finalS = questions.length > 0 ? (score / questions.length) * 10 : 0;
@@ -500,17 +503,39 @@ const Lesson = () => {
                     </div>
                   )}
 
-                  {q.type === 'matching' && (shuffledMatchingRows[q.id || idx] || q.matchingPairs || []).map((pair, pIdx) => (
-                    <div key={pIdx} style={{display:'flex', alignItems:'center', gap:'1rem', marginBottom:'0.5rem'}}>
-                      <div style={{flex:1, padding:'0.75rem', background:'rgba(255,255,255,0.05)', borderRadius:'8px'}}>{pair.left}</div>
-                      <select className="form-control" style={{flex:1}} value={answers[q.id]?.[pair.left] || ''} onChange={e => setAnswers(p => ({...p, [q.id]: {...(p[q.id]||{}), [pair.left]: e.target.value}}))} disabled={submitted}>
-                        <option value="">Selecione...</option>
-                        {(shuffledOptions[q.id || idx] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
-                          <option key={roIdx} value={rightOpt}>{rightOpt}</option>
-                        ))}
-                      </select>
-                    </div>
-                  ))}
+                  {q.type === 'matching' && (shuffledMatchingRows[q.id || idx] || q.matchingPairs || []).map((pair, pIdx) => {
+                    const qKey = q.id || idx;
+                    const originalLeftIdx = q.matchingPairs?.findIndex(mp => mp.left === pair.left);
+                    const currentAnswerIdx = answers[qKey]?.[originalLeftIdx !== -1 ? originalLeftIdx! : pIdx];
+                    
+                    return (
+                      <div key={pIdx} style={{display:'flex', alignItems:'center', gap:'1rem', marginBottom:'0.5rem'}}>
+                        <div style={{flex:1, padding:'0.75rem', background:'rgba(255,255,255,0.05)', borderRadius:'8px'}}>{pair.left}</div>
+                        <select 
+                          className="form-control" 
+                          style={{flex:1}} 
+                          value={currentAnswerIdx !== undefined ? q.matchingPairs?.[parseInt(currentAnswerIdx)]?.right || '' : ''} 
+                          onChange={e => {
+                            const selectedRightIdx = q.matchingPairs?.findIndex(mp => mp.right === e.target.value);
+                            const leftIdx = originalLeftIdx !== -1 ? originalLeftIdx! : pIdx;
+                            setAnswers(p => ({
+                              ...p, 
+                              [qKey]: {
+                                ...(typeof p[qKey] === 'object' ? p[qKey] : {}), 
+                                [leftIdx]: selectedRightIdx !== -1 ? String(selectedRightIdx) : ''
+                              }
+                            }));
+                          }} 
+                          disabled={submitted}
+                        >
+                          <option value="">Selecione...</option>
+                          {(shuffledOptions[q.id || idx] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
+                            <option key={roIdx} value={rightOpt}>{rightOpt}</option>
+                          ))}
+                        </select>
+                      </div>
+                    );
+                  })}
 
                   {q.type === 'discursive' && (
                     <textarea className="form-control" rows={4} value={answers[q.id] || ''} onChange={e => setAnswers(p => ({...p, [q.id]: e.target.value}))} placeholder="Sua resposta..."></textarea>
