@@ -32,25 +32,9 @@ export const useProfessorGrading = () => {
       questionnaire.forEach((q: any, qIdx: number) => {
         const qKey = q.id || qIdx;
         const studentAns = sub.respostas?.[qKey];
-        const correctOpt = q.correctOption !== undefined ? q.correctOption : q.correct;
-
-        if (q.type === 'multiple_choice' || !q.type) {
-          const isCorrect = studentAns !== undefined && studentAns !== null && String(studentAns) === String(correctOpt);
-          initialEvals[qKey] = isCorrect;
-        } else if (q.type === 'true_false') {
-          const isCorrect = studentAns === q.correctAnswer;
-          initialEvals[qKey] = !!isCorrect;
-        } else if (q.type === 'matching') {
-          let allCorrect = true;
-          if (!studentAns || Object.keys(studentAns).length === 0) {
-            allCorrect = false;
-          } else {
-            const answerMap = studentAns as Record<string, string>;
-            q.matchingPairs?.forEach((_: any, mIdx: number) => {
-              if (String(answerMap[mIdx]) !== String(mIdx)) allCorrect = false;
-            });
-          }
-          initialEvals[qKey] = allCorrect;
+        const savedEval = sub.respostas?.[`${qKey}_avaliacao`];
+        if (savedEval !== undefined) {
+          initialEvals[qKey] = savedEval === true;
         }
       });
     }
@@ -131,6 +115,10 @@ export const useProfessorGrading = () => {
       Object.entries(questionComments).forEach(([qId, comment]) => {
         if (comment.trim()) updatedRespostas[`${qId}_comentario`] = comment;
         else delete updatedRespostas[`${qId}_comentario`];
+      });
+
+      Object.entries(questionEvaluations).forEach(([qId, isCorrect]) => {
+        updatedRespostas[`${qId}_avaliacao`] = isCorrect;
       });
 
       const updateData: any = {
