@@ -62,9 +62,14 @@ const CourseList: React.FC<CourseListProps> = ({
             a.tipo === 'atividade' ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
           ).length;
           
-          const bookGrades = (atividades || []).filter((at: any) => 
-            allAulas.some((a: any) => a.id === at.aula_id) && at.nota !== null
-          );
+          const bookGrades = (atividades || []).filter((at: any) => {
+            const relatedAula = allAulas.find((a: any) => a.id === at.aula_id);
+            if (!relatedAula) return false;
+            if (at.nota === null) return false;
+            // Rule: only count exams if they are explicitly graded by the teacher
+            if (relatedAula.tipo === 'prova' && at.status !== 'corrigida') return false;
+            return true;
+          });
           
           const averageGrade = bookGrades.length > 0 
             ? bookGrades.reduce((a, b) => a + (b.nota || 0), 0) / bookGrades.length 

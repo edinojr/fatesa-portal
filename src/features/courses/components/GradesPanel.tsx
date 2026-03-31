@@ -219,7 +219,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                 <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 800 }}>Correção Detalhada</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
                   {reviewSub.aulas?.titulo || 'Atividade'} • {reviewSub.aulas?.tipo === 'prova' ? 
-                    <>Nota Final: <strong style={{color: 'var(--primary)'}}>{reviewSub.nota?.toFixed(1) || (reviewSub.status === 'pendente' ? 'Aguardando' : '10.0')}</strong></> : 
+                    <>Nota Final: <strong style={{color: 'var(--primary)'}}>{reviewSub.status === 'pendente' ? 'Aguardando Correção' : (reviewSub.nota?.toFixed(1) || '---')}</strong></> : 
                     <strong style={{color: 'var(--success)'}}>{reviewSub.status === 'pendente' ? 'Em Correção' : 'Status: Concluída'}</strong>
                   }
                 </p>

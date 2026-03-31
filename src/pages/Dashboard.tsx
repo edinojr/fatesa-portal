@@ -323,16 +323,6 @@ const Dashboard = () => {
             />
           )}
 
-          {activeTab === 'avaliacoes' && (
-            <GradesPanel 
-              profile={profile}
-              availableNucleos={availableNucleos}
-              handleChangeNucleo={() => {}} // Precisa de refatoração se necessário
-              courses={courses}
-              atividades={atividades}
-            />
-          )}
-
           {activeTab === 'boletim' && (
             <GradesPanel 
               profile={profile}

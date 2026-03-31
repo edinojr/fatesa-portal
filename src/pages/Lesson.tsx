@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, AlertCircle, Clock, LayoutDashboard } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, AlertCircle, Clock, LayoutDashboard, CheckCircle2 } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -664,23 +664,26 @@ const Lesson = () => {
                         </>
                       ) : (
                         <>
-                          <Award size={40} color="var(--primary)" style={{marginBottom:'1rem'}}/>
-                          {lesson.is_bloco_final && result.passed && (
+                          {lesson.tipo === 'prova' ? (
                             <>
-                              <h2 style={{ color: 'var(--success)', fontWeight: 800, marginBottom: '0.5rem' }}>Módulo Completo!</h2>
-                              <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)' }}>
-                                <div style={{ height: '100%', width: '100%', background: 'linear-gradient(90deg, var(--success) 0%, #10b981 100%)', boxShadow: '0 0 10px rgba(16, 185, 129, 0.4)' }}></div>
-                              </div>
+                              <Award size={40} color="var(--primary)" style={{marginBottom:'1rem'}}/>
+                              {lesson.is_bloco_final && result.passed && (
+                                <>
+                                  <h2 style={{ color: 'var(--success)', fontWeight: 800, marginBottom: '0.5rem' }}>Módulo Completo!</h2>
+                                  <svg style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)' }}>
+                                    <rect style={{ height: '100%', width: '100%', fill: 'var(--success)' }} />
+                                  </svg>
+                                </>
+                              )}
+                              <h3>Nota Final: {result.score?.toFixed(1)} / 10</h3>
+                              <p>{result.passed ? 'Parabéns! Você atingiu a nota mínima de aprovação.' : 'Nota insuficiente. Por favor, realize a recuperação para prosseguir.'}</p>
                             </>
-                          )}
-                          {lesson.is_bloco_final && !result.passed && (
-                            <h2 style={{ color: 'var(--error)', fontWeight: 800, marginBottom: '1rem' }}>Refazer o Módulo</h2>
-                          )}
-                          <h3>Resultado: {result.score?.toFixed(1)} / 10</h3>
-                          {result.passed ? (
-                            <p>Parabéns! Você atingiu a nota mínima.</p>
                           ) : (
-                            <h2 style={{ color: 'var(--error)', fontWeight: 800, marginTop: '1rem' }}>Refazer o Módulo</h2>
+                            <>
+                              <CheckCircle2 size={40} color="var(--success)" style={{marginBottom:'1rem'}}/>
+                              <h2 style={{ color: 'var(--success)', fontWeight: 800 }}>Atividade Concluída!</h2>
+                              <p style={{ color: 'var(--text-muted)' }}>Você completou este exercício com sucesso e seu progresso foi registrado.</p>
+                            </>
                           )}
                         </>
                       )}
