@@ -345,39 +345,43 @@ const Lesson = () => {
     if (!lesson || !userProfile) return
     setSubmitting(true)
     try {
-      let score = 0; questions.forEach((q, idx) => {
-        const qKey = q.id || idx;
-        const studentAns = answers[qKey];
-        if (q.type === 'multiple_choice' || !q.type) {
-          if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score++;
-        }
-        else if (q.type === 'true_false' && studentAns === q.isTrue) score++;
-        else if (q.type === 'matching') {
-          const uA = studentAns || {};
-          // No novo formato, uA[index_esq] armazena o index_dir selecionado
-          if (q.matchingPairs?.every((_, mIdx) => String(uA[mIdx]) === String(mIdx))) {
-            score++;
-          }
-        }
-      });
-      const finalS = questions.length > 0 ? (score / questions.length) * 10 : 0;
-      const hasD = questions.some(q => q.type === 'discursive');
+      let score = 0; 
+      
       const targetId = (lesson as any).linkedActivity?.id || id;
-
-      // Determine correct reference for current attempt count
-      const currentSub = (lesson as any).linkedActivity ? (lesson as any).linkedSubmission : existingSubmission;
       const targetLesson = (lesson as any).linkedActivity || lesson;
-
+      const currentSub = (lesson as any).linkedActivity ? (lesson as any).linkedSubmission : existingSubmission;
+      
       // Rule: Provas and final assessments are ALWAYS manual/teacher-corrected.
       const isFinal = targetLesson.tipo === 'prova' || targetLesson.is_bloco_final;
-      const status = (!isFinal && !hasD) ? 'corrigida' : 'pendente';
-      const pass = isFinal ? false : (hasD ? false : (finalS || 0) >= (targetLesson.min_grade || 7));
+
+      if (!isFinal) {
+        questions.forEach((q, idx) => {
+          const qKey = q.id || idx;
+          const studentAns = answers[qKey];
+          if (q.type === 'multiple_choice' || !q.type) {
+            if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score++;
+          }
+          else if (q.type === 'true_false' && studentAns === q.isTrue) score++;
+          else if (q.type === 'matching') {
+            const uA = studentAns || {};
+            if (q.matchingPairs?.every((_, mIdx) => String(uA[mIdx]) === String(mIdx))) {
+              score++;
+            }
+          }
+        });
+      }
+
+      const finalS = isFinal ? 0 : (questions.length > 0 ? (score / questions.length) * 10 : 0);
+      
+      // Regra aprovada pelo UX: Atividades (exercícios) NUNCA passam por correção manual, nem mesmo se tiverem discursivas.
+      const status = isFinal ? 'pendente' : 'corrigida';
+      const pass = false; // Nota para aprovação visual de prova será checada após a correção do prof. Exercícios não precisam de nota de aprovação.
 
       const payload: any = {
         aluno_id: userProfile.id, 
         aula_id: targetId, 
         respostas: answers, 
-        nota: finalS || 0, // Recorded but not yet definitive/official for finals
+        nota: finalS, 
         status: status,
         tentativas: (currentSub?.tentativas || 0) + 1, 
         updated_at: new Date().toISOString()

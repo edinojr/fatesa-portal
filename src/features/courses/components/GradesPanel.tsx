@@ -276,7 +276,20 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                         ) : q.type === 'discursive' ? (
                           <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{studentAns || <span style={{opacity: 0.5}}>Sem resposta</span>}</div>
                         ) : q.type === 'matching' ? (
-                          <div style={{fontSize: '0.9rem', opacity: 0.8}}>Associações realizadas através do sistema de colunas.</div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            {q.matchingPairs?.map((pair: any, mIdx: number) => {
+                              const stdR = studentAns?.[mIdx];
+                              const rTxt = stdR !== undefined && q.matchingPairs[stdR] ? q.matchingPairs[stdR].right : 'Sem resposta';
+                              const isMatchCorrect = String(stdR) === String(mIdx);
+                              return (
+                                <div key={mIdx} style={{ fontSize: '0.9rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                  <span style={{ fontWeight: 600 }}>{pair.left}</span>
+                                  <span style={{ opacity: 0.5 }}>→</span>
+                                  <span style={{ color: isMatchCorrect ? 'var(--success)' : 'var(--error)' }}>{rTxt}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
                         ) : studentAns}
                       </div>
                     </div>
@@ -288,6 +301,17 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                            {q.type === 'multiple_choice' ? q.options?.[q.correct] : 
                             q.type === 'true_false' ? (q.isTrue ? 'Verdadeiro' : 'Falso') :
                             q.type === 'discursive' ? (q.expectedAnswer || 'Esta questão exige avaliação qualitativa do professor.') :
+                            q.type === 'matching' ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                {q.matchingPairs?.map((pair: any, mIdx: number) => (
+                                  <div key={mIdx} style={{ fontSize: '0.9rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                    <span style={{ fontWeight: 600 }}>{pair.left}</span>
+                                    <span style={{ opacity: 0.5 }}>→</span>
+                                    <span style={{ color: 'var(--success)' }}>{pair.right}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) :
                             'Consulte o material de estudo.'}
                         </div>
                       </div>
