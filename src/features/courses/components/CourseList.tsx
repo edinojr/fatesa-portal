@@ -42,12 +42,12 @@ const CourseList: React.FC<CourseListProps> = ({
 
         const getBookStats = (l: any) => {
           const allAulas = l.aulas || [];
-          const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'prova' && a.tipo !== 'licao');
+          const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'licao');
           const totalItems = itemsForProgress.length;
           if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 10, isFinished: true, isApproved: true, examGrade: 10 };
           
           const completedItems = itemsForProgress.filter((a: any) => 
-            a.tipo === 'atividade' ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
+            (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
           ).length;
           
           // Rule: Approved if has a 'prova' and grade >= min_grade (default 7), OR if no 'prova' exists
