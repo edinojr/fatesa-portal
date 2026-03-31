@@ -1,5 +1,5 @@
 import React from 'react'
-import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen } from 'lucide-react'
+import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen, RotateCcw } from 'lucide-react'
 import Badge from '../../../components/ui/Badge'
 
 interface UserManagementProps {
@@ -15,6 +15,7 @@ interface UserManagementProps {
   handleUpdateUserNucleo: (userId: string, nucleoId: string) => Promise<void>
   handleUpdateUserName: (userId: string, newName: string) => Promise<void>
   handleDeleteUser: (userId: string) => Promise<void>
+  handleResetActivities: (userId: string) => Promise<void>
   handleManualPayment: (userId: string) => Promise<void>
   setShowAddAdmin: (val: boolean) => void
   onAddNucleo?: () => void
@@ -22,7 +23,7 @@ interface UserManagementProps {
 
 const STAFF_TYPES = ['professor', 'admin', 'suporte']
 
-const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleApproveAccess, handleToggleBlock, handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleManualPayment }: any) => {
+const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleApproveAccess, handleToggleBlock, handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleResetActivities, handleManualPayment }: any) => {
   const isProf = STAFF_TYPES.includes(user.tipo)
   return (
     <tr>
@@ -148,6 +149,17 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
               {user.bloqueado ? 'Ativar' : 'Bloquear'}
             </button>
           )}
+          {!isProf && (
+            <button
+              className="btn"
+              style={{ width: 'auto', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '0.4rem' }}
+              onClick={() => handleResetActivities(user.id)}
+              disabled={actionLoading === user.id}
+              title="Resetar Atividades e Progresso"
+            >
+              {actionLoading === user.id ? <Loader2 className="spinner" size={16} /> : <RotateCcw size={16} />}
+            </button>
+          )}
           <button
             className="btn"
             style={{ width: 'auto', background: 'rgba(255, 77, 77, 0.1)', color: 'var(--error)', padding: '0.4rem' }}
@@ -220,7 +232,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
   users, allNucleos, searchTerm, actionLoading,
   handleTypeChange, handleApproveAccess, handleToggleBlock,
   handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName,
-  handleDeleteUser, handleManualPayment, setShowAddAdmin, onAddNucleo
+  handleDeleteUser, handleResetActivities, handleManualPayment, setShowAddAdmin, onAddNucleo
 }) => {
   const filteredUsers = users.filter(u =>
     u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -240,7 +252,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
 
   const handlers = {
     handleTypeChange, handleApproveAccess, handleToggleBlock,
-    handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleManualPayment
+    handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleResetActivities, handleManualPayment
   }
 
   return (

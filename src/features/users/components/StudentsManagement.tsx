@@ -1,5 +1,5 @@
 import React from 'react'
-import { Users, Trash2, Loader2, CheckCircle, XCircle } from 'lucide-react'
+import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw } from 'lucide-react'
 import { Student } from '../../../types/professor'
 
 interface StudentsManagementProps {
@@ -10,11 +10,14 @@ interface StudentsManagementProps {
   handleApproveAccess: (userId: string) => Promise<void>
   handleRejectAccess: (userId: string) => Promise<void>
   handleDeleteUser: (userId: string) => Promise<void>
+  handleResetActivities: (userId: string) => Promise<void>
+  userRole?: string | null
 }
 
 export default function StudentsManagement({ 
   allStudents, searchTerm, setSearchTerm, actionLoading,
-  handleApproveAccess, handleRejectAccess, handleDeleteUser
+  handleApproveAccess, handleRejectAccess, handleDeleteUser,
+  handleResetActivities, userRole
 }: StudentsManagementProps) {
   const filteredStudents = allStudents.filter(s => 
     s.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -111,6 +114,17 @@ export default function StudentsManagement({
                                 >
                                   <XCircle size={14} />
                                   <span style={{ marginLeft: '4px' }}>Recusar</span>
+                                </button>
+                              )}
+                              {(userRole === 'admin' || userRole === 'suporte') && (
+                                <button 
+                                  className="btn"
+                                  style={{ padding: '0.4rem', fontSize: '0.75rem', width: 'auto', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)' }}
+                                  onClick={() => handleResetActivities(student.id)}
+                                  disabled={actionLoading === student.id}
+                                  title="Resetar Atividades e Progresso"
+                                >
+                                  {actionLoading === student.id ? <Loader2 className="spinner" size={16} /> : <RotateCcw size={16} />}
                                 </button>
                               )}
                               <button 

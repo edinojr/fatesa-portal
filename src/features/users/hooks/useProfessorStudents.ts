@@ -56,6 +56,26 @@ export const useProfessorStudents = () => {
     }
   }
 
+  const handleResetProgress = async (userId: string, onSuccess?: () => void) => {
+    if (!window.confirm('ATENÇÃO: Deseja realmente resetar TODO o progresso e todas as avaliações deste aluno? Esta ação removerá permanentemente todas as notas, respostas e aulas concluídas.')) return;
+    
+    setActionLoading(userId);
+    try {
+      const { error: errorRes } = await supabase.from('respostas_aulas').delete().eq('aluno_id', userId);
+      if (errorRes) throw errorRes;
+      
+      const { error: errorProg } = await supabase.from('progresso_aulas').delete().eq('aluno_id', userId);
+      if (errorProg) throw errorProg;
+      
+      alert('Progresso e atividades resetados com sucesso!');
+      if (onSuccess) onSuccess();
+    } catch (err: any) {
+      alert('Erro ao resetar progresso: ' + err.message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   const handleDeleteUser = async (userId: string, onSuccess?: () => void) => {
     if (!confirm('Deseja realmente EXCLUIR este aluno permanentemente? Esta ação não pode ser desfeita.')) return
     setActionLoading(userId)
@@ -79,6 +99,7 @@ export const useProfessorStudents = () => {
     actionLoading,
     handleApproveAccess,
     handleRejectAccess,
-    handleDeleteUser
+    handleDeleteUser,
+    handleResetProgress
   }
 }

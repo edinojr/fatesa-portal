@@ -332,7 +332,7 @@ const Lesson = () => {
     if (!lesson || !userProfile) return
     setSubmitting(true)
     try {
-      let score = 0; questions.forEach(q => {
+      let score = 0; questions.forEach((q, idx) => {
         if (q.type === 'multiple_choice' && answers[q.id] === q.correct) score++;
         else if (q.type === 'true_false' && answers[q.id] === q.isTrue) score++;
         else if (q.type === 'matching') {

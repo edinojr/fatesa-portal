@@ -423,6 +423,26 @@ export const useAdminManagement = () => {
     }
   }
 
+  const handleResetProgress = async (userId: string) => {
+    if (!window.confirm('ATENÇÃO: Deseja realmente resetar TODO o progresso e avaliações deste aluno? Esta ação removerá permanentemente todas as notas e aulas assistidas.')) return;
+    
+    setActionLoading(userId);
+    try {
+      const { error: errorRes } = await supabase.from('respostas_aulas').delete().eq('aluno_id', userId);
+      if (errorRes) throw errorRes;
+      
+      const { error: errorProg } = await supabase.from('progresso_aulas').delete().eq('aluno_id', userId);
+      if (errorProg) throw errorProg;
+      
+      showToast('Atividades e progresso resetados com sucesso!');
+      fetchData();
+    } catch (err: any) {
+      showToast('Erro ao resetar: ' + err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   const handleRemoveFileFinal = async (table: 'livros' | 'aulas', id: string, column: string) => {
     setActionLoading(id + '_' + column)
     try {
@@ -725,6 +745,7 @@ export const useAdminManagement = () => {
     handleUpdateUserName,
     handleDeleteUser,
     handleRemoveFileFinal,
+    handleResetProgress,
     handleManualPayment,
     handleAddTeacher,
     handleAddAdmin,

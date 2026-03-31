@@ -63,6 +63,7 @@ const Professor = () => {
     handleApproveAccess,
     handleRejectAccess,
     handleDeleteUser,
+    handleResetProgress,
     handleLogout,
     fetchBooks,
     selectBookAndShowLessons
@@ -196,6 +197,8 @@ const Professor = () => {
             handleApproveAccess={handleApproveAccess}
             handleRejectAccess={handleRejectAccess}
             handleDeleteUser={handleDeleteUser}
+            handleResetActivities={handleResetProgress}
+            userRole={profile?.tipo}
           />
         )}
 

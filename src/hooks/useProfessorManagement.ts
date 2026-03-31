@@ -181,6 +181,7 @@ export const useProfessorManagement = () => {
     handleApproveAccess: (id: string) => studentHook.handleApproveAccess(id, fetchData),
     handleRejectAccess: (id: string) => studentHook.handleRejectAccess(id, fetchData),
     handleDeleteUser: (id: string) => studentHook.handleDeleteUser(id, fetchData),
+    handleResetProgress: (id: string) => studentHook.handleResetProgress(id, fetchData),
     // Delegated Grading State & Actions
     ...gradingHook,
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),

@@ -143,6 +143,7 @@ const Admin = () => {
     handleUpdateUserName,
     handleDeleteUser,
     handleRemoveFileFinal,
+    handleResetProgress,
     handleManualPayment,
     handleAddTeacher,
     handleAddAdmin,
@@ -361,6 +362,7 @@ const Admin = () => {
             handleUpdateUserNucleo={handleUpdateUserNucleo}
             handleUpdateUserName={handleUpdateUserName}
             handleDeleteUser={async (userId: string) => setConfirmDelete({ type: 'user', id: userId, title: 'Tem certeza que deseja excluir este usuário?' })}
+            handleResetActivities={handleResetProgress}
             handleManualPayment={handleManualPayment}
             onAddNucleo={() => { setActiveTab('nucleos'); setNucleosAutoOpenAdd(true); }}
           />
