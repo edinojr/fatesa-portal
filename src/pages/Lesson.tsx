@@ -348,7 +348,7 @@ const Lesson = () => {
       const { error } = await supabase.from('respostas_aulas').upsert({
         id: (lesson as any).linkedSubmission?.id || existingSubmission?.id,
         aluno_id: userProfile.id, aula_id: targetId, respostas: answers, 
-        nota: finalS || 0, nota_original: finalS || 0, status: 'pendente',
+        nota: finalS || 0, status: 'pendente',
         tentativas: (existingSubmission?.tentativas || 0) + 1, updated_at: new Date().toISOString()
       });
       if (error) throw error;
