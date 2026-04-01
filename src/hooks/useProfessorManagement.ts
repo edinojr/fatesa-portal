@@ -145,7 +145,7 @@ export const useProfessorManagement = () => {
                   tentativas,
                   primeira_correcao_at,
                   aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
-                  users:aluno_id ( id, nome, email )
+                  users:aluno_id ( id, nome, email, nucleos ( nome ) )
                 `)
                 .in('aluno_id', studentIds)
                 .order('updated_at', { ascending: false })

@@ -57,30 +57,61 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               📖 Ver Gabaritos (Banco de Questões)
             </button>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {submissions.filter(s => s.status === 'pendente').map(sub => (
-              <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div>
-                  <h4 style={{ marginBottom: '0.25rem' }}>{sub.aulas?.titulo || 'Atividade Desconhecida'}</h4>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Aluno: {sub.users?.nome} ({sub.users?.email})</p>
-                  <p style={{ fontSize: '0.75rem', opacity: 0.5, marginTop: '0.25rem' }}>Data: {new Date(sub.created_at).toLocaleString()}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {(() => {
+              // Filtrar apenas provas finais pendentes
+              const finalExams = submissions.filter(s => 
+                s.status === 'pendente' && 
+                ((s as any).aulas?.tipo === 'prova' || (s as any).aulas?.is_bloco_final)
+              );
+
+              if (finalExams.length === 0) {
+                return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Você não tem provas finais pendentes de correção no momento.</p>;
+              }
+
+              // Agrupar por Núcleo
+              const grouped = finalExams.reduce((acc, sub) => {
+                const nucName = (sub.users as any)?.nucleos?.nome || 'Sem Polo';
+                if (!acc[nucName]) acc[nucName] = [];
+                acc[nucName].push(sub);
+                return acc;
+              }, {} as Record<string, typeof finalExams>);
+
+              return Object.keys(grouped).sort().map(nuc => (
+                <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
+                    <MapPin size={16} className="text-primary" />
+                    <span style={{ fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Polo: {nuc}</span>
+                    <span style={{ marginLeft: 'auto', fontSize: '0.75rem', opacity: 0.6 }}>{grouped[nuc].length} Pendentes</span>
+                  </div>
+                  
+                  {grouped[nuc].map(sub => (
+                    <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div>
+                        <h4 style={{ marginBottom: '0.25rem' }}>{sub.aulas?.titulo || 'Prova Final'}</h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          <Users size={14} />
+                          <strong>{sub.users?.nome}</strong>
+                          <span style={{ opacity: 0.5 }}>• {sub.users?.email}</span>
+                        </div>
+                        <p style={{ fontSize: '0.7rem', opacity: 0.4, marginTop: '0.25rem' }}>Recebido em: {new Date(sub.created_at).toLocaleString()}</p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                        <button className="btn btn-primary" style={{ width: 'auto', padding: '0.6rem 1.2rem' }} onClick={() => handleSelectSubmission(sub)}>Corrigir Prova</button>
+                        <button 
+                          className="btn btn-outline" 
+                          style={{ width: 'auto', border: 'none', color: 'var(--error)', padding: '0.5rem' }}
+                          onClick={() => handleDeleteSubmission(sub.id)}
+                          disabled={deleting === sub.id}
+                        >
+                          {deleting === sub.id ? <Loader2 className="spinner" size={20} /> : <Trash2 size={20} />}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                  <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => handleSelectSubmission(sub)}>Corrigir Teste</button>
-                  <button 
-                    className="btn btn-outline" 
-                    style={{ width: 'auto', border: 'none', color: 'var(--error)', padding: '0.5rem' }}
-                    onClick={() => handleDeleteSubmission(sub.id)}
-                    disabled={deleting === sub.id}
-                  >
-                    {deleting === sub.id ? <Loader2 className="spinner" size={20} /> : <Trash2 size={20} />}
-                  </button>
-                </div>
-              </div>
-            ))}
-            {submissions.filter(s => s.status === 'pendente').length === 0 && (
-              <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Você não tem avaliações pendentes de correção no momento.</p>
-            )}
+              ));
+            })()}
           </div>
 
           <h3 style={{ marginTop: '3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><CheckCircle color="var(--success)" /> Últimas Correções</h3>
