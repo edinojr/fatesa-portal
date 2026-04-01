@@ -37,3 +37,22 @@ export interface ProfessorCourse {
   nome: string
   livros: any[]
 }
+
+export interface AttendanceRecord {
+  id?: string
+  aluno_id: string
+  professor_id: string
+  nucleo_id: string
+  data: string
+  status: 'P' | 'F'
+  compartilhado: boolean
+  aluno?: {
+    nome: string
+    email: string
+  }
+}
+
+export interface Nucleo {
+  id: string
+  nome: string
+}

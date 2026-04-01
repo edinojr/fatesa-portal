@@ -5,7 +5,7 @@ import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 import { useProfile } from './useProfile'
 import { QuizQuestion } from '../types/admin'
 
-export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum'
+export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics'
 
 export const useAdminManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
@@ -15,6 +15,10 @@ export const useAdminManagement = () => {
   const [courses, setCourses] = useState<any[]>([])
   const [pendingDocs, setPendingDocs] = useState<any[]>([])
   const [pendingPays, setPendingPays] = useState<any[]>([])
+  const [professors, setProfessors] = useState<any[]>([])
+  const [attendanceRecords, setAttendanceRecords] = useState<any[]>([])
+  const [pendingUsersByNucleo, setPendingUsersByNucleo] = useState<Record<string, number>>({})
+  const [analyticsData, setAnalyticsData] = useState<any>(null)
 
   const [userCount, setUserCount] = useState(0)
   const [courseCount, setCourseCount] = useState(0)
@@ -81,13 +85,28 @@ export const useAdminManagement = () => {
   useEffect(() => {
     if (userRole) {
       fetchData()
-      if (userRole === 'admin') fetchNucleosGlobal()
+      if (userRole === 'admin') {
+        fetchNucleosGlobal()
+        fetchPendingCounts()
+      }
     }
   }, [activeTab, userRole])
 
   const fetchNucleosGlobal = async () => {
     const { data } = await supabase.from('nucleos').select('*')
     if (data) setAllNucleos(data)
+  }
+
+  const fetchPendingCounts = async () => {
+    const { data } = await supabase.from('users').select('id, nucleo_id').or('acesso_definitivo.is.null,acesso_definitivo.eq.false')
+    if (data) {
+      const counts: Record<string, number> = {}
+      data.forEach(u => {
+        const nId = u.nucleo_id || 'none'
+        counts[nId] = (counts[nId] || 0) + 1
+      })
+      setPendingUsersByNucleo(counts)
+    }
   }
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -231,7 +250,17 @@ export const useAdminManagement = () => {
         setPendingPays([]);
       } else if (activeTab === 'users') {
         const { data } = await supabase.from('users').select('*, nucleos(nome)')
-        if (data) setUsers(data)
+        if (data) {
+          setUsers(data)
+          // Calculate pending counts
+          const pending = data.filter(u => u.acesso_definitivo === false || u.acesso_definitivo === null)
+          const counts: Record<string, number> = {}
+          pending.forEach(u => {
+            const nId = u.nucleo_id || 'none'
+            counts[nId] = (counts[nId] || 0) + 1
+          })
+          setPendingUsersByNucleo(counts)
+        }
       } else if (activeTab === 'content') {
         const { data } = await supabase.from('cursos').select('*, livros(count)')
         if (data) setCourses(data)
@@ -253,6 +282,53 @@ export const useAdminManagement = () => {
           data.forEach(item => {
             if (item.chave === 'pix_key') setPixKey(item.valor);
             if (item.chave === 'pix_qr_url') setPixQrUrl(item.valor);
+          });
+        }
+      } else if (activeTab === 'professors') {
+        const { data } = await supabase
+          .from('users')
+          .select('*, professor_nucleo(nucleos(nome))')
+          .eq('tipo', 'professor')
+          .order('nome');
+        if (data) setProfessors(data);
+      } else if (activeTab === 'attendance') {
+        const { data } = await supabase
+          .from('frequencia')
+          .select('*, aluno:users!aluno_id(nome, email), nucleo:nucleos(nome), professor:users!professor_id(nome)')
+          .eq('compartilhado', true)
+          .order('data', { ascending: false });
+        if (data) setAttendanceRecords(data);
+      } else if (activeTab === 'analytics') {
+        const { data } = await supabase
+          .from('portal_access_logs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(5000);
+          
+        if (data) {
+          // Process statistics
+          const totalViews = data.length;
+          const uniqueSessions = new Set(data.map(l => l.session_id)).size;
+          const registeredViews = data.filter(l => l.user_type === 'registrado').length;
+          const visitorViews = data.filter(l => l.user_type === 'visitante').length;
+          
+          // Daily Active Users (Unique registered users today)
+          const today = new Date().toISOString().split('T')[0];
+          const dau = new Set(data.filter(l => l.user_type === 'registrado' && l.created_at.startsWith(today)).map(l => l.user_id)).size;
+          
+          // Rotation / Activity trend (last 7 days unique sessions)
+          const last7Days = new Date();
+          last7Days.setDate(last7Days.getDate() - 7);
+          const activeLast7 = new Set(data.filter(l => new Date(l.created_at) > last7Days).map(l => l.session_id)).size;
+
+          setAnalyticsData({
+            totalViews,
+            uniqueSessions,
+            registeredViews,
+            visitorViews,
+            dau,
+            activeLast7,
+            logs: data.slice(0, 100)
           });
         }
       }
@@ -727,7 +803,12 @@ export const useAdminManagement = () => {
     setNucleosAutoOpenAdd,
     confirmDelete,
     setConfirmDelete,
+    attendanceRecords,
+    professors,
+    pendingUsersByNucleo,
+    analyticsData,
     fetchData,
+    fetchPendingCounts,
     fetchNucleosGlobal,
     showToast,
     handleFileUpload,

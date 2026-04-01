@@ -16,6 +16,14 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
   actionLoading,
   handleValidar
 }) => {
+  const labelMap: Record<string, string> = {
+    rg: 'RG / CNH',
+    residencia: 'Residência',
+    certidao: 'Certidões',
+    exame: 'Exame Médico',
+    outro: 'Outro'
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
       <section>
@@ -38,7 +46,11 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
               {pendingDocs.map(doc => (
                 <tr key={doc.id}>
                   <td><div style={{ fontWeight: 600 }}>{doc.users?.nome}</div></td>
-                  <td><span className="admin-badge">{doc.tipo.toUpperCase()}</span></td>
+                  <td>
+                    <span className="admin-badge" style={{ background: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary)', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
+                      {labelMap[doc.tipo] || doc.tipo.toUpperCase()}
+                    </span>
+                  </td>
                   <td>
                     <a 
                       href={doc.url} 

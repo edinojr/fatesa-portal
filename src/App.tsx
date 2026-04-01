@@ -7,6 +7,7 @@ import Matricula from './pages/Matricula'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import ProtectedRoute from './components/ProtectedRoute'
+import AnalyticsTracker from './components/AnalyticsTracker'
 
 // Optimized Lazy Imports
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -18,6 +19,7 @@ const Professor = lazy(() => import('./pages/Professor'))
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AnalyticsTracker />
       <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0a', color: 'var(--primary)' }}>Carregando...</div>}>
         <Routes>
           <Route path="/" element={<Landing />} />

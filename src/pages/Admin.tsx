@@ -17,7 +17,12 @@ import {
   X,
   Menu,
   MessageSquare,
-  LogOut
+  LogOut,
+  ChevronDown,
+  ChevronRight,
+  ClipboardList,
+  MapPin,
+  TrendingUp
 } from 'lucide-react'
 
 // Features Components
@@ -26,6 +31,9 @@ import AlumniManagement from '../features/users/components/AlumniManagement'
 import ContentManagement from '../features/courses/components/ContentManagement'
 import ValidationPanel from '../features/finance/components/ValidationPanel'
 import SettingsPanel from '../features/finance/components/SettingsPanel'
+import ProfessorsManagement from '../features/users/components/ProfessorsManagement'
+import AttendanceList from '../features/users/components/AttendanceList'
+import AnalyticsDashboard from '../features/admin/components/AnalyticsDashboard'
 
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
@@ -149,8 +157,16 @@ const Admin = () => {
     handleAddAdmin,
     handleSaveSettings,
     handleUploadQrCode,
-    normalizeFileName
+    normalizeFileName,
+    attendanceRecords,
+    professors,
+    pendingUsersByNucleo,
+    analyticsData
   } = useAdminManagement()
+
+  const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
+  const [expandedUsers, setExpandedUsers] = React.useState(false)
+  const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null)
 
   if (loading) {
     return (
@@ -227,11 +243,73 @@ const Admin = () => {
 
           {userRole === 'admin' && (
             <>
-              <div className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => { setActiveTab('users'); setIsMobileMenuOpen(false); }}>
-                <Users size={18} /> <span className="mobile-hide">Usuários</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div 
+                  className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} 
+                  onClick={() => { 
+                    setExpandedUsers(!expandedUsers);
+                    if (activeTab !== 'users') {
+                      setActiveTab('users');
+                      setSelectedNucleoId(null);
+                    }
+                  }}
+                  style={{ justifyContent: 'space-between' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Users size={18} /> <span className="mobile-hide">Usuários</span>
+                    {totalPendingUsers > 0 && (
+                      <span style={{ background: 'var(--error)', color: '#fff', fontSize: '0.65rem', padding: '1px 6px', borderRadius: '10px', fontWeight: 700 }}>
+                        {totalPendingUsers}
+                      </span>
+                    )}
+                  </div>
+                  {expandedUsers ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </div>
+                
+                {expandedUsers && (
+                  <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '1.5rem', gap: '0.25rem', marginTop: '0.25rem' }}>
+                    <div 
+                      className={`admin-nav-item ${activeTab === 'users' && !selectedNucleoId ? 'active' : ''}`} 
+                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                      onClick={() => { setActiveTab('users'); setSelectedNucleoId(null); setIsMobileMenuOpen(false); }}
+                    >
+                      Todos
+                    </div>
+                    {allNucleos.map(n => (
+                      <div 
+                        key={n.id}
+                        className={`admin-nav-item ${activeTab === 'users' && selectedNucleoId === n.id ? 'active' : ''}`} 
+                        style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem', justifyContent: 'space-between' }}
+                        onClick={() => { setActiveTab('users'); setSelectedNucleoId(n.id); setIsMobileMenuOpen(false); }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <MapPin size={12} /> {n.nome}
+                        </div>
+                        {pendingUsersByNucleo[n.id] > 0 && (
+                          <span style={{ background: 'var(--error)', color: '#fff', fontSize: '0.6rem', padding: '1px 5px', borderRadius: '10px' }}>
+                            {pendingUsersByNucleo[n.id]}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+
+              <div className={`admin-nav-item ${activeTab === 'professors' ? 'active' : ''}`} onClick={() => { setActiveTab('professors'); setIsMobileMenuOpen(false); }}>
+                <GraduationCap size={18} /> <span className="mobile-hide">Professores</span>
+              </div>
+
               <div className={`admin-nav-item ${activeTab === 'alumni' ? 'active' : ''}`} onClick={() => { setActiveTab('alumni'); setIsMobileMenuOpen(false); }}>
                 <GraduationCap size={18} /> <span className="mobile-hide">Alumni / Formados</span>
+              </div>
+
+              <div className={`admin-nav-item ${activeTab === 'attendance' ? 'active' : ''}`} onClick={() => { setActiveTab('attendance'); setIsMobileMenuOpen(false); }}>
+                <ClipboardList size={18} /> <span className="mobile-hide">Frequência</span>
+              </div>
+
+              <div className={`admin-nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => { setActiveTab('analytics'); setIsMobileMenuOpen(false); }}>
+                <TrendingUp size={18} /> <span className="mobile-hide">Analytics</span>
               </div>
             </>
           )}
@@ -294,20 +372,26 @@ const Admin = () => {
                 marginBottom: '0.25rem'
               }}>
                 {activeTab === 'home' ? 'Painel Administrativo' : 
-                 activeTab === 'users' ? 'Gestão de Usuários' : 
+                 activeTab === 'users' ? (selectedNucleoId ? `Usuários - ${allNucleos.find(n => n.id === selectedNucleoId)?.nome}` : 'Gestão de Usuários') : 
+                 activeTab === 'professors' ? 'Gestão de Professores' :
                  activeTab === 'alumni' ? 'Base de Formados (Alumni)' :
                  activeTab === 'content' ? 'Gestão de Conteúdo' : 
                  activeTab === 'forum' ? 'Fórum da Comunidade' : 
                  activeTab === 'nucleos' ? 'Gestão de Núcleos' :
+                 activeTab === 'attendance' ? 'Relatório de Frequência' :
+                 activeTab === 'analytics' ? 'Análise do Portal' :
                  'Validação de Acesso'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
                 {activeTab === 'home' ? 'Visão geral do sistema e atalhos rápidos.' : 
                  activeTab === 'users' ? 'Administre os perfis, bloqueios e acessos.' : 
+                 activeTab === 'professors' ? 'Visualize professores e seus núcleos vinculados.' :
                  activeTab === 'alumni' ? 'Gerencie o banco de dados histórico de alunos formados.' :
                  activeTab === 'content' ? 'Gerencie as matérias, livros e atividades.' : 
                  activeTab === 'forum' ? 'Acompanhe as discussões da comunidade.' :
                  activeTab === 'nucleos' ? 'Gerencie polos e núcleos de ensino.' :
+                 activeTab === 'attendance' ? 'Acompanhe as listas de presença compartilhadas pelos professores.' :
+                 activeTab === 'analytics' ? 'Monitore visualizações, acessos únicos e rotatividade de usuários.' :
                  'Verifique envios dos alunos.'}
               </p>
             </div>
@@ -349,7 +433,7 @@ const Admin = () => {
         
         {activeTab === 'users' && (
           <UserManagement 
-            users={users}
+            users={selectedNucleoId ? users.filter(u => u.nucleo_id === selectedNucleoId) : users}
             allNucleos={allNucleos}
             searchTerm={searchTerm}
             userRole={userRole}
@@ -366,6 +450,67 @@ const Admin = () => {
             handleManualPayment={handleManualPayment}
             onAddNucleo={() => { setActiveTab('nucleos'); setNucleosAutoOpenAdd(true); }}
           />
+        )}
+
+        {activeTab === 'professors' && (
+          <ProfessorsManagement 
+            professors={professors}
+            searchTerm={searchTerm}
+          />
+        )}
+
+        {activeTab === 'attendance' && (
+          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Aluno</th>
+                  <th>Núcleo</th>
+                  <th>Professor</th>
+                  <th style={{ textAlign: 'center' }}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {attendanceRecords.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                      Nenhuma lista de presença compartilhada encontrada.
+                    </td>
+                  </tr>
+                ) : (
+                  attendanceRecords.filter(r => 
+                    r.aluno?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    r.professor?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    r.nucleo?.nome?.toLowerCase().includes(searchTerm.toLowerCase())
+                  ).map(record => (
+                    <tr key={record.id}>
+                      <td>{new Date(record.data).toLocaleDateString()}</td>
+                      <td style={{ fontWeight: 600 }}>{record.aluno?.nome}</td>
+                      <td>{record.nucleo?.nome}</td>
+                      <td>{record.professor?.nome}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span style={{ 
+                          background: record.status === 'P' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                          color: record.status === 'P' ? '#22c55e' : '#ef4444',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '0.8rem',
+                          fontWeight: 700
+                        }}>
+                          {record.status === 'P' ? 'PRESENÇA' : 'FALTA'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <AnalyticsDashboard data={analyticsData} />
         )}
 
         {activeTab === 'content' && (

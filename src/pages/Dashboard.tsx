@@ -13,9 +13,10 @@ import {
   Loader2,
   Menu,
   X,
-  Bell
+  Bell,
+  MessageSquare
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
 
@@ -29,8 +30,9 @@ import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
 import GradesPanel from '../features/courses/components/GradesPanel'
 import NoticeBoard from '../features/communication/components/NoticeBoard'
+import ForumPanel from '../features/forum/components/ForumPanel'
 
-type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim'
+type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
 
 const Dashboard = () => {
   const { profile, loading: profileLoading, signOut, refreshProfile } = useProfile();
@@ -38,7 +40,7 @@ const Dashboard = () => {
   
   const [activeTab, setActiveTab] = useState<Tab>(() => {
     const saved = localStorage.getItem('activeTab') as Tab;
-    if (saved && ['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'].includes(saved)) {
+    if (saved && ['cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'forum'].includes(saved)) {
       localStorage.removeItem('activeTab');
       return saved;
     }
@@ -46,6 +48,13 @@ const Dashboard = () => {
   });
 
   const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab as Tab);
+    }
+  }, [location.state]);
   
   // Custom Hooks para lógica de negócio
   const { 
@@ -230,7 +239,7 @@ const Dashboard = () => {
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {(['cursos', 'avisos', 'documentos', 'financeiro', 'boletim'] as Tab[])
+          {(['cursos', 'avisos', 'forum', 'documentos', 'financeiro', 'boletim'] as Tab[])
             .filter(t => isStaff ? t !== 'financeiro' : true)
             .map(t => {
               const isDisabled = (isBlocked || isBlockedDueToPayment) && t !== 'financeiro';
@@ -250,7 +259,8 @@ const Dashboard = () => {
                   {t === 'documentos' && <FileText size={20} />}
                   {t === 'financeiro' && <CreditCard size={20} />}
                   {t === 'boletim' && <Award size={20} />}
-                  <span>{t === 'avisos' ? 'Avisos' : t === 'financeiro' ? 'Pagamentos' : t === 'boletim' ? 'Boletim' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
+                  {t === 'forum' && <MessageSquare size={20} />}
+                  <span>{t === 'avisos' ? 'Avisos' : t === 'financeiro' ? 'Pagamentos' : t === 'boletim' ? 'Boletim' : t === 'forum' ? 'Fórum' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
                 </div>
               );
             })}
@@ -278,6 +288,7 @@ const Dashboard = () => {
               {activeTab === 'documentos' && 'Meus Documentos'}
               {activeTab === 'financeiro' && 'Meus Pagamentos'}
               {activeTab === 'boletim' && 'Meu Boletim'}
+              {activeTab === 'forum' && 'Fórum da Comunidade'}
             </h1>
             <p style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
               Bem-vindo de volta, {profile?.nome || 'Aluno'}. 
@@ -361,6 +372,10 @@ const Dashboard = () => {
               courses={courses}
               atividades={atividades}
             />
+          )}
+
+          {activeTab === 'forum' && (
+            <ForumPanel userProfile={profile} />
           )}
         </div>
       </main>

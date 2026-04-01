@@ -8,7 +8,7 @@ import { useProfessorCourses } from '../features/courses/hooks/useProfessorCours
 import { useProfessorStudents } from '../features/users/hooks/useProfessorStudents'
 import { useProfessorGrading } from '../features/courses/hooks/useProfessorGrading'
 
-export type Tab = 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais'
+export type Tab = 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais' | 'attendance'
 
 export const useProfessorManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
@@ -19,6 +19,8 @@ export const useProfessorManagement = () => {
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
   const [professorNucleos, setProfessorNucleos] = useState<any[]>([])
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [attendanceRecords, setAttendanceRecords] = useState<any[]>([])
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
 
   const navigate = useNavigate()
 
@@ -152,6 +154,29 @@ export const useProfessorManagement = () => {
           }
         }
       }
+      
+      // Fetch Attendance
+      const { data: attData } = await supabase
+        .from('frequencia')
+        .select('*, aluno:users!aluno_id(nome)')
+        .eq('professor_id', user.id)
+        .order('data', { ascending: false });
+      if (attData) setAttendanceRecords(attData);
+    }
+  }
+
+  const handleSaveAttendance = async (records: any[]) => {
+    setActionLoading('saving-attendance');
+    try {
+      const { error } = await supabase.from('frequencia').upsert(records);
+      if (error) throw error;
+      await fetchData();
+      return { success: true };
+    } catch (err: any) {
+      console.error(err);
+      return { success: false, error: err.message };
+    } finally {
+      setActionLoading(null);
     }
   }
 
@@ -185,6 +210,10 @@ export const useProfessorManagement = () => {
     // Delegated Grading State & Actions
     ...gradingHook,
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),
-    handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData)
+    handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData),
+    attendanceRecords,
+    handleSaveAttendance,
+    actionLoading,
+    setActionLoading
   }
 }

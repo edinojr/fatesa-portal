@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2 } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -742,6 +742,27 @@ const Lesson = () => {
           </button>
         </div>
       )}
+
+      {/* Forum Discussion Section */}
+      <div style={{ marginTop: '3rem', padding: '2.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+        <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+          <MessageSquare size={24} color="var(--primary)" />
+        </div>
+        <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Dúvidas ou Discussão?</h3>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', maxWidth: '500px', margin: '0 auto 1.5rem' }}>
+          Participe do fórum oficial para conversar com outros alunos e professores sobre o conteúdo desta aula.
+        </p>
+        <button 
+          className="btn btn-outline" 
+          onClick={() => {
+            const path = userProfile?.profile_tipo === 'professor' ? '/professor' : (userProfile?.profile_tipo === 'admin' ? '/admin' : '/dashboard');
+            navigate(path, { state: { activeTab: 'forum' } });
+          }}
+          style={{ width: 'auto', padding: '0.75rem 2rem' }}
+        >
+          Acessar Fórum da Comunidade
+        </button>
+      </div>
 
       <div style={{ marginTop: '4rem', padding: '2rem 0', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'center', gap: '2rem' }}>
         <button onClick={() => navigate(-1)} className="btn btn-outline" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Voltar">

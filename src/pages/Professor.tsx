@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { 
   Users, 
   BookOpen, 
@@ -11,8 +11,11 @@ import {
   Menu,
   X,
   AlertCircle,
-  FileText
+  FileText,
+  ClipboardList,
+  MessageSquare
 } from 'lucide-react'
+import AttendanceList from '../features/users/components/AttendanceList'
 import NucleosPanel from '../components/NucleosPanel'
 import StudentsManagement from '../features/users/components/StudentsManagement'
 import ProfessorContent from '../features/courses/components/ProfessorContent'
@@ -22,6 +25,7 @@ import MateriaisManagement from '../features/communication/components/MateriaisM
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import Logo from '../components/common/Logo'
+import ForumPanel from '../features/forum/components/ForumPanel'
 
 const Professor = () => {
   const {
@@ -68,10 +72,19 @@ const Professor = () => {
     handleResetProgress,
     handleLogout,
     fetchBooks,
-    selectBookAndShowLessons
+    selectBookAndShowLessons,
+    attendanceRecords,
+    handleSaveAttendance
   } = useProfessorManagement();
 
   const navigate = useNavigate()
+  const location = useLocation()
+
+  React.useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state, setActiveTab]);
 
   if (loading) return <div className="auth-container"><Loader2 className="spinner" /> Carregando Painel...</div>
 
@@ -164,6 +177,18 @@ const Professor = () => {
           >
             <FileText size={18} /> <span className="mobile-hide">Materiais</span>
           </div>
+          <div 
+            className={`admin-nav-item ${activeTab === 'attendance' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('attendance'); setIsMobileMenuOpen(false); }}
+          >
+            <ClipboardList size={18} /> <span className="mobile-hide">Frequência</span>
+          </div>
+          <div 
+            className={`admin-nav-item ${activeTab === 'forum' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('forum'); setIsMobileMenuOpen(false); }}
+          >
+            <MessageSquare size={18} /> <span className="mobile-hide">Fórum</span>
+          </div>
           
           <div style={{ marginLeft: 'auto', paddingLeft: '0.5rem' }}>
             <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent' }} onClick={handleLogout}>
@@ -182,9 +207,13 @@ const Professor = () => {
                activeTab === 'grading' ? 'Correção de Avaliações' : 
                activeTab === 'avisos' ? 'Quadro de Avisos' :
                activeTab === 'materiais' ? 'Materiais Adicionais' :
+               activeTab === 'attendance' ? 'Lista de Presença (Frequência)' :
+               activeTab === 'forum' ? 'Fórum da Comunidade' :
                'Conteúdo do Curso'}
             </h1>
-            <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta, Professor.</p>
+            <p style={{ color: 'var(--text-muted)' }}>
+              {activeTab === 'attendance' ? 'Marque a presença ou falta dos alunos por núcleo.' : 'Bem-vindo de volta, Professor.'}
+            </p>
           </div>
         </header>
 
@@ -249,6 +278,16 @@ const Professor = () => {
 
         {activeTab === 'materiais' && (
           <MateriaisManagement />
+        )}
+
+        {activeTab === 'attendance' && (
+          <AttendanceList 
+            professorNucleos={professorNucleos}
+            allStudents={allStudents}
+            onSave={handleSaveAttendance}
+            history={attendanceRecords}
+            professorId={profile?.id || ''}
+          />
         )}
 
         <div className="bottom-nav-footer">
