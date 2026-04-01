@@ -67,10 +67,8 @@ const Dashboard = () => {
 
   const [uploading, setUploading] = useState<string | null>(null)
   const [selectedBook, setSelectedBook] = useState<string | null>(null)
-  const [selectedLessonType, setSelectedLessonType] = useState<'video' | 'atividade'>('video')
   const [availableNucleos, setAvailableNucleos] = useState<any[]>([])
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
-  const [showArchives, setShowArchives] = useState<Record<string, boolean>>({})
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [avisos, setAvisos] = useState<any[]>([])
   const [materiais, setMateriais] = useState<any[]>([])
@@ -116,6 +114,24 @@ const Dashboard = () => {
     const { data: nucs } = await supabase.from('nucleos').select('id, nome, cidade, estado').order('nome')
     if (nucs) setAvailableNucleos(nucs)
   }
+
+  const handleChangeNucleo = async (id: string, name?: string) => {
+    if (!profile || !id) return;
+    try {
+      const selectedName = name || availableNucleos.find(n => n.id === id)?.nome;
+      const { error } = await supabase.from('users').update({ 
+        nucleo_id: id,
+        nucleo: selectedName,
+        status_nucleo: 'pendente'
+      }).eq('id', profile.id);
+      
+      if (error) throw error;
+      showToast('Polo vinculado com sucesso! Aguarde aprovação.', 'success');
+      await refreshProfile();
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    }
+  };
 
   const fetchNoticeBoard = async (nucleoId: string) => {
     try {
@@ -263,7 +279,25 @@ const Dashboard = () => {
               {activeTab === 'financeiro' && 'Meus Pagamentos'}
               {activeTab === 'boletim' && 'Meu Boletim'}
             </h1>
-            <p style={{ color: 'var(--text-muted)' }}>Bem-vindo de volta, {profile?.nome || 'Aluno'}.</p>
+            <p style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+              Bem-vindo de volta, {profile?.nome || 'Aluno'}. 
+              {profile?.nucleo && (
+                <span className="badge" style={{ 
+                  fontSize: '0.75rem', 
+                  background: 'rgba(var(--primary-rgb), 0.1)', 
+                  color: 'var(--primary)', 
+                  padding: '0.2rem 0.75rem', 
+                  borderRadius: '50px',
+                  border: '1px solid var(--primary)',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem'
+                }}>
+                  <GraduationCap size={14} /> Polo: {profile.nucleo}
+                </span>
+              )}
+            </p>
           </div>
         </header>
 
@@ -281,12 +315,8 @@ const Dashboard = () => {
           {activeTab === 'cursos' && (
             <CourseList 
               courses={courses}
-              showArchives={showArchives}
-              setShowArchives={setShowArchives}
               selectedBook={selectedBook}
               setSelectedBook={setSelectedBook}
-              selectedLessonType={selectedLessonType}
-              setSelectedLessonType={setSelectedLessonType}
               progressoAulas={progressoAulas}
               atividades={atividades}
             />
@@ -327,7 +357,7 @@ const Dashboard = () => {
             <GradesPanel 
               profile={profile}
               availableNucleos={availableNucleos}
-              handleChangeNucleo={() => {}} 
+              handleChangeNucleo={handleChangeNucleo} 
               courses={courses}
               atividades={atividades}
             />

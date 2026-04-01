@@ -1,0 +1,1 @@
+src/features/courses/components/GradesPanel.tsx(324,57): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?

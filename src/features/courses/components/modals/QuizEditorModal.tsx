@@ -264,6 +264,21 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                   />
                 </div>
               )}
+
+              <div className="form-group" style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
+                <label style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 700 }}>Explicação do Gabarito / Feedback (Opcional)</label>
+                <textarea 
+                  className="form-control" 
+                  rows={2} 
+                  placeholder="Explique por que esta é a resposta correta ou dê uma dica..."
+                  value={q.explanation || ''}
+                  onChange={(e) => {
+                    const newQ = [...quizQuestions];
+                    newQ[qIdx].explanation = e.target.value;
+                    setQuizQuestions(newQ);
+                  }}
+                />
+              </div>
             </div>
           ))}
       

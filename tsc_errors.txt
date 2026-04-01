@@ -1,2 +1,8 @@
-src/pages/Login.tsx(85,74): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
-src/pages/Login.tsx(114,36): error TS2304: Cannot find name 'step'.
+src/components/NucleosPanel.tsx(806,38): error TS2345: Argument of type '({ day: string; start: string; end: string; } | null)[]' is not assignable to parameter of type 'SetStateAction<{ day: string; start: string; end: string; }[]>'.
+  Type '({ day: string; start: string; end: string; } | null)[]' is not assignable to type '{ day: string; start: string; end: string; }[]'.
+    Type '{ day: string; start: string; end: string; } | null' is not assignable to type '{ day: string; start: string; end: string; }'.
+      Type 'null' is not assignable to type '{ day: string; start: string; end: string; }'.
+src/components/NucleosPanel.tsx(891,38): error TS2345: Argument of type '({ day: string; start: string; end: string; } | null)[]' is not assignable to parameter of type 'SetStateAction<{ day: string; start: string; end: string; }[]>'.
+  Type '({ day: string; start: string; end: string; } | null)[]' is not assignable to type '{ day: string; start: string; end: string; }[]'.
+    Type '{ day: string; start: string; end: string; } | null' is not assignable to type '{ day: string; start: string; end: string; }'.
+      Type 'null' is not assignable to type '{ day: string; start: string; end: string; }'.

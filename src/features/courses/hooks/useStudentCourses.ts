@@ -77,8 +77,8 @@ export const useStudentCourses = (profile: any) => {
 
       // Progresso e Notas
       const [{ data: respostasData }, { data: progData }] = await Promise.all([
-        supabase.from('respostas_aulas').select('id, status, nota, tentativas, aula_id, aulas(titulo, tipo, livro:livros(id, titulo, ordem))').eq('aluno_id', profile.id),
-        supabase.from('progresso_aulas').select('aula_id, concluida').eq('aluno_id', profile.id)
+        supabase.from('respostas_aulas').select('id, status, nota, tentativas, aula_id, respostas, aulas(titulo, tipo, questionario, questionario_v2, questionario_v3, livro:livros(id, titulo, ordem))').eq('aluno_id', profile.id),
+        supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id)
       ]);
       
       const resData = respostasData || [];
@@ -107,13 +107,18 @@ export const useStudentCourses = (profile: any) => {
                   const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
                   if (!matchesNucleo) return { ...a, isHidden: true };
 
-                  let lockedByProfessor = false;
-                  const isExercise = a.tipo === 'atividade' || a.tipo === 'prova';
-                  const isVideo = a.tipo === 'gravada' || a.tipo === 'ao_vivo';
-
-                  if (isExercise) lockedByProfessor = !releasedAtividades.includes(a.id);
-                  if (isVideo) lockedByProfessor = !releasedVideos.includes(a.id);
-                  if (!professorReleased) lockedByProfessor = true;
+                  let lockedByProfessor = !professorReleased;
+                  if (professorReleased) {
+                    const isManual = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'prova';
+                    if (isManual) {
+                      const isReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo') 
+                        ? releasedVideos.includes(a.id) 
+                        : releasedAtividades.includes(a.id);
+                      lockedByProfessor = !isReleased;
+                    } else {
+                      lockedByProfessor = false; // Lesson materials and exercises are released automatically with the module
+                    }
+                  }
 
                   return { ...a, lockedByProfessor };
                 }).filter((a: any) => !a.isHidden),

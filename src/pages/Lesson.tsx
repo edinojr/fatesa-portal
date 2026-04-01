@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, AlertCircle, Clock, LayoutDashboard, CheckCircle2 } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2 } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -116,7 +116,7 @@ const Lesson = () => {
             if (bItems?.length) {
               const [{ data: resData }, { data: pData }] = await Promise.all([
                 supabase.from('respostas_aulas').select('aula_id').eq('aluno_id', user.id),
-                supabase.from('progresso_aulas').select('aula_id, concluida').eq('aluno_id', user.id)
+                supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', user.id)
               ]);
               if (pData?.some(p => p.aula_id === id && p.concluida)) setComplete(true);
               const unfinished = bItems.some(item => {
@@ -146,7 +146,7 @@ const Lesson = () => {
               if (linkedSub.nota !== null) setResult({ score: linkedSub.nota, passed: linkedSub.nota >= (linked.min_grade || 0), pendingReview: linkedSub.status === 'pendente' });
               setSubmitted(true);
             }
-            const { data: pData } = await supabase.from('progresso_aulas').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
+            const { data: pData } = await supabase.from('progresso').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
             if (pData?.concluida) setComplete(true);
           }
         }
@@ -172,9 +172,18 @@ const Lesson = () => {
               if (subData.status === 'liberado') handleSubmit();
             }
           }
-          if (subData.status !== 'liberado') setSubmitted(true);
+          if (subData.status !== 'liberado') {
+            setSubmitted(true);
+            
+            // Bloqueio de Reentrada para Provas (Apenas se ainda não estiver corrigida)
+            if ((lessonData.tipo === 'prova' || lessonData.is_bloco_final) && subData.status !== 'corrigida' && !isStaff) {
+              alert('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor no seu boletim.');
+              navigate('/dashboard');
+              return;
+            }
+          }
         }
-        const { data: progData } = await supabase.from('progresso_aulas').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
+        const { data: progData } = await supabase.from('progresso').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
         if (progData?.concluida) setComplete(true);
 
         // Enhanced Deadline & Version Logic
@@ -394,6 +403,8 @@ const Lesson = () => {
       // Pop-ups based on lesson type
       if (isFinal) {
         alert('Prova enviada com sucesso! O professor corrigirá todas as questões manualmente com base no gabarito oficial.');
+        navigate('/dashboard');
+        return;
       } else {
         alert('Exercício finalizado! Progresso registrado.');
       }
@@ -407,11 +418,11 @@ const Lesson = () => {
       // Exams (provas) unlock the next module but NOT the progress bar.
       if (!isFinal) {
         // Regular activity or content
-        await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true }, { onConflict: 'aluno_id,aula_id' });
+        await supabase.from('progresso').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true }, { onConflict: 'aluno_id,aula_id' });
         setComplete(true);
       } else {
         // This is a Prova (isFinal is true).
-        // It DOES NOT record progress (concluida: true) in progresso_aulas, 
+        // It DOES NOT record progress (concluida: true) in progresso, 
         // because evaluations don't fill the progress bar as per user request.
         if (targetLesson.is_bloco_final && pass) {
           // Special scroll for module completion
@@ -430,7 +441,7 @@ const Lesson = () => {
   const checkBlockCompletion = async (aId: string, bId: number, lId: string) => {
     const { data: items } = await supabase.from('aulas').select('id').eq('bloco_id', bId).eq('livro_id', lId).not('tipo', 'in', '("gravada","ao_vivo")').eq('is_bloco_final', false);
     if (!items?.length) return;
-    const { data: prog } = await supabase.from('progresso_aulas').select('aula_id').eq('aluno_id', aId).in('aula_id', items.map(i => i.id)).eq('concluida', true);
+    const { data: prog } = await supabase.from('progresso').select('aula_id').eq('aluno_id', aId).in('aula_id', items.map(i => i.id)).eq('concluida', true);
     if (prog?.length === items.length) {
       // Logic for completion can be added here
     }
@@ -440,7 +451,7 @@ const Lesson = () => {
     if (!lesson || !userProfile) return
     setSubmitting(true)
     try {
-      await supabase.from('progresso_aulas').upsert({ aluno_id: userProfile.id, aula_id: id, concluida: true }, { onConflict: 'aluno_id,aula_id' });
+      await supabase.from('progresso').upsert({ aluno_id: userProfile.id, aula_id: id, concluida: true }, { onConflict: 'aluno_id,aula_id' });
       setComplete(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (lesson.bloco_id) await checkBlockCompletion(userProfile.id, lesson.bloco_id, lesson.livro_id);
@@ -572,7 +583,7 @@ const Lesson = () => {
                       }}>
                         <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={submitted && !reviewMode} /> 
                         <span style={{flex:1}}>{opt}</span>
-                        {showGabarito && submitted && q.correct === oIdx && <CheckCircle size={16} color="var(--success)"/>}
+                        {showGabarito && submitted && q.correct === oIdx && <div style={{color:'var(--success)', fontSize:'0.75rem', fontWeight:800, display:'flex', alignItems:'center', gap:'0.4rem'}}><CheckCircle size={14}/> GABARITO</div>}
                         {showGabarito && submitted && answers[qKey] === oIdx && !isCorrect && <XCircle size={16} color="var(--error)"/>}
                       </label>
                     ))}
@@ -646,6 +657,13 @@ const Lesson = () => {
                             {q.expectedAnswer}
                           </div>
                         )}
+                      </div>
+                    )}
+
+                    {showGabarito && submitted && q.explanation && (
+                      <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.9rem' }}>
+                        <strong style={{ color: 'var(--primary)', display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Explicação / Gabarito Comentado:</strong>
+                        <div style={{ color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>{q.explanation}</div>
                       </div>
                     )}
                   </div>

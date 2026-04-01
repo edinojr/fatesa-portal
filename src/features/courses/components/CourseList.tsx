@@ -1,34 +1,24 @@
 import React from 'react'
 import { BookOpen, PlayCircle, ClipboardList, Award, CheckCircle2, FileText, Lock } from 'lucide-react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 
 interface CourseListProps {
   courses: Course[]
-  showArchives: Record<string, boolean>
-  setShowArchives: (val: Record<string, boolean>) => void
   selectedBook: string | null
   setSelectedBook: (val: string | null) => void
-  selectedLessonType: 'video' | 'atividade'
-  setSelectedLessonType: (val: 'video' | 'atividade') => void
   atividades: any[]
   progressoAulas: any[]
 }
 
 const CourseList: React.FC<CourseListProps> = ({ 
   courses, 
-  showArchives, 
-  setShowArchives, 
   selectedBook, 
   setSelectedBook, 
-  selectedLessonType,
-  setSelectedLessonType,
   atividades = [],
   progressoAulas = []
 }) => {
-  const navigate = useNavigate()
-
-  const isExamLocked = (aula: any, allAulas: any[], atividades: any[]) => {
+  const isExamLocked = () => {
     return false; // Desativado para permitir fluxo contínuo autorizado pelo professor
   }
 
@@ -211,7 +201,7 @@ const CourseList: React.FC<CourseListProps> = ({
                                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                             {children.map(child => {
                                               const isChildCompleted = (child.tipo === 'atividade' || child.tipo === 'prova') ? submittedIds.includes(child.id) : watchedIds.includes(child.id);
-                                              const examLocked = isExamLocked(child, allAulas, atividades);
+                                              const examLocked = isExamLocked();
                                               const profLocked = child.lockedByProfessor;
                                               const isLocked = examLocked || profLocked;
 
@@ -270,7 +260,14 @@ const CourseList: React.FC<CourseListProps> = ({
                                                      child.tipo === 'prova' ? <Award size={14} color="#EAB308" /> : <FileText size={14} color="var(--text-muted)" />}
                                                     <span style={{ fontSize: '0.8rem' }}>{child.titulo}</span>
                                                   </div>
-                                                  {isChildCompleted && <CheckCircle2 size={14} color="var(--success)" />}
+                                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    {child.tipo === 'prova' && (atividades || []).find(at => at.aula_id === child.id && at.status === 'corrigida') && (
+                                                      <span style={{ fontSize: '0.7rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
+                                                        Ver Correção
+                                                      </span>
+                                                    )}
+                                                    {isChildCompleted && <CheckCircle2 size={14} color="var(--success)" />}
+                                                  </div>
                                                 </Link>
                                               );
                                             })}
@@ -279,7 +276,7 @@ const CourseList: React.FC<CourseListProps> = ({
                                       );
                                     }
 
-                                    const examLocked = isExamLocked(aula, allAulas, atividades);
+                                    const examLocked = isExamLocked();
                                     const profLocked = aula.lockedByProfessor;
                                     const isLocked = examLocked || profLocked;
 
@@ -338,7 +335,14 @@ const CourseList: React.FC<CourseListProps> = ({
                                            aula.tipo === 'prova' ? <Award size={16} color="#EAB308" /> : <FileText size={16} color="var(--text-muted)" />}
                                           <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{aula.titulo}</span>
                                         </div>
-                                        {isCompleted(aula) && <CheckCircle2 size={16} color="var(--success)" />}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                          {aula.tipo === 'prova' && (atividades || []).find(at => at.aula_id === aula.id && at.status === 'corrigida') && (
+                                            <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '3px 10px', borderRadius: '6px', fontWeight: 700 }}>
+                                              Ver Correção
+                                            </span>
+                                          )}
+                                          {isCompleted(aula) && <CheckCircle2 size={16} color="var(--success)" />}
+                                        </div>
                                       </Link>
                                     );
                                   })}

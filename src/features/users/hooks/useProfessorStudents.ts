@@ -64,7 +64,7 @@ export const useProfessorStudents = () => {
       const { error: errorRes } = await supabase.from('respostas_aulas').delete().eq('aluno_id', userId);
       if (errorRes) throw errorRes;
       
-      const { error: errorProg } = await supabase.from('progresso_aulas').delete().eq('aluno_id', userId);
+      const { error: errorProg } = await supabase.from('progresso').delete().eq('aluno_id', userId);
       if (errorProg) throw errorProg;
       
       alert('Progresso e atividades resetados com sucesso!');

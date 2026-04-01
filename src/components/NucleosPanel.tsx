@@ -380,12 +380,12 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     }
   }
 
-  const parseScheduleString = (str: string) => {
+  const parseScheduleString = (str: string | null | undefined): { day: string; start: string; end: string }[] => {
     if (!str) return [{ day: '', start: '', end: '' }];
     const parts = str.split(', ').map(p => {
       const match = p.match(/(.+) \((.+) - (.+)\)/);
       return match ? { day: match[1], start: match[2], end: match[3] } : null;
-    }).filter(Boolean);
+    }).filter((p): p is { day: string; start: string; end: string } => !!p);
     return parts.length > 0 ? parts : [{ day: '', start: '', end: '' }];
   }
 
