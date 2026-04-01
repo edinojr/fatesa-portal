@@ -26,6 +26,7 @@ export interface Student {
   id: string
   nome: string
   email: string
+  nucleo_id?: string
   status_nucleo?: string
   nucleos?: {
     nome: string

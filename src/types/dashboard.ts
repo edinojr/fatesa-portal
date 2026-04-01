@@ -32,10 +32,11 @@ export interface Course {
 
 export interface Documento {
   id: string
-  tipo: 'rg' | 'cnh' | 'residencia' | 'exame' | 'outro'
+  tipo: 'rg' | 'cnh' | 'residencia' | 'exame' | 'certidao' | 'outro'
   url: string
   status: 'pendente' | 'aprovado' | 'rejeitado'
   feedback?: string
+  created_at: string
 }
 
 export interface Pagamento {
