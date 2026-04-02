@@ -157,6 +157,7 @@ const Admin = () => {
     handleAddAdmin,
     handleSaveSettings,
     handleUploadQrCode,
+    handleDeleteValidation,
     normalizeFileName,
     attendanceRecords,
     professors,
@@ -559,6 +560,7 @@ const Admin = () => {
             userRole={userRole}
             actionLoading={actionLoading}
             handleValidar={handleValidar}
+            handleDeleteValidation={handleDeleteValidation}
           />
         )}
 

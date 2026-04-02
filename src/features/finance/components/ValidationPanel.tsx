@@ -1,5 +1,4 @@
-import React from 'react'
-import { FileText, CreditCard, Eye, CheckCircle2, XCircle } from 'lucide-react'
+import { FileText, CreditCard, Eye, CheckCircle2, XCircle, Trash2 } from 'lucide-react'
 
 interface ValidationPanelProps {
   pendingDocs: any[]
@@ -7,6 +6,7 @@ interface ValidationPanelProps {
   userRole: string | null
   actionLoading: string | null
   handleValidar: (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado') => Promise<void>
+  handleDeleteValidation: (target: 'doc' | 'pay', id: string) => Promise<void>
 }
 
 const ValidationPanel: React.FC<ValidationPanelProps> = ({
@@ -14,7 +14,8 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
   pendingPays,
   userRole,
   actionLoading,
-  handleValidar
+  handleValidar,
+  handleDeleteValidation
 }) => {
   const labelMap: Record<string, string> = {
     rg: 'RG / CNH',
@@ -79,6 +80,15 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                       >
                         <XCircle size={16} />
                       </button>
+                      <button 
+                        className="btn btn-outline" 
+                        style={{ color: 'var(--error)', borderColor: 'var(--error)' }} 
+                        onClick={() => handleDeleteValidation('doc', doc.id)} 
+                        disabled={actionLoading === doc.id}
+                        title="Excluir Registro"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -102,6 +112,7 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                   <th>Aluno</th>
                   <th>Valor</th>
                   <th>Vencimento</th>
+                  <th>Descrição</th>
                   <th>Arquivo</th>
                   <th>Ações</th>
                 </tr>
@@ -112,6 +123,9 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                     <td><div style={{ fontWeight: 600 }}>{pay.users?.nome}</div></td>
                     <td><div style={{ fontWeight: 700 }}>R$ {pay.valor.toFixed(2)}</div></td>
                     <td>{new Date(pay.data_vencimento).toLocaleDateString()}</td>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: '200px' }}>
+                      {pay.descricao || <span style={{ opacity: 0.5 }}>-</span>}
+                    </td>
                     <td>
                       <a 
                         href={pay.comprovante_url} 
@@ -139,6 +153,15 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                           disabled={actionLoading === pay.id}
                         >
                           <XCircle size={16} />
+                        </button>
+                        <button 
+                          className="btn btn-outline" 
+                          style={{ color: 'var(--error)', borderColor: 'var(--error)' }} 
+                          onClick={() => handleDeleteValidation('pay', pay.id)} 
+                          disabled={actionLoading === pay.id}
+                          title="Excluir Registro"
+                        >
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>

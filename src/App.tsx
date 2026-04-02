@@ -17,6 +17,7 @@ const Admin = lazy(() => import('./pages/Admin'))
 const Professor = lazy(() => import('./pages/Professor'))
 
 const DashboardBridge = lazy(() => import('./components/DashboardBridge'))
+const BlockedAccess = lazy(() => import('./pages/BlockedAccess'))
 
 function App() {
   return (
@@ -30,9 +31,10 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/matricula" element={<Matricula />} />
-          <Route path="/dashboard" element={<DashboardBridge />} />
-          <Route path="/lesson/:id" element={<Lesson />} />
-          <Route path="/book/:id" element={<SmartViewer />} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardBridge /></ProtectedRoute>} />
+          <Route path="/vencido" element={<BlockedAccess />} />
+          <Route path="/lesson/:id" element={<ProtectedRoute><Lesson /></ProtectedRoute>} />
+          <Route path="/book/:id" element={<ProtectedRoute><SmartViewer /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />

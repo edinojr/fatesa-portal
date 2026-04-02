@@ -114,14 +114,57 @@ ALTER TABLE public.respostas_atividades_extra ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.registros_alumni ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.portal_access_logs ENABLE ROW LEVEL SECURITY;
 
--- 12. Políticas básicas (Liberar leitura para todos)
-CREATE POLICY "Leitura_Publica_Nucleos" ON public.nucleos FOR SELECT USING (true);
-CREATE POLICY "Leitura_Publica_Avisos" ON public.avisos FOR SELECT USING (true);
-CREATE POLICY "Leitura_Publica_Materiais" ON public.materiais_adicionais FOR SELECT USING (true);
-CREATE POLICY "Leitura_Publica_Atividades" ON public.atividades FOR SELECT USING (true);
-CREATE POLICY "Leitura_Publica_Alumni" ON public.registros_alumni FOR SELECT USING (true);
-CREATE POLICY "Escrita_Logs" ON public.portal_access_logs FOR INSERT WITH CHECK (true);
+-- 12. Estabilização da Tabela de Pagamentos (Adicionar campos e permissões)
+ALTER TABLE public.pagamentos ADD COLUMN IF NOT EXISTS descricao TEXT;
+ALTER TABLE public.pagamentos ENABLE ROW LEVEL SECURITY;
 
--- 13. Políticas para Admin/Professor
-CREATE POLICY "Gestao_Total_Staff" ON public.liberacoes_nucleo FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
-CREATE POLICY "Gestao_Total_Avisos" ON public.avisos FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
+-- 13. Políticas de Segurança (Limpando e Recriando com Drop Policy para evitar duplicidade)
+DO $$ 
+BEGIN
+    -- Nucleos
+    DROP POLICY IF EXISTS "Leitura_Publica_Nucleos" ON public.nucleos;
+    CREATE POLICY "Leitura_Publica_Nucleos" ON public.nucleos FOR SELECT USING (true);
+    
+    -- Avisos
+    DROP POLICY IF EXISTS "Leitura_Publica_Avisos" ON public.avisos;
+    CREATE POLICY "Leitura_Publica_Avisos" ON public.avisos FOR SELECT USING (true);
+    DROP POLICY IF EXISTS "Gestao_Total_Avisos" ON public.avisos;
+    CREATE POLICY "Gestao_Total_Avisos" ON public.avisos FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
+    
+    -- Materiais
+    DROP POLICY IF EXISTS "Leitura_Publica_Materiais" ON public.materiais_adicionais;
+    CREATE POLICY "Leitura_Publica_Materiais" ON public.materiais_adicionais FOR SELECT USING (true);
+    DROP POLICY IF EXISTS "Gestao_Total_Materiais" ON public.materiais_adicionais;
+    CREATE POLICY "Gestao_Total_Materiais" ON public.materiais_adicionais FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
+    
+    -- Liberações
+    DROP POLICY IF EXISTS "Gestao_Total_Staff" ON public.liberacoes_nucleo;
+    CREATE POLICY "Gestao_Total_Staff" ON public.liberacoes_nucleo FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
+    
+    -- Pagamentos (Onde dava o erro 400 no upload)
+    DROP POLICY IF EXISTS "Users can view their own payments" ON public.pagamentos;
+    CREATE POLICY "Users can view their own payments" ON public.pagamentos FOR SELECT USING (user_id = auth.uid());
+    
+    DROP POLICY IF EXISTS "Users can insert their own payments" ON public.pagamentos;
+    CREATE POLICY "Users can insert their own payments" ON public.pagamentos FOR INSERT WITH CHECK (user_id = auth.uid());
+    
+    DROP POLICY IF EXISTS "Users can update their own payments" ON public.pagamentos;
+    CREATE POLICY "Users can update their own payments" ON public.pagamentos FOR UPDATE USING (user_id = auth.uid());
+
+    -- Permissão Total para Admins nos Pagamentos (Para poderem Validar e EXCLUIR)
+    DROP POLICY IF EXISTS "Admins can manage all payments" ON public.pagamentos;
+    CREATE POLICY "Admins can manage all payments" ON public.pagamentos FOR ALL 
+    USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'suporte')));
+
+    -- Políticas para Analytics (portal_access_logs)
+    DROP POLICY IF EXISTS "Anyone can insert logs" ON public.portal_access_logs;
+    CREATE POLICY "Anyone can insert logs" ON public.portal_access_logs FOR INSERT WITH CHECK (true);
+    
+    DROP POLICY IF EXISTS "Admins can view logs" ON public.portal_access_logs;
+    CREATE POLICY "Admins can view logs" ON public.portal_access_logs FOR SELECT 
+    USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'suporte')));
+
+    -- Ajuste final de Enums (Garantir que 'rejeitado' existe para pagamentos)
+    ALTER TYPE public.pagamento_status ADD VALUE IF NOT EXISTS 'rejeitado';
+
+EXCEPTION WHEN others THEN END $$;

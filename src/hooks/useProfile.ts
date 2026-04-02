@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { checkAccessStatus } from '../lib/paymentCycle';
 
 export const useProfile = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -36,21 +37,25 @@ export const useProfile = () => {
 
       const { data, error } = await supabase
         .from('users')
-        .select('*')
+        .select(`
+          *,
+          pagamentos (*)
+        `)
         .eq('id', session.user.id)
         .single();
-
+      
       if (error) {
         console.error('Database Profile Error:', error);
         // Special case: User authenticated in Auth but no record in Public.users
         if (error.code === 'PGRST116') {
-           setProfile({ id: session.user.id, email: session.user.email, tipo: 'aluno', caminhos_acesso: ['aluno'] });
+           setProfile({ id: session.user.id, email: session.user.email, tipo: 'aluno', caminhos_acesso: ['aluno'], accessStatus: 'active' });
            return;
         }
         throw error;
       }
       
-      setProfile({ ...data, email: session.user.email });
+      const accessStatus = checkAccessStatus(data, data?.pagamentos || []);
+      setProfile({ ...data, email: session.user.email, accessStatus });
     } catch (err: any) {
       console.error('Error fetching profile:', err);
       

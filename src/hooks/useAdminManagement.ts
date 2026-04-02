@@ -27,7 +27,6 @@ export const useAdminManagement = () => {
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
   const [showAddTeacher, setShowAddTeacher] = useState(false)
   const [newTeacherEmail, setNewTeacherEmail] = useState('')
   const [newTeacherNome, setNewTeacherNome] = useState('')
@@ -76,7 +75,7 @@ export const useAdminManagement = () => {
         return;
       }
       setUserRole(profile.tipo);
-      setCurrentUserEmail(profile.email);
+      setUserRole(profile.tipo);
       setAvailableRoles(profile.caminhos_acesso || []);
       setLoading(false);
     }
@@ -197,7 +196,7 @@ export const useAdminManagement = () => {
     }
     
     const updates = newItems.map((item, index) => {
-      const { children, count, professores, nucleos, ...rest } = item;
+      const { children: _children, count: _count, professores: _professores, nucleos: _nucleos, ...rest } = item;
       return {
         ...rest,
         ordem: index + 1,
@@ -249,11 +248,26 @@ export const useAdminManagement = () => {
         setPendingDocs([]);
         setPendingPays([]);
       } else if (activeTab === 'users') {
-        const { data } = await supabase.from('users').select('*, nucleos(nome)')
-        if (data) {
-          setUsers(data)
+        const { data: usersData } = await supabase.from('users').select('*, nucleos(nome)').order('nome')
+        
+        // Fetch User IDs with pending payments (receipts waiting validation)
+        const { data: pendingPaysList } = await supabase
+          .from('pagamentos')
+          .select('user_id')
+          .eq('status', 'pago')
+          .not('comprovante_url', 'is', null)
+        
+        const pendingUserIds = new Set(pendingPaysList?.map(p => p.user_id) || [])
+
+        if (usersData) {
+          const enrichedUsers = usersData.map(u => ({
+            ...u,
+            hasPendingPayment: pendingUserIds.has(u.id)
+          }))
+          setUsers(enrichedUsers)
+          
           // Calculate pending counts
-          const pending = data.filter(u => u.acesso_definitivo === false || u.acesso_definitivo === null)
+          const pending = enrichedUsers.filter(u => u.acesso_definitivo === false || u.acesso_definitivo === null)
           const counts: Record<string, number> = {}
           pending.forEach(u => {
             const nId = u.nucleo_id || 'none'
@@ -390,6 +404,24 @@ export const useAdminManagement = () => {
       fetchData()
     } catch (err: any) {
       showToast('Erro: ' + err.message, 'error')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleDeleteValidation = async (target: 'doc' | 'pay', id: string) => {
+    if (!window.confirm(`Deseja realmente EXCLUIR este registro de ${target === 'doc' ? 'documento' : 'pagamento'}? Esta ação é irreversível.`)) return
+
+    setActionLoading(id)
+    try {
+      const table = target === 'doc' ? 'documentos' : 'pagamentos'
+      const { error } = await supabase.from(table).delete().eq('id', id)
+      
+      if (error) throw error
+      showToast('Registro excluído com sucesso!')
+      fetchData()
+    } catch (err: any) {
+      showToast('Erro ao excluir: ' + err.message, 'error')
     } finally {
       setActionLoading(null)
     }
@@ -832,6 +864,7 @@ export const useAdminManagement = () => {
     handleAddAdmin,
     handleSaveSettings,
     handleUploadQrCode,
+    handleDeleteValidation,
     normalizeFileName
   }
 }

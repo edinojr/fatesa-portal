@@ -1,5 +1,5 @@
 import React from 'react'
-import { CreditCard, CheckCircle2, AlertCircle, Upload, Copy, Info, ShieldAlert, QrCode, Loader2, ClipboardList } from 'lucide-react'
+import { CreditCard, CheckCircle2, AlertCircle, Upload, Copy, Info, ShieldAlert, QrCode, Loader2, ClipboardList, XCircle } from 'lucide-react'
 import { Pagamento } from '../../../types/dashboard'
 
 interface FinancePanelProps {
@@ -56,6 +56,28 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
           >
             Liberar 3 Dias
           </button>
+        </div>
+      )}
+
+      {/* WARNING BANNER (PAST DUE BUT NOT BLOCKED) */}
+      {!isBlockedDueToPayment && isPastDue && (
+        <div style={{
+          marginBottom: '2rem',
+          padding: '1rem 1.5rem',
+          background: 'rgba(234, 179, 8, 0.1)',
+          border: '1px solid #EAB308',
+          borderRadius: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem'
+        }}>
+          <AlertCircle size={24} color="#EAB308" />
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: '0.9rem', margin: 0, color: '#EAB308', fontWeight: 600 }}>
+              Atenção: O prazo para envio do comprovante vence em breve (dia 12). 
+              Evite a suspensão automática do seu acesso.
+            </p>
+          </div>
         </div>
       )}
 
@@ -185,28 +207,53 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
                   padding: '1.75rem', 
                   background: 'rgba(255,255,255,0.02)', 
                   borderRadius: '20px', 
-                  border: '1px solid rgba(255,255,255,0.05)',
+                  border: p.status === 'rejeitado' ? '1px solid rgba(244, 63, 94, 0.3)' : '1px solid rgba(255,255,255,0.05)',
                   flexWrap: 'wrap',
                   gap: '1.5rem',
-                  transition: 'transform 0.2s'
+                  transition: 'transform 0.2s',
+                  position: 'relative'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                     <div style={{ 
                       width: '56px', 
                       height: '56px', 
                       borderRadius: '16px', 
-                      background: p.status === 'pago' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)', 
+                      background: p.status === 'pago' ? 'rgba(16, 185, 129, 0.1)' : p.status === 'rejeitado' ? 'rgba(244, 63, 94, 0.1)' : 'rgba(234, 179, 8, 0.1)', 
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'center' 
                     }}>
-                      {p.status === 'pago' ? <CheckCircle2 color="var(--success)" size={28} /> : <AlertCircle color="#EAB308" size={28} />}
+                      {p.status === 'pago' ? (
+                        <CheckCircle2 color="var(--success)" size={28} />
+                      ) : p.status === 'rejeitado' ? (
+                        <XCircle color="var(--error)" size={28} />
+                      ) : (
+                        <AlertCircle color="#EAB308" size={28} />
+                      )}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: '1.35rem', letterSpacing: '-0.5px' }}>R$ {p.valor.toFixed(2)}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ fontWeight: 800, fontSize: '1.35rem', letterSpacing: '-0.5px' }}>R$ {p.valor.toFixed(2)}</div>
+                        {p.status === 'rejeitado' && (
+                          <span style={{ background: 'var(--error)', color: '#fff', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>RECUSADO</span>
+                        )}
+                      </div>
                       <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                         {p.descricao || 'Mensalidade'} • Vencimento: {new Date(p.data_vencimento).toLocaleDateString('pt-BR')}
                       </div>
+                      {p.status === 'rejeitado' && p.feedback && (
+                        <div style={{ 
+                          marginTop: '0.75rem', 
+                          padding: '0.75rem', 
+                          background: 'rgba(244, 63, 94, 0.05)', 
+                          borderRadius: '8px', 
+                          borderLeft: '3px solid var(--error)',
+                          fontSize: '0.85rem',
+                          color: '#ff8a95'
+                        }}>
+                          <strong>Motivo:</strong> {p.feedback}
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -217,9 +264,11 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
                       </div>
                     ) : (
                       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <div className="status-badge" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#EAB308', border: '1px solid rgba(234, 179, 8, 0.2)', padding: '0.6rem 1rem' }}>PENDENTE</div>
-                        <label className="btn btn-primary" style={{ padding: '0.6rem 1.25rem', borderRadius: '12px', fontSize: '0.85rem', cursor: 'pointer', width: 'auto' }}>
-                          <Upload size={16} /> {uploading === p.id ? 'Sincronizando...' : 'Anexar Comprovante'}
+                        {p.status !== 'rejeitado' && (
+                          <div className="status-badge" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#EAB308', border: '1px solid rgba(234, 179, 8, 0.2)', padding: '0.6rem 1rem' }}>PENDENTE</div>
+                        )}
+                        <label className={`btn ${p.status === 'rejeitado' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.6rem 1.25rem', borderRadius: '12px', fontSize: '0.85rem', cursor: 'pointer', width: 'auto', background: p.status === 'rejeitado' ? 'var(--error)' : '', border: p.status === 'rejeitado' ? 'none' : '' }}>
+                          <Upload size={16} /> {uploading === p.id ? 'Sincronizando...' : p.status === 'rejeitado' ? 'Reenviar Comprovante' : 'Anexar Comprovante'}
                           <input type="file" style={{ display: 'none' }} onChange={(e) => handleFileUpload(e, 'pay', p.id)} />
                         </label>
                       </div>

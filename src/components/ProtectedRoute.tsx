@@ -41,6 +41,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     return <Navigate to="/dashboard" replace />
   }
 
+  // Handle Blocking (but only for students, admins/profs are exempt via checkAccessStatus)
+  if (profile.accessStatus === 'blocked_payment') {
+    return <Navigate to="/vencido" replace />
+  }
+
+  if (profile.accessStatus === 'blocked_admin') {
+    return <Navigate to="/vencido?type=admin" replace />
+  }
+
   return <>{children}</>
 }
 

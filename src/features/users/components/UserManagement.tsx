@@ -1,5 +1,4 @@
-import React from 'react'
-import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen, RotateCcw } from 'lucide-react'
+import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen, RotateCcw, CreditCard } from 'lucide-react'
 import Badge from '../../../components/ui/Badge'
 
 interface UserManagementProps {
@@ -30,6 +29,11 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
       <td>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ fontWeight: 600, marginRight: '0.5rem' }}>{user.nome}</div>
+          {user.hasPendingPayment && (
+            <span title="Comprovante pendente de validação" style={{ display: 'flex', alignItems: 'center', marginRight: '0.4rem' }}>
+              <CreditCard size={14} color="var(--primary)" style={{ animation: 'pulse 2s infinite' }} />
+            </span>
+          )}
           <button
             className="btn-icon"
             style={{ padding: '2px', opacity: 0.5 }}
