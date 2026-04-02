@@ -10,7 +10,8 @@ import {
   Calendar,
   BookOpen,
   MapPin,
-  X
+  X,
+  GraduationCap
 } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 
