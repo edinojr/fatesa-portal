@@ -16,6 +16,8 @@ const SmartViewer = lazy(() => import('./pages/SmartViewer'))
 const Admin = lazy(() => import('./pages/Admin'))
 const Professor = lazy(() => import('./pages/Professor'))
 
+const DashboardBridge = lazy(() => import('./components/DashboardBridge'))
+
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -28,7 +30,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/matricula" element={<Matricula />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<DashboardBridge />} />
           <Route path="/lesson/:id" element={<Lesson />} />
           <Route path="/book/:id" element={<SmartViewer />} />
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />

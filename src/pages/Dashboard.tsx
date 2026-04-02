@@ -36,6 +36,11 @@ type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'foru
 
 const Dashboard = () => {
   const { profile, loading: profileLoading, signOut, refreshProfile } = useProfile();
+  
+  useEffect(() => {
+    localStorage.setItem('fatesa_active_role', 'student')
+  }, [])
+
   const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
   
   const [activeTab, setActiveTab] = useState<Tab>(() => {

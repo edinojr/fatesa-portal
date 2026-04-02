@@ -24,26 +24,43 @@ export const useProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (authError || !user) {
-        throw new Error('Sessão expirada ou inválida');
+      if (sessionError || !session) {
+        // Only redirect if we're not already on a public page
+        if (!['/', '/login', '/signup', '/forgot-password', '/reset-password'].includes(window.location.pathname)) {
+          throw new Error('Sessão expirada ou inválida');
+        }
+        return;
       }
 
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', session.user.id)
         .single();
 
-      if (error) throw error;
-      setProfile({ ...data, email: user.email });
+      if (error) {
+        console.error('Database Profile Error:', error);
+        // Special case: User authenticated in Auth but no record in Public.users
+        if (error.code === 'PGRST116') {
+           setProfile({ id: session.user.id, email: session.user.email, tipo: 'aluno', caminhos_acesso: ['aluno'] });
+           return;
+        }
+        throw error;
+      }
+      
+      setProfile({ ...data, email: session.user.email });
     } catch (err: any) {
       console.error('Error fetching profile:', err);
-      // Fallback: Se for erro de auth, limpa e redireciona
-      if (err?.message?.includes('Refresh Token') || err?.message?.includes('Sessão expirada') || err?.code === 'PGRST301') {
+      
+      // Prevent infinite redirect loops
+      const isPublicPath = ['/', '/login', '/signup', '/forgot-password', '/reset-password'].includes(window.location.pathname);
+      
+      if (!isPublicPath) {
+        localStorage.removeItem('fatesa_active_role');
         await supabase.auth.signOut();
-        navigate('/login');
+        navigate('/login', { replace: true });
       }
     } finally {
       setLoading(false);
