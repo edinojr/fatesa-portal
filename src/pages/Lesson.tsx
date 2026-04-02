@@ -111,28 +111,8 @@ const Lesson = () => {
           }
         }
 
-        // Access Control (Block logic)
-        if ((lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') && lessonData.bloco_id) {
-          if (!isStaff) {
-            const { data: bItems } = await supabase.from('aulas').select('id, tipo').eq('bloco_id', lessonData.bloco_id).not('tipo', 'in', '("gravada","ao_vivo")').eq('is_bloco_final', false);
-            if (bItems?.length) {
-              const [{ data: resData }, { data: pData }] = await Promise.all([
-                supabase.from('respostas_aulas').select('aula_id').eq('aluno_id', user.id),
-                supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', user.id)
-              ]);
-              if (pData?.some(p => p.aula_id === id && p.concluida)) setComplete(true);
-              const unfinished = bItems.some(item => {
-                if (item.tipo === 'atividade' || item.tipo === 'prova') return !resData?.some(r => r.aula_id === item.id);
-                return !pData?.some(p => p.aula_id === item.id && p.concluida);
-              });
-              if (unfinished) {
-                alert('Conclua os itens obrigatórios do bloco antes.');
-                navigate('/dashboard');
-                return;
-              }
-            }
-          }
-        }
+        // Access Control for Videos can now be removed as requested.
+        // It is now strictly handled by Professor Release in the section above.
 
         // Linked Activity logic (for materials)
         if (lessonData.tipo === 'material' && lessonData.bloco_id) {
