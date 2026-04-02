@@ -230,7 +230,7 @@ const Lesson = () => {
               setQuestions(Array.isArray(lessonData.questionario_v3) ? lessonData.questionario_v3 : []);
             }
 
-            if (canRetry && subData.nota !== null) {
+            if (canRetry && subData?.nota !== null) {
               setResult(p => p ? { ...p, canRetry: true } : null);
             }
           }

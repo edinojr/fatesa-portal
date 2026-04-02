@@ -72,7 +72,7 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
           value={user.nucleo_id || ''}
           onChange={(e) => {
             const nId = e.target.value;
-            const nName = allNucleos.find(n => n.id === nId)?.nome || 'Sem Núcleo';
+            const nName = allNucleos.find((n: any) => n.id === nId)?.nome || 'Sem Núcleo';
             if (window.confirm(`Deseja realmente trocar o núcleo deste aluno para "${nName}"?`)) {
               handleUpdateUserNucleo(user.id, nId);
             }

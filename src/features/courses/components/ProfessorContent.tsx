@@ -16,6 +16,7 @@ interface ProfessorContentProps {
   selectBookAndShowLessons: (book: any) => void
   professorNucleos: any[]
   submissions?: any[]
+  profile?: any
 }
 
 const ProfessorContent: React.FC<ProfessorContentProps> = ({
@@ -29,7 +30,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   fetchBooks,
   selectBookAndShowLessons,
   professorNucleos,
-  submissions = []
+  submissions = [],
+  profile
 }) => {
   const [releases, setReleases] = useState<any[]>([])
 
@@ -38,10 +40,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   }, [])
 
   const fetchReleases = async () => {
-    setLoadingReleases(true)
     const { data } = await supabase.from('liberacoes_nucleo').select('*')
     if (data) setReleases(data)
-    setLoadingReleases(false)
   }
 
   const toggleRelease = async (nucleoId: string, itemId: string, itemType: 'modulo' | 'atividade' | 'video') => {

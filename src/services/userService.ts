@@ -39,8 +39,19 @@ export const userService = {
       .update({ 
         nucleo_id: nucleoId || null, 
         nucleo: nucleoNome || null,
-        status_nucleo: 'aprovado' // Ao trocar manualmente, já marcamos como aprovado
+        status_nucleo: 'aprovado'
       })
+      .eq('id', userId);
+    if (error) throw error;
+  },
+
+  /**
+   * Atualização genérica de usuário
+   */
+  async updateUser(userId: string, updates: any) {
+    const { error } = await supabase
+      .from('users')
+      .update(updates)
       .eq('id', userId);
     if (error) throw error;
   },
