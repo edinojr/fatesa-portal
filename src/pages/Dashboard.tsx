@@ -149,16 +149,19 @@ const Dashboard = () => {
 
   const fetchNoticeBoard = async (nucleoId: string) => {
     try {
-      const { data: avisosData } = await supabase.from('avisos').select('id, titulo, conteudo, created_at, prioridade').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      const { data: avisosData, error: errAvisos } = await supabase.from('avisos').select('id, titulo, conteudo, created_at, prioridade').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      if (errAvisos) console.error('Avisos Error:', errAvisos.message, errAvisos.details, errAvisos.hint);
       setAvisos(avisosData || []);
 
-      const { data: materiaisData } = await supabase.from('materiais_adicionais').select('id, titulo, descricao, arquivos, created_at').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      const { data: materiaisData, error: errMat } = await supabase.from('materiais_adicionais').select('id, titulo, descricao, arquivos, created_at').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      if (errMat) console.error('Materiais Error:', errMat.message, errMat.details, errMat.hint);
       setMateriais(materiaisData || []);
 
-      const { data: atvData } = await supabase.from('atividades').select('*, respostas_atividades_extra(id, status, nota)').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      const { data: atvData, error: errAtv } = await supabase.from('atividades').select('*, respostas_atividades_extra(id, status, nota)').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      if (errAtv) console.error('Polo Atividades Error:', errAtv.message, errAtv.details, errAtv.hint);
       setPoloAtividades(atvData || []);
     } catch (error) {
-      console.error('Notice Board Error:', error);
+      console.error('Notice Board Exception:', error);
     }
   }
 
