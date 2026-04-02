@@ -144,10 +144,10 @@ const Dashboard = () => {
 
   const fetchNoticeBoard = async (nucleoId: string) => {
     try {
-      const { data: avisosData } = await supabase.from('avisos').select('id, titulo, texto, created_at, prioridade').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      const { data: avisosData } = await supabase.from('avisos').select('id, titulo, conteudo, created_at, prioridade').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
       setAvisos(avisosData || []);
 
-      const { data: materiaisData } = await supabase.from('materiais_adicionais').select('id, titulo, descricao, arquivo_url, created_at').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
+      const { data: materiaisData } = await supabase.from('materiais_adicionais').select('id, titulo, descricao, arquivos, created_at').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
       setMateriais(materiaisData || []);
 
       const { data: atvData } = await supabase.from('atividades').select('*, respostas_atividades_extra(id, status, nota)').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
@@ -169,39 +169,58 @@ const Dashboard = () => {
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'doc' | 'pay', id?: string, docType?: string) => {
-    // Mantendo a lógica de upload aqui por possuir dependência direta de e.target.files e state de uploading local
     const file = e.target.files?.[0]
     if (!file || !profile) return
 
+    // Clear the input value so the same file selection can trigger onChange again if needed
+    const target = e.target;
+    
     setUploading(id || docType || 'general')
     try {
       const bucket = type === 'doc' ? 'documentos' : 'comprovantes'
-      const filePath = `${profile.id}/${Date.now()}_${file.name.replace(/[^\w.-]/g, '_')}`
-      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file)
-      if (uploadError) throw uploadError
+      const fileName = `${Date.now()}_${file.name.replace(/[^\w.-]/g, '_')}`
+      const filePath = `${profile.id}/${fileName}`
+
+      console.log(`Iniciando upload para o bucket: ${bucket}, caminho: ${filePath}`);
+
+      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      })
+      
+      if (uploadError) {
+        console.error('Erro no Supabase Storage:', uploadError);
+        throw new Error(`Erro no servidor de arquivos: ${uploadError.message === 'Bucket not found' ? 'A pasta do servidor não foi encontrada. Verifique se o bucket "' + bucket + '" foi criado no Supabase.' : uploadError.message}`);
+      }
 
       const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
 
       if (type === 'doc') {
-        await supabase.from('documentos').upsert({ user_id: profile.id, tipo: docType as any, url: publicUrl, status: 'pendente' })
+        const { error: dbError } = await supabase.from('documentos').upsert({ user_id: profile.id, tipo: docType as any, url: publicUrl, status: 'pendente' })
+        if (dbError) throw dbError;
       } else {
         if (id && id !== 'general' && id !== 'pay') {
-          await supabase.from('pagamentos').update({ comprovante_url: publicUrl, status: 'pago' }).eq('id', id)
+          const { error: dbError } = await supabase.from('pagamentos').update({ comprovante_url: publicUrl, status: 'pago' }).eq('id', id)
+          if (dbError) throw dbError;
         } else {
-          await supabase.from('pagamentos').insert({
+          const { error: dbError } = await supabase.from('pagamentos').insert({
             user_id: profile.id,
-            valor: 75,
+            valor: 0,
             status: 'pago',
             comprovante_url: publicUrl,
             data_vencimento: new Date().toISOString().split('T')[0],
-            descricao: 'Mensalidade - Enviada pelo Aluno'
+            descricao: 'Comprovante avulso enviado pelo Aluno'
           })
+          if (dbError) throw dbError;
         }
         fetchPayments()
       }
-      showToast('Upload realizado!')
+      showToast('Upload realizado com sucesso!')
+      target.value = ''; // Reset input selection
     } catch (err: any) {
-      showToast(err.message, 'error')
+      console.error('Falha no upload:', err);
+      showToast(err.message || 'Falha ao processar arquivo', 'error')
+      target.value = ''; // Reset input selection on error too
     } finally {
       setUploading(null)
     }
