@@ -10,6 +10,24 @@
   --glass: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* ===== WINDOWS 2000 THEME VARIABLES ===== */
+  --w2k-bg: #d4d0c8;
+  --w2k-window: #d4d0c8;
+  --w2k-titlebar-active: #0a246a;
+  --w2k-titlebar-text: #ffffff;
+  --w2k-border-light: #ffffff;
+  --w2k-border-mid: #808080;
+  --w2k-border-dark: #404040;
+  --w2k-text: #000000;
+  --w2k-text-muted: #444444;
+  --w2k-selected: #0a246a;
+  --w2k-selected-text: #ffffff;
+  --w2k-button: #d4d0c8;
+  --w2k-inset: #808080;
+  --w2k-success: #008000;
+  --w2k-error: #cc0000;
+  --w2k-font: 'Tahoma', 'Microsoft Sans Serif', 'Arial', sans-serif;
 }
 
 /* --- SAFETY RESPONSIVE PROTOCOL --- */
@@ -2156,3 +2174,503 @@ select.form-control option {
     width: 100%;
   }
 }
+
+/* =====================================================
+   WINDOWS 2000 DASHBOARD THEME
+   Applies to .admin-layout and all children
+   ===================================================== */
+
+.admin-layout {
+  background: var(--w2k-bg) !important;
+  font-family: var(--w2k-font) !important;
+  color: var(--w2k-text) !important;
+}
+
+/* Sidebar — Win2k raised panel */
+.admin-sidebar {
+  background: var(--w2k-window) !important;
+  border: none !important;
+  border-right: 2px solid var(--w2k-border-dark) !important;
+  box-shadow: inset -2px 0 0 var(--w2k-border-light), 2px 0 0 var(--w2k-border-mid) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  width: 220px !important;
+  min-width: 220px !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+/* Sidebar logo section — Win2k titlebar */
+.admin-sidebar .logo-section {
+  background: linear-gradient(to right, var(--w2k-titlebar-active), #1e5fbc) !important;
+  padding: 6px 10px !important;
+  margin-bottom: 0 !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  border-top: 1px solid var(--w2k-border-light) !important;
+}
+
+/* Hide the big logo in sidebar, show a compact title instead */
+.admin-sidebar .logo-section img,
+.admin-sidebar .logo-section svg {
+  height: 16px !important;
+  width: auto !important;
+  filter: brightness(5) !important;
+}
+
+/* Nav container */
+.admin-sidebar nav {
+  padding: 4px 2px !important;
+  gap: 1px !important;
+  background: var(--w2k-window) !important;
+}
+
+/* Nav items */
+.admin-nav-item {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 0 !important;
+  color: var(--w2k-text) !important;
+  font-family: var(--w2k-font) !important;
+  font-size: 0.8rem !important;
+  font-weight: normal !important;
+  padding: 4px 8px !important;
+  gap: 6px !important;
+  transition: none !important;
+}
+
+.admin-nav-item:hover {
+  background: var(--w2k-selected) !important;
+  color: var(--w2k-selected-text) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.admin-nav-item.active {
+  background: var(--w2k-selected) !important;
+  color: var(--w2k-selected-text) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+.admin-nav-item svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Main area */
+.admin-main {
+  background: var(--w2k-bg) !important;
+  padding: 8px 10px !important;
+}
+
+/* Header title */
+.admin-main header h1 {
+  font-family: var(--w2k-font) !important;
+  font-size: 1.1rem !important;
+  font-weight: bold !important;
+  color: var(--w2k-text) !important;
+  background: none !important;
+  -webkit-text-fill-color: var(--w2k-text) !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-main header p {
+  font-family: var(--w2k-font) !important;
+  font-size: 0.75rem !important;
+  color: var(--w2k-text-muted) !important;
+}
+
+/* Data cards — Win2k inset sunken panel */
+.data-card {
+  background: var(--w2k-window) !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--w2k-border-dark) !important;
+  border-left: 1px solid var(--w2k-border-dark) !important;
+  border-right: 1px solid var(--w2k-border-light) !important;
+  border-bottom: 1px solid var(--w2k-border-light) !important;
+  box-shadow: inset 1px 1px 0 var(--w2k-inset) !important;
+  padding: 12px !important;
+  margin-bottom: 8px !important;
+  animation: none !important;
+  font-family: var(--w2k-font) !important;
+  color: var(--w2k-text) !important;
+}
+
+/* Glass cards — Win2k raised window */
+.glass-card {
+  background: var(--w2k-window) !important;
+  border-radius: 0 !important;
+  border-top: 2px solid var(--w2k-border-light) !important;
+  border-left: 2px solid var(--w2k-border-light) !important;
+  border-right: 2px solid var(--w2k-border-dark) !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  box-shadow: 1px 1px 0 var(--w2k-border-mid) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 12px !important;
+  font-family: var(--w2k-font) !important;
+  color: var(--w2k-text) !important;
+}
+
+/* Buttons — Win2k raised button */
+.admin-layout .btn,
+.admin-layout button:not(.floating-menu-btn):not(.mobile-menu-btn):not(.btn-icon) {
+  background: var(--w2k-button) !important;
+  color: var(--w2k-text) !important;
+  font-family: var(--w2k-font) !important;
+  font-size: 0.75rem !important;
+  font-weight: normal !important;
+  border-radius: 2px !important;
+  border-top: 2px solid var(--w2k-border-light) !important;
+  border-left: 2px solid var(--w2k-border-light) !important;
+  border-right: 2px solid var(--w2k-border-dark) !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  padding: 3px 10px !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  transition: none !important;
+  cursor: default !important;
+  min-width: 70px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-layout .btn:active,
+.admin-layout button:not(.floating-menu-btn):not(.mobile-menu-btn):not(.btn-icon):active {
+  border-top: 2px solid var(--w2k-border-dark) !important;
+  border-left: 2px solid var(--w2k-border-dark) !important;
+  border-right: 2px solid var(--w2k-border-light) !important;
+  border-bottom: 2px solid var(--w2k-border-light) !important;
+  transform: none !important;
+}
+
+.admin-layout .btn:hover,
+.admin-layout button:not(.floating-menu-btn):not(.mobile-menu-btn):not(.btn-icon):hover {
+  background: var(--w2k-button) !important;
+  color: var(--w2k-text) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Logout button */
+.admin-layout .admin-nav-item[style*="--error"],
+.admin-layout .admin-nav-item:has(svg.lucide-log-out) {
+  color: var(--w2k-error) !important;
+}
+
+/* Course cards */
+.admin-layout .course-card {
+  background: var(--w2k-window) !important;
+  border-radius: 0 !important;
+  border-top: 2px solid var(--w2k-border-light) !important;
+  border-left: 2px solid var(--w2k-border-light) !important;
+  border-right: 2px solid var(--w2k-border-dark) !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  box-shadow: 1px 1px 0 var(--w2k-border-mid) !important;
+  padding: 12px !important;
+}
+
+.admin-layout .course-card:hover {
+  transform: none !important;
+  border-top: 2px solid var(--w2k-border-light) !important;
+  border-left: 2px solid var(--w2k-border-light) !important;
+  border-right: 2px solid var(--w2k-border-dark) !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  box-shadow: 1px 1px 0 var(--w2k-border-mid) !important;
+}
+
+/* Progress bar */
+.admin-layout .progress-container {
+  background: var(--w2k-window) !important;
+  border-top: 1px solid var(--w2k-border-dark) !important;
+  border-left: 1px solid var(--w2k-border-dark) !important;
+  border-right: 1px solid var(--w2k-border-light) !important;
+  border-bottom: 1px solid var(--w2k-border-light) !important;
+  border-radius: 0 !important;
+  height: 14px !important;
+}
+
+.admin-layout .progress-bar {
+  background: #000080 !important;
+  border-radius: 0 !important;
+}
+
+/* Book items */
+.admin-layout .book-item {
+  background: var(--w2k-window) !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--w2k-border-mid) !important;
+}
+
+.admin-layout .book-item:hover {
+  background: #f0efea !important;
+  border-color: var(--w2k-selected) !important;
+}
+
+/* Status badges */
+.admin-layout .status-badge {
+  border-radius: 0 !important;
+  font-family: var(--w2k-font) !important;
+  font-size: 0.65rem !important;
+}
+
+.admin-layout .status-completed,
+.admin-layout .status-badge.status-pago {
+  background: #e0f0e0 !important;
+  color: var(--w2k-success) !important;
+  border: 1px solid #008000 !important;
+}
+
+.admin-layout .status-pending,
+.admin-layout .status-badge.status-aberto {
+  background: #fff8e0 !important;
+  color: #a06000 !important;
+  border: 1px solid #a06000 !important;
+}
+
+.admin-layout .status-badge.status-approved {
+  background: #e0f0e0 !important;
+  color: var(--w2k-success) !important;
+  border: 1px solid #008000 !important;
+}
+
+.admin-layout .status-badge.status-rejected {
+  background: #ffe0e0 !important;
+  color: var(--w2k-error) !important;
+  border: 1px solid var(--w2k-error) !important;
+}
+
+/* Admin table */
+.admin-layout .admin-table th {
+  background: var(--w2k-bg) !important;
+  color: var(--w2k-text) !important;
+  font-size: 0.75rem !important;
+  font-family: var(--w2k-font) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  padding: 4px 8px !important;
+}
+
+.admin-layout .admin-table td {
+  background: var(--w2k-window) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--w2k-bg) !important;
+  color: var(--w2k-text) !important;
+  font-family: var(--w2k-font) !important;
+  font-size: 0.75rem !important;
+  padding: 3px 8px !important;
+  border-radius: 0 !important;
+}
+
+.admin-layout .admin-table tr:hover td {
+  background: var(--w2k-selected) !important;
+  color: var(--w2k-selected-text) !important;
+}
+
+/* Form controls */
+.admin-layout .form-control,
+.admin-layout input,
+.admin-layout select,
+.admin-layout textarea {
+  background: #ffffff !important;
+  border-top: 1px solid var(--w2k-border-dark) !important;
+  border-left: 1px solid var(--w2k-border-dark) !important;
+  border-right: 1px solid var(--w2k-border-light) !important;
+  border-bottom: 1px solid var(--w2k-border-light) !important;
+  border-radius: 0 !important;
+  color: var(--w2k-text) !important;
+  font-family: var(--w2k-font) !important;
+  font-size: 0.8rem !important;
+  padding: 3px 6px !important;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.15) !important;
+}
+
+.admin-layout .form-control:focus,
+.admin-layout input:focus {
+  outline: 1px dotted var(--w2k-selected) !important;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.15) !important;
+  border-color: var(--w2k-border-dark) !important;
+}
+
+/* Data items */
+.admin-layout .data-item {
+  background: #ffffff !important;
+  border-radius: 0 !important;
+  border: 1px solid var(--w2k-border-mid) !important;
+  padding: 4px 8px !important;
+}
+
+.admin-layout .data-item:hover {
+  background: #f0efea !important;
+  border-color: var(--w2k-selected) !important;
+}
+
+/* Modal */
+.admin-layout .modal-overlay {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.admin-layout .modal-content {
+  background: var(--w2k-window) !important;
+  border-radius: 0 !important;
+  border-top: 2px solid var(--w2k-border-light) !important;
+  border-left: 2px solid var(--w2k-border-light) !important;
+  border-right: 2px solid var(--w2k-border-dark) !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  box-shadow: 4px 4px 8px rgba(0,0,0,0.5) !important;
+  padding: 0 !important;
+}
+
+/* Badge */
+.admin-layout .badge {
+  background: #e0e8f8 !important;
+  color: var(--w2k-text) !important;
+  border: 1px solid var(--w2k-border-mid) !important;
+  border-radius: 0 !important;
+  font-family: var(--w2k-font) !important;
+  font-size: 0.65rem !important;
+  font-weight: normal !important;
+  letter-spacing: 0 !important;
+}
+
+/* Alert / blocked message */
+.admin-layout [style*="rgba(255, 77, 77"] {
+  background: #ffe0e0 !important;
+  border: 1px solid var(--w2k-error) !important;
+  border-radius: 0 !important;
+  color: var(--w2k-text) !important;
+}
+
+/* Upload zone */
+.admin-layout .file-upload-zone {
+  border: 2px dashed var(--w2k-border-mid) !important;
+  border-radius: 0 !important;
+  background: #f8f8f8 !important;
+  color: var(--w2k-text) !important;
+}
+
+.admin-layout .file-upload-zone:hover {
+  border-color: var(--w2k-selected) !important;
+  background: #eef0f8 !important;
+}
+
+/* Win2k taskbar-style bottom bar for payment button */
+.admin-sidebar > nav > div[style*="padding: '1rem'"],
+.admin-sidebar > nav > div:has(.btn-primary) {
+  border-top: 2px solid var(--w2k-border-light) !important;
+  padding: 6px 4px !important;
+}
+
+/* All text inside admin-layout */
+.admin-layout h1,
+.admin-layout h2,
+.admin-layout h3,
+.admin-layout h4,
+.admin-layout h5,
+.admin-layout h6,
+.admin-layout p,
+.admin-layout span,
+.admin-layout label,
+.admin-layout li {
+  font-family: var(--w2k-font) !important;
+  color: var(--w2k-text) !important;
+  -webkit-text-fill-color: var(--w2k-text) !important;
+  background: none !important;
+  background-clip: unset !important;
+  -webkit-background-clip: unset !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
+}
+
+/* Keep muted text visible */
+.admin-layout [style*="var(--text-muted)"] {
+  color: var(--w2k-text-muted) !important;
+}
+
+/* Headings style */
+.admin-layout h1 {
+  font-size: 1.0rem !important;
+  font-weight: bold !important;
+}
+
+.admin-layout h2 {
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+}
+
+/* Icons in nav */
+.admin-nav-item svg {
+  opacity: 1 !important;
+}
+
+.admin-nav-item:not(.active):not(:hover) svg {
+  color: var(--w2k-text) !important;
+}
+
+.admin-nav-item.active svg,
+.admin-nav-item:hover svg {
+  color: var(--w2k-selected-text) !important;
+}
+
+/* Floating menu button (mobile) — keep functional */
+.floating-menu-btn {
+  background: var(--w2k-button) !important;
+  color: var(--w2k-text) !important;
+  border-top: 2px solid var(--w2k-border-light) !important;
+  border-left: 2px solid var(--w2k-border-light) !important;
+  border-right: 2px solid var(--w2k-border-dark) !important;
+  border-bottom: 2px solid var(--w2k-border-dark) !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+}
+
+/* Toast notification */
+.admin-layout [style*="position: 'fixed'"][style*="bottom"],
+div[style*="position: fixed"][style*="bottom: '2rem'"] {
+  border-radius: 0 !important;
+  font-family: var(--w2k-font) !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.4) !important;
+}
+
+/* Tab content */
+.admin-layout .tab-content {
+  animation: none !important;
+}
+
+/* Scrollbars Win2k style */
+.admin-sidebar::-webkit-scrollbar {
+  width: 16px !important;
+  background: var(--w2k-bg) !important;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--w2k-button) !important;
+  border-top: 1px solid var(--w2k-border-light) !important;
+  border-left: 1px solid var(--w2k-border-light) !important;
+  border-right: 1px solid var(--w2k-border-dark) !important;
+  border-bottom: 1px solid var(--w2k-border-dark) !important;
+  border-radius: 0 !important;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: var(--w2k-bg) !important;
+}
+
+/* Win2k desktop teal background for the outer shell */
+body:has(.admin-layout) {
+  background: #008080 !important;
+}
+
+/* ===== END WINDOWS 2000 THEME ===== */
