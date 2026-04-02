@@ -70,7 +70,13 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
           className="form-control"
           style={{ width: '180px', fontSize: '0.85rem', padding: '0.5rem' }}
           value={user.nucleo_id || ''}
-          onChange={(e) => handleUpdateUserNucleo(user.id, e.target.value)}
+          onChange={(e) => {
+            const nId = e.target.value;
+            const nName = allNucleos.find(n => n.id === nId)?.nome || 'Sem Núcleo';
+            if (window.confirm(`Deseja realmente trocar o núcleo deste aluno para "${nName}"?`)) {
+              handleUpdateUserNucleo(user.id, nId);
+            }
+          }}
         >
           <option value="">Sem Núcleo</option>
           {allNucleos.map((n: any) => (

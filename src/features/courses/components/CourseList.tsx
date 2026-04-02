@@ -18,9 +18,6 @@ const CourseList: React.FC<CourseListProps> = ({
   atividades = [],
   progressoAulas = []
 }) => {
-  const isExamLocked = () => {
-    return false; // Desativado para permitir fluxo contínuo autorizado pelo professor
-  }
 
   return (
     <div className="courses-grid">
@@ -200,10 +197,15 @@ const CourseList: React.FC<CourseListProps> = ({
                                           
                                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                             {children.map(child => {
-                                              const isChildCompleted = (child.tipo === 'atividade' || child.tipo === 'prova') ? submittedIds.includes(child.id) : watchedIds.includes(child.id);
-                                              const examLocked = isExamLocked();
+                                              const submission = (atividades || []).find((at: any) => at.aula_id === child.id);
+                                              const isChildCompleted = (child.tipo === 'atividade' || child.tipo === 'prova') ? !!submission : watchedIds.includes(child.id);
+                                              
+                                              // Regra: Bloqueio Sequencial V1 -> V2 -> V3
+                                              // Se já enviou e não foi corrigida, bloqueia reentrada na UI também para clareza
+                                              const isPendingCorrection = (child.tipo === 'prova' || child.is_bloco_final) && submission && submission.status !== 'corrigida';
+                                              
                                               const profLocked = child.lockedByProfessor;
-                                              const isLocked = examLocked || profLocked;
+                                              const isLocked = profLocked || isPendingCorrection;
 
                                               if (isLocked) {
                                                 return (
@@ -226,7 +228,7 @@ const CourseList: React.FC<CourseListProps> = ({
                                                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                                                         {child.titulo} 
                                                         <span style={{ fontSize: '0.7rem', fontStyle: 'italic', marginLeft: '0.5rem' }}>
-                                                          {profLocked ? '(Aguardando liberação do professor)' : '(Aguardando correção da anterior)'}
+                                                          {isPendingCorrection ? '(Aguardando correção para próxima tentativa)' : '(Aguardando liberação do professor)'}
                                                         </span>
                                                       </span>
                                                     </div>
@@ -276,9 +278,11 @@ const CourseList: React.FC<CourseListProps> = ({
                                       );
                                     }
 
-                                    const examLocked = isExamLocked();
+                                    const submission = (atividades || []).find((at: any) => at.aula_id === aula.id);
+                                    const isPendingCorrection = (aula.tipo === 'prova' || aula.is_bloco_final) && submission && submission.status !== 'corrigida';
+                                    
                                     const profLocked = aula.lockedByProfessor;
-                                    const isLocked = examLocked || profLocked;
+                                    const isLocked = profLocked || isPendingCorrection;
 
                                     if (isLocked) {
                                       return (
@@ -301,7 +305,7 @@ const CourseList: React.FC<CourseListProps> = ({
                                             <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                                               {aula.titulo} 
                                               <span style={{ fontSize: '0.75rem', fontStyle: 'italic', marginLeft: '0.5rem' }}>
-                                                {profLocked ? '(Aguardando liberação do professor)' : '(Aguardando correção da anterior)'}
+                                                {isPendingCorrection ? '(Aguardando correção para próxima tentativa)' : '(Aguardando liberação do professor)'}
                                               </span>
                                             </span>
                                           </div>

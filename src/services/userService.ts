@@ -31,12 +31,16 @@ export const userService = {
   },
 
   /**
-   * Atualiza campos específicos do usuário (nome, tipo, núcleo, etc)
+   * Atualiza o núcleo do usuário garantindo sincronia entre ID e Nome (texto)
    */
-  async updateUser(userId: string, updates: any) {
+  async updateUserNucleo(userId: string, nucleoId: string, nucleoNome: string) {
     const { error } = await supabase
       .from('users')
-      .update(updates)
+      .update({ 
+        nucleo_id: nucleoId || null, 
+        nucleo: nucleoNome || null,
+        status_nucleo: 'aprovado' // Ao trocar manualmente, já marcamos como aprovado
+      })
       .eq('id', userId);
     if (error) throw error;
   },

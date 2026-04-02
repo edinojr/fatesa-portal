@@ -104,7 +104,19 @@ CREATE TABLE public.registros_alumni (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 11. Habilitar RLS
+-- 11. Estabilizar Constraints de Respostas e Liberações (Garante que upsert funcione)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'unique_aluno_aula') THEN
+        ALTER TABLE public.respostas_aulas ADD CONSTRAINT unique_aluno_aula UNIQUE (aluno_id, aula_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'unique_liberacao_item') THEN
+        ALTER TABLE public.liberacoes_nucleo ADD CONSTRAINT unique_liberacao_item UNIQUE (nucleo_id, item_id, item_type);
+    END IF;
+END $$;
+
+-- 12. Habilitar RLS
 ALTER TABLE public.nucleos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.liberacoes_nucleo ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.avisos ENABLE ROW LEVEL SECURITY;
@@ -125,21 +137,24 @@ BEGIN
     DROP POLICY IF EXISTS "Leitura_Publica_Nucleos" ON public.nucleos;
     CREATE POLICY "Leitura_Publica_Nucleos" ON public.nucleos FOR SELECT USING (true);
     
-    -- Avisos
-    DROP POLICY IF EXISTS "Leitura_Publica_Avisos" ON public.avisos;
-    CREATE POLICY "Leitura_Publica_Avisos" ON public.avisos FOR SELECT USING (true);
-    DROP POLICY IF EXISTS "Gestao_Total_Avisos" ON public.avisos;
-    CREATE POLICY "Gestao_Total_Avisos" ON public.avisos FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
+    -- Avisos (Restrito ao Polo)
+    DROP POLICY IF EXISTS "Leitura_Aluno_Avisos" ON public.avisos;
+    CREATE POLICY "Leitura_Aluno_Avisos" ON public.avisos FOR SELECT 
+    USING (nucleo_id = (SELECT nucleo_id FROM public.users WHERE id = auth.uid()));
     
-    -- Materiais
-    DROP POLICY IF EXISTS "Leitura_Publica_Materiais" ON public.materiais_adicionais;
-    CREATE POLICY "Leitura_Publica_Materiais" ON public.materiais_adicionais FOR SELECT USING (true);
-    DROP POLICY IF EXISTS "Gestao_Total_Materiais" ON public.materiais_adicionais;
-    CREATE POLICY "Gestao_Total_Materiais" ON public.materiais_adicionais FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
+    -- Materiais (Restrito ao Polo)
+    DROP POLICY IF EXISTS "Leitura_Aluno_Materiais" ON public.materiais_adicionais;
+    CREATE POLICY "Leitura_Aluno_Materiais" ON public.materiais_adicionais FOR SELECT 
+    USING (nucleo_id = (SELECT nucleo_id FROM public.users WHERE id = auth.uid()));
     
     -- Liberações
     DROP POLICY IF EXISTS "Gestao_Total_Staff" ON public.liberacoes_nucleo;
     CREATE POLICY "Gestao_Total_Staff" ON public.liberacoes_nucleo FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'professor')));
+    
+    -- Atividades (Restrito ao Polo)
+    DROP POLICY IF EXISTS "Leitura_Aluno_Atividades" ON public.atividades;
+    CREATE POLICY "Leitura_Aluno_Atividades" ON public.atividades FOR SELECT 
+    USING (nucleo_id = (SELECT nucleo_id FROM public.users WHERE id = auth.uid()));
     
     -- Pagamentos (Onde dava o erro 400 no upload)
     DROP POLICY IF EXISTS "Users can view their own payments" ON public.pagamentos;
@@ -156,15 +171,18 @@ BEGIN
     CREATE POLICY "Admins can manage all payments" ON public.pagamentos FOR ALL 
     USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'suporte')));
 
+    DROP POLICY IF EXISTS "Leitura_Aluno_Liberacoes" ON public.liberacoes_nucleo;
+    CREATE POLICY "Leitura_Aluno_Liberacoes" ON public.liberacoes_nucleo FOR SELECT USING (nucleo_id = (SELECT nucleo_id FROM public.users WHERE id = auth.uid()));
+
     -- Políticas para Analytics (portal_access_logs)
-    DROP POLICY IF EXISTS "Anyone can insert logs" ON public.portal_access_logs;
-    CREATE POLICY "Anyone can insert logs" ON public.portal_access_logs FOR INSERT WITH CHECK (true);
-    
-    DROP POLICY IF EXISTS "Admins can view logs" ON public.portal_access_logs;
-    CREATE POLICY "Admins can view logs" ON public.portal_access_logs FOR SELECT 
-    USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'suporte')));
 
     -- Ajuste final de Enums (Garantir que 'rejeitado' existe para pagamentos)
     ALTER TYPE public.pagamento_status ADD VALUE IF NOT EXISTS 'rejeitado';
+
+    -- 14. Sincronização em Massa de Nomes de Núcleo (Para transferências anteriores)
+    UPDATE public.users u
+    SET nucleo = n.nome
+    FROM public.nucleos n
+    WHERE u.nucleo_id = n.id AND (u.nucleo IS DISTINCT FROM n.nome OR u.nucleo IS NULL);
 
 EXCEPTION WHEN others THEN END $$;

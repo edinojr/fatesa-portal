@@ -13,7 +13,7 @@ const Lesson = () => {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [answers, setAnswers] = useState<Record<string, any>>({})
-  const [result, setResult] = useState<{ score: number | null; passed: boolean; pendingReview?: boolean; scoreOriginal?: number | null } | null>(null)
+  const [result, setResult] = useState<{ score: number | null; passed: boolean; pendingReview?: boolean; scoreOriginal?: number | null; canRetry?: boolean } | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [complete, setComplete] = useState(false)
   const [existingSubmission, setExistingSubmission] = useState<any | null>(null)
@@ -72,10 +72,11 @@ const Lesson = () => {
 
         // Check Professor Release (liberacoes_nucleo)
         if (!isStaff && profile?.nucleo_id) {
-          const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') ? 'video' : 
-                           (lessonData.tipo === 'atividade' || lessonData.tipo === 'prova') ? 'atividade' : 'modulo';
+          const isRestrictedType = lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'prova' || !!lessonData.is_bloco_final;
           
-          if (itemType === 'video' || itemType === 'atividade') {
+          if (isRestrictedType) {
+            const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') ? 'video' : 'atividade';
+            
             const { data: releaseData } = await supabase
               .from('liberacoes_nucleo')
               .select('id')
@@ -86,25 +87,26 @@ const Lesson = () => {
               .maybeSingle();
             
             if (!releaseData) {
-              setIsReleased(false);
-              setLoading(false);
-              return;
-            }
-          } else if (lessonData.livro_id) {
-            // Check if the module (livro) itself is released
-            const { data: moduleRelease } = await supabase
-              .from('liberacoes_nucleo')
-              .select('id')
-              .eq('nucleo_id', profile.nucleo_id)
-              .eq('item_id', lessonData.livro_id)
-              .eq('item_type', 'modulo')
-              .eq('liberado', true)
-              .maybeSingle();
+              // Somente libera se for V2/V3 automático por nota (Progressão Pedagógica)
+              const title = (lessonData.titulo || '').toUpperCase();
+              let isAutoAllowed = false;
+              
+              if (title.includes('V2') || title.includes('V3')) {
+                  const { data: resData } = await supabase
+                    .from('respostas_aulas')
+                    .select('status, nota, aulas(titulo)')
+                    .eq('aluno_id', user.id);
+                  
+                  const prevTitle = title.includes('V2') ? 'V1' : 'V2';
+                  const sub = (resData || []).find((s: any) => s.aulas?.titulo?.toUpperCase().includes(prevTitle));
+                  isAutoAllowed = !!sub && sub.status === 'corrigida' && (sub.nota || 0) < 7.0;
+              }
 
-            if (!moduleRelease) {
-              setIsReleased(false);
-              setLoading(false);
-              return;
+              if (!isAutoAllowed) {
+                setIsReleased(false);
+                setLoading(false);
+                return;
+              }
             }
           }
         }
@@ -219,11 +221,17 @@ const Lesson = () => {
             const expired = now > deadline;
             setDeadlineInfo({ deadline, stage, expired });
 
+            const canRetry = !expired && stage > (currentSub.tentativas || 1) && currentSub.status === 'corrigida';
+
             // Swap questions based on current stage
             if (stage === 2) {
               setQuestions(Array.isArray(lessonData.questionario_v2) ? lessonData.questionario_v2 : []);
             } else if (stage === 3) {
               setQuestions(Array.isArray(lessonData.questionario_v3) ? lessonData.questionario_v3 : []);
+            }
+
+            if (canRetry && subData.nota !== null) {
+              setResult(p => p ? { ...p, canRetry: true } : null);
             }
           }
         }
@@ -361,7 +369,7 @@ const Lesson = () => {
       const currentSub = (lesson as any).linkedActivity ? (lesson as any).linkedSubmission : existingSubmission;
       
       // Rule: Provas and final assessments are ALWAYS manual/teacher-corrected.
-      const isFinal = targetLesson.tipo === 'prova' || targetLesson.is_bloco_final;
+      const isFinal = targetLesson.tipo === 'prova' || !!targetLesson.is_bloco_final;
 
       if (!isFinal) {
         questions.forEach((q, idx) => {
@@ -487,8 +495,15 @@ const Lesson = () => {
           </p>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button onClick={() => navigate(-1)} className="btn btn-outline">Voltar</button>
-            <button onClick={() => navigate('/dashboard')} className="btn btn-primary">Ir para o Dashboard</button>
+            <button onClick={() => navigate('/dashboard')} className="btn btn-primary">
+              {existingSubmission && existingSubmission.status !== 'corrigida' ? 'Ver Dashboard' : 'Ir para o Dashboard'}
+            </button>
           </div>
+          {existingSubmission && existingSubmission.status !== 'corrigida' && (
+            <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--warning)', fontWeight: 600 }}>
+              Status: Sua tentativa anterior está aguardando correção manual do professor.
+            </p>
+          )}
         </div>
       </div>
     )
@@ -717,7 +732,20 @@ const Lesson = () => {
                     <button className="btn btn-outline" onClick={() => navigate('/dashboard')} style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}>
                       <LayoutDashboard size={18}/> Voltar ao Painel
                     </button>
-                    {nextLessonId && (
+                    {result.canRetry && (
+                      <button 
+                        className="btn btn-primary" 
+                        onClick={() => {
+                          setSubmitted(false);
+                          setResult(null);
+                          setAnswers({});
+                        }} 
+                        style={{width:'auto', background:'var(--warning)', color:'#000', fontWeight:800}}
+                      >
+                        Iniciar Recuperação (V{deadlineInfo?.stage})
+                      </button>
+                    )}
+                    {!result.canRetry && nextLessonId && (
                       <button className="btn btn-primary" onClick={() => navigate(`/lesson/${nextLessonId}`)} style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}>
                         Próxima Aula <ChevronRight size={18}/>
                       </button>

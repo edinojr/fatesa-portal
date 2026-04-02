@@ -14,9 +14,8 @@ interface ProfessorContentProps {
   lessons: any[]
   fetchBooks: (id: string) => void
   selectBookAndShowLessons: (book: any) => void
-  profile: any
   professorNucleos: any[]
-  submissions?: any[] // Added to track completions
+  submissions?: any[]
 }
 
 const ProfessorContent: React.FC<ProfessorContentProps> = ({
@@ -29,13 +28,10 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   lessons,
   fetchBooks,
   selectBookAndShowLessons,
-  profile,
   professorNucleos,
   submissions = []
 }) => {
-  const navigate = useNavigate()
   const [releases, setReleases] = useState<any[]>([])
-  const [loadingReleases, setLoadingReleases] = useState(false)
 
   useEffect(() => {
     fetchReleases()
@@ -195,11 +191,17 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               </div>
 
               {(() => {
-                const itemType = (lesson.tipo === 'atividade' || lesson.tipo === 'prova') ? 'atividade' : 'video';
+                const isExam = lesson.tipo === 'prova' || !!lesson.is_bloco_final;
+                const isAutoExam = isExam && (lesson.titulo?.toUpperCase().includes('V2') || lesson.titulo?.toUpperCase().includes('V3'));
+                const itemType = isExam ? 'atividade' : (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') ? 'video' : null;
+
+                if (!itemType || isAutoExam) return null;
 
                 return (
                   <div style={{ flex: 1, margin: '0 1rem', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Controle de Acesso ({itemType === 'video' ? 'Vídeo' : 'Avaliação'}):</p>
+                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>
+                      Controle de Acesso ({lesson.tipo === 'prova' ? 'Prova V1' : 'Vídeo-Aula'}):
+                    </p>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {professorNucleos.map(n => {
                         const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === lesson.id && r.item_type === itemType);

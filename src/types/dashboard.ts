@@ -9,6 +9,7 @@ export interface Lesson {
   parent_aula_id?: string
   parent_id?: string
   ordem?: number
+  is_bloco_final?: boolean
 }
 
 export interface Book {

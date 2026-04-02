@@ -69,11 +69,20 @@ export const useStudentCourses = (profile: any) => {
         releasedCount = Math.max(paidCount + 1, maxExamOrdem + 1);
       }
 
-      // Liberações por Núcleo (Professor releases)
-      const { data: releases } = await supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
+      // Liberações por Polo: Consultamos tudo o que o RLS permitir este aluno ver
+      const { data: releases, error: relError } = await supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('liberado', true);
+      
+      if (relError) console.error('[Dashboard] Erro ao buscar liberações:', relError);
+
       const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
       const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
       const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
+
+      if (releases && releases.length > 0) {
+        console.log(`[Dashboard] ${releases.length} liberações vinculadas encontradas.`, { modulos: releasedModulos.length, videos: releasedVideos.length, atividades: releasedAtividades.length });
+      } else {
+        console.warn(`[Dashboard] Nenhuma ativação individual encontrada para seu Polo. Solicitando liberação ao professor...`);
+      }
 
       // Progresso e Notas
       const [{ data: respostasData }, { data: progData }] = await Promise.all([
@@ -95,36 +104,55 @@ export const useStudentCourses = (profile: any) => {
             id: c.id,
             nome: c.nome,
             livros: sortedLivros.map((l: any) => {
-              const professorReleased = isStaff || releasedModulos.includes(l.id);
               const isCurrent = !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount;
 
-              return {
-                ...l,
-                aulas: [...(l.aulas || [])]
-                  .sort((a: any, b: any) => (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' }))
-                  .map((a: any) => {
-                  if (isStaff) return { ...a, lockedByProfessor: false };
-                  const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
-                  if (!matchesNucleo) return { ...a, isHidden: true };
+              const isReleased = (isStaff || exemptStatus || (l.ordem || 1) <= releasedCount || releasedModulos.includes(l.id));
 
-                  let lockedByProfessor = !professorReleased;
-                  if (professorReleased) {
-                    const isManual = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'prova';
-                    if (isManual) {
-                      const isReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo') 
-                        ? releasedVideos.includes(a.id) 
-                        : releasedAtividades.includes(a.id);
-                      lockedByProfessor = !isReleased;
+                return {
+                  ...l,
+                  aulas: [...(l.aulas || [])]
+                    .sort((a: any, b: any) => (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' }))
+                    .map((a: any) => {
+                    if (isStaff) return { ...a, lockedByProfessor: false };
+                    
+                    const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
+                    if (!matchesNucleo) return { ...a, isHidden: true };
+
+                    let lockedByProfessor = false;
+                    
+                    // Apenas vídeos e provas finais exigem liberação manual do professor
+                    const isRestrictedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'prova' || !!a.is_bloco_final;
+                    
+                    if (isRestrictedType) {
+                      const title = a.titulo || '';
+                      let isItemReleased = false;
+
+                      if (title.toUpperCase().includes('V2')) {
+                        // Automático se V1 reprovou e foi corrigida
+                        const v1Sub = resData.find((s: any) => s.aulas?.livro?.id === l.id && s.aulas?.titulo?.toUpperCase().includes('V1'));
+                        isItemReleased = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
+                      } else if (title.toUpperCase().includes('V3')) {
+                        // Automático se V2 reprovou e foi corrigida
+                        const v2Sub = resData.find((s: any) => s.aulas?.livro?.id === l.id && s.aulas?.titulo?.toUpperCase().includes('V2'));
+                        isItemReleased = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
+                      } else {
+                        // V1 ou Vídeo: Liberação manual
+                        isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo') 
+                          ? releasedVideos.includes(a.id) 
+                          : releasedAtividades.includes(a.id);
+                      }
+                      
+                      lockedByProfessor = !isItemReleased;
                     } else {
-                      lockedByProfessor = false; // Lesson materials and exercises are released automatically with the module
+                      // Conteúdo nativo é liberado se o módulo está liberado pelo fluxo de pagamentos
+                      lockedByProfessor = !isReleased;
                     }
-                  }
 
-                  return { ...a, lockedByProfessor };
-                }).filter((a: any) => !a.isHidden),
-                isReleased: (isStaff || exemptStatus || (l.ordem || 1) <= releasedCount) && professorReleased,
-                isCurrent: isCurrent && professorReleased
-              };
+                    return { ...a, lockedByProfessor };
+                  }).filter((a: any) => !a.isHidden),
+                  isReleased,
+                  isCurrent: isCurrent && isReleased
+                };
             })
           };
         }).filter((c: any) => c.livros.length > 0);

@@ -39,6 +39,7 @@ export const useProfile = () => {
         .from('users')
         .select(`
           *,
+          nucleos(nome),
           pagamentos (*)
         `)
         .eq('id', session.user.id)
@@ -55,7 +56,9 @@ export const useProfile = () => {
       }
       
       const accessStatus = checkAccessStatus(data, data?.pagamentos || []);
-      setProfile({ ...data, email: session.user.email, accessStatus });
+      // Map Joined Name to the profile.nucleo field for UI compatibility
+      const refreshedNucleo = (data as any).nucleos?.nome || data.nucleo;
+      setProfile({ ...data, nucleo: refreshedNucleo, email: session.user.email, accessStatus });
     } catch (err: any) {
       console.error('Error fetching profile:', err);
       

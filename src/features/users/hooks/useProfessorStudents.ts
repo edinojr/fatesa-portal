@@ -91,6 +91,30 @@ export const useProfessorStudents = () => {
     }
   }
 
+  const handleUpdateUserNucleo = async (userId: string, nucleoId: string, nucleoNome: string, onSuccess?: () => void) => {
+    if (!confirm(`Deseja realmente trocar o núcleo deste aluno para "${nucleoNome}"?`)) return;
+    
+    setActionLoading(userId);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          nucleo_id: nucleoId || null,
+          nucleo: nucleoNome || null,
+          status_nucleo: 'aprovado'
+        })
+        .eq('id', userId);
+      
+      if (error) throw error;
+      alert('Núcleo atualizado com sucesso!');
+      if (onSuccess) onSuccess();
+    } catch (err: any) {
+      alert('Erro ao atualizar núcleo: ' + err.message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   return {
     allStudents,
     setAllStudents: setSortedStudents,
@@ -100,6 +124,7 @@ export const useProfessorStudents = () => {
     handleApproveAccess,
     handleRejectAccess,
     handleDeleteUser,
-    handleResetProgress
+    handleResetProgress,
+    handleUpdateUserNucleo
   }
 }

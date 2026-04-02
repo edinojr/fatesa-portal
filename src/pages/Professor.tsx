@@ -25,7 +25,6 @@ import MateriaisManagement from '../features/communication/components/MateriaisM
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import Logo from '../components/common/Logo'
-import ForumPanel from '../features/forum/components/ForumPanel'
 
 const Professor = () => {
   const {
@@ -71,6 +70,7 @@ const Professor = () => {
     handleDeleteUser,
     handleResetProgress,
     handleLogout,
+    handleUpdateUserNucleo,
     fetchBooks,
     selectBookAndShowLessons,
     attendanceRecords,
@@ -81,6 +81,7 @@ const Professor = () => {
   const location = useLocation()
 
   React.useEffect(() => {
+    localStorage.setItem('fatesa_active_role', 'professor');
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab);
     }
@@ -229,7 +230,9 @@ const Professor = () => {
             handleRejectAccess={handleRejectAccess}
             handleDeleteUser={handleDeleteUser}
             handleResetActivities={handleResetProgress}
+            handleUpdateUserNucleo={handleUpdateUserNucleo}
             userRole={profile?.tipo}
+            allNucleos={professorNucleos}
           />
         )}
 

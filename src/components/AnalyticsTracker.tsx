@@ -16,11 +16,18 @@ const AnalyticsTracker = () => {
         }
 
         // Try to get user. If it fails due to lock/timeout, we silent fail for analytics.
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        
-        if (authError) {
-          if (authError.message.includes('Lock broken')) return; // Ignore lock issues
-          throw authError;
+        let user = null;
+        try {
+          const { data, error: authError } = await supabase.auth.getUser();
+          if (authError) {
+            if (!authError.message.includes('Auth session missing')) {
+              console.warn('Auth check skipped for analytics:', authError.message);
+            }
+          } else {
+            user = data.user;
+          }
+        } catch (authCatch) {
+          // Silent auth failure for analytics
         }
         
         await supabase.from('portal_access_logs').insert({

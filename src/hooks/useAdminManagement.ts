@@ -492,9 +492,22 @@ export const useAdminManagement = () => {
 
   const handleUpdateUserNucleo = async (userId: string, nucleoId: string) => {
     try {
-      const { error } = await supabase.from('users').update({ nucleo_id: nucleoId || null }).eq('id', userId)
+      const nucleoObj = allNucleos.find(n => n.id === nucleoId);
+      const nucleoNome = nucleoObj ? nucleoObj.nome : 'Sem Núcleo';
+      
+      const { error } = await supabase.from('users').update({ 
+        nucleo_id: nucleoId || null,
+        nucleo: nucleoId ? nucleoNome : null,
+        status_nucleo: 'aprovado'
+      }).eq('id', userId)
       if (error) throw error
-      setUsers(users.map(u => u.id === userId ? { ...u, nucleo_id: nucleoId || null } : u))
+      setUsers(prev => prev.map(u => u.id === userId ? { 
+        ...u, 
+        nucleo_id: nucleoId || null, 
+        nucleo: nucleoId ? nucleoNome : null,
+        status_nucleo: 'aprovado',
+        nucleos: nucleoId ? { id: nucleoId, nome: nucleoNome } : null
+      } : u))
     } catch(err: any) {
       alert('Erro: ' + err.message)
     }

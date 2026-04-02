@@ -11,13 +11,15 @@ interface StudentsManagementProps {
   handleRejectAccess: (userId: string) => Promise<void>
   handleDeleteUser: (userId: string) => Promise<void>
   handleResetActivities: (userId: string) => Promise<void>
+  handleUpdateUserNucleo: (userId: string, nucleoId: string, nucleoNome: string) => Promise<void>
   userRole?: string | null
+  allNucleos?: any[]
 }
 
 export default function StudentsManagement({ 
   allStudents, searchTerm, setSearchTerm, actionLoading,
   handleApproveAccess, handleRejectAccess, handleDeleteUser,
-  handleResetActivities, userRole
+  handleResetActivities, handleUpdateUserNucleo, userRole, allNucleos = []
 }: StudentsManagementProps) {
   const filteredStudents = allStudents.filter(s => 
     s.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -136,6 +138,23 @@ export default function StudentsManagement({
                               >
                                 {actionLoading === student.id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
                               </button>
+                              
+                              <select 
+                                className="form-control"
+                                style={{ width: '130px', fontSize: '0.75rem', padding: '0.2rem', height: 'auto', background: 'rgba(255,255,255,0.05)', color: 'var(--text-main)', border: '1px solid var(--glass-border)' }}
+                                value={student.nucleo_id || ''}
+                                onChange={(e) => {
+                                  const nId = e.target.value;
+                                  const nName = allNucleos.find(n => n.id === nId)?.nome || 'Sem Núcleo';
+                                  handleUpdateUserNucleo(student.id, nId, nName);
+                                }}
+                                disabled={actionLoading === student.id}
+                              >
+                                <option value="" disabled>Trocar Pólo...</option>
+                                {allNucleos.map((n: any) => (
+                                  <option key={n.id} value={n.id}>{n.nome}</option>
+                                ))}
+                              </select>
                             </div>
                           </td>
                         </tr>

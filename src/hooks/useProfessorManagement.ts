@@ -147,7 +147,7 @@ export const useProfessorManagement = () => {
                   aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
                   users:aluno_id ( id, nome, email, nucleos ( nome ) )
                 `)
-                .in('aluno_id', studentIds)
+                .or(`aluno_id.in.(${studentIds.join(',')}),status.eq.pendente`) // Busca por aluno OU qualquer pendente que o RLS permita
                 .order('updated_at', { ascending: false })
               if (subData) gradingHook.setSubmissions(subData as any)
             }
@@ -207,6 +207,7 @@ export const useProfessorManagement = () => {
     handleRejectAccess: (id: string) => studentHook.handleRejectAccess(id, fetchData),
     handleDeleteUser: (id: string) => studentHook.handleDeleteUser(id, fetchData),
     handleResetProgress: (id: string) => studentHook.handleResetProgress(id, fetchData),
+    handleUpdateUserNucleo: (id: string, nId: string, nNome: string) => studentHook.handleUpdateUserNucleo(id, nId, nNome, fetchData),
     // Delegated Grading State & Actions
     ...gradingHook,
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),

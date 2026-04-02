@@ -38,8 +38,10 @@ const Dashboard = () => {
   const { profile, loading: profileLoading, signOut, refreshProfile } = useProfile();
   
   useEffect(() => {
-    localStorage.setItem('fatesa_active_role', 'student')
+    localStorage.setItem('fatesa_active_role', 'aluno')
   }, [])
+
+  const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
 
   const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
   
@@ -266,6 +268,39 @@ const Dashboard = () => {
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {isStaff && (
+            <div style={{ padding: '0.5rem 1rem', position: 'relative' }}>
+              <button 
+                className="admin-nav-item" 
+                style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'rgba(var(--primary-rgb), 0.1)', border: '1px solid var(--primary)', borderRadius: '10px' }}
+                onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
+              >
+                <GraduationCap size={18} color="var(--primary)" /> <span>Alternar Painel</span>
+              </button>
+              {showRoleSwitcher && (
+                <div style={{ position: 'absolute', top: '100%', left: '1rem', right: '1rem', background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+                  {profile?.tipo === 'professor' || profile?.caminhos_acesso?.includes('professor') ? (
+                    <button 
+                      className="admin-nav-item" 
+                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
+                      onClick={() => navigate('/professor')}
+                    >
+                      Painel do Professor
+                    </button>
+                  ) : null}
+                  {profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin') || profile?.tipo === 'suporte' ? (
+                    <button 
+                      className="admin-nav-item" 
+                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
+                      onClick={() => navigate('/admin')}
+                    >
+                      Painel Administrativo
+                    </button>
+                  ) : null}
+                </div>
+              )}
+            </div>
+          )}
           {(['cursos', 'avisos', 'forum', 'documentos', 'financeiro', 'boletim'] as Tab[])
             .filter(t => isStaff ? t !== 'financeiro' : true)
             .map(t => {

@@ -41,6 +41,31 @@ export const useUserManagement = () => {
     }
   };
 
+  const updateUserNucleo = async (userId: string, nucleoId: string, nucleoNome: string) => {
+    setActionLoading(userId);
+    try {
+      await userService.updateUserNucleo(userId, nucleoId, nucleoNome);
+      setUsers((prev) => 
+        prev.map((u) => 
+          u.id === userId 
+            ? { 
+                ...u, 
+                nucleo_id: nucleoId, 
+                nucleo: nucleoNome, 
+                status_nucleo: 'aprovado',
+                nucleos: nucleoId ? { id: nucleoId, nome: nucleoNome } : null 
+              } 
+            : u
+        )
+      );
+      return { success: true };
+    } catch (err: any) {
+      return { error: err.message };
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const deleteUser = async (userId: string) => {
     setActionLoading(userId);
     try {
@@ -75,6 +100,7 @@ export const useUserManagement = () => {
     fetchUsers,
     fetchNucleos,
     updateUser,
+    updateUserNucleo,
     deleteUser,
     createSpecialUser
   };
