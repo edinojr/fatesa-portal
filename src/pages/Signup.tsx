@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { UserPlus, Loader2, Eye, EyeOff, ChevronLeft, ShieldCheck } from 'lucide-react'
+import { UserPlus, Loader2, Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import Logo from '../components/common/Logo'
 
 const Signup = () => {
@@ -14,6 +14,7 @@ const Signup = () => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [tipo, setTipo] = useState<'presencial' | 'online' | 'super_visitante' | 'ex_aluno' | 'colaborador'>('presencial')
+  const [alumniVerified, setAlumniVerified] = useState<any>(null)
   const [nucleo, setNucleo] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -79,6 +80,35 @@ const Signup = () => {
     return () => clearTimeout(timer);
   }, [email]);
 
+  const verifyAlumniStatus = async () => {
+    if (!nome) {
+      setError('Por favor, preencha seu Nome Completo para verificação.');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error: err } = await supabase
+        .from('registros_alumni')
+        .select('*')
+        .ilike('nome', nome.trim())
+        .is('user_id', null)
+        .maybeSingle();
+
+      if (err) throw err;
+      if (data) {
+        setAlumniVerified(data);
+        setError(null);
+      } else {
+        setError('Não encontramos um registro de formado com este nome ou o acesso já foi ativado. Verifique se o nome está idêntico ao da lista ou contate o suporte.');
+      }
+    } catch (err: any) {
+      setError('Erro na verificação: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchNucleos = async () => {
       const { data } = await supabase.from('nucleos').select('id, nome').order('nome');
@@ -121,6 +151,14 @@ const Signup = () => {
       })
 
       if (authError) throw authError
+
+      // 2. Vincular se for Alumni
+      if (authData.user && alumniVerified) {
+        await supabase
+          .from('registros_alumni')
+          .update({ user_id: authData.user.id, email: email.toLowerCase() })
+          .eq('id', alumniVerified.id);
+      }
 
       if (authData.session) {
         // Redirecionamento instantâneo para dentro da plataforma (Bypass da confirmação superado)
@@ -182,8 +220,33 @@ const Signup = () => {
                 <option value="colaborador">Colaborador / Parceiro</option>
               </select>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                {tipo === 'presencial' ? 'Obrigatório selecionar seu núcleo de origem.' : 'Seu perfil terá acesso imediato aos conteúdos liberados para sua categoria.'}
+                {tipo === 'presencial' ? 'Obrigatório selecionar seu núcleo de origem.' : tipo === 'ex_aluno' ? 'Seu perfil será validado contra a lista oficial de formados.' : 'Seu perfil terá acesso imediato aos conteúdos liberados para sua categoria.'}
               </p>
+            </div>
+          )}
+
+          {tipo === 'ex_aluno' && !alumniVerified && (
+            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '12px', border: '1px solid rgba(var(--primary-rgb), 0.1)', textAlign: 'center' }}>
+              <p style={{ fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--text-muted)' }}>
+                Clique no botão abaixo para confirmar se seu nome consta na nossa lista oficial de formados.
+              </p>
+              <button 
+                type="button" 
+                className="btn btn-primary" 
+                style={{ width: '100%' }}
+                onClick={verifyAlumniStatus}
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="spinner" /> : <ShieldCheck size={18} />} Verificar Meu Nome na Lista
+              </button>
+            </div>
+          )}
+
+          {alumniVerified && (
+            <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', borderRadius: '12px', color: 'var(--success)', fontSize: '0.9rem', textAlign: 'center' }}>
+              <ShieldCheck size={24} style={{ marginBottom: '0.5rem' }} />
+              <p><strong>Identidade Confirmada!</strong></p>
+              <p>Olá, {alumniVerified.nome}. Sua conta será vinculada ao registro de formado.</p>
             </div>
           )}
 

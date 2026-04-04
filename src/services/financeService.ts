@@ -29,7 +29,7 @@ export const financeService = {
   /**
    * Valida ou rejeita um pagamento
    */
-  async validatePayment(id: string, status: 'pago' | 'rejeitado', feedback?: string | null) {
+  async validatePayment(id: string, status: 'aprovado' | 'rejeitado', feedback?: string | null) {
     const { error } = await supabase
       .from('pagamentos')
       .update({ status, feedback })
@@ -92,5 +92,19 @@ export const financeService = {
   async saveConfig(chave: string, valor: string) {
     const { error } = await supabase.from('configuracoes').upsert({ chave, valor });
     if (error) throw error;
+  },
+
+  /**
+   * Busca relatório de alunos pagantes que enviaram comprovante via site
+   */
+  async getFinanceReport() {
+    const { data, error } = await supabase
+      .from('pagamentos')
+      .select('id, valor, status, data_vencimento, comprovante_url, feedback, users(id, nome, email, nucleo, nucleo_id)')
+      .not('comprovante_url', 'is', null)
+      .order('id', { ascending: false });
+    
+    if (error) throw error;
+    return data;
   }
 };

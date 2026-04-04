@@ -31,6 +31,7 @@ import FinancePanel from '../features/finance/components/FinancePanel'
 import GradesPanel from '../features/courses/components/GradesPanel'
 import NoticeBoard from '../features/communication/components/NoticeBoard'
 import ForumPanel from '../features/forum/components/ForumPanel'
+import AlumniCertificate from '../components/documents/AlumniCertificate'
 
 type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
 
@@ -89,6 +90,7 @@ const Dashboard = () => {
   const [avisos, setAvisos] = useState<any[]>([])
   const [materiais, setMateriais] = useState<any[]>([])
   const [poloAtividades, setPoloAtividades] = useState<any[]>([])
+  const [isAlumniData, setIsAlumniData] = useState<any>(null)
   const [isBlocked, setIsBlocked] = useState(false)
 
   useEffect(() => {
@@ -106,6 +108,7 @@ const Dashboard = () => {
 
       fetchStudentDashboardData();
       fetchPayments();
+      checkAlumniStatus();
       if (profile.bloqueado) {
         setIsBlocked(true);
         setActiveTab('financeiro');
@@ -146,6 +149,32 @@ const Dashboard = () => {
       await refreshProfile();
     } catch (err: any) {
       showToast(err.message, 'error');
+    }
+  };
+
+  const checkAlumniStatus = async () => {
+    if (!profile?.id) return;
+    
+    // Busca prioritária pelo vínculo do user_id
+    let { data, error } = await supabase
+      .from('registros_alumni')
+      .select('*')
+      .eq('user_id', profile.id)
+      .maybeSingle();
+    
+    // Fallback por e-mail caso o vínculo direto ainda não exista
+    if (!data && profile.email) {
+      const { data: emailData } = await supabase
+        .from('registros_alumni')
+        .select('*')
+        .eq('email', profile.email.toLowerCase())
+        .is('user_id', null)
+        .maybeSingle();
+      data = emailData;
+    }
+    
+    if (data && !error) {
+      setIsAlumniData(data);
     }
   };
 
@@ -375,6 +404,22 @@ const Dashboard = () => {
         </header>
 
         <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
+          {isAlumniData && activeTab === 'cursos' && (
+            <div style={{ marginBottom: '2rem', padding: '2rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '24px', border: '1px solid rgba(var(--primary-rgb), 0.2)', textAlign: 'center', animation: 'fadeIn 0.5s' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                <Award size={48} color="var(--primary)" />
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>Parabéns pela Conclusão!</h2>
+                <p style={{ color: 'var(--text-muted)', maxWidth: '600px' }}>Você concluiu com aproveitamento o **Curso Básico de Teologia**. Seu certificado oficial está pronto para download abaixo.</p>
+                <AlumniCertificate aluno={{
+                  nome: profile?.nome || isAlumniData.nome,
+                  email: profile?.email || isAlumniData.email,
+                  ano_formacao: isAlumniData.ano_formacao,
+                  matricula: isAlumniData.matricula
+                }} />
+              </div>
+            </div>
+          )}
+
           {isBlocked && (
             <div style={{ marginBottom: '1.5rem', padding: '1rem 1.5rem', background: 'rgba(255, 77, 77, 0.1)', border: '1px solid var(--error)', borderRadius: '12px', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
               <AlertCircle size={20} color="var(--error)" style={{ flexShrink: 0, marginTop: '0.1rem' }} />

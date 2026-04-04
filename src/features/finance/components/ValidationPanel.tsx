@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { FileText, CreditCard, Eye, CheckCircle2, XCircle, Trash2 } from 'lucide-react'
 
 interface ValidationPanelProps {
@@ -5,7 +6,7 @@ interface ValidationPanelProps {
   pendingPays: any[]
   userRole: string | null
   actionLoading: string | null
-  handleValidar: (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado') => Promise<void>
+  handleValidar: (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado', modulo?: string) => Promise<void>
   handleDeleteValidation: (target: 'doc' | 'pay', id: string) => Promise<void>
 }
 
@@ -17,6 +18,8 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
   handleValidar,
   handleDeleteValidation
 }) => {
+  const [selectedModulos, setSelectedModulos] = useState<Record<string, string>>({});
+
   const labelMap: Record<string, string> = {
     rg: 'RG / CNH',
     residencia: 'Residência',
@@ -24,6 +27,8 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
     exame: 'Exame Médico',
     outro: 'Outro'
   }
+
+  const modulos = Array.from({ length: 24 }, (_, i) => (i + 1).toString());
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
@@ -112,7 +117,7 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                   <th>Aluno</th>
                   <th>Valor</th>
                   <th>Vencimento</th>
-                  <th>Descrição</th>
+                  <th>Módulo</th>
                   <th>Arquivo</th>
                   <th>Ações</th>
                 </tr>
@@ -123,8 +128,23 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                     <td><div style={{ fontWeight: 600 }}>{pay.users?.nome}</div></td>
                     <td><div style={{ fontWeight: 700 }}>R$ {pay.valor.toFixed(2)}</div></td>
                     <td>{new Date(pay.data_vencimento).toLocaleDateString()}</td>
-                    <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: '200px' }}>
-                      {pay.descricao || <span style={{ opacity: 0.5 }}>-</span>}
+                    <td>
+                      <select 
+                        value={selectedModulos[pay.id] || '1'} 
+                        onChange={(e) => setSelectedModulos({ ...selectedModulos, [pay.id]: e.target.value })}
+                        style={{ 
+                          background: 'rgba(255,255,255,0.05)', 
+                          border: '1px solid var(--glass-border)', 
+                          color: '#fff', 
+                          padding: '4px 8px', 
+                          borderRadius: '6px',
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        {modulos.map(m => (
+                          <option key={m} value={m}>Módulo {m}</option>
+                        ))}
+                      </select>
                     </td>
                     <td>
                       <a 
@@ -141,7 +161,7 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button 
                           className="btn btn-primary" 
-                          onClick={() => handleValidar('pay', pay.id, 'aprovado')} 
+                          onClick={() => handleValidar('pay', pay.id, 'aprovado', selectedModulos[pay.id] || '1')} 
                           disabled={actionLoading === pay.id}
                         >
                           <CheckCircle2 size={16} />

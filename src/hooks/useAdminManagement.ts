@@ -5,7 +5,7 @@ import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 import { useProfile } from './useProfile'
 import { QuizQuestion } from '../types/admin'
 
-export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics'
+export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics' | 'reports'
 
 export const useAdminManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
@@ -19,6 +19,7 @@ export const useAdminManagement = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([])
   const [pendingUsersByNucleo, setPendingUsersByNucleo] = useState<Record<string, number>>({})
   const [analyticsData, setAnalyticsData] = useState<any>(null)
+  const [financeReport, setFinanceReport] = useState<any[]>([])
 
   const [userCount, setUserCount] = useState(0)
   const [courseCount, setCourseCount] = useState(0)
@@ -196,9 +197,15 @@ export const useAdminManagement = () => {
     }
     
     const updates = newItems.map((item, index) => {
-      const { children: _children, count: _count, professores: _professores, nucleos: _nucleos, ...rest } = item;
+      const payload = { ...item };
+      // Remover campos virtuais/relacionais que não existem na tabela original
+      delete (payload as any).children;
+      delete (payload as any).count;
+      delete (payload as any).professores;
+      delete (payload as any).nucleos;
+
       return {
-        ...rest,
+        ...payload,
         ordem: index + 1,
         bloco_id: item.bloco_id
       };
@@ -345,6 +352,15 @@ export const useAdminManagement = () => {
             logs: data.slice(0, 100)
           });
         }
+      } else if (activeTab === 'reports' && userRole === 'admin') {
+        const { data, error } = await supabase
+          .from('pagamentos')
+          .select('id, valor, status, data_vencimento, comprovante_url, feedback, modulo, users(id, nome, email, nucleo, nucleo_id)')
+          .not('comprovante_url', 'is', null)
+          .order('id', { ascending: false });
+        
+        if (data) setFinanceReport(data);
+        if (error) throw error;
       }
     } catch (err) {
       console.error(err)
@@ -384,7 +400,7 @@ export const useAdminManagement = () => {
     setActionLoading(null)
   }
 
-  const handleValidar = async (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado') => {
+  const handleValidar = async (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado', modulo?: string) => {
     const feedback = status === 'rejeitado' ? prompt('Motivo da rejeição:') : null
     if (status === 'rejeitado' && !feedback) return
 
@@ -394,12 +410,22 @@ export const useAdminManagement = () => {
       const { error } = await supabase
         .from(table)
         .update({ 
-          status: status === 'aprovado' ? (target === 'doc' ? 'aprovado' : 'pago') : 'rejeitado',
-          feedback 
+          status: status === 'aprovado' ? 'aprovado' : 'rejeitado',
+          feedback,
+          modulo: modulo || null
         })
         .eq('id', id)
 
       if (error) throw error
+
+      // Ativação automática do usuário ao aprovar pagamento
+      if (status === 'aprovado' && target === 'pay') {
+        const { data: payData } = await supabase.from('pagamentos').select('user_id').eq('id', id).single()
+        if (payData?.user_id) {
+          await supabase.from('users').update({ acesso_definitivo: true }).eq('id', payData.user_id)
+        }
+      }
+
       showToast(`${target === 'doc' ? 'Documento' : 'Pagamento'} ${status} com sucesso!`)
       fetchData()
     } catch (err: any) {
@@ -586,7 +612,10 @@ export const useAdminManagement = () => {
   }
 
   const handleManualPayment = async (userId: string) => {
-    if (!window.confirm('Deseja registrar o pagamento manual para este aluno? Isso liberará o acesso caso ele esteja bloqueado.')) return;
+    const modulo = prompt('Informe o Módulo deste pagamento (ex: 1, 2, 3...):', '1');
+    if (modulo === null) return;
+
+    if (!window.confirm(`Deseja registrar o pagamento manual do Módulo ${modulo} para este aluno?`)) return;
     
     setActionLoading(userId);
     try {
@@ -602,8 +631,9 @@ export const useAdminManagement = () => {
         const { error } = await supabase
           .from('pagamentos')
           .update({ 
-            status: 'pago',
-            feedback: 'Registrado manualmente pela administração'
+            status: 'aprovado',
+            feedback: 'Registrado manualmente pela administração',
+            modulo: modulo
           })
           .eq('id', openPays[0].id);
 
@@ -613,10 +643,11 @@ export const useAdminManagement = () => {
         const { error } = await supabase.from('pagamentos').insert({
           user_id: userId,
           valor: 70,
-          status: 'pago',
+          status: 'aprovado',
           data_vencimento: new Date().toISOString().split('T')[0],
           descricao: 'Pagamento Manual (Avulso)',
-          feedback: 'Registrado manualmente pela administração'
+          feedback: 'Registrado manualmente pela administração',
+          modulo: modulo
         });
         if (error) throw error;
         showToast('Novo pagamento registrado com sucesso!');
@@ -852,6 +883,7 @@ export const useAdminManagement = () => {
     professors,
     pendingUsersByNucleo,
     analyticsData,
+    financeReport,
     fetchData,
     fetchPendingCounts,
     fetchNucleosGlobal,

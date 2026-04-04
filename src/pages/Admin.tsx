@@ -34,6 +34,7 @@ import SettingsPanel from '../features/finance/components/SettingsPanel'
 import ProfessorsManagement from '../features/users/components/ProfessorsManagement'
 import AttendanceList from '../features/users/components/AttendanceList'
 import AnalyticsDashboard from '../features/admin/components/AnalyticsDashboard'
+import FinanceReport from '../features/finance/components/FinanceReport'
 
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
@@ -162,11 +163,13 @@ const Admin = () => {
     attendanceRecords,
     professors,
     pendingUsersByNucleo,
-    analyticsData
+    analyticsData,
+    financeReport
   } = useAdminManagement()
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
   const [expandedUsers, setExpandedUsers] = React.useState(false)
+  const [expandedAlumni, setExpandedAlumni] = React.useState(false)
   const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null)
 
   if (loading) {
@@ -301,8 +304,39 @@ const Admin = () => {
                 <GraduationCap size={18} /> <span className="mobile-hide">Professores</span>
               </div>
 
-              <div className={`admin-nav-item ${activeTab === 'alumni' ? 'active' : ''}`} onClick={() => { setActiveTab('alumni'); setIsMobileMenuOpen(false); }}>
-                <GraduationCap size={18} /> <span className="mobile-hide">Alumni / Formados</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div 
+                  className={`admin-nav-item ${activeTab === 'alumni' ? 'active' : ''}`} 
+                  onClick={() => { 
+                    setExpandedAlumni(!expandedAlumni);
+                    if (activeTab !== 'alumni') {
+                      setActiveTab('alumni');
+                      setIsMobileMenuOpen(false);
+                    }
+                  }}
+                  style={{ justifyContent: 'space-between' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <GraduationCap size={18} /> <span className="mobile-hide">Alumni / Formados</span>
+                  </div>
+                  {expandedAlumni ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </div>
+                
+                {expandedAlumni && (
+                  <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '1.5rem', gap: '0.25rem', marginTop: '0.25rem' }}>
+                    <div 
+                      className="admin-nav-item" 
+                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                      onClick={() => { 
+                        setActiveTab('alumni');
+                        setTimeout(() => document.getElementById('import-alumni-file-global')?.click(), 100);
+                        setIsMobileMenuOpen(false); 
+                      }}
+                    >
+                      <Plus size={12} /> Importar Planilha (Excel/CSV)
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className={`admin-nav-item ${activeTab === 'attendance' ? 'active' : ''}`} onClick={() => { setActiveTab('attendance'); setIsMobileMenuOpen(false); }}>
@@ -311,6 +345,10 @@ const Admin = () => {
 
               <div className={`admin-nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => { setActiveTab('analytics'); setIsMobileMenuOpen(false); }}>
                 <TrendingUp size={18} /> <span className="mobile-hide">Analytics</span>
+              </div>
+
+              <div className={`admin-nav-item ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => { setActiveTab('reports'); setIsMobileMenuOpen(false); }}>
+                <FileText size={18} /> <span className="mobile-hide">Relatórios</span>
               </div>
             </>
           )}
@@ -381,6 +419,7 @@ const Admin = () => {
                  activeTab === 'nucleos' ? 'Gestão de Núcleos' :
                  activeTab === 'attendance' ? 'Relatório de Frequência' :
                  activeTab === 'analytics' ? 'Análise do Portal' :
+                 activeTab === 'reports' ? 'Relatório de Pagamentos' :
                  'Validação de Acesso'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
@@ -393,6 +432,7 @@ const Admin = () => {
                  activeTab === 'nucleos' ? 'Gerencie polos e núcleos de ensino.' :
                  activeTab === 'attendance' ? 'Acompanhe as listas de presença compartilhadas pelos professores.' :
                  activeTab === 'analytics' ? 'Monitore visualizações, acessos únicos e rotatividade de usuários.' :
+                 activeTab === 'reports' ? 'Lista de alunos que enviaram comprovantes pelo portal.' :
                  'Verifique envios dos alunos.'}
               </p>
             </div>
@@ -402,6 +442,16 @@ const Admin = () => {
             {activeTab === 'users' && (
               <button className="btn btn-primary" onClick={() => setShowAddTeacher(true)} style={{ width: 'auto' }}>
                 <Plus size={20} /> Cadastrar Professor
+              </button>
+            )}
+            {activeTab === 'alumni' && (
+              <button 
+                className="btn btn-outline" 
+                onClick={() => document.getElementById('import-alumni-file-global')?.click()} 
+                style={{ width: 'auto' }}
+                disabled={!!actionLoading}
+              >
+                {actionLoading === 'importing-file' ? <Loader2 className="spinner" size={20} /> : <FileText size={20} />} Importar Planilha (Excel/CSV)
               </button>
             )}
             <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
@@ -581,6 +631,10 @@ const Admin = () => {
             handleUploadQrCode={handleUploadQrCode}
             actionLoading={actionLoading}
           />
+        )}
+
+        {activeTab === 'reports' && (
+          <FinanceReport data={financeReport} searchTerm={searchTerm} />
         )}
 
         {activeTab === 'forum' && (
@@ -787,6 +841,29 @@ const Admin = () => {
           <span style={{ fontWeight: 600 }}>{toast.message}</span>
         </div>
       )}
+
+      <input 
+        id="import-alumni-file-global"
+        type="file" 
+        accept=".xlsx,.xls,.csv" 
+        style={{ display: 'none' }} 
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          setActionLoading('importing-file');
+          try {
+            const { importAlumniFile } = await import('../services/import_alumni_file');
+            const result = await importAlumniFile(file);
+            alert(`Importação concluída!\nLidas: ${result.total}\nSucessos (Formados): ${result.success}\nErros: ${result.errors}`);
+            window.location.reload();
+          } catch (err: any) {
+            alert('Erro na importação: ' + err.message);
+          } finally {
+            setActionLoading(null);
+            e.target.value = '';
+          }
+        }}
+      />
 
       <style>{`
         @keyframes fadeIn {

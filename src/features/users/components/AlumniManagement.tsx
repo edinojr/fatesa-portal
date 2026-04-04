@@ -1,18 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { 
-  Users, 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Loader2, 
-  Download,
-  Calendar,
-  BookOpen,
-  MapPin,
-  X,
-  GraduationCap
-} from 'lucide-react'
+import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, BookOpen, MapPin, X, FileText } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 
 interface AlumniRecord {
@@ -23,6 +10,7 @@ interface AlumniRecord {
   nucleo: string
   ano_formacao: string
   nivel_curso: string
+  matricula?: string
   observacoes: string
   created_at: string
 }
@@ -33,7 +21,7 @@ const AlumniManagement = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<AlumniRecord | null>(null)
-  const [actionLoading, setActionLoading] = useState(false)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
   
   // Níveis de curso pré-definidos
   const niveis = ['Graduação', 'Pós-Graduação', 'Mestrado', 'Doutorado', 'Extensão', 'Curso Livre']
@@ -45,6 +33,7 @@ const AlumniManagement = () => {
     curso: '',
     nucleo: '',
     ano_formacao: '',
+    matricula: '',
     nivel_curso: 'Graduação',
     observacoes: ''
   })
@@ -73,7 +62,7 @@ const AlumniManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setActionLoading(true)
+    setActionLoading('saving')
 
     try {
       if (editingRecord) {
@@ -91,12 +80,12 @@ const AlumniManagement = () => {
 
       setShowModal(false)
       setEditingRecord(null)
-      setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', nivel_curso: 'Graduação', observacoes: '' })
+      setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Graduação', observacoes: '' })
       fetchRecords()
     } catch (err: any) {
       alert('Erro ao salvar: ' + err.message)
     } finally {
-      setActionLoading(false)
+      setActionLoading(null)
     }
   }
 
@@ -124,20 +113,21 @@ const AlumniManagement = () => {
       curso: record.curso || '',
       nucleo: record.nucleo || '',
       ano_formacao: record.ano_formacao || '',
+      matricula: record.matricula || '',
       nivel_curso: record.nivel_curso || 'Graduação',
       observacoes: record.observacoes || ''
     })
     setShowModal(true)
   }
 
-  const filteredRecords = records.filter(r => 
+  const filteredRecords = records.filter((r: AlumniRecord) => 
     r.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.curso?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   // Agrupar registros por Ano e Nível
-  const grouped = filteredRecords.reduce((acc, r) => {
+  const grouped = filteredRecords.reduce((acc: any, r: AlumniRecord) => {
     const year = r.ano_formacao || 'Sem Ano'
     const level = r.nivel_curso || 'Graduação'
     if (!acc[year]) acc[year] = {}
@@ -170,7 +160,55 @@ const AlumniManagement = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setEditingRecord(null); setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', nivel_curso: 'Graduação', observacoes: '' }); setShowModal(true); }}>
+          <button 
+            className="btn btn-outline" 
+            style={{ 
+              width: 'auto',
+              cursor: actionLoading === 'importing-file' ? 'wait' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }} 
+            onClick={() => document.getElementById('import-alumni-file-input')?.click()}
+            disabled={!!actionLoading}
+            title="Clique para selecionar uma planilha Excel ou CSV"
+          >
+            {actionLoading === 'importing-file' ? (
+              <Loader2 className="spinner" />
+            ) : (
+              <FileText size={18} />
+            )}
+            <span>Importar Planilha de Identificação</span>
+          </button>
+          <input 
+            id="import-alumni-file-input"
+            type="file" 
+            accept=".xlsx,.xls,.cvs,.csv" 
+            style={{ 
+              position: 'absolute',
+              width: 0,
+              height: 0,
+              opacity: 0,
+              overflow: 'hidden'
+            }} 
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setActionLoading('importing-file');
+              try {
+                const { importAlumniFile } = await import('../../../services/import_alumni_file');
+                const result = await importAlumniFile(file);
+                alert(`Importação concluída!\nLidas: ${result.total}\nSucessos (Formados): ${result.success}\nErros: ${result.errors}`);
+                fetchRecords();
+              } catch (err: any) {
+                alert('Erro na importação: ' + err.message);
+              } finally {
+                setActionLoading(null);
+                e.target.value = '';
+              }
+            }}
+          />
+          <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setEditingRecord(null); setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Graduação', observacoes: '' }); setShowModal(true); }}>
             <Plus size={18} /> Adicionar Registro
           </button>
         </div>
@@ -199,17 +237,21 @@ const AlumniManagement = () => {
                   <thead>
                     <tr>
                       <th>Nome / E-mail</th>
+                      <th>Matrícula</th>
                       <th>Curso Especialidade</th>
                       <th>Polo / Núcleo</th>
                       <th style={{ textAlign: 'center' }}>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {grouped[year][level].map(record => (
+                    {grouped[year][level].map((record: AlumniRecord) => (
                       <tr key={record.id}>
                         <td>
                           <div style={{ fontWeight: 700 }}>{record.nome}</div>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{record.email}</div>
+                        </td>
+                        <td>
+                          <code style={{ fontSize: '0.85rem', background: 'rgba(0,0,0,0.05)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{record.matricula || '---'}</code>
                         </td>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -304,6 +346,16 @@ const AlumniManagement = () => {
                   <input 
                     type="text" 
                     className="form-control" 
+                    placeholder="Ex: 2023.1.001"
+                    value={formData.matricula}
+                    onChange={(e) => setFormData({...formData, matricula: e.target.value})}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Polo / Núcleo</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
                     value={formData.nucleo}
                     onChange={(e) => setFormData({...formData, nucleo: e.target.value})}
                   />
@@ -333,9 +385,9 @@ const AlumniManagement = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary" style={{ flex: 2 }} disabled={actionLoading}>
-                  {actionLoading ? <Loader2 className="spinner" /> : (editingRecord ? 'Salvar Alterações' : 'Cadastrar Formado')}
+                <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setShowModal(false)} disabled={!!actionLoading}>Cancelar</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 2 }} disabled={!!actionLoading}>
+                  {actionLoading === 'saving' ? <Loader2 className="spinner" /> : (editingRecord ? 'Salvar Alterações' : 'Cadastrar Formado')}
                 </button>
               </div>
             </form>

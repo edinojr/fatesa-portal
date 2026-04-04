@@ -12,13 +12,16 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.363.0",
     "pdfjs-dist": "5.4.296",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-pageflip": "^2.0.3",
     "react-pdf": "^10.4.1",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
