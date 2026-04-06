@@ -2916,4 +2916,97 @@ select.form-control option {
     padding: 0.75rem 1.5rem !important;
     font-size: 0.85rem !important;
   }
+
+/* --- COMPACT PREMIUM CARDS & ICON HUB (v1.6.0) --- */
+.nav-card-premium {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 160px;
+  text-align: center;
+  align-items: center;
+}
+
+.nav-card-premium:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.nav-card-premium.active {
+  border-color: rgba(156, 39, 176, 0.3);
+}
+
+.icon-badge-premium {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.nav-card-premium:hover .icon-badge-premium {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.nav-card-content h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.nav-card-content p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.card-arrow {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  width: 16px;
+  height: 16px;
+}
+
+.nav-card-premium:hover .card-arrow {
+  color: #fff;
+  transform: translateX(3px);
+}
+
+.app-store-btn {
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.app-store-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+@media (max-width: 768px) {
+  .nav-card-premium {
+    min-height: auto;
+    padding: 1.25rem;
+  }
+  
+  .nav-card-content h3 {
+    font-size: 1rem;
+  }
 }

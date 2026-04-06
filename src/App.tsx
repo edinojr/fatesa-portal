@@ -23,6 +23,7 @@ const Lesson = lazy(() => import('./pages/Lesson'))
 const Admin = lazy(() => import('./pages/Admin'))
 const Professor = lazy(() => import('./pages/Professor'))
 const BlockedAccess = lazy(() => import('./pages/BlockedAccess'))
+const AppConstruction = lazy(() => import('./pages/AppConstruction'))
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/matricula" element={<Matricula />} />
+          <Route path="/app-mobile" element={<AppConstruction />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardBridge /></ProtectedRoute>} />
           <Route path="/modulos-finalizados" element={<ProtectedRoute><ModulosFinalizados /></ProtectedRoute>} />
           <Route path="/vencido" element={<BlockedAccess />} />

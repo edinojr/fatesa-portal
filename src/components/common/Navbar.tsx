@@ -22,15 +22,6 @@ const Navbar = () => {
         return () => subscription.unsubscribe();
     }, []);
 
-    const navLinks = [
-        { name: 'Home', path: '/', icon: <Home size={18} /> },
-        { name: 'A Fatesa', path: '/sobre', icon: <Info size={18} /> },
-        { name: 'Metodologia', path: '/metodologia', icon: <BookOpen size={18} /> },
-        { name: 'Patrono', path: '/patrono', icon: <UserCheck size={18} /> },
-        { name: 'Cursos', path: '/cursos', icon: <GraduationCap size={18} /> },
-        { name: 'Contato', path: '/contato', icon: <Mail size={18} /> },
-    ];
-
     return (
         <nav className="landing-nav">
             <div className="nav-content">
@@ -38,35 +29,20 @@ const Navbar = () => {
                     <Logo size={250} />
                 </Link>
                 
-                <div className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-                    {navLinks.map((link) => (
-                        <Link 
-                            key={link.path} 
-                            to={link.path} 
-                            className={`nav-link-item ${location.pathname === link.path ? 'active' : ''}`}
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            <span className="nav-icon">{link.icon}</span>
-                            <span className="nav-text">{link.name}</span>
-                        </Link>
-                    ))}
-                    
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <button 
                         className="btn btn-primary btn-sm" 
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'auto', padding: '0.6rem 1.2rem' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'auto', padding: '0.6rem 1.4rem', fontSize: '0.9rem', fontWeight: 700, borderRadius: '50px' }}
                         onClick={() => {
                             if (sessionUser) navigate('/dashboard');
                             else navigate('/login');
-                            setMobileMenuOpen(false);
                         }}
                     >
-                        {sessionUser ? <><Users size={18} /> Meu Painel</> : <><LogIn size={18} /> Entrar</>}
+                        {sessionUser ? <><Users size={18} /> MEU PAINEL</> : <><LogIn size={18} /> ENTRAR</>}
                     </button>
+                    
+                    {/* Mobile toggle might still be needed if user wants to add mobile-only links later, but for now we simplify */}
                 </div>
-
-                <button className="mobile-menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                    {mobileMenuOpen ? <XCircle size={24} /> : <Menu size={24} />}
-                </button>
             </div>
         </nav>
     );
