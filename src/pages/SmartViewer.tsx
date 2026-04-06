@@ -48,7 +48,8 @@ const SmartViewer = () => {
   const [inputPage, setInputPage] = useState<string>('1');
 
   // 3. Memos e Variáveis Calculadas
-  const pageWidth = Math.floor(containerWidth * 0.95);
+  const isMobile = containerWidth < 768;
+  const pageWidth = Math.floor(containerWidth * (isMobile ? 1 : 0.95));
   const isAnyFullscreen = isFullscreen || isPseudoFullscreen;
 
   const pdfOptions = useMemo(() => ({
@@ -73,6 +74,12 @@ const SmartViewer = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [id]);
+
+  useEffect(() => {
+    if (isMobile && viewType !== 'scroll') {
+      setViewType('scroll');
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -287,7 +294,7 @@ const SmartViewer = () => {
       style={{ 
         display: 'flex', 
         flexDirection: 'column', 
-        height: isPseudoFullscreen ? '100vh' : '100dvh',
+        height: isPseudoFullscreen ? '100vh' : (isMobile ? 'auto' : '100dvh'),
         width: '100%',
         position: isPseudoFullscreen ? 'fixed' : 'relative',
         top: 0,
@@ -295,7 +302,7 @@ const SmartViewer = () => {
         zIndex: isPseudoFullscreen ? 9999 : 1,
         background: '#0a0a0a', 
         color: '#fff', 
-        overflow: 'hidden' 
+        overflow: isMobile ? 'visible' : 'hidden' 
       }}
     >
       <header style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1.5rem', background: '#0f0f0f', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', zIndex: 100 }}>
@@ -329,7 +336,7 @@ const SmartViewer = () => {
         </div>
       </header>
 
-      <div ref={scrollContainerRef} style={{ flex: 1, overflowY: 'auto' }}>
+      <div ref={scrollContainerRef} style={{ flex: isMobile ? 'none' : 1, overflowY: isMobile ? 'visible' : 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 1rem' }}>
           {viewMode === 'pdf' && pdfUrl ? (
             <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
