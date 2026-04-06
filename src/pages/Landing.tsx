@@ -47,17 +47,6 @@ const Landing = () => {
       <section className="landing-hub" style={{ padding: '2rem' }}>
         <div className="hub-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
           
-          <Link to="/cursos" className="nav-card-premium" style={{ textDecoration: 'none' }}>
-            <div className="icon-badge-premium" style={{ background: 'rgba(33, 150, 243, 0.1)', color: '#2196f3' }}>
-              <GraduationCap size={24} />
-            </div>
-            <div className="nav-card-content">
-              <h3>Cursos</h3>
-              <p>Catálogo completo de formação.</p>
-            </div>
-            <ArrowRight className="card-arrow" />
-          </Link>
-
           <Link to="/sobre" className="nav-card-premium" style={{ textDecoration: 'none' }}>
             <div className="icon-badge-premium" style={{ background: 'rgba(156, 39, 176, 0.1)', color: '#9c27b0' }}>
               <Info size={24} />
@@ -76,6 +65,17 @@ const Landing = () => {
             <div className="nav-card-content">
               <h3>Metodologia</h3>
               <p>Sistema EAD e presencial.</p>
+            </div>
+            <ArrowRight className="card-arrow" />
+          </Link>
+
+          <Link to="/cursos" className="nav-card-premium" style={{ textDecoration: 'none' }}>
+            <div className="icon-badge-premium" style={{ background: 'rgba(33, 150, 243, 0.1)', color: '#2196f3' }}>
+              <GraduationCap size={24} />
+            </div>
+            <div className="nav-card-content">
+              <h3>Cursos</h3>
+              <p>Catálogo completo de formação.</p>
             </div>
             <ArrowRight className="card-arrow" />
           </Link>
