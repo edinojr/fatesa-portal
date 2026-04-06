@@ -394,9 +394,11 @@ const SmartViewer = () => {
 
       <footer className="viewer-footer-responsive">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button onClick={handlePagePrev} disabled={pageNumber <= 1} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', width: 'auto', padding: '0.5rem 1.25rem', borderRadius: '50px', opacity: pageNumber <= 1 ? 0.3 : 1 }}>
-            <ChevronLeft size={18} /> <span className="mobile-hide">Anterior</span>
-          </button>
+          {viewType === 'single' && (
+            <button onClick={handlePagePrev} disabled={pageNumber <= 1} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', width: 'auto', padding: '0.5rem 1.25rem', borderRadius: '50px', opacity: pageNumber <= 1 ? 0.3 : 1 }}>
+              <ChevronLeft size={18} /> <span className="mobile-hide">Anterior</span>
+            </button>
+          )}
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', padding: '0.2rem 0.6rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Pág</span>
@@ -404,9 +406,11 @@ const SmartViewer = () => {
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>/ {numPages}</span>
           </div>
 
-          <button onClick={handlePageNext} disabled={pageNumber >= numPages} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', width: 'auto', padding: '0.5rem 1.25rem', borderRadius: '50px', opacity: pageNumber >= numPages ? 0.3 : 1 }}>
-            <span className="mobile-hide">Próxima</span> <ChevronRight size={18} />
-          </button>
+          {viewType === 'single' && (
+            <button onClick={handlePageNext} disabled={pageNumber >= numPages} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', width: 'auto', padding: '0.5rem 1.25rem', borderRadius: '50px', opacity: pageNumber >= numPages ? 0.3 : 1 }}>
+              <span className="mobile-hide">Próxima</span> <ChevronRight size={18} />
+            </button>
+          )}
         </div>
 
         {(pageNumber >= numPages || viewType === 'scroll') && (
