@@ -82,6 +82,24 @@ const SmartViewer = () => {
   }, [isMobile]);
 
   useEffect(() => {
+    if (viewType === 'scroll' && numPages > 0) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const page = parseInt(entry.target.getAttribute('data-page') || '1');
+            setPageNumber(page);
+            setInputPage(String(page));
+          }
+        });
+      }, { threshold: 0.5 });
+
+      const containers = document.querySelectorAll('.pdf-page-container');
+      containers.forEach(c => observer.observe(c));
+      return () => observer.disconnect();
+    }
+  }, [viewType, numPages, loading]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.key === 'f' || e.key === 'F') && viewerRef.current) {
         toggleFullscreen();
@@ -344,7 +362,7 @@ const SmartViewer = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', alignItems: 'center' }}>
                   {viewType === 'scroll' ? (
                     Array.from(new Array(numPages || 0), (_, index) => (
-                      <div key={`page_${index + 1}`} className="pdf-page-shadow" style={{ minHeight: pageWidth * 1.3 }}>
+                      <div key={`page_${index + 1}`} data-page={index + 1} className="pdf-page-shadow pdf-page-container" style={{ minHeight: pageWidth * 1.3 }}>
                         <Page 
                           pageNumber={index + 1} 
                           width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
