@@ -16,12 +16,17 @@ const Login = () => {
     const checkSession = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await supabase.from('users').select('tipo').eq('id', user.id).single();
+        const { data } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', user.id).single();
         const userType = data?.tipo || '';
-        const isStaff = ['admin', 'professor', 'suporte'].includes(userType);
+        const roles = data?.caminhos_acesso || [];
         
-        if (isStaff) {
+        const isAdmin = ['admin', 'suporte'].includes(userType) || roles.some((r: any) => ['admin', 'suporte'].includes(r)) || user.email === 'edi.ben.jr@gmail.com';
+        const isProfessor = userType === 'professor' || roles.includes('professor');
+        
+        if (isAdmin) {
           navigate('/admin', { replace: true });
+        } else if (isProfessor) {
+          navigate('/professor', { replace: true });
         } else {
           navigate('/dashboard', { replace: true });
         }
@@ -86,11 +91,11 @@ const Login = () => {
       const isProfessor = finalRoles.some((r: any) => r === 'professor') || userType === 'professor'
 
       if (isAdmin) {
-        navigate('/admin')
+        navigate('/admin', { replace: true })
       } else if (isProfessor) {
-        navigate('/professor')
+        navigate('/professor', { replace: true })
       } else {
-        navigate('/dashboard')
+        navigate('/dashboard', { replace: true })
       }
     } catch (err: any) {
       setError(err.message === 'Invalid login credentials' ? 'Credenciais incorretas para este e-mail.' : err.message)

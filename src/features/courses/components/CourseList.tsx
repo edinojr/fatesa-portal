@@ -1,370 +1,195 @@
-import React from 'react'
-import { BookOpen, PlayCircle, ClipboardList, Award, CheckCircle2, FileText, Lock } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { BookOpen, PlayCircle, CheckCircle2, LayoutGrid } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 
 interface CourseListProps {
   courses: Course[]
-  selectedBook: string | null
-  setSelectedBook: (val: string | null) => void
+  selectedBook?: string | null // Keep for backward compat but won't use for accordion
+  setSelectedBook?: (val: string | null) => void
   atividades: any[]
   progressoAulas: any[]
+  showOnlyOngoing?: boolean
+  showOnlyFinished?: boolean
 }
 
 const CourseList: React.FC<CourseListProps> = ({ 
   courses, 
-  selectedBook, 
-  setSelectedBook, 
   atividades = [],
-  progressoAulas = []
+  progressoAulas = [],
+  showOnlyOngoing = false,
+  showOnlyFinished = false
 }) => {
+  const navigate = useNavigate();
+  const submittedIds = (atividades || []).map((at: any) => at.aula_id);
+  const watchedIds = (progressoAulas || []).filter(p => p.concluida).map(p => p.aula_id);
 
-  return (
-    <div className="courses-grid">
-      {(courses || []).map(course => {
-        const releasedBooks = (course.livros || []).filter(l => l.isReleased);
-        
-        const submittedIds = (atividades || []).map((at: any) => at.aula_id);
-        const watchedIds = (progressoAulas || []).filter(p => p.concluida).map(p => p.aula_id);
+  const getBookStats = (l: any) => {
+    const allAulas = l.aulas || [];
+    const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'licao');
+    const totalItems = itemsForProgress.length;
+    if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 10, isFinished: true, isApproved: true, examGrade: 10 };
+    
+    const completedItems = itemsForProgress.filter((a: any) => 
+      (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
+    ).length;
+    
+    const finalExam = allAulas.find((a: any) => a.tipo === 'prova');
+    let isApproved = false;
+    let examGrade = 0;
+    let attemptsCount = 0;
+    let isFinished = false;
+    
+    if (finalExam) {
+      const examSubmissions = (atividades || []).filter(at => at.aula_id === finalExam.id);
+      attemptsCount = examSubmissions.length;
+      const bestSub = examSubmissions.sort((a,b) => (b.nota || 0) - (a.nota || 0))[0];
+      examGrade = bestSub?.nota || 0;
+      const minGrade = finalExam.min_grade || 7.0;
+      isApproved = bestSub ? (bestSub.status === 'corrigida' && bestSub.nota >= minGrade) : false;
+      isFinished = isApproved || attemptsCount >= 3;
+    } else {
+      isApproved = false;
+      isFinished = (completedItems === totalItems && totalItems > 0);
+    }
+    
+    return {
+      percent: Math.round((completedItems / totalItems) * 100),
+      completed: completedItems,
+      total: totalItems,
+      examGrade: examGrade,
+      isApproved: isApproved,
+      isFinished: isFinished,
+      attemptsCount,
+      hasExam: !!finalExam
+    };
+  };
 
-        const getBookStats = (l: any) => {
-          const allAulas = l.aulas || [];
-          const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'licao');
-          const totalItems = itemsForProgress.length;
-          if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 10, isFinished: true, isApproved: true, examGrade: 10 };
-          
-          const completedItems = itemsForProgress.filter((a: any) => 
-            (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
-          ).length;
-          
-          // Rule: Approved if has a 'prova' and grade >= min_grade (default 7), OR if no 'prova' exists
-          const finalExam = allAulas.find((a: any) => a.tipo === 'prova');
-          let isApproved = false;
-          let examGrade = 0;
-          let attemptsCount = 0;
-          let isFinished = false;
-          
-          if (finalExam) {
-            const examSubmissions = (atividades || []).filter(at => at.aula_id === finalExam.id);
-            attemptsCount = examSubmissions.length;
-            const bestSub = examSubmissions.sort((a,b) => (b.nota || 0) - (a.nota || 0))[0];
-            examGrade = bestSub?.nota || 0;
-            const minGrade = finalExam.min_grade || 7.0;
-            isApproved = bestSub ? (bestSub.status === 'corrigida' && bestSub.nota >= minGrade) : false;
-            // Finished if passed or exhausted
-            isFinished = isApproved || attemptsCount >= 3;
-          } else {
-            // If no exam, the student is NEVER "approved" (system-wise), 
-            // but can "finish" by consuming 100% of the content.
-            isApproved = false;
-            isFinished = (completedItems === totalItems && totalItems > 0);
-          }
-          
-          return {
-            percent: Math.round((completedItems / totalItems) * 100),
-            completed: completedItems,
-            total: totalItems,
-            examGrade: examGrade,
-            isApproved: isApproved,
-            isFinished: isFinished,
-            attemptsCount,
-            hasExam: !!finalExam
-          };
-        };
-
-        const sortedBooks = [...releasedBooks].sort((a,b) => {
-          const statsA = getBookStats(a);
-          const statsB = getBookStats(b);
-          if (statsA.isFinished !== statsB.isFinished) return statsA.isFinished ? 1 : -1;
-          return (a.ordem || 0) - (b.ordem || 0);
-        });
-
-        return (
-          <div key={course.id} style={{ marginBottom: '4rem' }}>
-            <h3 style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: '4px', height: '24px', background: 'var(--primary)', borderRadius: '4px' }}></div>
-              {course.nome}
-            </h3>
-
-            {/* All Modules List (Finished go to bottom) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
-              {sortedBooks.map(currentBook => {
-                const stats = getBookStats(currentBook);
-                return (
-                  <div key={currentBook.id} className={`${stats.isFinished ? 'book-card-finished' : 'book-highlight-card'}`}>
-                    <div 
-                      onClick={() => setSelectedBook(selectedBook === currentBook.id ? null : currentBook.id)} 
-                      className="book-cover" 
-                      style={{ background: currentBook.capa_url ? `url(${currentBook.capa_url}) center/cover` : 'var(--glass-border)', cursor: 'pointer' }}
-                    ></div>
-                    <div style={{ flex: 1 }}>
-                      <div 
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '0.5rem', cursor: 'pointer' }}
-                        onClick={() => setSelectedBook(selectedBook === currentBook.id ? null : currentBook.id)}
-                      >
-                        <h2 style={{ margin: 0 }}>{currentBook.titulo}</h2>
-                        <div style={{ textAlign: 'right' }}>
-                          {stats.isFinished ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                              <span style={{ 
-                                fontSize: '0.85rem', 
-                                fontWeight: 800, 
-                                color: stats.hasExam ? (stats.isApproved ? 'var(--success)' : 'var(--error)') : 'var(--primary)',
-                                background: stats.hasExam ? (stats.isApproved ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(var(--primary-rgb), 0.1)',
-                                padding: '2px 10px',
-                                borderRadius: '6px',
-                                marginBottom: '4px'
-                              }}>
-                                {stats.hasExam 
-                                  ? (stats.isApproved ? 'APROVADO' : 'REPROVADO - REFAZER NO FINAL')
-                                  : 'CONCLUÍDO'}
-                              </span>
-                              {stats.hasExam && <span style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>Nota: {stats.examGrade.toFixed(1)}</span>}
-                            </div>
-                          ) : (
-                            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)' }}>
-                              {stats.percent}% concluído
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Progress Bar */}
-                      <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)' }}>
-                        <div style={{ 
-                          height: '100%', 
-                          width: `${stats.percent}%`, 
-                          background: stats.percent === 100 && !stats.isApproved 
-                            ? 'linear-gradient(90deg, #eab308 0%, #ca8a04 100%)' 
-                            : 'linear-gradient(90deg, var(--primary) 0%, #a855f7 100%)', 
-                          boxShadow: stats.percent === 100 && !stats.isApproved 
-                            ? '0 0 10px rgba(234, 179, 8, 0.3)' 
-                            : '0 0 10px rgba(156, 39, 176, 0.5)', 
-                          transition: 'width 1s ease-out' 
-                        }}></div>
-                      </div>
-
-                      <div className="book-actions">
-                        <button 
-                          className="btn btn-primary" 
-                          style={{ width: 'auto', padding: '0.75rem 2rem', borderRadius: '12px' }}
-                          onClick={() => setSelectedBook(selectedBook === currentBook.id ? null : currentBook.id)}
-                        >
-                          {selectedBook === currentBook.id ? 'Fechar Aulas' : (stats.isFinished ? 'Revisar Conteúdo' : 'Continuar Estudando')}
-                        </button>
-                      </div>
-
-                      {/* Expanded Lessons Grid */}
-                      {selectedBook === currentBook.id && (
-                        <div style={{ marginTop: '2rem', animation: 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)', padding: '2rem', background: 'rgba(0,0,0,0.2)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                            {(() => {
-                              const allAulas = currentBook.aulas || [];
-                              const submittedIds = (atividades || []).map((at: any) => at.aula_id);
-                              const watchedIds = (progressoAulas || []).filter(p => p.concluida).map(p => p.aula_id);
-
-                              const isCompleted = (aula: any) => {
-                                if (aula.tipo === 'gravada') return watchedIds.includes(aula.id);
-                                return submittedIds.includes(aula.id);
-                              };
-
-                              const topLevelAulas = allAulas
-                                .filter((a: any) => !a.parent_aula_id && !a.parent_id)
-                                .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
-
-                              return (
-                                <>
-                                  {topLevelAulas.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', gridColumn: '1/-1', textAlign: 'center' }}>Nenhum conteúdo disponível neste capítulo.</p>}
-                                  
-                                  {topLevelAulas.map(aula => {
-                                    if (aula.tipo === 'licao') {
-                                      const children = allAulas
-                                        .filter((a: any) => a.id !== aula.id && (a.parent_aula_id === aula.id || a.parent_id === aula.id))
-                                        .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
-                                      
-                                      const isAllCompleted = children.length > 0 && children.every((c: any) => 
-                                        (c.tipo === 'atividade' || c.tipo === 'prova') ? submittedIds.includes(c.id) : watchedIds.includes(c.id)
-                                      );
-
-                                      return (
-                                        <div key={aula.id} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '16px', border: isAllCompleted ? '1px solid rgba(16, 185, 129, 0.1)' : '1px solid rgba(255,255,255,0.03)' }}>
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                                            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(168, 85, 247, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                              <BookOpen size={16} color="var(--primary)" />
-                                            </div>
-                                            <h4 style={{ margin: 0, fontSize: '1rem' }}>{aula.titulo}</h4>
-                                          </div>
-                                          
-                                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                            {children.map(child => {
-                                              const submission = (atividades || []).find((at: any) => at.aula_id === child.id);
-                                              const isChildCompleted = (child.tipo === 'atividade' || child.tipo === 'prova') ? !!submission : watchedIds.includes(child.id);
-                                              
-                                              // Regra: Bloqueio Sequencial V1 -> V2 -> V3
-                                              // Se já enviou e não foi corrigida, bloqueia reentrada na UI também para clareza
-                                              const isPendingCorrection = (child.tipo === 'prova' || child.is_bloco_final) && submission && submission.status !== 'corrigida';
-                                              
-                                              const profLocked = child.lockedByProfessor;
-                                              const isLocked = profLocked || isPendingCorrection;
-
-                                              if (isLocked) {
-                                                return (
-                                                  <div 
-                                                    key={child.id}
-                                                    style={{ 
-                                                      padding: '0.5rem 0.75rem', 
-                                                      background: 'rgba(255,255,255,0.01)', 
-                                                      borderRadius: '8px', 
-                                                      cursor: 'not-allowed',
-                                                      display: 'flex',
-                                                      alignItems: 'center',
-                                                      justifyContent: 'space-between',
-                                                      border: '1px dashed rgba(255,255,255,0.1)',
-                                                      opacity: 0.5
-                                                    }}
-                                                  >
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                                      <Lock size={14} color="var(--text-muted)" />
-                                                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                                                        {child.titulo} 
-                                                        <span style={{ fontSize: '0.7rem', fontStyle: 'italic', marginLeft: '0.5rem' }}>
-                                                          {isPendingCorrection ? '(Aguardando correção para próxima tentativa)' : '(Aguardando liberação do professor)'}
-                                                        </span>
-                                                      </span>
-                                                    </div>
-                                                    <Lock size={14} color="var(--text-muted)" />
-                                                  </div>
-                                                );
-                                              }
-                                              
-                                              return (
-                                                <Link 
-                                                  key={child.id} 
-                                                  to={ (child.arquivo_url || child.pdf_url) ? `/book/${child.id}?type=aula` : `/lesson/${child.id}`}
-                                                  style={{ 
-                                                    padding: '0.5rem 0.75rem', 
-                                                    background: 'rgba(255,255,255,0.02)', 
-                                                    borderRadius: '8px', 
-                                                    cursor: 'pointer',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    border: isChildCompleted ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(255,255,255,0.03)',
-                                                    textDecoration: 'none',
-                                                    color: 'inherit'
-                                                  }}
-                                                  className="lesson-link-card"
-                                                >
-                                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                                    {child.tipo === 'gravada' ? <PlayCircle size={14} color="var(--primary)" /> : 
-                                                     (child.arquivo_url || child.pdf_url) ? <FileText size={14} color="var(--success)" /> :
-                                                     child.tipo === 'atividade' ? <ClipboardList size={14} color="var(--success)" /> : 
-                                                     child.tipo === 'prova' ? <Award size={14} color="#EAB308" /> : <FileText size={14} color="var(--text-muted)" />}
-                                                    <span style={{ fontSize: '0.8rem' }}>{child.titulo}</span>
-                                                  </div>
-                                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                    {child.tipo === 'prova' && (atividades || []).find(at => at.aula_id === child.id && at.status === 'corrigida') && (
-                                                      <span style={{ fontSize: '0.7rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
-                                                        Ver Correção
-                                                      </span>
-                                                    )}
-                                                    {isChildCompleted && <CheckCircle2 size={14} color="var(--success)" />}
-                                                  </div>
-                                                </Link>
-                                              );
-                                            })}
-                                          </div>
-                                        </div>
-                                      );
-                                    }
-
-                                    const submission = (atividades || []).find((at: any) => at.aula_id === aula.id);
-                                    const isPendingCorrection = (aula.tipo === 'prova' || aula.is_bloco_final) && submission && submission.status !== 'corrigida';
-                                    
-                                    const profLocked = aula.lockedByProfessor;
-                                    const isLocked = profLocked || isPendingCorrection;
-
-                                    if (isLocked) {
-                                      return (
-                                        <div 
-                                          key={aula.id} 
-                                          style={{ 
-                                            padding: '0.75rem 1rem', 
-                                            background: 'rgba(255,255,255,0.01)', 
-                                            borderRadius: '12px', 
-                                            cursor: 'not-allowed', 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
-                                            justifyContent: 'space-between', 
-                                            border: '1px dashed rgba(255,255,255,0.1)',
-                                            opacity: 0.5
-                                          }}
-                                        >
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                            <Lock size={16} color="var(--text-muted)" />
-                                            <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                                              {aula.titulo} 
-                                              <span style={{ fontSize: '0.75rem', fontStyle: 'italic', marginLeft: '0.5rem' }}>
-                                                {isPendingCorrection ? '(Aguardando correção para próxima tentativa)' : '(Aguardando liberação do professor)'}
-                                              </span>
-                                            </span>
-                                          </div>
-                                          <Lock size={16} color="var(--text-muted)" />
-                                        </div>
-                                      );
-                                    }
-
-                                    return (
-                                      <Link 
-                                        key={aula.id} 
-                                        to={ (aula.arquivo_url || aula.pdf_url) ? `/book/${aula.id}?type=aula` : `/lesson/${aula.id}`}
-                                        className="lesson-link-card" 
-                                        style={{ 
-                                          padding: '0.75rem 1rem', 
-                                          background: aula.tipo === 'prova' ? 'rgba(234, 179, 8, 0.05)' : 'rgba(255,255,255,0.02)', 
-                                          borderRadius: '12px', 
-                                          cursor: 'pointer', 
-                                          display: 'flex', 
-                                          alignItems: 'center', 
-                                          justifyContent: 'space-between', 
-                                          border: isCompleted(aula) ? '1px solid var(--success)' : (aula.tipo === 'prova' ? '1px solid rgba(234, 179, 8, 0.1)' : '1px solid rgba(255,255,255,0.03)'),
-                                          textDecoration: 'none',
-                                          color: 'inherit'
-                                        }}
-                                      >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                          {aula.tipo === 'gravada' ? <PlayCircle size={16} color="var(--primary)" /> : 
-                                           (aula.arquivo_url || aula.pdf_url) ? <FileText size={16} color="var(--success)" /> :
-                                           aula.tipo === 'atividade' ? <ClipboardList size={16} color="var(--success)" /> : 
-                                           aula.tipo === 'prova' ? <Award size={16} color="#EAB308" /> : <FileText size={16} color="var(--text-muted)" />}
-                                          <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{aula.titulo}</span>
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                          {aula.tipo === 'prova' && (atividades || []).find(at => at.aula_id === aula.id && at.status === 'corrigida') && (
-                                            <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', padding: '3px 10px', borderRadius: '6px', fontWeight: 700 }}>
-                                              Ver Correção
-                                            </span>
-                                          )}
-                                          {isCompleted(aula) && <CheckCircle2 size={16} color="var(--success)" />}
-                                        </div>
-                                      </Link>
-                                    );
-                                  })}
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-              {sortedBooks.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Nenhum módulo ativo no momento.</p>}
+  const renderBookCard = (currentBook: any) => {
+    const stats = getBookStats(currentBook);
+    return (
+      <div key={currentBook.id} className={`${stats.isFinished ? 'book-card-finished' : 'book-highlight-card'}`}>
+        <div 
+          onClick={() => navigate(`/module/${currentBook.id}`)} 
+          className="book-cover" 
+          style={{ background: currentBook.capa_url ? `url(${currentBook.capa_url}) center/cover` : 'var(--glass-border)', cursor: 'pointer' }}
+        ></div>
+        <div style={{ flex: 1 }}>
+          <div 
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '0.5rem', cursor: 'pointer' }}
+            onClick={() => navigate(`/module/${currentBook.id}`)}
+          >
+            <h2 style={{ margin: 0 }}>{currentBook.titulo}</h2>
+            <div style={{ textAlign: 'right' }}>
+              {stats.isFinished ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <span style={{ 
+                    fontSize: '0.85rem', 
+                    fontWeight: 800, 
+                    color: stats.hasExam ? (stats.isApproved ? 'var(--success)' : 'var(--error)') : 'var(--primary)',
+                    background: stats.hasExam ? (stats.isApproved ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(var(--primary-rgb), 0.1)',
+                    padding: '2px 10px',
+                    borderRadius: '6px',
+                    marginBottom: '4px'
+                  }}>
+                    {stats.hasExam 
+                      ? (stats.isApproved ? 'APROVADO' : 'REPROVADO - REFAZER NO FINAL')
+                      : 'CONCLUÍDO'}
+                  </span>
+                  {stats.hasExam && <span style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>Nota: {stats.examGrade.toFixed(1)}</span>}
+                </div>
+              ) : (
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)' }}>
+                  {stats.percent}% concluído
+                </span>
+              )}
             </div>
           </div>
-        );
-      })}
+          
+          <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)' }}>
+            <div style={{ 
+              height: '100%', 
+              width: `${stats.percent}%`, 
+              background: stats.percent === 100 && !stats.isApproved 
+                ? 'linear-gradient(90deg, #eab308 0%, #ca8a04 100%)' 
+                : 'linear-gradient(90deg, var(--primary) 0%, #a855f7 100%)', 
+              boxShadow: stats.percent === 100 && !stats.isApproved 
+                ? '0 0 10px rgba(234, 179, 8, 0.3)' 
+                : '0 0 10px rgba(156, 39, 176, 0.5)', 
+              transition: 'width 1s ease-out' 
+            }}></div>
+          </div>
+
+          <div className="book-actions">
+            <button 
+              className="nav-btn-premium" 
+              style={{ width: 'auto' }}
+              onClick={() => navigate(`/module/${currentBook.id}`)}
+            >
+                <LayoutGrid size={18} />
+                Entrar no Módulo
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const basicCourses = (courses || []).filter(c => c.nivel === 'basico' || !c.nivel);
+  const medioCourses = (courses || []).filter(c => c.nivel === 'medio');
+
+  const renderNivelSection = (label: string, coursesList: Course[]) => {
+    if (coursesList.length === 0) return null;
+    return (
+      <div style={{ marginBottom: '5rem', animation: 'fadeIn 0.6s' }}>
+        <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--primary)' }}>
+          <div style={{ width: '8px', height: '36px', background: 'var(--primary)', borderRadius: '10px' }}></div>
+          {label}
+        </h2>
+
+        {coursesList.map(course => {
+          const releasedBooks = (course.livros || []).filter(l => l.isReleased);
+          const ongoingBooks = releasedBooks.filter(b => !getBookStats(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
+          const finishedBooks = releasedBooks.filter(b => getBookStats(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
+
+          return (
+            <div key={course.id} style={{ marginBottom: '3.5rem' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem', opacity: 0.9 }}>
+                <BookOpen size={24} /> {course.nome}
+              </h3>
+
+              {!showOnlyFinished && ongoingBooks.length > 0 && (
+                <div style={{ marginBottom: '2.5rem' }}>
+                  <h4 style={{ color: 'var(--primary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <PlayCircle size={16} /> Módulos em Andamento
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {ongoingBooks.map(renderBookCard)}
+                  </div>
+                </div>
+              )}
+
+              {!showOnlyOngoing && finishedBooks.length > 0 && (
+                <div>
+                  <h4 style={{ color: 'var(--success)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <CheckCircle2 size={16} /> Módulos Concluídos
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {finishedBooks.map(renderBookCard)}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  return (
+    <div className="courses-container">
+      {renderNivelSection('Teologia Básico', basicCourses)}
+      {renderNivelSection('Teologia Médio', medioCourses)}
+      {courses.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: '1rem', textAlign: 'center', marginTop: '3rem' }}>Nenhum módulo disponível no momento.</p>}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { 
   BookOpen, 
@@ -10,11 +10,12 @@ import {
   AlertCircle,
   CheckCircle2,
   XCircle,
-  Loader2,
-  Menu,
-  X,
   Bell,
-  MessageSquare
+  MessageSquare,
+  Home as HomeIcon,
+  ChevronLeft,
+  ChevronRight,
+  LayoutGrid
 } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
@@ -33,30 +34,31 @@ import NoticeBoard from '../features/communication/components/NoticeBoard'
 import ForumPanel from '../features/forum/components/ForumPanel'
 import AlumniCertificate from '../components/documents/AlumniCertificate'
 
-type Tab = 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
+type Tab = 'home' | 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
 
 const Dashboard = () => {
-  const { profile, loading: profileLoading, signOut, refreshProfile } = useProfile();
+  const { profile, signOut, refreshProfile } = useProfile();
+  const navigate = useNavigate()
+  const location = useLocation()
   
   useEffect(() => {
     localStorage.setItem('fatesa_active_role', 'aluno')
   }, [])
 
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
-
   const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
   
   const [activeTab, setActiveTab] = useState<Tab>(() => {
-    const saved = localStorage.getItem('activeTab') as Tab;
-    if (saved && ['cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'forum'].includes(saved)) {
-      localStorage.removeItem('activeTab');
+    const saved = localStorage.getItem('fatesa_student_activeTab') as Tab;
+    if (saved && ['home', 'cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'forum'].includes(saved)) {
       return saved;
     }
-    return 'cursos';
+    return 'home';
   });
 
-  const navigate = useNavigate()
-  const location = useLocation()
+  useEffect(() => {
+    localStorage.setItem('fatesa_student_activeTab', activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     if (location.state?.activeTab) {
@@ -68,215 +70,147 @@ const Dashboard = () => {
   const { 
     courses, 
     progressoAulas, 
-    atividades,
-    loading: coursesLoading, 
+    atividades, 
     fetchStudentDashboardData 
   } = useStudentCourses(profile);
 
-  const {
-    payments,
-    pixConfig,
-    isBlockedDueToPayment,
-    isPastDue,
-    fetchPayments,
-    requestExtension
+  const { 
+    payments, 
+    pixConfig, 
+    isBlockedDueToPayment, 
+    isPastDue, 
+    fetchPayments, 
+    requestExtension 
   } = useFinanceControl(profile);
 
-  const [uploading, setUploading] = useState<string | null>(null)
-  const [selectedBook, setSelectedBook] = useState<string | null>(null)
-  const [availableNucleos, setAvailableNucleos] = useState<any[]>([])
-  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [avisos, setAvisos] = useState<any[]>([])
-  const [materiais, setMateriais] = useState<any[]>([])
-  const [poloAtividades, setPoloAtividades] = useState<any[]>([])
-  const [isAlumniData, setIsAlumniData] = useState<any>(null)
-  const [isBlocked, setIsBlocked] = useState(false)
+  // Estados Locais
+  const [selectedBook, setSelectedBook] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+  const [avisos, setAvisos] = useState<any[]>([]);
+  const [materiais, setMateriais] = useState<any[]>([]);
+  const [poloAtividades, setPoloAtividades] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (!profileLoading && profile) {
-      // Bloquear acesso de professores estritos ao portal do aluno
-      if (profile.tipo === 'professor' && profile.email !== 'edi.ben.jr@gmail.com' && !profile.caminhos_acesso?.includes('aluno')) {
-        navigate('/professor', { replace: true });
-        return;
-      }
-      // Opcional: Bloquear admins também, se fizer sentido
-      if (profile.tipo === 'admin' && profile.email !== 'edi.ben.jr@gmail.com' && profile.email !== 'ap.panisso@gmail.com' && !profile.caminhos_acesso?.includes('aluno')) {
-        navigate('/admin', { replace: true });
-        return;
-      }
-
-      fetchStudentDashboardData();
-      fetchPayments();
-      checkAlumniStatus();
-      if (profile.bloqueado) {
-        setIsBlocked(true);
-        setActiveTab('financeiro');
-      }
-    }
-  }, [profileLoading, profile, fetchStudentDashboardData, fetchPayments, navigate]);
+  const isBlocked = profile?.bloqueado;
+  const isAlumniData = (profile as any)?.isAlumni;
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ message, type })
-    setTimeout(() => setToast(null), 3000)
-  }
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const fetchNoticeBoard = useCallback(async (nucleoId: string) => {
+    try {
+      const [{ data: a }, { data: m }, { data: at }] = await Promise.all([
+        supabase.from('avisos_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false }),
+        supabase.from('materiais_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false }),
+        supabase.from('item_aula').select('*').eq('nucleo_id', nucleoId).eq('tipo', 'atividade').order('id', { ascending: false })
+      ]);
+      setAvisos(a || []);
+      setMateriais(m || []);
+      setPoloAtividades(at || []);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
 
   useEffect(() => {
     if (profile) {
-      if (activeTab === 'avisos' && profile.nucleo_id) fetchNoticeBoard(profile.nucleo_id);
-      if (activeTab === 'boletim') fetchBoletim();
+      fetchStudentDashboardData();
+      fetchPayments();
+      if (profile.nucleo_id) fetchNoticeBoard(profile.nucleo_id);
     }
-  }, [activeTab, profile])
+  }, [profile, fetchStudentDashboardData, fetchPayments, fetchNoticeBoard]);
 
-  const fetchBoletim = async () => {
-    if (!profile) return
-    const { data: nucs } = await supabase.from('nucleos').select('id, nome, cidade, estado').order('nome')
-    if (nucs) setAvailableNucleos(nucs)
-  }
-
-  const handleChangeNucleo = async (id: string, name?: string) => {
-    if (!profile || !id) return;
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>, 
+    type: 'doc' | 'pay', 
+    id?: string, 
+    docType?: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile?.id) return;
+    
+    const uploadId = id || docType || 'general';
+    setUploading(uploadId);
+    
     try {
-      const selectedName = name || availableNucleos.find(n => n.id === id)?.nome;
-      const { error } = await supabase.from('users').update({ 
-        nucleo_id: id,
-        nucleo: selectedName,
-        status_nucleo: 'pendente'
-      }).eq('id', profile.id);
-      
-      if (error) throw error;
-      showToast('Polo vinculado com sucesso! Aguarde aprovação.', 'success');
-      await refreshProfile();
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${profile.id}_${Math.random()}.${fileExt}`;
+      const filePath = `${type === 'pay' ? 'comprovantes' : 'documentos'}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('pedagogico')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage.from('pedagogico').getPublicUrl(filePath);
+
+      if (type === 'pay' && id) {
+        const { error: dbError } = await supabase
+          .from('pagamentos')
+          .update({ comprovante_url: publicUrl, status: 'pendente' })
+          .eq('id', id);
+        if (dbError) throw dbError;
+      } else if (type === 'doc' && docType) {
+        const { error: dbError } = await supabase
+          .from('documentos_aluno')
+          .upsert({
+            user_id: profile.id,
+            tipo: docType,
+            url: publicUrl,
+            status: 'pendente'
+          });
+        if (dbError) throw dbError;
+      }
+
+      showToast('Arquivo enviado com sucesso!');
+      fetchPayments();
     } catch (err: any) {
       showToast(err.message, 'error');
+    } finally {
+      setUploading(null);
     }
   };
-
-  const checkAlumniStatus = async () => {
-    if (!profile?.id) return;
-    
-    // Busca prioritária pelo vínculo do user_id
-    let { data, error } = await supabase
-      .from('registros_alumni')
-      .select('*')
-      .eq('user_id', profile.id)
-      .maybeSingle();
-    
-    // Fallback por e-mail caso o vínculo direto ainda não exista
-    if (!data && profile.email) {
-      const { data: emailData } = await supabase
-        .from('registros_alumni')
-        .select('*')
-        .eq('email', profile.email.toLowerCase())
-        .is('user_id', null)
-        .maybeSingle();
-      data = emailData;
-    }
-    
-    if (data && !error) {
-      setIsAlumniData(data);
-    }
-  };
-
-  const fetchNoticeBoard = async (nucleoId: string) => {
-    try {
-      const { data: avisosData, error: errAvisos } = await supabase.from('avisos').select('id, titulo, conteudo, created_at, prioridade').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
-      if (errAvisos) console.error('Avisos Error:', errAvisos.message, errAvisos.details, errAvisos.hint);
-      setAvisos(avisosData || []);
-
-      const { data: materiaisData, error: errMat } = await supabase.from('materiais_adicionais').select('id, titulo, descricao, arquivos, created_at').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
-      if (errMat) console.error('Materiais Error:', errMat.message, errMat.details, errMat.hint);
-      setMateriais(materiaisData || []);
-
-      const { data: atvData, error: errAtv } = await supabase.from('atividades').select('*, respostas_atividades_extra(id, status, nota)').eq('nucleo_id', nucleoId).order('created_at', { ascending: false });
-      if (errAtv) console.error('Polo Atividades Error:', errAtv.message, errAtv.details, errAtv.hint);
-      setPoloAtividades(atvData || []);
-    } catch (error) {
-      console.error('Notice Board Exception:', error);
-    }
-  }
 
   const handleRequestExtension = async () => {
     const result = await requestExtension();
     if (result.success) {
-      showToast('Acesso de emergência liberado!');
-      await refreshProfile();
-      fetchStudentDashboardData();
+      showToast('Extensão concedida até o dia ' + result.date);
+      refreshProfile();
     } else {
       showToast(result.error || 'Erro ao solicitar extensão', 'error');
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'doc' | 'pay', id?: string, docType?: string) => {
-    const file = e.target.files?.[0]
-    if (!file || !profile) return
-
-    // Clear the input value so the same file selection can trigger onChange again if needed
-    const target = e.target;
-    
-    setUploading(id || docType || 'general')
+  const availableNucleos: any[] = []; // Se necessário para staff
+  const handleChangeNucleo = async (newNucleoId: string) => {
+    if (!profile) return;
     try {
-      const bucket = type === 'doc' ? 'documentos' : 'comprovantes'
-      const fileName = `${Date.now()}_${file.name.replace(/[^\w.-]/g, '_')}`
-      const filePath = `${profile.id}/${fileName}`
-
-      console.log(`Iniciando upload para o bucket: ${bucket}, caminho: ${filePath}`);
-
-      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false
-      })
-      
-      if (uploadError) {
-        console.error('Erro no Supabase Storage:', uploadError);
-        throw new Error(`Erro no servidor de arquivos: ${uploadError.message === 'Bucket not found' ? 'A pasta do servidor não foi encontrada. Verifique se o bucket "' + bucket + '" foi criado no Supabase.' : uploadError.message}`);
-      }
-
-      const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
-
-      if (type === 'doc') {
-        const { error: dbError } = await supabase.from('documentos').upsert({ user_id: profile.id, tipo: docType as any, url: publicUrl, status: 'pendente' })
-        if (dbError) throw dbError;
-      } else {
-        if (id && id !== 'general' && id !== 'pay') {
-          const { error: dbError } = await supabase.from('pagamentos').update({ comprovante_url: publicUrl, status: 'pago' }).eq('id', id)
-          if (dbError) throw dbError;
-        } else {
-          const { error: dbError } = await supabase.from('pagamentos').insert({
-            user_id: profile.id,
-            valor: 0,
-            status: 'pago',
-            comprovante_url: publicUrl,
-            data_vencimento: new Date().toISOString().split('T')[0],
-            descricao: 'Comprovante avulso enviado pelo Aluno'
-          })
-          if (dbError) throw dbError;
-        }
-        fetchPayments()
-      }
-      showToast('Upload realizado com sucesso!')
-      target.value = ''; // Reset input selection
+      const { error } = await supabase.from('alunos').update({ nucleo_id: newNucleoId }).eq('id', profile.id);
+      if (error) throw error;
+      refreshProfile();
+      showToast('Núcleo alterado!');
     } catch (err: any) {
-      console.error('Falha no upload:', err);
-      showToast(err.message || 'Falha ao processar arquivo', 'error')
-      target.value = ''; // Reset input selection on error too
-    } finally {
-      setUploading(null)
+      showToast(err.message, 'error');
     }
-  }
+  }; 
 
-  if (profileLoading || (coursesLoading && courses.length === 0)) return <div className="auth-container"><Loader2 className="spinner" /> Carregando...</div>
+  const handleStudentBack = () => {
+    if (selectedBook) {
+      setSelectedBook(null);
+      return;
+    }
+    if (activeTab !== 'home') {
+      setActiveTab('home');
+      return;
+    }
+    // If already at home, we don't navigate out to avoid quitting the dashboard unexpectedly
+  }
 
   return (
     <div className="admin-layout">
-      {/* Botão de Menu Flutuante */}
-      <button className="floating-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* Backdrop do Menu */}
-      {isMobileMenuOpen && <div className="menu-backdrop" onClick={() => setIsMobileMenuOpen(false)} />}
-
       {toast && (
         <div style={{
           position: 'fixed', bottom: '2rem', right: '2rem', padding: '1rem 2rem', 
@@ -288,92 +222,73 @@ const Dashboard = () => {
         </div>
       )}
 
-      <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
-        <div className="logo-section" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center', width: '100%', position: 'relative' }}>
-          <Logo size={200} />
-          <button className="mobile-menu-btn" style={{ position: 'absolute', right: '0.5rem', top: '0.5rem' }} onClick={() => setIsMobileMenuOpen(false)}>
-            <X size={24} />
-          </button>
+      {/* Standardized Dashboard Navigation Header */}
+      <header className="dashboard-header-modern">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <Logo size={120} />
+          
+          <div style={{ display: 'flex', gap: '0.75rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.5rem' }}>
+            <button onClick={() => navigate('/')} className="nav-btn-premium" title="Ir para Home do Site">
+              <HomeIcon size={18} />
+            </button>
+            <button 
+              onClick={handleStudentBack} 
+              className="nav-btn-premium" 
+              title="Voltar"
+              style={{ display: (activeTab === 'home') ? 'none' : 'inline-flex' }}
+            >
+              <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
+            </button>
+            <button onClick={() => navigate('/modulos-finalizados')} className="nav-btn-premium" title="Ver Concluídos" style={{ border: '1px solid var(--success-border)', background: 'rgba(16, 185, 129, 0.05)' }}>
+              <Award size={18} color="var(--success)" /> <span className="mobile-hide">Módulos Finalizados</span>
+            </button>
+          </div>
         </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {isStaff && (
-            <div style={{ padding: '0.5rem 1rem', position: 'relative' }}>
+        <nav style={{ display: 'flex', gap: '0.5rem', flex: 1, overflowX: 'auto', scrollbarWidth: 'none' }}>
+           {activeTab !== 'home' && (
+             <div className="nav-breadcrumb-modern">
+               <LayoutGrid size={16} /> <span>Painel do Aluno</span>
+               <ChevronRight size={14} className="divider" />
+               <span className="current">
+                 {activeTab === 'cursos' ? 'Meus Cursos' :
+                  activeTab === 'avisos' ? 'Avisos' :
+                  activeTab === 'documentos' ? 'Documentos' :
+                  activeTab === 'financeiro' ? 'Pagamentos' :
+                  activeTab === 'boletim' ? 'Boletim' : 'Fórum'}
+               </span>
+             </div>
+           )}
+        </nav>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {(profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.caminhos_acesso?.includes('admin') || profile?.email === 'edi.ben.jr@gmail.com') && (
+            <div style={{ position: 'relative' }}>
               <button 
-                className="admin-nav-item" 
-                style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'rgba(var(--primary-rgb), 0.1)', border: '1px solid var(--primary)', borderRadius: '10px' }}
+                className="nav-btn-premium" 
                 onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
               >
-                <GraduationCap size={18} color="var(--primary)" /> <span>Alternar Painel</span>
+                <GraduationCap size={18} /> <span className="mobile-hide">Trocar Painel</span>
               </button>
               {showRoleSwitcher && (
-                <div style={{ position: 'absolute', top: '100%', left: '1rem', right: '1rem', background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
-                  {profile?.tipo === 'professor' || profile?.caminhos_acesso?.includes('professor') ? (
-                    <button 
-                      className="admin-nav-item" 
-                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
-                      onClick={() => navigate('/professor')}
-                    >
-                      Painel do Professor
-                    </button>
-                  ) : null}
-                  {profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin') || profile?.tipo === 'suporte' ? (
-                    <button 
-                      className="admin-nav-item" 
-                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none' }}
-                      onClick={() => navigate('/admin')}
-                    >
-                      Painel Administrativo
-                    </button>
-                  ) : null}
+                <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '14px', padding: '0.5rem', zIndex: 110, display: 'flex', flexDirection: 'column', gap: '0.25rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)', minWidth: '180px', marginTop: '0.5rem' }}>
+                  <button className="nav-btn-premium" style={{ width: '100%', justifyContent: 'flex-start', background: 'transparent', border: 'none' }} onClick={() => navigate('/professor')}>Painel do Professor</button>
+                  <button className="nav-btn-premium" style={{ width: '100%', justifyContent: 'flex-start', background: 'transparent', border: 'none' }} onClick={() => navigate('/admin')}>Painel Administrativo</button>
                 </div>
               )}
             </div>
           )}
-          {(['cursos', 'avisos', 'forum', 'documentos', 'financeiro', 'boletim'] as Tab[])
-            .filter(t => isStaff ? t !== 'financeiro' : true)
-            .map(t => {
-              const isDisabled = (isBlocked || isBlockedDueToPayment) && t !== 'financeiro';
-              return (
-                <div
-                  key={t}
-                  className={`admin-nav-item ${activeTab === t ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
-                  onClick={() => {
-                    if (isDisabled) return;
-                    setActiveTab(t);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  style={{ opacity: isDisabled ? 0.35 : 1, cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-                >
-                  {t === 'cursos' && <BookOpen size={20} />}
-                  {t === 'avisos' && <Bell size={20} />}
-                  {t === 'documentos' && <FileText size={20} />}
-                  {t === 'financeiro' && <CreditCard size={20} />}
-                  {t === 'boletim' && <Award size={20} />}
-                  {t === 'forum' && <MessageSquare size={20} />}
-                  <span>{t === 'avisos' ? 'Avisos' : t === 'financeiro' ? 'Pagamentos' : t === 'boletim' ? 'Boletim' : t === 'forum' ? 'Fórum' : t.charAt(0).toUpperCase() + t.slice(1)}</span>
-                </div>
-              );
-            })}
+          <button className="nav-btn-premium danger" onClick={() => signOut()}>
+            <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+          </button>
+        </div>
+      </header>
 
-          <div style={{ padding: '1rem', marginTop: 'auto' }}>
-            <button className="btn btn-primary" style={{ width: '100%', padding: '1rem', borderRadius: '16px', background: 'linear-gradient(135deg, var(--primary) 0%, #7B1FA2 100%)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', fontWeight: 800 }} onClick={() => { setActiveTab('financeiro'); setIsMobileMenuOpen(false); }}>
-              <CreditCard size={20} /> Realizar Pagamento
-            </button>
-          </div>
-
-          <div style={{ padding: '0.5rem 1rem' }}>
-            <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent' }} onClick={() => signOut()}>
-              <LogOut size={18} /> <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Sair</span>
-            </div>
-          </div>
-        </nav>
-      </aside>
-
-      <main className="admin-main" style={{ paddingTop: '1rem' }}>
+      <main className="admin-main">
         <header className="mobile-col-flex" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
+              {activeTab === 'home' && 'Área do Aluno'}
               {activeTab === 'cursos' && 'Meus Cursos'}
               {activeTab === 'avisos' && 'Quadro de Avisos'}
               {activeTab === 'documentos' && 'Meus Documentos'}
@@ -404,7 +319,54 @@ const Dashboard = () => {
         </header>
 
         <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
-          {isAlumniData && activeTab === 'cursos' && (
+          {activeTab === 'home' && (
+            <div className="admin-dashboard-grid transition-fade-in" style={{ marginTop: '1rem' }}>
+              <div className="admin-action-card" onClick={() => setActiveTab('cursos')}>
+                <div className="icon-wrapper"><BookOpen size={32} /></div>
+                <h3>Meus Cursos</h3>
+                <p>Acesse suas aulas, materiais e continue seus estudos.</p>
+              </div>
+
+              <div className="admin-action-card" onClick={() => setActiveTab('avisos')}>
+                <div className="icon-wrapper"><Bell size={32} /></div>
+                <h3>Avisos do Polo</h3>
+                <p>Comunicados importantes e materiais extras do seu núcleo.</p>
+              </div>
+
+              <div className="admin-action-card" onClick={() => setActiveTab('forum')}>
+                <div className="icon-wrapper"><MessageSquare size={32} /></div>
+                <h3>Fórum</h3>
+                <p>Participe de discussões e tire dúvidas com a comunidade.</p>
+              </div>
+
+              <div className="admin-action-card" onClick={() => setActiveTab('documentos')}>
+                <div className="icon-wrapper"><FileText size={32} /></div>
+                <h3>Documentação</h3>
+                <p>Envie e gerencie seus documentos de matrícula.</p>
+              </div>
+
+              {!isStaff && (
+                <div className="admin-action-card" onClick={() => setActiveTab('financeiro')}>
+                  <div className="icon-wrapper"><CreditCard size={32} /></div>
+                  <h3>Pagamentos</h3>
+                  <p>Consulte mensalidades e gere bônus/PIX de pagamento.</p>
+                  {isPastDue && (
+                    <span style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--error)', color: '#fff', fontSize: '0.7rem', padding: '4px 10px', borderRadius: '50px', fontWeight: 800 }}>
+                      PENDENTE
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <div className="admin-action-card" onClick={() => setActiveTab('boletim')}>
+                <div className="icon-wrapper"><Award size={32} /></div>
+                <h3>Meu Boletim</h3>
+                <p>Consulte suas notas e desempenho acadêmico.</p>
+              </div>
+            </div>
+          )}
+
+          {isAlumniData && activeTab === 'home' && (
             <div style={{ marginBottom: '2rem', padding: '2rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '24px', border: '1px solid rgba(var(--primary-rgb), 0.2)', textAlign: 'center', animation: 'fadeIn 0.5s' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                 <Award size={48} color="var(--primary)" />
@@ -431,13 +393,27 @@ const Dashboard = () => {
           )}
 
           {activeTab === 'cursos' && (
-            <CourseList 
-              courses={courses}
-              selectedBook={selectedBook}
-              setSelectedBook={setSelectedBook}
-              progressoAulas={progressoAulas}
-              atividades={atividades}
-            />
+            <>
+              <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--glass)', padding: '1.5rem 2rem', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Meus Módulos Ativos</h3>
+                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Acompanhe seu progresso atual e continue seus estudos.</p>
+                </div>
+                <button 
+                  onClick={() => navigate('/modulos-finalizados')} 
+                  className="btn btn-outline" 
+                  style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1.5rem', borderRadius: '12px', borderColor: 'var(--primary)', color: 'var(--primary)' }}
+                >
+                  <Award size={20} /> <span className="hide-mobile">Módulos Finalizados</span>
+                </button>
+              </div>
+              <CourseList 
+                courses={courses}
+                progressoAulas={progressoAulas}
+                atividades={atividades}
+                showOnlyOngoing={true}
+              />
+            </>
           )}
 
           {activeTab === 'avisos' && (

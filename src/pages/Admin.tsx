@@ -14,15 +14,14 @@ import {
   GraduationCap,
   ChevronLeft,
   LayoutDashboard,
-  X,
-  Menu,
   MessageSquare,
   LogOut,
-  ChevronDown,
-  ChevronRight,
-  ClipboardList,
   MapPin,
-  TrendingUp
+  TrendingUp,
+  History,
+  LayoutGrid,
+  Shield,
+  ExternalLink
 } from 'lucide-react'
 
 // Features Components
@@ -32,7 +31,6 @@ import ContentManagement from '../features/courses/components/ContentManagement'
 import ValidationPanel from '../features/finance/components/ValidationPanel'
 import SettingsPanel from '../features/finance/components/SettingsPanel'
 import ProfessorsManagement from '../features/users/components/ProfessorsManagement'
-import AttendanceList from '../features/users/components/AttendanceList'
 import AnalyticsDashboard from '../features/admin/components/AnalyticsDashboard'
 import FinanceReport from '../features/finance/components/FinanceReport'
 
@@ -69,9 +67,6 @@ const Admin = () => {
     courses,
     pendingDocs,
     pendingPays,
-    userCount,
-    courseCount,
-    pendingCount,
     loading,
     actionLoading,
     setActionLoading,
@@ -129,8 +124,6 @@ const Admin = () => {
     setPixKey,
     pixQrUrl,
     uploading,
-    isMobileMenuOpen,
-    setIsMobileMenuOpen,
     nucleosAutoOpenAdd,
     setNucleosAutoOpenAdd,
     confirmDelete,
@@ -168,9 +161,18 @@ const Admin = () => {
   } = useAdminManagement()
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
-  const [expandedUsers, setExpandedUsers] = React.useState(false)
-  const [expandedAlumni, setExpandedAlumni] = React.useState(false)
-  const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null)
+  const [dashboardView, setDashboardView] = React.useState<'main' | 'users' | 'admin_tools'>('main')
+  const [userTypeFilter, setUserTypeFilter] = React.useState<string | null>(null)
+
+  const handleGlobalBack = () => {
+    if (selectedLesson) { setSelectedLesson(null); return; }
+    if (selectedBook) { setSelectedBook(null); return; }
+    if (selectedCourse) { setSelectedCourse(null); return; }
+    if (dashboardView !== 'main') { setDashboardView('main'); setUserTypeFilter(null); return; }
+    if (activeTab !== 'home') { setActiveTab('home'); return; }
+  }
+
+  const isAtRoot = activeTab === 'home' && dashboardView === 'main'
 
   if (loading) {
     return (
@@ -182,225 +184,76 @@ const Admin = () => {
 
   return (
     <div className="admin-layout">
-      {/* Floating Menu Toggle Button */}
-      <button className="floating-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* Menu Backdrop */}
-      {isMobileMenuOpen && (
-        <div className="menu-backdrop" onClick={() => setIsMobileMenuOpen(false)} />
-      )}
-
-      {/* Sidebar */}
-      <aside className={`admin-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ paddingTop: '2rem' }}>
-        <div className="logo-section" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center', width: '100%', position: 'relative' }}>
-          <Logo size={200} />
-          <button className="mobile-menu-btn" style={{ position: 'absolute', right: '0.5rem', top: '0.5rem' }} onClick={() => setIsMobileMenuOpen(false)}>
-            <X size={24} />
-          </button>
-        </div>
-
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
-            <button onClick={() => window.history.back()} className="admin-nav-item" style={{ background: 'transparent', border: 'none' }}>
-              <ChevronLeft size={18} />
-            </button>
-            <button onClick={() => setActiveTab('home')} className="admin-nav-item" style={{ background: 'transparent', border: 'none' }}>
-              <LayoutDashboard size={18} />
-            </button>
-          </div>
-
-          {availableRoles.length > 1 && (
-            <div style={{ position: 'relative' }}>
-              <button 
-                className="admin-nav-item" 
-                style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem' }}
-                onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
-              >
-                <Users size={16} /> <span className="mobile-hide">Alternar</span>
-              </button>
-              {showRoleSwitcher && (
-                <div style={{ position: 'absolute', top: '100%', left: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '0.5rem', zIndex: 100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '180px' }}>
-                  {availableRoles.filter(r => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map(r => (
-                    <Link 
-                      key={r} 
-                      to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'}
-                      className="admin-nav-item" 
-                      style={{ width: '100%', justifyContent: 'flex-start', padding: '0.6rem', fontSize: '0.8rem', background: 'transparent', border: 'none', textDecoration: 'none', color: 'inherit' }}
-                      onClick={() => { 
-                        setShowRoleSwitcher(false); 
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      {r === 'aluno' ? 'Painel do Aluno' : r === 'professor' ? 'Painel do Professor' : 'Administração'}
-                    </Link>
-                  ))}
-                </div>
+      <main className="admin-main">
+        {/* New Standardized Administrative Header */}
+        <header className="dashboard-header-modern">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <Logo size={140} />
+            
+            <div style={{ display: 'flex', gap: '0.75rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.5rem' }}>
+              {!isAtRoot && (
+                <button 
+                  className="nav-btn-premium" 
+                  onClick={handleGlobalBack}
+                  title="Voltar um passo"
+                >
+                  <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
+                </button>
+              )}
+              {activeTab !== 'home' && (
+                <button className="nav-btn-premium" onClick={() => { setActiveTab('home'); setDashboardView('main'); setUserTypeFilter(null); }}>
+                  <LayoutGrid size={18} /> <span className="mobile-hide">Menu Principal</span>
+                </button>
               )}
             </div>
-          )}
-          
-          <div className={`admin-nav-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }}>
-            <LayoutDashboard size={18} /> <span className="mobile-hide">Início</span>
           </div>
 
-          {userRole === 'admin' && (
-            <>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div 
-                  className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} 
-                  onClick={() => { 
-                    setExpandedUsers(!expandedUsers);
-                    if (activeTab !== 'users') {
-                      setActiveTab('users');
-                      setSelectedNucleoId(null);
-                    }
-                  }}
-                  style={{ justifyContent: 'space-between' }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {availableRoles.length > 1 && (
+              <div style={{ position: 'relative' }}>
+                <button 
+                  className="nav-btn-premium" 
+                  onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Users size={18} /> <span className="mobile-hide">Usuários</span>
-                    {totalPendingUsers > 0 && (
-                      <span style={{ background: 'var(--error)', color: '#fff', fontSize: '0.65rem', padding: '1px 6px', borderRadius: '10px', fontWeight: 700 }}>
-                        {totalPendingUsers}
-                      </span>
-                    )}
-                  </div>
-                  {expandedUsers ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                </div>
-                
-                {expandedUsers && (
-                  <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '1.5rem', gap: '0.25rem', marginTop: '0.25rem' }}>
-                    <div 
-                      className={`admin-nav-item ${activeTab === 'users' && !selectedNucleoId ? 'active' : ''}`} 
-                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
-                      onClick={() => { setActiveTab('users'); setSelectedNucleoId(null); setIsMobileMenuOpen(false); }}
-                    >
-                      Todos
-                    </div>
-                    {allNucleos.map(n => (
-                      <div 
-                        key={n.id}
-                        className={`admin-nav-item ${activeTab === 'users' && selectedNucleoId === n.id ? 'active' : ''}`} 
-                        style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem', justifyContent: 'space-between' }}
-                        onClick={() => { setActiveTab('users'); setSelectedNucleoId(n.id); setIsMobileMenuOpen(false); }}
+                  <Users size={18} /> <span className="mobile-hide">Alternar Visão</span>
+                </button>
+                {showRoleSwitcher && (
+                  <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '14px', padding: '0.5rem', zIndex: 1100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '200px', marginTop: '0.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                    {availableRoles.filter(r => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map(r => (
+                      <Link 
+                        key={r} 
+                        to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'}
+                        className="nav-btn-premium" 
+                        style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent' }}
+                        onClick={() => setShowRoleSwitcher(false)}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <MapPin size={12} /> {n.nome}
-                        </div>
-                        {pendingUsersByNucleo[n.id] > 0 && (
-                          <span style={{ background: 'var(--error)', color: '#fff', fontSize: '0.6rem', padding: '1px 5px', borderRadius: '10px' }}>
-                            {pendingUsersByNucleo[n.id]}
-                          </span>
-                        )}
-                      </div>
+                        {r === 'aluno' ? 'Painel do Aluno' : r === 'professor' ? 'Painel do Professor' : 'Administração'}
+                      </Link>
                     ))}
                   </div>
                 )}
               </div>
-
-              <div className={`admin-nav-item ${activeTab === 'professors' ? 'active' : ''}`} onClick={() => { setActiveTab('professors'); setIsMobileMenuOpen(false); }}>
-                <GraduationCap size={18} /> <span className="mobile-hide">Professores</span>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div 
-                  className={`admin-nav-item ${activeTab === 'alumni' ? 'active' : ''}`} 
-                  onClick={() => { 
-                    setExpandedAlumni(!expandedAlumni);
-                    if (activeTab !== 'alumni') {
-                      setActiveTab('alumni');
-                      setIsMobileMenuOpen(false);
-                    }
-                  }}
-                  style={{ justifyContent: 'space-between' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <GraduationCap size={18} /> <span className="mobile-hide">Alumni / Formados</span>
-                  </div>
-                  {expandedAlumni ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                </div>
-                
-                {expandedAlumni && (
-                  <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '1.5rem', gap: '0.25rem', marginTop: '0.25rem' }}>
-                    <div 
-                      className="admin-nav-item" 
-                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
-                      onClick={() => { 
-                        setActiveTab('alumni');
-                        setTimeout(() => document.getElementById('import-alumni-file-global')?.click(), 100);
-                        setIsMobileMenuOpen(false); 
-                      }}
-                    >
-                      <Plus size={12} /> Importar Planilha (Excel/CSV)
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className={`admin-nav-item ${activeTab === 'attendance' ? 'active' : ''}`} onClick={() => { setActiveTab('attendance'); setIsMobileMenuOpen(false); }}>
-                <ClipboardList size={18} /> <span className="mobile-hide">Frequência</span>
-              </div>
-
-              <div className={`admin-nav-item ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => { setActiveTab('analytics'); setIsMobileMenuOpen(false); }}>
-                <TrendingUp size={18} /> <span className="mobile-hide">Analytics</span>
-              </div>
-
-              <div className={`admin-nav-item ${activeTab === 'reports' ? 'active' : ''}`} onClick={() => { setActiveTab('reports'); setIsMobileMenuOpen(false); }}>
-                <FileText size={18} /> <span className="mobile-hide">Relatórios</span>
-              </div>
-            </>
-          )}
-
-          <div className={`admin-nav-item ${activeTab === 'nucleos' ? 'active' : ''}`} onClick={() => { setActiveTab('nucleos'); setIsMobileMenuOpen(false); }}>
-            <GraduationCap size={18} /> <span className="mobile-hide">Núcleos</span>
-          </div>
-
-          <div className={`admin-nav-item ${activeTab === 'content' ? 'active' : ''}`} onClick={() => { setActiveTab('content'); setIsMobileMenuOpen(false); }}>
-            <BookOpen size={18} /> <span className="mobile-hide">Conteúdo</span>
-          </div>
-
-          <div className={`admin-nav-item ${activeTab === 'forum' ? 'active' : ''}`} onClick={() => { setActiveTab('forum'); setIsMobileMenuOpen(false); }}>
-            <MessageSquare size={18} /> <span className="mobile-hide">Fórum</span>
-          </div>
-
-          <div className={`admin-nav-item ${activeTab === 'validation' ? 'active' : ''}`} onClick={() => { setActiveTab('validation'); setIsMobileMenuOpen(false); }}>
-            <ShieldCheck size={18} /> <span className="mobile-hide">Validação</span>
-            {(pendingDocs.length + pendingPays.length) > 0 && (
-              <span style={{ marginLeft: '4px', background: 'var(--error)', color: '#fff', fontSize: '0.6rem', padding: '1px 4px', borderRadius: '10px' }}>
-                {pendingDocs.length + pendingPays.length}
-              </span>
             )}
+
+            <Link 
+              to="/dashboard" 
+              className="nav-btn-premium"
+            >
+              <ExternalLink size={18} /> <span className="mobile-hide">Área do Aluno</span>
+            </Link>
+            
+            <button 
+              className="nav-btn-premium danger" 
+              onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
+              title="Sair"
+            >
+              <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+            </button>
           </div>
+        </header>
 
-          {userRole === 'admin' && (
-            <div className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }}>
-              <Settings size={18} /> <span className="mobile-hide">Config</span>
-            </div>
-          )}
-
-          <div style={{ marginLeft: 'auto', paddingLeft: '0.5rem' }}>
-            <div className="admin-nav-item" style={{ color: 'var(--error)', border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}>
-              <LogOut size={18} />
-            </div>
-          </div>
-        </nav>
-      </aside>
-
-      <main className="admin-main">
-        <Link 
-          to="/dashboard" 
-          className="btn btn-outline" 
-          style={{ width: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginBottom: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', textDecoration: 'none', color: 'inherit' }}
-        >
-          <ChevronLeft size={16} /> Voltar ao Dashboard
-        </Link>
-
-        <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <div className="logo-section" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <Logo size={120} />
-            <div>
+        <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
               <h1 style={{ 
                 fontSize: '2.2rem', 
                 fontWeight: 900, 
@@ -411,7 +264,7 @@ const Admin = () => {
                 marginBottom: '0.25rem'
               }}>
                 {activeTab === 'home' ? 'Painel Administrativo' : 
-                 activeTab === 'users' ? (selectedNucleoId ? `Usuários - ${allNucleos.find(n => n.id === selectedNucleoId)?.nome}` : 'Gestão de Usuários') : 
+                 activeTab === 'users' ? 'Gestão de Usuários' : 
                  activeTab === 'professors' ? 'Gestão de Professores' :
                  activeTab === 'alumni' ? 'Base de Formados (Alumni)' :
                  activeTab === 'content' ? 'Gestão de Conteúdo' : 
@@ -434,57 +287,147 @@ const Admin = () => {
                  activeTab === 'analytics' ? 'Monitore visualizações, acessos únicos e rotatividade de usuários.' :
                  activeTab === 'reports' ? 'Lista de alunos que enviaram comprovantes pelo portal.' :
                  'Verifique envios dos alunos.'}
-              </p>
+                </p>
+              </div>
+            
+            <div className="mobile-wrap-flex" style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', width: '100%' }}>
+              {activeTab === 'users' && (
+                <button className="btn btn-primary" onClick={() => setShowAddTeacher(true)} style={{ width: 'auto' }}>
+                  <Plus size={20} /> Cadastrar Professor
+                </button>
+              )}
+              {activeTab === 'alumni' && (
+                <button 
+                  className="btn btn-outline" 
+                  onClick={() => document.getElementById('import-alumni-file-global')?.click()} 
+                  style={{ width: 'auto' }}
+                  disabled={!!actionLoading}
+                >
+                  {actionLoading === 'importing-file' ? <Loader2 className="spinner" size={20} /> : <FileText size={20} />} Importar Planilha (Excel/CSV)
+                </button>
+              )}
+              <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
+                <input type="text" placeholder="Pesquisar..." className="form-control" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              </div>
             </div>
-          </div>
-          
-          <div className="mobile-wrap-flex" style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', width: '100%' }}>
-            {activeTab === 'users' && (
-              <button className="btn btn-primary" onClick={() => setShowAddTeacher(true)} style={{ width: 'auto' }}>
-                <Plus size={20} /> Cadastrar Professor
-              </button>
-            )}
-            {activeTab === 'alumni' && (
-              <button 
-                className="btn btn-outline" 
-                onClick={() => document.getElementById('import-alumni-file-global')?.click()} 
-                style={{ width: 'auto' }}
-                disabled={!!actionLoading}
-              >
-                {actionLoading === 'importing-file' ? <Loader2 className="spinner" size={20} /> : <FileText size={20} />} Importar Planilha (Excel/CSV)
-              </button>
-            )}
-            <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
-              <input type="text" placeholder="Pesquisar..." className="form-control" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-            </div>
-          </div>
-        </header>
+          </header>
 
-        {activeTab === 'home' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-            <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.2) 0%, rgba(var(--primary-rgb), 0.05) 100%)', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
-              <Users size={32} style={{ marginBottom: '1rem', color: 'var(--primary)' }} />
-              <h3 style={{ fontSize: '2rem', margin: 0 }}>{userCount}</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Usuários Cadastrados</p>
+          {activeTab === 'home' && (
+            <div className="admin-dashboard-grid transition-fade-in">
+              {dashboardView === 'main' && (
+                <>
+                  <div className="admin-action-card" onClick={() => setActiveTab('content')}>
+                    <div className="icon-wrapper"><BookOpen size={32} /></div>
+                    <h3>Conteúdo</h3>
+                    <p>Gerencie cursos, módulos, aulas e materiais.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setDashboardView('users')}>
+                    <div className="icon-wrapper"><Users size={32} /></div>
+                    <h3>Gestão de Usuários</h3>
+                    <p>Alunos, Professores, Administrativo e Alumni.</p>
+                    {totalPendingUsers > 0 && (
+                      <span style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--error)', color: '#fff', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '12px', fontWeight: 700 }}>
+                        {totalPendingUsers} pendentes
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setDashboardView('admin_tools')}>
+                    <div className="icon-wrapper"><ShieldCheck size={32} /></div>
+                    <h3>Administrativo</h3>
+                    <p>Validação, Financeiro e Analytics.</p>
+                    {(pendingDocs.length + pendingPays.length) > 0 && (
+                      <span style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--warning)', color: '#000', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '12px', fontWeight: 700 }}>
+                        {pendingDocs.length + pendingPays.length} envios
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('nucleos')}>
+                    <div className="icon-wrapper"><MapPin size={32} /></div>
+                    <h3>Núcleos</h3>
+                    <p>Gestão de polos e unidades de ensino.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('forum')}>
+                    <div className="icon-wrapper"><MessageSquare size={32} /></div>
+                    <h3>Fórum</h3>
+                    <p>Modere discussões e dúvidas da comunidade.</p>
+                  </div>
+
+                  {userRole === 'admin' && (
+                    <div className="admin-action-card" onClick={() => setActiveTab('settings')}>
+                      <div className="icon-wrapper"><Settings size={32} /></div>
+                      <h3>Configurações</h3>
+                      <p>Ajustes globais do sistema e chaves PIX.</p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {dashboardView === 'users' && (
+                <>
+                  <div className="admin-action-card" onClick={() => { setActiveTab('users'); setUserTypeFilter('administrativos'); }}>
+                    <div className="icon-wrapper"><ShieldCheck size={32} /></div>
+                    <h3>Administrativo</h3>
+                    <p>Gerencie suporte, moderadores e administradores.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => { setActiveTab('professors'); }}>
+                    <div className="icon-wrapper"><GraduationCap size={32} /></div>
+                    <h3>Professores</h3>
+                    <p>Visualize e vincule docentes aos núcleos.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => { setActiveTab('users'); setUserTypeFilter('alunos'); }}>
+                    <div className="icon-wrapper"><Users size={32} /></div>
+                    <h3>Alunos</h3>
+                    <p>Gestão total dos alunos ativos.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('alumni')}>
+                    <div className="icon-wrapper"><History size={32} /></div>
+                    <h3>Alumni Formados</h3>
+                    <p>Base histórica e certificados.</p>
+                  </div>
+                </>
+              )}
+
+              {dashboardView === 'admin_tools' && (
+                <>
+                  <div className="admin-action-card" onClick={() => setActiveTab('validation')}>
+                    <div className="icon-wrapper"><Shield size={32} /></div>
+                    <h3>Validação</h3>
+                    <p>Aprovação de acessos e comprovantes.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('reports')}>
+                    <div className="icon-wrapper"><FileText size={32} /></div>
+                    <h3>Financeiro</h3>
+                    <p>Relatórios de pagamentos e inadimplência.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('analytics')}>
+                    <div className="icon-wrapper"><TrendingUp size={32} /></div>
+                    <h3>Analytics</h3>
+                    <p>Métricas de acesso e engajamento.</p>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.05) 100%)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
-              <BookOpen size={32} style={{ marginBottom: '1rem', color: 'var(--success)' }} />
-              <h3 style={{ fontSize: '2rem', margin: 0 }}>{courseCount}</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Cursos Ativos</p>
-            </div>
-            <div className="data-card" style={{ padding: '2.5rem', background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.05) 100%)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
-              <FileText size={32} style={{ marginBottom: '1rem', color: 'var(--warning)' }} />
-              <h3 style={{ fontSize: '2rem', margin: 0 }}>{pendingCount}</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 600 }}>Pendências de Validação</p>
-            </div>
-          </div>
-        )}
+          )}
         
         {activeTab === 'alumni' && <AlumniManagement />}
         
         {activeTab === 'users' && (
           <UserManagement 
-            users={selectedNucleoId ? users.filter(u => u.nucleo_id === selectedNucleoId) : users}
+            users={(() => {
+              let filtered = users;
+              if (userTypeFilter === 'administrativos') filtered = filtered.filter(u => ['admin', 'suporte', 'colaborador'].includes(u.tipo));
+              if (userTypeFilter === 'alunos') filtered = filtered.filter(u => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo));
+              return filtered;
+            })()}
             allNucleos={allNucleos}
             searchTerm={searchTerm}
             userRole={userRole}
@@ -827,7 +770,7 @@ const Admin = () => {
           bottom: '2rem',
           right: '2rem',
           padding: '1rem 2rem',
-          background: toast.type === 'success' ? 'var(--success)' : 'var(--error)',
+          background: toast?.type === 'success' ? 'var(--success)' : 'var(--error)',
           color: '#fff',
           borderRadius: '12px',
           boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
@@ -837,8 +780,8 @@ const Admin = () => {
           gap: '0.75rem',
           animation: 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
         }}>
-          {toast.type === 'success' ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
-          <span style={{ fontWeight: 600 }}>{toast.message}</span>
+          {toast?.type === 'success' ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
+          <span style={{ fontWeight: 600 }}>{toast?.message}</span>
         </div>
       )}
 

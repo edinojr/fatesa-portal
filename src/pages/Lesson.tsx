@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, Video } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -512,11 +512,16 @@ const Lesson = () => {
       )}
 
       {lesson.tipo === 'material' && (
-        <div style={{ background: 'var(--glass)', padding: '4rem 2rem', borderRadius: '24px', textAlign: 'center', marginBottom: '4rem' }}>
-          <FileText size={80} color="var(--primary)" style={{marginBottom:'1rem'}}/>
-          <h2>Material de Estudo</h2>
-          <button className="btn btn-primary" onClick={() => navigate(`/book/${lesson.id}?type=aula`)} style={{width:'auto', marginTop:'1rem'}}>Ver Conteúdo</button>
-          {!complete && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto', marginTop:'1rem', marginLeft:'1rem'}}>Concluir Leitura</button>}
+        <div style={{ background: 'var(--glass)', padding: '4rem 2rem', borderRadius: '24px', textAlign: 'center', marginBottom: '4rem', border: '1px solid var(--glass-border)' }}>
+          <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+            <FileText size={40} color="var(--primary)" />
+          </div>
+          <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Material de Estudo</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Este módulo contém textos e materiais de leitura essenciais para sua formação.</p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button className="btn btn-primary" onClick={() => navigate(`/book/${lesson.id}?type=aula`)} style={{width:'auto'}}>Ver Conteúdo</button>
+            {!complete && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto'}}>Concluir Leitura</button>}
+          </div>
         </div>
       )}
 

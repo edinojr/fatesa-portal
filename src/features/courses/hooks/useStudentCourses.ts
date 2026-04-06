@@ -95,7 +95,7 @@ export const useStudentCourses = (profile: any) => {
       setProgressoAulas(progData || []);
 
       // Busca Cursos e mapeia liberação
-      const { data: allCourses } = await supabase.from('cursos').select('id, nome, livros(*, aulas(*))');
+      const { data: allCourses } = await supabase.from('cursos').select('id, nome, nivel, livros(*, aulas(*))');
       
       if (allCourses) {
         const mappedCourses: Course[] = allCourses.map((c: any) => {
@@ -121,28 +121,42 @@ export const useStudentCourses = (profile: any) => {
                     let lockedByProfessor = false;
                     
                     // Apenas vídeos e provas finais exigem liberação manual do professor
-                    const isRestrictedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'prova' || !!a.is_bloco_final;
+                    const isRestrictedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
                     
                     if (isRestrictedType) {
                       const title = a.titulo || '';
                       let isItemReleased = false;
+                      let isHiddenByRule = false;
 
                       if (title.toUpperCase().includes('V2')) {
                         // Automático se V1 reprovou e foi corrigida
-                        const v1Sub = resData.find((s: any) => s.aulas?.livro?.id === l.id && s.aulas?.titulo?.toUpperCase().includes('V1'));
-                        isItemReleased = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
+                        const v1Sub = resData.find((s: any) => {
+                          const aulaData = Array.isArray(s.aulas) ? s.aulas[0] : s.aulas;
+                          return aulaData?.livro?.id === l.id && aulaData?.titulo?.toUpperCase().includes('V1');
+                        });
+                        const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
+                        isItemReleased = v1Reprovou;
+                        // Oculta V2 se V1 não existe ou se o aluno passou na V1
+                        isHiddenByRule = !v1Sub || (v1Sub.status === 'corrigida' && (v1Sub.nota || 0) >= 7.0);
                       } else if (title.toUpperCase().includes('V3')) {
                         // Automático se V2 reprovou e foi corrigida
-                        const v2Sub = resData.find((s: any) => s.aulas?.livro?.id === l.id && s.aulas?.titulo?.toUpperCase().includes('V2'));
-                        isItemReleased = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
+                        const v2Sub = resData.find((s: any) => {
+                          const aulaData = Array.isArray(s.aulas) ? s.aulas[0] : s.aulas;
+                          return aulaData?.livro?.id === l.id && aulaData?.titulo?.toUpperCase().includes('V2');
+                        });
+                        const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
+                        isItemReleased = v2Reprovou;
+                        // Oculta V3 se V2 não existe ou se o aluno parou na V1/V2 sem reprovar
+                        isHiddenByRule = !v2Sub || (v2Sub.status === 'corrigida' && (v2Sub.nota || 0) >= 7.0);
                       } else {
                         // V1 ou Vídeo: Liberação manual
-                        isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo') 
+                        isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video') 
                           ? releasedVideos.includes(a.id) 
                           : releasedAtividades.includes(a.id);
                       }
                       
                       lockedByProfessor = !isItemReleased;
+                      if (isHiddenByRule) return { ...a, isHidden: true };
                     } else {
                       // Conteúdo nativo é liberado se o módulo está liberado pelo fluxo de pagamentos
                       lockedByProfessor = !isReleased;

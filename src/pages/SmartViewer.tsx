@@ -15,13 +15,15 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-// Configurando o worker do PDF.js (v4.4.168+ requer .mjs para garantir que lições carreguem corretamente)
-pdfjs.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.mjs';
+// Configurando o worker do PDF.js (v4.4.168+ para react-pdf 10.x)
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const SmartViewer = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    console.log('[SmartViewer] Abrindo conteúdo com ID:', id);
   
   // 1. Hooks de Estado
   const [data, setData] = useState<any>(null);
@@ -336,12 +338,24 @@ const SmartViewer = () => {
                   {viewType === 'scroll' ? (
                     Array.from(new Array(numPages || 0), (_, index) => (
                       <div key={`page_${index + 1}`} className="pdf-page-shadow" style={{ minHeight: pageWidth * 1.3 }}>
-                        <Page pageNumber={index + 1} width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} renderTextLayer={true} renderAnnotationLayer={false} loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>} />
+                        <Page 
+                          pageNumber={index + 1} 
+                          width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
+                          renderTextLayer={false} 
+                          renderAnnotationLayer={false} 
+                          loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>} 
+                        />
                       </div>
                     ))
                   ) : (
                     <div className="pdf-page-shadow" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} style={{ cursor: viewType === 'single' ? 'grab' : 'default' }}>
-                      <Page pageNumber={pageNumber} width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} renderTextLayer={true} renderAnnotationLayer={false} loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>} />
+                      <Page 
+                        pageNumber={pageNumber} 
+                        width={isAnyFullscreen ? Math.min(window.innerWidth * 0.95, 1200) : pageWidth} 
+                        renderTextLayer={false} 
+                        renderAnnotationLayer={false} 
+                        loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}></div>} 
+                      />
                     </div>
                   )}
                 </div>

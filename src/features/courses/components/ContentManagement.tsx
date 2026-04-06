@@ -314,7 +314,20 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
                 Ordem: {lesson.ordem} • {lesson.children?.[0]?.count || 0} Itens de Conteúdo
               </p>
-              <button className="btn btn-primary" onClick={() => { setSelectedLesson(lesson); fetchLessonItems(lesson.id); }}>Ver Conteúdo</button>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => { setSelectedLesson(lesson); fetchLessonItems(lesson.id); }}>Ver Conteúdo</button>
+                {canEdit && (
+                  <label className="btn btn-outline" style={{ width: 'auto', cursor: 'pointer', padding: '0.85rem' }} title={lesson.arquivo_url ? 'Alterar PDF anexado' : 'Anexar novo PDF'}>
+                    {uploading === lesson.id ? <Loader2 size={18} className="spinner" /> : <Upload size={18} />}
+                    <input type="file" hidden accept=".pdf" onChange={(e) => handleFileUpload(e, 'aulas', lesson.id, 'arquivo_url')} />
+                  </label>
+                )}
+                {canEdit && lesson.arquivo_url && (
+                  <button className="btn btn-outline" style={{ width: 'auto', padding: '0.85rem', color: 'var(--error)' }} title="Remover PDF" onClick={() => handleRemoveFile('aulas', lesson.id, 'arquivo_url')}>
+                    <Trash2 size={18} />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
           {lessons.length === 0 && <p style={{ textAlign: 'center', gridColumn: '1/-1', color: 'var(--text-muted)' }}>Nenhuma lição cadastrada para este livro.</p>}

@@ -9,7 +9,16 @@ export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucl
 
 export const useAdminManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
-  const [activeTab, setActiveTab] = useState<Tab>('home')
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const saved = localStorage.getItem('fatesa_admin_activeTab') as Tab;
+    return (saved && ['home', 'users', 'alumni', 'content', 'validation', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports'].includes(saved)) 
+      ? saved 
+      : 'home';
+  })
+
+  useEffect(() => {
+    localStorage.setItem('fatesa_admin_activeTab', activeTab);
+  }, [activeTab]);
   const [userRole, setUserRole] = useState<string | null>(null)
   const [users, setUsers] = useState<any[]>([])
   const [courses, setCourses] = useState<any[]>([])

@@ -125,39 +125,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                   </div>
                 </div>
 
-                <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.02)', flexGrow: 1 }}>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>Ativar para Núcleo:</p>
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                      {professorNucleos.map(n => {
-                        const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo');
-                        return (
-                          <div key={n.id} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(0,0,0,0.2)', padding: '0.25rem 0.25rem 0.25rem 0.75rem', borderRadius: '8px', border: `1px solid ${isReleased ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255,255,255,0.1)'}` }}>
-                            <span style={{ fontSize: '0.7rem', fontWeight: 600, color: isReleased ? '#fff' : 'rgba(255,255,255,0.5)' }}>{n.nome}</span>
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }}
-                              style={{ 
-                                fontSize: '0.6rem', 
-                                padding: '4px 8px', 
-                                borderRadius: '6px',
-                                background: isReleased ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                                border: `1px solid ${isReleased ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`,
-                                color: isReleased ? 'var(--error)' : 'var(--success)',
-                                cursor: 'pointer',
-                                fontWeight: 700,
-                                textTransform: 'uppercase'
-                              }}
-                              title={isReleased ? 'Desativar Módulo' : 'Ativar Módulo'}
-                            >
-                              {isReleased ? 'Desativar' : 'Ativar'}
-                            </button>
-                          </div>
-                        )
-                      })}
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => selectBookAndShowLessons(book)}>Aulas</button>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                  <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => selectBookAndShowLessons(book)}>Gerenciar Aulas</button>
                   <Link 
                     className="btn btn-outline" 
                     style={{ width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
@@ -193,7 +162,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               {(() => {
                 const isExam = lesson.tipo === 'prova' || !!lesson.is_bloco_final;
                 const isAutoExam = isExam && (lesson.titulo?.toUpperCase().includes('V2') || lesson.titulo?.toUpperCase().includes('V3'));
-                const itemType = isExam ? 'atividade' : (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') ? 'video' : null;
+                const itemType = isExam ? 'atividade' : (lesson.tipo === 'gravada') ? 'video' : null;
 
                 if (!itemType || isAutoExam) return null;
 

@@ -8,11 +8,11 @@ import { useProfessorCourses } from '../features/courses/hooks/useProfessorCours
 import { useProfessorStudents } from '../features/users/hooks/useProfessorStudents'
 import { useProfessorGrading } from '../features/courses/hooks/useProfessorGrading'
 
-export type Tab = 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais' | 'attendance' | 'forum'
+export type Tab = 'home' | 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais' | 'attendance' | 'forum'
 
 export const useProfessorManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
-  const [activeTab, setActiveTab] = useState<Tab>('nucleos')
+  const [activeTab, setActiveTab] = useState<Tab>('home')
   const [loading, setLoading] = useState(true)
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
   const [availableRoles, setAvailableRoles] = useState<string[]>([])

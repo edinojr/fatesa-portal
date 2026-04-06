@@ -21,10 +21,15 @@ export default function StudentsManagement({
   handleApproveAccess, handleRejectAccess, handleDeleteUser,
   handleResetActivities, handleUpdateUserNucleo, userRole, allNucleos = []
 }: StudentsManagementProps) {
-  const filteredStudents = allStudents.filter(s => 
-    s.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    s.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredStudents = allStudents.filter(s => {
+    // Excluir professores da gestão de alunos, exceto o Edino Junior
+    const isProfessor = s.tipo === 'professor';
+    const isEdino = s.nome?.toLowerCase().includes('edino junior');
+    if (isProfessor && !isEdino) return false;
+
+    return s.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
+           s.email.toLowerCase().includes(searchTerm.toLowerCase())
+  })
 
   const groupedStudents = filteredStudents.reduce((acc: any, student: any) => {
     const nucName = student.nucleos?.nome || 'Sem Núcleo Definido';

@@ -28,6 +28,7 @@ export interface Book {
 export interface Course {
   id: string
   nome: string
+  nivel?: 'basico' | 'medio'
   livros: Book[]
 }
 

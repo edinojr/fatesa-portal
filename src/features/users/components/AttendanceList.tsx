@@ -24,8 +24,21 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
 
-  // Filter students by selected nucleo
-  const filteredStudents = allStudents.filter(s => s.nucleo_id === selectedNucleo || (s as any).nucleos?.id === selectedNucleo)
+  const [isReadOnly, setIsReadOnly] = useState(false)
+
+  // Filter students by selected nucleo, excluding professors except for Edino Junior
+  const filteredStudents = allStudents.filter(s => {
+    const isInNucleo = s.nucleo_id === selectedNucleo || (s as any).nucleos?.id === selectedNucleo;
+    if (!isInNucleo) return false;
+
+    // Excluir professores da lista de chamada, exceto o Edino Junior
+    const isProfessor = s.tipo === 'professor';
+    const isEdino = s.nome?.toLowerCase().includes('edino junior');
+
+    if (isProfessor && !isEdino) return false;
+    
+    return true;
+  })
 
   useEffect(() => {
     // If we have history for this date and nucleo, load it
@@ -36,22 +49,24 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
       dateHistory.forEach(h => {
         newAttendance[h.aluno_id] = h.status
       })
-      setIsShared(dateHistory[0].compartilhado)
+      setIsReadOnly(true)
     } else {
       // Default to P (Present) for everyone
       filteredStudents.forEach(s => {
         newAttendance[s.id] = 'P'
       })
-      setIsShared(false)
+      setIsReadOnly(false)
     }
     setCurrentAttendance(newAttendance)
   }, [selectedDate, selectedNucleo, history, allStudents])
 
   const handleStatusChange = (studentId: string, status: 'P' | 'F') => {
+    if (isReadOnly) return;
     setCurrentAttendance(prev => ({ ...prev, [studentId]: status }))
   }
 
   const handleSave = async () => {
+    if (isReadOnly) return;
     setSaving(true)
     setMessage(null)
     
@@ -61,12 +76,13 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
       nucleo_id: selectedNucleo,
       data: selectedDate,
       status: currentAttendance[s.id] || 'F',
-      compartilhado: isShared
+      compartilhado: true // Padrão nativo
     }))
 
     const result = await onSave(records)
     if (result.success) {
-      setMessage({ text: 'Lista de presença salva com sucesso!', type: 'success' })
+      setMessage({ text: 'Lista de presença salva e compartilhada com a administração!', type: 'success' })
+      setIsReadOnly(true)
     } else {
       setMessage({ text: 'Erro ao salvar: ' + result.error, type: 'error' })
     }
@@ -103,26 +119,20 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', height: '45px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem', userSelect: 'none' }}>
-            <input 
-              type="checkbox" 
-              checked={isShared} 
-              onChange={(e) => setIsShared(e.target.checked)}
-              style={{ width: '18px', height: '18px' }}
-            />
-            Compartilhar com Administração
-          </label>
-        </div>
-
-        <button 
-          className="btn btn-primary" 
-          onClick={handleSave} 
-          disabled={saving || !selectedNucleo}
-          style={{ height: '45px', minWidth: '160px' }}
-        >
-          {saving ? <Loader2 className="spinner" size={18} /> : <><Save size={18} /> Salvar Lista</>}
-        </button>
+        {isReadOnly ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', height: '45px', padding: '0 1rem', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', borderRadius: '10px', fontWeight: 600 }}>
+            <Check size={18} /> Lista já enviada (Bloqueada)
+          </div>
+        ) : (
+          <button 
+            className="btn btn-primary" 
+            onClick={handleSave} 
+            disabled={saving || !selectedNucleo}
+            style={{ height: '45px', minWidth: '160px' }}
+          >
+            {saving ? <Loader2 className="spinner" size={18} /> : <><Save size={18} /> Salvar Lista</>}
+          </button>
+        )}
       </div>
 
       {message && (
