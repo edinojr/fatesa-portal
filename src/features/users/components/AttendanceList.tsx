@@ -26,9 +26,8 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
 
   const [isReadOnly, setIsReadOnly] = useState(false)
 
-  // Filter students by selected nucleo, excluding professors except for Edino Junior
   const filteredStudents = allStudents.filter(s => {
-    const isInNucleo = s.nucleo_id === selectedNucleo || (s as any).nucleos?.id === selectedNucleo;
+    const isInNucleo = s.nucleo_id === selectedNucleo || s.nucleos?.id === selectedNucleo;
     if (!isInNucleo) return false;
 
     // Excluir professores da lista de chamada, exceto o Edino Junior
