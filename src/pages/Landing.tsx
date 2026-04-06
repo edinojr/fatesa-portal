@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ChevronRight, LogIn, Info, BookOpen, UserCheck, GraduationCap, ArrowRight, Mail } from 'lucide-react'
+import { ChevronRight, LogIn, Info, BookOpen, UserCheck, GraduationCap, ArrowRight, Mail, ClipboardSignature } from 'lucide-react'
+import toast, { Toaster } from 'react-hot-toast'
 import Navbar from '../components/common/Navbar'
 import Footer from '../components/common/Footer'
 
@@ -9,6 +10,7 @@ const Landing = () => {
 
     return (
     <div className="landing-container">
+      <Toaster position="top-center" />
       {/* Top Subjects Banner */}
       <div className="top-subjects-banner">
         <div className="banner-overlay"></div>
@@ -100,6 +102,17 @@ const Landing = () => {
             <ArrowRight className="card-arrow" />
           </Link>
 
+          <Link to="/matricula" className="nav-card-premium" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.05))', border: '1px solid rgba(255, 193, 7, 0.2)' }}>
+            <div className="icon-badge-premium" style={{ background: '#ffc107', color: '#000' }}>
+              <ClipboardSignature size={24} />
+            </div>
+            <div className="nav-card-content">
+              <h3>Matrícula</h3>
+              <p>Inicie sua jornada hoje.</p>
+            </div>
+            <ArrowRight className="card-arrow" />
+          </Link>
+
           <Link to="/login" className="nav-card-premium active" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(156, 39, 176, 0.05))', border: '1px solid rgba(156, 39, 176, 0.2)' }}>
             <div className="icon-badge-premium" style={{ background: 'var(--primary)', color: '#fff' }}>
               <LogIn size={24} />
@@ -120,12 +133,12 @@ const Landing = () => {
           <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontSize: '0.9rem' }}>Leve a Fatesa com você. Estude de qualquer lugar.</p>
           
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/app-mobile" className="app-store-btn">
+            <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
               <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" style={{ height: '40px' }} />
-            </Link>
-            <Link to="/app-mobile" className="app-store-btn">
+            </button>
+            <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
               <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style={{ height: '40px' }} />
-            </Link>
+            </button>
           </div>
         </div>
       </section>
