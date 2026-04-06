@@ -130,16 +130,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Prepare Section (CTA) */}
-      <section className="cta-section" style={{ padding: '4rem 2rem' }}>
-        <div className="cta-content">
-          <h2>Pronto para começar?</h2>
-          <Link to="/matricula" className="btn btn-primary btn-lg" style={{ borderRadius: '50px', padding: '1rem 3rem', marginTop: '1rem' }}>
-            INICIAR MATRÍCULA
-          </Link>
-        </div>
-      </section>
-
       <Footer />
     </div>
   )
