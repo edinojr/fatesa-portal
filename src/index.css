@@ -2860,3 +2860,60 @@ select.form-control option {
     padding: 0.75rem;
   }
 }
+
+/* --- VIEWER & LESSON RESPONSIVE FOOTERS --- */
+.viewer-footer-responsive {
+  background: #0f0f0f;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 1rem 2rem;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  transition: all 0.3s ease;
+}
+
+.lesson-footer-responsive {
+  margin-top: 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .viewer-footer-responsive {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .viewer-footer-responsive > div {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .viewer-footer-responsive .btn {
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.75rem !important;
+    min-height: 32px;
+  }
+
+  .lesson-footer-responsive {
+    margin-top: 2rem;
+    padding: 1.5rem 0.5rem;
+    gap: 0.75rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lesson-footer-responsive .btn {
+    width: 100% !important;
+    max-width: 280px;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.85rem !important;
+  }
+}

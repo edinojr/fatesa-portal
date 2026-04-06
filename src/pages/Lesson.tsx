@@ -777,7 +777,7 @@ const Lesson = () => {
         </button>
       </div>
 
-      <div style={{ marginTop: '4rem', padding: '2rem 0', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'center', gap: '2rem' }}>
+      <div className="lesson-footer-responsive">
         <button onClick={() => navigate(-1)} className="btn btn-outline" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Voltar">
           <ChevronLeft size={24} style={{marginRight:'0.5rem'}}/> Aula Anterior
         </button>

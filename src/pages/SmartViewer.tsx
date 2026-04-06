@@ -367,32 +367,32 @@ const SmartViewer = () => {
         </div>
       </div>
 
-      <footer style={{ background: '#0f0f0f', borderTop: '1px solid rgba(255,255,255,0.1)', padding: '1rem 2rem', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '3rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={handlePagePrev} disabled={pageNumber <= 1} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px', opacity: pageNumber <= 1 ? 0.3 : 1 }}>
-            <ChevronLeft size={20} style={{ marginRight: '0.5rem' }} /> Anterior
+      <footer className="viewer-footer-responsive">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button onClick={handlePagePrev} disabled={pageNumber <= 1} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', width: 'auto', padding: '0.5rem 1.25rem', borderRadius: '50px', opacity: pageNumber <= 1 ? 0.3 : 1 }}>
+            <ChevronLeft size={18} /> <span className="mobile-hide">Anterior</span>
           </button>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', padding: '0.2rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Pág</span>
-            <input type="number" value={inputPage} onChange={(e) => handlePageInput(e.target.value)} min={1} max={numPages} style={{ background: 'transparent', border: 'none', color: '#fff', width: '40px', textAlign: 'center', fontSize: '1rem', fontWeight: 700, outline: 'none' }} />
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>/ {numPages}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', padding: '0.2rem 0.6rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Pág</span>
+            <input type="number" value={inputPage} onChange={(e) => handlePageInput(e.target.value)} min={1} max={numPages} style={{ background: 'transparent', border: 'none', color: '#fff', width: '35px', textAlign: 'center', fontSize: '0.9rem', fontWeight: 700, outline: 'none' }} />
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>/ {numPages}</span>
           </div>
 
-          <button onClick={handlePageNext} disabled={pageNumber >= numPages} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px', opacity: pageNumber >= numPages ? 0.3 : 1 }}>
-            Próxima <ChevronRight size={20} style={{ marginLeft: '0.5rem' }} />
+          <button onClick={handlePageNext} disabled={pageNumber >= numPages} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', width: 'auto', padding: '0.5rem 1.25rem', borderRadius: '50px', opacity: pageNumber >= numPages ? 0.3 : 1 }}>
+            <span className="mobile-hide">Próxima</span> <ChevronRight size={18} />
           </button>
         </div>
 
         {(pageNumber >= numPages || viewType === 'scroll') && (
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
             {relatedActivities.length > 0 && (
               <button 
                 onClick={() => navigate(`/lesson/${relatedActivities[0].id}`)} 
                 className="btn btn-primary"
-                style={{ width: 'auto', padding: '0.6rem 2rem', borderRadius: '50px', background: 'var(--success)', border: 'none' }}
+                style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px', background: 'var(--success)', border: 'none' }}
               >
-                Atividade da Lição <ChevronRight size={18} style={{ marginLeft:'0.5rem' }} />
+                <BookOpen size={16} /> Atividade
               </button>
             )}
 
@@ -400,13 +400,13 @@ const SmartViewer = () => {
               <button 
                 onClick={() => { setLoading(true); navigate(`/book/${nextLesson.id}?type=aula`); window.location.reload(); }} 
                 className="btn btn-primary"
-                style={{ width: 'auto', padding: '0.6rem 2.5rem', borderRadius: '50px' }}
+                style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px' }}
               >
-                Próxima Lição: {nextLesson.titulo} <ChevronRight size={20} style={{ marginLeft:'0.5rem' }} />
+                Próxima Lição <ChevronRight size={18} />
               </button>
             ) : (
               <button onClick={() => navigate('/dashboard')} className="btn btn-outline" style={{ border:'none', width: 'auto', borderRadius: '50px' }}>
-                Fim do Material - Voltar ao Painel
+                Voltar ao Painel
               </button>
             )}
           </div>
