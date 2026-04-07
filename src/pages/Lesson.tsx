@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, Video } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
