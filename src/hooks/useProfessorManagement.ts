@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useProfile } from './useProfile'
 
@@ -12,7 +12,17 @@ export type Tab = 'home' | 'nucleos' | 'content' | 'students' | 'grading' | 'avi
 
 export const useProfessorManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
-  const [activeTab, setActiveTab] = useState<Tab>('home')
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const activeTab = useMemo(() => {
+    const tab = searchParams.get('tab') as Tab;
+    const validTabs: Tab[] = ['home', 'nucleos', 'content', 'students', 'grading', 'avisos', 'materiais', 'attendance', 'forum'];
+    return validTabs.includes(tab) ? tab : 'home';
+  }, [searchParams]);
+
+  const setActiveTab = (newTab: Tab) => {
+    setSearchParams({ tab: newTab });
+  };
   const [loading, setLoading] = useState(true)
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
@@ -113,7 +123,7 @@ export const useProfessorManagement = () => {
             tentativas,
             primeira_correcao_at,
             aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
-            users:aluno_id ( id, nome, email )
+            users:aluno_id ( id, nome, email, nucleos ( nome ) )
           `)
           .order('updated_at', { ascending: false })
         if (subData) gradingHook.setSubmissions(subData as any)
@@ -147,7 +157,7 @@ export const useProfessorManagement = () => {
                   aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
                   users:aluno_id ( id, nome, email, nucleos ( nome ) )
                 `)
-                .or(`aluno_id.in.(${studentIds.join(',')}),status.eq.pendente`) // Busca por aluno OU qualquer pendente que o RLS permita
+                .in('aluno_id', studentIds)
                 .order('updated_at', { ascending: false })
               if (subData) gradingHook.setSubmissions(subData as any)
             }

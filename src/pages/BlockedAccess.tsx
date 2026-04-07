@@ -1,43 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useProfile } from '../hooks/useProfile';
 import { getTargetDueDate } from '../lib/paymentCycle';
 import { 
   AlertCircle, 
   CreditCard, 
-  Upload, 
-  CheckCircle2, 
-  Loader2, 
-  LogOut,
+  Check, 
+  Clock, 
+  ShieldAlert, 
+  MessageCircle, 
+  ExternalLink,
   ChevronRight,
-  Info
+  HelpCircle,
+  FileText,
+  Upload,
+  Loader2
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const BlockedAccess: React.FC = () => {
-  const { profile, signOut } = useProfile();
+  const { profile, loading, refreshProfile } = useProfile();
+  const [notifying, setNotifying] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [pixKey, setPixKey] = useState<string>('');
-  const [pixQrUrl, setPixQrUrl] = useState<string>('');
-  const [loadingConfig, setLoadingConfig] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchConfig();
-  }, []);
+    if (!loading && profile && !profile.status_bloqueio) {
+      navigate('/dashboard');
+    }
+  }, [profile, loading, navigate]);
 
-  const fetchConfig = async () => {
+  const handleNotifyPayment = async () => {
+    if (!profile) return;
+    setNotifying(true);
     try {
-      const { data } = await supabase.from('configuracoes').select('chave, valor');
-      if (data) {
-        data.forEach(item => {
-          if (item.chave === 'pix_key') setPixKey(item.valor);
-          if (item.chave === 'pix_qr_url') setPixQrUrl(item.valor);
-        });
-      }
-    } catch (err) {
-      console.error('Error fetching config:', err);
+      const targetDueDate = getTargetDueDate();
+      const { error: dbError } = await supabase.from('pagamentos').insert({
+        user_id: profile.id,
+        valor: 0,
+        status: 'pago', 
+        data_vencimento: targetDueDate,
+        descricao: 'Aviso de Pagamento via Central de Bloqueio',
+        data_pagamento: new Date().toISOString().split('T')[0]
+      });
+
+      if (dbError) throw dbError;
+      setSuccess(true);
+    } catch (err: any) {
+      alert('Erro ao notificar: ' + err.message);
     } finally {
-      setLoadingConfig(false);
+      setNotifying(false);
     }
   };
 
@@ -47,180 +61,228 @@ const BlockedAccess: React.FC = () => {
 
     setUploading(true);
     try {
-      const fileName = `${Date.now()}_${file.name.replace(/[^\w.-]/g, '_')}`;
-      const filePath = `${profile.id}/${fileName}`;
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${profile.id}_blocked_${Date.now()}.${fileExt}`;
+      const filePath = `comprovantes/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage.from('comprovantes').upload(filePath, file);
+      const { error: uploadError } = await supabase.storage
+        .from('comprovantes')
+        .upload(filePath, file);
+
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage.from('comprovantes').getPublicUrl(filePath);
 
       const targetDueDate = getTargetDueDate();
-
       const { error: dbError } = await supabase.from('pagamentos').insert({
         user_id: profile.id,
         valor: 0,
-        status: 'pago', // 'pago' aqui significa "enviado para validação"
+        status: 'pago',
         comprovante_url: publicUrl,
         data_vencimento: targetDueDate,
-        descricao: 'Comprovante enviado via Central de Bloqueio'
+        descricao: 'Aviso de Pagamento com Comprovante (via Bloqueio)',
+        data_pagamento: new Date().toISOString().split('T')[0]
       });
 
       if (dbError) throw dbError;
-
       setSuccess(true);
     } catch (err: any) {
-      alert('Falha no upload: ' + err.message);
+      alert('Erro no upload: ' + err.message);
     } finally {
       setUploading(false);
     }
   };
 
-  const currentMonth = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  if (loading) return null;
 
   return (
-    <div className="auth-container" style={{ minHeight: '100vh', padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
-      <div className="auth-card" style={{ maxWidth: '600px', width: '100%', border: '1px solid rgba(255, 71, 87, 0.2)' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'radial-gradient(circle at top right, #0f172a, #020617)', 
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      fontFamily: "'Inter', sans-serif"
+    }}>
+      <div style={{ maxWidth: '800px', width: '100%', animation: 'fadeIn 0.6s ease-out' }}>
+        
+        {/* Header Section */}
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <div style={{ 
             width: '80px', 
             height: '80px', 
-            borderRadius: '50%', 
-            background: 'rgba(255, 71, 87, 0.1)', 
+            background: 'rgba(244, 63, 94, 0.1)', 
+            borderRadius: '24px', 
             display: 'flex', 
             alignItems: 'center', 
-            justifyContent: 'center', 
+            justifyContent: 'center',
             margin: '0 auto 1.5rem',
-            border: '2px solid rgba(255, 71, 87, 0.3)',
-            animation: 'pulse 2s infinite'
+            border: '1px solid rgba(244, 63, 94, 0.2)',
+            boxShadow: '0 10px 30px rgba(244, 63, 94, 0.1)'
           }}>
-            <AlertCircle size={40} color="#ff4757" />
+            <ShieldAlert size={40} color="#f43f5e" />
           </div>
-          <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem', color: '#fff' }}>Acesso Suspenso</h1>
-          <p style={{ color: 'var(--text-muted)' }}>
-            Não identificamos o pagamento referente ao ciclo de <strong>{currentMonth}</strong>.
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem', letterSpacing: '-1px' }}>Acesso Suspenso</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '500px', margin: '0 auto' }}>
+            Identificamos uma pendência financeira que restringe seu acesso aos conteúdos acadêmicos.
           </p>
         </div>
 
         {success ? (
           <div style={{ 
-            background: 'rgba(46, 213, 115, 0.1)', 
-            padding: '2rem', 
-            borderRadius: '12px', 
+            background: 'var(--glass)', 
+            padding: '3rem', 
+            borderRadius: '32px', 
+            border: '1px solid var(--success)', 
             textAlign: 'center',
-            border: '1px solid rgba(46, 213, 115, 0.2)'
+            animation: 'scaleIn 0.4s ease-out'
           }}>
-            <CheckCircle2 size={48} color="#2ed573" style={{ marginBottom: '1rem' }} />
-            <h3 style={{ color: '#fff', marginBottom: '0.5rem' }}>Recebemos seu comprovante!</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              Nossa equipe administrativa validará seu pagamento em breve para liberar seu acesso.
+            <div style={{ 
+              width: '64px', 
+              height: '64px', 
+              background: 'rgba(16, 185, 129, 0.1)', 
+              borderRadius: '50%', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem'
+            }}>
+              <Check size={32} color="var(--success)" />
+            </div>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '1rem' }}>Comprovante Enviado!</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.6 }}>
+              Recebemos sua notificação. Nosso departamento financeiro analisará o comprovante em até 24h úteis para liberar seu acesso.
             </p>
-            <button className="btn btn-primary" style={{ marginTop: '1.5rem', width: 'auto' }} onClick={() => window.location.reload()}>
-              Entendi
+            <button 
+              onClick={() => window.location.reload()}
+              className="btn btn-primary"
+              style={{ padding: '1rem 2.5rem' }}
+            >
+              Entendi, obrigado!
             </button>
           </div>
         ) : (
-          <>
-            <div style={{ 
-              background: 'rgba(255,255,255,0.03)', 
-              borderRadius: '12px', 
-              padding: '1.5rem', 
-              marginBottom: '2rem',
-              border: '1px solid rgba(255,255,255,0.05)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', color: 'var(--primary)' }}>
-                <CreditCard size={20} />
-                <span style={{ fontWeight: 600 }}>Dados para Pagamento (PIX)</span>
-              </div>
-              
-              {loadingConfig ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}><Loader2 className="spinner" /></div>
-              ) : (
-                <div style={{ textAlign: 'center' }}>
-                  {pixQrUrl && (
-                    <img src={pixQrUrl} alt="QR Code PIX" style={{ width: '180px', height: '180px', borderRadius: '8px', marginBottom: '1rem', background: '#fff', padding: '10px' }} />
-                  )}
-                  {pixKey && (
-                    <div style={{ 
-                      background: 'rgba(0,0,0,0.3)', 
-                      padding: '0.75rem', 
-                      borderRadius: '8px', 
-                      fontSize: '0.9rem',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.5rem'
-                    }}>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Chave PIX:</span>
-                      <code style={{ color: 'var(--primary)', fontWeight: 700, wordBreak: 'break-all' }}>{pixKey}</code>
-                    </div>
-                  )}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            
+            {/* Left Col: Actions */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ background: 'var(--glass)', padding: '2rem', borderRadius: '28px', border: '1px solid var(--glass-border)' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <ExternalLink size={20} color="var(--primary)" /> Regularizar Agora
+                </h3>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <button 
+                      onClick={() => navigate('/dashboard')}
+                      className="btn btn-primary"
+                      style={{ width: '100%', justifyContent: 'space-between', padding: '1.25rem' }}
+                    >
+                      <span>Ir para Área Financeira</span>
+                      <ChevronRight size={18} />
+                    </button>
+
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      style={{ display: 'none' }} 
+                      accept="image/*,application/pdf"
+                      onChange={handleFileUpload}
+                    />
+
+                    <button 
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading || notifying}
+                      className="btn btn-primary" 
+                      style={{ 
+                        width: '100%', 
+                        padding: '1.25rem',
+                        fontWeight: 800,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.75rem',
+                        boxShadow: '0 10px 20px rgba(var(--primary-rgb), 0.2)'
+                      }}
+                    >
+                      {uploading ? <Loader2 className="spinner" size={20} /> : <Upload size={20} />}
+                      {uploading ? 'Enviando Arquivo...' : 'Anexar Comprovante agora'}
+                    </button>
                 </div>
-              )}
+              </div>
+
+              <div style={{ background: 'rgba(59, 130, 246, 0.05)', padding: '1.5rem', borderRadius: '24px', border: '1px solid rgba(59, 130, 246, 0.2)', display: 'flex', gap: '1rem' }}>
+                <HelpCircle size={24} color="#3b82f6" style={{ flexShrink: 0 }} />
+                <p style={{ fontSize: '0.85rem', lineHeight: 1.5, color: '#94a3b8' }}>
+                  Dúvidas sobre sua mensalidade? Entre em contato com nosso suporte financeiro via WhatsApp.
+                </p>
+              </div>
             </div>
 
-            <div style={{ marginBottom: '2rem' }}>
-              <label className="btn btn-primary" style={{ width: '100%', cursor: 'pointer', height: 'auto', padding: '1rem' }}>
-                {uploading ? (
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                    <Loader2 className="spinner" size={20} /> Enviando...
-                  </span>
-                ) : (
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                    <Upload size={20} /> Já paguei! Enviar Comprovante
-                  </span>
-                )}
-                <input type="file" accept="image/*,.pdf" style={{ display: 'none' }} onChange={handleFileUpload} disabled={uploading} />
-              </label>
+            {/* Right Col: Info */}
+            <div style={{ background: 'var(--glass)', padding: '2.5rem', borderRadius: '28px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                  <div style={{ width: '32px', height: '32px', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
+                    <FileText size={18} color="var(--primary)" />
+                  </div>
+                  <h4 style={{ fontWeight: 700, margin: 0 }}>Política de Acesso</h4>
+                </div>
+                <ul style={{ padding: 0, margin: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <li style={{ display: 'flex', gap: '0.75rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+                    <div style={{ width: '6px', height: '6px', background: 'var(--primary)', borderRadius: '50%', marginTop: '0.5rem', flexShrink: 0 }}></div>
+                    O vencimento das mensalidades ocorre todo dia 10.
+                  </li>
+                  <li style={{ display: 'flex', gap: '0.75rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+                    <div style={{ width: '6px', height: '6px', background: 'var(--primary)', borderRadius: '50%', marginTop: '0.5rem', flexShrink: 0 }}></div>
+                    O bloqueio automático é ativado após o dia 12.
+                  </li>
+                  <li style={{ display: 'flex', gap: '0.75rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+                    <div style={{ width: '6px', height: '6px', background: 'var(--primary)', borderRadius: '50%', marginTop: '0.5rem', flexShrink: 0 }}></div>
+                    Pagamentos via boleto podem levar até 72h para compensar. Use o envio de comprovante para agilizar.
+                  </li>
+                </ul>
+              </div>
+
+              <a 
+                href="https://wa.me/5516999999999" 
+                target="_blank" 
+                rel="noreferrer"
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '1rem', 
+                  padding: '1.25rem', 
+                  background: 'rgba(34, 197, 94, 0.1)', 
+                  borderRadius: '20px', 
+                  color: '#22c55e',
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                  border: '1px solid rgba(34, 197, 94, 0.2)',
+                  transition: 'transform 0.2s'
+                }}
+              >
+                <MessageCircle size={24} />
+                Falar com Financeiro
+              </a>
             </div>
-          </>
+
+          </div>
         )}
 
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'flex-start', 
-          gap: '0.75rem', 
-          background: 'rgba(255,165,0,0.05)', 
-          padding: '1rem', 
-          borderRadius: '8px',
-          marginBottom: '1.5rem',
-          border: '1px solid rgba(255,165,0,0.1)'
-        }}>
-          <Info size={18} color="#ffa500" style={{ flexShrink: 0, marginTop: '2px' }} />
-          <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
-            O prazo para envio do comprovante é até o dia <strong>12 de cada mês</strong>. 
-            Após essa data, o acesso é suspenso preventivamente até a confirmação bancária.
-          </p>
-        </div>
+        {/* Footer */}
+        <p style={{ textAlign: 'center', marginTop: '4rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.2)' }}>
+          © 2026 Fatesa - Faculdade de Teologia de Santo André. Todos os direitos reservados.
+        </p>
 
-        <button 
-          onClick={signOut}
-          style={{ 
-            width: '100%', 
-            background: 'none', 
-            border: 'none', 
-            color: 'var(--text-muted)', 
-            fontSize: '0.9rem', 
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            padding: '1rem',
-            transition: 'color 0.2s'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.color = '#fff'}
-          onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
-        >
-          <LogOut size={16} /> Sair do Portal
-        </button>
       </div>
 
       <style>{`
-        @keyframes pulse {
-          0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); }
-          70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
     </div>
   );

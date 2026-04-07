@@ -55,7 +55,7 @@ export const useProfile = () => {
         throw error;
       }
       
-      const accessStatus = checkAccessStatus(data, data?.pagamentos || []);
+      const accessStatus = checkAccessStatus(data);
       // Map Joined Name to the profile.nucleo field for UI compatibility
       const refreshedNucleo = (data as any).nucleos?.nome || data.nucleo;
       setProfile({ ...data, nucleo: refreshedNucleo, email: session.user.email, accessStatus });

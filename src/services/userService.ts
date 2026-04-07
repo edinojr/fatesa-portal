@@ -77,7 +77,12 @@ export const userService = {
 
     // 2. Cria o usuário usando cliente temporário
     const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+      auth: { 
+        persistSession: false, 
+        autoRefreshToken: false, 
+        detectSessionInUrl: false,
+        storageKey: 'fatesa-temp-auth'
+      }
     });
 
     const { data, error } = await tempClient.auth.signUp({

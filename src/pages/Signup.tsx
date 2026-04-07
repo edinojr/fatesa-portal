@@ -169,7 +169,11 @@ const Signup = () => {
       }
 
     } catch (err: any) {
-      setError(err.message)
+      if (err.status === 422 || err.message?.includes('already registered')) {
+        setError('Este e-mail já está ativado no portal. Tente fazer login ou recuperar sua senha.')
+      } else {
+        setError(err.message)
+      }
     } finally {
       setLoading(false)
     }

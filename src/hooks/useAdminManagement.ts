@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { createClient } from '@supabase/supabase-js'
 import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 import { useProfile } from './useProfile'
@@ -9,16 +9,17 @@ export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucl
 
 export const useAdminManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
-  const [activeTab, setActiveTab] = useState<Tab>(() => {
-    const saved = localStorage.getItem('fatesa_admin_activeTab') as Tab;
-    return (saved && ['home', 'users', 'alumni', 'content', 'validation', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports'].includes(saved)) 
-      ? saved 
-      : 'home';
-  })
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const activeTab = useMemo(() => {
+    const tab = searchParams.get('tab') as Tab;
+    const validTabs: Tab[] = ['home', 'users', 'alumni', 'content', 'validation', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports'];
+    return validTabs.includes(tab) ? tab : 'home';
+  }, [searchParams]);
 
-  useEffect(() => {
-    localStorage.setItem('fatesa_admin_activeTab', activeTab);
-  }, [activeTab]);
+  const setActiveTab = (newTab: Tab) => {
+    setSearchParams({ tab: newTab });
+  };
   const [userRole, setUserRole] = useState<string | null>(null)
   const [users, setUsers] = useState<any[]>([])
   const [courses, setCourses] = useState<any[]>([])
@@ -252,7 +253,7 @@ export const useAdminManagement = () => {
           supabase.from('users').select('id', { count: 'exact', head: true }),
           supabase.from('cursos').select('id', { count: 'exact', head: true }),
           supabase.from('documentos').select('id', { count: 'exact', head: true }).eq('status', 'pendente'),
-          supabase.from('pagamentos').select('id', { count: 'exact', head: true }).eq('status', 'pago')
+          supabase.from('pagamentos').select('id', { count: 'exact', head: true }).not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)')
         ]);
         
         setUserCount(usersCount.count || 0);
@@ -267,13 +268,9 @@ export const useAdminManagement = () => {
         const { data: usersData } = await supabase.from('users').select('*, nucleos(nome)').order('nome')
         
         // Fetch User IDs with pending payments (receipts waiting validation)
-        const { data: pendingPaysList } = await supabase
-          .from('pagamentos')
-          .select('user_id')
-          .eq('status', 'pago')
-          .not('comprovante_url', 'is', null)
+        const { data: payIds } = await supabase.from('pagamentos').select('user_id').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)')
         
-        const pendingUserIds = new Set(pendingPaysList?.map(p => p.user_id) || [])
+        const pendingUserIds = new Set(payIds?.map(p => p.user_id) || [])
 
         if (usersData) {
           const enrichedUsers = usersData.map(u => ({
@@ -298,11 +295,12 @@ export const useAdminManagement = () => {
         const { data: docs } = await supabase
           .from('documentos')
           .select('*, users(nome, email)')
-          .eq('status', 'pendente')
+          .eq('status', 'pendente');
+
         const { data: pays } = await supabase
           .from('pagamentos')
-          .select('*, users(nome, email)')
-          .eq('status', 'pago') 
+          .select('*, users(nome, email, nucleo_id, nucleos(nome))')
+          .filter('status', 'not.in', '(aprovado,rejeitado,cancelado)');
         
         if (docs) setPendingDocs(docs)
         if (pays) setPendingPays(pays)
@@ -362,13 +360,12 @@ export const useAdminManagement = () => {
           });
         }
       } else if (activeTab === 'reports' && userRole === 'admin') {
-        const { data, error } = await supabase
+        const { data: reportPays, error } = await supabase
           .from('pagamentos')
           .select('id, valor, status, data_vencimento, comprovante_url, feedback, modulo, users(id, nome, email, nucleo, nucleo_id)')
-          .not('comprovante_url', 'is', null)
-          .order('id', { ascending: false });
+          .order('data_vencimento', { ascending: false });
         
-        if (data) setFinanceReport(data);
+        if (reportPays) setFinanceReport(reportPays);
         if (error) throw error;
       }
     } catch (err) {
@@ -415,11 +412,14 @@ export const useAdminManagement = () => {
 
     setActionLoading(id)
     try {
-      const table = target === 'doc' ? 'documentos' : 'pagamentos'
+      const isPay = target === 'pay'
+      const table = isPay ? 'pagamentos' : 'documentos'
+      const finalStatus = status === 'aprovado' ? 'aprovado' : 'rejeitado'
+      
       const { error } = await supabase
         .from(table)
         .update({ 
-          status: status === 'aprovado' ? 'aprovado' : 'rejeitado',
+          status: finalStatus,
           feedback,
           modulo: modulo || null
         })
@@ -428,7 +428,7 @@ export const useAdminManagement = () => {
       if (error) throw error
 
       // Ativação automática do usuário ao aprovar pagamento
-      if (status === 'aprovado' && target === 'pay') {
+      if (status === 'aprovado' && isPay) {
         const { data: payData } = await supabase.from('pagamentos').select('user_id').eq('id', id).single()
         if (payData?.user_id) {
           await supabase.from('users').update({ acesso_definitivo: true }).eq('id', payData.user_id)
@@ -640,7 +640,7 @@ export const useAdminManagement = () => {
         const { error } = await supabase
           .from('pagamentos')
           .update({ 
-            status: 'aprovado',
+            status: 'pago',
             feedback: 'Registrado manualmente pela administração',
             modulo: modulo
           })
@@ -652,7 +652,7 @@ export const useAdminManagement = () => {
         const { error } = await supabase.from('pagamentos').insert({
           user_id: userId,
           valor: 70,
-          status: 'aprovado',
+          status: 'pago',
           data_vencimento: new Date().toISOString().split('T')[0],
           descricao: 'Pagamento Manual (Avulso)',
           feedback: 'Registrado manualmente pela administração',
@@ -686,7 +686,12 @@ export const useAdminManagement = () => {
       }
 
       const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
-        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+        auth: { 
+          persistSession: false, 
+          autoRefreshToken: false, 
+          detectSessionInUrl: false,
+          storageKey: 'fatesa-temp-auth'
+        }
       })
 
       const { error: signUpError } = await tempClient.auth.signUp({
@@ -701,7 +706,12 @@ export const useAdminManagement = () => {
         }
       })
 
-      if (signUpError) throw signUpError
+      if (signUpError) {
+        if (signUpError.status === 422 || signUpError.message?.includes('already registered')) {
+          throw new Error('Este e-mail já possui uma conta no sistema. Use o e-mail como acesso ou solicite recuperação de senha.');
+        }
+        throw signUpError;
+      }
 
       showToast('Professor cadastrado e autorizado com sucesso!')
       setShowAddTeacher(false)
@@ -710,7 +720,7 @@ export const useAdminManagement = () => {
       setNewTeacherPassword('')
       fetchData()
     } catch (err: any) {
-      showToast('Erro ao cadastrar professor: ' + err.message, 'error')
+      showToast(err.message, 'error')
     } finally {
       setActionLoading(null)
     }
@@ -743,7 +753,8 @@ export const useAdminManagement = () => {
         auth: {
           persistSession: false,
           autoRefreshToken: false,
-          detectSessionInUrl: false
+          detectSessionInUrl: false,
+          storageKey: 'fatesa-temp-auth'
         }
       })
 
@@ -760,13 +771,18 @@ export const useAdminManagement = () => {
         }
       })
 
-      if (signUpError) throw signUpError
+      if (signUpError) {
+        if (signUpError.status === 422 || signUpError.message?.includes('already registered')) {
+          throw new Error('Este e-mail já possui uma conta no sistema. Use o e-mail como acesso ou solicite recuperação de senha.');
+        }
+        throw signUpError;
+      }
 
       showToast('Administrador cadastrado com sucesso!')
       setShowAddAdmin(false)
       fetchData()
     } catch (err: any) {
-      showToast('Erro ao cadastrar administrador: ' + err.message, 'error')
+      showToast(err.message, 'error')
     } finally {
       setActionLoading(null)
     }

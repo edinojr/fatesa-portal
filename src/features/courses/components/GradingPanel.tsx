@@ -5,6 +5,7 @@ import { Submission } from '../../../types/professor'
 interface GradingPanelProps {
   courses?: any[]
   submissions: Submission[]
+  professorNucleos?: { id: string; nome: string }[]
   selectedSubmission: Submission | null
   setSelectedSubmission: (sub: Submission | null) => void
   handleSelectSubmission: (sub: Submission) => void
@@ -25,6 +26,7 @@ interface GradingPanelProps {
 const GradingPanel: React.FC<GradingPanelProps> = ({
   courses = [],
   submissions,
+  professorNucleos = [],
   selectedSubmission,
   setSelectedSubmission,
   handleSelectSubmission,
@@ -42,31 +44,86 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   handleSaveGrade
 }) => {
   const [showGabaritosModal, setShowGabaritosModal] = React.useState(false);
+  const [selectedNucleoFilter, setSelectedNucleoFilter] = React.useState<string>('todos');
 
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
       {!selectedSubmission ? (
         <div className="data-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}><AlertCircle color="var(--primary)" /> Submissões Pendentes</h3>
+            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}><AlertCircle color="var(--primary)" /> Correção de Provas</h3>
             <button 
               className="btn btn-outline" 
               style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
               onClick={() => setShowGabaritosModal(true)}
             >
-              📖 Ver Gabaritos (Banco de Questões)
+              📖 Ver Gabaritos
             </button>
           </div>
+
+          {/* NUCLEUS FILTER CHIPS — shown only when professor has multiple nucleos */}
+          {professorNucleos.length > 1 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2rem', padding: '1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
+              <div style={{ width: '100%', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <MapPin size={13} /> Filtrar por Núcleo
+              </div>
+              <button
+                onClick={() => setSelectedNucleoFilter('todos')}
+                style={{
+                  padding: '0.4rem 1rem',
+                  borderRadius: '50px',
+                  border: `1px solid ${selectedNucleoFilter === 'todos' ? 'var(--primary)' : 'var(--glass-border)'}`,
+                  background: selectedNucleoFilter === 'todos' ? 'rgba(var(--primary-rgb), 0.15)' : 'transparent',
+                  color: selectedNucleoFilter === 'todos' ? 'var(--primary)' : 'var(--text-muted)',
+                  fontWeight: selectedNucleoFilter === 'todos' ? 800 : 500,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Todos os Núcleos
+              </button>
+              {professorNucleos.map(n => (
+                <button
+                  key={n.id}
+                  onClick={() => setSelectedNucleoFilter(n.nome)}
+                  style={{
+                    padding: '0.4rem 1rem',
+                    borderRadius: '50px',
+                    border: `1px solid ${selectedNucleoFilter === n.nome ? 'var(--primary)' : 'var(--glass-border)'}`,
+                    background: selectedNucleoFilter === n.nome ? 'rgba(var(--primary-rgb), 0.15)' : 'transparent',
+                    color: selectedNucleoFilter === n.nome ? 'var(--primary)' : 'var(--text-muted)',
+                    fontWeight: selectedNucleoFilter === n.nome ? 800 : 500,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {n.nome}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {(() => {
               // Filtrar apenas provas finais pendentes
-              const finalExams = submissions.filter(s => 
+              const allFinalExams = submissions.filter(s => 
                 s.status === 'pendente' && 
                 ((s as any).aulas?.tipo === 'prova' || (s as any).aulas?.is_bloco_final)
               );
 
-              if (finalExams.length === 0) {
+              // Aplicar filtro de núcleo
+              const finalExams = selectedNucleoFilter === 'todos'
+                ? allFinalExams
+                : allFinalExams.filter(s => (s.users as any)?.nucleos?.nome === selectedNucleoFilter);
+
+              if (allFinalExams.length === 0) {
                 return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Você não tem provas finais pendentes de correção no momento.</p>;
+              }
+
+              if (finalExams.length === 0) {
+                return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Nenhuma prova pendente para o núcleo <strong>{selectedNucleoFilter}</strong> no momento.</p>;
               }
 
               // Agrupar por Núcleo
@@ -77,46 +134,101 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 return acc;
               }, {} as Record<string, typeof finalExams>);
 
-              return Object.keys(grouped).sort().map(nuc => (
-                <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem 1rem', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '8px', borderLeft: '4px solid var(--primary)' }}>
-                    <MapPin size={16} className="text-primary" />
-                    <span style={{ fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Polo: {nuc}</span>
-                    <span style={{ marginLeft: 'auto', fontSize: '0.75rem', opacity: 0.6 }}>{grouped[nuc].length} Pendentes</span>
-                  </div>
-                  
-                  {grouped[nuc].map(sub => (
-                    <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div>
-                        <h4 style={{ marginBottom: '0.25rem' }}>{sub.aulas?.titulo || 'Prova Final'}</h4>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                          <Users size={14} />
-                          <strong>{sub.users?.nome}</strong>
-                          <span style={{ opacity: 0.5 }}>• {sub.users?.email}</span>
-                        </div>
-                        <p style={{ fontSize: '0.7rem', opacity: 0.4, marginTop: '0.25rem' }}>Recebido em: {new Date(sub.created_at).toLocaleString()}</p>
+              // Função para gerar uma cor baseada no nome
+              const getNucleoColor = (name: string) => {
+                const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
+                let hash = 0;
+                for (let i = 0; i < name.length; i++) {
+                  hash = name.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                return colors[Math.abs(hash) % colors.length];
+              };
+
+              return Object.keys(grouped).sort().map(nuc => {
+                const color = getNucleoColor(nuc);
+                return (
+                  <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '1rem', 
+                      padding: '0.75rem 1.25rem', 
+                      background: `${color}15`, 
+                      borderRadius: '12px', 
+                      borderLeft: `4px solid ${color}`,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}>
+                      <div style={{ 
+                        width: '32px', 
+                        height: '32px', 
+                        borderRadius: '8px', 
+                        background: color, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        color: '#fff'
+                      }}>
+                        <MapPin size={18} />
                       </div>
-                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                        <button className="btn btn-primary" style={{ width: 'auto', padding: '0.6rem 1.2rem' }} onClick={() => handleSelectSubmission(sub)}>Corrigir Prova</button>
-                        <button 
-                          className="btn btn-outline" 
-                          style={{ width: 'auto', border: 'none', color: 'var(--error)', padding: '0.5rem' }}
-                          onClick={() => handleDeleteSubmission(sub.id)}
-                          disabled={deleting === sub.id}
-                        >
-                          {deleting === sub.id ? <Loader2 className="spinner" size={20} /> : <Trash2 size={20} />}
-                        </button>
+                      <div>
+                        <span style={{ fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color }}>{nuc}</span>
+                        <div style={{ fontSize: '0.7rem', opacity: 0.6, marginTop: '-2px' }}>{grouped[nuc].length} correções pendentes</div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ));
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
+                      {grouped[nuc].map(sub => (
+                        <div key={sub.id} style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'center', 
+                          padding: '1.25rem', 
+                          background: 'rgba(255,255,255,0.02)', 
+                          borderRadius: '16px', 
+                          border: '1px solid rgba(255,255,255,0.05)',
+                          transition: 'transform 0.2s',
+                          cursor: 'default'
+                        }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                              <div style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)' }}>MÓDULO</div>
+                              <h4 style={{ margin: 0, fontSize: '1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.aulas?.titulo || 'Prova Final'}</h4>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                              <Users size={14} color="var(--primary)" />
+                              <strong style={{ color: 'var(--text)' }}>{sub.users?.nome}</strong>
+                            </div>
+                            <p style={{ fontSize: '0.7rem', opacity: 0.4, marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <AlertCircle size={10} /> Submetido em: {new Date(sub.created_at).toLocaleString()}
+                            </p>
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
+                            <button className="btn btn-primary" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }} onClick={() => handleSelectSubmission(sub)}>Corrigir</button>
+                            <button 
+                              className="btn btn-icon" 
+                              style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--error)', width: '38px', height: '38px' }}
+                              onClick={() => handleDeleteSubmission(sub.id)}
+                              disabled={deleting === sub.id}
+                              title="Excluir submissão"
+                            >
+                              {deleting === sub.id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              });
             })()}
           </div>
 
           <h3 style={{ marginTop: '3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><CheckCircle color="var(--success)" /> Últimas Correções</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', opacity: 0.7 }}>
-            {submissions.filter(s => s.status === 'corrigida').slice(0, 10).map(sub => (
+            {submissions.filter(s => 
+              s.status === 'corrigida' &&
+              (selectedNucleoFilter === 'todos' || (s.users as any)?.nucleos?.nome === selectedNucleoFilter)
+            ).slice(0, 10).map(sub => (
               <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
                 <div>
                   <h4 style={{ fontSize: '1rem' }}>{sub.aulas?.titulo}</h4>

@@ -100,7 +100,7 @@ export const financeService = {
   async getFinanceReport() {
     const { data, error } = await supabase
       .from('pagamentos')
-      .select('id, valor, status, data_vencimento, comprovante_url, feedback, users(id, nome, email, nucleo, nucleo_id)')
+      .select('id, valor, status, data_vencimento, comprovante_url, feedback, users(id, nome, email, nucleo_id, nucleos(nome))')
       .not('comprovante_url', 'is', null)
       .order('id', { ascending: false });
     

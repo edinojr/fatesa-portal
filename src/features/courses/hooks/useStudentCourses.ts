@@ -69,8 +69,12 @@ export const useStudentCourses = (profile: any) => {
         releasedCount = Math.max(paidCount + 1, maxExamOrdem + 1);
       }
 
-      // Liberações por Polo: Consultamos tudo o que o RLS permitir este aluno ver
-      const { data: releases, error: relError } = await supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('liberado', true);
+      // Liberações por Polo: Consultamos apenas o que está vinculado ao Polo do aluno
+      const { data: releases, error: relError } = await supabase
+        .from('liberacoes_nucleo')
+        .select('item_id, item_type')
+        .eq('nucleo_id', profile.nucleo_id)
+        .eq('liberado', true);
       
       if (relError) console.error('[Dashboard] Erro ao buscar liberações:', relError);
 
@@ -155,11 +159,8 @@ export const useStudentCourses = (profile: any) => {
                           : releasedAtividades.includes(a.id);
                       }
                       
-                      lockedByProfessor = !isItemReleased;
-                      if (isHiddenByRule) return { ...a, isHidden: true };
-                    } else {
-                      // Conteúdo nativo é liberado se o módulo está liberado pelo fluxo de pagamentos
-                      lockedByProfessor = !isReleased;
+                      // Conteúdo padrão é desbloqueado se o módulo pai estiver liberado
+                      lockedByProfessor = !isReleased && !isItemReleased;
                     }
 
                     return { ...a, lockedByProfessor };

@@ -577,7 +577,13 @@ const Admin = () => {
         )}
 
         {activeTab === 'reports' && (
-          <FinanceReport data={financeReport} searchTerm={searchTerm} />
+          <FinanceReport 
+            data={financeReport} 
+            searchTerm={searchTerm} 
+            handleValidar={handleValidar}
+            handleDeleteValidation={handleDeleteValidation} 
+            actionLoading={actionLoading}
+          />
         )}
 
         {activeTab === 'forum' && (

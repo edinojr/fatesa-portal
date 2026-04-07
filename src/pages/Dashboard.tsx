@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { 
   BookOpen, 
@@ -17,7 +17,7 @@ import {
   ChevronRight,
   LayoutGrid
 } from 'lucide-react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
 
@@ -48,17 +48,17 @@ const Dashboard = () => {
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
   const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
   
-  const [activeTab, setActiveTab] = useState<Tab>(() => {
-    const saved = localStorage.getItem('fatesa_student_activeTab') as Tab;
-    if (saved && ['home', 'cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'forum'].includes(saved)) {
-      return saved;
-    }
-    return 'home';
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const activeTab = useMemo(() => {
+    const tab = searchParams.get('tab') as Tab;
+    const validTabs: Tab[] = ['home', 'cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'forum'];
+    return validTabs.includes(tab) ? tab : 'home';
+  }, [searchParams]);
 
-  useEffect(() => {
-    localStorage.setItem('fatesa_student_activeTab', activeTab);
-  }, [activeTab]);
+  const setActiveTab = (newTab: Tab) => {
+    setSearchParams({ tab: newTab });
+  };
 
   useEffect(() => {
     if (location.state?.activeTab) {
@@ -94,23 +94,83 @@ const Dashboard = () => {
   const isBlocked = profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
 
+  // Exam notification state
+  const [activeExams, setActiveExams] = useState<{ id: string; titulo: string }[]>([]);
+  const [showExamNotice, setShowExamNotice] = useState(false);
+
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
   const fetchNoticeBoard = useCallback(async (nucleoId: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const safeQuery = async (query: PromiseLike<{ data: any; error: any }>) => {
+      try {
+        const { data, error } = await query;
+        // PGRST205 = table not found (404). Ignore silently.
+        if (error && error.code !== 'PGRST205' && !error.message?.includes('404')) {
+          console.warn('[NoticeBoard]', error.message);
+        }
+        return data || [];
+      } catch {
+        return [];
+      }
+    };
+
+    const [a, m, at] = await Promise.all([
+      safeQuery(supabase.from('avisos_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false })),
+      safeQuery(supabase.from('materiais_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false })),
+      safeQuery(supabase.from('item_aula').select('*').eq('nucleo_id', nucleoId).eq('tipo', 'atividade').order('id', { ascending: false }))
+    ]);
+
+    setAvisos(a);
+    setMateriais(m);
+    setPoloAtividades(at);
+  }, []);
+
+  const fetchActiveExams = useCallback(async (nucleoId: string, userId: string) => {
     try {
-      const [{ data: a }, { data: m }, { data: at }] = await Promise.all([
-        supabase.from('avisos_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false }),
-        supabase.from('materiais_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false }),
-        supabase.from('item_aula').select('*').eq('nucleo_id', nucleoId).eq('tipo', 'atividade').order('id', { ascending: false })
-      ]);
-      setAvisos(a || []);
-      setMateriais(m || []);
-      setPoloAtividades(at || []);
+      // Step 1: Buscar IDs liberados para o polo do aluno
+      const { data: releases } = await supabase
+        .from('liberacoes_nucleo')
+        .select('item_id')
+        .eq('nucleo_id', nucleoId)
+        .eq('item_type', 'atividade')
+        .eq('liberado', true);
+
+      if (!releases || releases.length === 0) return;
+
+      const itemIds = releases.map((r: any) => r.item_id);
+
+      // Step 2: Buscar detalhes das aulas liberadas que são do tipo 'prova'
+      const { data: provaAulas } = await supabase
+        .from('aulas')
+        .select('id, titulo, tipo')
+        .in('id', itemIds)
+        .eq('tipo', 'prova');
+
+      if (!provaAulas || provaAulas.length === 0) return;
+
+      const provaIds = provaAulas.map((a: any) => ({ id: a.id, titulo: a.titulo || 'Avaliação' }));
+
+      // Step 3: Verificar quais o aluno já submeteu (qualquer status)
+      const { data: submitted } = await supabase
+        .from('respostas_aulas')
+        .select('aula_id')
+        .eq('aluno_id', userId)
+        .in('aula_id', provaIds.map((p: any) => p.id));
+
+      const submittedIds = new Set((submitted || []).map((s: any) => s.aula_id));
+      const pending = provaIds.filter((p: any) => !submittedIds.has(p.id));
+
+      if (pending.length > 0) {
+        setActiveExams(pending);
+        const dismissed = sessionStorage.getItem('fatesa_exam_notice_dismissed');
+        if (!dismissed) setShowExamNotice(true);
+      }
     } catch (err) {
-      console.error(err);
+      console.error('[ExamNotice]', err);
     }
   }, []);
 
@@ -118,9 +178,12 @@ const Dashboard = () => {
     if (profile) {
       fetchStudentDashboardData();
       fetchPayments();
-      if (profile.nucleo_id) fetchNoticeBoard(profile.nucleo_id);
+      if (profile.nucleo_id) {
+        fetchNoticeBoard(profile.nucleo_id);
+        if (!isStaff) fetchActiveExams(profile.nucleo_id, profile.id);
+      }
     }
-  }, [profile, fetchStudentDashboardData, fetchPayments, fetchNoticeBoard]);
+  }, [profile, fetchStudentDashboardData, fetchPayments, fetchNoticeBoard, fetchActiveExams, isStaff]);
 
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>, 
@@ -136,26 +199,22 @@ const Dashboard = () => {
     
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${profile.id}_${Math.random()}.${fileExt}`;
-      const filePath = `${type === 'pay' ? 'comprovantes' : 'documentos'}/${fileName}`;
+      const fileName = `${profile.id}_${Date.now()}.${fileExt}`;
+      const filePath = type === 'pay' ? `comprovantes/${fileName}` : fileName; 
+
+      const bucketName = type === 'pay' ? 'comprovantes' : 'pedagogico';
 
       const { error: uploadError } = await supabase.storage
-        .from('pedagogico')
+        .from(bucketName)
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage.from('pedagogico').getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage.from(bucketName).getPublicUrl(filePath);
 
-      if (type === 'pay' && id) {
+      if (type === 'doc' && docType) {
         const { error: dbError } = await supabase
-          .from('pagamentos')
-          .update({ comprovante_url: publicUrl, status: 'pendente' })
-          .eq('id', id);
-        if (dbError) throw dbError;
-      } else if (type === 'doc' && docType) {
-        const { error: dbError } = await supabase
-          .from('documentos_aluno')
+          .from('documentos')
           .upsert({
             user_id: profile.id,
             tipo: docType,
@@ -163,6 +222,33 @@ const Dashboard = () => {
             status: 'pendente'
           });
         if (dbError) throw dbError;
+      } else if (type === 'pay') {
+        if (id) {
+          // Atualiza fatura existente com o comprovante
+          const { error: dbError } = await supabase
+            .from('pagamentos')
+            .update({ 
+               comprovante_url: publicUrl, 
+               status: 'pago',
+               data_pagamento: new Date().toISOString().split('T')[0]
+            })
+            .eq('id', id);
+          if (dbError) throw dbError;
+        } else {
+          // Novo aviso com comprovante (Checkout Livre)
+          const { error: dbError } = await supabase
+            .from('pagamentos')
+            .insert({
+               user_id: profile.id,
+               valor: 0,
+               comprovante_url: publicUrl,
+               status: 'pago',
+               data_pagamento: new Date().toISOString().split('T')[0],
+               descricao: 'Aviso de Pagamento com Comprovante (via Site)',
+               data_vencimento: new Date().toISOString().split('T')[0]
+            });
+          if (dbError) throw dbError;
+        }
       }
 
       showToast('Arquivo enviado com sucesso!');
@@ -171,6 +257,41 @@ const Dashboard = () => {
       showToast(err.message, 'error');
     } finally {
       setUploading(null);
+    }
+  };
+
+  const handleNotifyPayment = async (id?: string) => {
+    if (!profile) return;
+    try {
+      if (id) {
+        // Atualiza fatura existente
+        const { error } = await supabase
+          .from('pagamentos')
+          .update({ 
+            status: 'pago',
+            data_pagamento: new Date().toISOString().split('T')[0],
+            descricao: 'Aviso de Pagamento (Manual)'
+          })
+          .eq('id', id);
+        if (error) throw error;
+      } else {
+        // Cria novo registro se não houver ID (Checkout livre)
+        const { error } = await supabase
+          .from('pagamentos')
+          .insert({
+            user_id: profile.id,
+            valor: 0,
+            status: 'pago',
+            data_pagamento: new Date().toISOString().split('T')[0],
+            descricao: 'Aviso de Pagamento (Checkout Manual)',
+            data_vencimento: new Date().toISOString().split('T')[0] // Vencimento imediato
+          });
+        if (error) throw error;
+      }
+      showToast('Aviso de pagamento enviado com sucesso! Aguarde a validação.');
+      fetchPayments();
+    } catch (err: any) {
+      showToast('Erro ao notificar: ' + err.message, 'error');
     }
   };
 
@@ -440,6 +561,7 @@ const Dashboard = () => {
               payments={payments}
               uploading={uploading}
               handleFileUpload={handleFileUpload}
+              handleNotifyPayment={handleNotifyPayment}
               showToast={showToast}
               isBlockedDueToPayment={isBlockedDueToPayment}
               isPastDue={isPastDue}
@@ -462,6 +584,66 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+
+      {/* EXAM NOTIFICATION TOAST */}
+      {showExamNotice && activeExams.length > 0 && (
+        <div style={{
+          position: 'fixed',
+          bottom: '1.5rem',
+          right: '1.5rem',
+          zIndex: 9999,
+          maxWidth: '320px',
+          width: 'calc(100vw - 3rem)',
+          background: 'linear-gradient(135deg, #1e293b, #0f172a)',
+          border: '1px solid rgba(239,68,68,0.35)',
+          borderRadius: '18px',
+          padding: '1rem 1.25rem',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+          animation: 'slideInRight 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)'
+        }}>
+          {/* Header row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', flexShrink: 0, boxShadow: '0 0 6px #ef4444' }} />
+            <span style={{ fontWeight: 800, fontSize: '0.9rem', flex: 1 }}>⚡ Prova Disponível!</span>
+            <button
+              onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); }}
+              style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, padding: '0 0.2rem' }}
+            >×</button>
+          </div>
+
+          {/* Exam names */}
+          <div style={{ marginBottom: '0.75rem' }}>
+            {activeExams.slice(0, 2).map(exam => (
+              <p key={exam.id} style={{ margin: '0 0 0.2rem 0.9rem', fontSize: '0.78rem', color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                📋 {exam.titulo}
+              </p>
+            ))}
+            {activeExams.length > 2 && (
+              <p style={{ margin: '0 0 0 0.9rem', fontSize: '0.75rem', color: '#64748b' }}>+{activeExams.length - 2} mais...</p>
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button
+              onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); }}
+              style={{ flex: 1, padding: '0.5rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#94a3b8', fontWeight: 600, cursor: 'pointer', fontSize: '0.78rem' }}
+            >Depois</button>
+            <button
+              onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); navigate(`/lesson/${activeExams[0].id}`); }}
+              className="btn btn-primary"
+              style={{ flex: 1.5, padding: '0.5rem', borderRadius: '10px', fontWeight: 800, fontSize: '0.82rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}
+            >Fazer Prova →</button>
+          </div>
+
+          <style>{`
+            @keyframes slideInRight {
+              from { opacity: 0; transform: translateX(40px) scale(0.95); }
+              to { opacity: 1; transform: translateX(0) scale(1); }
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   )
 }

@@ -25,6 +25,8 @@ const Lesson = () => {
   const [reviewMode] = useState(false)
   const [shuffledOptions, setShuffledOptions] = useState<Record<string, string[]>>({})
   const [shuffledMatchingRows, setShuffledMatchingRows] = useState<Record<string, any[]>>({})
+  const [showExamModal, setShowExamModal] = useState(false)
+  const [examModalConfirmed, setExamModalConfirmed] = useState(false)
   
 
 
@@ -140,7 +142,7 @@ const Lesson = () => {
           setAnswers(subData.respostas || {});
           if (subData.nota !== null) setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
           
-          // Timer check
+          // Timer check for bloco_final
           if (lessonData.is_bloco_final && subData.start_time && subData.status === 'liberado') {
             const startTime = new Date(subData.start_time).getTime();
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -154,6 +156,20 @@ const Lesson = () => {
               if (subData.status === 'liberado') handleSubmit();
             }
           }
+
+          // Bloqueio de Reentrada para Provas Regulares (tipo === 'prova' e NÃO is_bloco_final)
+          if (lessonData.tipo === 'prova' && !lessonData.is_bloco_final && subData.status === 'liberado' && !isStaff) {
+            // Já iniciou mas não terminou — force submit or block
+            alert('Você saiu da prova antes de finalizar. Sua tentativa anterior foi registrada automaticamente e enviada para correção.');
+            // Auto-submit the empty/partial answers
+            await supabase.from('respostas_aulas').update({ 
+              status: 'pendente', 
+              updated_at: new Date().toISOString()
+            }).eq('id', subData.id);
+            navigate('/dashboard');
+            return;
+          }
+
           if (subData.status !== 'liberado') {
             setSubmitted(true);
             
@@ -309,20 +325,9 @@ const Lesson = () => {
   const handleStartExam = async () => {
     if (!lesson || !userProfile) return;
     
-    const confirmMessage = `
-      AVISO DE AVALIAÇÃO:
-      - Você terá 40 minutos para concluir esta prova.
-      - O cronômetro NÃO para se você fechar a página.
-      - Certifique-se de estar em um local tranquilo e com boa conexão.
-      
-      Deseja iniciar agora?
-    `;
-
-    if (!window.confirm(confirmMessage)) return;
-    
     const now = new Date().toISOString();
     const { error } = await supabase.from('respostas_aulas').upsert({ 
-      id: existingSubmission?.id, // Garantir update se já existir registro (ex: reinício)
+      id: existingSubmission?.id,
       aluno_id: userProfile.id, 
       aula_id: id, 
       start_time: now, 
@@ -336,6 +341,24 @@ const Lesson = () => {
     }
     setTimeLeft(2400); 
     setIsExamStarted(true);
+    setExamModalConfirmed(true);
+  }
+
+  const handleStartRegularProva = async () => {
+    if (!lesson || !userProfile) return;
+    const now = new Date().toISOString();
+    const { error } = await supabase.from('respostas_aulas').upsert({ 
+      aluno_id: userProfile.id, 
+      aula_id: id, 
+      start_time: now, 
+      status: 'liberado', 
+      respostas: {},
+      updated_at: now 
+    }, { onConflict: 'aluno_id,aula_id' });
+    if (error) return alert('Não foi possível iniciar a prova: ' + error.message);
+    const { data: sub } = await supabase.from('respostas_aulas').select('id').eq('aula_id', id as string).eq('aluno_id', userProfile.id).maybeSingle();
+    if (sub) setExistingSubmission(sub);
+    setExamModalConfirmed(true);
   }
 
   const handleSubmit = async () => {
@@ -528,13 +551,31 @@ const Lesson = () => {
       {(lesson.tipo === 'atividade' || lesson.tipo === 'prova' || questions.length > 0) && (
         <div className="quiz-section" style={{ background: 'var(--glass)', padding: '3rem', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'2rem'}}>
-            <h2>{lesson.is_bloco_final ? 'Avaliação Final' : 'Questionário'}</h2>
+            <h2>{lesson.is_bloco_final ? 'Avaliação Final' : lesson.tipo === 'prova' ? 'Avaliação' : 'Questionário'}</h2>
             {isExamStarted && timeLeft && (
               <div style={{background:'var(--primary)', color:'#fff', padding:'0.5rem 1.5rem', borderRadius:'50px', fontWeight:800}}>
                 TEMPO: {Math.floor(timeLeft/60)}:{(timeLeft%60).toString().padStart(2,'0')}
               </div>
             )}
           </div>
+
+          {/* REGULAR PROVA — show warning gate */}
+          {lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && (
+            <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
+              <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Prova: {lesson.titulo}</h3>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+                Ao iniciar, você não poderá sair e voltar. A prova deve ser concluída de uma só vez.
+              </p>
+              <button 
+                className="btn btn-primary" 
+                onClick={() => setShowExamModal(true)}
+                style={{width:'auto', marginTop:'0.5rem', padding:'1rem 2.5rem', fontWeight:800}}
+              >
+                Iniciar Avaliação
+              </button>
+            </div>
+          )}
 
           {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode ? (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
@@ -543,12 +584,12 @@ const Lesson = () => {
               <p>Duração: 40 minutos | Tentativa: {deadlineInfo?.stage || 1}</p>
               <p>Prazo: {deadlineInfo?.deadline.toLocaleDateString()}</p>
               {deadlineInfo?.expired && userProfile?.profile_tipo === 'aluno' && !userProfile?.isStaff ? <p style={{color:'var(--error)'}}>Prazo Expirado</p> : (
-                <button className="btn btn-primary" onClick={handleStartExam} style={{width:'auto', marginTop:'1rem'}}>
+                <button className="btn btn-primary" onClick={() => setShowExamModal(true)} style={{width:'auto', marginTop:'1rem'}}>
                   {userProfile?.isStaff ? 'Pré-visualizar Prova' : 'Começar Agora'}
                 </button>
               )}
             </div>
-          ) : (
+          ) : (lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff) ? null : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               {questions.map((q, idx) => {
                 const qKey = q.id || idx;
@@ -797,6 +838,160 @@ const Lesson = () => {
           supabase={supabase} showToast={(m: string) => alert(m)}
           fetchLessons={async () => fetchLessonData()} selectedBook={book}
         />
+      )}
+
+      {/* EXAM WARNING MODAL */}
+      {showExamModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem',
+          animation: 'fadeIn 0.25s ease-out'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+            borderRadius: '32px',
+            padding: '3rem',
+            maxWidth: '560px',
+            width: '100%',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            boxShadow: '0 40px 80px rgba(0,0,0,0.6)',
+            animation: 'slideUp 0.3s ease-out'
+          }}>
+            {/* Icon */}
+            <div style={{
+              width: '72px',
+              height: '72px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              borderRadius: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem',
+              border: '1px solid rgba(239, 68, 68, 0.2)'
+            }}>
+              <Lock size={36} color="#ef4444" />
+            </div>
+
+            <h2 style={{
+              fontSize: '1.8rem',
+              fontWeight: 900,
+              textAlign: 'center',
+              marginBottom: '0.5rem',
+              letterSpacing: '-0.5px'
+            }}>Atenção: Regras da Avaliação</h2>
+
+            <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '1rem' }}>
+              Leia com atenção antes de começar.
+            </p>
+
+            {/* Rules list */}
+            <div className="modal-rules-container" style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '0.75rem', 
+              marginBottom: '2.5rem',
+              maxHeight: '300px',
+              overflowY: 'auto',
+              paddingRight: '0.5rem',
+              scrollbarWidth: 'thin'
+            }}>
+              {[
+                { icon: '🚫', text: 'Uma vez iniciada, você NÃO poderá sair e retornar à prova.' },
+                { icon: '📋', text: 'Todas as questões devem ser respondidas antes do envio.' },
+                { icon: lesson?.is_bloco_final ? '⏱️' : '📝', text: lesson?.is_bloco_final ? 'Você terá 40 minutos para concluir. O tempo NÃO para se você fechar a página.' : 'A prova será enviada ao professor para correção manual após o envio.' },
+                { icon: '📶', text: 'Certifique-se de estar em local tranquilo e com boa conexão de internet.' },
+                { icon: '🔒', text: 'Saídas ou tentativas de reentrada serão registradas e a avaliação será encerrada automaticamente.' },
+              ].map((rule, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  alignItems: 'flex-start',
+                  padding: '1rem 1.25rem',
+                  background: 'rgba(255,255,255,0.03)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255,255,255,0.05)'
+                }}>
+                  <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{rule.icon}</span>
+                  <p style={{ fontSize: '0.9rem', lineHeight: 1.5, color: '#cbd5e1', margin: 0 }}>{rule.text}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button
+                onClick={() => setShowExamModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '0.85rem',
+                  borderRadius: '14px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'var(--text-muted)',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={async () => {
+                  setShowExamModal(false);
+                  if (lesson?.is_bloco_final) {
+                    await handleStartExam();
+                  } else {
+                    await handleStartRegularProva();
+                  }
+                }}
+                className="btn btn-primary"
+                style={{
+                  flex: 1.5,
+                  padding: '0.85rem',
+                  borderRadius: '14px',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  boxShadow: '0 8px 20px rgba(var(--primary-rgb), 0.25)'
+                }}
+              >
+                ✅ Iniciar Agora
+              </button>
+            </div>
+          </div>
+
+          <style>{`
+            @keyframes slideUp {
+              from { opacity: 0; transform: translateY(30px) scale(0.97); }
+              to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+            .modal-rules-container::-webkit-scrollbar {
+              width: 5px;
+            }
+            .modal-rules-container::-webkit-scrollbar-track {
+              background: rgba(255, 255, 255, 0.02);
+              border-radius: 10px;
+            }
+            .modal-rules-container::-webkit-scrollbar-thumb {
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 10px;
+            }
+            .modal-rules-container::-webkit-scrollbar-thumb:hover {
+              background: rgba(255, 255, 255, 0.15);
+            }
+          `}</style>
+        </div>
       )}
     </div>
   )

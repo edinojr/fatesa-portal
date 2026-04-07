@@ -44,7 +44,7 @@ export interface Documento {
 export interface Pagamento {
   id: string
   valor: number
-  status: 'aberto' | 'pago' | 'atrasado' | 'rejeitado'
+  status: 'aberto' | 'pago' | 'atrasado' | 'rejeitado' | 'aprovado'
   data_vencimento: string
   comprovante_url?: string
   feedback?: string
