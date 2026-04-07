@@ -550,7 +550,7 @@ const Admin = () => {
           <ValidationPanel 
             pendingDocs={pendingDocs}
             pendingPays={pendingPays}
-            userRole={userRole}
+            userRole={userRole || ''}
             actionLoading={actionLoading}
             handleValidar={handleValidar}
             handleDeleteValidation={handleDeleteValidation}

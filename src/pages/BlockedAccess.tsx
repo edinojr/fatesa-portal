@@ -224,7 +224,7 @@ const BlockedAccess: React.FC = () => {
             <div style={{ background: 'var(--glass)', padding: '2.5rem', borderRadius: '28px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ marginBottom: '2rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                  <div style={{ width: '32px', height: '32px', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
+                  <div style={{ width: '32px', height: '32px', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <FileText size={18} color="var(--primary)" />
                   </div>
                   <h4 style={{ fontWeight: 700, margin: 0 }}>Política de Acesso</h4>
