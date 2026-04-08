@@ -95,12 +95,12 @@ const Lesson = () => {
               
               if (title.includes('V2') || title.includes('V3')) {
                   const { data: resData } = await supabase
-                    .from('respostas_aulas')
-                    .select('status, nota, aulas(titulo)')
-                    .eq('aluno_id', user.id);
+                    .from('view_submissions_detailed')
+                    .select('status, nota, lesson_title')
+                    .eq('student_id', user.id);
                   
                   const prevTitle = title.includes('V2') ? 'V1' : 'V2';
-                  const sub = (resData || []).find((s: any) => s.aulas?.titulo?.toUpperCase().includes(prevTitle));
+                  const sub = (resData || []).find((s: any) => s.lesson_title?.toUpperCase().includes(prevTitle));
                   isAutoAllowed = !!sub && sub.status === 'corrigida' && (sub.nota || 0) < 7.0;
               }
 

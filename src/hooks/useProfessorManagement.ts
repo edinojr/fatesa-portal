@@ -114,20 +114,9 @@ export const useProfessorManagement = () => {
         if (sData) studentHook.setAllStudents(sData)
 
          const { data: subData } = await supabase
-          .from('respostas_aulas')
-          .select(`
-            id, 
-            respostas, 
-            nota, 
-            status, 
-            created_at, 
-            tentativas,
-            primeira_correcao_at,
-            aulas:aula_id!inner ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
-            users:aluno_id ( id, nome, email, nucleos ( nome ) )
-          `)
-          .or('is_bloco_final.eq.true,tipo.eq.prova', { foreignTable: 'aulas' })
-          .order('updated_at', { ascending: false })
+          .from('view_submissions_detailed')
+          .select('*')
+          .order('last_updated', { ascending: false })
         if (subData) gradingHook.setSubmissions(subData as any)
       } else {
         const { data: myNucs } = await supabase
@@ -163,21 +152,10 @@ export const useProfessorManagement = () => {
             studentHook.setAllStudents(sData)
             if (studentIds.length > 0) {
                const { data: subData } = await supabase
-                .from('respostas_aulas')
-                .select(`
-                  id, 
-                  respostas, 
-                  nota, 
-                  status, 
-                  created_at, 
-                  tentativas,
-                  primeira_correcao_at,
-                  aulas:aula_id!inner ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
-                  users:aluno_id ( id, nome, email, tipo, ano_graduacao, nucleos ( nome ) )
-                `)
-                .in('aluno_id', studentIds)
-                .or('is_bloco_final.eq.true,tipo.eq.prova', { foreignTable: 'aulas' })
-                .order('updated_at', { ascending: false })
+                .from('view_submissions_detailed')
+                .select('*')
+                .in('student_id', studentIds)
+                .order('last_updated', { ascending: false })
               if (subData) gradingHook.setSubmissions(subData as any)
             }
           }

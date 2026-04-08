@@ -108,17 +108,13 @@ export const useStudentCourses = (profile: any) => {
 
       // Progresso e Notas
       const [{ data: respostasData }, { data: progData }] = await Promise.all([
-        supabase.from('respostas_aulas').select('id, status, nota, tentativas, aula_id, respostas, aulas(titulo, tipo, questionario, questionario_v2, questionario_v3, livro:livros(id, titulo, ordem))').eq('aluno_id', profile.id),
+        supabase.from('view_submissions_detailed').select('*').eq('student_id', profile.id),
         supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id)
       ]);
       
-      const resData = respostasData || [];
+      const resData = (respostasData || []) as any[];
       const userHasActivityInModule = (livroId: string) => {
-        return resData.some(res => {
-          const aula = Array.isArray(res.aulas) ? res.aulas[0] : res.aulas;
-          const livro = Array.isArray(aula?.livro) ? aula.livro[0] : aula?.livro;
-          return (livro?.id || (aula as any)?.livro_id) === livroId;
-        });
+        return resData.some(res => res.book_id === livroId);
       };
 
       setAtividades(resData);
@@ -173,16 +169,14 @@ export const useStudentCourses = (profile: any) => {
                       if (title.toUpperCase().includes('V2')) {
                         // Automático se V1 reprovou e foi corrigida
                         const v1Sub = resData.find((s: any) => {
-                          const aulaData = Array.isArray(s.aulas) ? s.aulas[0] : s.aulas;
-                          return aulaData?.livro?.id === l.id && aulaData?.titulo?.toUpperCase().includes('V1');
+                          return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V1');
                         });
                         const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
                         isItemReleased = v1Reprovou;
                       } else if (title.toUpperCase().includes('V3')) {
                         // Automático se V2 reprovou e foi corrigida
                         const v2Sub = resData.find((s: any) => {
-                          const aulaData = Array.isArray(s.aulas) ? s.aulas[0] : s.aulas;
-                          return aulaData?.livro?.id === l.id && aulaData?.titulo?.toUpperCase().includes('V2');
+                          return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V2');
                         });
                         const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
                         isItemReleased = v2Reprovou;

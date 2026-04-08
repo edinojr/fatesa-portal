@@ -127,8 +127,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               }
 
               // Agrupar por Núcleo
-              const grouped = finalExams.reduce((acc, sub) => {
-                const nucName = (sub.users as any)?.nucleos?.nome || 'Sem Polo';
+              const grouped = finalExams.reduce((acc: any, sub: any) => {
+                const nucName = sub.nucleus_name || 'Sem Polo';
                 if (!acc[nucName]) acc[nucName] = [];
                 acc[nucName].push(sub);
                 return acc;
@@ -178,7 +178,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                     
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
                       {grouped[nuc].map(sub => (
-                        <div key={sub.id} style={{ 
+                        <div key={sub.submission_id} style={{ 
                           display: 'flex', 
                           justifyContent: 'space-between', 
                           alignItems: 'center', 
@@ -192,14 +192,14 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                               <div style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)' }}>MÓDULO</div>
-                              <h4 style={{ margin: 0, fontSize: '1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.aulas?.titulo || 'Prova Final'}</h4>
+                              <h4 style={{ margin: 0, fontSize: '1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.lesson_title || 'Prova Final'}</h4>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
                               <Users size={14} color="var(--primary)" />
-                              <strong style={{ color: 'var(--text)' }}>{sub.users?.nome}</strong>
+                              <strong style={{ color: 'var(--text)' }}>{sub.student_name}</strong>
                             </div>
                             <p style={{ fontSize: '0.7rem', opacity: 0.4, marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                              <AlertCircle size={10} /> Submetido em: {new Date(sub.created_at).toLocaleString()}
+                              <AlertCircle size={10} /> Submetido em: {new Date(sub.submitted_at).toLocaleString()}
                               {sub.status === 'pendente' && (sub.nota ?? 0) > 0 && (
                                 <span style={{ marginLeft: '1rem', color: 'var(--warning)', fontWeight: 800 }}>⚠️ RETORNADA PARA REVISÃO</span>
                               )}
@@ -210,11 +210,11 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                             <button 
                               className="btn btn-icon" 
                               style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--error)', width: '38px', height: '38px' }}
-                              onClick={() => handleDeleteSubmission(sub.id)}
-                              disabled={deleting === sub.id}
+                              onClick={() => handleDeleteSubmission(sub.submission_id)}
+                              disabled={deleting === sub.submission_id}
                               title="Excluir submissão"
                             >
-                              {deleting === sub.id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
+                              {deleting === sub.submission_id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
                             </button>
                           </div>
                         </div>
@@ -230,13 +230,13 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', opacity: 0.7 }}>
             {submissions.filter(s => 
               s.status === 'corrigida' &&
-              (selectedNucleoFilter === 'todos' || (s.users as any)?.nucleos?.nome === selectedNucleoFilter)
+              (selectedNucleoFilter === 'todos' || s.nucleus_name === selectedNucleoFilter)
             ).slice(0, 10).map(sub => (
-              <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
+              <div key={sub.submission_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
                 <div>
-                  <h4 style={{ fontSize: '1rem' }}>{sub.aulas?.titulo}</h4>
+                  <h4 style={{ fontSize: '1rem' }}>{sub.lesson_title}</h4>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    Aluno: {sub.users?.nome} 
+                    Aluno: {sub.student_name} 
                     <span style={{ marginLeft: '1rem', color: sub.tentativas > 1 ? 'var(--warning)' : 'var(--text-muted)' }}>
                         • {sub.tentativas || 1}ª tentativa
                     </span>
