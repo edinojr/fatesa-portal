@@ -1,25 +1,51 @@
 export interface Submission {
-  id: string
-  respostas: any
-  nota: number | null
-  comentario_professor: string | null
-  bloqueio_final: boolean
-  status: 'pendente' | 'corrigida'
-  created_at: string
-  tentativas: number
-  primeira_correcao_at?: string
-  aulas: {
-    id: string
-    titulo: string
-    questionario: any[]
-    tipo?: string
-    is_bloco_final?: boolean
-  }
-  users: {
-    id: string
-    nome: string
-    email: string
-  }
+  // Dados Básicos da Submissão
+  id?: string;
+  submission_id: string; // ID vindo da view
+  respostas: any;
+  nota: number | null;
+  comentario_professor: string | null;
+  status: 'pendente' | 'corrigida';
+  created_at?: string;
+  submitted_at: string;
+  last_updated?: string;
+  tentativas: number;
+  primeira_correcao_at?: string;
+  
+  // Informações da Aula (Flattened)
+  lesson_id?: string;
+  lesson_title: string;
+  lesson_type?: string;
+  questionario?: any[];
+  is_bloco_final?: boolean;
+  
+  // Informações do Livro
+  book_id?: string;
+  book_title?: string;
+  
+  // Informações do Aluno (Flattened)
+  student_id: string;
+  student_name: string;
+  student_email: string;
+  student_graduation_year?: string;
+  
+  // Informações do Núcleo (Flattened)
+  nucleus_id: string;
+  nucleus_name: string;
+
+  // Legado para compatibilidade se necessário
+  aulas?: {
+    id: string;
+    titulo: string;
+    questionario: any[];
+    tipo?: string;
+    is_bloco_final?: boolean;
+  };
+  users?: {
+    id: string;
+    nome: string;
+    email: string;
+  };
 }
 
 export interface Student {
