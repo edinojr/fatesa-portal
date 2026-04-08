@@ -14,22 +14,18 @@ const Login = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', user.id).single();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', session.user.id).single();
         const userType = data?.tipo || '';
         const roles = data?.caminhos_acesso || [];
         
-        const isAdmin = ['admin', 'suporte'].includes(userType) || roles.some((r: any) => ['admin', 'suporte'].includes(r)) || user.email === 'edi.ben.jr@gmail.com';
+        const isAdmin = ['admin', 'suporte'].includes(userType) || roles.some((r: any) => ['admin', 'suporte'].includes(r)) || session.user.email === 'edi.ben.jr@gmail.com';
         const isProfessor = userType === 'professor' || roles.includes('professor');
         
-        if (isAdmin) {
-          navigate('/admin', { replace: true });
-        } else if (isProfessor) {
-          navigate('/professor', { replace: true });
-        } else {
-          navigate('/dashboard', { replace: true });
-        }
+        if (isAdmin) navigate('/admin', { replace: true });
+        else if (isProfessor) navigate('/professor', { replace: true });
+        else navigate('/dashboard', { replace: true });
       }
     };
     checkSession();

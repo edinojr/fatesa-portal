@@ -35,7 +35,7 @@ import AcademicHistory from '../features/admin/components/AcademicHistory'
 import DocsArchive from '../features/admin/components/DocsArchive'
 
 // Icons and UI
-import { Folder } from 'lucide-react'
+// import { Folder } from 'lucide-react'
 
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
@@ -166,7 +166,8 @@ const Admin = () => {
     pendingProofsCount,
     pendingStudentsCount,
     academicReport,
-    handleDeleteNucleo
+    handleDeleteNucleo,
+    handleResetAutoCorrectedExams
   } = useAdminManagement()
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
@@ -469,10 +470,10 @@ const Admin = () => {
                     <p>Métricas de acesso e engajamento.</p>
                   </div>
 
-                  <div className="admin-action-card" onClick={() => setActiveTab('docs_archive')}>
-                    <div className="icon-wrapper"><Folder size={32} /></div>
-                    <h3>Arquivo Geral</h3>
-                    <p>Documentação por polo e status acadêmico.</p>
+                  <div className="admin-action-card" onClick={handleResetAutoCorrectedExams} style={{ border: '1px solid var(--error)', background: 'rgba(239, 68, 68, 0.05)' }}>
+                    <div className="icon-wrapper" style={{ background: 'var(--error)' }}><History size={32} /></div>
+                    <h3 style={{ color: 'var(--error)' }}>Manutenção de Provas</h3>
+                    <p>Resetar e devolver provas auto-corrigidas para os professores.</p>
                   </div>
                 </>
               )}

@@ -12,9 +12,11 @@ export const useProfile = () => {
     fetchProfile();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
+      if (event === 'SIGNED_OUT') {
         setProfile(null);
-        navigate('/login');
+        navigate('/login', { replace: true });
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        if (session) fetchProfile();
       }
     });
 
@@ -28,10 +30,8 @@ export const useProfile = () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
-        // Only redirect if we're not already on a public page
-        if (!['/', '/login', '/signup', '/forgot-password', '/reset-password'].includes(window.location.pathname)) {
-          throw new Error('Sessão expirada ou inválida');
-        }
+        // Se não houver sessão, apenas setamos loading false e deixamos o ProtectedRoute decidir
+        setLoading(false);
         return;
       }
 

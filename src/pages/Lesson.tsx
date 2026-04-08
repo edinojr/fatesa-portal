@@ -371,8 +371,9 @@ const Lesson = () => {
       const targetLesson = (lesson as any).linkedActivity || lesson;
       const currentSub = (lesson as any).linkedActivity ? (lesson as any).linkedSubmission : existingSubmission;
       
-      // Rule: Provas and final assessments are ALWAYS manual/teacher-corrected.
-      const isFinal = targetLesson.tipo === 'prova' || !!targetLesson.is_bloco_final;
+      // Regra Fatesa: Provas e avaliações finais de bloco são SEMPRE corrigidas manualmente pelo professor.
+      // Provas normais (tipo === 'prova') e Blocos Finais agora são ambos direcionados para a fila de correção.
+      const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
 
       if (!isFinal) {
         questions.forEach((q, idx) => {

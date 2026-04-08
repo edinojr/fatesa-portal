@@ -54,6 +54,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const [courseSubmissions, setCourseSubmissions] = useState<any[]>([])
   const [expandedSub, setExpandedSub] = useState<string | null>(null)
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
+  const [studentCourseLivros, setStudentCourseLivros] = useState<any[]>([])
+  const [studentExceptions, setStudentExceptions] = useState<string[]>([])
 
   const isAdmin = userRole === 'admin'
   const isProfessor = userRole === 'professor'
@@ -609,8 +611,42 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         .order('created_at', { ascending: false })
       
       if (sData) setCourseSubmissions(sData)
+
+      // Fetch student's course modules and exceptions
+      if (student.curso_id) {
+        const { data: bData } = await supabase.from('livros').select('*').eq('curso_id', student.curso_id).order('ordem')
+        if (bData) setStudentCourseLivros(bData)
+      }
+      
+      const { data: exData } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', student.id)
+      if (exData) setStudentExceptions(exData.map(e => e.livro_id))
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleToggleException = async (studentId: string, livroId: string, currentStatus: boolean) => {
+    setActionLoading(`toggle_exception_${livroId}`)
+    try {
+      if (!currentStatus) {
+        const { data: { user } } = await supabase.auth.getUser()
+        await supabase.from('liberacoes_excecao').insert({
+          user_id: studentId,
+          livro_id: livroId,
+          granted_by: user?.id
+        })
+        setStudentExceptions([...studentExceptions, livroId])
+      } else {
+        await supabase.from('liberacoes_excecao').delete().match({
+          user_id: studentId,
+          livro_id: livroId
+        })
+        setStudentExceptions(studentExceptions.filter(id => id !== livroId))
+      }
+    } catch (err: any) {
+      alert('Erro ao alterar autorização: ' + err.message)
+    } finally {
+      setActionLoading(null)
     }
   }
 
@@ -1002,6 +1038,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           handleDeleteSubmission={handleDeleteSubmission}
           actionLoading={actionLoading}
           isProfessor={isProfessor}
+          studentCourseLivros={studentCourseLivros}
+          studentExceptions={studentExceptions}
+          handleToggleException={handleToggleException}
         />
       )}
 

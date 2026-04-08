@@ -72,20 +72,38 @@ export const useStudentCourses = (profile: any) => {
       // Liberações por Polo: Consultamos apenas o que está vinculado ao Polo do aluno
       const { data: releases, error: relError } = await supabase
         .from('liberacoes_nucleo')
-        .select('item_id, item_type')
+        .select('item_id, item_type, created_at')
         .eq('nucleo_id', profile.nucleo_id)
         .eq('liberado', true);
       
       if (relError) console.error('[Dashboard] Erro ao buscar liberações:', relError);
 
+      // Buscar exceções individuais (liberações manuais do professor)
+      const { data: exceptions } = await supabase
+        .from('liberacoes_excecao')
+        .select('livro_id')
+        .eq('user_id', profile.id);
+      
+      const exceptionIds = (exceptions || []).map(e => e.livro_id);
+
       const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
       const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
       const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
 
-      if (releases && releases.length > 0) {
-        console.log(`[Dashboard] ${releases.length} liberações vinculadas encontradas.`, { modulos: releasedModulos.length, videos: releasedVideos.length, atividades: releasedAtividades.length });
-      } else {
-        console.warn(`[Dashboard] Nenhuma ativação individual encontrada para seu Polo. Solicitando liberação ao professor...`);
+      // Mapear datas de liberação das provas finais por livro
+      const examReleaseDates: Record<string, string> = {};
+      const { data: exams } = await supabase
+        .from('aulas')
+        .select('id, livro_id')
+        .eq('is_bloco_final', true);
+      
+      if (exams && releases) {
+        exams.forEach(exam => {
+          const rel = (releases as any[]).find(r => r.item_id === exam.id && r.item_type === 'atividade');
+          if (rel) {
+            examReleaseDates[exam.livro_id] = rel.created_at;
+          }
+        });
       }
 
       // Progresso e Notas
@@ -95,6 +113,13 @@ export const useStudentCourses = (profile: any) => {
       ]);
       
       const resData = respostasData || [];
+      const userHasActivityInModule = (livroId: string) => {
+        return resData.some(res => {
+          const aula = Array.isArray(res.aulas) ? res.aulas[0] : res.aulas;
+          return (aula?.livro?.id || (aula as any)?.livro_id) === livroId;
+        });
+      };
+
       setAtividades(resData);
       setProgressoAulas(progData || []);
 
@@ -110,7 +135,21 @@ export const useStudentCourses = (profile: any) => {
             livros: sortedLivros.map((l: any) => {
               const isCurrent = !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount;
 
+              // REGRA DE ACESSO POR DATA DE INGRESSO
+              const examReleaseDate = examReleaseDates[l.id];
+              const userCreatedAt = new Date(profile.created_at).getTime();
+              const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
+              
+              // Se a prova foi liberada ANTES do aluno entrar, ele só acessa se tiver autorização ou já tiver feito algo
+              const isPastModule = releaseTime > 0 && userCreatedAt > (releaseTime + 86400000); // 24h de tolerância
+              const hasException = exceptionIds.includes(l.id);
+              const hasStarted = userHasActivityInModule(l.id);
+              
+              const isHidden = isPastModule && !hasException && !hasStarted && !isStaff;
+
               const isReleased = (isStaff || exemptStatus || (l.ordem || 1) <= releasedCount || releasedModulos.includes(l.id));
+
+              if (isHidden) return null;
 
                 return {
                   ...l,
@@ -162,7 +201,7 @@ export const useStudentCourses = (profile: any) => {
                   isReleased,
                   isCurrent: isCurrent && isReleased
                 };
-            })
+            }).filter(Boolean)
           };
         }).filter((c: any) => c.livros.length > 0);
         setCourses(mappedCourses);

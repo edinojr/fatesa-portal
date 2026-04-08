@@ -53,7 +53,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   }
 
   if (!profile) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/login" replace />
   }
 
   const roles = (profile.caminhos_acesso as string[]) || []

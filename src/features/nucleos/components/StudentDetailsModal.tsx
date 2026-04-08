@@ -15,6 +15,9 @@ interface StudentDetailsModalProps {
   handleDeleteSubmission: (id: string) => void;
   actionLoading: string | null;
   isProfessor: boolean;
+  studentCourseLivros: any[];
+  studentExceptions: string[];
+  handleToggleException: (sId: string, lId: string, current: boolean) => void;
 }
 
 const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
@@ -30,7 +33,10 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
   handleLancarNota,
   handleDeleteSubmission,
   actionLoading,
-  isProfessor
+  isProfessor,
+  studentCourseLivros,
+  studentExceptions,
+  handleToggleException
 }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -39,6 +45,43 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
           <h2 style={{ margin: 0 }}>Boletim: {student.nome}</h2>
           <button className="btn-icon" onClick={onClose}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
         </div>
+
+        {/* SEÇÃO DE AUTORIZAÇÃO DE MÓDULOS (EXCEÇÕES) */}
+        {isProfessor && studentCourseLivros.length > 0 && (
+          <div style={{ marginBottom: '2rem', padding: '1.25rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+            <h4 style={{ color: 'var(--primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+               Autorização de Acesso (Módulos Anteriores)
+            </h4>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Ative para permitir que este aluno acesse módulos que foram concluídos pelo núcleo antes do seu cadastro.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
+              {studentCourseLivros.map(livro => {
+                const isAuthorized = studentExceptions.includes(livro.id);
+                return (
+                  <div key={livro.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{livro.titulo}</span>
+                    <button 
+                      className="btn" 
+                      style={{ 
+                        width: 'auto', 
+                        padding: '0.2rem 0.6rem', 
+                        fontSize: '0.7rem', 
+                        background: isAuthorized ? 'var(--success)' : 'rgba(255,255,255,0.1)',
+                        color: '#fff',
+                        border: 'none'
+                      }}
+                      onClick={() => handleToggleException(student.id, livro.id, isAuthorized)}
+                      disabled={actionLoading === `toggle_exception_${livro.id}`}
+                    >
+                      {actionLoading === `toggle_exception_${livro.id}` ? <Loader2 className="spinner" size={12} /> : isAuthorized ? 'Autorizado' : 'Bloqueado'}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div style={{ marginBottom: '2rem' }}>
           <h4 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>Atividades Enviadas (Portal)</h4>

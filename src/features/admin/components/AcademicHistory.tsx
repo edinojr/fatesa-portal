@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { 
-  FileText, 
   Search, 
   Download,
   User,
@@ -14,20 +13,58 @@ interface AcademicHistoryProps {
 }
 
 const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) => {
-  // Filter data based on search term (name, nucleus, or module)
-  const filteredData = data.filter(item => 
-    item.users?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (item.users?.nucleos?.nome || 'N/A').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.aulas?.livros?.titulo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.aulas?.titulo?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter and Category Logic
+  const processedData = useMemo(() => {
+    // 1. Initial Filtering (Term + Exam Type)
+    const filtered = data.filter(item => {
+      const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova';
+      if (!isExam) return false;
+
+      const term = searchTerm.toLowerCase();
+      return (
+        item.users?.nome?.toLowerCase().includes(term) ||
+        (item.users?.nucleos?.nome || 'N/A').toLowerCase().includes(term) ||
+        item.aulas?.livros?.titulo?.toLowerCase().includes(term) ||
+        item.aulas?.titulo?.toLowerCase().includes(term) ||
+        (item.users?.ano_graduacao || '').includes(term)
+      );
+    });
+
+    // 2. Grouping Logic
+    const activeGroups: Record<string, any[]> = {};
+    const alumniGroups: Record<string, any[]> = {};
+
+    filtered.forEach(item => {
+      const isAlumni = item.users?.tipo === 'ex_aluno';
+      
+      if (isAlumni) {
+        const year = item.users?.ano_graduacao || 'Ano não informado';
+        if (!alumniGroups[year]) alumniGroups[year] = [];
+        alumniGroups[year].push(item);
+      } else {
+        const nucleusName = item.users?.nucleos?.nome || 'Geral / Sem Núcleo';
+        if (!activeGroups[nucleusName]) activeGroups[nucleusName] = [];
+        activeGroups[nucleusName].push(item);
+      }
+    });
+
+    return { activeGroups, alumniGroups };
+  }, [data, searchTerm]);
 
   const exportToCSV = () => {
-    const headers = ['Aluno', 'Email', 'Núcleo', 'Livro/Módulo', 'Atividade/Bloco', 'Nota', 'Data Correção'];
-    const rows = filteredData.map(item => [
+    // Flatten grouped data for CSV export to maintain current behavior
+    const allFiltered = [
+      ...Object.values(processedData.activeGroups).flat(),
+      ...Object.values(processedData.alumniGroups).flat()
+    ];
+
+    const headers = ['Aluno', 'Email', 'Status', 'Núcleo', 'Ano Graduação', 'Livro/Módulo', 'Atividade/Bloco', 'Nota', 'Data Correção'];
+    const rows = allFiltered.map(item => [
       item.users?.nome || 'N/A',
       item.users?.email || 'N/A',
+      item.users?.tipo === 'ex_aluno' ? 'Ex-Aluno' : 'Ativo',
       item.users?.nucleos?.nome || 'Sem Núcleo',
+      item.users?.ano_graduacao || '---',
       item.aulas?.livros?.titulo || 'N/A',
       item.aulas?.titulo || 'N/A',
       item.nota?.toFixed(1) || '0.0',
@@ -47,9 +84,57 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
     document.body.removeChild(link);
   };
 
+  const renderGroupTable = (items: any[]) => (
+    <div className="table-responsive" style={{ marginTop: '1rem' }}>
+      <table className="admin-table mini">
+        <thead>
+          <tr>
+            <th>Aluno</th>
+            <th>Módulo / Bloco</th>
+            <th style={{ textAlign: 'center' }}>Nota Final</th>
+            <th style={{ textAlign: 'right' }}>Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item) => (
+            <tr key={item.id}>
+              <td>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <User size={14} opacity={0.5} />
+                  <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{item.users?.nome}</span>
+                </div>
+              </td>
+              <td>
+                <div style={{ fontSize: '0.8rem' }}>
+                  <div style={{ fontWeight: 700, color: 'var(--primary)' }}>{item.aulas?.livros?.titulo}</div>
+                  <div style={{ opacity: 0.6 }}>{item.aulas?.titulo}</div>
+                </div>
+              </td>
+              <td style={{ textAlign: 'center' }}>
+                <span style={{ 
+                  padding: '2px 8px', 
+                  borderRadius: '4px', 
+                  background: item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                  color: item.nota >= 7 ? '#10b981' : '#ef4444',
+                  fontWeight: 800,
+                  fontSize: '0.85rem'
+                }}>
+                  {item.nota?.toFixed(1)}
+                </span>
+              </td>
+              <td style={{ textAlign: 'right', fontSize: '0.75rem', opacity: 0.5 }}>
+                {item.updated_at ? new Date(item.updated_at).toLocaleDateString() : '---'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
     <div className="academic-history-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '10px', borderRadius: '12px' }}>
             <GraduationCap size={24} color="var(--primary)" />
@@ -57,81 +142,62 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
           <div>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Histórico Acadêmico</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
-              {filteredData.length} registros de avaliações concluídas
+              Notas consolidadas agrupadas por unidade
             </p>
           </div>
         </div>
         <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.5rem', width: 'auto' }}>
-          <Download size={18} /> Exportar CSV
+          <Download size={18} /> Exportar Geral
         </button>
       </div>
 
-      <div className="card" style={{ padding: 0, overflow: 'hidden', background: 'var(--bg-card)', border: '1px solid var(--glass-border)' }}>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Aluno</th>
-              <th>Núcleo</th>
-              <th>Módulo / Bloco</th>
-              <th style={{ textAlign: 'center' }}>Nota Final</th>
-              <th style={{ textAlign: 'right' }}>Data</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.length === 0 ? (
-              <tr>
-                <td colSpan={5} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-                  <Search size={48} style={{ margin: '0 auto 1.5rem', opacity: 0.2 }} />
-                  <div>Nenhum registro encontrado no histórico.</div>
-                </td>
-              </tr>
-            ) : (
-              filteredData.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--glass)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <User size={16} />
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 650, fontSize: '0.95rem' }}>{item.users?.nome}</div>
-                        <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{item.users?.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}>
-                      <MapPin size={14} opacity={0.5} />
-                      {item.users?.nucleos?.nome || 'Sem Núcleo'}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <div style={{ fontWeight: 700, color: 'var(--primary)' }}>{item.aulas?.livros?.titulo || 'Módulo'}</div>
-                      <div style={{ opacity: 0.7 }}>{item.aulas?.titulo}</div>
-                    </div>
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <div style={{ 
-                      display: 'inline-block',
-                      padding: '4px 12px',
-                      borderRadius: '8px',
-                      background: item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                      color: item.nota >= 7 ? '#10b981' : '#ef4444',
-                      fontWeight: 800,
-                      fontSize: '1rem'
-                    }}>
-                      {item.nota?.toFixed(1)}
-                    </div>
-                  </td>
-                  <td style={{ textAlign: 'right', fontSize: '0.85rem', opacity: 0.6 }}>
-                    {item.updated_at ? new Date(item.updated_at).toLocaleDateString() : '---'}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        {/* GRUPOS DE ALUNOS ATIVOS POR NÚCLEO */}
+        {Object.keys(processedData.activeGroups).length > 0 && (
+          <section>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <MapPin size={18} /> Alunos em Atividade por Núcleo
+            </h3>
+            <div className="groups-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '1.5rem' }}>
+              {Object.entries(processedData.activeGroups).sort().map(([name, items]) => (
+                <div key={name} className="card group-card" style={{ padding: '1.25rem', background: 'var(--bg-card)', border: '1px solid var(--glass-border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.75rem' }}>
+                    <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{name}</span>
+                    <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>{items.length} registros</span>
+                  </div>
+                  {renderGroupTable(items)}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* GRUPOS DE EX-ALUNOS POR ANO */}
+        {Object.keys(processedData.alumniGroups).length > 0 && (
+          <section>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.25rem', color: '#EAB308', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <GraduationCap size={18} /> Alunos Formados (por Ano)
+            </h3>
+            <div className="groups-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '1.5rem' }}>
+              {Object.entries(processedData.alumniGroups).sort(([a], [b]) => b.localeCompare(a)).map(([year, items]) => (
+                <div key={year} className="card group-card" style={{ padding: '1.25rem', background: 'rgba(234, 179, 8, 0.03)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(234, 179, 8, 0.1)', paddingBottom: '0.75rem' }}>
+                    <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#EAB308' }}>🎓 Graduação {year}</span>
+                    <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>{items.length} registros</span>
+                  </div>
+                  {renderGroupTable(items)}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {Object.keys(processedData.activeGroups).length === 0 && Object.keys(processedData.alumniGroups).length === 0 && (
+          <div style={{ textAlign: 'center', padding: '4rem', opacity: 0.5 }}>
+            <Search size={48} style={{ margin: '0 auto 1rem' }} />
+            <p>Nenhum registro encontrado para os critérios de busca.</p>
+          </div>
+        )}
       </div>
     </div>
   );

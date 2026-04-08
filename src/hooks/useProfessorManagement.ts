@@ -126,7 +126,7 @@ export const useProfessorManagement = () => {
             aulas:aula_id!inner ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
             users:aluno_id ( id, nome, email, nucleos ( nome ) )
           `)
-          .eq('aulas.is_bloco_final', true)
+          .or('is_bloco_final.eq.true,tipo.eq.prova', { foreignTable: 'aulas' })
           .order('updated_at', { ascending: false })
         if (subData) gradingHook.setSubmissions(subData as any)
       } else {
@@ -153,7 +153,7 @@ export const useProfessorManagement = () => {
                 status, 
                 updated_at,
                 aulas:aula_id ( id, titulo, is_bloco_final, livros ( id, titulo ) ), 
-                users:aluno_id ( id, nome, email, nucleos ( id, nome ) )
+                users:aluno_id ( id, nome, email, tipo, ano_graduacao, nucleos ( id, nome ) )
               `)
               .in('aluno_id', studentIds)
               .not('nota', 'is', null)
@@ -173,10 +173,10 @@ export const useProfessorManagement = () => {
                   tentativas,
                   primeira_correcao_at,
                   aulas:aula_id!inner ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
-                  users:aluno_id ( id, nome, email, nucleos ( nome ) )
+                  users:aluno_id ( id, nome, email, tipo, ano_graduacao, nucleos ( nome ) )
                 `)
                 .in('aluno_id', studentIds)
-                .eq('aulas.is_bloco_final', true)
+                .or('is_bloco_final.eq.true,tipo.eq.prova', { foreignTable: 'aulas' })
                 .order('updated_at', { ascending: false })
               if (subData) gradingHook.setSubmissions(subData as any)
             }

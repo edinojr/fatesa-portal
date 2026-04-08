@@ -399,7 +399,7 @@ export const useAdminManagement = () => {
             status, 
             updated_at,
             aulas:aula_id ( id, titulo, is_bloco_final, livros ( id, titulo ) ), 
-            users:aluno_id ( id, nome, email, nucleos ( id, nome ) )
+            users:aluno_id ( id, nome, email, tipo, ano_graduacao, nucleos ( id, nome ) )
           `)
           .not('nota', 'is', null)
           .order('updated_at', { ascending: false });
@@ -882,6 +882,54 @@ export const useAdminManagement = () => {
     }
   }
 
+  const handleResetAutoCorrectedExams = async () => {
+    if (!window.confirm('ATENÇÃO: Deseja realmente resetar todas as provas que foram corrigidas automaticamente? Estas provas voltarão para a fila dos professores dos respectivos núcleos com nota 0 para permitir uma correção manual justa.')) return;
+    
+    setActionLoading('reset-exams');
+    try {
+      // 1. Buscar submissões de provas auto-corrigidas
+      // Critério: status corrigida, sem data de primeira correção manual, sem comentário, e sendo do tipo prova ou bloco final.
+      const { data: subs, error: fetchError } = await supabase
+        .from('respostas_aulas')
+        .select(`
+          id,
+          aulas!inner ( id, tipo, is_bloco_final )
+        `)
+        .eq('status', 'corrigida')
+        .is('primeira_correcao_at', null)
+        .or('comentario_professor.is.null,comentario_professor.eq.""')
+        .or('is_bloco_final.eq.true,tipo.eq.prova', { foreignTable: 'aulas' });
+
+      if (fetchError) throw fetchError;
+      
+      if (!subs || subs.length === 0) {
+        showToast('Nenhuma prova auto-corrigida foi encontrada para resetar.');
+        return;
+      }
+
+      const ids = subs.map(s => s.id);
+      
+      // 2. Update status e reset da nota para 0
+      const { error: updateError } = await supabase
+        .from('respostas_aulas')
+        .update({ 
+          status: 'pendente', 
+          nota: 0,
+          updated_at: new Date().toISOString()
+        })
+        .in('id', ids);
+
+      if (updateError) throw updateError;
+      
+      showToast(`${ids.length} provas foram retornadas com sucesso para a fila de correção dos professores!`);
+      fetchData(); // Recarregar contadores no dashboard
+    } catch (err: any) {
+      showToast('Erro ao resetar: ' + err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   return {
     profile,
     activeTab,
@@ -999,6 +1047,7 @@ export const useAdminManagement = () => {
     pendingFinanceCount,
     academicReport,
     pendingActivityByNucleo,
-    handleDeleteNucleo
+    handleDeleteNucleo,
+    handleResetAutoCorrectedExams
   }
 }
