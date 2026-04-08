@@ -41,7 +41,7 @@ const BlockedAccess: React.FC = () => {
 
       const { error: uploadError } = await supabase.storage
         .from('comprovantes')
-        .upload(filePath, file);
+        .upload(filePath, file, { cacheControl: '31536000' });
 
       if (uploadError) throw uploadError;
 
