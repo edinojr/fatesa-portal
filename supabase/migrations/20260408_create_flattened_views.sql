@@ -27,7 +27,6 @@ SELECT
     u.id AS student_id,
     u.nome AS student_name,
     u.email AS student_email,
-    u.cpf AS student_cpf,
     u.ano_graduacao AS student_graduation_year,
     -- Informações do Núcleo/Polo
     n.id AS nucleus_id,
@@ -75,7 +74,6 @@ SELECT
     u.id,
     u.nome,
     u.email,
-    u.cpf,
     u.telefone,
     u.ano_graduacao,
     u.tipo AS modalidade,

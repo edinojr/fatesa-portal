@@ -177,8 +177,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                     </div>
                     
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
-                      {grouped[nuc].map(sub => (
-                        <div key={sub.submission_id} style={{ 
+                      {grouped[nuc].map((sub: any, idx: number) => (
+                        <div key={sub.submission_id || `sub-${idx}`} style={{ 
                           display: 'flex', 
                           justifyContent: 'space-between', 
                           alignItems: 'center', 
@@ -231,8 +231,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
             {submissions.filter(s => 
               s.status === 'corrigida' &&
               (selectedNucleoFilter === 'todos' || s.nucleus_name === selectedNucleoFilter)
-            ).slice(0, 10).map(sub => (
-              <div key={sub.submission_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
+            ).slice(0, 10).map((sub: any, idx: number) => (
+              <div key={sub.submission_id || `done-${idx}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
                 <div>
                   <h4 style={{ fontSize: '1rem' }}>{sub.lesson_title}</h4>
                   <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
