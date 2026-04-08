@@ -550,6 +550,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
         <form onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
+          const fileInput = e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement;
           const table = editingItem.type === 'course' ? 'cursos' : editingItem.type === 'book' ? 'livros' : 'aulas';
           
           const updates: any = {};
@@ -590,7 +591,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               }
             }
 
-            const file = (e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0];
+            const file = fileInput?.files?.[0];
             if (file) {
               const safeName = normalizeFileName ? normalizeFileName(file.name) : file.name;
               const filePath = `conteudo/${Date.now()}_${safeName}`;
