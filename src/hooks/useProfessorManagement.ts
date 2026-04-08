@@ -8,7 +8,7 @@ import { useProfessorCourses } from '../features/courses/hooks/useProfessorCours
 import { useProfessorStudents } from '../features/users/hooks/useProfessorStudents'
 import { useProfessorGrading } from '../features/courses/hooks/useProfessorGrading'
 
-export type Tab = 'home' | 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais' | 'attendance' | 'forum'
+export type Tab = 'home' | 'nucleos' | 'content' | 'students' | 'grading' | 'avisos' | 'materiais' | 'attendance' | 'forum' | 'academic'
 
 export const useProfessorManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
@@ -16,7 +16,7 @@ export const useProfessorManagement = () => {
   
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'nucleos', 'content', 'students', 'grading', 'avisos', 'materiais', 'attendance', 'forum'];
+    const validTabs: Tab[] = ['home', 'nucleos', 'content', 'students', 'grading', 'avisos', 'materiais', 'attendance', 'forum', 'academic'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
@@ -161,7 +161,6 @@ export const useProfessorManagement = () => {
             if (academicData) setAcademicReport(academicData);
             
             studentHook.setAllStudents(sData)
-            const studentIds = sData.map(s => s.id)
             if (studentIds.length > 0) {
                const { data: subData } = await supabase
                 .from('respostas_aulas')
@@ -242,10 +241,12 @@ export const useProfessorManagement = () => {
     ...gradingHook,
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),
     handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData),
+    pendingFinanceCount,
+    academicReport,
+    handleDeleteNucleo,
     attendanceRecords,
     handleSaveAttendance,
     actionLoading,
-    setActionLoading,
-    academicReport
+    setActionLoading
   }
 }

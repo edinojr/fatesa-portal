@@ -166,7 +166,8 @@ const Admin = () => {
     financeReport,
     pendingProofsCount,
     pendingStudentsCount,
-    academicReport
+    academicReport,
+    handleDeleteNucleo
   } = useAdminManagement()
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)

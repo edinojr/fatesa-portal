@@ -328,19 +328,6 @@ export const useAdminManagement = () => {
       } else if (activeTab === 'content') {
         const { data } = await supabase.from('cursos').select('*, livros(count)')
         if (data) setCourses(data)
-      } else if (activeTab === 'validation') {
-        const { data: docs } = await supabase
-          .from('documentos')
-          .select('*, users(nome, email)')
-          .eq('status', 'pendente');
-
-        const { data: pays } = await supabase
-          .from('pagamentos')
-          .select('*, users(nome, email, nucleo_id, nucleos(nome))')
-          .filter('status', 'not.in', '(aprovado,rejeitado,cancelado)');
-        
-        if (docs) setPendingDocs(docs)
-        if (pays) setPendingPays(pays)
       } else if (activeTab === 'settings' && userRole === 'admin') {
         const { data } = await supabase.from('configuracoes').select('chave, valor');
         if (data) {
