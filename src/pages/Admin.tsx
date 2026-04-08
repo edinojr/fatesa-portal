@@ -20,7 +20,6 @@ import {
   TrendingUp,
   History,
   LayoutGrid,
-  Shield,
   ExternalLink
 } from 'lucide-react'
 
@@ -58,7 +57,7 @@ import {
 } from '../features/courses/components/modals/ContentModals'
 
 // Hook
-import { useAdminManagement, Tab } from '../hooks/useAdminManagement'
+import { useAdminManagement } from '../hooks/useAdminManagement'
 import { supabase } from '../lib/supabase'
 
 const Admin = () => {

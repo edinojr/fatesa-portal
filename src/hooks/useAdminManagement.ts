@@ -4,7 +4,6 @@ import { createClient } from '@supabase/supabase-js'
 import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 import { useProfile } from './useProfile'
 import { QuizQuestion } from '../types/admin'
-import SettingsPanel from '../features/finance/components/SettingsPanel'
 
 export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics' | 'reports' | 'docs_archive' | 'academic'
 
