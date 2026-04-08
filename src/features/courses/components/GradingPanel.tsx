@@ -200,7 +200,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                             </div>
                             <p style={{ fontSize: '0.7rem', opacity: 0.4, marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                               <AlertCircle size={10} /> Submetido em: {new Date(sub.created_at).toLocaleString()}
-                              {sub.status === 'pendente' && sub.nota > 0 && (
+                              {sub.status === 'pendente' && (sub.nota ?? 0) > 0 && (
                                 <span style={{ marginLeft: '1rem', color: 'var(--warning)', fontWeight: 800 }}>⚠️ RETORNADA PARA REVISÃO</span>
                               )}
                             </p>

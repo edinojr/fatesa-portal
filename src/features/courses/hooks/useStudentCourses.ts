@@ -116,7 +116,8 @@ export const useStudentCourses = (profile: any) => {
       const userHasActivityInModule = (livroId: string) => {
         return resData.some(res => {
           const aula = Array.isArray(res.aulas) ? res.aulas[0] : res.aulas;
-          return (aula?.livro?.id || (aula as any)?.livro_id) === livroId;
+          const livro = Array.isArray(aula?.livro) ? aula.livro[0] : aula?.livro;
+          return (livro?.id || (aula as any)?.livro_id) === livroId;
         });
       };
 
