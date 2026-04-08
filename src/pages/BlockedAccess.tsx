@@ -3,10 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useProfile } from '../hooks/useProfile';
 import { getTargetDueDate } from '../lib/paymentCycle';
 import { 
-  AlertCircle, 
-  CreditCard, 
   Check, 
-  Clock, 
   ShieldAlert, 
   MessageCircle, 
   ExternalLink,
@@ -19,8 +16,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const BlockedAccess: React.FC = () => {
-  const { profile, loading, refreshProfile } = useProfile();
-  const [notifying, setNotifying] = useState(false);
+  const { profile, loading } = useProfile();
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,28 +28,6 @@ const BlockedAccess: React.FC = () => {
     }
   }, [profile, loading, navigate]);
 
-  const handleNotifyPayment = async () => {
-    if (!profile) return;
-    setNotifying(true);
-    try {
-      const targetDueDate = getTargetDueDate();
-      const { error: dbError } = await supabase.from('pagamentos').insert({
-        user_id: profile.id,
-        valor: 0,
-        status: 'pago', 
-        data_vencimento: targetDueDate,
-        descricao: 'Aviso de Pagamento via Central de Bloqueio',
-        data_pagamento: new Date().toISOString().split('T')[0]
-      });
-
-      if (dbError) throw dbError;
-      setSuccess(true);
-    } catch (err: any) {
-      alert('Erro ao notificar: ' + err.message);
-    } finally {
-      setNotifying(false);
-    }
-  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -193,7 +167,7 @@ const BlockedAccess: React.FC = () => {
 
                     <button 
                       onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading || notifying}
+                      disabled={uploading}
                       className="btn btn-primary" 
                       style={{ 
                         width: '100%', 

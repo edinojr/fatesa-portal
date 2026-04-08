@@ -13,7 +13,11 @@ interface NucleoPanelProps {
   onModalClose?: () => void
 }
 
-const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', autoOpenAddModal, onModalClose }) => {
+const NucleosPanel: React.FC<NucleoPanelProps> = ({ 
+  userRole = 'professor', 
+  autoOpenAddModal, 
+  onModalClose 
+}) => {
   const [nucleos, setNucleos] = useState<any[]>([]) // All available
   const [myNucleos, setMyNucleos] = useState<any[]>([]) // Tied to teacher
   const [selectedNucleo, setSelectedNucleo] = useState<any | null>(null)
@@ -50,7 +54,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
   const [courseSubmissions, setCourseSubmissions] = useState<any[]>([])
   const [expandedSub, setExpandedSub] = useState<string | null>(null)
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
-  const [autoGrade, setAutoGrade] = useState<string>('0.0')
 
   const isAdmin = userRole === 'admin'
   const isProfessor = userRole === 'professor'
@@ -64,6 +67,12 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       setShowAddModal(true)
     }
   }, [autoOpenAddModal])
+
+  useEffect(() => {
+    if (!showAddModal && onModalClose) {
+      onModalClose()
+    }
+  }, [showAddModal, onModalClose])
 
   const fetchInitialData = async () => {
     setLoading(true)
@@ -484,7 +493,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       }, 0);
       
       const calculatedGrade = (correctCount / totalQuestions) * 10;
-      setAutoGrade(calculatedGrade.toFixed(1));
       
       // Also pre-select this activity in the dropdown if not already selected
       const select = document.querySelector('select[name="atividade_id"]') as HTMLSelectElement;
@@ -538,7 +546,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
         return acc + (initialEvals[q.id] === true ? 1 : 0);
       }, 0);
       const initialGrade = (correctCount / totalQuestions) * 10;
-      setAutoGrade(initialGrade.toFixed(1));
       
       const select = document.querySelector('select[name="atividade_id"]') as HTMLSelectElement;
       const gradeInput = document.querySelector('input[name="nota"]') as HTMLInputElement;
@@ -607,30 +614,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
     }
   }
 
-  const handleCreateAtividade = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setActionLoading('create_atv')
-    const formData = new FormData(e.currentTarget)
-    const titulo = formData.get('titulo') as string
-    const descricao = formData.get('descricao') as string
-    
-    try {
-      const { error } = await supabase.from('atividades').insert({ 
-        nucleo_id: selectedNucleo.id, 
-        titulo, 
-        descricao 
-      })
-      if (error) throw error
-      alert('Atividade publicada na turma!')
-      const resAtv = await supabase.from('atividades').select('*').eq('nucleo_id', selectedNucleo.id).order('created_at', { ascending: false })
-      if (resAtv.data) setAtividades(resAtv.data)
-      ;(e.target as HTMLFormElement).reset()
-    } catch(err: any) {
-      alert('Erro: ' + err.message)
-    } finally {
-      setActionLoading(null)
-    }
-  }
 
   const handleLancarNota = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -666,7 +649,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
       
       // refetch everything
       openStudent(showStudentModal);
-      ;(e.target as HTMLFormElement).reset()
+      (e.target as HTMLFormElement).reset()
     } catch(err: any) {
       alert('Erro: ' + err.message)
     } finally {
@@ -1012,7 +995,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
           notas={notas}
           courseSubmissions={courseSubmissions}
           expandedSub={expandedSub}
-          setExpandedSub={setExpandedSub}
           handleExpandSub={handleExpandSub}
           questionEvaluations={questionEvaluations}
           toggleEvaluation={toggleEvaluation}
@@ -1020,7 +1002,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({ userRole = 'professor', auto
           handleDeleteSubmission={handleDeleteSubmission}
           actionLoading={actionLoading}
           isProfessor={isProfessor}
-          isAdmin={isAdmin}
         />
       )}
 

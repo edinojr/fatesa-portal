@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Lock, Loader2, CheckCircle2, AlertCircle, ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import { Lock, Loader2, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import Logo from '../components/common/Logo';
 
 const ResetPassword = () => {
@@ -16,7 +16,7 @@ const ResetPassword = () => {
 
   useEffect(() => {
     // Escutar por mudanças de hash da recuperação de senha no momento que o componente carrega.
-    const listener = supabase.auth.onAuthStateChange(async (event, session) => {
+    const listener = supabase.auth.onAuthStateChange(async (event) => {
       if (event === 'PASSWORD_RECOVERY') {
         // Fluxo de Recuperação PKCE ativado com sucesso via URL.
       }

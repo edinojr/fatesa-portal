@@ -8,7 +8,6 @@ interface StudentDetailsModalProps {
   notas: any[];
   courseSubmissions: any[];
   expandedSub: string | null;
-  setExpandedSub: (id: string | null) => void;
   handleExpandSub: (sub: any) => void;
   questionEvaluations: Record<string, boolean>;
   toggleEvaluation: (sub: any, qId: string, correct: boolean) => void;
@@ -16,7 +15,6 @@ interface StudentDetailsModalProps {
   handleDeleteSubmission: (id: string) => void;
   actionLoading: string | null;
   isProfessor: boolean;
-  isAdmin: boolean;
 }
 
 const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
@@ -26,15 +24,13 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
   notas,
   courseSubmissions,
   expandedSub,
-  setExpandedSub,
   handleExpandSub,
   questionEvaluations,
   toggleEvaluation,
   handleLancarNota,
   handleDeleteSubmission,
   actionLoading,
-  isProfessor,
-  isAdmin
+  isProfessor
 }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>

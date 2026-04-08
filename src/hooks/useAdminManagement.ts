@@ -4,8 +4,9 @@ import { createClient } from '@supabase/supabase-js'
 import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabase'
 import { useProfile } from './useProfile'
 import { QuizQuestion } from '../types/admin'
+import SettingsPanel from '../features/finance/components/SettingsPanel'
 
-export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'validation' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics' | 'reports'
+export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics' | 'reports' | 'docs_archive' | 'academic'
 
 export const useAdminManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
@@ -13,7 +14,7 @@ export const useAdminManagement = () => {
   
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'users', 'alumni', 'content', 'validation', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports'];
+    const validTabs: Tab[] = ['home', 'users', 'alumni', 'content', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports', 'docs_archive', 'academic'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
@@ -28,12 +29,19 @@ export const useAdminManagement = () => {
   const [professors, setProfessors] = useState<any[]>([])
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([])
   const [pendingUsersByNucleo, setPendingUsersByNucleo] = useState<Record<string, number>>({})
+  const [pendingActivityByNucleo, setPendingActivityByNucleo] = useState<Record<string, { students: number; payments: number }>>({})
   const [analyticsData, setAnalyticsData] = useState<any>(null)
   const [financeReport, setFinanceReport] = useState<any[]>([])
 
   const [userCount, setUserCount] = useState(0)
   const [courseCount, setCourseCount] = useState(0)
   const [pendingCount, setPendingCount] = useState(0)
+  
+  // New Signaling Counts
+  const [pendingProofsCount, setPendingProofsCount] = useState(0)
+  const [pendingStudentsCount, setPendingStudentsCount] = useState(0)
+  const [pendingFinanceCount, setPendingFinanceCount] = useState(0)
+  const [academicReport, setAcademicReport] = useState<any[]>([])
 
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -249,16 +257,30 @@ export const useAdminManagement = () => {
     setLoading(true)
     try {
       if (activeTab === 'home') {
-        const [usersCount, coursesCount, docsCount, paysCount] = await Promise.all([
+        const [usersCount, coursesCount, docsCount, paysCount, proofsPending] = await Promise.all([
           supabase.from('users').select('id', { count: 'exact', head: true }),
           supabase.from('cursos').select('id', { count: 'exact', head: true }),
           supabase.from('documentos').select('id', { count: 'exact', head: true }).eq('status', 'pendente'),
-          supabase.from('pagamentos').select('id', { count: 'exact', head: true }).not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)')
+          supabase.from('pagamentos').select('id', { count: 'exact', head: true }).not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
+          supabase.from('respostas_aulas')
+            .select('id, aulas!inner(is_bloco_final)', { count: 'exact', head: true })
+            .is('nota', null)
+            .eq('aulas.is_bloco_final', true)
         ]);
         
         setUserCount(usersCount.count || 0);
         setCourseCount(coursesCount.count || 0);
-        setPendingCount((docsCount.count || 0) + (userRole === 'admin' ? (paysCount.count || 0) : 0));
+        
+        const financeCount = (docsCount.count || 0) + (userRole === 'admin' ? (paysCount.count || 0) : 0);
+        setPendingCount(financeCount);
+        setPendingFinanceCount(financeCount);
+        setPendingProofsCount(proofsPending.count || 0);
+
+        // Fetch pending students count
+        const { count: studentsCount } = await supabase.from('users')
+          .select('id', { count: 'exact', head: true })
+          .or('acesso_definitivo.is.null,acesso_definitivo.eq.false');
+        setPendingStudentsCount(studentsCount || 0);
         
         setUsers([]);
         setCourses([]);
@@ -279,14 +301,29 @@ export const useAdminManagement = () => {
           }))
           setUsers(enrichedUsers)
           
-          // Calculate pending counts
-          const pending = enrichedUsers.filter(u => u.acesso_definitivo === false || u.acesso_definitivo === null)
-          const counts: Record<string, number> = {}
-          pending.forEach(u => {
+          // Calculate pending counts per nucleus
+          const activity: Record<string, { students: number; payments: number }> = {}
+          
+          enrichedUsers.forEach(u => {
             const nId = u.nucleo_id || 'none'
-            counts[nId] = (counts[nId] || 0) + 1
+            if (!activity[nId]) activity[nId] = { students: 0, payments: 0 }
+            
+            if (u.acesso_definitivo === false || u.acesso_definitivo === null) {
+              activity[nId].students++
+            }
+            if (u.hasPendingPayment) {
+              activity[nId].payments++
+            }
           })
-          setPendingUsersByNucleo(counts)
+          
+          setPendingActivityByNucleo(activity)
+          
+          // Legacy count for backwards compatibility
+          const legacyCounts: Record<string, number> = {}
+          Object.entries(activity).forEach(([id, counts]) => {
+            legacyCounts[id] = counts.students
+          })
+          setPendingUsersByNucleo(legacyCounts)
         }
       } else if (activeTab === 'content') {
         const { data } = await supabase.from('cursos').select('*, livros(count)')
@@ -366,6 +403,22 @@ export const useAdminManagement = () => {
           .order('data_vencimento', { ascending: false });
         
         if (reportPays) setFinanceReport(reportPays);
+        if (error) throw error;
+      } else if (activeTab === 'academic') {
+        const { data: academicData, error } = await supabase
+          .from('respostas_aulas')
+          .select(`
+            id, 
+            nota, 
+            status, 
+            updated_at,
+            aulas:aula_id ( id, titulo, is_bloco_final, livros ( id, titulo ) ), 
+            users:aluno_id ( id, nome, email, nucleos ( id, nome ) )
+          `)
+          .not('nota', 'is', null)
+          .order('updated_at', { ascending: false });
+        
+        if (academicData) setAcademicReport(academicData);
         if (error) throw error;
       }
     } catch (err) {
@@ -824,6 +877,25 @@ export const useAdminManagement = () => {
     }
   }
 
+  const handleDeleteNucleo = async (nucleoId: string) => {
+    if (!window.confirm('Deseja realmente excluir este núcleo? Todas as faturas e alunos vinculados ficarão órfãos de polo. Esta ação é definitiva.')) return
+    
+    setActionLoading(`delete_nuc_${nucleoId}`)
+    try {
+      const { error } = await supabase.from('nucleos').delete().eq('id', nucleoId)
+      if (error) throw error
+      showToast('Núcleo excluído com sucesso!')
+      setAllNucleos(prev => {
+        const updated = prev.filter(n => n.id !== nucleoId)
+        return updated
+      })
+    } catch(err: any) {
+      showToast('Erro ao excluir: ' + err.message, 'error')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   return {
     profile,
     activeTab,
@@ -935,6 +1007,12 @@ export const useAdminManagement = () => {
     handleSaveSettings,
     handleUploadQrCode,
     handleDeleteValidation,
-    normalizeFileName
+    normalizeFileName,
+    pendingProofsCount,
+    pendingStudentsCount,
+    pendingFinanceCount,
+    academicReport,
+    pendingActivityByNucleo,
+    handleDeleteNucleo
   }
 }

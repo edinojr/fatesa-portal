@@ -12,7 +12,9 @@ interface QuizEditorModalProps {
   supabase: any
   showToast: (msg: string, type?: 'success' | 'error') => void
   fetchLessons: (bookId?: any) => Promise<void>
+  fetchLessonItems: (lessonId: string) => Promise<void>
   selectedBook: any
+  selectedLesson: any
 }
 
 const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
@@ -25,7 +27,9 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
   supabase,
   showToast,
   fetchLessons,
-  selectedBook
+  fetchLessonItems,
+  selectedBook,
+  selectedLesson
 }) => {
   const [currentVersion, setCurrentVersion] = React.useState<'v1' | 'v2' | 'v3'>('v1');
   
@@ -344,7 +348,10 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 // If not block final, we close. If it is, maybe stay to allow editing other versions?
                 // For safety, let's close and refresh.
                 setEditingQuiz(null);
-                fetchLessons(selectedBook.id); // This call remains valid as bookId is now optional
+                
+                // Refresh both layers just in case
+                if (selectedBook?.id) fetchLessons(selectedBook.id);
+                if (selectedLesson?.id) fetchLessonItems(selectedLesson.id);
               }
               setActionLoading(null);
             }} disabled={actionLoading === 'save-quiz'}>

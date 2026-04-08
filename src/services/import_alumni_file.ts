@@ -11,6 +11,7 @@ export interface AlumniRecord {
   ano_formacao: string
   matricula?: string
   observacoes: string
+  historico?: { modulo: string; nota: string; data: string }[]
 }
 
 /**
@@ -58,6 +59,18 @@ export const importAlumniFile = (file: File) => {
                 if (['status', 'situação', 'situacao', 'formado'].some(p => val.includes(p))) colMap['status'] = idx
                 if (['ano', 'conclusão', 'conclusao', 'data'].some(p => val.includes(p))) colMap['ano'] = idx
                 if (['email', 'e-mail'].some(p => val.includes(p))) colMap['email'] = idx
+
+                // Detectar múltiplos módulos (campos individuais)
+                if (val.includes('modulo') || val.includes('disciplina') || val.includes('bloco')) {
+                  const numMatch = val.match(/\d+/);
+                  const num = numMatch ? numMatch[0] : (Object.keys(colMap).filter(k => k.startsWith('modulo_')).length + 1).toString();
+                  colMap[`modulo_${num}`] = idx;
+                }
+                if (val.includes('nota') || val.includes('média') || val.includes('media')) {
+                  const numMatch = val.match(/\d+/);
+                  const num = numMatch ? numMatch[0] : (Object.keys(colMap).filter(k => k.startsWith('nota_')).length + 1).toString();
+                  colMap[`nota_${num}`] = idx;
+                }
               })
               break
             }
@@ -88,6 +101,25 @@ export const importAlumniFile = (file: File) => {
             // Gerar e-mail resiliente se não existir
             const email = emailInRow || `${nome.toLowerCase().replace(/[^\w]/g, '.')}.${matricula || 'alumni'}@fatesa.edu.br`
 
+            // Processar Histórico (Módulos Individuais)
+            const historico: { modulo: string; nota: string; data: string }[] = [];
+            const hoje = new Date().toLocaleDateString();
+            
+            Object.keys(colMap).forEach(key => {
+              if (key.startsWith('modulo_')) {
+                const num = key.split('_')[1];
+                const moduloIdx = colMap[key];
+                const notaIdx = colMap[`nota_${num}`];
+                
+                const moduloVal = moduloIdx !== undefined ? String(row[moduloIdx] || '').trim() : '';
+                const notaVal = notaIdx !== undefined ? String(row[notaIdx] || '').trim() : '';
+                
+                if (moduloVal && notaVal) {
+                  historico.push({ modulo: moduloVal, nota: notaVal, data: hoje });
+                }
+              }
+            });
+
             records.push({
               nome,
               email: email.toLowerCase(),
@@ -96,6 +128,7 @@ export const importAlumniFile = (file: File) => {
               nivel_curso: 'Curso Básico',
               nucleo,
               ano_formacao: ano,
+              historico: historico.length > 0 ? historico : undefined,
               observacoes: `Importado: Whitelist de Confirmação (${new Date().toLocaleDateString()})`
             })
           }

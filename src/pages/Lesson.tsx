@@ -836,7 +836,9 @@ const Lesson = () => {
           quizQuestions={questions} setQuizQuestions={setQuestions}
           actionLoading={actionLoading} setActionLoading={setActionLoading}
           supabase={supabase} showToast={(m: string) => alert(m)}
-          fetchLessons={async () => fetchLessonData()} selectedBook={book}
+          fetchLessons={async () => fetchLessonData()} 
+          fetchLessonItems={async () => fetchLessonData()}
+          selectedBook={book} selectedLesson={lesson}
         />
       )}
 

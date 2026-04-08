@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, BookOpen, MapPin, X, FileText } from 'lucide-react'
+import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, BookOpen, MapPin, X, FileText, History as HistoryIcon } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
+import Logo from '../../../components/common/Logo'
 
 interface AlumniRecord {
   id: string
@@ -12,6 +13,8 @@ interface AlumniRecord {
   nivel_curso: string
   matricula?: string
   observacoes: string
+  historico?: { modulo: string; nota: string; data: string }[]
+  certificados?: { id: string; titulo: string; data_emissao: string }[]
   created_at: string
 }
 
@@ -22,9 +25,13 @@ const AlumniManagement = () => {
   const [showModal, setShowModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<AlumniRecord | null>(null)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [showDossie, setShowDossie] = useState(false)
+  const [selectedAlumni, setSelectedAlumni] = useState<AlumniRecord | null>(null)
+  const [showCertificate, setShowCertificate] = useState(false)
+  const [activeHistoryItem, setActiveHistoryItem] = useState<any>(null)
   
   // Níveis de curso pré-definidos
-  const niveis = ['Graduação', 'Pós-Graduação', 'Mestrado', 'Doutorado', 'Extensão', 'Curso Livre']
+  const niveis = ['Básico', 'Médio']
 
   // Form State
   const [formData, setFormData] = useState({
@@ -34,7 +41,7 @@ const AlumniManagement = () => {
     nucleo: '',
     ano_formacao: '',
     matricula: '',
-    nivel_curso: 'Graduação',
+    nivel_curso: 'Básico',
     observacoes: ''
   })
 
@@ -266,7 +273,10 @@ const AlumniManagement = () => {
                           </div>
                         </td>
                         <td>
-                          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                           <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                            <button className="btn btn-icon" onClick={() => { setSelectedAlumni(record); setShowDossie(true); }} title="Ver Dossiê / Histórico">
+                              <FileText size={16} color="var(--primary)" />
+                            </button>
                             <button className="btn btn-icon" onClick={() => handleEdit(record)} title="Editar">
                               <Edit size={16} />
                             </button>
@@ -391,6 +401,173 @@ const AlumniManagement = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE DOSSIÊ / HISTÓRICO */}
+      {showDossie && selectedAlumni && (
+        <div className="modal-overlay" onClick={() => setShowDossie(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '850px', width: '95%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ background: 'var(--primary)', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <GraduationCap size={24} />
+                </div>
+                <div>
+                  <h2 style={{ margin: 0 }}>Dossiê do Formado</h2>
+                  <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>{selectedAlumni.nome} • {selectedAlumni.curso}</p>
+                </div>
+              </div>
+              <button className="btn-icon" onClick={() => setShowDossie(false)}><X /></button>
+            </div>
+
+            <div className="admin-card" style={{ padding: '1.5rem', marginBottom: '2rem', background: 'rgba(var(--primary-rgb), 0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <HistoryIcon size={18} /> Histórico Escolar (Módulos Concluídos)
+                </h3>
+                <button 
+                  className="btn btn-outline" 
+                  style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.8rem' }}
+                  onClick={() => {
+                    const modulo = prompt('Nome do Módulo/Disciplina:');
+                    const nota = prompt('Nota Final:');
+                    const data = new Date().toLocaleDateString();
+                    if (modulo && nota) {
+                      const newHistory = [...(selectedAlumni.historico || []), { modulo, nota, data }];
+                      const updatedAlumni = { ...selectedAlumni, historico: newHistory };
+                      setSelectedAlumni(updatedAlumni);
+                      // Update in DB
+                      supabase.from('registros_alumni').update({ historico: newHistory }).eq('id', selectedAlumni.id).then(fetchRecords);
+                    }
+                  }}
+                >
+                  <Plus size={14} /> Adicionar Registro
+                </button>
+              </div>
+
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Módulo / Bloco</th>
+                    <th style={{ textAlign: 'center' }}>Nota</th>
+                    <th style={{ textAlign: 'center' }}>Data</th>
+                    <th style={{ textAlign: 'right' }}>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!selectedAlumni.historico || selectedAlumni.historico.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', opacity: 0.5 }}>Nenhum registro no histórico.</td>
+                    </tr>
+                  ) : (
+                    selectedAlumni.historico.map((item, idx) => (
+                      <tr key={idx}>
+                        <td style={{ fontWeight: 600 }}>{item.modulo}</td>
+                        <td style={{ textAlign: 'center' }}>
+                          <span style={{ background: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
+                            {item.nota}
+                          </span>
+                        </td>
+                        <td style={{ textAlign: 'center', fontSize: '0.85rem' }}>{item.data}</td>
+                        <td style={{ textAlign: 'right' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                            <button 
+                              className="btn btn-primary" 
+                              style={{ width: 'auto', padding: '0.3rem 0.75rem', fontSize: '0.75rem', gap: '0.3rem' }}
+                              onClick={() => {
+                                setActiveHistoryItem(item);
+                                setShowCertificate(true);
+                              }}
+                            >
+                              <GraduationCap size={14} /> GERAR CERTIFICADO
+                            </button>
+                            <button 
+                              className="btn btn-icon text-error"
+                              onClick={() => {
+                                const newHistory = selectedAlumni.historico!.filter((_, i) => i !== idx);
+                                setSelectedAlumni({ ...selectedAlumni, historico: newHistory });
+                                supabase.from('registros_alumni').update({ historico: newHistory }).eq('id', selectedAlumni.id).then(fetchRecords);
+                              }}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OVERLAY DE CERTIFICADO (IMPRESSÃO) */}
+      {showCertificate && selectedAlumni && activeHistoryItem && (
+        <div 
+          className="modal-overlay" 
+          style={{ background: '#f0f0f0', zIndex: 9999, overflowY: 'auto', padding: '2rem' }}
+          onClick={() => setShowCertificate(false)}
+        >
+          <div 
+            className="certificate-paper"
+            onClick={e => e.stopPropagation()}
+            style={{ 
+              background: '#fff', 
+              width: '297mm', 
+              height: '210mm', 
+              margin: '0 auto', 
+              padding: '2rem',
+              position: 'relative',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              border: '20px solid var(--primary)',
+              borderRadius: '2px'
+            }}
+          >
+            <div style={{ position: 'absolute', top: '2rem', left: '2rem' }}><Logo /></div>
+            
+            <div style={{ marginBottom: '2rem' }}>
+              <h1 style={{ fontSize: '4rem', fontWeight: 900, color: 'var(--primary)', margin: 0, letterSpacing: '2px' }}>CERTIFICADO</h1>
+              <p style={{ fontSize: '1.2rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '4px' }}>De Conclusão de Módulo</p>
+            </div>
+
+            <div style={{ maxWidth: '80%', lineHeight: '1.6' }}>
+              <p style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
+                Certificamos para os devidos fins que o(a) aluno(a)
+              </p>
+              <h2 style={{ fontSize: '3rem', fontWeight: 800, margin: '2rem 0', color: '#1a1a1a' }}>{selectedAlumni.nome.toUpperCase()}</h2>
+              <p style={{ fontSize: '1.4rem' }}>
+                Concluiu com êxito o módulo/bloco de <br/>
+                <strong style={{ fontSize: '1.8rem', color: 'var(--primary)' }}>{activeHistoryItem.modulo}</strong> <br/>
+                pelo curso de <strong>{selectedAlumni.curso}</strong>, obtendo a nota final de <strong>{activeHistoryItem.nota}</strong>.
+              </p>
+            </div>
+
+            <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'space-between', width: '80%', alignItems: 'flex-end' }}>
+              <div style={{ textAlign: 'center', borderTop: '1px solid #ccc', paddingTop: '1rem', width: '250px' }}>
+                <p style={{ margin: 0, fontWeight: 700 }}>COORDENAÇÃO PEDAGÓGICA</p>
+                <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.6 }}>Fatesa - Casa do Saber</p>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ marginBottom: '1rem', fontWeight: 700 }}>Emitido em {activeHistoryItem.data}</p>
+                <div style={{ background: '#eee', padding: '10px', fontSize: '0.7rem' }}>
+                  Código de Autenticidade: {selectedAlumni.id.substring(0, 8)}-{Math.random().toString(36).substring(7).toUpperCase()}
+                </div>
+              </div>
+            </div>
+
+            <div className="no-print" style={{ position: 'fixed', bottom: '2rem', right: '2rem', display: 'flex', gap: '1rem' }}>
+              <button className="btn btn-primary" onClick={() => { window.print() }} style={{ width: 'auto', background: '#333' }}>Imprimir / Salvar PDF</button>
+              <button className="btn btn-outline" onClick={() => setShowCertificate(false)} style={{ width: 'auto' }}>Fechar</button>
+            </div>
           </div>
         </div>
       )}

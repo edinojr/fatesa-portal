@@ -6,18 +6,14 @@ import {
   Loader2,
   CheckCircle2,
   MapPin,
-  Phone,
-  Mail,
   CreditCard,
   AlertTriangle,
   ArrowRight,
-  ChevronLeft,
   Search
 } from 'lucide-react'
 import Logo from '../components/common/Logo'
 
 const Matricula = () => {
-  const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)

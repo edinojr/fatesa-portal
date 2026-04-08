@@ -15,7 +15,8 @@ import {
   MapPin,
   GraduationCap,
   ShieldCheck,
-  Video
+  Video,
+  History
 } from 'lucide-react'
 import AttendanceList from '../features/users/components/AttendanceList'
 import NucleosPanel from '../components/NucleosPanel'
@@ -24,6 +25,7 @@ import ProfessorContent from '../features/courses/components/ProfessorContent'
 import GradingPanel from '../features/courses/components/GradingPanel'
 import AvisosManagement from '../features/communication/components/AvisosManagement'
 import MateriaisManagement from '../features/communication/components/MateriaisManagement'
+import AcademicHistory from '../features/admin/components/AcademicHistory'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import Logo from '../components/common/Logo'
@@ -74,7 +76,8 @@ const Professor = () => {
     fetchBooks,
     selectBookAndShowLessons,
     attendanceRecords,
-    handleSaveAttendance
+    handleSaveAttendance,
+    academicReport
   } = useProfessorManagement();
 
   const navigate = useNavigate()
@@ -206,7 +209,60 @@ const Professor = () => {
 
           <div className="tab-content">
             {activeTab === 'home' && (
-              <div className="admin-dashboard-grid transition-fade-in" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+              <div className="admin-dashboard-grid transition-fade-in" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+                {dashboardView === 'main' && (
+                  <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
+                    <div 
+                      className="activity-signal-card" 
+                      onClick={() => setActiveTab('grading')} 
+                      style={{ 
+                        background: 'rgba(156, 39, 176, 0.05)', 
+                        border: '1px solid rgba(156, 39, 176, 0.2)', 
+                        padding: '1.5rem', 
+                        borderRadius: '18px', 
+                        cursor: 'pointer', 
+                        position: 'relative', 
+                        overflow: 'hidden' 
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ background: '#9c27b0', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <GraduationCap size={24} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Provas p/ Corrigir</div>
+                          <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{submissions.length}</div>
+                        </div>
+                      </div>
+                      {submissions.length > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#9c27b0' }}></div>}
+                    </div>
+
+                    <div 
+                      className="activity-signal-card" 
+                      onClick={() => setActiveTab('academic')} 
+                      style={{ 
+                        background: 'rgba(var(--primary-rgb), 0.05)', 
+                        border: '1px solid rgba(var(--primary-rgb), 0.2)', 
+                        padding: '1.5rem', 
+                        borderRadius: '18px', 
+                        cursor: 'pointer', 
+                        position: 'relative', 
+                        overflow: 'hidden' 
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ background: 'var(--primary)', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <History size={24} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Histórico dos Alunos</div>
+                          <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{academicReport.length}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {dashboardView === 'main' && (
                   <>
                     <div className="admin-action-card" onClick={() => setActiveTab('nucleos')}>
@@ -336,7 +392,11 @@ const Professor = () => {
               />
             )}
 
-            {activeTab === 'grading' && (
+            {activeTab === 'academic' && (
+            <AcademicHistory data={academicReport} searchTerm={searchTerm} />
+          )}
+
+          {activeTab === 'grading' && (
               <GradingPanel 
                 courses={courses}
                 submissions={submissions}

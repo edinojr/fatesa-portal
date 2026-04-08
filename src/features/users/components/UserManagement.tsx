@@ -1,11 +1,11 @@
-import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen, RotateCcw, CreditCard } from 'lucide-react'
+import React from 'react'
+import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen, RotateCcw, CreditCard, LayoutGrid, MapPin } from 'lucide-react'
 import Badge from '../../../components/ui/Badge'
 
 interface UserManagementProps {
   users: any[]
   allNucleos: any[]
-  searchTerm: string
-  userRole: string | null
+  searchTerm: string,
   actionLoading: string | null
   handleTypeChange: (userId: string, newType: string) => Promise<void>
   handleApproveAccess: (userId: string) => Promise<void>
@@ -18,6 +18,8 @@ interface UserManagementProps {
   handleManualPayment: (userId: string) => Promise<void>
   setShowAddAdmin: (val: boolean) => void
   onAddNucleo?: () => void
+  pendingActivityByNucleo?: Record<string, { students: number; payments: number }>
+  handleDeleteNucleo?: (nucleoId: string) => Promise<void>
 }
 
 const STAFF_TYPES = ['professor', 'admin', 'suporte']
@@ -242,91 +244,229 @@ const UserManagement: React.FC<UserManagementProps> = ({
   users, allNucleos, searchTerm, actionLoading,
   handleTypeChange, handleApproveAccess, handleToggleBlock,
   handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName,
-  handleDeleteUser, handleResetActivities, handleManualPayment, setShowAddAdmin, onAddNucleo
+  handleDeleteUser, handleResetActivities, handleManualPayment, setShowAddAdmin, onAddNucleo,
+  pendingActivityByNucleo = {},
+  handleDeleteNucleo
 }) => {
-  const filteredUsers = users.filter(u =>
-    u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const groupedByNucleo = filteredUsers.reduce((acc: any, user: any) => {
-    const nucName = user.nucleos?.nome || 'Sem Núcleo Definido'
-    if (!acc[nucName]) acc[nucName] = { professors: [], students: [] }
-    if (STAFF_TYPES.includes(user.tipo)) {
-      acc[nucName].professors.push(user)
-    } else {
-      acc[nucName].students.push(user)
+    const [selectedNucleoFilter, setSelectedNucleoFilter] = React.useState<string | null>(null)
+  
+    const filteredUsers = users.filter(u => {
+      const matchSearch = u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchNucleo = !selectedNucleoFilter || u.nucleo_id === selectedNucleoFilter
+      return matchSearch && matchNucleo
+    })
+  
+    const groupedByNucleo = filteredUsers.reduce((acc: any, user: any) => {
+      const nucName = user.nucleos?.nome || 'Sem Núcleo Definido'
+      if (!acc[nucName]) acc[nucName] = { professors: [], students: [] }
+      if (STAFF_TYPES.includes(user.tipo)) {
+        acc[nucName].professors.push(user)
+      } else {
+        acc[nucName].students.push(user)
+      }
+      return acc
+    }, {})
+  
+    const handlers = {
+      handleTypeChange, handleApproveAccess, handleToggleBlock,
+      handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleResetActivities, handleManualPayment
     }
-    return acc
-  }, {})
 
-  const handlers = {
-    handleTypeChange, handleApproveAccess, handleToggleBlock,
-    handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName, handleDeleteUser, handleResetActivities, handleManualPayment
-  }
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-        <button
-          className="btn btn-outline"
-          onClick={onAddNucleo}
-          style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass)' }}
-        >
-          <GraduationCap size={18} /> Adicionar Núcleo
-        </button>
-        <button
-          className="btn btn-primary"
-          onClick={() => setShowAddAdmin(true)}
-          style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-        >
-          <UserPlus size={18} /> Adicionar Usuário
-        </button>
-      </div>
-
-      {Object.entries(groupedByNucleo)
-        .sort(([nA], [nB]) => nA.localeCompare(nB))
-        .map(([nucleoName, groups]: [string, any]) => (
-          <div key={nucleoName}>
-            {/* Nucleus Header */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '1rem',
-              marginBottom: '1.5rem', padding: '1rem 1.5rem',
-              background: 'rgba(156, 39, 176, 0.1)',
-              borderRadius: '12px', borderLeft: '4px solid var(--primary)'
-            }}>
-              <GraduationCap size={22} color="var(--primary)" />
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>
-                {nucleoName}
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 400, marginLeft: '0.75rem' }}>
-                  {groups.professors.length} prof. · {groups.students.length} alunos
-                </span>
-              </h3>
-            </div>
-
-            <SubTable
-              title="Equipe / Docentes"
-              icon={<BookOpen size={16} color="var(--primary)" />}
-              color="var(--primary)"
-              users={groups.professors}
-              allNucleos={allNucleos}
-              actionLoading={actionLoading}
-              handlers={handlers}
-            />
-
-            <SubTable
-              title="Alunos"
-              icon={<Users size={16} color="var(--text-muted)" />}
-              color="var(--text-muted)"
-              users={groups.students}
-              allNucleos={allNucleos}
-              actionLoading={actionLoading}
-              handlers={handlers}
-            />
+    // Sort Nucleos Alphabetically
+    const sortedNucleos = [...allNucleos].sort((a, b) => a.nome.localeCompare(b.nome))
+  
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+        
+        {/* Header Actions */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <div>
+            {selectedNucleoFilter && (
+              <button 
+                className="btn-icon" 
+                onClick={() => setSelectedNucleoFilter(null)}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass)', borderRadius: '12px', padding: '0.6rem 1.2rem', color: 'var(--primary)', fontWeight: 700 }}
+              >
+                <LayoutGrid size={18} /> Ver todos os Polos
+              </button>
+            )}
+            {!selectedNucleoFilter && (
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, opacity: 0.8 }}>Escolha um Polo para gerenciar</h2>
+            )}
           </div>
-        ))}
-    </div>
-  )
+
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button
+              className="btn btn-outline"
+              onClick={onAddNucleo}
+              style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass)' }}
+            >
+              <GraduationCap size={18} /> Adicionar Núcleo
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowAddAdmin(true)}
+              style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <UserPlus size={18} /> Adicionar Usuário
+            </button>
+          </div>
+        </div>
+
+        {/* Global Search Results override OR Polo Selection Grid */}
+        {(!selectedNucleoFilter && !searchTerm) ? (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+            gap: '1.5rem',
+            padding: '0.5rem'
+          }}>
+            {sortedNucleos.map(nucleo => {
+              const activity = pendingActivityByNucleo[nucleo.id] || { students: 0, payments: 0 }
+              const hasActivity = activity.students > 0 || activity.payments > 0
+              
+              const nucleoStudentsCount = users.filter(u => u.nucleo_id === nucleo.id).length
+
+              return (
+                <div 
+                  key={nucleo.id}
+                  className="card hover-glow"
+                  onClick={() => setSelectedNucleoFilter(nucleo.id)}
+                  style={{ 
+                    cursor: 'pointer',
+                    padding: '1.5rem',
+                    position: 'relative',
+                    transition: 'all 0.3s ease',
+                    border: hasActivity ? '1px solid rgba(var(--primary-rgb), 0.3)' : '1px solid var(--glass-border)',
+                    background: hasActivity ? 'rgba(var(--primary-rgb), 0.02)' : 'var(--bg-card)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ 
+                      background: hasActivity ? 'var(--primary)' : 'rgba(255,255,255,0.05)', 
+                      color: hasActivity ? '#fff' : 'var(--text-muted)',
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <MapPin size={24} />
+                    </div>
+
+                    {hasActivity && (
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        {activity.students > 0 && (
+                          <div title={`${activity.students} Novos Alunos`} style={{ background: 'var(--primary)', color: '#fff', fontSize: '0.7rem', padding: '4px 8px', borderRadius: '8px', fontWeight: 800 }}>
+                            {activity.students} NOVO
+                          </div>
+                        )}
+                        {activity.payments > 0 && (
+                          <div title="Pagamento Pendente" style={{ background: '#10b981', color: '#fff', fontSize: '0.7rem', padding: '4px 8px', borderRadius: '8px', fontWeight: 800 }}>
+                            <CreditCard size={12} />
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {handleDeleteNucleo && (
+                      <button 
+                        className="btn-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteNucleo(nucleo.id);
+                        }}
+                        style={{ 
+                          padding: '8px', 
+                          color: 'var(--error)', 
+                          background: 'rgba(255, 77, 77, 0.1)', 
+                          borderRadius: '8px',
+                          opacity: 0.6,
+                          transition: 'opacity 0.2s'
+                        }}
+                        title="Excluir Núcleo"
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '0 0 0.25rem 0' }}>{nucleo.nome}</h3>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Users size={14} /> {nucleoStudentsCount} Alunos cadastrados
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      Gerenciar <LayoutGrid size={14} />
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          /* Detailed List View (Filtrada por Polo ou Busca Global) */
+          <div>
+            {searchTerm && (
+              <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '12px', border: '1px solid rgba(var(--primary-rgb), 0.1)' }}>
+                <span style={{ fontWeight: 700 }}>Busca Global ativa por "{searchTerm}":</span> {filteredUsers.length} resultados encontrados.
+              </div>
+            )}
+
+            {Object.entries(groupedByNucleo)
+              .sort(([nA], [nB]) => nA.localeCompare(nB))
+              .map(([nucleoName, groups]: [string, any]) => (
+                <div key={nucleoName}>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '1rem',
+                    marginBottom: '1.5rem', padding: '1rem 1.5rem',
+                    background: 'rgba(156, 39, 176, 0.1)',
+                    borderRadius: '12px', borderLeft: '4px solid var(--primary)'
+                  }}>
+                    <GraduationCap size={22} color="var(--primary)" />
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>
+                      {nucleoName}
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 400, marginLeft: '0.75rem' }}>
+                        {groups.professors.length} prof. · {groups.students.length} alunos
+                      </span>
+                    </h3>
+                  </div>
+
+                  <SubTable
+                    title="Equipe / Docentes"
+                    icon={<BookOpen size={16} color="var(--primary)" />}
+                    color="var(--primary)"
+                    users={groups.professors}
+                    allNucleos={allNucleos}
+                    actionLoading={actionLoading}
+                    handlers={handlers}
+                  />
+
+                  <SubTable
+                    title="Alunos"
+                    icon={<Users size={16} color="var(--text-muted)" />}
+                    color="var(--text-muted)"
+                    users={groups.students}
+                    allNucleos={allNucleos}
+                    actionLoading={actionLoading}
+                    handlers={handlers}
+                  />
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
+    )
 }
 
 export default UserManagement

@@ -30,6 +30,7 @@ export const useProfessorManagement = () => {
   const [professorNucleos, setProfessorNucleos] = useState<any[]>([])
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([])
+  const [academicReport, setAcademicReport] = useState<any[]>([])
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
   const navigate = useNavigate()
@@ -112,7 +113,7 @@ export const useProfessorManagement = () => {
         const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').order('nome')
         if (sData) studentHook.setAllStudents(sData)
 
-        const { data: subData } = await supabase
+         const { data: subData } = await supabase
           .from('respostas_aulas')
           .select(`
             id, 
@@ -122,9 +123,10 @@ export const useProfessorManagement = () => {
             created_at, 
             tentativas,
             primeira_correcao_at,
-            aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
+            aulas:aula_id!inner ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
             users:aluno_id ( id, nome, email, nucleos ( nome ) )
           `)
+          .eq('aulas.is_bloco_final', true)
           .order('updated_at', { ascending: false })
         if (subData) gradingHook.setSubmissions(subData as any)
       } else {
@@ -140,11 +142,28 @@ export const useProfessorManagement = () => {
           
           const nucIds = myNucs.map(n => n.nucleo_id)
           const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').in('nucleo_id', nucIds).order('nome')
-          if (sData) {
+          
+          if (sData && sData.length > 0) {
+            const studentIds = sData.map(s => s.id)
+            const { data: academicData } = await supabase
+              .from('respostas_aulas')
+              .select(`
+                id, 
+                nota, 
+                status, 
+                updated_at,
+                aulas:aula_id ( id, titulo, is_bloco_final, livros ( id, titulo ) ), 
+                users:aluno_id ( id, nome, email, nucleos ( id, nome ) )
+              `)
+              .in('aluno_id', studentIds)
+              .not('nota', 'is', null)
+              .order('updated_at', { ascending: false });
+            if (academicData) setAcademicReport(academicData);
+            
             studentHook.setAllStudents(sData)
             const studentIds = sData.map(s => s.id)
             if (studentIds.length > 0) {
-              const { data: subData } = await supabase
+               const { data: subData } = await supabase
                 .from('respostas_aulas')
                 .select(`
                   id, 
@@ -154,10 +173,11 @@ export const useProfessorManagement = () => {
                   created_at, 
                   tentativas,
                   primeira_correcao_at,
-                  aulas:aula_id ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
+                  aulas:aula_id!inner ( id, titulo, questionario, tipo, is_bloco_final, livros ( titulo ) ), 
                   users:aluno_id ( id, nome, email, nucleos ( nome ) )
                 `)
                 .in('aluno_id', studentIds)
+                .eq('aulas.is_bloco_final', true)
                 .order('updated_at', { ascending: false })
               if (subData) gradingHook.setSubmissions(subData as any)
             }
@@ -225,6 +245,7 @@ export const useProfessorManagement = () => {
     attendanceRecords,
     handleSaveAttendance,
     actionLoading,
-    setActionLoading
+    setActionLoading,
+    academicReport
   }
 }

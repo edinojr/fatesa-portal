@@ -130,8 +130,6 @@ export const useStudentCourses = (profile: any) => {
                     if (isRestrictedType) {
                       const title = a.titulo || '';
                       let isItemReleased = false;
-                      let isHiddenByRule = false;
-
                       if (title.toUpperCase().includes('V2')) {
                         // Automático se V1 reprovou e foi corrigida
                         const v1Sub = resData.find((s: any) => {
@@ -140,8 +138,6 @@ export const useStudentCourses = (profile: any) => {
                         });
                         const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
                         isItemReleased = v1Reprovou;
-                        // Oculta V2 se V1 não existe ou se o aluno passou na V1
-                        isHiddenByRule = !v1Sub || (v1Sub.status === 'corrigida' && (v1Sub.nota || 0) >= 7.0);
                       } else if (title.toUpperCase().includes('V3')) {
                         // Automático se V2 reprovou e foi corrigida
                         const v2Sub = resData.find((s: any) => {
@@ -150,8 +146,6 @@ export const useStudentCourses = (profile: any) => {
                         });
                         const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
                         isItemReleased = v2Reprovou;
-                        // Oculta V3 se V2 não existe ou se o aluno parou na V1/V2 sem reprovar
-                        isHiddenByRule = !v2Sub || (v2Sub.status === 'corrigida' && (v2Sub.nota || 0) >= 7.0);
                       } else {
                         // V1 ou Vídeo: Liberação manual
                         isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video') 

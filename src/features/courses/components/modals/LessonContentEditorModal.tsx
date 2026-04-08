@@ -13,7 +13,9 @@ interface LessonContentEditorModalProps {
   supabase: any
   showToast: (msg: string, type?: 'success' | 'error') => void
   fetchLessons: (bookId: string) => Promise<void>
+  fetchLessonItems: (lessonId: string) => Promise<void>
   selectedBook: any
+  selectedLesson: any
   normalizeFileName: (name: string) => string
 }
 
@@ -29,7 +31,9 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
   supabase,
   showToast,
   fetchLessons,
+  fetchLessonItems,
   selectedBook,
+  selectedLesson,
   normalizeFileName
 }) => {
   if (!editingLessonContent) return null;
@@ -54,7 +58,8 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                 if (error) throw error;
                 showToast('Conteúdo da aula salvo com sucesso!');
                 setEditingLessonContent(null);
-                fetchLessons(selectedBook.id);
+                if (selectedBook?.id) fetchLessons(selectedBook.id);
+                if (selectedLesson?.id) fetchLessonItems(selectedLesson.id);
               } catch (err: any) {
                 showToast('Erro ao salvar: ' + err.message, 'error');
               } finally {

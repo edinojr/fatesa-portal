@@ -28,11 +28,15 @@ import {
 import UserManagement from '../features/users/components/UserManagement'
 import AlumniManagement from '../features/users/components/AlumniManagement'
 import ContentManagement from '../features/courses/components/ContentManagement'
-import ValidationPanel from '../features/finance/components/ValidationPanel'
 import SettingsPanel from '../features/finance/components/SettingsPanel'
 import ProfessorsManagement from '../features/users/components/ProfessorsManagement'
 import AnalyticsDashboard from '../features/admin/components/AnalyticsDashboard'
 import FinanceReport from '../features/finance/components/FinanceReport'
+import AcademicHistory from '../features/admin/components/AcademicHistory'
+import DocsArchive from '../features/admin/components/DocsArchive'
+
+// Icons and UI
+import { Folder } from 'lucide-react'
 
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
@@ -54,7 +58,7 @@ import {
 } from '../features/courses/components/modals/ContentModals'
 
 // Hook
-import { useAdminManagement } from '../hooks/useAdminManagement'
+import { useAdminManagement, Tab } from '../hooks/useAdminManagement'
 import { supabase } from '../lib/supabase'
 
 const Admin = () => {
@@ -156,8 +160,13 @@ const Admin = () => {
     attendanceRecords,
     professors,
     pendingUsersByNucleo,
+    pendingActivityByNucleo,
+    pendingFinanceCount,
     analyticsData,
-    financeReport
+    financeReport,
+    pendingProofsCount,
+    pendingStudentsCount,
+    academicReport
   } = useAdminManagement()
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
@@ -273,6 +282,7 @@ const Admin = () => {
                  activeTab === 'attendance' ? 'Relatório de Frequência' :
                  activeTab === 'analytics' ? 'Análise do Portal' :
                  activeTab === 'reports' ? 'Relatório de Pagamentos' :
+                 activeTab === 'docs_archive' ? 'Arquivo de Documentação' :
                  'Validação de Acesso'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
@@ -286,6 +296,7 @@ const Admin = () => {
                  activeTab === 'attendance' ? 'Acompanhe as listas de presença compartilhadas pelos professores.' :
                  activeTab === 'analytics' ? 'Monitore visualizações, acessos únicos e rotatividade de usuários.' :
                  activeTab === 'reports' ? 'Lista de alunos que enviaram comprovantes pelo portal.' :
+                 activeTab === 'docs_archive' ? 'Central de arquivos organizada por polo e status.' :
                  'Verifique envios dos alunos.'}
                 </p>
               </div>
@@ -312,8 +323,52 @@ const Admin = () => {
             </div>
           </header>
 
-          {activeTab === 'home' && (
-            <div className="admin-dashboard-grid transition-fade-in">
+           {activeTab === 'home' && (
+            <div className="admin-dashboard-grid transition-fade-in" style={{ gap: '2rem' }}>
+              {/* CENTRAL DE ATIVIDADES (SINALIZAÇÃO) */}
+              {dashboardView === 'main' && (
+                <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
+                  <div className="activity-signal-card" onClick={() => { setActiveTab('users'); setUserTypeFilter('alunos'); }} style={{ background: 'rgba(var(--primary-rgb), 0.05)', border: '1px solid rgba(var(--primary-rgb), 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ background: 'var(--primary)', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Users size={24} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Novos Alunos</div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingStudentsCount}</div>
+                      </div>
+                    </div>
+                    {pendingStudentsCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: 'var(--primary)' }}></div>}
+                  </div>
+
+                  <div className="activity-signal-card" onClick={() => setActiveTab('nucleos')} style={{ background: 'rgba(156, 39, 176, 0.05)', border: '1px solid rgba(156, 39, 176, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ background: '#9c27b0', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <GraduationCap size={24} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Provas p/ Corrigir</div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingProofsCount}</div>
+                      </div>
+                    </div>
+                    {pendingProofsCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#9c27b0' }}></div>}
+                  </div>
+
+                  <div className="activity-signal-card" onClick={() => { setDashboardView('admin_tools'); setActiveTab('reports'); }} style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ background: '#f59e0b', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ShieldCheck size={24} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Validação de Documentos/Pagamentos</div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingFinanceCount}</div>
+                      </div>
+                    </div>
+                    {pendingFinanceCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#f59e0b' }}></div>}
+                  </div>
+                </div>
+              )}
+
               {dashboardView === 'main' && (
                 <>
                   <div className="admin-action-card" onClick={() => setActiveTab('content')}>
@@ -336,7 +391,7 @@ const Admin = () => {
                   <div className="admin-action-card" onClick={() => setDashboardView('admin_tools')}>
                     <div className="icon-wrapper"><ShieldCheck size={32} /></div>
                     <h3>Administrativo</h3>
-                    <p>Validação, Financeiro e Analytics.</p>
+                    <p>Financeiro, Docs e Analytics.</p>
                     {(pendingDocs.length + pendingPays.length) > 0 && (
                       <span style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--warning)', color: '#000', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '12px', fontWeight: 700 }}>
                         {pendingDocs.length + pendingPays.length} envios
@@ -363,6 +418,12 @@ const Admin = () => {
                       <p>Ajustes globais do sistema e chaves PIX.</p>
                     </div>
                   )}
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('academic')} style={{ border: '1px solid rgba(var(--primary-rgb), 0.3)', background: 'rgba(var(--primary-rgb), 0.02)' }}>
+                    <div className="icon-wrapper"><History size={32} /></div>
+                    <h3>Histórico Acadêmico</h3>
+                    <p>Relatório completo de notas e módulos.</p>
+                  </div>
                 </>
               )}
 
@@ -396,22 +457,22 @@ const Admin = () => {
 
               {dashboardView === 'admin_tools' && (
                 <>
-                  <div className="admin-action-card" onClick={() => setActiveTab('validation')}>
-                    <div className="icon-wrapper"><Shield size={32} /></div>
-                    <h3>Validação</h3>
-                    <p>Aprovação de acessos e comprovantes.</p>
-                  </div>
-
                   <div className="admin-action-card" onClick={() => setActiveTab('reports')}>
                     <div className="icon-wrapper"><FileText size={32} /></div>
                     <h3>Financeiro</h3>
-                    <p>Relatórios de pagamentos e inadimplência.</p>
+                    <p>Relatórios, Faturas e Homologação.</p>
                   </div>
 
                   <div className="admin-action-card" onClick={() => setActiveTab('analytics')}>
                     <div className="icon-wrapper"><TrendingUp size={32} /></div>
                     <h3>Analytics</h3>
                     <p>Métricas de acesso e engajamento.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('docs_archive')}>
+                    <div className="icon-wrapper"><Folder size={32} /></div>
+                    <h3>Arquivo Geral</h3>
+                    <p>Documentação por polo e status acadêmico.</p>
                   </div>
                 </>
               )}
@@ -422,6 +483,7 @@ const Admin = () => {
         
         {activeTab === 'users' && (
           <UserManagement 
+            pendingActivityByNucleo={pendingActivityByNucleo}
             users={(() => {
               let filtered = users;
               if (userTypeFilter === 'administrativos') filtered = filtered.filter(u => ['admin', 'suporte', 'colaborador'].includes(u.tipo));
@@ -430,7 +492,6 @@ const Admin = () => {
             })()}
             allNucleos={allNucleos}
             searchTerm={searchTerm}
-            userRole={userRole}
             actionLoading={actionLoading}
             setShowAddAdmin={setShowAddAdmin}
             handleTypeChange={handleTypeChange}
@@ -443,6 +504,7 @@ const Admin = () => {
             handleResetActivities={handleResetProgress}
             handleManualPayment={handleManualPayment}
             onAddNucleo={() => { setActiveTab('nucleos'); setNucleosAutoOpenAdd(true); }}
+            handleDeleteNucleo={handleDeleteNucleo}
           />
         )}
 
@@ -546,15 +608,9 @@ const Admin = () => {
           />
         )}
 
-        {activeTab === 'validation' && (
-          <ValidationPanel 
-            pendingDocs={pendingDocs}
-            pendingPays={pendingPays}
-            userRole={userRole || ''}
-            actionLoading={actionLoading}
-            handleValidar={handleValidar}
-            handleDeleteValidation={handleDeleteValidation}
-          />
+
+        {activeTab === 'docs_archive' && (
+          <DocsArchive allNucleos={allNucleos} />
         )}
 
         {activeTab === 'nucleos' && (
@@ -574,6 +630,10 @@ const Admin = () => {
             handleUploadQrCode={handleUploadQrCode}
             actionLoading={actionLoading}
           />
+        )}
+
+         {activeTab === 'academic' && (
+          <AcademicHistory data={academicReport} searchTerm={searchTerm} />
         )}
 
         {activeTab === 'reports' && (
@@ -683,7 +743,9 @@ const Admin = () => {
           supabase={supabase}
           showToast={showToast}
           fetchLessons={fetchLessons}
+          fetchLessonItems={fetchLessonItems}
           selectedBook={selectedBook}
+          selectedLesson={selectedLesson}
           normalizeFileName={normalizeFileName}
         />
 
@@ -697,7 +759,9 @@ const Admin = () => {
           supabase={supabase}
           showToast={showToast}
           fetchLessons={fetchLessons}
+          fetchLessonItems={fetchLessonItems}
           selectedBook={selectedBook}
+          selectedLesson={selectedLesson}
         />
 
         <AddAdminModal 
