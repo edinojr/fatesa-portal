@@ -138,7 +138,7 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                             const firstFile = files[0];
                             const firstSafeName = normalizeFileName(firstFile.name);
                             const firstPath = `lesson-elements/${Date.now()}_${firstSafeName}`;
-                            const { error: firstError } = await supabase.storage.from('livros').upload(firstPath, firstFile);
+                            const { error: firstError } = await supabase.storage.from('livros').upload(firstPath, firstFile, { cacheControl: '31536000' });
                             if (firstError) throw firstError;
                             const { data: { publicUrl: firstUrl } } = supabase.storage.from('livros').getPublicUrl(firstPath);
                             newBlocks[idx].content = firstUrl;
@@ -148,7 +148,7 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                               const file = files[i];
                               const safeName = normalizeFileName(file.name);
                               const filePath = `lesson-elements/${Date.now()}_${safeName}`;
-                              const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                              const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: '31536000' });
                               if (uploadError) throw uploadError;
                               const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
                               newBlocks.push({ type: 'image', content: publicUrl });
@@ -225,7 +225,7 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                       const file = files[i];
                       const safeName = normalizeFileName(file.name);
                       const filePath = `materiais/${Date.now()}_${safeName}`;
-                      const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                      const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: '31536000' });
                       if (uploadError) throw uploadError;
                       const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
                       newMaterials.push({ name: file.name, url: publicUrl });

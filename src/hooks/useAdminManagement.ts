@@ -149,7 +149,7 @@ export const useAdminManagement = () => {
       const safeName = normalizeFileName(file.name)
       const folder = column === 'capa_url' ? 'capas' : (file.name.toLowerCase().endsWith('.epub') ? 'epubs' : 'pdfs')
       const filePath = `${folder}/${Date.now()}_${safeName}`
-      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file)
+      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file, { cacheControl: '31536000' })
       if (uploadError) throw uploadError
 
       const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
@@ -848,7 +848,7 @@ export const useAdminManagement = () => {
       const ext = file.name.split('.').pop();
       const safeName = normalizeFileName(file.name.replace(`.${ext}`, ''));
       const fileName = `qrcode_${Date.now()}_${safeName}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from('livros').upload(`assets/${fileName}`, file);
+      const { error: uploadError } = await supabase.storage.from('livros').upload(`assets/${fileName}`, file, { cacheControl: '31536000' });
       if (uploadError) throw uploadError;
       
       const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(`assets/${fileName}`);

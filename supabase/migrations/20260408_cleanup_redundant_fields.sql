@@ -10,4 +10,4 @@ WHERE u.nucleo_id IS NULL
 ALTER TABLE public.users DROP COLUMN IF EXISTS nucleo;
 
 -- 3. Adicionar comentário para documentar a mudança
-COMMENT ON COLUMN public.users.nucleo_id IS 'Referência oficial ao núcleo/polo. A coluna de texto legada foi removida para garantir integridade via Views.';
+COMMENT ON COLUMN public.users.nucleo_id IS 'Referencia oficial ao nucleo/polo. Coluna legada removida.';

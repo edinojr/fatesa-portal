@@ -182,7 +182,7 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
             if (capaFile && capaFile.size > 0) {
               const safeName = normalizeFileName(capaFile.name);
               const capaPath = `capas/${Date.now()}_${safeName}`;
-              const { error: uploadError } = await supabase.storage.from('livros').upload(capaPath, capaFile);
+              const { error: uploadError } = await supabase.storage.from('livros').upload(capaPath, capaFile, { cacheControl: '31536000' });
               if (uploadError) throw uploadError;
               capa_url = supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl;
             }
@@ -367,7 +367,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                   const file = files[i];
                   const safeName = normalizeFileName(file.name);
                   const filePath = `materiais/${Date.now()}_${safeName}`;
-                  const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                  const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: '31536000' });
                   if (uploadError) throw uploadError;
                   const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
                   
@@ -395,7 +395,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
               if (file) {
                 const safeName = normalizeFileName(file.name);
                 const filePath = `conteudo/${Date.now()}_${safeName}`;
-                const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+                const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: '31536000' });
                 if (uploadError) throw uploadError;
                 const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
                 arquivo_url = publicUrl;
@@ -584,7 +584,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               if (capaFile && capaFile.size > 0 && normalizeFileName) {
                 const safeName = normalizeFileName(capaFile.name);
                 const capaPath = `capas/${Date.now()}_${safeName}`;
-                const { error: uploadError } = await supabase.storage.from('livros').upload(capaPath, capaFile);
+                const { error: uploadError } = await supabase.storage.from('livros').upload(capaPath, capaFile, { cacheControl: '31536000' });
                 if (uploadError) throw uploadError;
                 updates.capa_url = supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl;
               }
@@ -594,7 +594,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
             if (file) {
               const safeName = normalizeFileName ? normalizeFileName(file.name) : file.name;
               const filePath = `conteudo/${Date.now()}_${safeName}`;
-              const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
+              const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: '31536000' });
               if (uploadError) throw uploadError;
               const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
               updates.arquivo_url = publicUrl;
