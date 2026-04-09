@@ -79,6 +79,9 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
     document.body.removeChild(link);
   };
 
+  const confirmedTotal = filteredData.filter(p => p.status === 'aprovado').length;
+  const pendingTotal = filteredData.filter(p => p.status === 'pago' || p.status === 'pendente').length;
+
   return (
     <div className="finance-report-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -96,6 +99,29 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
         <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.5rem', width: 'auto' }}>
           <Download size={18} /> Exportar CSV
         </button>
+      </div>
+
+      {/* Summary Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        <div className="card" style={{ padding: '1.5rem', background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(16, 185, 129, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CheckCircle2 size={24} color="#10b981" />
+          </div>
+          <div>
+            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#10b981', lineHeight: 1 }}>{confirmedTotal}</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, opacity: 0.7, marginTop: '4px' }}>Pagamentos Confirmados</div>
+          </div>
+        </div>
+
+        <div className="card" style={{ padding: '1.5rem', background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Clock size={24} color="#f59e0b" />
+          </div>
+          <div>
+            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#f59e0b', lineHeight: 1 }}>{pendingTotal}</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, opacity: 0.7, marginTop: '4px' }}>Aguardando Confirmação</div>
+          </div>
+        </div>
       </div>
 
       {filteredData.length === 0 ? (

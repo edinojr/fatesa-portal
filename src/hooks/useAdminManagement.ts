@@ -21,12 +21,14 @@ export const useAdminManagement = () => {
   const userTypeFilter = useMemo(() => searchParams.get('filter'), [searchParams]);
 
   const updateParams = (newParams: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams);
-    Object.entries(newParams).forEach(([key, value]) => {
-      if (value === null) params.delete(key);
-      else params.set(key, value);
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      Object.entries(newParams).forEach(([key, value]) => {
+        if (value === null) params.delete(key);
+        else params.set(key, value);
+      });
+      return params;
     });
-    setSearchParams(params);
   };
 
   const setActiveTab = (newTab: Tab) => updateParams({ tab: newTab, view: 'main', filter: null, courseId: null, bookId: null, lessonId: null });
@@ -434,7 +436,7 @@ export const useAdminManagement = () => {
       } else if (activeTab === 'reports' && userRole === 'admin') {
         const { data: reportPays, error } = await supabase
           .from('pagamentos')
-          .select('id, valor, status, data_vencimento, comprovante_url, feedback, modulo, users(id, nome, email, nucleo, nucleo_id)')
+          .select('id, valor, status, data_vencimento, comprovante_url, feedback, modulo, users(id, nome, email, nucleo, nucleo_id, nucleos(nome))')
           .order('data_vencimento', { ascending: false });
         
         if (reportPays) setFinanceReport(reportPays);

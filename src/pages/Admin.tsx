@@ -180,7 +180,7 @@ const Admin = () => {
     if (selectedLesson) { setSelectedLesson(null); return; }
     if (selectedBook) { setSelectedBook(null); return; }
     if (selectedCourse) { setSelectedCourse(null); return; }
-    if (dashboardView !== 'main') { setDashboardView('main'); setUserTypeFilter(null); return; }
+    if (dashboardView !== 'main') { setDashboardView('main'); return; }
     if (activeTab !== 'home') { setActiveTab('home'); return; }
   }
 
@@ -213,7 +213,7 @@ const Admin = () => {
                 </button>
               )}
               {activeTab !== 'home' && (
-                <button className="nav-btn-premium" onClick={() => { setActiveTab('home'); setDashboardView('main'); setUserTypeFilter(null); }}>
+                <button className="nav-btn-premium" onClick={() => setActiveTab('home')}>
                   <LayoutGrid size={18} /> <span className="mobile-hide">Menu Principal</span>
                 </button>
               )}
