@@ -37,25 +37,13 @@ export const useAdminManagement = () => {
   const [userRole, setUserRole] = useState<string | null>(null)
   const [users, setUsers] = useState<any[]>([])
   const [courses, setCourses] = useState<any[]>([])
-  const [pendingDocs, setPendingDocs] = useState<any[]>([])
-  const [pendingPays, setPendingPays] = useState<any[]>([])
   const [professors, setProfessors] = useState<any[]>([])
   const [attendanceRecords, setAttendanceRecords] = useState<any[]>([])
-  const [pendingUsersByNucleo, setPendingUsersByNucleo] = useState<Record<string, number>>({})
-  const [pendingActivityByNucleo, setPendingActivityByNucleo] = useState<Record<string, { students: number; payments: number }>>({})
   const [analyticsData, setAnalyticsData] = useState<any>(null)
   const [financeReport, setFinanceReport] = useState<any[]>([])
-
   const [userCount, setUserCount] = useState(0)
   const [courseCount, setCourseCount] = useState(0)
   const [pendingCount, setPendingCount] = useState(0)
-  
-  // New Signaling Counts
-  const [pendingProofsCount, setPendingProofsCount] = useState(0)
-  const [pendingStudentsCount, setPendingStudentsCount] = useState(0)
-  const [pendingFinanceCount, setPendingFinanceCount] = useState(0)
-  const [academicReport, setAcademicReport] = useState<any[]>([])
-
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -66,13 +54,10 @@ export const useAdminManagement = () => {
   const [availableRoles, setAvailableRoles] = useState<string[]>([])
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
   const [showAddAdmin, setShowAddAdmin] = useState(false)
-  
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
-  
   const [selectedCourse, setSelectedCourseState] = useState<any | null>(null)
   const [selectedBook, setSelectedBookState] = useState<any | null>(null)
   const [selectedLesson, setSelectedLessonState] = useState<any | null>(null)
-
   const setSelectedCourse = (val: any) => updateParams({ courseId: val?.id || null, bookId: null, lessonId: null });
   const setSelectedBook = (val: any) => updateParams({ bookId: val?.id || null, lessonId: null });
   const setSelectedLesson = (val: any) => updateParams({ lessonId: val?.id || null });
@@ -83,7 +68,6 @@ export const useAdminManagement = () => {
   const [showAddBook, setShowAddBook] = useState(false)
   const [showAddLesson, setShowAddLesson] = useState(false)
   const [showAddContent, setShowAddContent] = useState(false)
-  
   const [allNucleos, setAllNucleos] = useState<any[]>([])
   const [editingItem, setEditingItem] = useState<{ type: 'course' | 'book' | 'lesson' | 'content', data: any } | null>(null)
   const [editingQuiz, setEditingQuiz] = useState<any | null>(null)
@@ -93,14 +77,11 @@ export const useAdminManagement = () => {
   const [editingLessonContent, setEditingLessonContent] = useState<any | null>(null)
   const [lessonBlocks, setLessonBlocks] = useState<any[]>([])
   const [lessonMaterials, setLessonMaterials] = useState<any[]>([])
-  
   const [pixKey, setPixKey] = useState('')
   const [pixQrUrl, setPixQrUrl] = useState('')
   const [uploading, setUploading] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [nucleosAutoOpenAdd, setNucleosAutoOpenAdd] = useState(false)
-  
-  const [pendingCount, setPendingCount] = useState(0)
   const [pendingStudentsCount, setPendingStudentsCount] = useState(0)
   const [pendingProofsCount, setPendingProofsCount] = useState(0)
   const [pendingDocsCount, setPendingDocsCount] = useState(0)
@@ -108,8 +89,8 @@ export const useAdminManagement = () => {
   const [pendingDocs, setPendingDocs] = useState<any[]>([])
   const [pendingPaysValidation, setPendingPaysValidation] = useState<any[]>([])
   const [pendingUsersByNucleo, setPendingUsersByNucleo] = useState<Record<string, number>>({})
-  const [academicReport, setAcademicHistory] = useState<any[]>([])
   const [pendingActivityByNucleo, setPendingActivityByNucleo] = useState<Record<string, any>>({})
+  const [academicReport, setAcademicHistory] = useState<any[]>([])
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'user' | 'content', id: string, table?: string, column?: string, title: string } | null>(null);
 
   const navigate = useNavigate()

@@ -39,7 +39,7 @@ import DocsArchive from '../features/admin/components/DocsArchive'
 // import { Folder } from 'lucide-react'
 
 // Legacy / Shared Components
-import NucleosPanel from '../features/nucleos/components/NucleosPanel'
+import NucleosPanel from '../components/NucleosPanel'
 import Logo from '../components/common/Logo'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import ForumPanel from '../features/forum/components/ForumPanel'
@@ -412,9 +412,9 @@ const Admin = () => {
                     <div className="icon-wrapper"><ShieldCheck size={32} /></div>
                     <h3>Administrativo</h3>
                     <p>Financeiro, Docs e Analytics.</p>
-                    {(pendingDocs.length + pendingPays.length) > 0 && (
+                    {(pendingDocsCount + pendingPaysCount) > 0 && (
                       <span style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--warning)', color: '#000', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '12px', fontWeight: 700 }}>
-                        {pendingDocs.length + pendingPays.length} envios
+                        {pendingDocsCount + pendingPaysCount} envios
                       </span>
                     )}
                   </div>
