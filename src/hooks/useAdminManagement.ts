@@ -160,6 +160,13 @@ export const useAdminManagement = () => {
     }
   }, [searchParams, userRole, loading]);
 
+  // NEW: Auto-Forward logic for user selection tiles
+  useEffect(() => {
+    if (activeTab === 'home' && dashboardView === 'users' && userTypeFilter) {
+      updateParams({ tab: 'users' });
+    }
+  }, [activeTab, dashboardView, userTypeFilter]);
+
   const fetchNucleosGlobal = async () => {
     const { data } = await supabase.from('nucleos').select('*')
     if (data) setAllNucleos(data)
@@ -1103,6 +1110,7 @@ export const useAdminManagement = () => {
     academicReport,
     pendingActivityByNucleo,
     handleDeleteNucleo,
-    handleResetAutoCorrectedExams
+    handleResetAutoCorrectedExams,
+    updateParams
   }
 }

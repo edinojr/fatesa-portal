@@ -171,7 +171,8 @@ const Admin = () => {
     pendingStudentsCount,
     academicReport,
     handleDeleteNucleo,
-    handleResetAutoCorrectedExams
+    handleResetAutoCorrectedExams,
+    updateParams
   } = useAdminManagement()
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
@@ -432,7 +433,7 @@ const Admin = () => {
 
               {dashboardView === 'users' && (
                 <>
-                  <div className="admin-action-card" onClick={() => { setActiveTab('users'); setUserTypeFilter('administrativos'); }}>
+                  <div className="admin-action-card" onClick={() => updateParams({ tab: 'users', filter: 'administrativos', view: 'main' })}>
                     <div className="icon-wrapper"><ShieldCheck size={32} /></div>
                     <h3>Administrativo</h3>
                     <p>Gerencie suporte, moderadores e administradores.</p>
@@ -444,7 +445,7 @@ const Admin = () => {
                     <p>Visualize e vincule docentes aos núcleos.</p>
                   </div>
 
-                  <div className="admin-action-card" onClick={() => { setActiveTab('users'); setUserTypeFilter('alunos'); }}>
+                  <div className="admin-action-card" onClick={() => updateParams({ tab: 'users', filter: 'alunos', view: 'main' })}>
                     <div className="icon-wrapper"><Users size={32} /></div>
                     <h3>Alunos</h3>
                     <p>Gestão total dos alunos ativos.</p>
