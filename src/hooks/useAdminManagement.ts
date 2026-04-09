@@ -17,9 +17,21 @@ export const useAdminManagement = () => {
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
-  const setActiveTab = (newTab: Tab) => {
-    setSearchParams({ tab: newTab });
+  const dashboardView = useMemo(() => (searchParams.get('view') || 'main') as 'main' | 'users' | 'admin_tools', [searchParams]);
+  const userTypeFilter = useMemo(() => searchParams.get('filter'), [searchParams]);
+
+  const updateParams = (newParams: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams);
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value === null) params.delete(key);
+      else params.set(key, value);
+    });
+    setSearchParams(params);
   };
+
+  const setActiveTab = (newTab: Tab) => updateParams({ tab: newTab, view: 'main', filter: null, courseId: null, bookId: null, lessonId: null });
+  const setDashboardView = (view: string) => updateParams({ view });
+  const setUserTypeFilter = (filter: string | null) => updateParams({ filter });
   const [userRole, setUserRole] = useState<string | null>(null)
   const [users, setUsers] = useState<any[]>([])
   const [courses, setCourses] = useState<any[]>([])
@@ -55,9 +67,13 @@ export const useAdminManagement = () => {
   
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
   
-  const [selectedCourse, setSelectedCourse] = useState<any | null>(null)
-  const [selectedBook, setSelectedBook] = useState<any | null>(null)
-  const [selectedLesson, setSelectedLesson] = useState<any | null>(null)
+  const [selectedCourse, setSelectedCourseState] = useState<any | null>(null)
+  const [selectedBook, setSelectedBookState] = useState<any | null>(null)
+  const [selectedLesson, setSelectedLessonState] = useState<any | null>(null)
+
+  const setSelectedCourse = (val: any) => updateParams({ courseId: val?.id || null, bookId: null, lessonId: null });
+  const setSelectedBook = (val: any) => updateParams({ bookId: val?.id || null, lessonId: null });
+  const setSelectedLesson = (val: any) => updateParams({ lessonId: val?.id || null });
   const [books, setBooks] = useState<any[]>([])
   const [lessons, setLessons] = useState<any[]>([])
   const [lessonItems, setLessonItems] = useState<any[]>([]) 
@@ -108,6 +124,39 @@ export const useAdminManagement = () => {
       }
     }
   }, [activeTab, userRole])
+
+  // NEW: Persistence Recovery Effect
+  useEffect(() => {
+    if (!loading && userRole) {
+      const cId = searchParams.get('courseId');
+      const bId = searchParams.get('bookId');
+      const lId = searchParams.get('lessonId');
+
+      if (cId && (!selectedCourse || selectedCourse.id !== cId)) {
+        supabase.from('cursos').select('*, livros(count)').eq('id', cId).single().then(({ data }) => {
+          if (data) { setSelectedCourseState(data); fetchBooks(cId); }
+        });
+      } else if (!cId) {
+        setSelectedCourseState(null);
+      }
+
+      if (bId && (!selectedBook || selectedBook.id !== bId)) {
+        supabase.from('livros').select('*, aulas(count)').eq('id', bId).single().then(({ data }) => {
+          if (data) { setSelectedBookState(data); fetchLessons(bId); }
+        });
+      } else if (!bId) {
+        setSelectedBookState(null);
+      }
+
+      if (lId && (!selectedLesson || selectedLesson.id !== lId)) {
+        supabase.from('aulas').select('*').eq('id', lId).single().then(({ data }) => {
+          if (data) { setSelectedLessonState(data); fetchLessonItems(lId); }
+        });
+      } else if (!lId) {
+        setSelectedLessonState(null);
+      }
+    }
+  }, [searchParams, userRole, loading]);
 
   const fetchNucleosGlobal = async () => {
     const { data } = await supabase.from('nucleos').select('*')
@@ -934,6 +983,10 @@ export const useAdminManagement = () => {
     profile,
     activeTab,
     setActiveTab,
+    dashboardView,
+    setDashboardView,
+    userTypeFilter,
+    setUserTypeFilter,
     userRole,
     users,
     courses,

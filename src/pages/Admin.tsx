@@ -65,6 +65,10 @@ const Admin = () => {
     profile,
     activeTab,
     setActiveTab,
+    dashboardView,
+    setDashboardView,
+    userTypeFilter,
+    setUserTypeFilter,
     userRole,
     users,
     courses,
@@ -171,8 +175,6 @@ const Admin = () => {
   } = useAdminManagement()
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
-  const [dashboardView, setDashboardView] = React.useState<'main' | 'users' | 'admin_tools'>('main')
-  const [userTypeFilter, setUserTypeFilter] = React.useState<string | null>(null)
 
   const handleGlobalBack = () => {
     if (selectedLesson) { setSelectedLesson(null); return; }

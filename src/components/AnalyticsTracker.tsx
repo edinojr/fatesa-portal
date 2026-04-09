@@ -34,7 +34,7 @@ const AnalyticsTracker = () => {
           user_id: user?.id || null,
           session_id: sessionId,
           user_type: user ? 'registrado' : 'visitante',
-          path: location.pathname
+          path: location.pathname + location.search
         })
       } catch (err: any) {
         // Silent fail for analytics. Most likely network or lock issue.
@@ -44,7 +44,7 @@ const AnalyticsTracker = () => {
     }, 500)
 
     return () => clearTimeout(timer)
-  }, [location.pathname]) // Only track on pathname change
+  }, [location.pathname, location.search]) // Track on pathname or search change
 
   return null
 }
