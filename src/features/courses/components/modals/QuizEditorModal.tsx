@@ -1,5 +1,5 @@
 import React from 'react'
-import { Award, Trash2, X, Plus, CheckCircle2, XCircle, ChevronRight, Loader2 } from 'lucide-react'
+import { Award, Trash2, X, Plus, CheckCircle2, XCircle, ChevronRight, Loader2, ClipboardList } from 'lucide-react'
 import { QuizQuestion, QuestionType } from '../../../../types/admin'
 
 interface QuizEditorModalProps {
@@ -174,7 +174,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
           <Award color="var(--primary)" /> {editingQuiz.is_bloco_final ? 'Avaliação Final de Bloco' : 'Atividade'}: {editingQuiz.titulo}
         </h2>
         
-        {editingQuiz.is_bloco_final && (
+        {(editingQuiz.is_bloco_final || editingQuiz.tipo === 'prova') && (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', background: 'rgba(var(--primary-rgb), 0.05)', padding: '1rem', borderRadius: '12px' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button 
@@ -202,7 +202,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
             
             <button 
               className="btn btn-primary" 
-              style={{ width: 'auto', background: '#38bdf8', borderColor: '#38bdf8', color: '#000', fontWeight: 700, px: '1.5rem' }}
+              style={{ width: 'auto', background: '#38bdf8', borderColor: '#38bdf8', color: '#000', fontWeight: 700, paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
               onClick={() => setShowImporter(true)}
             >
               <ClipboardList size={18} /> IMPORTAR DO PUBLISHER (TEXTO)

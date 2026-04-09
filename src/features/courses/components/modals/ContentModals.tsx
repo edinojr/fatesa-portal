@@ -93,6 +93,7 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
 interface AddCourseModalProps {
   showAddCourse: boolean
   setShowAddCourse: (val: boolean) => void
+  actionLoading: string | null
   supabase: any
   fetchData: () => Promise<void>
   showToast: (msg: string, type?: 'success' | 'error') => void
@@ -411,6 +412,9 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 }
               ];
 
+              const isExam = (addingLessonType === 'prova' || formData.get('is_bloco_final') === 'on');
+              const initialQuiz = (addingLessonType === 'atividade' || addingLessonType === 'prova') ? standardTemplate : [];
+
               const { error } = await supabase.from('aulas').insert({ 
                 livro_id: selectedLesson.livro_id,
                 parent_aula_id: selectedLesson.id,
@@ -423,7 +427,9 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 bloco_id: addingBloco,
                 versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
                 is_bloco_final: formData.get('is_bloco_final') === 'on',
-                questionario: (addingLessonType === 'atividade' || addingLessonType === 'prova') ? standardTemplate : []
+                questionario: initialQuiz,
+                questionario_v2: isExam ? standardTemplate : null,
+                questionario_v3: isExam ? standardTemplate : null
               });
               
               if (error) throw error;
