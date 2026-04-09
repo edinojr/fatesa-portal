@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { 
   CheckCircle2, 
   XCircle, 
@@ -46,6 +47,8 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
   actionLoading,
   userRole
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeView = (searchParams.get('view') === 'docs' ? 'docs' : 'pays') as 'docs' | 'pays';
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedModulos, setSelectedModulos] = useState<Record<string, string>>({});
 
@@ -83,6 +86,13 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
 
     return Object.values(students);
   }, [pendingDocs, pendingPays]);
+
+  const filteredStudents = useMemo(() => {
+    if (activeView === 'docs') {
+      return groupedStudents.filter(s => s.docs.length > 0);
+    }
+    return groupedStudents.filter(s => s.pays.length > 0);
+  }, [groupedStudents, activeView]);
 
   const selectedStudent = groupedStudents.find(s => s.user_id === selectedUserId);
 
@@ -312,7 +322,34 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
   }
 
   return (
-    <div className="validation-panel-container">
+    <div className="validation-panel-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      
+      {/* Abas de Navegação Interna */}
+      <div style={{ display: 'flex', background: 'var(--glass)', padding: '0.4rem', borderRadius: '12px', border: '1px solid var(--glass-border)', width: 'fit-content' }}>
+        <button 
+          className={`nav-btn-premium ${activeView === 'pays' ? 'active' : ''}`}
+          onClick={() => {
+            const params = new URLSearchParams(searchParams);
+            params.set('view', 'pays');
+            setSearchParams(params);
+          }}
+          style={{ border: 'none', background: activeView === 'pays' ? 'var(--primary)' : 'transparent', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+        >
+          <CreditCard size={16} /> Pagamentos ({pendingPays.length})
+        </button>
+        <button 
+          className={`nav-btn-premium ${activeView === 'docs' ? 'active' : ''}`}
+          onClick={() => {
+            const params = new URLSearchParams(searchParams);
+            params.set('view', 'docs');
+            setSearchParams(params);
+          }}
+          style={{ border: 'none', background: activeView === 'docs' ? 'var(--primary)' : 'transparent', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+        >
+          <FileText size={16} /> Documentos ({pendingDocs.length})
+        </button>
+      </div>
+
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <table className="admin-table">
           <thead>
@@ -324,14 +361,17 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
             </tr>
           </thead>
           <tbody>
-            {groupedStudents.length === 0 ? (
+            {filteredStudents.length === 0 ? (
               <tr>
-                <td colSpan={userRole === 'admin' ? 4 : 3} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                  Excelente! Nenhum documento ou pagamento aguardando validação no momento.
+                <td colSpan={userRole === 'admin' ? 4 : 3} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                    <CheckCircle2 size={48} opacity={0.3} />
+                    <p>Excelente! Nenhum {activeView === 'pays' ? 'pagamento' : 'documento'} aguardando validação no momento.</p>
+                  </div>
                 </td>
               </tr>
             ) : (
-              groupedStudents.map(student => (
+              filteredStudents.map(student => (
                 <tr key={student.user_id}>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

@@ -9,6 +9,7 @@ import {
   Trash2,
   CheckCircle2,
   ShieldCheck,
+  FileCheck,
   XCircle,
   Loader2, 
   GraduationCap,
@@ -38,10 +39,11 @@ import DocsArchive from '../features/admin/components/DocsArchive'
 // import { Folder } from 'lucide-react'
 
 // Legacy / Shared Components
-import NucleosPanel from '../components/NucleosPanel'
+import NucleosPanel from '../features/nucleos/components/NucleosPanel'
 import Logo from '../components/common/Logo'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import ForumPanel from '../features/forum/components/ForumPanel'
+import ValidationPanel from '../features/finance/components/ValidationPanel'
 
 // Modals
 import LessonContentEditorModal from '../features/courses/components/modals/LessonContentEditorModal'
@@ -72,8 +74,6 @@ const Admin = () => {
     userRole,
     users,
     courses,
-    pendingDocs,
-    pendingPays,
     loading,
     actionLoading,
     setActionLoading,
@@ -164,11 +164,14 @@ const Admin = () => {
     professors,
     pendingUsersByNucleo,
     pendingActivityByNucleo,
-    pendingFinanceCount,
     analyticsData,
     financeReport,
-    pendingProofsCount,
+    pendingDocsCount,
+    pendingPaysCount,
+    pendingDocs,
+    pendingPaysValidation,
     pendingStudentsCount,
+    pendingProofsCount,
     academicReport,
     handleDeleteNucleo,
     handleResetAutoCorrectedExams,
@@ -358,17 +361,30 @@ const Admin = () => {
                     {pendingProofsCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#9c27b0' }}></div>}
                   </div>
 
-                  <div className="activity-signal-card" onClick={() => { setDashboardView('admin_tools'); setActiveTab('reports'); }} style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                  <div className="activity-signal-card" onClick={() => updateParams({ tab: 'finance', view: 'pays' })} style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ background: '#f59e0b', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ background: '#10b981', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <ShieldCheck size={24} />
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Validação de Documentos/Pagamentos</div>
-                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingFinanceCount}</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Validação de Pagamentos</div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingPaysCount}</div>
                       </div>
                     </div>
-                    {pendingFinanceCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#f59e0b' }}></div>}
+                    {pendingPaysCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#10b981' }}></div>}
+                  </div>
+
+                  <div className="activity-signal-card" onClick={() => updateParams({ tab: 'finance', view: 'docs' })} style={{ background: 'rgba(56, 189, 248, 0.05)', border: '1px solid rgba(56, 189, 248, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ background: '#38bdf8', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <FileCheck size={24} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Validação de Documentos</div>
+                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingDocsCount}</div>
+                      </div>
+                    </div>
+                    {pendingDocsCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#38bdf8' }}></div>}
                   </div>
                 </div>
               )}
@@ -638,6 +654,17 @@ const Admin = () => {
 
          {activeTab === 'academic' && (
           <AcademicHistory data={academicReport} searchTerm={searchTerm} />
+        )}
+
+        {activeTab === 'finance' && (
+          <ValidationPanel 
+            pendingDocs={pendingDocs}
+            pendingPays={pendingPaysValidation}
+            handleValidar={handleValidar}
+            handleDeleteValidation={handleDeleteValidation}
+            actionLoading={actionLoading}
+            userRole={userRole || 'admin'}
+          />
         )}
 
         {activeTab === 'reports' && (

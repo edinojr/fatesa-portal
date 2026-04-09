@@ -100,6 +100,16 @@ export const useAdminManagement = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [nucleosAutoOpenAdd, setNucleosAutoOpenAdd] = useState(false)
   
+  const [pendingCount, setPendingCount] = useState(0)
+  const [pendingStudentsCount, setPendingStudentsCount] = useState(0)
+  const [pendingProofsCount, setPendingProofsCount] = useState(0)
+  const [pendingDocsCount, setPendingDocsCount] = useState(0)
+  const [pendingPaysCount, setPendingPaysCount] = useState(0)
+  const [pendingDocs, setPendingDocs] = useState<any[]>([])
+  const [pendingPaysValidation, setPendingPaysValidation] = useState<any[]>([])
+  const [pendingUsersByNucleo, setPendingUsersByNucleo] = useState<Record<string, number>>({})
+  const [academicReport, setAcademicHistory] = useState<any[]>([])
+  const [pendingActivityByNucleo, setPendingActivityByNucleo] = useState<Record<string, any>>({})
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'user' | 'content', id: string, table?: string, column?: string, title: string } | null>(null);
 
   const navigate = useNavigate()
@@ -317,7 +327,7 @@ export const useAdminManagement = () => {
         const [usersCount, coursesCount, docsCount, paysCount, proofsPending] = await Promise.all([
           supabase.from('users').select('id', { count: 'exact', head: true }),
           supabase.from('cursos').select('id', { count: 'exact', head: true }),
-          supabase.from('documentos').select('id', { count: 'exact', head: true }).eq('status', 'pendente'),
+          supabase.from('documentos').select('id', { count: 'exact', head: true }).not('url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
           supabase.from('pagamentos').select('id', { count: 'exact', head: true }).not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
           supabase.from('respostas_aulas')
             .select('id, aulas!inner(is_bloco_final)', { count: 'exact', head: true })
@@ -407,6 +417,13 @@ export const useAdminManagement = () => {
           .eq('compartilhado', true)
           .order('data', { ascending: false });
         if (data) setAttendanceRecords(data);
+      } else if (activeTab === 'finance') {
+        const [docsData, paysData] = await Promise.all([
+          supabase.from('documentos').select('*, users(id, nome, email, nucleo, nucleo_id, nucleos(nome))').not('url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
+          supabase.from('pagamentos').select('*, users(id, nome, email, nucleo, nucleo_id, nucleos(nome))').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)')
+        ]);
+        if (docsData.data) setPendingDocs(docsData.data);
+        if (paysData.data) setPendingPaysValidation(paysData.data);
       } else if (activeTab === 'analytics') {
         const { data } = await supabase
           .from('portal_access_logs')
@@ -1106,7 +1123,10 @@ export const useAdminManagement = () => {
     normalizeFileName,
     pendingProofsCount,
     pendingStudentsCount,
-    pendingFinanceCount,
+    pendingDocsCount,
+    pendingPaysCount,
+    pendingDocs,
+    pendingPaysValidation,
     academicReport,
     pendingActivityByNucleo,
     handleDeleteNucleo,
