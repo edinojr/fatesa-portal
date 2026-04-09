@@ -220,8 +220,8 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                         <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '10px' }}>
                           <span style={{ fontSize: '0.85rem' }}>{f.aulas?.titulo || 'Atividade'}</span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <span style={{ fontWeight: 700, color: f.status === 'pendente' ? 'var(--warning)' : 'var(--success)' }}>
-                              {f.status === 'pendente' ? 'Em Correção' : 'Concluída'}
+                            <span style={{ fontWeight: 700, color: 'var(--success)', fontSize: '0.8rem', opacity: 0.8 }}>
+                              PRÁTICA REALIZADA
                             </span>
                             <button 
                               className="btn btn-outline" 

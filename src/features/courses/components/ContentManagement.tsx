@@ -461,10 +461,12 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                           </div>
 
                           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                            <label className="btn btn-outline" style={{ width: 'auto', fontSize: '0.75rem', padding: '0.4rem 0.7rem', cursor: 'pointer' }}>
-                              {uploading === item.id ? <Loader2 size={12} className="spinner" /> : <Upload size={12} />} {item.arquivo_url ? 'Alterar' : 'Enviar PDF'}
-                              <input type="file" hidden accept=".pdf" onChange={(e) => handleFileUpload(e, 'aulas', item.id, 'arquivo_url')} />
-                            </label>
+                            {(item.tipo !== 'atividade' && item.tipo !== 'prova') && (
+                              <label className="btn btn-outline" style={{ width: 'auto', fontSize: '0.75rem', padding: '0.4rem 0.7rem', cursor: 'pointer' }}>
+                                {uploading === item.id ? <Loader2 size={12} className="spinner" /> : <Upload size={12} />} {item.arquivo_url ? 'Alterar PDF' : 'Enviar PDF'}
+                                <input type="file" hidden accept=".pdf" onChange={(e) => handleFileUpload(e, 'aulas', item.id, 'arquivo_url')} />
+                              </label>
+                            )}
 
                             {(item.tipo === 'gravada' || item.tipo === 'ao_vivo') && (
                               <button className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem' }}

@@ -394,8 +394,8 @@ const Lesson = () => {
 
       const finalS = isFinal ? 0 : (questions.length > 0 ? (score / questions.length) * 10 : 0);
       
-      // Regra aprovada pelo UX: Atividades (exercícios) NUNCA passam por correção manual, nem mesmo se tiverem discursivas.
-      const status = isFinal ? 'pendente' : 'corrigida';
+      // Provas (regulares ou finais) exigem correção manual. Exercícios são auto-corrigidos.
+      const status = (isFinal || lesson.tipo === 'prova') ? 'pendente' : 'corrigida';
       const pass = false; // Nota para aprovação visual de prova será checada após a correção do prof. Exercícios não precisam de nota de aprovação.
 
       const payload: any = {

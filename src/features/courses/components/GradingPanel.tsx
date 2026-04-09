@@ -110,7 +110,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               // Filtrar apenas provas finais pendentes
               const allFinalExams = submissions.filter(s => 
                 s.status === 'pendente' && 
-                ((s as any).aulas?.tipo === 'prova' || (s as any).aulas?.is_bloco_final)
+                ((s as any).aulas?.tipo === 'prova' || (s as any).aulas?.is_bloco_final === true)
               );
 
               // Aplicar filtro de núcleo

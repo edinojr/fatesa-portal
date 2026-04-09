@@ -32,6 +32,129 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
   selectedLesson
 }) => {
   const [currentVersion, setCurrentVersion] = React.useState<'v1' | 'v2' | 'v3'>('v1');
+  const [showImporter, setShowImporter] = React.useState(false);
+  const [importRawText, setImportRawText] = React.useState('');
+
+  const handleSmartImport = () => {
+    if (!importRawText.trim()) return;
+
+    const lines = importRawText.split('\n').map(l => l.trim()).filter(l => l);
+    const newQuestions: QuizQuestion[] = [];
+    
+    // REGEX PATTERNS based on Publisher sample
+    const regexVF = /^([VF])_{2,}(\d+)[–\-\s]+(.+)/i;
+    const regexMC_Option = /^([X\s]*)_{2,}\s*([a-d])[–\-_.\s]+(.+)/i;
+    const regexDiscursiveNum = /^(\d+)[–\-\s]+(?!Col|Enum)(.+)/i;
+    const regexMatchingLine = /^(\d+)[–\-\s]+(.+?)\s{2,}\(\s*(\d+)\s*\)\s+(.+)/;
+    const regexStandaloneMatchingRight = /^\(\s*(\d+)\s*\)\s+(.+)/;
+
+    // Categorize lines by Section
+    let sectionIdx = 0; // 0=None, 1=VF, 2=Citar, 3=MC, 4=Matching
+    
+    const vfItems: any[] = [];
+    const disItems: any[] = [];
+    const mcItems: { q: string, opts: string[], correct: number }[] = [];
+    const matPairs: { left: string, right: string, id: number }[] = [];
+
+    lines.forEach((line) => {
+        if (line.includes('EXERCÍCIO I')) { sectionIdx = 1; return; }
+        if (line.includes('EXERCÍCIO II')) { sectionIdx = 2; return; }
+        if (line.includes('EXERCÍCIO III')) { sectionIdx = 3; return; }
+        if (line.includes('EXERCÍCIO IV')) { sectionIdx = 4; return; }
+
+        if (sectionIdx === 1) {
+            const match = line.match(regexVF);
+            if (match) {
+                vfItems.push({ text: match[3], isTrue: match[1].toUpperCase() === 'V' });
+            } else if (vfItems.length > 0) {
+                // Potential multi-line text
+                vfItems[vfItems.length - 1].text += ' ' + line;
+            }
+        } else if (sectionIdx === 2) {
+            const match = line.match(regexDiscursiveNum);
+            if (match) {
+                disItems.push({ text: match[2] });
+            } else if (disItems.length > 0 && !line.includes('Resposta')) {
+                disItems[disItems.length - 1].text += ' ' + line;
+            }
+        } else if (sectionIdx === 3) {
+            const optMatch = line.match(regexMC_Option);
+            if (optMatch) {
+                const currentMC = mcItems[mcItems.length - 1];
+                if (currentMC) {
+                    currentMC.opts.push(optMatch[3]);
+                    if (optMatch[1].toUpperCase().includes('X')) {
+                        currentMC.correct = currentMC.opts.length - 1;
+                    }
+                }
+            } else {
+                const qMatch = line.match(/^(\d+)[–\-\s]+(.+)/);
+                if (qMatch) {
+                    mcItems.push({ q: qMatch[2], opts: [], correct: 0 });
+                }
+            }
+        } else if (sectionIdx === 4) {
+            // Complex Matching Logic
+            const fullMatch = line.match(regexMatchingLine);
+            if (fullMatch) {
+                matPairs.push({ left: fullMatch[2].trim(), right: '...', id: parseInt(fullMatch[1]) });
+                // We also store the right side content to match later
+                matPairs.push({ left: '---', right: fullMatch[4].trim(), id: parseInt(fullMatch[3]) });
+            } else {
+                const rightMatch = line.match(regexStandaloneMatchingRight);
+                if (rightMatch) {
+                    matPairs.push({ left: '---', right: rightMatch[2].trim(), id: parseInt(rightMatch[1]) });
+                } else {
+                   const leftMatch = line.match(/^(\d+)[–\-\s]+(.+)/);
+                   if (leftMatch) matPairs.push({ left: leftMatch[2].trim(), right: '...', id: parseInt(leftMatch[1]) });
+                }
+            }
+        }
+    });
+
+    // RECONSTRUCT 10-2-2-1
+    // VF
+    for(let i=0; i<10; i++) {
+        const item = vfItems[i];
+        newQuestions.push({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: item?.text || `V/F ${i+1}`, isTrue: item ? item.isTrue : true });
+    }
+    // Discursive
+    for(let i=0; i<2; i++) {
+        const item = disItems[i];
+        newQuestions.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: item?.text || `Dissertativa ${i+1}` });
+    }
+    // MC
+    for(let i=0; i<2; i++) {
+        const item = mcItems[i];
+        newQuestions.push({ 
+            id: `mc-${Date.now()}-${i}`, 
+            type: 'multiple_choice', 
+            text: item?.q || `Múltipla Escolha ${i+1}`, 
+            options: item?.opts.length ? item.opts : ['Opção A', 'Opção B', 'Opção C', 'Opção D'], 
+            correct: item?.correct || 0 
+        });
+    }
+    // Matching
+    const finalMatchingPairs: {left: string, right: string}[] = [];
+    for(let i=1; i<=6; i++) {
+        const left = matPairs.find(p => p.id === i && p.left !== '---')?.left || `Item ${i}`;
+        const right = matPairs.find(p => p.id === i && p.left === '---')?.right || '...';
+        finalMatchingPairs.push({ left, right });
+    }
+    newQuestions.push({
+        id: `mat-${Date.now()}`,
+        type: 'matching',
+        text: 'Enumere a coluna B de acordo com a A:',
+        matchingPairs: finalMatchingPairs
+    });
+
+    if (window.confirm(`Importador Fatesa: Detectamos as questões no padrão informado. Deseja aplicar as 15 perguntas agora?`)) {
+        setQuizQuestions(newQuestions);
+        setShowImporter(false);
+        setImportRawText('');
+        showToast('Importação concluída com sucesso!', 'success');
+    }
+  };
   
   // React to version change to load correct initial data
   React.useEffect(() => {
@@ -78,25 +201,41 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
             </div>
             
             <button 
+              className="btn btn-primary" 
+              style={{ width: 'auto', background: '#38bdf8', borderColor: '#38bdf8', color: '#000', fontWeight: 700, px: '1.5rem' }}
+              onClick={() => setShowImporter(true)}
+            >
+              <ClipboardList size={18} /> IMPORTAR DO PUBLISHER (TEXTO)
+            </button>
+
+            <button 
               className="btn btn-outline" 
               style={{ width: 'auto', border: '1px solid var(--primary)', color: 'var(--primary)', background: 'rgba(var(--primary-rgb), 0.05)' }}
               onClick={() => {
                 const template: QuizQuestion[] = [];
                 // 10 True/False
-                for(let i=0; i<10; i++) template.push({ id: `tf-${i}`, type: 'true_false', text: '', isTrue: true });
+                for(let i=0; i<10; i++) template.push({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true });
                 // 2 Discursive
-                for(let i=0; i<2; i++) template.push({ id: `dis-${i}`, type: 'discursive', text: '' });
+                for(let i=0; i<2; i++) template.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' });
                 // 2 Multiple Choice
-                for(let i=0; i<2; i++) template.push({ id: `mc-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 });
-                // 6 Matching
-                for(let i=0; i<6; i++) template.push({ id: `mat-${i}`, type: 'matching', text: '', matchingPairs: [{left: '', right: ''}, {left: '', right: ''}] });
+                for(let i=0; i<2; i++) template.push({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 });
+                // 1 Matching (6 pairs)
+                template.push({ 
+                  id: `mat-${Date.now()}`, 
+                  type: 'matching', 
+                  text: 'Relacione as colunas abaixo:', 
+                  matchingPairs: [
+                    {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''},
+                    {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''}
+                  ] 
+                });
                 
-                if (window.confirm('Isso substituirá as questões atuais pelo template padrão de 20 questões (10 V/F, 2 Dissert., 2 M.C., 6 Colunas). Deseja continuar?')) {
+                if (window.confirm('Isso substituirá as questões atuais pelo padrão Fatesa de 15 itens (10 V/F, 2 Dissert., 2 M.C., 1 Coluna com 6 pares). Deseja continuar?')) {
                   setQuizQuestions(template);
                 }
               }}
             >
-              Carregar Template (20 Questões)
+              Carregar Padrão Fatesa (15 Itens)
             </button>
           </div>
         )}
@@ -331,9 +470,10 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 const disCount = quizQuestions.filter(q => q.type === 'discursive').length;
                 const mcCount = quizQuestions.filter(q => q.type === 'multiple_choice' || !q.type).length;
                 const matCount = quizQuestions.filter(q => q.type === 'matching').length;
+                const matPairs = quizQuestions.find(q => q.type === 'matching')?.matchingPairs?.length || 0;
                 
-                if (tfCount !== 10 || disCount !== 2 || mcCount !== 2 || matCount !== 6) {
-                  if (!window.confirm(`ESTRUTURA INCORRETA: Provas Finais devem ter 10 V/F, 2 Dissert., 2 M.C. e 6 Colunas (Total 20).\n\nAtual:\n- V/F: ${tfCount}\n- Dissert.: ${disCount}\n- M.C.: ${mcCount}\n- Colunas: ${matCount}\n\nDeseja salvar assim mesmo?`)) {
+                if (tfCount !== 10 || disCount !== 2 || mcCount !== 2 || matCount !== 1 || matPairs !== 6) {
+                  if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O padrão Fatesa para Provas Finais exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 02 Dissertativas (Atuais: ${disCount})\n- 02 Múltipla Escolha (Atuais: ${mcCount})\n- 01 Relacione Colunas com 6 pares (Atuais: ${matCount} questão com ${matPairs} pares)\n\nDeseja salvar assim mesmo?`)) {
                     return;
                   }
                 }
@@ -359,6 +499,37 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
             </button>
           </div>
         </div>
+
+        {showImporter && (
+          <div className="modal-overlay" style={{ zIndex: 1100 }} onClick={() => setShowImporter(false)}>
+            <div className="modal-content" style={{ maxWidth: '600px', padding: '2.5rem' }} onClick={e => e.stopPropagation()}>
+              <h3 style={{ marginBottom: '1rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Plus size={20} /> Assistente de Importação Fatesa
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                Cole aqui o texto bruto do Microsoft Publisher. O sistema tentará mapear as 15 questões (10 V/F, 2 Diss, 2 M.C. e 1 Matching) automaticamente.
+                <br/><br/>
+                <em>Dica: Uma questão por linha funciona melhor. Para alternativas, use marcas como A), B), C), D). No Relacione Colunas, tente usar Item = Correspondente.</em>
+              </p>
+              
+              <textarea 
+                className="form-control" 
+                rows={12} 
+                placeholder="Cole o texto aqui..."
+                value={importRawText}
+                onChange={e => setImportRawText(e.target.value)}
+                style={{ fontFamily: 'monospace', fontSize: '0.8rem', background: 'rgba(0,0,0,0.2)' }}
+              />
+
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                <button className="btn btn-outline" onClick={() => setShowImporter(false)}>Cancelar</button>
+                <button className="btn btn-primary" style={{ background: '#38bdf8', borderColor: '#38bdf8', color: '#000' }} onClick={handleSmartImport}>
+                  Processar e Preencher 15 Questões
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

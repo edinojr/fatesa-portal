@@ -1079,10 +1079,63 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
                 <h2 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>Editor de Avaliação Extra</h2>
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{editingQuestionnaire.titulo}</p>
               </div>
-              <button className="btn-icon" onClick={() => setEditingQuestionnaire(null)}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button 
+                  className="btn btn-outline" 
+                  style={{ width: 'auto', border: '1px solid #38bdf8', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.05)', padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}
+                  onClick={() => {
+                    const texto = window.prompt('Cole aqui o texto bruto (uma questão por linha, na ordem 10 V/F, 2 Diss, 2 MC, 1 Coluna):');
+                    if (!texto) return;
+                    
+                    const lines = texto.split('\n').filter(l => l.trim());
+                    const q: any[] = [];
+                    let idx = 0;
+                    for (let i=0; i<10; i++) q.push({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: lines[idx++] || '', isTrue: true });
+                    for (let i=0; i<2; i++) q.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: lines[idx++] || '' });
+                    for (let i=0; i<2; i++) {
+                      let text = lines[idx++] || '';
+                      q.push({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text, options: [lines[idx++]||'', lines[idx++]||'', lines[idx++]||'', lines[idx++]||''], correctOption: 0 });
+                    }
+                    const matPairs: any[] = [];
+                    let matT = lines[idx++] || 'Relacione:';
+                    for (let i=0; i<6; i++) matPairs.push({ left: lines[idx++] || `Item ${i+1}`, right: '...' });
+                    q.push({ id: `mat-${Date.now()}`, type: 'matching', text: matT, matchingPairs: matPairs });
+
+                    setEditingQuestionnaire({ ...editingQuestionnaire, questionario: q });
+                  }}
+                >
+                  <Plus size={14} /> Importar Texto
+                </button>
+                <button className="btn-icon" onClick={() => setEditingQuestionnaire(null)}><Plus style={{ transform: 'rotate(45deg)' }} /></button>
+              </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <button 
+                className="btn btn-outline" 
+                style={{ width: 'auto', alignSelf: 'flex-start', border: '1px solid var(--primary)', color: 'var(--primary)', background: 'rgba(var(--primary-rgb), 0.05)', padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}
+                onClick={() => {
+                  const template: any[] = [];
+                  for(let i=0; i<10; i++) template.push({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true });
+                  for(let i=0; i<2; i++) template.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' });
+                  for(let i=0; i<2; i++) template.push({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 });
+                  template.push({ 
+                    id: `mat-${Date.now()}`, 
+                    type: 'matching', 
+                    text: 'Relacione as colunas abaixo:', 
+                    matchingPairs: [
+                      {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''},
+                      {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''}
+                    ] 
+                  });
+                  if (window.confirm('Isso substituirá o questionário pelo padrão Fatesa (15 itens). Deseja continuar?')) {
+                    setEditingQuestionnaire({ ...editingQuestionnaire, questionario: template });
+                  }
+                }}
+              >
+                Carregar Padrão Fatesa (15 Itens)
+              </button>
+
               {(editingQuestionnaire.questionario || []).map((q: any, qIdx: number) => (
                 <div key={q.id || qIdx} style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>

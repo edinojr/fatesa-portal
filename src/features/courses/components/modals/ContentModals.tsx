@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Loader2, Plus, Eye, EyeOff, Upload } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Upload } from 'lucide-react'
 
 interface AddTeacherModalProps {
   showAddTeacher: boolean
@@ -93,7 +93,6 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
 interface AddCourseModalProps {
   showAddCourse: boolean
   setShowAddCourse: (val: boolean) => void
-  actionLoading: string | null
   supabase: any
   fetchData: () => Promise<void>
   showToast: (msg: string, type?: 'success' | 'error') => void
@@ -102,7 +101,6 @@ interface AddCourseModalProps {
 export const AddCourseModal: React.FC<AddCourseModalProps> = ({
   showAddCourse,
   setShowAddCourse,
-  actionLoading,
   supabase,
   fetchData,
   showToast
@@ -392,7 +390,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
               const file = (e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0];
               let arquivo_url = null;
 
-              if (file) {
+              if (file && (addingLessonType === 'material' || addingLessonType === 'gravada' || addingLessonType === 'ao_vivo')) {
                 const safeName = normalizeFileName(file.name);
                 const filePath = `conteudo/${Date.now()}_${safeName}`;
                 const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: 'max-age=31536000' });
@@ -400,6 +398,18 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
                 arquivo_url = publicUrl;
               }
+
+              const standardTemplate = [
+                ...Array(10).fill(null).map((_, i) => ({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true })),
+                ...Array(2).fill(null).map((_, i) => ({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' })),
+                ...Array(2).fill(null).map((_, i) => ({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 })),
+                { 
+                  id: `mat-${Date.now()}`, 
+                  type: 'matching', 
+                  text: 'Relacione as colunas abaixo:', 
+                  matchingPairs: Array(6).fill(null).map(() => ({left: '', right: ''}))
+                }
+              ];
 
               const { error } = await supabase.from('aulas').insert({ 
                 livro_id: selectedLesson.livro_id,
@@ -412,7 +422,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 ordem,
                 bloco_id: addingBloco,
                 versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
-                is_bloco_final: formData.get('is_bloco_final') === 'on'
+                is_bloco_final: formData.get('is_bloco_final') === 'on',
+                questionario: (addingLessonType === 'atividade' || addingLessonType === 'prova') ? standardTemplate : []
               });
               
               if (error) throw error;
@@ -433,8 +444,17 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
 
           {(addingLessonType === 'gravada' || addingLessonType === 'ao_vivo') && (
             <div className="form-group">
-            <label>Vídeo URL</label>
+              <label>Vídeo URL</label>
               <input name="video_url" type="text" className="form-control" placeholder="YouTube/Vimeo link" />
+            </div>
+          )}
+          
+          {addingLessonType !== 'atividade' && addingLessonType !== 'prova' && (
+            <div className="form-group" style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Upload size={16} /> {addingLessonType === 'material' ? 'Arquivo PDF' : 'Anexo (Opcional)'}
+              </label>
+              <input name={addingLessonType === 'material' ? "files" : "file"} type="file" className="form-control" accept=".pdf" multiple={addingLessonType === 'material'} required={addingLessonType === 'material'} />
             </div>
           )}
 
@@ -539,7 +559,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   selectedBook,
   selectedLesson,
   showToast,
-  lessons,
   normalizeFileName
 }) => {
   if (!editingItem) return null;
