@@ -91,8 +91,9 @@ export const useProfessorGrading = () => {
     if (!confirm('Deseja realmente excluir esta atividade do aluno? Isso permitirá que ele refaça a atividade novamente do zero.')) return
     
     setDeleting(subId)
+    const subIdToDelete = subId || (submissions.find(s => (s as any).submission_id === subId) as any)?.submission_id;
     try {
-      const { error } = await supabase.from('respostas_aulas').delete().eq('id', subId)
+      const { error } = await supabase.from('respostas_aulas').delete().eq('id', subIdToDelete)
       if (error) throw error
       alert('Atividade excluída com sucesso. O aluno já pode refazer.')
       if (onSuccess) onSuccess()
@@ -132,7 +133,8 @@ export const useProfessorGrading = () => {
         updateData.primeira_correcao_at = new Date().toISOString()
       }
 
-      const { error } = await supabase.from('respostas_aulas').update(updateData).eq('id', selectedSubmission.id)
+      const targetId = selectedSubmission.id || (selectedSubmission as any).submission_id;
+      const { error } = await supabase.from('respostas_aulas').update(updateData).eq('id', targetId)
       
       if(error) throw error
       

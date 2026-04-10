@@ -106,13 +106,15 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
-      // Progresso e Notas
-      const [{ data: respostasData }, { data: progData }] = await Promise.all([
-        supabase.from('view_submissions_detailed').select('*').eq('student_id', profile.id),
+      // Progresso e Notas - Removido filtro student_id que não existe no topo da view
+      const [{ data: respostasRaw }, { data: progData }] = await Promise.all([
+        supabase.from('view_submissions_detailed').select('*'),
         supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id)
       ]);
       
-      const resData = (respostasData || []) as any[];
+      const resData = (respostasRaw || [])
+        .filter((r: any) => r.users?.id === profile.id)
+        .map((r: any) => ({ ...r, id: r.submission_id }));
       const userHasActivityInModule = (livroId: string) => {
         return resData.some(res => res.book_id === livroId);
       };
@@ -171,14 +173,26 @@ export const useStudentCourses = (profile: any) => {
                         const v1Sub = resData.find((s: any) => {
                           return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V1');
                         });
-                        const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
+                        let past3Days = false;
+                        if (v1Sub?.last_updated || v1Sub?.submitted_at) {
+                           const lastUpdate = new Date(v1Sub.last_updated || v1Sub.submitted_at).getTime();
+                           const daysDiff = (Date.now() - lastUpdate) / (1000 * 3600 * 24);
+                           past3Days = daysDiff >= 3;
+                        }
+                        const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0 && past3Days;
                         isItemReleased = v1Reprovou;
                       } else if (title.toUpperCase().includes('V3')) {
                         // Automático se V2 reprovou e foi corrigida
                         const v2Sub = resData.find((s: any) => {
                           return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V2');
                         });
-                        const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
+                        let past3Days = false;
+                        if (v2Sub?.last_updated || v2Sub?.submitted_at) {
+                           const lastUpdate = new Date(v2Sub.last_updated || v2Sub.submitted_at).getTime();
+                           const daysDiff = (Date.now() - lastUpdate) / (1000 * 3600 * 24);
+                           past3Days = daysDiff >= 3;
+                        }
+                        const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0 && past3Days;
                         isItemReleased = v2Reprovou;
                       } else {
                         // V1 ou Vídeo: Liberação manual

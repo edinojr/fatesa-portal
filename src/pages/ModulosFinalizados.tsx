@@ -5,6 +5,7 @@ import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import Logo from '../components/common/Logo'
 import CourseList from '../features/courses/components/CourseList'
+import { getBookStats } from '../features/courses/utils/courseUtils'
 
 const ModulosFinalizados = () => {
     const { profile, loading: profileLoading } = useProfile();
@@ -19,30 +20,7 @@ const ModulosFinalizados = () => {
 
     // Filtrar apenas cursos que possuem pelo menos um livro finalizado
     const finishedCourses = (courses || []).map(course => {
-        const finishedBooks = (course.livros || []).filter(l => {
-            const allAulas = l.aulas || [];
-            const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'licao');
-            const totalItems = itemsForProgress.length;
-            if (totalItems === 0) return false;
-
-            const submittedIds = (atividades || []).map((at: any) => at.aula_id);
-            const watchedIds = (progressoAulas || []).filter(p => p.concluida).map(p => p.aula_id);
-
-            const completedItems = itemsForProgress.filter((a: any) => 
-                (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
-            ).length;
-
-            const finalExam = allAulas.find((a: any) => a.tipo === 'prova');
-            if (finalExam) {
-                const examSubmissions = (atividades || []).filter(at => at.aula_id === finalExam.id);
-                const bestSub = examSubmissions.sort((a,b) => (b.nota || 0) - (a.nota || 0))[0];
-                const minGrade = (finalExam as any).min_grade || 7.0;
-                return bestSub ? (bestSub.status === 'corrigida' && bestSub.nota >= minGrade) : false;
-            } else {
-                return (completedItems === totalItems && totalItems > 0);
-            }
-        });
-
+        const finishedBooks = (course.livros || []).filter(l => getBookStats(l, atividades, progressoAulas).isFinished);
         return { ...course, livros: finishedBooks };
     }).filter(course => course.livros.length > 0);
 
@@ -50,7 +28,7 @@ const ModulosFinalizados = () => {
         return (
             <div className="auth-container">
                 <div className="spinner"></div>
-                <p>Carregando seus módulos concluídos...</p>
+                <p>Carregando seus módulos finalizados...</p>
             </div>
         );
     }
@@ -82,7 +60,7 @@ const ModulosFinalizados = () => {
 
             <main className="admin-main" style={{ padding: '2rem 4rem' }}>
                 <header style={{ marginBottom: '3rem' }}>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Aqui você encontra o histórico de todos os módulos que você já concluiu com sucesso.</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Aqui você encontra o histórico de todos os módulos que você já finalizou com sucesso.</p>
                 </header>
 
                 {finishedCourses.length === 0 ? (

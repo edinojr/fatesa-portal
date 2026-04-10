@@ -27,6 +27,7 @@ const Lesson = () => {
   const [shuffledMatchingRows, setShuffledMatchingRows] = useState<Record<string, any[]>>({})
   const [showExamModal, setShowExamModal] = useState(false)
   const [examModalConfirmed, setExamModalConfirmed] = useState(false)
+  const [isModuleApproved, setIsModuleApproved] = useState(false)
   
 
 
@@ -72,8 +73,26 @@ const Lesson = () => {
         const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
         setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, isStaff });
 
+        // Passe Livre de Módulo Concluído (Garante acesso retroativo a tudo na unidade)
+        let modulePassed = false;
+        if (lessonData?.livro_id && user?.id) {
+            const { data: moduleExams } = await supabase.from('aulas')
+                .select('id')
+                .eq('livro_id', lessonData.livro_id)
+                .or('tipo.eq.prova,is_bloco_final.eq.true');
+            
+            if (moduleExams && moduleExams.length > 0) {
+                const { data: moduleSubs } = await supabase.from('respostas_aulas')
+                    .select('nota, status')
+                    .eq('aluno_id', user.id)
+                    .in('aula_id', moduleExams.map(ex => ex.id));
+                modulePassed = (moduleSubs || []).some(s => s.status === 'corrigida' && s.nota >= (lessonData.min_grade || 7.0));
+                if (modulePassed) setIsModuleApproved(true);
+            }
+        }
+
         // Check Professor Release (liberacoes_nucleo)
-        if (!isStaff && profile?.nucleo_id) {
+        if (!isStaff && profile?.nucleo_id && !modulePassed) {
           const isRestrictedType = lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'prova' || !!lessonData.is_bloco_final;
           
           if (isRestrictedType) {
@@ -96,12 +115,20 @@ const Lesson = () => {
               if (title.includes('V2') || title.includes('V3')) {
                   const { data: resData } = await supabase
                     .from('view_submissions_detailed')
-                    .select('status, nota, lesson_title')
+                    .select('status, nota, lesson_title, last_updated, submitted_at')
                     .eq('student_id', user.id);
                   
                   const prevTitle = title.includes('V2') ? 'V1' : 'V2';
                   const sub = (resData || []).find((s: any) => s.lesson_title?.toUpperCase().includes(prevTitle));
-                  isAutoAllowed = !!sub && sub.status === 'corrigida' && (sub.nota || 0) < 7.0;
+                  
+                  let past3Days = false;
+                  if (sub?.last_updated || sub?.submitted_at) {
+                     const lastUpdate = new Date(sub.last_updated || sub.submitted_at).getTime();
+                     const daysDiff = (Date.now() - lastUpdate) / (1000 * 3600 * 24);
+                     past3Days = daysDiff >= 3;
+                  }
+
+                  isAutoAllowed = !!sub && sub.status === 'corrigida' && (sub.nota || 0) < 7.0 && past3Days;
               }
 
               if (!isAutoAllowed) {
@@ -599,10 +626,11 @@ const Lesson = () => {
                                   q.type === 'true_false' ? studentAns === q.isTrue :
                                   q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
                 
-                // O gabarito agora é mostrado no modo de revisão, se for ATIVIDADE já enviada, ou PROVA corrigida
+                // O gabarito agora é mostrado no modo de revisão, se for ATIVIDADE já enviada, ou PROVA corrigida com nota superior à média (ou módulo ganho de forma definitiva)
+                const isApprovedScore = existingSubmission?.nota !== null && existingSubmission?.nota !== undefined ? existingSubmission.nota >= (lesson?.min_grade || 7.0) : false;
                 const showGabarito = reviewMode || 
                                      (lesson?.tipo === 'atividade' && (submitted || !!existingSubmission)) ||
-                                     ((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && existingSubmission?.status === 'corrigida');
+                                     ((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && existingSubmission?.status === 'corrigida' && (isApprovedScore || isModuleApproved));
 
                 return (
                   <div key={qKey} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: showGabarito && submitted ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)' }}>

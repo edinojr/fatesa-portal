@@ -1,6 +1,7 @@
 import { BookOpen, PlayCircle, CheckCircle2, LayoutGrid } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
+import { getBookStats } from '../utils/courseUtils'
 
 interface CourseListProps {
   courses: Course[]
@@ -20,52 +21,10 @@ const CourseList: React.FC<CourseListProps> = ({
   showOnlyFinished = false
 }) => {
   const navigate = useNavigate();
-  const submittedIds = (atividades || []).map((at: any) => at.aula_id);
-  const watchedIds = (progressoAulas || []).filter(p => p.concluida).map(p => p.aula_id);
-
-  const getBookStats = (l: any) => {
-    const allAulas = l.aulas || [];
-    const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'licao');
-    const totalItems = itemsForProgress.length;
-    if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 10, isFinished: true, isApproved: true, examGrade: 10 };
-    
-    const completedItems = itemsForProgress.filter((a: any) => 
-      (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
-    ).length;
-    
-    const finalExam = allAulas.find((a: any) => a.tipo === 'prova');
-    let isApproved = false;
-    let examGrade = 0;
-    let attemptsCount = 0;
-    let isFinished = false;
-    
-    if (finalExam) {
-      const examSubmissions = (atividades || []).filter(at => at.aula_id === finalExam.id);
-      attemptsCount = examSubmissions.length;
-      const bestSub = examSubmissions.sort((a,b) => (b.nota || 0) - (a.nota || 0))[0];
-      examGrade = bestSub?.nota || 0;
-      const minGrade = finalExam.min_grade || 7.0;
-      isApproved = bestSub ? (bestSub.status === 'corrigida' && bestSub.nota >= minGrade) : false;
-      isFinished = isApproved || attemptsCount >= 3;
-    } else {
-      isApproved = false;
-      isFinished = (completedItems === totalItems && totalItems > 0);
-    }
-    
-    return {
-      percent: Math.round((completedItems / totalItems) * 100),
-      completed: completedItems,
-      total: totalItems,
-      examGrade: examGrade,
-      isApproved: isApproved,
-      isFinished: isFinished,
-      attemptsCount,
-      hasExam: !!finalExam
-    };
-  };
+  const getBookStatsWrapper = (l: any) => getBookStats(l, atividades, progressoAulas);
 
   const renderBookCard = (currentBook: any) => {
-    const stats = getBookStats(currentBook);
+    const stats = getBookStatsWrapper(currentBook);
     return (
       <div key={currentBook.id} className={`${stats.isFinished ? 'book-card-finished' : 'book-highlight-card'}`}>
         <div 
@@ -92,8 +51,8 @@ const CourseList: React.FC<CourseListProps> = ({
                     marginBottom: '4px'
                   }}>
                     {stats.hasExam 
-                      ? (stats.isApproved ? 'APROVADO' : 'REPROVADO - REFAZER NO FINAL')
-                      : 'CONCLUÍDO'}
+                      ? (stats.isApproved ? 'FINALIZADO' : 'REPROVADO - REFAZER NO FINAL')
+                      : 'FINALIZADO'}
                   </span>
                   {stats.hasExam && <span style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>Nota: {stats.examGrade.toFixed(1)}</span>}
                 </div>
@@ -148,8 +107,8 @@ const CourseList: React.FC<CourseListProps> = ({
 
         {coursesList.map(course => {
           const releasedBooks = (course.livros || []).filter(l => l.isReleased);
-          const ongoingBooks = releasedBooks.filter(b => !getBookStats(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
-          const finishedBooks = releasedBooks.filter(b => getBookStats(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
+          const ongoingBooks = releasedBooks.filter(b => !getBookStatsWrapper(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
+          const finishedBooks = releasedBooks.filter(b => getBookStatsWrapper(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
 
           return (
             <div key={course.id} style={{ marginBottom: '3.5rem' }}>
@@ -171,7 +130,7 @@ const CourseList: React.FC<CourseListProps> = ({
               {!showOnlyOngoing && finishedBooks.length > 0 && (
                 <div>
                   <h4 style={{ color: 'var(--success)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <CheckCircle2 size={16} /> Módulos Concluídos
+                    <CheckCircle2 size={16} /> Módulos Finalizados
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {finishedBooks.map(renderBookCard)}

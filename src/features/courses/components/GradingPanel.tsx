@@ -45,6 +45,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
 }) => {
   const [showGabaritosModal, setShowGabaritosModal] = React.useState(false);
   const [selectedNucleoFilter, setSelectedNucleoFilter] = React.useState<string>('todos');
+  const [activeStatusFilter, setActiveStatusFilter] = React.useState<'pendente' | 'aprovado' | 'reprovado'>('pendente');
 
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
@@ -60,6 +61,55 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               📖 Ver Gabaritos
             </button>
           </div>
+
+          {/* ESTATÍSTICA DE AVALIAÇÕES POR NÚCLEO (CARDS) */}
+          {(() => {
+             const allExamsStats = submissions.filter(s => (s as any).aulas?.tipo === 'prova' || (s as any).aulas?.is_bloco_final === true);
+             if (professorNucleos.length === 0 || allExamsStats.length === 0) return null;
+             
+             return (
+               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                 {professorNucleos.map(nuc => {
+                   const nucSubs = allExamsStats.filter(s => (s.users as any)?.nucleos?.nome === nuc.nome || (s as any).nucleus_name === nuc.nome);
+                   const pendentes = nucSubs.filter(s => s.status === 'pendente').length;
+                   const aprovados = nucSubs.filter(s => s.status === 'corrigida' && (s.nota || 0) >= ((s as any).aulas?.min_grade || 7.0)).length;
+                   const reprovados = nucSubs.filter(s => s.status === 'corrigida' && (s.nota || 0) < ((s as any).aulas?.min_grade || 7.0)).length;
+
+                   return (
+                     <div key={nuc.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column' }}>
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                         <div style={{ padding: '0.4rem', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: '8px', display: 'flex' }}><MapPin size={16} color="var(--primary)" /></div>
+                         <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>{nuc.nome}</h4>
+                       </div>
+                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginTop: 'auto' }}>
+                         <div 
+                           onClick={() => { setSelectedNucleoFilter(nuc.nome); setActiveStatusFilter('pendente'); }}
+                           style={{ flex: 1, background: selectedNucleoFilter === nuc.nome && activeStatusFilter === 'pendente' ? 'rgba(234, 179, 8, 0.15)' : 'rgba(234, 179, 8, 0.05)', border: `1px solid ${selectedNucleoFilter === nuc.nome && activeStatusFilter === 'pendente' ? '#eab308' : 'rgba(234, 179, 8, 0.2)'}`, padding: '0.5rem', borderRadius: '8px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', opacity: (selectedNucleoFilter === 'todos' || selectedNucleoFilter === nuc.nome) ? 1 : 0.5 }}
+                         >
+                           <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#eab308' }}>{pendentes}</div>
+                           <div style={{ fontSize: '0.6rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Pendente</div>
+                         </div>
+                         <div 
+                           onClick={() => { setSelectedNucleoFilter(nuc.nome); setActiveStatusFilter('aprovado'); }}
+                           style={{ flex: 1, background: selectedNucleoFilter === nuc.nome && activeStatusFilter === 'aprovado' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.05)', border: `1px solid ${selectedNucleoFilter === nuc.nome && activeStatusFilter === 'aprovado' ? 'var(--success)' : 'rgba(16, 185, 129, 0.2)'}`, padding: '0.5rem', borderRadius: '8px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', opacity: (selectedNucleoFilter === 'todos' || selectedNucleoFilter === nuc.nome) ? 1 : 0.5 }}
+                         >
+                           <div style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--success)' }}>{aprovados}</div>
+                           <div style={{ fontSize: '0.6rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Aprovado</div>
+                         </div>
+                         <div 
+                           onClick={() => { setSelectedNucleoFilter(nuc.nome); setActiveStatusFilter('reprovado'); }}
+                           style={{ flex: 1, background: selectedNucleoFilter === nuc.nome && activeStatusFilter === 'reprovado' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.05)', border: `1px solid ${selectedNucleoFilter === nuc.nome && activeStatusFilter === 'reprovado' ? 'var(--error)' : 'rgba(239, 68, 68, 0.2)'}`, padding: '0.5rem', borderRadius: '8px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', opacity: (selectedNucleoFilter === 'todos' || selectedNucleoFilter === nuc.nome) ? 1 : 0.5 }}
+                         >
+                           <div style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--error)' }}>{reprovados}</div>
+                           <div style={{ fontSize: '0.6rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Reprovado</div>
+                         </div>
+                       </div>
+                     </div>
+                   );
+                 })}
+               </div>
+             );
+          })()}
 
           {/* NUCLEUS FILTER CHIPS — shown only when professor has multiple nucleos */}
           {professorNucleos.length > 1 && (
@@ -107,23 +157,26 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {(() => {
-              // Filtrar apenas provas finais pendentes
-              const allFinalExams = submissions.filter(s => 
-                s.status === 'pendente' && 
-                ((s as any).aulas?.tipo === 'prova' || (s as any).aulas?.is_bloco_final === true)
-              );
+              const finalExams = submissions.filter(s => {
+                const isProva = (s as any).aulas?.tipo === 'prova' || (s as any).aulas?.is_bloco_final === true;
+                if (!isProva) return false;
 
-              // Aplicar filtro de núcleo
-              const finalExams = selectedNucleoFilter === 'todos'
-                ? allFinalExams
-                : allFinalExams.filter(s => (s.users as any)?.nucleos?.nome === selectedNucleoFilter);
+                if (selectedNucleoFilter !== 'todos') {
+                  const nName = s.nucleus_name || (s.users as any)?.nucleos?.nome;
+                  if (nName !== selectedNucleoFilter) return false;
+                }
 
-              if (allFinalExams.length === 0) {
-                return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Você não tem provas finais pendentes de correção no momento.</p>;
-              }
+                const minGrade = (s as any).aulas?.min_grade || 7.0;
+                
+                if (activeStatusFilter === 'pendente') return s.status === 'pendente';
+                if (activeStatusFilter === 'aprovado') return s.status === 'corrigida' && (s.nota || 0) >= minGrade;
+                if (activeStatusFilter === 'reprovado') return s.status === 'corrigida' && (s.nota || 0) < minGrade;
+                
+                return false;
+              });
 
               if (finalExams.length === 0) {
-                return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Nenhuma prova pendente para o núcleo <strong>{selectedNucleoFilter}</strong> no momento.</p>;
+                return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Nenhum resultado de aluno {activeStatusFilter} no filtro atual.</p>;
               }
 
               // Agrupar por Núcleo
@@ -191,22 +244,36 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                         }}>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                              <div style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)' }}>MÓDULO</div>
+                              <div style={{ padding: '4px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                                {activeStatusFilter === 'pendente' ? 'MÓDULO / PENDENTE' : (activeStatusFilter === 'aprovado' ? 'MÓDULO / APROVADO' : 'MÓDULO / REPROVADO')}
+                              </div>
                               <h4 style={{ margin: 0, fontSize: '1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.lesson_title || 'Prova Final'}</h4>
+                              <span style={{ fontSize: '0.7rem', padding: '2px 6px', background: 'rgba(var(--primary-rgb), 0.15)', color: 'var(--primary)', borderRadius: '4px', fontWeight: 800 }}>V{sub.tentativas || 1}</span>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
                               <Users size={14} color="var(--primary)" />
                               <strong style={{ color: 'var(--text)' }}>{sub.student_name}</strong>
                             </div>
-                            <p style={{ fontSize: '0.7rem', opacity: 0.4, marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                              <AlertCircle size={10} /> Submetido em: {new Date(sub.submitted_at).toLocaleString()}
+                            <p style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)' }}>
+                              <AlertCircle size={10} /> Submetido em: {sub.submitted_at ? new Date(sub.submitted_at).toLocaleString() : 'N/A'}
+                              {activeStatusFilter !== 'pendente' && (
+                                <span style={{ marginLeft: '1rem', color: activeStatusFilter === 'aprovado' ? 'var(--success)' : 'var(--error)', fontWeight: 800 }}>
+                                  • NOTA GRAVADA: {sub.nota?.toFixed(1) || '0.0'}
+                                </span>
+                              )}
                               {sub.status === 'pendente' && (sub.nota ?? 0) > 0 && (
                                 <span style={{ marginLeft: '1rem', color: 'var(--warning)', fontWeight: 800 }}>⚠️ RETORNADA PARA REVISÃO</span>
                               )}
                             </p>
                           </div>
                           <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
-                            <button className="btn btn-primary" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }} onClick={() => handleSelectSubmission(sub)}>Corrigir</button>
+                            <button 
+                              className="btn btn-primary" 
+                              style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem', background: activeStatusFilter !== 'pendente' ? 'rgba(255,255,255,0.1)' : 'var(--primary)', color: '#fff' }} 
+                              onClick={() => handleSelectSubmission(sub)}
+                            >
+                              {activeStatusFilter === 'pendente' ? 'Corrigir' : 'Revisar / Ver Respostas'}
+                            </button>
                             <button 
                               className="btn btn-icon" 
                               style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--error)', width: '38px', height: '38px' }}
@@ -226,44 +293,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
             })()}
           </div>
 
-          <h3 style={{ marginTop: '3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><CheckCircle color="var(--success)" /> Últimas Correções</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', opacity: 0.7 }}>
-            {submissions.filter(s => 
-              s.status === 'corrigida' &&
-              (selectedNucleoFilter === 'todos' || s.nucleus_name === selectedNucleoFilter)
-            ).slice(0, 10).map((sub: any, idx: number) => (
-              <div key={sub.submission_id || `done-${idx}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px' }}>
-                <div>
-                  <h4 style={{ fontSize: '1rem' }}>{sub.lesson_title}</h4>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    Aluno: {sub.student_name} 
-                    <span style={{ marginLeft: '1rem', color: sub.tentativas > 1 ? 'var(--warning)' : 'var(--text-muted)' }}>
-                        • {sub.tentativas || 1}ª tentativa
-                    </span>
-                    {!sub.comentario_professor && (
-                      <span style={{ display: 'block', color: 'var(--error)', fontSize: '0.7rem', fontWeight: 800, marginTop: '4px' }}>
-                        ⚠️ AUTO-CORRIGIDA PELO SISTEMA
-                      </span>
-                    )}
-                  </p>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ fontWeight: 800, color: 'var(--success)', fontSize: '1.2rem', textAlign: 'right' }}>{sub.nota?.toFixed(1)} / 10</div>
-                  <button 
-                    className="btn btn-outline" 
-                    style={{ width: 'auto', border: 'none', color: 'var(--error)', padding: '0.5rem' }}
-                    onClick={() => handleDeleteSubmission(sub.id)}
-                    disabled={deleting === sub.id}
-                  >
-                    {deleting === sub.id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
-                  </button>
-                </div>
-              </div>
-            ))}
-            {submissions.filter(s => s.status === 'corrigida').length === 0 && (
-              <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>Nenhuma correção recente.</p>
-            )}
-          </div>
+
         </div>
       ) : (
         <div className="data-card" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -280,7 +310,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div className="admin-badge status-pendente" style={{ background: selectedSubmission.tentativas > 1 ? 'var(--warning-dark)' : 'rgba(var(--primary-rgb), 0.1)' }}>
-                  {selectedSubmission.tentativas || 1}ª Tentativa
+                  {selectedSubmission.tentativas || 1}ª Tentativa (V{selectedSubmission.tentativas || 1})
                 </div>
                 {selectedSubmission.primeira_correcao_at && (
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
