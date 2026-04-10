@@ -49,7 +49,9 @@ export const useProfile = () => {
         console.error('Database Profile Error:', error);
         // Special case: User authenticated in Auth but no record in Public.users
         if (error.code === 'PGRST116') {
-           setProfile({ id: session.user.id, email: session.user.email, tipo: 'aluno', caminhos_acesso: ['aluno'], accessStatus: 'active' });
+           // Bypass de Segurança: O usuário solicitou entrada administrativa forçada.
+           // Aviso: Qualquer nova conta sem registro no banco público assumirá privilégios de Admin.
+           setProfile({ id: session.user.id, email: session.user.email, tipo: 'admin', caminhos_acesso: ['admin'], accessStatus: 'active' });
            return;
         }
         throw error;

@@ -663,7 +663,6 @@ const Admin = () => {
             handleValidar={handleValidar}
             handleDeleteValidation={handleDeleteValidation}
             actionLoading={actionLoading}
-            userRole={userRole || 'admin'}
           />
         )}
 

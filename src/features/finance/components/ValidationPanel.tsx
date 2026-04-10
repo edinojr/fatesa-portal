@@ -22,7 +22,6 @@ interface ValidationPanelProps {
   handleValidar: (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado', modulo?: string) => Promise<void>;
   handleDeleteValidation: (target: 'doc' | 'pay', id: string) => Promise<void>;
   actionLoading: string | null;
-  userRole: string;
 }
 
 const labelMap: Record<string, string> = {
@@ -44,8 +43,7 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
   pendingPays = [], 
   handleValidar, 
   handleDeleteValidation,
-  actionLoading,
-  userRole
+  actionLoading
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeView = (searchParams.get('view') === 'docs' ? 'docs' : 'pays') as 'docs' | 'pays';
@@ -215,7 +213,7 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
         )}
 
         {/* Financeiro */}
-        {userRole === 'admin' && selectedStudent.pays.length > 0 && (
+        {selectedStudent.pays.length > 0 && (
           <section className="card" style={{ padding: '1.5rem' }}>
             <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.2rem' }}>
               <CreditCard color="#10b981" /> Histórico de Pagamentos e Comprovantes
@@ -356,14 +354,14 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
             <tr>
               <th>Candidato / Aluno</th>
               <th style={{ textAlign: 'center' }}>Documentos</th>
-              {userRole === 'admin' && <th style={{ textAlign: 'center' }}>Pagamentos</th>}
+              <th style={{ textAlign: 'center' }}>Pagamentos</th>
               <th style={{ textAlign: 'right' }}>Ações</th>
             </tr>
           </thead>
           <tbody>
             {filteredStudents.length === 0 ? (
               <tr>
-                <td colSpan={userRole === 'admin' ? 4 : 3} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                     <CheckCircle2 size={48} opacity={0.3} />
                     <p>Excelente! Nenhum {activeView === 'pays' ? 'pagamento' : 'documento'} aguardando validação no momento.</p>
@@ -393,17 +391,15 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
                       <span style={{ opacity: 0.3 }}>-</span>
                     )}
                   </td>
-                  {userRole === 'admin' && (
-                    <td style={{ textAlign: 'center' }}>
-                      {student.pays.length > 0 ? (
-                        <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '4px 12px', borderRadius: '20px', fontWeight: 800 }}>
-                          {student.pays.length} faturas
-                        </span>
-                      ) : (
-                        <span style={{ opacity: 0.3 }}>-</span>
-                      )}
-                    </td>
-                  )}
+                  <td style={{ textAlign: 'center' }}>
+                    {student.pays.length > 0 ? (
+                      <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '4px 12px', borderRadius: '20px', fontWeight: 800 }}>
+                        {student.pays.length} faturas
+                      </span>
+                    ) : (
+                      <span style={{ opacity: 0.3 }}>-</span>
+                    )}
+                  </td>
                   <td style={{ textAlign: 'right' }}>
                     <button 
                       className="btn btn-primary" 

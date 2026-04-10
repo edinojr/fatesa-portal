@@ -319,10 +319,11 @@ export const useAdminManagement = () => {
         setUserCount(usersCount.count || 0);
         setCourseCount(coursesCount.count || 0);
         
-        const financeCount = (docsCount.count || 0) + (userRole === 'admin' ? (paysCount.count || 0) : 0);
+        const financeCount = (docsCount.count || 0) + (paysCount.count || 0);
         setPendingCount(financeCount);
-        setPendingFinanceCount(financeCount);
         setPendingProofsCount(proofsPending.count || 0);
+        setPendingDocsCount(docsCount.count || 0);
+        setPendingPaysCount(paysCount.count || 0);
 
         // Fetch pending students count
         const { count: studentsCount } = await supabase.from('users')
@@ -333,7 +334,7 @@ export const useAdminManagement = () => {
         setUsers([]);
         setCourses([]);
         setPendingDocs([]);
-        setPendingPays([]);
+        setPendingPaysValidation([]);
       } else if (activeTab === 'users') {
         const { data: usersData } = await supabase.from('users').select('*, nucleos(nome)').order('nome')
         
@@ -400,8 +401,8 @@ export const useAdminManagement = () => {
         if (data) setAttendanceRecords(data);
       } else if (activeTab === 'finance') {
         const [docsData, paysData] = await Promise.all([
-          supabase.from('documentos').select('*, users(id, nome, email, nucleo, nucleo_id, nucleos(nome))').not('url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
-          supabase.from('pagamentos').select('*, users(id, nome, email, nucleo, nucleo_id, nucleos(nome))').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)')
+          supabase.from('documentos').select('*, users(id, nome, email, nucleo_id, nucleos(nome))').not('url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
+          supabase.from('pagamentos').select('*, users(id, nome, email, nucleo_id, nucleos(nome))').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)')
         ]);
         if (docsData.data) setPendingDocs(docsData.data);
         if (paysData.data) setPendingPaysValidation(paysData.data);
@@ -438,10 +439,10 @@ export const useAdminManagement = () => {
             logs: data.slice(0, 100)
           });
         }
-      } else if (activeTab === 'reports' && userRole === 'admin') {
+      } else if (activeTab === 'reports') {
         const { data: reportPays, error } = await supabase
           .from('pagamentos')
-          .select('id, valor, status, data_vencimento, comprovante_url, feedback, modulo, users(id, nome, email, nucleo, nucleo_id, nucleos(nome))')
+          .select('id, valor, status, data_vencimento, comprovante_url, feedback, modulo, users(id, nome, email, nucleo_id, nucleos(nome))')
           .order('data_vencimento', { ascending: false });
         
         if (reportPays) setFinanceReport(reportPays);
@@ -460,13 +461,14 @@ export const useAdminManagement = () => {
           .not('nota', 'is', null)
           .order('updated_at', { ascending: false });
         
-        if (academicData) setAcademicReport(academicData);
+        if (academicData) setAcademicHistory(academicData);
         if (error) throw error;
       }
-    } catch (err) {
-      console.error(err)
+    } catch (err: any) {
+      console.error('FetchData Error:', err);
+      showToast('Erro ao buscar dados: ' + (err.message || JSON.stringify(err)), 'error');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -997,8 +999,6 @@ export const useAdminManagement = () => {
     userRole,
     users,
     courses,
-    pendingDocs,
-    pendingPays,
     userCount,
     courseCount,
     pendingCount,
