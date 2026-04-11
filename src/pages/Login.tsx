@@ -19,117 +19,121 @@ const Login = () => {
   });
 
   useEffect(() => {
-    const checkSession = async () => {
+    // 1. Escuta mudanças globais na sessão para garantir sincronia 100% segura do JWT
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      // Quando logado com sucesso, chama a verificação
+      if (event === 'SIGNED_IN' && session?.user) {
+        await checkSessionRoles(session.user);
+      }
+    });
+
+    // 2. Validação inicial se já existe sessão no cache
+    const initCheck = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        const { data } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', session.user.id).maybeSingle();
-        const userType = data?.tipo || '';
-        const roles = data?.caminhos_acesso || [];
-        
-        const isAdmin = ['admin', 'suporte'].includes(userType) || roles.some((r: any) => ['admin', 'suporte'].includes(r)) || session.user.email === 'edi.ben.jr@gmail.com';
-        const isProfessor = userType === 'professor' || roles.includes('professor');
-        
-        if (isAdmin) navigate('/admin', { replace: true });
-        else if (isProfessor) navigate('/professor', { replace: true });
-        else navigate('/dashboard', { replace: true });
+        await checkSessionRoles(session.user);
       }
     };
-    checkSession();
+    initCheck();
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const checkSessionRoles = async (user: any) => {
+    // FIX RACE CONDITION: Delay estratégico para garantir que o Headers Locais do Supabase
+    // estejam sincronizados antes do PostgREST validar o Row Level Security.
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    let { data, error: fetchError } = await supabase
+      .from('users')
+      .select('tipo, bloqueado, caminhos_acesso')
+      .eq('id', user.id)
+      .maybeSingle();
+    
+    // Auto-repair missing profile
+    if (!fetchError && !data) {
+      console.warn("Perfil não encontrado para o usuário. Tentando auto-reparo...", user.id);
+      const metadata = user.user_metadata || {};
+      const isAdminEmail = user.email === 'edi.ben.jr@gmail.com' || user.email === 'ap.panisso@gmail.com';
+      const defaultTipo = isAdminEmail ? 'admin' : (metadata.student_type || 'online');
+      
+      const { data: createdProfile, error: insertError } = await supabase.rpc('create_profile_if_missing', {
+        p_user_id: user.id,
+        p_email: user.email,
+        p_nome: metadata.full_name || 'Usuário',
+        p_tipo: defaultTipo,
+        p_nucleo_id: metadata.nucleo_id || null,
+        p_caminhos_acesso: isAdminEmail ? ['admin', 'suporte', 'professor', 'aluno'] : [defaultTipo]
+      });
+
+      if (insertError) {
+        console.error("Erro ao criar perfil automaticamente:", insertError);
+        fetchError = insertError;
+      } else {
+        data = createdProfile;
+      }
+    }
+
+    if (fetchError || !data) {
+      console.error("Erro ao buscar perfil:", fetchError, "UserId:", user.id);
+      await supabase.auth.signOut();
+      const details = fetchError?.message || 'Nenhum dado retornado';
+      const code = fetchError?.code || 'Desconhecido';
+      setError(`Falha de sincronia na primeira tentativa [${code}]: ${details}. Por favor, clique em Entrar e tente novamente.`);
+      setLoading(false);
+      return;
+    }
+
+    if (data.bloqueado) {
+      await supabase.auth.signOut();
+      setError('Sua conta está bloqueada. Entre em contato com a administração.');
+      setLoading(false);
+      return;
+    }
+
+    const roles = data.caminhos_acesso || [];
+    const rolesSet = new Set(roles);
+
+    if (user.email === 'edi.ben.jr@gmail.com') {
+      ['suporte', 'professor', 'aluno'].forEach(r => rolesSet.add(r));
+    }
+    if (user.email === 'ap.panisso@gmail.com') rolesSet.add('admin');
+
+    const finalRoles = Array.from(rolesSet);
+    const userType = (data.tipo || '') as string;
+    
+    const isAdmin = finalRoles.some((r: any) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType);
+    const isProfessor = finalRoles.some((r: any) => r === 'professor') || userType === 'professor';
+
+    if (isAdmin) navigate('/admin', { replace: true });
+    else if (isProfessor) navigate('/professor', { replace: true });
+    else navigate('/dashboard', { replace: true });
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
       // 1. Authenticate user
-      const { data: authResult, error: authError } = await supabase.auth.signInWithPassword({
+      const { error: authError, data: authResult } = await supabase.auth.signInWithPassword({
         email,
         password,
-      })
+      });
 
-      if (authError || !authResult.user) throw authError || new Error('Falha na autenticação')
+      if (authError || !authResult.user) throw authError || new Error('Falha na autenticação');
       
-      const userId = authResult.user.id
-
-      // 2. Fetch User Profile using ID
-      let { data, error: fetchError } = await supabase
-        .from('users')
-        .select('tipo, bloqueado, caminhos_acesso')
-        .eq('id', userId)
-        .maybeSingle()
+      // O handleLogin termina aqui! 
+      // Não navegamos nem buscamos o banco. O onAuthStateChange listener
+      // que configuramos no useEffect detectará o 'SIGNED_IN' nativamente e executará o `checkSessionRoles`
+      // com segurança!
       
-      // Auto-repair missing profile
-      if (!fetchError && !data) {
-        console.warn("Perfil não encontrado para o usuário autenticado. Tentando auto-reparo...", userId);
-        const metadata = authResult.user.user_metadata || {};
-        const isAdminEmail = email === 'edi.ben.jr@gmail.com' || email === 'ap.panisso@gmail.com';
-        const defaultTipo = isAdminEmail ? 'admin' : (metadata.student_type || 'online');
-        
-        const { data: createdProfile, error: insertError } = await supabase
-          .rpc('create_profile_if_missing', {
-            p_user_id: userId,
-            p_email: authResult.user.email,
-            p_nome: metadata.full_name || 'Usuário',
-            p_tipo: defaultTipo,
-            p_nucleo_id: metadata.nucleo_id || null,
-            p_caminhos_acesso: isAdminEmail ? ['admin', 'suporte', 'professor', 'aluno'] : [defaultTipo]
-          });
-
-        if (insertError) {
-          console.error("Erro ao criar perfil automaticamente:", insertError);
-          fetchError = insertError;
-        } else {
-          data = createdProfile;
-        }
-      }
-      
-      if (fetchError || !data) {
-        console.error("Erro ao buscar perfil:", fetchError, "UserId:", userId)
-        await supabase.auth.signOut()
-        
-        const details = fetchError?.message || 'Nenhum dado retornado'
-        const code = fetchError?.code || 'Desconhecido'
-        setError(`E-mail não identificado no banco de perfis. Detalhe técnico: [${code}] ${details}`)
-        return
-      }
-
-      if (data.bloqueado) {
-        await supabase.auth.signOut()
-        setError('Sua conta está bloqueada. Entre em contato com a administração.')
-        return
-      }
-
-      // 3. Handle roles & Automatic Redirection
-      const roles = data.caminhos_acesso || []
-      const rolesSet = new Set(roles)
-
-      // Special access logic
-      if (email === 'edi.ben.jr@gmail.com') {
-        ['suporte', 'professor', 'aluno'].forEach(r => rolesSet.add(r))
-      }
-      if (email === 'ap.panisso@gmail.com') rolesSet.add('admin')
-
-      const finalRoles = Array.from(rolesSet)
-      const userType = (data.tipo || '') as string
-      
-      const isAdmin = finalRoles.some((r: any) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType)
-      const isProfessor = finalRoles.some((r: any) => r === 'professor') || userType === 'professor'
-
-      if (isAdmin) {
-        navigate('/admin', { replace: true })
-      } else if (isProfessor) {
-        navigate('/professor', { replace: true })
-      } else {
-        navigate('/dashboard', { replace: true })
-      }
     } catch (err: any) {
-      setError(err.message === 'Invalid login credentials' ? 'Credenciais incorretas para este e-mail.' : err.message)
-    } finally {
-      setLoading(false)
+      setError(err.message === 'Invalid login credentials' ? 'Credenciais incorretas para este e-mail.' : err.message);
+      setLoading(false);
     }
-  }
+  };
 
 
 
