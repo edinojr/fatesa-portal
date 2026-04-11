@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
+
 import Navbar from '../components/common/Navbar'
 import Footer from '../components/common/Footer'
 import Logo from '../components/common/Logo'

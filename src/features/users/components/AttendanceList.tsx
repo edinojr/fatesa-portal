@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Check, X, Share2, Save, Loader2, Calendar, Users as UsersIcon } from 'lucide-react'
+import { Check, X, Save, Loader2, Calendar, Users as UsersIcon } from 'lucide-react'
 import { AttendanceRecord, Nucleo, Student } from '../../../types/professor'
 
 interface AttendanceListProps {
@@ -20,7 +20,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
   const [selectedNucleo, setSelectedNucleo] = useState<string>(professorNucleos[0]?.id || '')
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
   const [currentAttendance, setCurrentAttendance] = useState<Record<string, 'P' | 'F'>>({})
-  const [isShared, setIsShared] = useState(false)
+
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
 

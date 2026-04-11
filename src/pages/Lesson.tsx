@@ -59,7 +59,7 @@ const Lesson = () => {
         .from('aulas')
         .select('*, livros(*)')
         .eq('id', id)
-        .single();
+        .maybeSingle();
         
       if (lessonError) throw lessonError;
       
@@ -69,7 +69,7 @@ const Lesson = () => {
 
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).single();
+        const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).maybeSingle();
         const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
         setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, isStaff });
 

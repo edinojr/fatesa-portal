@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { LogIn, Loader2, Eye, EyeOff } from 'lucide-react'
 import Logo from '../components/common/Logo'
+import { useSEO } from '../hooks/useSEO'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -12,11 +13,16 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
+  useSEO({
+    title: 'Entrar na Plataforma | Fatesa',
+    description: 'Faça login no portal do aluno Fatesa para continuar seus estudos teológicos online.'
+  });
+
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        const { data } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', session.user.id).single();
+        const { data } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', session.user.id).maybeSingle();
         const userType = data?.tipo || '';
         const roles = data?.caminhos_acesso || [];
         
@@ -48,11 +54,36 @@ const Login = () => {
       const userId = authResult.user.id
 
       // 2. Fetch User Profile using ID
-      const { data, error: fetchError } = await supabase
+      let { data, error: fetchError } = await supabase
         .from('users')
         .select('tipo, bloqueado, caminhos_acesso')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
+      
+      // Auto-repair missing profile
+      if (!fetchError && !data) {
+        console.warn("Perfil não encontrado para o usuário autenticado. Tentando auto-reparo...", userId);
+        const metadata = authResult.user.user_metadata || {};
+        const isAdminEmail = email === 'edi.ben.jr@gmail.com' || email === 'ap.panisso@gmail.com';
+        const defaultTipo = isAdminEmail ? 'admin' : (metadata.student_type || 'online');
+        
+        const { data: createdProfile, error: insertError } = await supabase
+          .rpc('create_profile_if_missing', {
+            p_user_id: userId,
+            p_email: authResult.user.email,
+            p_nome: metadata.full_name || 'Usuário',
+            p_tipo: defaultTipo,
+            p_nucleo_id: metadata.nucleo_id || null,
+            p_caminhos_acesso: isAdminEmail ? ['admin', 'suporte', 'professor', 'aluno'] : [defaultTipo]
+          });
+
+        if (insertError) {
+          console.error("Erro ao criar perfil automaticamente:", insertError);
+          fetchError = insertError;
+        } else {
+          data = createdProfile;
+        }
+      }
       
       if (fetchError || !data) {
         console.error("Erro ao buscar perfil:", fetchError, "UserId:", userId)

@@ -148,7 +148,7 @@ const SmartViewer = () => {
       const isAula = searchParams.get('type') === 'aula';
       const table = isAula ? 'aulas' : 'livros';
       
-      const { data: res, error } = await supabase.from(table).select('*').eq('id', id).single();
+      const { data: res, error } = await supabase.from(table).select('*').eq('id', id).maybeSingle();
       if (error) throw error;
       
       setData(res);

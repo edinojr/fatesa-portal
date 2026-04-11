@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 import { 
   Megaphone, 
   FileText, 
-  ExternalLink, 
   AlertCircle, 
   Clock,
-  ChevronRight,
   Download,
-  Award,
-  ClipboardList
+  Award
 } from 'lucide-react';
 import ExtraAssessmentModal from './ExtraAssessmentModal';
 

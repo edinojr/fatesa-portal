@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Mail, Loader2, ChevronLeft, CheckCircle2 } from 'lucide-react'
+import { Mail, Loader2, CheckCircle2 } from 'lucide-react'
 import Logo from '../components/common/Logo'
 
 const ForgotPassword = () => {

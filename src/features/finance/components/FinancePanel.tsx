@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { CreditCard, CheckCircle2, AlertCircle, Copy, Info, ShieldAlert, QrCode, Loader2, ClipboardList, XCircle, Clock, Check, Upload } from 'lucide-react'
+import { CreditCard, CheckCircle2, AlertCircle, Copy, Info, ShieldAlert, QrCode, Loader2, ClipboardList, Clock, Upload } from 'lucide-react'
 import { Pagamento } from '../../../types/dashboard'
 
 interface FinancePanelProps {
@@ -24,10 +24,8 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
   handleNotifyPayment,
   showToast,
   isBlockedDueToPayment,
-  isPastDue,
   handleRequestExtension
 }) => {
-  const [notifying, setNotifying] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pendingFile, setPendingFile] = useState<string | null>(null);
   
@@ -40,12 +38,7 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
       fileInputRef.current?.click();
     } else {
       // General notification if no specific payment selected
-      setNotifying('general');
-      try {
-        await handleNotifyPayment();
-      } finally {
-        setNotifying(null);
-      }
+      await handleNotifyPayment();
     }
   };
 

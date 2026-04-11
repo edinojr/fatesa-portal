@@ -30,7 +30,7 @@ const Signup = () => {
     const checkSession = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await supabase.from('users').select('tipo').eq('id', user.id).single();
+        const { data } = await supabase.from('users').select('tipo').eq('id', user.id).maybeSingle();
         if (data && ['admin', 'professor', 'suporte'].includes(data.tipo)) {
           navigate('/admin', { replace: true });
         } else {

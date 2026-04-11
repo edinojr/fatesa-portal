@@ -18,7 +18,7 @@ export const useStudentCourses = (profile: any) => {
       // Lógica de isenção
       let nucleoIsento = false;
       if (profile.nucleo_id) {
-        const { data: nucData } = await supabase.from('nucleos').select('isento').eq('id', profile.nucleo_id).single();
+        const { data: nucData } = await supabase.from('nucleos').select('isento').eq('id', profile.nucleo_id).maybeSingle();
         nucleoIsento = !!nucData?.isento;
       }
       const exemptStatus = profile.bolsista || isStaff || nucleoIsento;
@@ -36,40 +36,7 @@ export const useStudentCourses = (profile: any) => {
         courseBooks = cb || [];
       }
 
-      if (exemptStatus) {
-        releasedCount = 999;
-      } else {
-        const { data: payRecords } = await supabase.from('pagamentos').select('status').eq('user_id', profile.id).eq('status', 'pago');
-        const paidCount = payRecords?.length || 0;
-        
-        // Release count based on Exams (tipo 'prova')
-        const { data: resExamSubmissions } = await supabase
-          .from('respostas_aulas')
-          .select('aula_id, aulas(tipo, livro_id)')
-          .eq('aluno_id', profile.id)
-          .gte('tentativas', 1);
-        
-        const examSubmissions = (resExamSubmissions || []) as any[];
-        const submittedExamBookIds = new Set(
-          examSubmissions
-            .filter(s => (Array.isArray(s.aulas) ? s.aulas[0]?.tipo : s.aulas?.tipo) === 'prova') // Only count exams for module release
-            .map(s => {
-              const aula = Array.isArray(s.aulas) ? s.aulas[0] : s.aulas;
-              return aula?.livro_id;
-            })
-            .filter(id => !!id)
-        );
-        
-        let maxExamOrdem = 0;
-        if (courseBooks) {
-          courseBooks.forEach(b => {
-            if (submittedExamBookIds.has(b.id) && b.ordem > maxExamOrdem) maxExamOrdem = b.ordem;
-          });
-        }
-        releasedCount = Math.max(paidCount + 1, maxExamOrdem + 1);
-      }
-
-      // Liberações por Polo: Consultamos apenas o que está vinculado ao Polo do aluno
+      // Fetch releases first
       const { data: releases, error: relError } = await supabase
         .from('liberacoes_nucleo')
         .select('item_id, item_type, created_at')
@@ -78,6 +45,52 @@ export const useStudentCourses = (profile: any) => {
       
       if (relError) console.error('[Dashboard] Erro ao buscar liberações:', relError);
 
+      const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
+      const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
+      const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
+
+      // Limite Pedagógico Rigoroso: O aluno só acessa o módulo N+1 se o professor liberar a prova do módulo N
+      const examReleaseDates: Record<string, string> = {};
+      let maxReleasedExamOrdem = 0;
+
+      const { data: exams } = await supabase
+        .from('aulas')
+        .select('id, livro_id, is_bloco_final')
+        .or('tipo.eq.prova,is_bloco_final.eq.true');
+
+      if (exams && releases) {
+        const releasedExamBookIds = new Set(
+          exams.filter(exam => releasedAtividades.includes(exam.id)).map(exam => exam.livro_id)
+        );
+
+        if (courseBooks) {
+          courseBooks.forEach(b => {
+            if (releasedExamBookIds.has(b.id) && b.ordem > maxReleasedExamOrdem) {
+              maxReleasedExamOrdem = b.ordem;
+            }
+          });
+        }
+
+        exams.forEach(exam => {
+          if (exam.is_bloco_final) {
+            const rel = (releases as any[]).find(r => r.item_id === exam.id && r.item_type === 'atividade');
+            if (rel) examReleaseDates[exam.livro_id] = rel.created_at;
+          }
+        });
+      }
+
+      const pedagogicalLimit = maxReleasedExamOrdem + 1;
+
+      if (exemptStatus) {
+        releasedCount = pedagogicalLimit; 
+      } else {
+        const { data: payRecords } = await supabase.from('pagamentos').select('status').eq('user_id', profile.id).eq('status', 'pago');
+        const paidCount = payRecords?.length || 0;
+        
+        // Exige tanto financeiro quanto pedagógico para liberar
+        releasedCount = Math.min(paidCount + 1, pedagogicalLimit);
+      }
+
       // Buscar exceções individuais (liberações manuais do professor)
       const { data: exceptions } = await supabase
         .from('liberacoes_excecao')
@@ -85,26 +98,6 @@ export const useStudentCourses = (profile: any) => {
         .eq('user_id', profile.id);
       
       const exceptionIds = (exceptions || []).map(e => e.livro_id);
-
-      const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
-      const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
-      const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
-
-      // Mapear datas de liberação das provas finais por livro
-      const examReleaseDates: Record<string, string> = {};
-      const { data: exams } = await supabase
-        .from('aulas')
-        .select('id, livro_id')
-        .eq('is_bloco_final', true);
-      
-      if (exams && releases) {
-        exams.forEach(exam => {
-          const rel = (releases as any[]).find(r => r.item_id === exam.id && r.item_type === 'atividade');
-          if (rel) {
-            examReleaseDates[exam.livro_id] = rel.created_at;
-          }
-        });
-      }
 
       // Progresso e Notas - Removido filtro student_id que não existe no topo da view
       const [{ data: respostasRaw }, { data: progData }] = await Promise.all([
@@ -146,14 +139,17 @@ export const useStudentCourses = (profile: any) => {
               
               const isHidden = isPastModule && !hasException && !hasStarted && !isStaff;
 
-              const isReleased = (isStaff || exemptStatus || (l.ordem || 1) <= releasedCount || releasedModulos.includes(l.id));
+              const isReleased = (isStaff || (l.ordem || 1) <= releasedCount || releasedModulos.includes(l.id));
 
               if (isHidden) return null;
 
                 return {
                   ...l,
                   aulas: [...(l.aulas || [])]
-                    .sort((a: any, b: any) => (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' }))
+                    .sort((a: any, b: any) => {
+                      if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
+                      return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' });
+                    })
                     .map((a: any) => {
                     if (isStaff) return { ...a, lockedByProfessor: false };
                     

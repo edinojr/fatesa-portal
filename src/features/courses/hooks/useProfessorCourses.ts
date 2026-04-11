@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react'
-import { supabase } from '../../../lib/supabase'
 import { ProfessorCourse } from '../../../types/professor'
 
 export const useProfessorCourses = () => {

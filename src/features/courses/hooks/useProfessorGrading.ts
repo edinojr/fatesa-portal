@@ -31,7 +31,6 @@ export const useProfessorGrading = () => {
     if (Array.isArray(questionnaire) && questionnaire.length > 0) {
       questionnaire.forEach((q: any, qIdx: number) => {
         const qKey = q.id || qIdx;
-        const studentAns = sub.respostas?.[qKey];
         const savedEval = sub.respostas?.[`${qKey}_avaliacao`];
         if (savedEval !== undefined) {
           initialEvals[qKey] = savedEval === true;

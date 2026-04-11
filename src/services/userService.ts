@@ -14,7 +14,7 @@ export const userService = {
       .from('users')
       .select('id, email, nome, tipo, nucleo_id, created_at, phone, profile_image, nucleos(id, nome)')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },

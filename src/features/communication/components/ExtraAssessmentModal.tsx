@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../../../lib/supabase';
-import { Award, Clock, Save, X, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Award, Clock, X, CheckCircle2, Loader2 } from 'lucide-react';
 
 interface ExtraAssessmentModalProps {
   atividade: any;

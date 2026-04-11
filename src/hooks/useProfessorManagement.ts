@@ -103,7 +103,7 @@ export const useProfessorManagement = () => {
 
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      const { data: profileData } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', user.id).single()
+      const { data: profileData } = await supabase.from('users').select('tipo, caminhos_acesso').eq('id', user.id).maybeSingle()
       const isAdmin = profileData?.tipo === 'admin' || profileData?.tipo === 'suporte' || profileData?.caminhos_acesso?.includes('admin') || user.email === 'edi.ben.jr@gmail.com'
 
       if (isAdmin) {

@@ -7,12 +7,12 @@ interface LogoProps {
   white?: boolean
 }
 
-const Logo: React.FC<LogoProps> = ({ size = 64, className = '', showText = false, white = false }) => {
+const Logo: React.FC<LogoProps> = ({ size = 64, className = '' }) => {
   return (
     <div className={`logo-container ${className}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <img 
         src="/logo.png" 
-        alt="Casa do Saber" 
+        alt="Logotipo Oficial Fatesa Casa do Saber" 
         style={{ 
           width: size, 
           height: 'auto', 

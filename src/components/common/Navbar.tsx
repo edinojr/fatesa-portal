@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Menu, XCircle, LogIn, Users, Home, Info, BookOpen, UserCheck, GraduationCap, Mail } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { LogIn, Users } from 'lucide-react'
 import Logo from './Logo'
 import { supabase } from '../../lib/supabase'
 
 const Navbar = () => {
     const [sessionUser, setSessionUser] = useState<any>(null);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -25,7 +23,7 @@ const Navbar = () => {
     return (
         <nav className="landing-nav">
             <div className="nav-content">
-                <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/">
                     <Logo size={250} />
                 </Link>
                 

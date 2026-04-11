@@ -126,7 +126,7 @@ export const useAdminManagement = () => {
       const lId = searchParams.get('lessonId');
 
       if (cId && (!selectedCourse || selectedCourse.id !== cId)) {
-        supabase.from('cursos').select('*, livros(count)').eq('id', cId).single().then(({ data }) => {
+        supabase.from('cursos').select('*, livros(count)').eq('id', cId).maybeSingle().then(({ data }) => {
           if (data) { setSelectedCourseState(data); fetchBooks(cId); }
         });
       } else if (!cId) {
@@ -134,7 +134,7 @@ export const useAdminManagement = () => {
       }
 
       if (bId && (!selectedBook || selectedBook.id !== bId)) {
-        supabase.from('livros').select('*, aulas(count)').eq('id', bId).single().then(({ data }) => {
+        supabase.from('livros').select('*, aulas(count)').eq('id', bId).maybeSingle().then(({ data }) => {
           if (data) { setSelectedBookState(data); fetchLessons(bId); }
         });
       } else if (!bId) {
@@ -142,7 +142,7 @@ export const useAdminManagement = () => {
       }
 
       if (lId && (!selectedLesson || selectedLesson.id !== lId)) {
-        supabase.from('aulas').select('*').eq('id', lId).single().then(({ data }) => {
+        supabase.from('aulas').select('*').eq('id', lId).maybeSingle().then(({ data }) => {
           if (data) { setSelectedLessonState(data); fetchLessonItems(lId); }
         });
       } else if (!lId) {
@@ -526,7 +526,7 @@ export const useAdminManagement = () => {
 
       // Ativação automática do usuário ao aprovar pagamento
       if (status === 'aprovado' && isPay) {
-        const { data: payData } = await supabase.from('pagamentos').select('user_id').eq('id', id).single()
+        const { data: payData } = await supabase.from('pagamentos').select('user_id').eq('id', id).maybeSingle()
         if (payData?.user_id) {
           await supabase.from('users').update({ acesso_definitivo: true }).eq('id', payData.user_id)
         }

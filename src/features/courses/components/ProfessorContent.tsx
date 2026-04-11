@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
 
 interface ProfessorContentProps {
@@ -30,8 +30,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   fetchBooks,
   selectBookAndShowLessons,
   professorNucleos,
-  submissions = [],
-  profile
+  submissions = []
 }) => {
   const [releases, setReleases] = useState<any[]>([])
 

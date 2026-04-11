@@ -43,18 +43,20 @@ export const useProfile = () => {
           pagamentos (*)
         `)
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
       
       if (error) {
         console.error('Database Profile Error:', error);
-        // Special case: User authenticated in Auth but no record in Public.users
-        if (error.code === 'PGRST116') {
-           // Bypass de Segurança: O usuário solicitou entrada administrativa forçada.
-           // Aviso: Qualquer nova conta sem registro no banco público assumirá privilégios de Admin.
-           setProfile({ id: session.user.id, email: session.user.email, tipo: 'admin', caminhos_acesso: ['admin'], accessStatus: 'active' });
-           return;
-        }
         throw error;
+      }
+
+      if (!data) {
+        console.warn('Profile not found for authenticated user, applying fallback/mock.');
+        // Special case: User authenticated in Auth but no record in Public.users
+        // Bypass de Segurança: O usuário solicitou entrada administrativa forçada.
+        // Aviso: Qualquer nova conta sem registro no banco público assumirá privilégios de Admin.
+        setProfile({ id: session.user.id, email: session.user.email, tipo: 'admin', caminhos_acesso: ['admin'], accessStatus: 'active' });
+        return;
       }
       
       const accessStatus = checkAccessStatus(data);

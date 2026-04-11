@@ -22,7 +22,7 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isHighlighterActive, setIsHighlighterActive] = useState(false);
+
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -42,9 +42,6 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
     setZoomLevel(prev => prev === 1 ? 1.5 : 1);
   };
 
-  const toggleHighlighter = () => {
-    setIsHighlighterActive(prev => !prev);
-  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -143,7 +140,7 @@ const BookModal: React.FC<BookModalProps> = ({ book, onClose }) => {
 
 
 
-          <div className={isHighlighterActive ? 'highlighter-mode' : ''} style={{ 
+          <div style={{ 
             minWidth: '100%',
             minHeight: '100%',
             display: 'flex', 

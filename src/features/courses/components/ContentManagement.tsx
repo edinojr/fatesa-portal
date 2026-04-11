@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BookOpen, Edit, Trash2, ChevronRight, Plus, ClipboardList, Award, PlayCircle, Eye, FileText, Upload, CheckCircle2, Loader2, ChevronUp, ChevronDown, Layers, GripVertical } from 'lucide-react'
+import { BookOpen, Edit, Trash2, ChevronRight, Plus, ClipboardList, Award, PlayCircle, Eye, FileText, Upload, Loader2, ChevronUp, ChevronDown, Layers, GripVertical } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 interface ContentManagementProps {
@@ -83,8 +83,6 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   lessons,
   lessonItems,
   userRole,
-  actionLoading,
-  fetchData,
   fetchBooks,
   fetchLessons,
   fetchLessonItems,

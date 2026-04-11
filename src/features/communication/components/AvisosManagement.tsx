@@ -7,8 +7,7 @@ import {
   AlertCircle, 
   Megaphone,
   Loader2,
-  X,
-  CheckCircle2
+  X
 } from 'lucide-react';
 
 const AvisosManagement = () => {

@@ -104,7 +104,6 @@ const Dashboard = () => {
   };
 
   const fetchNoticeBoard = useCallback(async (nucleoId: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const safeQuery = async (query: PromiseLike<{ data: any; error: any }>) => {
       try {
         const { data, error } = await query;

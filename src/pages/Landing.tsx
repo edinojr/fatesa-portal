@@ -4,9 +4,15 @@ import { ChevronRight, LogIn, Info, BookOpen, UserCheck, GraduationCap, ArrowRig
 import toast, { Toaster } from 'react-hot-toast'
 import Navbar from '../components/common/Navbar'
 import Footer from '../components/common/Footer'
+import { useSEO } from '../hooks/useSEO'
 
 const Landing = () => {
     const navigate = useNavigate();
+
+    useSEO({
+      title: 'Fatesa Casa do Saber | Formação Teológica e Ministerial',
+      description: 'Aprofunde seus conhecimentos bíblicos com nossos cursos de teologia. Acesso 100% online, material exclusivo e certificado.'
+    });
 
     return (
     <div className="landing-container">
@@ -52,7 +58,7 @@ const Landing = () => {
               <Info size={24} />
             </div>
             <div className="nav-card-content">
-              <h3>A Fatesa</h3>
+              <h2>A Fatesa</h2>
               <p>Nossa história e missão.</p>
             </div>
             <ArrowRight className="card-arrow" />
@@ -63,7 +69,7 @@ const Landing = () => {
               <BookOpen size={24} />
             </div>
             <div className="nav-card-content">
-              <h3>Metodologia</h3>
+              <h2>Metodologia</h2>
               <p>Sistema EAD e presencial.</p>
             </div>
             <ArrowRight className="card-arrow" />
@@ -74,7 +80,7 @@ const Landing = () => {
               <GraduationCap size={24} />
             </div>
             <div className="nav-card-content">
-              <h3>Cursos</h3>
+              <h2>Cursos</h2>
               <p>Catálogo completo de formação.</p>
             </div>
             <ArrowRight className="card-arrow" />
@@ -85,7 +91,7 @@ const Landing = () => {
               <UserCheck size={24} />
             </div>
             <div className="nav-card-content">
-              <h3>Docentes</h3>
+              <h2>Docentes</h2>
               <p>Mestres que guiarão seus estudos.</p>
             </div>
             <ArrowRight className="card-arrow" />
@@ -96,7 +102,7 @@ const Landing = () => {
               <Mail size={24} />
             </div>
             <div className="nav-card-content">
-              <h3>Contato</h3>
+              <h2>Contato</h2>
               <p>Suporte e secretaria.</p>
             </div>
             <ArrowRight className="card-arrow" />
@@ -107,7 +113,7 @@ const Landing = () => {
               <ClipboardSignature size={24} />
             </div>
             <div className="nav-card-content">
-              <h3>Matrícula</h3>
+              <h2>Matrícula</h2>
               <p>Inicie sua jornada hoje.</p>
             </div>
             <ArrowRight className="card-arrow" />
@@ -118,7 +124,7 @@ const Landing = () => {
               <LogIn size={24} />
             </div>
             <div className="nav-card-content">
-              <h3>Portal</h3>
+              <h2>Portal</h2>
               <p>Acesse seu painel exclusivo.</p>
             </div>
             <ArrowRight className="card-arrow" />
@@ -134,10 +140,10 @@ const Landing = () => {
           
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" style={{ height: '40px' }} />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Baixar aplicativo teológico Fatesa na Apple Store" style={{ height: '40px' }} />
             </button>
             <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style={{ height: '40px' }} />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Baixar aplicativo teológico Fatesa no Google Play" style={{ height: '40px' }} />
             </button>
           </div>
         </div>

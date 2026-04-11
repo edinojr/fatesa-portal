@@ -9,9 +9,7 @@ import {
   ChevronLeft, 
   Plus, 
   X, 
-  Loader2,
-  AlertCircle,
-  Hash
+  Loader2
 } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 
@@ -128,7 +126,7 @@ const ForumPanel: React.FC<ForumPanelProps> = ({ userProfile }) => {
           user_id: userProfile.id
         })
         .select()
-        .single()
+        .maybeSingle()
       
       if (error) throw error
       
@@ -346,7 +344,7 @@ const ForumPanel: React.FC<ForumPanelProps> = ({ userProfile }) => {
             flexDirection: 'column',
             gap: '1.5rem'
           }}>
-            {messages.map((msg, index) => (
+            {messages.map((msg) => (
               <div 
                 key={msg.id} 
                 style={{ 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { MessageCircle, Phone, Mail, MapPin } from 'lucide-react'
+import { MessageCircle, Phone, MapPin } from 'lucide-react'
 import Navbar from '../components/common/Navbar'
 import Footer from '../components/common/Footer'
 

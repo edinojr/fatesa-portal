@@ -39,7 +39,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
           {pixQrUrl && (
             <img 
               src={pixQrUrl} 
-              alt="QR Code PIX" 
+              alt="QR Code PIX oficial para pagamento na Fatesa Casa do Saber" 
               style={{ width: '150px', background: 'white', padding: '0.5rem', display: 'block', marginBottom: '1rem', borderRadius: '8px' }} 
             />
           )}

@@ -426,7 +426,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         if (error) throw error
         alert('Núcleo atualizado com sucesso!')
       } else {
-        const { data, error } = await supabase.from('nucleos').insert(finalNucleoData).select().single()
+        const { data, error } = await supabase.from('nucleos').insert(finalNucleoData).select().maybeSingle()
         if (error) throw error
         
         // Automatically link teacher to it (even if Admin creates it, link the creator)
@@ -1093,11 +1093,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
                     for (let i=0; i<10; i++) q.push({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: lines[idx++] || '', isTrue: true });
                     for (let i=0; i<2; i++) q.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: lines[idx++] || '' });
                     for (let i=0; i<2; i++) {
-                      let text = lines[idx++] || '';
+                      const text = lines[idx++] || '';
                       q.push({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text, options: [lines[idx++]||'', lines[idx++]||'', lines[idx++]||'', lines[idx++]||''], correctOption: 0 });
                     }
                     const matPairs: any[] = [];
-                    let matT = lines[idx++] || 'Relacione:';
+                    const matT = lines[idx++] || 'Relacione:';
                     for (let i=0; i<6; i++) matPairs.push({ left: lines[idx++] || `Item ${i+1}`, right: '...' });
                     q.push({ id: `mat-${Date.now()}`, type: 'matching', text: matT, matchingPairs: matPairs });
 

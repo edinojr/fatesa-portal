@@ -84,7 +84,7 @@ const AlumniCertificate: React.FC<CertificateProps> = ({ aluno }) => {
           {/* Watermark Logo */}
           <img 
             src="/logo.png" 
-            alt="Marca d'água"
+            alt="Marca d'água Fatesa Casa do Saber"
             style={{
               position: 'absolute',
               top: '50%',
@@ -99,7 +99,7 @@ const AlumniCertificate: React.FC<CertificateProps> = ({ aluno }) => {
           <div style={{ position: 'relative', zIndex: 10, width: '100%', border: '4px solid #B4962B', height: '100%', padding: '10mm', boxSizing: 'border-box', borderStyle: 'double' }}>
             {/* Header */}
             <div style={{ marginBottom: '2rem' }}>
-              <img src="/logo.png" alt="Fatesa Logo" style={{ height: '100px', marginBottom: '0.5rem' }} />
+              <img src="/logo.png" alt="Logotipo Oficial Fatesa Casa do Saber" style={{ height: '100px', marginBottom: '0.5rem' }} />
               <h2 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase' }}>Fatesa - A Casa do Saber</h2>
             </div>
 

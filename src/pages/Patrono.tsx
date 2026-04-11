@@ -33,7 +33,7 @@ const Patrono = () => {
                             <div className="faculty-photo-container">
                                 <img 
                                     src="https://www.fatesacasadosaber.education/image/profes/profes.jpg" 
-                                    alt="Dr. Pr. Antônio Sebastião da Silva" 
+                                    alt="Foto oficial do Patrono e Diretor Dr. Pr. Antônio Sebastião da Silva da Fatesa Casa do Saber" 
                                     className="faculty-photo" 
                                 />
                             </div>
