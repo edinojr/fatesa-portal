@@ -162,14 +162,17 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                                 <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem'}}>O professor está avaliando sua última tentativa. Aguarde o feedback para liberar a próxima versão, caso necessário.</p>
                               </div>
                             ) : submissions.length >= 3 ? (
-                              <div style={{ padding: '1.5rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '16px', border: '1px solid var(--error)', textAlign: 'center' }}>
-                                <XCircle size={32} color="var(--error)" style={{marginBottom:'0.5rem', display:'inline-block'}}/>
-                                <h4 style={{margin:0, color:'var(--error)'}}>Tentativas Esgotadas</h4>
-                                <p style={{fontSize:'0.85rem', color:'var(--text-muted)', marginTop:'0.5rem', marginBottom: '1rem'}}>Você não atingiu a nota mínima nas 3 avaliações disponíveis. Este módulo ficará pendente para você refazer ao final do seu curso.</p>
+                              <div style={{ padding: '2rem', background: 'rgba(239, 68, 68, 0.08)', borderRadius: '20px', border: '1px solid var(--error)', textAlign: 'center' }}>
+                                <XCircle size={48} color="var(--error)" style={{marginBottom:'1rem', display:'inline-block'}}/>
+                                <h4 style={{margin:0, color:'var(--error)', fontSize: '1.4rem', fontWeight: 800}}>Módulo Encerrado</h4>
+                                <p style={{fontSize:'0.95rem', color:'var(--text-muted)', marginTop:'1rem', marginBottom: '1.5rem', lineHeight: 1.6}}>
+                                  Você atingiu o limite de 3 tentativas sem obter a nota mínima de aprovação. <br/>
+                                  <strong>Atenção:</strong> Este módulo não foi concluído e você deverá refazê-lo para obter sua certificação.
+                                </p>
                                 {lastSub && (
                                   <button 
                                     className="btn btn-outline" 
-                                    style={{ width: 'auto', padding: '0.5rem 1rem', borderColor: 'var(--error)', color: 'var(--error)' }}
+                                    style={{ width: 'auto', padding: '0.6rem 1.5rem', borderColor: 'var(--error)', color: 'var(--error)', fontWeight: 700 }}
                                     onClick={() => setReviewSub(lastSub)}
                                   >
                                     Ver Última Correção

@@ -167,7 +167,7 @@ export const useStudentCourses = (profile: any) => {
 
                       // Liberação manual para Provas ou Vídeos restritos
                       isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final) 
-                        ? (releasedVideos.includes(a.id) || releasedAtividades.includes(a.id))
+                        ? (releasedVideos.includes(a.id) || releasedAtividades.includes(a.id) || (a.tipo === 'prova' && releasedExamBookIds.has(l.id)))
                         : true;
                       
                       // Conteúdo padrão é desbloqueado se o módulo pai estiver liberado (ou manual se restrito)

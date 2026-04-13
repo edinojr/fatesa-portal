@@ -108,9 +108,29 @@ const Lesson = () => {
               .maybeSingle();
             
             if (!releaseData) {
-              setIsReleased(false);
-              setLoading(false);
-              return;
+              // Fallback: Se for prova, verifica se qualquer prova do mesmo livro está liberada
+              if (lessonData.tipo === 'prova' || lessonData.is_bloco_final) {
+                 const { data: siblingExams } = await supabase.from('aulas').select('id').eq('livro_id', lessonData.livro_id).eq('tipo', 'prova');
+                 const examIds = (siblingExams || []).map(e => e.id);
+                 
+                 const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
+                   .select('id')
+                   .eq('nucleo_id', profile.nucleo_id)
+                   .eq('item_type', 'atividade')
+                   .in('item_id', examIds)
+                   .eq('liberado', true)
+                   .maybeSingle();
+                 
+                 if (!siblingRel) {
+                    setIsReleased(false);
+                    setLoading(false);
+                    return;
+                 }
+              } else {
+                setIsReleased(false);
+                setLoading(false);
+                return;
+              }
             }
           }
         }
