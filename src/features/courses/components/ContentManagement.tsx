@@ -73,31 +73,8 @@ const tipoIcon = (tipo: string, size = 20) => {
   }
 }
 
-const ContentManagement: React.FC<ContentManagementProps> = ({
-  courses,
-  selectedCourse,
-  setSelectedCourse,
-  selectedBook,
-  setSelectedBook,
-  selectedLesson,
-  setSelectedLesson,
-  books,
-  lessons,
-  lessonItems,
-  userRole,
-  fetchBooks,
-  fetchLessons,
-  fetchLessonItems,
-  handleDelete,
-  handleRemoveFile,
-  handleFileUpload,
-  handleReorder,
-  handleMoveTo,
-  setShowAddCourse,
-  setShowAddBook,
-  setShowAddLesson,
-  setShowAddContent,
 const ContentManagement: React.FC<ContentManagementProps> = (props) => {
+
   const {
     courses,
     selectedCourse,
