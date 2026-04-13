@@ -58,10 +58,12 @@ export const useStudentCourses = (profile: any) => {
         .select('id, livro_id, is_bloco_final')
         .or('tipo.eq.prova,is_bloco_final.eq.true');
 
+      const releasedExamBookIds = new Set<string>();
+      
       if (exams && releases) {
-        const releasedExamBookIds = new Set(
-          exams.filter(exam => releasedAtividades.includes(exam.id)).map(exam => exam.livro_id)
-        );
+        exams.filter(exam => releasedAtividades.includes(exam.id)).forEach(exam => {
+          releasedExamBookIds.add(exam.livro_id);
+        });
 
         if (courseBooks) {
           courseBooks.forEach(b => {

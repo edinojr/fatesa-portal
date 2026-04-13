@@ -217,7 +217,7 @@ const Lesson = () => {
             // Standard 7 days deadline for any attempt
             const deadline = new Date(libDate.getTime() + 7 * 24 * 3600 * 1000);
             const expired = now > deadline;
-            setDeadlineInfo({ deadline, stage: a.versao || 1, expired });
+            setDeadlineInfo({ deadline, stage: lessonData.versao || 1, expired });
 
             const canRetry = !expired && currentSub.status === 'corrigida' && (currentSub.nota || 0) < (lessonData.min_grade || 7);
 

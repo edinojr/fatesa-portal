@@ -30,6 +30,8 @@ import CourseList from '../features/courses/components/CourseList'
 import GradesPanel from '../features/courses/components/GradesPanel'
 import ForumPanel from '../features/forum/components/ForumPanel'
 import AlumniCertificate from '../components/documents/AlumniCertificate'
+import DocumentUpload from '../features/finance/components/DocumentUpload'
+import FinancePanel from '../features/finance/components/FinancePanel'
 
 type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
 

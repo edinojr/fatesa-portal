@@ -1002,6 +1002,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         <StudentDetailsModal 
           student={showStudentModal}
           onClose={() => setShowStudentModal(null)}
+          atividades={[]}
+          notas={[]}
           courseSubmissions={courseSubmissions}
           expandedSub={expandedSub}
           handleExpandSub={handleExpandSub}

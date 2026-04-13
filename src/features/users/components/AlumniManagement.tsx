@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react'
 import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, X, FileText, History as HistoryIcon, Award } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import Logo from '../../../components/common/Logo'
@@ -520,7 +521,7 @@ const AlumniManagement = () => {
                       <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', opacity: 0.5 }}>Nenhum registro no histórico.</td>
                     </tr>
                   ) : (
-                    selectedAlumni.historico.map((item, idx) => (
+                    selectedAlumni.historico.map((item: any, idx: number) => (
                       <tr key={idx}>
                         <td style={{ fontWeight: 600 }}>{item.modulo}</td>
                         <td style={{ textAlign: 'center' }}>
@@ -544,7 +545,7 @@ const AlumniManagement = () => {
                             <button 
                               className="btn btn-icon text-error"
                               onClick={() => {
-                                const newHistory = selectedAlumni.historico!.filter((_, i) => i !== idx);
+                                const newHistory = selectedAlumni.historico!.filter((_: any, i: number) => i !== idx);
                                 setSelectedAlumni({ ...selectedAlumni, historico: newHistory });
                                 supabase.from('registros_alumni').update({ historico: newHistory }).eq('id', selectedAlumni.id).then(fetchRecords);
                               }}
