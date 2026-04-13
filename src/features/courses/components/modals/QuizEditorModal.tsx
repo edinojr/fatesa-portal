@@ -112,7 +112,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
         }
     });
 
-    // RECONSTRUCT 10-2-2-1
+    // Reconstruct 10-2-2-2
     // VF
     for(let i=0; i<10; i++) {
         const item = vfItems[i];
@@ -134,21 +134,24 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
             correct: item?.correct || 0 
         });
     }
-    // Matching
-    const finalMatchingPairs: {left: string, right: string}[] = [];
-    for(let i=1; i<=6; i++) {
-        const left = matPairs.find(p => p.id === i && p.left !== '---')?.left || `Item ${i}`;
-        const right = matPairs.find(p => p.id === i && p.left === '---')?.right || '...';
-        finalMatchingPairs.push({ left, right });
+    // Matching (Two Questions)
+    for(let qIdx=0; qIdx<2; qIdx++) {
+        const finalMatchingPairs: {left: string, right: string}[] = [];
+        const startId = qIdx * 6 + 1;
+        for(let i=startId; i<startId+6; i++) {
+            const left = matPairs.find(p => p.id === i && p.left !== '---')?.left || `Item ${i}`;
+            const right = matPairs.find(p => p.id === i && p.left === '---')?.right || '...';
+            finalMatchingPairs.push({ left, right });
+        }
+        newQuestions.push({
+            id: `mat-${Date.now()}-${qIdx}`,
+            type: 'matching',
+            text: qIdx === 0 ? 'Enumere a coluna B de acordo com a A:' : 'Relacione os conceitos abaixo:',
+            matchingPairs: finalMatchingPairs
+        });
     }
-    newQuestions.push({
-        id: `mat-${Date.now()}`,
-        type: 'matching',
-        text: 'Enumere a coluna B de acordo com a A:',
-        matchingPairs: finalMatchingPairs
-    });
 
-    if (window.confirm(`Importador Fatesa: Detectamos as questões no padrão informado. Deseja aplicar as 15 perguntas agora?`)) {
+    if (window.confirm(`Importador Fatesa: Detectamos as questões no padrão informado. Deseja aplicar as 16 perguntas agora?`)) {
         setQuizQuestions(newQuestions);
         setShowImporter(false);
         setImportRawText('');
@@ -174,7 +177,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
           <Award color="var(--primary)" /> {editingQuiz.is_bloco_final ? 'Avaliação Final de Bloco' : 'Atividade'}: {editingQuiz.titulo}
         </h2>
         
-        {(editingQuiz.is_bloco_final || editingQuiz.tipo === 'prova') && (
+        {true && (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', background: 'rgba(var(--primary-rgb), 0.05)', padding: '1rem', borderRadius: '12px' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button 
@@ -219,23 +222,25 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 for(let i=0; i<2; i++) template.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' });
                 // 2 Multiple Choice
                 for(let i=0; i<2; i++) template.push({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 });
-                // 1 Matching (6 pairs)
-                template.push({ 
-                  id: `mat-${Date.now()}`, 
-                  type: 'matching', 
-                  text: 'Relacione as colunas abaixo:', 
-                  matchingPairs: [
-                    {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''},
-                    {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''}
-                  ] 
-                });
+                // 2 Matching (6 pairs each)
+                for(let j=0; j<2; j++) {
+                  template.push({ 
+                    id: `mat-${Date.now()}-${j}`, 
+                    type: 'matching', 
+                    text: j === 0 ? 'Relacione as colunas abaixo:' : 'Relacione os termos abaixo:', 
+                    matchingPairs: [
+                      {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''},
+                      {left: '', right: ''}, {left: '', right: ''}, {left: '', right: ''}
+                    ] 
+                  });
+                }
                 
-                if (window.confirm('Isso substituirá as questões atuais pelo padrão Fatesa de 15 itens (10 V/F, 2 Dissert., 2 M.C., 1 Coluna com 6 pares). Deseja continuar?')) {
+                if (window.confirm('Isso substituirá as questões atuais pelo padrão Fatesa de 16 itens (10 V/F, 2 Dissert., 2 M.C., 2 Colunas com 6 pares cada). Deseja continuar?')) {
                   setQuizQuestions(template);
                 }
               }}
             >
-              Carregar Padrão Fatesa (15 Itens)
+              Carregar Padrão Fatesa (16 Itens)
             </button>
           </div>
         )}
@@ -472,8 +477,8 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 const matCount = quizQuestions.filter(q => q.type === 'matching').length;
                 const matPairs = quizQuestions.find(q => q.type === 'matching')?.matchingPairs?.length || 0;
                 
-                if (tfCount !== 10 || disCount !== 2 || mcCount !== 2 || matCount !== 1 || matPairs !== 6) {
-                  if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O padrão Fatesa para Provas Finais exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 02 Dissertativas (Atuais: ${disCount})\n- 02 Múltipla Escolha (Atuais: ${mcCount})\n- 01 Relacione Colunas com 6 pares (Atuais: ${matCount} questão com ${matPairs} pares)\n\nDeseja salvar assim mesmo?`)) {
+                if (tfCount !== 10 || disCount !== 2 || mcCount !== 2 || matCount !== 2) {
+                  if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O padrão Fatesa exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 02 Dissertativas (Atuais: ${disCount})\n- 02 Múltipla Escolha (Atuais: ${mcCount})\n- 02 Relacione Colunas (Atuais: ${matCount})\n\nDeseja salvar assim mesmo?`)) {
                     return;
                   }
                 }

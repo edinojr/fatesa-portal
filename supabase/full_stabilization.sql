@@ -176,6 +176,11 @@ BEGIN
     CREATE POLICY "Leitura_Aluno_Liberacoes" ON public.liberacoes_nucleo FOR SELECT USING (nucleo_id = (SELECT nucleo_id FROM public.users WHERE id = auth.uid()));
 
     -- Políticas para Analytics (portal_access_logs)
+    DROP POLICY IF EXISTS "Allow_Public_Insert_Logs" ON public.portal_access_logs;
+    CREATE POLICY "Allow_Public_Insert_Logs" ON public.portal_access_logs FOR INSERT TO anon, authenticated WITH CHECK (true);
+    
+    DROP POLICY IF EXISTS "Admins_View_Logs" ON public.portal_access_logs;
+    CREATE POLICY "Admins_View_Logs" ON public.portal_access_logs FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND tipo IN ('admin', 'suporte')));
 
     -- Ajuste final de Enums (Garantir que 'rejeitado' existe para pagamentos)
     ALTER TYPE public.pagamento_status ADD VALUE IF NOT EXISTS 'rejeitado';
