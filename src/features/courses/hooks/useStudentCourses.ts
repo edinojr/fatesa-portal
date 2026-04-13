@@ -141,7 +141,7 @@ export const useStudentCourses = (profile: any) => {
               
               const isHidden = isPastModule && !hasException && !hasStarted && !isStaff;
 
-              const isReleased = (isStaff || (l.ordem || 1) <= releasedCount || releasedModulos.includes(l.id));
+              const isReleased = true; // Liberado para acesso aos materiais (Pedido: "liberar tudo, menos as provas")
 
               if (isHidden) return null;
 
