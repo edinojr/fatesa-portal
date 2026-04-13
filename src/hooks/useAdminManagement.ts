@@ -220,6 +220,51 @@ export const useAdminManagement = () => {
     }
   }
 
+  const handleBatchUpload = async (files: FileList, parentId: string, livroId: string, blocoId: number | null, startOrder: number) => {
+    if (!files || files.length === 0) return
+    
+    setUploading('batch')
+    try {
+      const results = []
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const safeName = normalizeFileName(file.name)
+        const filePath = `materiais/${Date.now()}_${safeName}`
+        
+        showToast(`Enviando ${i + 1} de ${files.length}: ${file.name}...`)
+        
+        const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: 'max-age=31536000' })
+        if (uploadError) throw uploadError
+
+        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
+        
+        // Use filename (without extension) as title
+        const title = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
+
+        results.push({
+          livro_id: livroId,
+          parent_aula_id: parentId,
+          titulo: title,
+          tipo: 'material',
+          arquivo_url: publicUrl,
+          ordem: startOrder + i,
+          bloco_id: blocoId
+        })
+      }
+
+      const { error: insertError } = await supabase.from('aulas').insert(results)
+      if (insertError) throw insertError
+
+      showToast(`${files.length} arquivos enviados e lições criadas com sucesso!`)
+      if (selectedLesson) fetchLessonItems(selectedLesson.id)
+    } catch (err: any) {
+      showToast('Erro no upload em lote: ' + err.message, 'error')
+    } finally {
+      setUploading(null)
+    }
+  }
+
+
   const handleReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas') => {
     const idx = items.findIndex(i => i.id === id)
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
@@ -474,14 +519,8 @@ export const useAdminManagement = () => {
 
   const fetchBooks = async (courseId: string) => {
     if (!courseId) return
-    const { data } = await supabase.from('livros').select('*, aulas(count)').eq('course_id', courseId).order('ordem')
-    if (data) {
-      setBooks(data)
-      // Auto-select if there's only one book and none is selected
-      if (data.length === 1 && !searchParams.get('bookId')) {
-        setSelectedBook(data[0]);
-      }
-    }
+    const { data } = await supabase.from('livros').select('*, aulas(count)').eq('curso_id', courseId).order('ordem')
+    if (data) setBooks(data)
   }
 
   const fetchLessons = async (bookId: string) => {
@@ -493,13 +532,7 @@ export const useAdminManagement = () => {
       .eq('livro_id', bookId)
       .eq('tipo', 'licao')
       .order('ordem')
-    if (data) {
-      setLessons(data)
-      // Shortcut: Auto-select the first lesson container if none is selected
-      if (data.length > 0 && !searchParams.get('lessonId')) {
-        setSelectedLesson(data[0]);
-      }
-    }
+    if (data) setLessons(data)
     setActionLoading(null)
   }
 
@@ -1137,6 +1170,7 @@ export const useAdminManagement = () => {
     fetchNucleosGlobal,
     showToast,
     handleFileUpload,
+    handleBatchUpload,
     handleReorder,
     handleMoveTo,
     fetchBooks,

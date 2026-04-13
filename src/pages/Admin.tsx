@@ -610,6 +610,7 @@ const Admin = () => {
             handleDelete={(table: any, id: string) => setConfirmDelete({ type: 'content', id, table, title: 'Tem certeza que deseja excluir este item?' })}
             handleRemoveFile={handleRemoveFileFinal}
             handleFileUpload={handleFileUpload}
+            handleBatchUpload={handleBatchUpload}
             handleReorder={handleReorder}
             handleMoveTo={handleMoveTo}
             setShowAddCourse={setShowAddCourse}

@@ -38,6 +38,7 @@ interface ContentManagementProps {
   setQuizQuestions: (val: any[]) => void
   uploading: string | null
   cleanupExcessExams?: () => Promise<void>
+  handleBatchUpload: (files: FileList, parentId: string, livroId: string, blocoId: number | null, startOrder: number) => Promise<void>
 }
 
 const groupByBloco = (items: any[]): Map<number, any[]> => {
@@ -96,20 +97,49 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   setShowAddBook,
   setShowAddLesson,
   setShowAddContent,
-  setAddingLessonType,
-  setAddingBloco,
-  setEditingItem,
-  setEditingLessonContent,
-  setLessonBlocks,
-  setLessonMaterials,
-  setEditingQuiz,
-  setQuizQuestions,
-  uploading,
-  cleanupExcessExams
-}) => {
-  const [reorderLoading, setReorderLoading] = useState<string | null>(null)
+const ContentManagement: React.FC<ContentManagementProps> = (props) => {
+  const {
+    courses,
+    selectedCourse,
+    setSelectedCourse,
+    selectedBook,
+    setSelectedBook,
+    selectedLesson,
+    setSelectedLesson,
+    books,
+    lessons,
+    lessonItems,
+    userRole,
+    fetchBooks,
+    fetchLessons,
+    fetchLessonItems,
+    handleDelete,
+    handleRemoveFile,
+    handleFileUpload,
+    handleReorder,
+    handleMoveTo,
+    setShowAddCourse,
+    setShowAddBook,
+    setShowAddLesson,
+    setShowAddContent,
+    setAddingLessonType,
+    setAddingBloco,
+    setEditingItem,
+    setEditingLessonContent,
+    setLessonBlocks,
+    setLessonMaterials,
+    setEditingQuiz,
+    setQuizQuestions,
+    uploading,
+    cleanupExcessExams,
+    handleBatchUpload
+  } = props
+
   const [draggedId, setDraggedId] = useState<string | null>(null)
   const [dragOverId, setDragOverId] = useState<string | null>(null)
+  const [reorderLoading, setReorderLoading] = useState<string | null>(null)
+  const [batchUploadTarget, setBatchUploadTarget] = useState<{ blocoId: number | null, order: number } | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const canEdit = userRole === 'admin' || userRole === 'suporte' || userRole === 'professor'
 
@@ -128,6 +158,11 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
     await handleReorder(id, direction, items, fetchFn, table)
     setReorderLoading(null)
   }
+
+  const triggerBatchUpload = (blocoId: number | null, order: number) => {
+    setBatchUploadTarget({ blocoId, order });
+    setTimeout(() => fileInputRef.current?.click(), 100);
+  };
 
   // HTML5 Drag and Drop Handlers
   const onDragStart = (e: React.DragEvent, id: string) => {
@@ -158,6 +193,20 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+      <input 
+        type="file" 
+        multiple 
+        accept=".pdf" 
+        ref={fileInputRef} 
+        style={{ display: 'none' }} 
+        onChange={(e) => {
+          const files = e.target.files;
+          if (files && files.length > 0 && batchUploadTarget && selectedLesson && selectedBook) {
+            handleBatchUpload(files, selectedLesson.id, selectedBook.id, batchUploadTarget.blocoId, batchUploadTarget.order);
+          }
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }}
+      />
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -413,6 +462,11 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                           <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.7rem', fontSize: '0.75rem', color: '#EAB308', borderColor: 'rgba(234, 179, 8, 0.3)' }}
                             onClick={() => handleAddToBloco('prova', blocoKey)} title="Adicionar Prova Final a este bloco">
                             <Award size={14} /> Prova Final
+                          </button>
+                          <button className="btn btn-primary" style={{ width: 'auto', padding: '0.3rem 0.7rem', fontSize: '0.75rem', background: 'var(--primary)', borderColor: 'var(--primary)', color: '#fff' }}
+                            onClick={() => triggerBatchUpload(blocoKey, items.length + 1)} title="Upload de vários PDFs de uma vez">
+                            {uploading === 'batch' ? <Loader2 size={14} className="spinner" /> : <Upload size={14} />} 
+                            <span style={{ marginLeft: '4px' }}>Upload Lote</span>
                           </button>
                         </div>
                       )}

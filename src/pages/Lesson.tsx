@@ -515,15 +515,6 @@ const Lesson = () => {
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           <button onClick={() => navigate('/dashboard')} className="btn btn-outline" style={{width:'auto'}}>Dashboard</button>
-          {book?.id && (
-            <button 
-              onClick={() => navigate(`/module/${book.id}`)} 
-              className="btn btn-outline" 
-              style={{width:'auto', display: 'flex', alignItems: 'center', gap: '8px'}}
-            >
-              <LayoutDashboard size={16} /> Índice do Módulo
-            </button>
-          )}
         </div>
       </div>
 
