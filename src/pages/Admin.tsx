@@ -138,6 +138,7 @@ const Admin = () => {
     fetchData,
     showToast,
     handleFileUpload,
+    handleBatchUpload,
     handleReorder,
     handleMoveTo,
     fetchBooks,
