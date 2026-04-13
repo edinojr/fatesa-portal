@@ -472,8 +472,6 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 const matCount = quizQuestions.filter(q => q.type === 'matching').length;
                 const matPairs = quizQuestions.find(q => q.type === 'matching')?.matchingPairs?.length || 0;
                 
-                const matPairs = quizQuestions.find(q => q.type === 'matching')?.matchingPairs?.length || 0;
-                
                 if (tfCount !== 10 || disCount !== 2 || mcCount !== 2 || matCount !== 1 || matPairs !== 6) {
                   if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O padrão Fatesa exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 02 Dissertativas (Atuais: ${disCount})\n- 02 Múltipla Escolha (Atuais: ${mcCount})\n- 01 Relacione Colunas com 6 pares (Atuais: ${matCount} questão com ${matPairs} pares)\n\nDeseja salvar assim mesmo?`)) {
                     return;

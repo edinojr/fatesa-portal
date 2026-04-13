@@ -374,7 +374,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                                   gap: '0.5rem'
                                 }}>
                                   {selectedRight}
-                                  {!isCorrect && <CheckCircle size={14} color="var(--success)" title={`Gabarito: ${pair.right}`} />}
+                                  {!isCorrect && <span title={`Gabarito: ${pair.right}`} style={{ display: 'flex' }}><CheckCircle size={14} color="var(--success)" /></span>}
                                 </div>
                               </React.Fragment>
                             );
