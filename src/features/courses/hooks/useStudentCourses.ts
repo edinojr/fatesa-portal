@@ -163,50 +163,15 @@ export const useStudentCourses = (profile: any) => {
                     const isRestrictedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
                     
                     if (isRestrictedType) {
-                      const title = a.titulo || '';
                       let isItemReleased = false;
 
-                      // Naming Mapping para Alunos
-                      if (title.toUpperCase().includes('V1')) displayTitle = 'Avaliação';
-                      else if (title.toUpperCase().includes('V2')) displayTitle = 'Avaliação - Recuperação';
-                      else if (title.toUpperCase().includes('V3')) displayTitle = 'Avaliação - Recuperação 2';
-
-                      if (title.toUpperCase().includes('V2')) {
-                        // Automático se V1 reprovou e foi corrigida
-                        const v1Sub = resData.find((s: any) => {
-                          return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V1');
-                        });
-                        const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
-                        isItemReleased = v1Reprovou;
-                      } else if (title.toUpperCase().includes('V3')) {
-                        // Automático se V2 reprovou e foi corrigida
-                        const v2Sub = resData.find((s: any) => {
-                          return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V2');
-                        });
-                        const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
-                        isItemReleased = v2Reprovou;
-                      } else {
-                        // V1 ou Vídeo: Liberação manual
-                        isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video') 
-                          ? releasedVideos.includes(a.id) 
-                          : releasedAtividades.includes(a.id);
-                      }
+                      // Liberação manual para Provas ou Vídeos restritos
+                      isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final) 
+                        ? (releasedVideos.includes(a.id) || releasedAtividades.includes(a.id))
+                        : true;
                       
-                      // Conteúdo padrão é desbloqueado se o módulo pai estiver liberado
+                      // Conteúdo padrão é desbloqueado se o módulo pai estiver liberado (ou manual se restrito)
                       lockedByProfessor = !isReleased && !isItemReleased;
-                    }
-
-                    // Esconde V2 e V3 se o aluno já passou na V1 ou V2
-                    const isV2 = a.titulo?.toUpperCase().includes('V2');
-                    const isV3 = a.titulo?.toUpperCase().includes('V3');
-                    if (isV2 || isV3) {
-                      const v1Sub = resData.find((s: any) => s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V1'));
-                      if (v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) >= 7.0) return { ...a, isHidden: true };
-                      
-                      if (isV3) {
-                        const v2Sub = resData.find((s: any) => s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V2'));
-                        if (v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) >= 7.0) return { ...a, isHidden: true };
-                      }
                     }
 
                     return { ...a, titulo: displayTitle, lockedByProfessor };

@@ -122,11 +122,13 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                           );
                         }
 
-                        // Determine version based on failed submissions
-                        currentVersionIndex = submissions.length; // 0 submissions -> V1 (index 0), 1 failed -> V2 (index 1), etc.
-                        if (currentVersionIndex >= allExams.length) currentVersionIndex = allExams.length - 1;
+                        // Determine version based on failed submissions (Stage 1 = V1, Stage 2 = V2, Stage 3 = V3)
+                        const currentStage = submissions.length + 1;
+                        
+                        // Fatesa structure uses a single exam item per module
+                        const activeExam = allExams[0];
+                        if (!activeExam) return null;
 
-                        const activeExam = allExams[currentVersionIndex];
                         const lastSub = submissions[submissions.length - 1];
                         const isWaitingCorrection = lastSub && lastSub.status === 'pendente';
 
@@ -190,7 +192,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                                         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0.25rem 0' }}>Disponível para realização imediata.</p>
                                       </div>
                                       <div style={{ background: 'var(--primary)', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 700 }}>
-                                        V{currentVersionIndex + 1}
+                                        V{currentStage > 3 ? 3 : currentStage}
                                       </div>
                                     </div>
                                     <button 
@@ -271,8 +273,6 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                {(() => {
                  const aula = Array.isArray(reviewSub.aulas) ? (reviewSub.aulas as any)[0] : reviewSub.aulas;
                  let questionnaire = aula?.questionario;
-                 if (reviewSub.tentativas === 2 && aula?.questionario_v2) questionnaire = aula.questionario_v2;
-                 if (reviewSub.tentativas >= 3 && aula?.questionario_v3) questionnaire = aula.questionario_v3;
                  
                  return Array.isArray(questionnaire) ? questionnaire.map((q: any, idx: number) => {
                  const qKey = q.id || idx;

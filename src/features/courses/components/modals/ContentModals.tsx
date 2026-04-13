@@ -416,22 +416,22 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
             ];
 
             if (addingLessonType === 'prova') {
-              const examRows = [1, 2, 3].map(v => ({
+              const examRow = {
                 livro_id: selectedLesson.livro_id,
                 parent_aula_id: selectedLesson.id,
-                titulo: `${titulo} - V${v}`,
+                titulo: titulo,
                 tipo: 'prova',
                 video_url: null,
                 arquivo_url: null,
                 min_grade: min_grade || 7,
-                ordem: ordem + (v - 1),
+                ordem: ordem,
                 bloco_id: addingBloco,
-                versao: v,
+                versao: 1,
                 is_bloco_final: true,
                 questionario: standardTemplate
-              }));
+              };
 
-              const { error } = await supabase.from('aulas').insert(examRows);
+              const { error } = await supabase.from('aulas').insert(examRow);
               if (error) throw error;
             } else {
               const initialQuiz = (addingLessonType === 'atividade') ? standardTemplate : [];
@@ -514,7 +514,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                       <strong style={{ color: '#EAB308' }}>Avaliação Final (V1, V2 e V3 Inclusas)</strong>
                    </div>
                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                     Esta opção cria automaticamente as três versões da prova com o padrão de 15 questões cada.
+                     Esta prova possui apenas 1 versão e as recuperações (V2 e V3) são tratadas automaticamente pelo sistema.
                    </p>
                    <div className="form-group">
                       <label>Nota Mínima para Aprovação (0-10)</label>

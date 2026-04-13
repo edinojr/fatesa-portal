@@ -108,34 +108,9 @@ const Lesson = () => {
               .maybeSingle();
             
             if (!releaseData) {
-              // Somente libera se for V2/V3 automático por nota (Progressão Pedagógica)
-              const title = (lessonData.titulo || '').toUpperCase();
-              let isAutoAllowed = false;
-              
-              if (title.includes('V2') || title.includes('V3')) {
-                  const { data: resData } = await supabase
-                    .from('view_submissions_detailed')
-                    .select('status, nota, lesson_title, last_updated, submitted_at')
-                    .eq('student_id', user.id);
-                  
-                  const prevTitle = title.includes('V2') ? 'V1' : 'V2';
-                  const sub = (resData || []).find((s: any) => s.lesson_title?.toUpperCase().includes(prevTitle));
-                  
-                  let past3Days = false;
-                  if (sub?.last_updated || sub?.submitted_at) {
-                     const lastUpdate = new Date(sub.last_updated || sub.submitted_at).getTime();
-                     const daysDiff = (Date.now() - lastUpdate) / (1000 * 3600 * 24);
-                     past3Days = daysDiff >= 3;
-                  }
-
-                  isAutoAllowed = !!sub && sub.status === 'corrigida' && (sub.nota || 0) < 7.0 && past3Days;
-              }
-
-              if (!isAutoAllowed) {
-                setIsReleased(false);
-                setLoading(false);
-                return;
-              }
+              setIsReleased(false);
+              setLoading(false);
+              return;
             }
           }
         }
@@ -245,13 +220,6 @@ const Lesson = () => {
             setDeadlineInfo({ deadline, stage, expired });
 
             const canRetry = !expired && stage > (currentSub.tentativas || 1) && currentSub.status === 'corrigida';
-
-            // Swap questions based on current stage
-            if (stage === 2) {
-              setQuestions(Array.isArray(lessonData.questionario_v2) ? lessonData.questionario_v2 : []);
-            } else if (stage === 3) {
-              setQuestions(Array.isArray(lessonData.questionario_v3) ? lessonData.questionario_v3 : []);
-            }
 
             if (canRetry && subData?.nota !== null) {
               setResult(p => p ? { ...p, canRetry: true } : null);

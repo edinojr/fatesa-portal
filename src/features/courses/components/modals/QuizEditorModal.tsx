@@ -31,7 +31,6 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
   selectedBook,
   selectedLesson
 }) => {
-  const [currentVersion, setCurrentVersion] = React.useState<'v1' | 'v2' | 'v3'>('v1');
   const [showImporter, setShowImporter] = React.useState(false);
   const [importRawText, setImportRawText] = React.useState('');
 
@@ -156,14 +155,12 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
     }
   };
   
-  // React to version change to load correct initial data
+  // React to editingQuiz change to load initial data
   React.useEffect(() => {
     if (editingQuiz) {
-      if (currentVersion === 'v1') setQuizQuestions(Array.isArray(editingQuiz.questionario) ? editingQuiz.questionario : []);
-      else if (currentVersion === 'v2') setQuizQuestions(Array.isArray(editingQuiz.questionario_v2) ? editingQuiz.questionario_v2 : []);
-      else if (currentVersion === 'v3') setQuizQuestions(Array.isArray(editingQuiz.questionario_v3) ? editingQuiz.questionario_v3 : []);
+      setQuizQuestions(Array.isArray(editingQuiz.questionario) ? editingQuiz.questionario : []);
     }
-  }, [currentVersion, editingQuiz?.id]);
+  }, [editingQuiz?.id]);
 
   if (!editingQuiz) return null;
 
@@ -176,30 +173,6 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
         
         {true && (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', background: 'rgba(var(--primary-rgb), 0.05)', padding: '1rem', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button 
-                className={`btn ${currentVersion === 'v1' ? 'btn-primary' : 'btn-outline'}`} 
-                style={{ width: 'auto', padding: '0.5rem 1rem' }}
-                onClick={() => setCurrentVersion('v1')}
-              >
-                Versão 1
-              </button>
-              <button 
-                className={`btn ${currentVersion === 'v2' ? 'btn-primary' : 'btn-outline'}`} 
-                style={{ width: 'auto', padding: '0.5rem 1rem' }}
-                onClick={() => setCurrentVersion('v2')}
-              >
-                Versão 2
-              </button>
-              <button 
-                className={`btn ${currentVersion === 'v3' ? 'btn-primary' : 'btn-outline'}`} 
-                style={{ width: 'auto', padding: '0.5rem 1rem' }}
-                onClick={() => setCurrentVersion('v3')}
-              >
-                Versão 3
-              </button>
-            </div>
-            
             <button 
               className="btn btn-primary" 
               style={{ width: 'auto', background: '#38bdf8', borderColor: '#38bdf8', color: '#000', fontWeight: 700, paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
@@ -481,13 +454,10 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
               }
 
               setActionLoading('save-quiz');
-              const field = currentVersion === 'v1' ? 'questionario' : currentVersion === 'v2' ? 'questionario_v2' : 'questionario_v3';
-              const { error } = await supabase.from('aulas').update({ [field]: quizQuestions }).eq('id', editingQuiz.id);
+              const { error } = await supabase.from('aulas').update({ 'questionario': quizQuestions }).eq('id', editingQuiz.id);
               if (error) showToast(error.message, 'error');
               else {
-                showToast(`Versão ${currentVersion === 'v1' ? '1' : currentVersion === 'v2' ? '2' : '3'} salva com sucesso!`);
-                // If not block final, we close. If it is, maybe stay to allow editing other versions?
-                // For safety, let's close and refresh.
+                showToast(`Questões salvas com sucesso!`);
                 setEditingQuiz(null);
                 
                 // Refresh both layers just in case
@@ -496,7 +466,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
               }
               setActionLoading(null);
             }} disabled={actionLoading === 'save-quiz'}>
-              {actionLoading === 'save-quiz' ? <Loader2 className="spinner" /> : `Salvar Versão ${currentVersion === 'v1' ? '1' : currentVersion === 'v2' ? '2' : '3'}`}
+              {actionLoading === 'save-quiz' ? <Loader2 className="spinner" /> : `Salvar Gabarito Oficial`}
             </button>
           </div>
         </div>
