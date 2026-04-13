@@ -416,22 +416,52 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
             ];
 
             if (addingLessonType === 'prova') {
-              const examRow = {
-                livro_id: selectedLesson.livro_id,
-                parent_aula_id: selectedLesson.id,
-                titulo: titulo,
-                tipo: 'prova',
-                video_url: null,
-                arquivo_url: null,
-                min_grade: min_grade || 7,
-                ordem: ordem,
-                bloco_id: addingBloco,
-                versao: 1,
-                is_bloco_final: true,
-                questionario: standardTemplate
-              };
+              const examRows = [
+                {
+                  livro_id: selectedLesson.livro_id,
+                  parent_aula_id: selectedLesson.id,
+                  titulo: `${titulo}`,
+                  tipo: 'prova',
+                  video_url: null,
+                  arquivo_url: null,
+                  min_grade: min_grade || 7,
+                  ordem: ordem,
+                  bloco_id: addingBloco,
+                  versao: 1,
+                  is_bloco_final: true,
+                  questionario: standardTemplate
+                },
+                {
+                  livro_id: selectedLesson.livro_id,
+                  parent_aula_id: selectedLesson.id,
+                  titulo: `${titulo} - Recuperação`,
+                  tipo: 'prova',
+                  video_url: null,
+                  arquivo_url: null,
+                  min_grade: min_grade || 7,
+                  ordem: ordem + 1,
+                  bloco_id: addingBloco,
+                  versao: 2,
+                  is_bloco_final: true,
+                  questionario: standardTemplate
+                },
+                {
+                  livro_id: selectedLesson.livro_id,
+                  parent_aula_id: selectedLesson.id,
+                  titulo: `${titulo} - Recuperação 2`,
+                  tipo: 'prova',
+                  video_url: null,
+                  arquivo_url: null,
+                  min_grade: min_grade || 7,
+                  ordem: ordem + 2,
+                  bloco_id: addingBloco,
+                  versao: 3,
+                  is_bloco_final: true,
+                  questionario: standardTemplate
+                }
+              ];
 
-              const { error } = await supabase.from('aulas').insert(examRow);
+              const { error } = await supabase.from('aulas').insert(examRows);
               if (error) throw error;
             } else {
               const initialQuiz = (addingLessonType === 'atividade') ? standardTemplate : [];

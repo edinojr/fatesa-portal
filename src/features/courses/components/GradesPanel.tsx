@@ -125,8 +125,8 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                         // Determine version based on failed submissions (Stage 1 = V1, Stage 2 = V2, Stage 3 = V3)
                         const currentStage = submissions.length + 1;
                         
-                        // Fatesa structure uses a single exam item per module
-                        const activeExam = allExams[0];
+                        // Select the specific record for the current version (V1, V2 or V3)
+                        const activeExam = allExams.find((ex: any) => (ex.versao || 1) === currentStage) || allExams[allExams.length - 1];
                         if (!activeExam) return null;
 
                         const lastSub = submissions[submissions.length - 1];

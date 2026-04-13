@@ -187,39 +187,19 @@ const Lesson = () => {
         if (progData?.concluida) setComplete(true);
 
         // Enhanced Deadline & Version Logic
+        // Simplified Deadline Logic (Optional)
         if (lessonData.is_bloco_final) {
           const currentSub = subData;
           if (currentSub?.data_liberacao) {
             const libDate = new Date(currentSub.data_liberacao);
             const now = new Date();
-            const min = lessonData.min_grade || 7;
             
-            // Step 1: 7 days (Attempt 1)
-            let stage = 1;
-            let deadline = new Date(libDate.getTime() + 7 * 24 * 3600 * 1000);
-            
-            // Step 2: 10 days (Additional)
-            const attempt1Failed = currentSub.tentativas >= 1 && currentSub.nota < min;
-            const attempt1Expired = now > deadline && currentSub.tentativas === 0;
-            
-            if (attempt1Failed || attempt1Expired) {
-              stage = 2;
-              deadline = new Date(deadline.getTime() + 10 * 24 * 3600 * 1000);
-            }
-            
-            // Step 3: 13 days (Additional)
-            const attempt2Failed = currentSub.tentativas >= 2 && currentSub.nota < min;
-            const attempt3Expired = now > deadline && currentSub.tentativas < 2;
-            
-            if (stage === 2 && (attempt2Failed || attempt3Expired)) {
-              stage = 3;
-              deadline = new Date(deadline.getTime() + 13 * 24 * 3600 * 1000);
-            }
-
+            // Standard 7 days deadline for any attempt
+            const deadline = new Date(libDate.getTime() + 7 * 24 * 3600 * 1000);
             const expired = now > deadline;
-            setDeadlineInfo({ deadline, stage, expired });
+            setDeadlineInfo({ deadline, stage: a.versao || 1, expired });
 
-            const canRetry = !expired && stage > (currentSub.tentativas || 1) && currentSub.status === 'corrigida';
+            const canRetry = !expired && currentSub.status === 'corrigida' && (currentSub.nota || 0) < (lessonData.min_grade || 7);
 
             if (canRetry && subData?.nota !== null) {
               setResult(p => p ? { ...p, canRetry: true } : null);

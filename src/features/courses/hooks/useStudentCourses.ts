@@ -174,7 +174,29 @@ export const useStudentCourses = (profile: any) => {
                       lockedByProfessor = !isReleased && !isItemReleased;
                     }
 
-                    return { ...a, titulo: displayTitle, lockedByProfessor };
+                    let isHiddenItem = false;
+                    const v = a.versao || 1;
+
+                    if (!isStaff && (v === 2 || v === 3)) {
+                      const prevV = v - 1;
+                      const prevAula = (l.aulas || []).find((pa: any) => pa.versao === prevV && !!pa.is_bloco_final);
+                      const prevSub = resData.find((s: any) => s.lesson_id === prevAula?.id);
+                      
+                      // Regras para esconder Recuperação:
+                      // 1. Se ainda não fez a anterior
+                      // 2. Se a anterior ainda não foi corrigida
+                      // 3. Se já passou na anterior ou em qualquer uma antes
+                      const passedAnyPrevious = resData.some((s: any) => {
+                        const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
+                        return sa?.is_bloco_final && (sa?.versao || 0) < v && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
+                      });
+
+                      if (!prevSub || prevSub.status !== 'corrigida' || passedAnyPrevious) {
+                        isHiddenItem = true;
+                      }
+                    }
+
+                    return { ...a, titulo: displayTitle, lockedByProfessor, isHidden: isHiddenItem };
                   }).filter((a: any) => !a.isHidden),
                   isReleased,
                   isCurrent: isCurrent && isReleased
