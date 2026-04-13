@@ -359,7 +359,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
           setActionLoading('add-content');
           
           try {
-            const isExam = (addingLessonType === 'prova' || formData.get('is_bloco_final') === 'on');
+            const isExam = (addingLessonType === 'prova' || (addingLessonType === 'atividade' && formData.get('is_bloco_final') === 'on'));
 
             if (addingLessonType === 'material') {
               const files = (e.currentTarget.querySelector('input[name="files"]') as HTMLInputElement)?.files;
@@ -415,27 +415,45 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
               }
             ];
 
-            const initialQuiz = (addingLessonType === 'atividade' || addingLessonType === 'prova') ? standardTemplate : [];
+            if (addingLessonType === 'prova') {
+              const examRows = [1, 2, 3].map(v => ({
+                livro_id: selectedLesson.livro_id,
+                parent_aula_id: selectedLesson.id,
+                titulo: `${titulo} - V${v}`,
+                tipo: 'prova',
+                video_url: null,
+                arquivo_url: null,
+                min_grade: min_grade || 7,
+                ordem: ordem + (v - 1),
+                bloco_id: addingBloco,
+                versao: v,
+                is_bloco_final: true,
+                questionario: standardTemplate
+              }));
 
-            const { error } = await supabase.from('aulas').insert({ 
-              livro_id: selectedLesson.livro_id,
-              parent_aula_id: selectedLesson.id,
-              titulo, 
-              tipo: addingLessonType,
-              video_url,
-              arquivo_url,
-              min_grade,
-              ordem,
-              bloco_id: addingBloco,
-              versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
-              is_bloco_final: isExam,
-              questionario: initialQuiz,
-              questionario_v2: isExam ? standardTemplate : null,
-              questionario_v3: isExam ? standardTemplate : null
-            });
+              const { error } = await supabase.from('aulas').insert(examRows);
+              if (error) throw error;
+            } else {
+              const initialQuiz = (addingLessonType === 'atividade') ? standardTemplate : [];
+
+              const { error } = await supabase.from('aulas').insert({ 
+                livro_id: selectedLesson.livro_id,
+                parent_aula_id: selectedLesson.id,
+                titulo, 
+                tipo: addingLessonType,
+                video_url,
+                arquivo_url,
+                min_grade,
+                ordem,
+                bloco_id: addingBloco,
+                versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
+                is_bloco_final: isExam,
+                questionario: initialQuiz
+              });
+              if (error) throw error;
+            }
             
-            if (error) throw error;
-            showToast('Conteúdo adicionado!');
+            showToast('Sucesso!');
             setShowAddContent(false);
             fetchLessonItems(selectedLesson.id);
           } catch (err: any) {
