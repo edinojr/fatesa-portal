@@ -48,9 +48,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const [releasedItems, setReleasedItems] = useState<Record<string, boolean>>({})
   const [editingQuestionnaire, setEditingQuestionnaire] = useState<any | null>(null)
   
-  // Missing states causing build errors
-  const [atividades, setAtividades] = useState<any[]>([])
-  const [notas, setNotas] = useState<any[]>([])
   const [courseSubmissions, setCourseSubmissions] = useState<any[]>([])
   const [expandedSub, setExpandedSub] = useState<string | null>(null)
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
@@ -126,10 +123,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       )
       setStudents(studentsWithPayments)
     }
-
-    // Fetch atividades for this nucleo
-    const resAtv = await supabase.from('atividades').select('*').eq('nucleo_id', nuc.id).order('created_at', { ascending: false })
-    if (resAtv.data) setAtividades(resAtv.data)
 
     // Fetch All Courses/Livros/Aulas for release management
     const resAll = await supabase.from('cursos').select('id, nome, livros(id, titulo, aulas(id, titulo, tipo, ordem))')
@@ -247,16 +240,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const handleSaveQuestionnaire = async (atividadeId: string, questionnaireData: any[]) => {
     setActionLoading('save_q')
     try {
-      const { error } = await supabase
-        .from('atividades')
-        .update({ questionario: questionnaireData })
-        .eq('id', atividadeId)
+      // Logic for saving questionnaire removed locally since atividades table is being dropped.
+      alert('Funcionalidade depreciada. Utilize a tabela aulas.');
       
-      if (error) throw error
-      alert('Questionário salvo com sucesso!')
-      
-      // Update local state
-      setAtividades((prev: any[]) => prev.map((a: any) => a.id === atividadeId ? { ...a, questionario: questionnaireData } : a))
       setEditingQuestionnaire(null)
     } catch (err: any) {
       alert('Erro ao salvar: ' + err.message)
@@ -599,10 +585,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     setShowStudentModal(student)
     setLoading(true)
     try {
-      // Fetch manual grades (legacy)
-      const { data: nData } = await supabase.from('notas').select('*, atividades(*)').eq('aluno_id', student.id)
-      if (nData) setNotas(nData)
-      
       // Fetch course submissions (Fichário)
       const { data: sData } = await supabase
         .from('respostas_aulas')
@@ -670,18 +652,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           .match({ aluno_id: showStudentModal.id, aula_id: aulaId });
         if (error) throw error;
       } else {
-        // Traditional Polo Activity in notas
-        const { error } = await supabase.from('notas').upsert({
-          aluno_id: showStudentModal.id,
-          atividade_id,
-          professor_id: session?.user.id,
-          nota,
-          feedback
-        }, { onConflict: 'aluno_id, atividade_id' })
-        if (error) throw error
+        throw new Error("Formato de atividade inválido. Use atividades vinculadas ao curso.");
       }
       
       alert('Nota contabilizada com sucesso!');
+
       
       // refetch everything
       openStudent(showStudentModal);
@@ -1027,8 +1002,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         <StudentDetailsModal 
           student={showStudentModal}
           onClose={() => setShowStudentModal(null)}
-          atividades={atividades}
-          notas={notas}
           courseSubmissions={courseSubmissions}
           expandedSub={expandedSub}
           handleExpandSub={handleExpandSub}

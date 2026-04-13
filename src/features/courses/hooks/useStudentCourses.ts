@@ -157,6 +157,7 @@ export const useStudentCourses = (profile: any) => {
                     if (!matchesNucleo) return { ...a, isHidden: true };
 
                     let lockedByProfessor = false;
+                    let displayTitle = a.titulo;
                     
                     // Apenas vídeos e provas finais exigem liberação manual do professor
                     const isRestrictedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
@@ -164,31 +165,25 @@ export const useStudentCourses = (profile: any) => {
                     if (isRestrictedType) {
                       const title = a.titulo || '';
                       let isItemReleased = false;
+
+                      // Naming Mapping para Alunos
+                      if (title.toUpperCase().includes('V1')) displayTitle = 'Avaliação';
+                      else if (title.toUpperCase().includes('V2')) displayTitle = 'Avaliação - Recuperação';
+                      else if (title.toUpperCase().includes('V3')) displayTitle = 'Avaliação - Recuperação 2';
+
                       if (title.toUpperCase().includes('V2')) {
                         // Automático se V1 reprovou e foi corrigida
                         const v1Sub = resData.find((s: any) => {
                           return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V1');
                         });
-                        let past3Days = false;
-                        if (v1Sub?.last_updated || v1Sub?.submitted_at) {
-                           const lastUpdate = new Date(v1Sub.last_updated || v1Sub.submitted_at).getTime();
-                           const daysDiff = (Date.now() - lastUpdate) / (1000 * 3600 * 24);
-                           past3Days = daysDiff >= 3;
-                        }
-                        const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0 && past3Days;
+                        const v1Reprovou = !!v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) < 7.0;
                         isItemReleased = v1Reprovou;
                       } else if (title.toUpperCase().includes('V3')) {
                         // Automático se V2 reprovou e foi corrigida
                         const v2Sub = resData.find((s: any) => {
                           return s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V2');
                         });
-                        let past3Days = false;
-                        if (v2Sub?.last_updated || v2Sub?.submitted_at) {
-                           const lastUpdate = new Date(v2Sub.last_updated || v2Sub.submitted_at).getTime();
-                           const daysDiff = (Date.now() - lastUpdate) / (1000 * 3600 * 24);
-                           past3Days = daysDiff >= 3;
-                        }
-                        const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0 && past3Days;
+                        const v2Reprovou = !!v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) < 7.0;
                         isItemReleased = v2Reprovou;
                       } else {
                         // V1 ou Vídeo: Liberação manual
@@ -201,7 +196,20 @@ export const useStudentCourses = (profile: any) => {
                       lockedByProfessor = !isReleased && !isItemReleased;
                     }
 
-                    return { ...a, lockedByProfessor };
+                    // Esconde V2 e V3 se o aluno já passou na V1 ou V2
+                    const isV2 = a.titulo?.toUpperCase().includes('V2');
+                    const isV3 = a.titulo?.toUpperCase().includes('V3');
+                    if (isV2 || isV3) {
+                      const v1Sub = resData.find((s: any) => s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V1'));
+                      if (v1Sub && v1Sub.status === 'corrigida' && (v1Sub.nota || 0) >= 7.0) return { ...a, isHidden: true };
+                      
+                      if (isV3) {
+                        const v2Sub = resData.find((s: any) => s.book_id === l.id && s.lesson_title?.toUpperCase().includes('V2'));
+                        if (v2Sub && v2Sub.status === 'corrigida' && (v2Sub.nota || 0) >= 7.0) return { ...a, isHidden: true };
+                      }
+                    }
+
+                    return { ...a, titulo: displayTitle, lockedByProfessor };
                   }).filter((a: any) => !a.isHidden),
                   isReleased,
                   isCurrent: isCurrent && isReleased

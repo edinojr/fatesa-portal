@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Loader2, Eye, EyeOff, Upload } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Upload, Award } from 'lucide-react'
 
 interface AddTeacherModalProps {
   showAddTeacher: boolean
@@ -359,7 +359,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
           setActionLoading('add-content');
           
           try {
-            const isExam = (addingLessonType === 'prova' || (addingLessonType === 'atividade' && formData.get('is_bloco_final') === 'on'));
+            const isFinalAssessment = (addingLessonType === 'prova' || (addingLessonType === 'atividade' && formData.get('is_bloco_final') === 'on'));
 
             if (addingLessonType === 'material') {
               const files = (e.currentTarget.querySelector('input[name="files"]') as HTMLInputElement)?.files;
@@ -447,7 +447,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 ordem,
                 bloco_id: addingBloco,
                 versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
-                is_bloco_final: isExam,
+                is_bloco_final: isFinalAssessment,
                 questionario: initialQuiz
               });
               if (error) throw error;

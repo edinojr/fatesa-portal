@@ -27,14 +27,11 @@ import { useFinanceControl } from '../features/finance/hooks/useFinanceControl'
 
 // Componentes Feature-based
 import CourseList from '../features/courses/components/CourseList'
-import DocumentUpload from '../features/finance/components/DocumentUpload'
-import FinancePanel from '../features/finance/components/FinancePanel'
 import GradesPanel from '../features/courses/components/GradesPanel'
-import NoticeBoard from '../features/communication/components/NoticeBoard'
 import ForumPanel from '../features/forum/components/ForumPanel'
 import AlumniCertificate from '../components/documents/AlumniCertificate'
 
-type Tab = 'home' | 'cursos' | 'avisos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
+type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
 
 const Dashboard = () => {
   const { profile, signOut, refreshProfile } = useProfile();
@@ -52,7 +49,7 @@ const Dashboard = () => {
   
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'cursos', 'avisos', 'documentos', 'financeiro', 'boletim', 'forum'];
+    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'boletim', 'forum'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
@@ -87,9 +84,6 @@ const Dashboard = () => {
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
-  const [avisos, setAvisos] = useState<any[]>([]);
-  const [materiais, setMateriais] = useState<any[]>([]);
-  const [poloAtividades, setPoloAtividades] = useState<any[]>([]);
 
   const isBlocked = profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
@@ -102,31 +96,6 @@ const Dashboard = () => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
-
-  const fetchNoticeBoard = useCallback(async (nucleoId: string) => {
-    const safeQuery = async (query: PromiseLike<{ data: any; error: any }>) => {
-      try {
-        const { data, error } = await query;
-        // PGRST205 = table not found (404). Ignore silently.
-        if (error && error.code !== 'PGRST205' && !error.message?.includes('404')) {
-          console.warn('[NoticeBoard]', error.message);
-        }
-        return data || [];
-      } catch {
-        return [];
-      }
-    };
-
-    const [a, m, at] = await Promise.all([
-      safeQuery(supabase.from('avisos_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false })),
-      safeQuery(supabase.from('materiais_nucleo').select('*').eq('nucleo_id', nucleoId).order('created_at', { ascending: false })),
-      safeQuery(supabase.from('item_aula').select('*').eq('nucleo_id', nucleoId).eq('tipo', 'atividade').order('id', { ascending: false }))
-    ]);
-
-    setAvisos(a);
-    setMateriais(m);
-    setPoloAtividades(at);
-  }, []);
 
   const fetchActiveExams = useCallback(async (nucleoId: string, userId: string) => {
     try {
@@ -178,11 +147,10 @@ const Dashboard = () => {
       fetchStudentDashboardData();
       fetchPayments();
       if (profile.nucleo_id) {
-        fetchNoticeBoard(profile.nucleo_id);
         if (!isStaff) fetchActiveExams(profile.nucleo_id, profile.id);
       }
     }
-  }, [profile, fetchStudentDashboardData, fetchPayments, fetchNoticeBoard, fetchActiveExams, isStaff]);
+  }, [profile, fetchStudentDashboardData, fetchPayments, fetchActiveExams, isStaff]);
 
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>, 
@@ -372,7 +340,6 @@ const Dashboard = () => {
                <ChevronRight size={14} className="divider" />
                <span className="current">
                  {activeTab === 'cursos' ? 'Meus Cursos' :
-                  activeTab === 'avisos' ? 'Avisos' :
                   activeTab === 'documentos' ? 'Documentos' :
                   activeTab === 'financeiro' ? 'Pagamentos' :
                   activeTab === 'boletim' ? 'Boletim' : 'Fórum'}
@@ -410,7 +377,6 @@ const Dashboard = () => {
             <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
               {activeTab === 'home' && 'Área do Aluno'}
               {activeTab === 'cursos' && 'Meus Cursos'}
-              {activeTab === 'avisos' && 'Quadro de Avisos'}
               {activeTab === 'documentos' && 'Meus Documentos'}
               {activeTab === 'financeiro' && 'Meus Pagamentos'}
               {activeTab === 'boletim' && 'Meu Boletim'}
@@ -445,12 +411,6 @@ const Dashboard = () => {
                 <div className="icon-wrapper"><BookOpen size={32} /></div>
                 <h3>Meus Cursos</h3>
                 <p>Acesse suas aulas, materiais e continue seus estudos.</p>
-              </div>
-
-              <div className="admin-action-card" onClick={() => setActiveTab('avisos')}>
-                <div className="icon-wrapper"><Bell size={32} /></div>
-                <h3>Avisos do Polo</h3>
-                <p>Comunicados importantes e materiais extras do seu núcleo.</p>
               </div>
 
               <div className="admin-action-card" onClick={() => setActiveTab('forum')}>
@@ -534,15 +494,6 @@ const Dashboard = () => {
                 showOnlyOngoing={true}
               />
             </>
-          )}
-
-          {activeTab === 'avisos' && (
-            <NoticeBoard 
-              avisos={avisos} 
-              materiais={materiais} 
-              atividades={poloAtividades}
-              onRefresh={() => profile?.nucleo_id && fetchNoticeBoard(profile.nucleo_id)}
-            />
           )}
 
           {activeTab === 'documentos' && (

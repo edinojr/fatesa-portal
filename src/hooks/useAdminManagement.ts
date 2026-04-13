@@ -988,6 +988,51 @@ export const useAdminManagement = () => {
     }
   }
 
+  const cleanupExcessExams = async () => {
+    if (!window.confirm('Deseja realmente remover TODAS as versões duplicadas/excedentes de provas? Esta ação manterá apenas a versão original de cada uma.')) return;
+    
+    setActionLoading('cleanup-exams');
+    try {
+      const { data: exams, error } = await supabase
+        .from('aulas')
+        .select('id, parent_aula_id, versao, created_at')
+        .eq('tipo', 'prova')
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      if (!exams) return;
+
+      const seen = new Set<string>();
+      const toDelete: string[] = [];
+
+      exams.forEach(ex => {
+        const key = `${ex.parent_aula_id}-${ex.versao}`;
+        if (seen.has(key)) {
+          toDelete.push(ex.id);
+        } else {
+          seen.add(key);
+        }
+      });
+
+      if (toDelete.length > 0) {
+        const { error: delError } = await supabase
+          .from('aulas')
+          .delete()
+          .in('id', toDelete);
+        
+        if (delError) throw delError;
+        showToast(`Limpeza concluída! ${toDelete.length} versões excedentes removidas.`);
+        fetchData();
+      } else {
+        showToast('Nenhuma versão excedente encontrada.');
+      }
+    } catch (err: any) {
+      showToast('Erro na limpeza: ' + err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   return {
     profile,
     activeTab,
@@ -1112,6 +1157,7 @@ export const useAdminManagement = () => {
     pendingActivityByNucleo,
     handleDeleteNucleo,
     handleResetAutoCorrectedExams,
+    cleanupExcessExams,
     updateParams
   }
 }

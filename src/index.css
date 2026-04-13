@@ -3010,4 +3010,57 @@ select.form-control option {
   .nav-card-content h3 {
     font-size: 1rem;
   }
+}/* ─── PREMIUM ENHANCEMENTS BY ANTIGRAVITY ─── */
+
+/* Prova Final Highlight */
+.bloco-final-highlight {
+  border-left: 4px solid #EAB308 !important;
+  background: linear-gradient(to right, rgba(234, 179, 8, 0.08), transparent) !important;
+  position: relative;
 }
+
+.bloco-final-highlight::after {
+  content: 'AVALIAÇÃO FINAL';
+  position: absolute;
+  top: 0.5rem;
+  right: 1.5rem;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #EAB308;
+  letter-spacing: 2px;
+  opacity: 0.6;
+}
+
+.prova-final-item {
+  border-color: rgba(234, 179, 8, 0.15) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.prova-final-item:hover {
+  border-color: #EAB308 !important;
+  box-shadow: 0 8px 25px rgba(234, 179, 8, 0.1) !important;
+  transform: translateX(5px);
+}
+
+/* Maintenance/System Correction Button */
+.btn-maintenance {
+  background: rgba(244, 63, 94, 0.02) !important;
+  border: 1px solid rgba(244, 63, 94, 0.1) !important;
+  color: var(--error) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+}
+
+.btn-maintenance:hover {
+  background: var(--error) !important;
+  color: #fff !important;
+  border-color: var(--error) !important;
+  box-shadow: 0 10px 30px rgba(244, 63, 94, 0.3) !important;
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-maintenance:active {
+  transform: translateY(0) scale(1);
+}
+
+/* ─────────────────────────────────────────── */

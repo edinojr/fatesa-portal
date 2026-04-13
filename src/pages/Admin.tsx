@@ -625,6 +625,7 @@ const Admin = () => {
             setEditingQuiz={setEditingQuiz}
             setQuizQuestions={setQuizQuestions}
             uploading={uploading}
+            cleanupExcessExams={cleanupExcessExams}
           />
         )}
 

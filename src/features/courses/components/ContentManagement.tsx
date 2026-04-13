@@ -37,6 +37,7 @@ interface ContentManagementProps {
   setEditingQuiz: (val: any) => void
   setQuizQuestions: (val: any[]) => void
   uploading: string | null
+  cleanupExcessExams?: () => Promise<void>
 }
 
 const groupByBloco = (items: any[]): Map<number, any[]> => {
@@ -103,7 +104,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
   setLessonMaterials,
   setEditingQuiz,
   setQuizQuestions,
-  uploading
+  uploading,
+  cleanupExcessExams
 }) => {
   const [reorderLoading, setReorderLoading] = useState<string | null>(null)
   const [draggedId, setDraggedId] = useState<string | null>(null)
@@ -188,9 +190,18 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
         {canEdit && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {!selectedCourse ? (
-              <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => setShowAddCourse(true)}>
-                <Plus size={20} /> Novo Curso
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {cleanupExcessExams && (
+                  <button className="btn btn-maintenance" style={{ width: 'auto', gap: '0.4rem' }}
+                    onClick={cleanupExcessExams}
+                    title="Limpar versões duplicadas de provas em todo o sistema">
+                    <Trash2 size={16} /> Corrigir Sistema
+                  </button>
+                )}
+                <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => setShowAddCourse(true)}>
+                  <Plus size={20} /> Novo Curso
+                </button>
+              </div>
             ) : !selectedBook ? (
               <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => setShowAddBook(true)}>
                 <Plus size={20} /> Novo Livro
@@ -416,6 +427,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                           onDragStart={(e) => onDragStart(e, item.id)}
                           onDragOver={(e) => onDragOver(e, item.id)}
                           onDrop={(e) => onDrop(e, item.id, lessonItems, () => fetchLessonItems(selectedLesson.id), 'aulas')}
+                          className={item.tipo === 'prova' || item.is_bloco_final ? 'prova-final-item' : ''}
                           style={{
                             padding: '1rem 1.5rem',
                             display: 'flex',
@@ -533,28 +545,34 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                       </p>
                     </div>
                     
-                    {lessonItems.find(i => i.is_bloco_final) ? (
-                      <div style={{ width: '100%', maxWidth: '600px', background: 'var(--glass)', padding: '1rem', borderRadius: '16px', border: '1px solid #EAB308', marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', textAlign: 'left' }}>
-                          <div style={{ width: '40px', height: '40px', background: 'rgba(234, 179, 8, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Award size={20} color="#EAB308" />
+                    {lessonItems.filter(i => i.is_bloco_final).length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: '600px' }}>
+                        {lessonItems.filter(i => i.is_bloco_final)
+                          .sort((a,b) => (a.versao || 0) - (b.versao || 0))
+                          .map(item => (
+                          <div key={item.id} className="prova-final-item" style={{ width: '100%', background: 'var(--glass)', padding: '1rem', borderRadius: '16px', border: '1px solid rgba(234, 179, 8, 0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', textAlign: 'left' }}>
+                              <div style={{ width: '40px', height: '40px', background: 'rgba(234, 179, 8, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Award size={20} color="#EAB308" />
+                              </div>
+                              <div>
+                                <strong style={{ display: 'block' }}>{item.titulo}</strong>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Nota Mínima: {item.min_grade || 7}</span>
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} 
+                                onClick={() => { setEditingQuiz(item); setQuizQuestions(item.questionario || []); }}
+                                title="Questões"><ClipboardList size={16} /></button>
+                              <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} 
+                                onClick={() => setEditingItem({ type: 'content', data: item })}
+                                title="Editar"><Edit size={16} /></button>
+                              <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} 
+                                onClick={() => handleDelete('aulas', item.id)}
+                                title="Excluir"><Trash2 size={16} /></button>
+                            </div>
                           </div>
-                          <div>
-                            <strong style={{ display: 'block' }}>{lessonItems.find(i => i.is_bloco_final).titulo}</strong>
-                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Nota Mínima: {lessonItems.find(i => i.is_bloco_final).min_grade || 7}</span>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} 
-                            onClick={() => { const item = lessonItems.find(i => i.is_bloco_final); setEditingQuiz(item); setQuizQuestions(item.questionario || []); }}
-                            title="Questões"><ClipboardList size={16} /></button>
-                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem' }} 
-                            onClick={() => setEditingItem({ type: 'content', data: lessonItems.find(i => i.is_bloco_final) })}
-                            title="Editar"><Edit size={16} /></button>
-                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem', color: 'var(--error)' }} 
-                            onClick={() => handleDelete('aulas', lessonItems.find(i => i.is_bloco_final).id)}
-                            title="Excluir"><Trash2 size={16} /></button>
-                        </div>
+                        ))}
                       </div>
                     ) : (
                       <button className="btn btn-primary" style={{ width: 'auto', background: '#EAB308', color: '#000', marginTop: '1rem' }}
