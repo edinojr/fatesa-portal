@@ -410,11 +410,13 @@ const Lesson = () => {
             if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score++;
           }
           else if (q.type === 'true_false' && studentAns === q.isTrue) score++;
-          else if (q.type === 'matching') {
+          else if (q.type === 'matching' && q.matchingPairs?.length) {
             const uA = studentAns || {};
-            if (q.matchingPairs?.every((_, mIdx) => String(uA[mIdx]) === String(mIdx))) {
-              score++;
-            }
+            const pairsCount = q.matchingPairs.length;
+            const correctPairs = q.matchingPairs.reduce((acc, _, mIdx) => {
+              return acc + (String(uA[mIdx]) === String(mIdx) ? 1 : 0);
+            }, 0);
+            score += (correctPairs / pairsCount);
           }
         });
       }

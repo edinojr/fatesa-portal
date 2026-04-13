@@ -54,12 +54,30 @@ export const useProfessorGrading = () => {
     const totalQuestions = validQuestions.length;
     
     if (totalQuestions > 0) {
-      const correctCount = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
+      const scoreSum = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
         if (!q || !q.text) return acc;
         const qKey = q.id || qIdx;
-        return acc + (initialEvals[qKey] === true ? 1 : 0);
+        
+        // Se já houver avaliação salva, usa ela
+        if (initialEvals[qKey] !== undefined) {
+            return acc + (initialEvals[qKey] === true ? 1 : 0);
+        }
+
+        // Caso contrário, auto-calcula para tipos objetivos
+        const studentAns = sub.respostas?.[qKey];
+        if (q.type === 'multiple_choice' || !q.type) {
+            return acc + (String(studentAns) === String(q.correct) ? 1 : 0);
+        } else if (q.type === 'true_false') {
+            return acc + (studentAns === q.isTrue ? 1 : 0);
+        } else if (q.type === 'matching' && q.matchingPairs) {
+            const answerMap = (studentAns || {}) as Record<string, string>;
+            const correctPairs = q.matchingPairs.filter((_: any, mIdx: number) => String(answerMap[mIdx]) === String(mIdx)).length;
+            return acc + (correctPairs / q.matchingPairs.length);
+        }
+        
+        return acc;
       }, 0);
-      const initialGrade = (correctCount / totalQuestions) * 10;
+      const initialGrade = (scoreSum / totalQuestions) * 10;
       setGradeInput(initialGrade.toFixed(1));
     } else {
       setGradeInput('10.0'); 

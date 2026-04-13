@@ -343,17 +343,41 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                           const selectedRight = (!isNaN(idxNum) && q.matchingPairs?.[idxNum]) 
                             ? q.matchingPairs[idxNum].right 
                             : (selectedRightIdx && typeof selectedRightIdx === 'string' && selectedRightIdx !== '' ? selectedRightIdx : '---');
-                          return (
-                            <React.Fragment key={pIdx}>
-                              <div style={{ padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', fontSize: '0.9rem', textAlign: 'right', fontWeight: 600, border: '1px solid rgba(255,255,255,0.05)' }}>
-                                {pair.left}
-                              </div>
-                              <div style={{ color: 'var(--primary)', opacity: 0.8 }}><ChevronRight size={18} /></div>
-                              <div style={{ padding: '0.8rem 1.2rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', border: '1px solid rgba(59, 130, 246, 0.2)', fontWeight: 600 }}>
-                                {selectedRight}
-                              </div>
-                            </React.Fragment>
-                          );
+                            const isCorrect = String(answerMap[pIdx]) === String(pIdx);
+                            return (
+                              <React.Fragment key={pIdx}>
+                                <div style={{ 
+                                  padding: '0.8rem 1.2rem', 
+                                  background: 'rgba(255,255,255,0.03)', 
+                                  borderRadius: '12px', 
+                                  fontSize: '0.9rem', 
+                                  textAlign: 'right', 
+                                  fontWeight: 600, 
+                                  border: isCorrect ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)' 
+                                }}>
+                                  {pair.left}
+                                </div>
+                                <div style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', opacity: 0.8 }}>
+                                  {isCorrect ? <CheckCircle size={18} /> : <span>&rarr;</span>}
+                                </div>
+                                <div style={{ 
+                                  padding: '0.8rem 1.2rem', 
+                                  background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+                                  borderRadius: '12px', 
+                                  fontSize: '0.9rem', 
+                                  color: '#fff', 
+                                  border: isCorrect ? '1px solid var(--success)' : '1px solid var(--error)', 
+                                  fontWeight: 600,
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  gap: '0.5rem'
+                                }}>
+                                  {selectedRight}
+                                  {!isCorrect && <CheckCircle size={14} color="var(--success)" title={`Gabarito: ${pair.right}`} />}
+                                </div>
+                              </React.Fragment>
+                            );
                         })}
                       </div>
                     </div>
