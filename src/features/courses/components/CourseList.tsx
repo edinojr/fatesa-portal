@@ -23,19 +23,29 @@ const CourseList: React.FC<CourseListProps> = ({
   const navigate = useNavigate();
   const getBookStatsWrapper = (l: any) => getBookStats(l, atividades, progressoAulas);
 
+  const handleEnterModule = (book: any) => {
+    const aulas = book.aulas || [];
+    const firstAula = aulas.find((a: any) => !a.isHidden);
+    if (firstAula) {
+      navigate((firstAula.arquivo_url || firstAula.pdf_url) ? `/book/${firstAula.id}?type=aula` : `/lesson/${firstAula.id}`);
+    } else {
+      navigate(`/module/${book.id}`);
+    }
+  };
+
   const renderBookCard = (currentBook: any) => {
     const stats = getBookStatsWrapper(currentBook);
     return (
       <div key={currentBook.id} className={`${stats.isFinished ? 'book-card-finished' : 'book-highlight-card'}`}>
         <div 
-          onClick={() => navigate(`/module/${currentBook.id}`)} 
+          onClick={() => handleEnterModule(currentBook)} 
           className="book-cover" 
           style={{ background: currentBook.capa_url ? `url(${currentBook.capa_url}) center/cover` : 'var(--glass-border)', cursor: 'pointer' }}
         ></div>
         <div style={{ flex: 1 }}>
           <div 
             style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '0.5rem', cursor: 'pointer' }}
-            onClick={() => navigate(`/module/${currentBook.id}`)}
+            onClick={() => handleEnterModule(currentBook)}
           >
             <h2 style={{ margin: 0 }}>{currentBook.titulo}</h2>
             <div style={{ textAlign: 'right' }}>
@@ -82,7 +92,7 @@ const CourseList: React.FC<CourseListProps> = ({
             <button 
               className="nav-btn-premium" 
               style={{ width: 'auto' }}
-              onClick={() => navigate(`/module/${currentBook.id}`)}
+              onClick={() => handleEnterModule(currentBook)}
             >
                 <LayoutGrid size={18} />
                 Entrar no Módulo

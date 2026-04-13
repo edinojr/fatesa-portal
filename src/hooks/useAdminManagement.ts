@@ -474,8 +474,14 @@ export const useAdminManagement = () => {
 
   const fetchBooks = async (courseId: string) => {
     if (!courseId) return
-    const { data } = await supabase.from('livros').select('*, aulas(count)').eq('curso_id', courseId).order('ordem')
-    if (data) setBooks(data)
+    const { data } = await supabase.from('livros').select('*, aulas(count)').eq('course_id', courseId).order('ordem')
+    if (data) {
+      setBooks(data)
+      // Auto-select if there's only one book and none is selected
+      if (data.length === 1 && !searchParams.get('bookId')) {
+        setSelectedBook(data[0]);
+      }
+    }
   }
 
   const fetchLessons = async (bookId: string) => {
@@ -487,7 +493,13 @@ export const useAdminManagement = () => {
       .eq('livro_id', bookId)
       .eq('tipo', 'licao')
       .order('ordem')
-    if (data) setLessons(data)
+    if (data) {
+      setLessons(data)
+      // Shortcut: Auto-select the first lesson container if none is selected
+      if (data.length > 0 && !searchParams.get('lessonId')) {
+        setSelectedLesson(data[0]);
+      }
+    }
     setActionLoading(null)
   }
 
