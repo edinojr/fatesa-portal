@@ -201,7 +201,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
               </button>
             ) : (
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn btn-outline" style={{ width: 'auto', gap: '0.4rem', color: 'var(--primary)' }}
+                <button className="btn btn-outline" style={{ width: 'auto', gap: '0.4rem', color: 'var(--primary)', borderColor: 'var(--primary)' }}
                   onClick={() => { setAddingBloco(null); setAddingLessonType('material'); setShowAddContent(true); }}
                   title="Upload de Múltiplos Arquivos">
                   <Upload size={16} /> Upload Múltiplo
@@ -210,6 +210,11 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                   onClick={() => { setAddingBloco(nextBloco); setAddingLessonType('material'); setShowAddContent(true); }}
                   title="Adicionar novo bloco">
                   <Layers size={16} /> Novo Bloco #{nextBloco}
+                </button>
+                <button className="btn btn-primary" style={{ width: 'auto', gap: '0.4rem', background: '#EAB308', borderColor: '#EAB308', color: '#000' }}
+                  onClick={() => { setAddingBloco(nextBloco); setAddingLessonType('prova'); setShowAddContent(true); }}
+                  title="Adicionar Avaliação Final em novo bloco">
+                  <Award size={16} /> Prova Final
                 </button>
               </div>
             )}
@@ -393,6 +398,10 @@ const ContentManagement: React.FC<ContentManagementProps> = ({
                           <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.7rem', fontSize: '0.75rem', color: 'var(--primary)' }}
                             onClick={() => handleAddToBloco('gravada', blocoKey)} title="Adicionar vídeo-aula a este bloco">
                             <Plus size={14} /> Vídeo
+                          </button>
+                          <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.7rem', fontSize: '0.75rem', color: '#EAB308', borderColor: 'rgba(234, 179, 8, 0.3)' }}
+                            onClick={() => handleAddToBloco('prova', blocoKey)} title="Adicionar Prova Final a este bloco">
+                            <Award size={14} /> Prova Final
                           </button>
                         </div>
                       )}

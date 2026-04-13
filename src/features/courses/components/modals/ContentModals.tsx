@@ -359,6 +359,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
           setActionLoading('add-content');
           
           try {
+            const isExam = (addingLessonType === 'prova' || formData.get('is_bloco_final') === 'on');
+
             if (addingLessonType === 'material') {
               const files = (e.currentTarget.querySelector('input[name="files"]') as HTMLInputElement)?.files;
               if (files && files.length > 0) {
@@ -370,6 +372,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                   if (uploadError) throw uploadError;
                   const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
                   
+                  // For multiple upload, we ignore complex quiz templates
                   const { error: insertError } = await supabase.from('aulas').insert({
                     livro_id: selectedLesson.livro_id,
                     parent_aula_id: selectedLesson.id,
@@ -384,59 +387,57 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                 showToast(`${files.length} materiais adicionados!`);
                 setShowAddContent(false);
                 fetchLessonItems(selectedLesson.id);
-              } else {
-                showToast('Selecione pelo menos um arquivo.', 'error');
+                return; // Stop here for material multiple
               }
-            } else {
-              const file = (e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0];
-              let arquivo_url = null;
-
-              if (file && (addingLessonType === 'material' || addingLessonType === 'gravada' || addingLessonType === 'ao_vivo')) {
-                const safeName = normalizeFileName(file.name);
-                const filePath = `conteudo/${Date.now()}_${safeName}`;
-                const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: 'max-age=31536000' });
-                if (uploadError) throw uploadError;
-                const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
-                arquivo_url = publicUrl;
-              }
-
-              const standardTemplate = [
-                ...Array(10).fill(null).map((_, i) => ({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true })),
-                ...Array(2).fill(null).map((_, i) => ({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' })),
-                ...Array(2).fill(null).map((_, i) => ({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 })),
-                { 
-                  id: `mat-${Date.now()}`, 
-                  type: 'matching', 
-                  text: 'Relacione as colunas abaixo:', 
-                  matchingPairs: Array(6).fill(null).map(() => ({left: '', right: ''}))
-                }
-              ];
-
-              const isExam = (addingLessonType === 'prova' || formData.get('is_bloco_final') === 'on');
-              const initialQuiz = (addingLessonType === 'atividade' || addingLessonType === 'prova') ? standardTemplate : [];
-
-              const { error } = await supabase.from('aulas').insert({ 
-                livro_id: selectedLesson.livro_id,
-                parent_aula_id: selectedLesson.id,
-                titulo, 
-                tipo: addingLessonType,
-                video_url,
-                arquivo_url,
-                min_grade,
-                ordem,
-                bloco_id: addingBloco,
-                versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
-                is_bloco_final: formData.get('is_bloco_final') === 'on',
-                questionario: initialQuiz,
-                questionario_v2: isExam ? standardTemplate : null,
-                questionario_v3: isExam ? standardTemplate : null
-              });
-              
-              if (error) throw error;
-              showToast('Conteúdo adicionado!');
-              setShowAddContent(false);
-              fetchLessonItems(selectedLesson.id);
             }
+
+            const file = (e.currentTarget.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0];
+            let arquivo_url = null;
+
+            if (file && (addingLessonType === 'material' || addingLessonType === 'gravada' || addingLessonType === 'ao_vivo')) {
+              const safeName = normalizeFileName(file.name);
+              const filePath = `conteudo/${Date.now()}_${safeName}`;
+              const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: 'max-age=31536000' });
+              if (uploadError) throw uploadError;
+              const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+              arquivo_url = publicUrl;
+            }
+
+            const standardTemplate = [
+              ...Array(10).fill(null).map((_, i) => ({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true })),
+              ...Array(2).fill(null).map((_, i) => ({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' })),
+              ...Array(2).fill(null).map((_, i) => ({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 })),
+              { 
+                id: `mat-${Date.now()}`, 
+                type: 'matching', 
+                text: 'Relacione as colunas abaixo:', 
+                matchingPairs: Array(6).fill(null).map(() => ({left: '', right: ''}))
+              }
+            ];
+
+            const initialQuiz = (addingLessonType === 'atividade' || addingLessonType === 'prova') ? standardTemplate : [];
+
+            const { error } = await supabase.from('aulas').insert({ 
+              livro_id: selectedLesson.livro_id,
+              parent_aula_id: selectedLesson.id,
+              titulo, 
+              tipo: addingLessonType,
+              video_url,
+              arquivo_url,
+              min_grade,
+              ordem,
+              bloco_id: addingBloco,
+              versao: formData.get('versao') ? parseInt(formData.get('versao') as string) : 1,
+              is_bloco_final: isExam,
+              questionario: initialQuiz,
+              questionario_v2: isExam ? standardTemplate : null,
+              questionario_v3: isExam ? standardTemplate : null
+            });
+            
+            if (error) throw error;
+            showToast('Conteúdo adicionado!');
+            setShowAddContent(false);
+            fetchLessonItems(selectedLesson.id);
           } catch (err: any) {
             showToast(err.message, 'error');
           } finally {
@@ -488,26 +489,29 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
 
           {(addingLessonType === 'prova' || addingLessonType === 'atividade') && (
             <>
-              {addingLessonType === 'prova' && (
+              {addingLessonType === 'prova' ? (
+                <div style={{ background: 'rgba(234, 179, 8, 0.1)', padding: '1.5rem', borderRadius: '16px', border: '1px solid rgba(234, 179, 8, 0.3)', marginBottom: '1.5rem' }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                      <Award color="#EAB308" />
+                      <strong style={{ color: '#EAB308' }}>Avaliação Final (V1, V2 e V3 Inclusas)</strong>
+                   </div>
+                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                     Esta opção cria automaticamente as três versões da prova com o padrão de 15 questões cada.
+                   </p>
+                   <div className="form-group">
+                      <label>Nota Mínima para Aprovação (0-10)</label>
+                      <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={7} min={0} max={10} required />
+                   </div>
+                   <input type="hidden" name="is_bloco_final" value="on" />
+                </div>
+              ) : (
                 <>
-                  <div className="form-group">
-                    <label>Versão da Avaliação</label>
-                    <select name="versao" className="form-control" defaultValue={1} required>
-                      <option value={1}>Versão 1 (1ª Oportunidade)</option>
-                      <option value={2}>Versão 2 (2ª Oportunidade)</option>
-                      <option value={3}>Versão 3 (3ª Oportunidade)</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Nota Mínima (0-10)</label>
-                    <input name="min_grade" type="number" step="0.5" className="form-control" defaultValue={7} min={0} max={10} required />
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
+                    <input name="is_bloco_final" type="checkbox" id="is_bloco_final_add" style={{ width: '20px', height: '20px' }} />
+                    <label htmlFor="is_bloco_final_add" style={{ margin: 0, cursor: 'pointer' }}>Avaliação Final do Bloco (Liberação Automática)</label>
                   </div>
                 </>
               )}
-              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px' }}>
-                <input name="is_bloco_final" type="checkbox" id="is_bloco_final_add" style={{ width: '20px', height: '20px' }} />
-                <label htmlFor="is_bloco_final_add" style={{ margin: 0, cursor: 'pointer' }}>Avaliação Final do Bloco (Liberação Automática)</label>
-              </div>
             </>
           )}
 
