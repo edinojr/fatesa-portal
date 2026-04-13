@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, BookOpen, MapPin, X, FileText, History as HistoryIcon } from 'lucide-react'
+import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, X, FileText, History as HistoryIcon, Award } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import Logo from '../../../components/common/Logo'
+import LevelCertificate from './LevelCertificate'
 
 interface AlumniRecord {
   id: string
@@ -15,6 +15,14 @@ interface AlumniRecord {
   observacoes: string
   historico?: { modulo: string; nota: string; data: string }[]
   certificados?: { id: string; titulo: string; data_emissao: string }[]
+  rg?: string
+  telefone?: string
+  cep?: string
+  endereco?: string
+  bairro?: string
+  cidade?: string
+  uf?: string
+  codigo_verificacao?: string
   created_at: string
 }
 
@@ -42,8 +50,17 @@ const AlumniManagement = () => {
     ano_formacao: '',
     matricula: '',
     nivel_curso: 'Básico',
-    observacoes: ''
+    observacoes: '',
+    rg: '',
+    telefone: '',
+    cep: '',
+    endereco: '',
+    bairro: '',
+    cidade: '',
+    uf: ''
   })
+  
+  const [showLevelCertificate, setShowLevelCertificate] = useState(false);
 
   useEffect(() => {
     fetchRecords()
@@ -87,7 +104,11 @@ const AlumniManagement = () => {
 
       setShowModal(false)
       setEditingRecord(null)
-      setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Graduação', observacoes: '' })
+      setFormData({ 
+        nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', 
+        matricula: '', nivel_curso: 'Básico', observacoes: '',
+        rg: '', telefone: '', cep: '', endereco: '', bairro: '', cidade: '', uf: ''
+      })
       fetchRecords()
     } catch (err: any) {
       alert('Erro ao salvar: ' + err.message)
@@ -97,7 +118,7 @@ const AlumniManagement = () => {
   }
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir este registro de ex-aluno?')) return
+    if (!window.confirm('Tem certeza que deseja excluir este registro de Formado?')) return
     
     try {
       const { error } = await supabase
@@ -121,8 +142,15 @@ const AlumniManagement = () => {
       nucleo: record.nucleo || '',
       ano_formacao: record.ano_formacao || '',
       matricula: record.matricula || '',
-      nivel_curso: record.nivel_curso || 'Graduação',
-      observacoes: record.observacoes || ''
+      nivel_curso: record.nivel_curso || 'Básico',
+      observacoes: record.observacoes || '',
+      rg: record.rg || '',
+      telefone: record.telefone || '',
+      cep: record.cep || '',
+      endereco: record.endereco || '',
+      bairro: record.bairro || '',
+      cidade: record.cidade || '',
+      uf: record.uf || ''
     })
     setShowModal(true)
   }
@@ -146,14 +174,14 @@ const AlumniManagement = () => {
   // Ordenar anos (descendente)
   const years = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '4rem' }}><Loader2 className="spinner" /> Carregando base de ex-alunos...</div>
+  if (loading) return <div style={{ textAlign: 'center', padding: '4rem' }}><Loader2 className="spinner" /> Carregando base de Formados...</div>
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h2 style={{ margin: 0 }}>Base de Formados</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Gestão de ex-alunos e históricos de conclusão.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Gestão de Formados e históricos de conclusão.</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <div style={{ position: 'relative', width: '300px' }}>
@@ -215,7 +243,7 @@ const AlumniManagement = () => {
               }
             }}
           />
-          <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setEditingRecord(null); setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Graduação', observacoes: '' }); setShowModal(true); }}>
+          <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setEditingRecord(null); setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Básico', observacoes: '', rg: '', telefone: '', cep: '', endereco: '', bairro: '', cidade: '', uf: '' }); setShowModal(true); }}>
             <Plus size={18} /> Adicionar Registro
           </button>
         </div>
@@ -244,9 +272,9 @@ const AlumniManagement = () => {
                   <thead>
                     <tr>
                       <th>Nome / E-mail</th>
-                      <th>Matrícula</th>
+                      <th>RG / Contato</th>
+                      <th>Matrícula / Código</th>
                       <th>Curso Especialidade</th>
-                      <th>Polo / Núcleo</th>
                       <th style={{ textAlign: 'center' }}>Ações</th>
                     </tr>
                   </thead>
@@ -258,19 +286,18 @@ const AlumniManagement = () => {
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{record.email}</div>
                         </td>
                         <td>
-                          <code style={{ fontSize: '0.85rem', background: 'rgba(0,0,0,0.05)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{record.matricula || '---'}</code>
+                          <div style={{ fontWeight: 600 }}>{record.rg || 'RG NI'}</div>
+                          <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>{record.telefone || 'Sem Tel'}</div>
                         </td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                            <BookOpen size={14} className="text-primary" />
-                            {record.curso || '---'}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                            <code style={{ fontSize: '0.8rem', background: 'rgba(0,0,0,0.05)', padding: '2px 5px', borderRadius: '4px' }}>M: {record.matricula || '---'}</code>
+                            <code style={{ fontSize: '0.7rem', color: 'var(--primary)', opacity: 0.8 }}>V: {record.codigo_verificacao?.substring(0, 8)}...</code>
                           </div>
                         </td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                            <MapPin size={14} color="var(--text-muted)" />
-                            {record.nucleo || '---'}
-                          </div>
+                          <div style={{ fontWeight: 600 }}>{record.curso || '---'}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{record.nucleo || 'Sem Polo'}</div>
                         </td>
                         <td>
                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
@@ -352,13 +379,35 @@ const AlumniManagement = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                 <div className="form-group">
-                  <label>Polo / Núcleo</label>
+                  <label>RG</label>
                   <input 
                     type="text" 
                     className="form-control" 
-                    placeholder="Ex: 2023.1.001"
-                    value={formData.matricula}
-                    onChange={(e) => setFormData({...formData, matricula: e.target.value})}
+                    value={formData.rg}
+                    onChange={(e) => setFormData({...formData, rg: e.target.value})}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Telefone / WhatsApp</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    value={formData.telefone}
+                    onChange={(e) => setFormData({...formData, telefone: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.25rem' }}>
+                <div className="form-group">
+                  <label>Ano de Formação</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Ex: 2023"
+                    value={formData.ano_formacao}
+                    onChange={(e) => setFormData({...formData, ano_formacao: e.target.value})}
+                    required
                   />
                 </div>
                 <div className="form-group">
@@ -371,14 +420,13 @@ const AlumniManagement = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Ano de Formação</label>
+                  <label>Matrícula</label>
                   <input 
                     type="text" 
                     className="form-control" 
-                    placeholder="Ex: 2023"
-                    value={formData.ano_formacao}
-                    onChange={(e) => setFormData({...formData, ano_formacao: e.target.value})}
-                    required
+                    placeholder="Ex: 2023.1.001"
+                    value={formData.matricula}
+                    onChange={(e) => setFormData({...formData, matricula: e.target.value})}
                   />
                 </div>
               </div>
@@ -420,6 +468,16 @@ const AlumniManagement = () => {
                 </div>
               </div>
               <button className="btn-icon" onClick={() => setShowDossie(false)}><X /></button>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem' }}
+                  onClick={() => setShowLevelCertificate(true)}
+                >
+                  <Award size={20} /> EMITIR CERTIFICADO DE NÍVEL ({selectedAlumni.nivel_curso})
+                </button>
             </div>
 
             <div className="admin-card" style={{ padding: '1.5rem', marginBottom: '2rem', background: 'rgba(var(--primary-rgb), 0.02)' }}>
@@ -570,6 +628,18 @@ const AlumniManagement = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* CERTIFICADO DE NÍVEL PREMIUM */}
+      {showLevelCertificate && selectedAlumni && (
+        <LevelCertificate 
+          studentName={selectedAlumni.nome}
+          courseName={selectedAlumni.curso}
+          levelName={selectedAlumni.nivel_curso === 'Básico' ? 'Teologia Básico' : 'Teologia Médio'}
+          date={selectedAlumni.ano_formacao}
+          verificationCode={selectedAlumni.codigo_verificacao || selectedAlumni.id}
+          onClose={() => setShowLevelCertificate(false)}
+        />
       )}
     </div>
   )

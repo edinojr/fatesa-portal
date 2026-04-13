@@ -80,3 +80,13 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       hasExam: finalExams.length > 0
     };
 };
+
+export const isCourseCompleted = (course: any, atividades: any[] = [], progressoAulas: any[] = []) => {
+    if (!course || !course.livros || course.livros.length === 0) return false;
+    
+    // Um curso (Nível) está completo se TODOS os seus livros estão finalizados
+    return course.livros.every((livro: any) => {
+        const stats = getBookStats(livro, atividades, progressoAulas);
+        return stats.isFinished && stats.isApproved;
+    });
+};

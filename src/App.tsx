@@ -12,6 +12,7 @@ import ModulosFinalizados from './pages/ModulosFinalizados'
 import Matricula from './pages/Matricula'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import CertificateVerification from './pages/CertificateVerification'
 import ProtectedRoute from './components/ProtectedRoute'
 import AnalyticsTracker from './components/AnalyticsTracker'
 
@@ -42,6 +43,8 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/matricula" element={<Matricula />} />
+          <Route path="/verificacao" element={<CertificateVerification />} />
+          <Route path="/verificacao/:code" element={<CertificateVerification />} />
           <Route path="/app-mobile" element={<AppConstruction />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardBridge /></ProtectedRoute>} />
           <Route path="/modulos-finalizados" element={<ProtectedRoute><ModulosFinalizados /></ProtectedRoute>} />

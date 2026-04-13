@@ -5,12 +5,53 @@ import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import Logo from '../components/common/Logo'
 import CourseList from '../features/courses/components/CourseList'
-import { getBookStats } from '../features/courses/utils/courseUtils'
+import { getBookStats, isCourseCompleted } from '../features/courses/utils/courseUtils'
+import GraduationFormModal from '../features/users/components/GraduationFormModal'
+import LevelCertificate from '../features/users/components/LevelCertificate'
+import { graduationService } from '../services/graduationService'
 
 const ModulosFinalizados = () => {
     const { profile, loading: profileLoading } = useProfile();
     const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData } = useStudentCourses(profile);
     const navigate = useNavigate();
+
+    const [showGraduationForm, setShowGraduationForm] = React.useState(false);
+    const [showCertificate, setShowCertificate] = React.useState(false);
+    const [completedCourse, setCompletedCourse] = React.useState<any>(null);
+    const [alumniRecord, setAlumniRecord] = React.useState<any>(null);
+
+    // Verificar se algum curso foi finalizado totalmente
+    useEffect(() => {
+        if (!coursesLoading && courses && courses.length > 0 && profile) {
+            courses.forEach(course => {
+                if (isCourseCompleted(course, atividades, progressoAulas)) {
+                    setCompletedCourse(course);
+                    checkAlumni(profile.id);
+                }
+            });
+        }
+    }, [coursesLoading, courses, atividades, progressoAulas, profile]);
+
+    const checkAlumni = async (userId: string) => {
+        const record = await graduationService.checkAlumniStatus(userId);
+        if (record) {
+            setAlumniRecord(record);
+        } else if (profile?.tipo !== 'ex_aluno') {
+            // Se for formado mas não tiver registro de alumni, e ainda não tiver status ex_aluno
+            setShowGraduationForm(true);
+        }
+    };
+
+    const handleGraduationComplete = async (formData: any) => {
+        if (!profile || !completedCourse) return;
+        const record = await graduationService.graduateStudent(profile.id, {
+            ...formData,
+            courseId: completedCourse.id,
+            courseName: completedCourse.nome,
+            levelName: completedCourse.nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio'
+        });
+        setAlumniRecord(record);
+    };
 
     useEffect(() => {
         if (!profileLoading && profile) {
@@ -59,8 +100,39 @@ const ModulosFinalizados = () => {
             </header>
 
             <main className="admin-main" style={{ padding: '2rem 4rem' }}>
-                <header style={{ marginBottom: '3rem' }}>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Aqui você encontra o histórico de todos os módulos que você já finalizou com sucesso.</p>
+                <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
+                    <div style={{ flex: 1 }}>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Aqui você encontra o histórico de todos os módulos que você já finalizou com sucesso.</p>
+                    </div>
+                    
+                    {alumniRecord && (
+                        <div style={{ 
+                            background: 'rgba(var(--primary-rgb), 0.05)', 
+                            border: '1px solid var(--primary)', 
+                            borderRadius: '16px', 
+                            padding: '1.5rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1rem',
+                            maxWidth: '400px',
+                            animation: 'slideInRight 0.5s ease'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <Award size={24} color="var(--primary)" />
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '1rem' }}>Parabéns, Formado!</h3>
+                                    <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.7 }}>Seu certificado de nível está disponível.</p>
+                                </div>
+                            </div>
+                            <button 
+                                className="btn btn-primary" 
+                                style={{ width: '100%', gap: '0.5rem' }}
+                                onClick={() => setShowCertificate(true)}
+                            >
+                                <Award size={18} /> Imprimir Meu Certificado
+                            </button>
+                        </div>
+                    )}
                 </header>
 
                 {finishedCourses.length === 0 ? (
@@ -81,6 +153,36 @@ const ModulosFinalizados = () => {
                     />
                 )}
             </main>
+
+            {showGraduationForm && completedCourse && profile && (
+                <GraduationFormModal 
+                    studentName={profile.nome}
+                    studentEmail={profile.email}
+                    courseId={completedCourse.id}
+                    courseName={completedCourse.nome}
+                    levelName={completedCourse.nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio'}
+                    onComplete={handleGraduationComplete}
+                    onClose={() => setShowGraduationForm(false)}
+                />
+            )}
+
+            {showCertificate && alumniRecord && (
+                <LevelCertificate 
+                    studentName={alumniRecord.nome}
+                    courseName={alumniRecord.curso}
+                    levelName={alumniRecord.nivel_curso}
+                    date={new Date(alumniRecord.created_at).toLocaleDateString()}
+                    verificationCode={alumniRecord.codigo_verificacao}
+                    onClose={() => setShowCertificate(false)}
+                />
+            )}
+
+            <style>{`
+                @keyframes slideInRight {
+                    from { opacity: 0; transform: translateX(30px); }
+                    to { opacity: 1; transform: translateX(0); }
+                }
+            `}</style>
         </div>
     );
 };

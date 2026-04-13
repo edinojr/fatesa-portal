@@ -62,7 +62,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
     const rows = allFiltered.map(item => [
       item.users?.nome || 'N/A',
       item.users?.email || 'N/A',
-      item.users?.tipo === 'ex_aluno' ? 'Ex-Aluno' : 'Ativo',
+      item.users?.tipo === 'ex_aluno' ? 'Formado' : 'Ativo',
       item.users?.nucleos?.nome || 'Sem Núcleo',
       item.users?.ano_graduacao || '---',
       item.aulas?.livros?.titulo || 'N/A',

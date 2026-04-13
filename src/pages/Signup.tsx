@@ -60,10 +60,18 @@ const Signup = () => {
         setIsProfessor(!!profRes.data);
         setIsAdmin(!!adminRes.data);
 
+        if (regRes.error) {
+          console.error('RPC get_registration_details falhou:', regRes.error);
+          // 400 indica que a função não foi encontrada ou argumentos inválidos
+          // Isso costuma acontecer em ambientes onde a migração de banco não foi concluída
+        }
+
         if (regRes.data && regRes.data.length > 0) {
           const reg = regRes.data[0];
+          console.log('Pré-registro encontrado:', reg);
           setPreRegistered(reg);
           setNome(reg.nome);
+          // Garantir que tipos administrativos sejam convertidos para tipos de aluno válidos na UI
           setTipo(reg.tipo === 'admin' || reg.tipo === 'professor' ? 'online' : reg.tipo);
           setNucleo(reg.nucleo_id || reg.nucleo || '');
         } else {
@@ -80,34 +88,42 @@ const Signup = () => {
     return () => clearTimeout(timer);
   }, [email]);
 
-  const verifyAlumniStatus = async () => {
-    if (!nome) {
-      setError('Por favor, preencha seu Nome Completo para verificação.');
-      return;
-    }
+  const verifyAlumniStatus = async (emailToVerify?: string) => {
+    const searchEmail = emailToVerify || email;
+    if (!searchEmail || !searchEmail.includes('@')) return;
+
     setLoading(true);
     setError(null);
     try {
       const { data, error: err } = await supabase
         .from('registros_alumni')
         .select('*')
-        .ilike('nome', nome.trim())
-        .is('user_id', null)
+        .eq('email', searchEmail.toLowerCase().trim())
         .maybeSingle();
 
       if (err) throw err;
       if (data) {
         setAlumniVerified(data);
+        setTipo('ex_aluno');
         setError(null);
-      } else {
-        setError('Não encontramos um registro de formado com este nome ou o acesso já foi ativado. Verifique se o nome está idêntico ao da lista ou contate o suporte.');
+      } else if (!emailToVerify) {
+        // Se foi um clique manual no botão de verificar, e não achou
+        setError('Não encontramos um registro de Formado com este e-mail. Verifique se é o mesmo e-mail usado anteriormente ou contate o suporte.');
       }
     } catch (err: any) {
-      setError('Erro na verificação: ' + err.message);
+      console.error('Erro na verificação de alumni:', err);
     } finally {
       setLoading(false);
     }
   };
+
+  // Autoverificar Alumni quando o e-mail for digitado
+  useEffect(() => {
+    if (email && email.includes('@') && email.length > 5) {
+      const timer = setTimeout(() => verifyAlumniStatus(email), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [email]);
 
   useEffect(() => {
     const fetchNucleos = async () => {
@@ -145,7 +161,9 @@ const Signup = () => {
             full_name: nome,
             student_type: tipo,
             nucleo: availableNucleos.find(n => n.id === nucleo)?.nome || (nucleo.includes('-') ? '' : nucleo),
-            nucleo_id: nucleo.includes('-') ? nucleo : null
+            nucleo_id: nucleo.includes('-') ? nucleo : null,
+            // Liberar automaticamente se for alumni confirmado
+            acesso_definitivo: !!alumniVerified
           }
         }
       })
@@ -220,11 +238,11 @@ const Signup = () => {
               >
                 <option value="presencial">Aluno Presencial (Já Matriculado)</option>
                 <option value="super_visitante">Super Visitante (Acesso Vídeos)</option>
-                <option value="ex_aluno">Ex-Aluno (Acesso Conteúdo)</option>
+                <option value="ex_aluno">Formado (Acesso Conteúdo)</option>
                 <option value="colaborador">Colaborador / Parceiro</option>
               </select>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                {tipo === 'presencial' ? 'Obrigatório selecionar seu núcleo de origem.' : tipo === 'ex_aluno' ? 'Seu perfil será validado contra a lista oficial de formados.' : 'Seu perfil terá acesso imediato aos conteúdos liberados para sua categoria.'}
+                {tipo === 'presencial' ? 'Obrigatório selecionar seu núcleo de origem.' : tipo === 'ex_aluno' ? 'Seu perfil será validado contra a lista oficial de Formados.' : 'Seu perfil terá acesso imediato aos conteúdos liberados para sua categoria.'}
               </p>
             </div>
           )}
@@ -232,13 +250,13 @@ const Signup = () => {
           {tipo === 'ex_aluno' && !alumniVerified && (
             <div style={{ marginBottom: '1.5rem', padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '12px', border: '1px solid rgba(var(--primary-rgb), 0.1)', textAlign: 'center' }}>
               <p style={{ fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--text-muted)' }}>
-                Clique no botão abaixo para confirmar se seu nome consta na nossa lista oficial de formados.
+                Clique no botão abaixo para confirmar se seu nome consta na nossa lista oficial de Formados.
               </p>
               <button 
                 type="button" 
                 className="btn btn-primary" 
                 style={{ width: '100%' }}
-                onClick={verifyAlumniStatus}
+                onClick={() => verifyAlumniStatus()}
                 disabled={loading}
               >
                 {loading ? <Loader2 className="spinner" /> : <ShieldCheck size={18} />} Verificar Meu Nome na Lista

@@ -764,7 +764,7 @@ export const AddAdminModal: React.FC<AddAdminModalProps> = ({
             <select name="tipo" className="form-control" required defaultValue="aluno">
               <option value="aluno">Aluno (Online/Presencial)</option>
               <option value="super_visitante">Super Visitante</option>
-              <option value="ex_aluno">Ex-Aluno</option>
+              <option value="ex_aluno">Formado</option>
               <option value="colaborador">Colaborador</option>
               <option value="professor">Professor</option>
               <option value="admin">Administrador</option>
