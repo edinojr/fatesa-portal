@@ -361,6 +361,7 @@ const Lesson = () => {
     setSubmitting(true)
     try {
       let score = 0; 
+      let totalWeight = 0;
       
       const targetId = (lesson as any).linkedActivity?.id || id;
       const targetLesson = (lesson as any).linkedActivity || lesson;
@@ -374,22 +375,26 @@ const Lesson = () => {
         questions.forEach((q, idx) => {
           const qKey = q.id || idx;
           const studentAns = answers[qKey];
-          if (q.type === 'multiple_choice' || !q.type) {
-            if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score++;
-          }
-          else if (q.type === 'true_false' && studentAns === q.isTrue) score++;
-          else if (q.type === 'matching' && q.matchingPairs?.length) {
-            const uA = studentAns || {};
+          
+          if (q.type === 'matching' && q.matchingPairs?.length) {
             const pairsCount = q.matchingPairs.length;
+            totalWeight += pairsCount;
+            const uA = studentAns || {};
             const correctPairs = q.matchingPairs.reduce((acc, _, mIdx) => {
               return acc + (String(uA[mIdx]) === String(mIdx) ? 1 : 0);
             }, 0);
-            score += (correctPairs / pairsCount);
+            score += correctPairs;
+          } else {
+            totalWeight += 1;
+            if (q.type === 'multiple_choice' || !q.type) {
+              if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score++;
+            }
+            else if (q.type === 'true_false' && studentAns === q.isTrue) score++;
           }
         });
       }
 
-      const finalS = isFinal ? 0 : (questions.length > 0 ? (score / questions.length) * 10 : 0);
+      const finalS = isFinal ? 0 : (totalWeight > 0 ? (score / totalWeight) * 10 : 0);
       
       // Provas (regulares ou finais) exigem correção manual. Exercícios são auto-corrigidos.
       const status = (isFinal || lesson.tipo === 'prova') ? 'pendente' : 'corrigida';

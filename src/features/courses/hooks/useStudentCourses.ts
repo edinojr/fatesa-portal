@@ -184,7 +184,7 @@ export const useStudentCourses = (profile: any) => {
                     if (!matchesNucleo) return { ...a, isHidden: true };
 
                     let lockedByProfessor = false;
-                    let displayTitle = a.titulo;
+                    const displayTitle = a.titulo || '';
                     
                     // Apenas vídeos e provas finais exigem liberação manual do professor
                     const isRestrictedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
