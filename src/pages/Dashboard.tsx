@@ -101,41 +101,26 @@ const Dashboard = () => {
 
   const fetchActiveExams = useCallback(async (nucleoId: string, userId: string) => {
     try {
-      // Step 1: Buscar IDs liberados para o polo do aluno
-      const { data: releases } = await supabase
-        .from('liberacoes_nucleo')
-        .select('item_id')
-        .eq('nucleo_id', nucleoId)
-        .eq('item_type', 'atividade')
-        .eq('liberado', true);
-
-      if (!releases || releases.length === 0) return;
-
-      const itemIds = releases.map((r: any) => r.item_id);
-
-      // Step 2: Buscar detalhes das aulas liberadas que são do tipo 'prova'
-      const { data: provaAulas } = await supabase
+      const { data: availableExams } = await supabase
         .from('aulas')
-        .select('id, titulo, tipo')
-        .in('id', itemIds)
-        .eq('tipo', 'prova');
+        .select('id, titulo, liberacoes_nucleo!inner(item_id)')
+        .eq('tipo', 'prova')
+        .eq('liberacoes_nucleo.nucleo_id', nucleoId)
+        .eq('liberacoes_nucleo.item_type', 'atividade')
+        .eq('liberacoes_nucleo.liberado', true);
 
-      if (!provaAulas || provaAulas.length === 0) return;
+      if (!availableExams) return;
 
-      const provaIds = provaAulas.map((a: any) => ({ id: a.id, titulo: a.titulo || 'Avaliação' }));
-
-      // Step 3: Verificar quais o aluno já submeteu (qualquer status)
       const { data: submitted } = await supabase
         .from('respostas_aulas')
         .select('aula_id')
-        .eq('aluno_id', userId)
-        .in('aula_id', provaIds.map((p: any) => p.id));
+        .eq('aluno_id', userId);
 
-      const submittedIds = new Set((submitted || []).map((s: any) => s.aula_id));
-      const pending = provaIds.filter((p: any) => !submittedIds.has(p.id));
+      const submittedIds = (submitted || []).map((s: any) => s.aula_id);
+      const pending = availableExams.filter((p: any) => !submittedIds.includes(p.id));
 
       if (pending.length > 0) {
-        setActiveExams(pending);
+        setActiveExams(pending.map((p: any) => ({ id: p.id, titulo: p.titulo || 'Avaliação' })));
         const dismissed = sessionStorage.getItem('fatesa_exam_notice_dismissed');
         if (!dismissed) setShowExamNotice(true);
       }

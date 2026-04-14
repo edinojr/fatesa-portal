@@ -15,48 +15,34 @@ export const useStudentCourses = (profile: any) => {
       const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || 
                       (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
 
-      // Lógica de isenção
+      // 1. Verificar Isenção do Núcleo
       let nucleoIsento = false;
       if (profile.nucleo_id) {
         const { data: nucData } = await supabase.from('nucleos').select('isento').eq('id', profile.nucleo_id).maybeSingle();
         nucleoIsento = !!nucData?.isento;
       }
-      const exemptStatus = profile.bolsista || isStaff || nucleoIsento;
 
-      // Cálculo de liberação (Pagamentos + Provas)
-      let releasedCount = 1;
-      let courseBooks: any[] = [];
+      // 2. Livros do Curso
+      const { data: courseBooks } = await supabase.from('livros').select('id, ordem').eq('curso_id', profile.curso_id).order('ordem');
       
-      if (profile.curso_id) {
-        const { data: cb } = await supabase
-          .from('livros')
-          .select('id, ordem')
-          .eq('curso_id', profile.curso_id)
-          .order('ordem', { ascending: true });
-        courseBooks = cb || [];
-      }
-
-      // Fetch releases first
-      const { data: releases, error: relError } = await supabase
-        .from('liberacoes_nucleo')
-        .select('item_id, item_type, created_at')
-        .eq('nucleo_id', profile.nucleo_id)
-        .eq('liberado', true);
+      // 3. Liberações do Núcleo
+      const { data: releases } = await supabase.from('liberacoes_nucleo').select('item_id, item_type, created_at').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
       
-      if (relError) console.error('[Dashboard] Erro ao buscar liberações:', relError);
-
       const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
       const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
       const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
 
+      // 4. Provas / Atividades do Professor
+      const { data: exams } = await supabase.from('aulas').select('id, livro_id, is_bloco_final, tipo').or('tipo.eq.prova,is_bloco_final.eq.true');
+
+      const exemptStatus = profile.bolsista || isStaff || nucleoIsento;
+
+      // Cálculo de liberação (Pagamentos + Provas)
+      let releasedCount = 1;
+
       // Limite Pedagógico Rigoroso: O aluno só acessa o módulo N+1 se o professor liberar a prova do módulo N
       const examReleaseDates: Record<string, string> = {};
       let maxReleasedExamOrdem = 0;
-
-      const { data: exams } = await supabase
-        .from('aulas')
-        .select('id, livro_id, is_bloco_final, tipo')
-        .or('tipo.eq.prova,is_bloco_final.eq.true');
 
       const releasedExamBookIds = new Set<string>();
       
@@ -93,23 +79,14 @@ export const useStudentCourses = (profile: any) => {
         releasedCount = Math.min(paidCount + 1, pedagogicalLimit);
       }
 
-      // Buscar exceções individuais (liberações manuais do professor)
-      const { data: exceptions } = await supabase
-        .from('liberacoes_excecao')
-        .select('livro_id')
-        .eq('user_id', profile.id);
+      // 5. Progresso e Notas
+      const { data: resDataRaw } = await supabase.from('view_submissions_detailed').select('*').eq('student_id', profile.id);
+      const resData = (resDataRaw || []).map((r: any) => ({ ...r, id: r.submission_id }));
+      
+      const { data: progData } = await supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id);
+      const { data: exceptions } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id);
       
       const exceptionIds = (exceptions || []).map(e => e.livro_id);
-
-      // Progresso e Notas - Removido filtro student_id que não existe no topo da view
-      const [{ data: respostasRaw }, { data: progData }] = await Promise.all([
-        supabase.from('view_submissions_detailed').select('*'),
-        supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id)
-      ]);
-      
-      const resData = (respostasRaw || [])
-        .filter((r: any) => r.users?.id === profile.id)
-        .map((r: any) => ({ ...r, id: r.submission_id }));
       const userHasActivityInModule = (livroId: string) => {
         return resData.some(res => res.book_id === livroId);
       };
@@ -117,8 +94,8 @@ export const useStudentCourses = (profile: any) => {
       setAtividades(resData);
       setProgressoAulas(progData || []);
 
-      // Busca Cursos e mapeia liberação
-      const { data: allCourses } = await supabase.from('cursos').select('id, nome, nivel, livros(*, aulas(*))');
+      // 6. Cursos
+      const { data: allCourses } = await supabase.from('cursos').select('id, nome, nivel, livros(id, titulo, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final))');
       
       if (allCourses) {
         const mappedCourses: Course[] = allCourses.map((c: any) => {

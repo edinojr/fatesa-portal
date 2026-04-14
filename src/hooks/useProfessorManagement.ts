@@ -114,13 +114,16 @@ export const useProfessorManagement = () => {
         if (sData) studentHook.setAllStudents(sData)
 
         const { data: subData } = await supabase
-          .from('view_submissions_detailed')
-          .select('*')
-          .order('last_updated', { ascending: false })
+          .from('respostas_aulas')
+          .select(`
+            *,
+            aulas:aula_id (*),
+            users:aluno_id (*, nucleos(*))
+          `)
+          .order('updated_at', { ascending: false })
         
         if (subData) {
-          const mapped = (subData as any[]).map(s => ({ ...s, id: s.submission_id }));
-          gradingHook.setSubmissions(mapped)
+          gradingHook.setSubmissions(subData)
         }
       } else {
         const { data: myNucs } = await supabase
@@ -156,16 +159,17 @@ export const useProfessorManagement = () => {
             studentHook.setAllStudents(sData)
             if (studentIds.length > 0) {
               const { data: subData } = await supabase
-                .from('view_submissions_detailed')
-                .select('*')
-                .order('last_updated', { ascending: false })
+                .from('respostas_aulas')
+                .select(`
+                  *,
+                  aulas:aula_id (*),
+                  users:aluno_id (*, nucleos(*))
+                `)
+                .in('aluno_id', studentIds)
+                .order('updated_at', { ascending: false });
               
               if (subData) {
-                // Filter locally because student_id is not a top-level column in the view
-                const filtered = (subData as any[])
-                  .filter(s => studentIds.includes(s.users?.id))
-                  .map(s => ({ ...s, id: s.submission_id }));
-                gradingHook.setSubmissions(filtered)
+                gradingHook.setSubmissions(subData)
               }
             }
           }
