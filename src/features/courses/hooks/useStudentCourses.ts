@@ -55,7 +55,7 @@ export const useStudentCourses = (profile: any) => {
 
       const { data: exams } = await supabase
         .from('aulas')
-        .select('id, livro_id, is_bloco_final')
+        .select('id, livro_id, is_bloco_final, tipo')
         .or('tipo.eq.prova,is_bloco_final.eq.true');
 
       const releasedExamBookIds = new Set<string>();
