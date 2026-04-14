@@ -93,10 +93,10 @@ const Lesson = () => {
 
         // Check Professor Release (liberacoes_nucleo)
         if (!isStaff && profile?.nucleo_id && !modulePassed) {
-          const isRestrictedType = lessonData.tipo === 'prova' || !!lessonData.is_bloco_final;
+          const isRestrictedType = lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'prova' || !!lessonData.is_bloco_final;
           
           if (isRestrictedType) {
-            const itemType = 'atividade'; // Provas são tratadas como 'atividade' na tabela de liberações
+            const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') ? 'video' : 'atividade';
             
             const { data: releaseData } = await supabase
               .from('liberacoes_nucleo')

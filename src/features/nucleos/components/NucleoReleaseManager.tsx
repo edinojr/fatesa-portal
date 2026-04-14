@@ -7,6 +7,7 @@ interface NucleoReleaseManagerProps {
   actionLoading: string | null;
   handleToggleRelease: (itemId: string, itemType: 'modulo' | 'atividade' | 'video', currentStatus: boolean) => void;
   handleBulkRelease: (release: boolean) => void;
+  userRole?: string;
 }
 
 const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
@@ -14,9 +15,13 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
   releasedItems,
   actionLoading,
   handleToggleRelease,
-  handleBulkRelease
+  handleBulkRelease,
+  userRole = 'professor'
 }) => {
   const [expandedCourse, setExpandedCourse] = React.useState<string | null>(null);
+  const isAdmin = userRole === 'admin' || userRole === 'suporte';
+  const isProfessor = userRole === 'professor';
+
 
   return (
     <div style={{ flex: '1 1 350px' }}>
@@ -85,8 +90,18 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                               color: '#fff',
                               border: 'none'
                             }}
-                            onClick={() => handleToggleRelease(livro.id, 'modulo', !!isLivroReleased)}
-                            disabled={actionLoading === `release_modulo:${livro.id}`}
+                             onClick={() => handleToggleRelease(livro.id, 'modulo', !!isLivroReleased)}
+                             disabled={actionLoading === `release_modulo:${livro.id}` || !isAdmin}
+                             style={{ 
+                               width: 'auto', 
+                               padding: '0.2rem 0.6rem', 
+                               fontSize: '0.7rem', 
+                               background: isLivroReleased ? 'var(--success)' : 'rgba(255,255,255,0.05)',
+                               color: '#fff',
+                               border: 'none',
+                               opacity: isAdmin ? 1 : 0.4,
+                               cursor: isAdmin ? 'pointer' : 'not-allowed'
+                             }}
                           >
                             {actionLoading === `release_modulo:${livro.id}` ? <Loader2 className="spinner" size={12} /> : isLivroReleased ? 'Liberado' : 'Bloqueado'}
                           </button>
@@ -115,8 +130,18 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                                     border: 'none',
                                     opacity: 0.8
                                   }}
-                                  onClick={() => handleToggleRelease(aula.id, type, !!isAulaReleased)}
-                                  disabled={actionLoading === `release_${key}`}
+                                   onClick={() => handleToggleRelease(aula.id, type, !!isAulaReleased)}
+                                   disabled={actionLoading === `release_${key}` || (!isProfessor && !isAdmin)}
+                                   style={{ 
+                                     width: 'auto', 
+                                     padding: '0.15rem 0.5rem', 
+                                     fontSize: '0.65rem', 
+                                     background: isAulaReleased ? 'var(--success)' : 'rgba(255,255,255,0.05)',
+                                     color: '#fff',
+                                     border: 'none',
+                                     opacity: (isProfessor || isAdmin) ? 0.8 : 0.3,
+                                     cursor: (isProfessor || isAdmin) ? 'pointer' : 'not-allowed'
+                                   }}
                                 >
                                   {actionLoading === `release_${key}` ? <Loader2 className="spinner" size={10} /> : isAulaReleased ? 'Liberado' : 'Bloqueado'}
                                 </button>

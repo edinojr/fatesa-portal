@@ -992,6 +992,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
               actionLoading={actionLoading}
               handleToggleRelease={handleToggleRelease}
               handleBulkRelease={handleBulkRelease}
+              userRole={userRole}
             />
           </div>
         </div>
