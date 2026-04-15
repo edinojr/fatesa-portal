@@ -78,8 +78,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                  {professorNucleos.map(nuc => {
                    const nucSubs = allExamsStats.filter(s => s.nucleus_name === nuc.nome || (s.users as any)?.nucleos?.nome === nuc.nome);
                    const pendentes = nucSubs.filter(s => s.status === 'pendente').length;
-                   const aprovados = nucSubs.filter(s => (s.status === 'corrigida' || s.status === 'corrigido') && (s.nota || 0) >= ((s as any).aulas?.min_grade || (s as any).min_grade || 7.0)).length;
-                   const reprovados = nucSubs.filter(s => (s.status === 'corrigida' || s.status === 'corrigido') && (s.nota || 0) < ((s as any).aulas?.min_grade || (s as any).min_grade || 7.0)).length;
+                   const aprovados = nucSubs.filter(s => (s.status === 'corrigida') && (s.nota || 0) >= ((s as any).aulas?.min_grade || (s as any).min_grade || 7.0)).length;
+                   const reprovados = nucSubs.filter(s => (s.status === 'corrigida') && (s.nota || 0) < ((s as any).aulas?.min_grade || (s as any).min_grade || 7.0)).length;
 
                    return (
                      <div key={nuc.id} style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem', borderRadius: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column' }}>
@@ -177,8 +177,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 const minGrade = (s as any).aulas?.min_grade || (s as any).min_grade || 7.0;
                 
                 if (activeStatusFilter === 'pendente') return s.status === 'pendente';
-                if (activeStatusFilter === 'aprovado') return (s.status === 'corrigida' || s.status === 'corrigido') && (s.nota || 0) >= minGrade;
-                if (activeStatusFilter === 'reprovado') return (s.status === 'corrigida' || s.status === 'corrigido') && (s.nota || 0) < minGrade;
+                if (activeStatusFilter === 'aprovado') return (s.status === 'corrigida') && (s.nota || 0) >= minGrade;
+                if (activeStatusFilter === 'reprovado') return (s.status === 'corrigida') && (s.nota || 0) < minGrade;
                 
                 return false;
               });

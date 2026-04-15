@@ -10,6 +10,8 @@ export interface Lesson {
   parent_id?: string
   ordem?: number
   is_bloco_final?: boolean
+  isHidden?: boolean
+  versao?: number
 }
 
 export interface Book {

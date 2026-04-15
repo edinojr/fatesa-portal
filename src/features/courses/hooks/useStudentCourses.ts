@@ -138,6 +138,12 @@ export const useStudentCourses = (profile: any) => {
                 }
               }
 
+              // --- Lógica de Apoio / Legado ---
+              const DATE_THRESHOLD = new Date('2026-04-12T00:00:00').getTime();
+              const studentActivationDate = new Date(profile.created_at).getTime();
+              const isFirstModulesLegado = studentActivationDate < DATE_THRESHOLD && (l.ordem || 1) <= 2;
+              const isManualModuleRelease = releasedModulos.includes(l.id);
+
               const isReleased = (
                 isStaff || 
                 isManualModuleRelease || 
