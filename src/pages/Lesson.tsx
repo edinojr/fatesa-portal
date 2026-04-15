@@ -523,8 +523,8 @@ const Lesson = () => {
         </div>
       </div>
 
-      <div style={{ marginBottom: '3rem' }}>
-        <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{book?.titulo}</div>
+      <div className="lesson-header-section" style={{ marginBottom: '3rem' }}>
+        <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-muted)', padding: '0 1.25rem' }}>{book?.titulo}</div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{lesson.titulo}</h1>
       </div>
 
@@ -608,7 +608,11 @@ const Lesson = () => {
                                      ((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && existingSubmission?.status === 'corrigida' && (isApprovedScore || isModuleApproved));
 
                 return (
-                  <div key={qKey} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: showGabarito && submitted ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)' }}>
+                  <div 
+                    key={qKey} 
+                    className="question-card"
+                    style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: showGabarito && submitted ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)' }}
+                  >
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                       <p style={{fontWeight:600, fontSize:'1.1rem', marginBottom:'1.5rem', flex: 1}}>{idx + 1}. {q.text}</p>
                       {showGabarito && submitted && (

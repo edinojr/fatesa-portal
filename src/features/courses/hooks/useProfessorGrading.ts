@@ -14,8 +14,8 @@ export const useProfessorGrading = () => {
 
   const setSortedSubmissions = useCallback((data: Submission[]) => {
     const sorted = [...data].sort((a, b) => {
-      const nameA = a.users?.nome || ''
-      const nameB = b.users?.nome || ''
+      const nameA = a.student_name || a.users?.nome || ''
+      const nameB = b.student_name || b.users?.nome || ''
       return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' })
     })
     setSubmissions(sorted)
@@ -26,7 +26,7 @@ export const useProfessorGrading = () => {
     setAvaliacaoComentario(sub.comentario_professor || '');
     
     const initialEvals: Record<string, boolean> = {};
-    const questionnaire = sub.aulas?.questionario;
+    const questionnaire = sub.questionario || sub.aulas?.questionario;
     
     if (Array.isArray(questionnaire) && questionnaire.length > 0) {
       questionnaire.forEach((q: any, qIdx: number) => {
@@ -88,7 +88,7 @@ export const useProfessorGrading = () => {
     const newEvals = { ...questionEvaluations, [questionId]: isCorrect };
     setQuestionEvaluations(newEvals);
     
-    const questionnaire = selectedSubmission?.aulas?.questionario;
+    const questionnaire = selectedSubmission?.questionario || selectedSubmission?.aulas?.questionario;
     const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
     const totalQuestions = validQuestions.length;
     
@@ -150,12 +150,12 @@ export const useProfessorGrading = () => {
         updateData.primeira_correcao_at = new Date().toISOString()
       }
 
-      const targetId = selectedSubmission.id || (selectedSubmission as any).submission_id;
+      const targetId = (selectedSubmission as any).submission_id || selectedSubmission.id;
       const { error } = await supabase.from('respostas_aulas').update(updateData).eq('id', targetId)
       
       if(error) throw error
       
-      const moduloNome = (selectedSubmission as any).aulas?.livros?.titulo || 'Módulo';
+      const moduloNome = (selectedSubmission as any).lesson_title || (selectedSubmission as any).aulas?.livros?.titulo || 'Módulo';
       alert(`Nota [${gradeInput}] do módulo [${moduloNome}] salva com sucesso!`)
       setSelectedSubmission(null)
       setGradeInput('')

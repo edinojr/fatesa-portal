@@ -33,11 +33,11 @@ SELECT
     n.nome AS nucleus_name
 FROM 
     public.respostas_aulas sub
-JOIN 
+LEFT JOIN 
     public.aulas a ON sub.aula_id = a.id
-JOIN 
+LEFT JOIN 
     public.livros l ON a.livro_id = l.id
-JOIN 
+LEFT JOIN 
     public.users u ON sub.aluno_id = u.id
 LEFT JOIN 
     public.nucleos n ON u.nucleo_id = n.id;

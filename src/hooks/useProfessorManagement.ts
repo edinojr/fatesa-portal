@@ -116,14 +116,48 @@ export const useProfessorManagement = () => {
         const { data: subData } = await supabase
           .from('respostas_aulas')
           .select(`
-            *,
-            aulas:aula_id (*),
-            users:aluno_id (*, nucleos(*))
+            submission_id:id,
+            nota,
+            status,
+            respostas,
+            tentativas,
+            primeira_correcao_at,
+            comentario_professor,
+            submitted_at:created_at,
+            last_updated:updated_at,
+            lesson_id:aula_id,
+            aulas:aula_id (
+              id,
+              titulo,
+              tipo,
+              questionario,
+              is_bloco_final,
+              min_grade,
+              livros ( id, titulo )
+            ),
+            student_id:aluno_id,
+            users:aluno_id (
+              id,
+              nome,
+              email,
+              nucleos ( id, nome )
+            )
           `)
-          .order('updated_at', { ascending: false })
+          .order('created_at', { ascending: false })
         
         if (subData) {
-          gradingHook.setSubmissions(subData)
+          // Normalize names for compatibility with the view-based components
+          const normalized = (subData as any[]).map(s => ({
+            ...s,
+            lesson_title: s.aulas?.titulo,
+            lesson_type: s.aulas?.tipo,
+            is_bloco_final: s.aulas?.is_bloco_final,
+            book_title: s.aulas?.livros?.titulo,
+            student_name: s.users?.nome,
+            student_email: s.users?.email,
+            nucleus_name: s.users?.nucleos?.nome
+          }));
+          gradingHook.setSubmissions(normalized)
         }
       } else {
         const { data: myNucs } = await supabase
@@ -161,15 +195,49 @@ export const useProfessorManagement = () => {
               const { data: subData } = await supabase
                 .from('respostas_aulas')
                 .select(`
-                  *,
-                  aulas:aula_id (*),
-                  users:aluno_id (*, nucleos(*))
+                  submission_id:id,
+                  nota,
+                  status,
+                  respostas,
+                  tentativas,
+                  primeira_correcao_at,
+                  comentario_professor,
+                  submitted_at:created_at,
+                  last_updated:updated_at,
+                  lesson_id:aula_id,
+                  aulas:aula_id (
+                    id,
+                    titulo,
+                    tipo,
+                    questionario,
+                    is_bloco_final,
+                    min_grade,
+                    livros ( id, titulo )
+                  ),
+                  student_id:aluno_id,
+                  users:aluno_id (
+                    id,
+                    nome,
+                    email,
+                    nucleos ( id, nome )
+                  )
                 `)
                 .in('aluno_id', studentIds)
-                .order('updated_at', { ascending: false });
+                .order('created_at', { ascending: false });
               
               if (subData) {
-                gradingHook.setSubmissions(subData)
+                // Normalize names for compatibility with the view-based components
+                const normalized = (subData as any[]).map(s => ({
+                  ...s,
+                  lesson_title: s.aulas?.titulo,
+                  lesson_type: s.aulas?.tipo,
+                  is_bloco_final: s.aulas?.is_bloco_final,
+                  book_title: s.aulas?.livros?.titulo,
+                  student_name: s.users?.nome,
+                  student_email: s.users?.email,
+                  nucleus_name: s.users?.nucleos?.nome
+                }));
+                gradingHook.setSubmissions(normalized)
               }
             }
           }

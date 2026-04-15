@@ -1207,6 +1207,64 @@ body {
   .viewer-header-desktop-only {
     display: none !important;
   }
+
+  /* --- Lesson & Quiz Responsiveness (Edge-to-Edge) --- */
+  .lesson-container {
+    padding: 1.5rem 0 !important; /* Minimal top/bottom, zero side padding */
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  .lesson-container h1 {
+    font-size: 1.75rem !important;
+    padding: 0 1.25rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .quiz-section {
+    padding: 1.5rem 1rem !important; /* Tight internal spacing */
+    border-radius: 0 !important; /* Square edges to maximize space */
+    border-left: none !important;
+    border-right: none !important;
+    margin-top: 1.5rem !important;
+  }
+
+  .quiz-section h2 {
+    font-size: 1.5rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .question-card {
+    padding: 1.25rem !important;
+    border-radius: 12px !important;
+    margin-bottom: 1rem !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .question-card p {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .option-label {
+    padding: 0.85rem !important;
+    border-radius: 10px !important;
+  }
+
+  .form-control, textarea {
+    font-size: 16px !important; /* Critical: Prevents iOS auto-zoom on click */
+  }
+
+  .video-section {
+    margin-bottom: 2rem !important;
+  }
+
+  .video-wrapper {
+    border-radius: 0 !important; /* Edge-to-edge video */
+    border-left: none !important;
+    border-right: none !important;
+  }
 }
 
 /* Landing Page Styles */

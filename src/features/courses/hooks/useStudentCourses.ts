@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
+import { getBookStats } from '../../../features/courses/utils/courseUtils';
 
 export const useStudentCourses = (profile: any) => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -95,7 +96,7 @@ export const useStudentCourses = (profile: any) => {
       setProgressoAulas(progData || []);
 
       // 6. Cursos
-      const { data: allCourses } = await supabase.from('cursos').select('id, nome, nivel, livros(id, titulo, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final))');
+      const { data: allCourses } = await supabase.from('cursos').select('id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final))');
       
       if (allCourses) {
         const mappedCourses: Course[] = allCourses.map((c: any) => {
@@ -118,22 +119,22 @@ export const useStudentCourses = (profile: any) => {
               
               const isHidden = isPastModule && !hasException && !hasStarted && !isStaff;
 
-              // --- NOVA LÓGICA DE ACESSO SEQUENCIAL (Admin + Professor + Cascata) ---
-              const DATE_THRESHOLD = new Date('2026-04-12T00:00:00').getTime();
-              const studentActivationDate = new Date(profile.created_at).getTime();
-              const isFirstModulesLegado = studentActivationDate < DATE_THRESHOLD && (l.ordem || 1) <= 2;
+              // --- NOVA LÓGICA DE ACESSO SEQUENCIAL ESTREITO ---
+              // Um livro N só é liberado se:
+              // 1. For o primeiro (ordem 1)
+              // 2. O livro anterior está FINALIZADO (isFinished) E seu exame foi liberado pelo professor
               
-              const isManualModuleRelease = releasedModulos.includes(l.id);
-              
-              // Busca se a prova do MÓDULO ANTERIOR foi liberada (Cascata)
-              let isPreviousExamReleased = false;
-              if ((l.ordem || 1) > 1 && courseBooks) {
-                const prevBook = courseBooks.find(b => b.ordem === (l.ordem || 1) - 1);
+              let isPreviousFinishedAndReleased = false;
+              if ((l.ordem || 1) > 1 && sortedLivros) {
+                const prevBook = sortedLivros.find((b: any) => (b.ordem || 0) === (l.ordem || 1) - 1);
                 if (prevBook) {
-                  // A Cascata acontece se qualquer prova (V1, V2 ou V3) do livro anterior for liberada
-                  isPreviousExamReleased = (exams || [])
+                  const prevStats = getBookStats(prevBook, resData, progData || []);
+                  const prevExamReleased = (exams || [])
                     .filter(e => e.livro_id === prevBook.id && (e.tipo === 'prova' || e.is_bloco_final))
                     .some(e => releasedAtividades.includes(e.id));
+                  
+                  // Sequential Rule: Need both finished status and professor release
+                  isPreviousFinishedAndReleased = prevStats.isFinished && prevExamReleased;
                 }
               }
 
@@ -141,8 +142,8 @@ export const useStudentCourses = (profile: any) => {
                 isStaff || 
                 isManualModuleRelease || 
                 isFirstModulesLegado || 
-                isPreviousExamReleased || 
-                (l.ordem || 1) <= releasedCount // Mantém compatibilidade com progresso financeiro se necessário
+                (l.ordem || 1) === 1 ||
+                isPreviousFinishedAndReleased
               );
 
               if (isHidden) return null;

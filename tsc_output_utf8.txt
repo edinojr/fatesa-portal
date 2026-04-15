@@ -1,0 +1,10 @@
+﻿src/features/courses/components/ContentManagement.tsx(217,6): error TS17008: JSX element 'div' has no corresponding closing tag.
+src/features/courses/components/ContentManagement.tsx(707,7): error TS17015: Expected corresponding closing tag for JSX fragment.
+src/features/courses/components/ContentManagement.tsx(707,10): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/features/courses/components/ContentManagement.tsx(709,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/features/courses/components/ContentManagement.tsx(712,1): error TS1005: '</' expected.
+src/pages/SmartViewer.tsx(364,5): error TS2657: JSX expressions must have one parent element.
+src/pages/SmartViewer.tsx(435,9): error TS17002: Expected corresponding JSX closing tag for 'div'.
+src/pages/SmartViewer.tsx(524,5): error TS1005: ')' expected.
+src/pages/SmartViewer.tsx(525,3): error TS1109: Expression expected.
+src/pages/SmartViewer.tsx(526,1): error TS1128: Declaration or statement expected.

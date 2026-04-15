@@ -99,45 +99,45 @@ const Dashboard = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const fetchActiveExams = useCallback(async (nucleoId: string, userId: string) => {
-    try {
-      const { data: availableExams } = await supabase
-        .from('aulas')
-        .select('id, titulo, liberacoes_nucleo!inner(item_id)')
-        .eq('tipo', 'prova')
-        .eq('liberacoes_nucleo.nucleo_id', nucleoId)
-        .eq('liberacoes_nucleo.item_type', 'atividade')
-        .eq('liberacoes_nucleo.liberado', true);
-
-      if (!availableExams) return;
-
-      const { data: submitted } = await supabase
-        .from('respostas_aulas')
-        .select('aula_id')
-        .eq('aluno_id', userId);
-
-      const submittedIds = (submitted || []).map((s: any) => s.aula_id);
-      const pending = availableExams.filter((p: any) => !submittedIds.includes(p.id));
-
-      if (pending.length > 0) {
-        setActiveExams(pending.map((p: any) => ({ id: p.id, titulo: p.titulo || 'Avaliação' })));
-        const dismissed = sessionStorage.getItem('fatesa_exam_notice_dismissed');
-        if (!dismissed) setShowExamNotice(true);
-      }
-    } catch (err) {
-      console.error('[ExamNotice]', err);
-    }
-  }, []);
+  // Logica de Provas Pendentes e Recuperação
+  const pendingExams = useMemo(() => {
+    if (!courses.length) return [];
+    
+    const pending: any[] = [];
+    courses.forEach(course => {
+      course.livros.forEach(libro => {
+        libro.aulas.forEach(aula => {
+          if ((aula.tipo === 'prova' || !!aula.is_bloco_final) && !aula.isHidden) {
+            const hasSubmission = atividades.some(sub => sub.lesson_id === aula.id);
+            if (!hasSubmission) {
+              pending.push({
+                id: aula.id,
+                titulo: aula.titulo || 'Avaliação',
+                livro: libro.titulo,
+                versao: aula.versao || 1,
+                isRecovery: (aula.versao || 1) > 1
+              });
+            }
+          }
+        });
+      });
+    });
+    return pending;
+  }, [courses, atividades]);
 
   useEffect(() => {
     if (profile) {
       fetchStudentDashboardData();
       fetchPayments();
-      if (profile.nucleo_id) {
-        if (!isStaff) fetchActiveExams(profile.nucleo_id, profile.id);
-      }
     }
-  }, [profile, fetchStudentDashboardData, fetchPayments, fetchActiveExams, isStaff]);
+  }, [profile, fetchStudentDashboardData, fetchPayments]);
+
+  useEffect(() => {
+    if (pendingExams.length > 0) {
+      const dismissed = sessionStorage.getItem('fatesa_exam_notice_dismissed');
+      if (!dismissed) setShowExamNotice(true);
+    }
+  }, [pendingExams]);
 
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>, 
@@ -522,63 +522,85 @@ const Dashboard = () => {
         </div>
       </main>
 
-      {/* EXAM NOTIFICATION TOAST */}
-      {showExamNotice && activeExams.length > 0 && (
-        <div style={{
-          position: 'fixed',
-          bottom: '1.5rem',
-          right: '1.5rem',
-          zIndex: 9999,
-          maxWidth: '320px',
-          width: 'calc(100vw - 3rem)',
-          background: 'linear-gradient(135deg, #1e293b, #0f172a)',
-          border: '1px solid rgba(239,68,68,0.35)',
-          borderRadius: '18px',
-          padding: '1rem 1.25rem',
-          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-          animation: 'slideInRight 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)'
-        }}>
-          {/* Header row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', flexShrink: 0, boxShadow: '0 0 6px #ef4444' }} />
-            <span style={{ fontWeight: 800, fontSize: '0.9rem', flex: 1 }}>⚡ Prova Disponível!</span>
-            <button
-              onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); }}
-              style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '1.1rem', lineHeight: 1, padding: '0 0.2rem' }}
-            >×</button>
-          </div>
+      {/* POP-UP DE PROVAS PENDENTES OU RECUPERAÇÃO */}
+      {showExamNotice && pendingExams.length > 0 && (
+        <div className="modal-overlay" style={{ zIndex: 10000 }}>
+          <div className="modal-content" style={{ 
+            maxWidth: '500px', 
+            textAlign: 'center', 
+            padding: '2.5rem', 
+            background: 'var(--bg-card)', 
+            borderRadius: '32px',
+            border: `1px solid ${pendingExams.some(e => e.isRecovery) ? 'rgba(244, 63, 94, 0.4)' : 'rgba(245, 158, 11, 0.4)'}`,
+            boxShadow: '0 30px 60px rgba(0,0,0,0.8)'
+          }}>
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              borderRadius: '24px', 
+              background: pendingExams.some(e => e.isRecovery) ? 'rgba(244, 63, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem',
+              color: pendingExams.some(e => e.isRecovery) ? '#f43f5e' : '#f59e0b'
+            }}>
+              <AlertCircle size={40} />
+            </div>
 
-          {/* Exam names */}
-          <div style={{ marginBottom: '0.75rem' }}>
-            {activeExams.slice(0, 2).map(exam => (
-              <p key={exam.id} style={{ margin: '0 0 0.2rem 0.9rem', fontSize: '0.78rem', color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                📋 {exam.titulo}
-              </p>
-            ))}
-            {activeExams.length > 2 && (
-              <p style={{ margin: '0 0 0 0.9rem', fontSize: '0.75rem', color: '#64748b' }}>+{activeExams.length - 2} mais...</p>
-            )}
-          </div>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: '0.75rem' }}>
+              {pendingExams.some(e => e.isRecovery) ? '⚠️ Recuperação Disponível!' : '📋 Prova Pendente!'}
+            </h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.6 }}>
+              Identificamos que você possui {pendingExams.length} avaliação(ões) disponível(eis) no seu portal. 
+              {pendingExams.some(e => e.isRecovery) && ' Uma delas é uma prova de recuperação para ajudar você a alcançar a nota necessária.'}
+            </p>
 
-          {/* Buttons */}
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); }}
-              style={{ flex: 1, padding: '0.5rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#94a3b8', fontWeight: 600, cursor: 'pointer', fontSize: '0.78rem' }}
-            >Depois</button>
-            <button
-              onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); navigate(`/lesson/${activeExams[0].id}`); }}
-              className="btn btn-primary"
-              style={{ flex: 1.5, padding: '0.5rem', borderRadius: '10px', fontWeight: 800, fontSize: '0.82rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}
-            >Fazer Prova →</button>
-          </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem', textAlign: 'left' }}>
+              {pendingExams.slice(0, 3).map(exam => (
+                <div key={exam.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ fontSize: '0.7rem', opacity: 0.6, textTransform: 'uppercase', letterSpacing: '1px' }}>{exam.livro}</div>
+                  <div style={{ fontWeight: 700, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>{exam.titulo}</span>
+                    <span style={{ 
+                      fontSize: '0.65rem', 
+                      padding: '2px 8px', 
+                      background: exam.isRecovery ? 'rgba(244, 63, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)', 
+                      color: exam.isRecovery ? '#f43f5e' : '#f59e0b',
+                      borderRadius: '50px',
+                      fontWeight: 800
+                    }}>
+                      {exam.isRecovery ? 'RECUPERAÇÃO' : 'VERSÃO V1'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {pendingExams.length > 3 && (
+                <div style={{ fontSize: '0.8rem', textAlign: 'center', opacity: 0.5 }}>E mais {pendingExams.length - 3} avaliações...</div>
+              )}
+            </div>
 
-          <style>{`
-            @keyframes slideInRight {
-              from { opacity: 0; transform: translateX(40px) scale(0.95); }
-              to { opacity: 1; transform: translateX(0) scale(1); }
-            }
-          `}</style>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                className="btn btn-outline" 
+                onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); }}
+                style={{ flex: 1, height: '54px' }}
+              >
+                Depois
+              </button>
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 1.5, height: '54px', background: pendingExams.some(e => e.isRecovery) ? '#f43f5e' : 'var(--primary)' }}
+                onClick={() => {
+                  setShowExamNotice(false);
+                  sessionStorage.setItem('fatesa_exam_notice_dismissed', '1');
+                  navigate(`/lesson/${pendingExams[0].id}`);
+                }}
+              >
+                Fazer Prova Agora
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
