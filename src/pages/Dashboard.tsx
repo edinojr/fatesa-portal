@@ -106,6 +106,9 @@ const Dashboard = () => {
     const pending: any[] = [];
     courses.forEach(course => {
       course.livros.forEach(libro => {
+        // Só mostrar provas de módulos liberados E vigentes
+        if (!libro.isReleased || !libro.isCurrent) return;
+
         libro.aulas.forEach(aula => {
           if ((aula.tipo === 'prova' || !!aula.is_bloco_final) && !aula.isHidden) {
             const hasSubmission = atividades.some(sub => sub.lesson_id === aula.id);

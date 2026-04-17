@@ -107,7 +107,11 @@ const CourseList: React.FC<CourseListProps> = ({
 
         {coursesList.map(course => {
           const releasedBooks = (course.livros || []).filter(l => l.isReleased);
-          const ongoingBooks = releasedBooks.filter(b => !getBookStatsWrapper(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
+          const ongoingBooks = releasedBooks.filter(b => !getBookStatsWrapper(b).isFinished).sort((a,b) => {
+            if (a.isCurrent) return -1;
+            if (b.isCurrent) return 1;
+            return (a.ordem || 0) - (b.ordem || 0);
+          });
           const finishedBooks = releasedBooks.filter(b => getBookStatsWrapper(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
 
           return (

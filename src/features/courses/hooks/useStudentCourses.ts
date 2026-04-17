@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
-import { getBookStats } from '../../../features/courses/utils/courseUtils';
+
 
 export const useStudentCourses = (profile: any) => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -28,11 +28,11 @@ export const useStudentCourses = (profile: any) => {
       
       // 3. Liberações do Núcleo
       const { data: releases } = await supabase.from('liberacoes_nucleo').select('item_id, item_type, created_at').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
-      
+       
       const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
       const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
       const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
-
+      
       // 4. Provas / Atividades do Professor
       const { data: exams } = await supabase.from('aulas').select('id, livro_id, is_bloco_final, tipo').or('tipo.eq.prova,is_bloco_final.eq.true');
 
@@ -41,25 +41,29 @@ export const useStudentCourses = (profile: any) => {
       // Cálculo de liberação (Pagamentos + Provas)
       let releasedCount = 1;
 
-      // Limite Pedagógico Rigoroso: O aluno só acessa o módulo N+1 se o professor liberar a prova do módulo N
+      // Limite Pedagógico: Módulo Vigente
       const examReleaseDates: Record<string, string> = {};
-      let maxReleasedExamOrdem = 0;
-
       const releasedExamBookIds = new Set<string>();
-      
+
       if (exams && releases) {
         exams.filter(exam => releasedAtividades.includes(exam.id)).forEach(exam => {
           releasedExamBookIds.add(exam.livro_id);
         });
+      }
 
-        if (courseBooks) {
-          courseBooks.forEach(b => {
-            if (releasedExamBookIds.has(b.id) && b.ordem > maxReleasedExamOrdem) {
-              maxReleasedExamOrdem = b.ordem;
-            }
-          });
-        }
+      // Módulo Vigente: O maior módulo liberado manualmente pelo professor
+      let maxReleasedModuleOrdem = 0;
+      if (courseBooks && releases) {
+        courseBooks.forEach(b => {
+          if (releasedModulos.includes(b.id) && (b.ordem || 0) > maxReleasedModuleOrdem) {
+            maxReleasedModuleOrdem = b.ordem;
+          }
+        });
+      }
 
+      const pedagogicalLimit = maxReleasedModuleOrdem > 0 ? maxReleasedModuleOrdem : 1;
+
+      if (exams && releases) {
         exams.forEach(exam => {
           if (exam.is_bloco_final) {
             const rel = (releases as any[]).find(r => r.item_id === exam.id && r.item_type === 'atividade');
@@ -68,7 +72,7 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
-      const pedagogicalLimit = maxReleasedExamOrdem + 1;
+
 
       if (exemptStatus) {
         releasedCount = pedagogicalLimit; 
@@ -105,52 +109,23 @@ export const useStudentCourses = (profile: any) => {
             id: c.id,
             nome: c.nome,
             livros: sortedLivros.map((l: any) => {
-              const isCurrent = !isStaff && !exemptStatus && (l.ordem || 1) === releasedCount;
+              const bookOrdem = l.ordem || 1;
+              const isManualModuleRelease = releasedModulos.includes(l.id);
+              const isReleased = (
+                isStaff || 
+                (isManualModuleRelease && (exemptStatus || bookOrdem <= releasedCount || bookOrdem === pedagogicalLimit))
+              );
+              const isCurrent = !isStaff && !exemptStatus && (bookOrdem === pedagogicalLimit);
 
-              // REGRA DE ACESSO POR DATA DE INGRESSO
               const examReleaseDate = examReleaseDates[l.id];
               const userCreatedAt = new Date(profile.created_at).getTime();
               const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
               
-              // Se a prova foi liberada ANTES do aluno entrar, ele só acessa se tiver autorização ou já tiver feito algo
-              const isPastModule = releaseTime > 0 && userCreatedAt > (releaseTime + 86400000); // 24h de tolerância
+              const isPastModule = releaseTime > 0 && userCreatedAt > (releaseTime + 86400000);
               const hasException = exceptionIds.includes(l.id);
               const hasStarted = userHasActivityInModule(l.id);
               
               const isHidden = isPastModule && !hasException && !hasStarted && !isStaff;
-
-              // --- NOVA LÓGICA DE ACESSO SEQUENCIAL ESTREITO ---
-              // Um livro N só é liberado se:
-              // 1. For o primeiro (ordem 1)
-              // 2. O livro anterior está FINALIZADO (isFinished) E seu exame foi liberado pelo professor
-              
-              let isPreviousFinishedAndReleased = false;
-              if ((l.ordem || 1) > 1 && sortedLivros) {
-                const prevBook = sortedLivros.find((b: any) => (b.ordem || 0) === (l.ordem || 1) - 1);
-                if (prevBook) {
-                  const prevStats = getBookStats(prevBook, resData, progData || []);
-                  const prevExamReleased = (exams || [])
-                    .filter(e => e.livro_id === prevBook.id && (e.tipo === 'prova' || e.is_bloco_final))
-                    .some(e => releasedAtividades.includes(e.id));
-                  
-                  // Sequential Rule: Need both finished status and professor release
-                  isPreviousFinishedAndReleased = prevStats.isFinished && prevExamReleased;
-                }
-              }
-
-              // --- Lógica de Apoio / Legado ---
-              const DATE_THRESHOLD = new Date('2026-04-12T00:00:00').getTime();
-              const studentActivationDate = new Date(profile.created_at).getTime();
-              const isFirstModulesLegado = studentActivationDate < DATE_THRESHOLD && (l.ordem || 1) <= 2;
-              const isManualModuleRelease = releasedModulos.includes(l.id);
-
-              const isReleased = (
-                isStaff || 
-                isManualModuleRelease || 
-                isFirstModulesLegado || 
-                (l.ordem || 1) === 1 ||
-                isPreviousFinishedAndReleased
-              );
 
               if (isHidden) return null;
 
