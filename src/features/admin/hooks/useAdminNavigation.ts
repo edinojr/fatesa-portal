@@ -33,7 +33,7 @@ export const useAdminNavigation = () => {
   const setDashboardView = useCallback((view: string) => updateParams({ view }), [updateParams]);
   const setUserTypeFilter = useCallback((filter: string | null) => updateParams({ filter }), [updateParams]);
 
-  return {
+  return useMemo(() => ({
     activeTab,
     dashboardView,
     userTypeFilter,
@@ -42,5 +42,14 @@ export const useAdminNavigation = () => {
     setUserTypeFilter,
     updateParams,
     searchParams
-  };
+  }), [
+    activeTab,
+    dashboardView,
+    userTypeFilter,
+    setActiveTab,
+    setDashboardView,
+    setUserTypeFilter,
+    updateParams,
+    searchParams
+  ]);
 };

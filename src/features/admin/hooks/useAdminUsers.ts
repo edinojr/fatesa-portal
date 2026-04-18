@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
 
 export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
@@ -62,7 +62,7 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     }
   }, [showToast]);
 
-  const handleTypeChange = async (userId: string, newType: string) => {
+  const handleTypeChange = useCallback(async (userId: string, newType: string) => {
     try {
       await supabase.from('users').update({ tipo: newType }).eq('id', userId);
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, tipo: newType } : u));
@@ -70,9 +70,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } catch (err: any) {
       showToast(err.message, 'error');
     }
-  };
+  }, [showToast]);
 
-  const handleApproveAccess = async (userId: string) => {
+  const handleApproveAccess = useCallback(async (userId: string) => {
     setActionLoading(userId);
     try {
       const { error } = await supabase.from('users').update({ acesso_definitivo: true }).eq('id', userId);
@@ -84,9 +84,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast]);
 
-  const handleToggleBlock = async (userId: string, currentStatus: boolean) => {
+  const handleToggleBlock = useCallback(async (userId: string, currentStatus: boolean) => {
     setActionLoading(userId);
     try {
       const { error } = await supabase.from('users').update({ bloqueado: !currentStatus }).eq('id', userId);
@@ -98,9 +98,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast]);
 
-  const handleToggleGratuidade = async (userId: string, currentStatus: boolean) => {
+  const handleToggleGratuidade = useCallback(async (userId: string, currentStatus: boolean) => {
     setActionLoading(userId);
     try {
       const { error } = await supabase.from('users').update({ bolsista: !currentStatus }).eq('id', userId);
@@ -112,9 +112,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast]);
 
-  const handleDeleteUser = async (userId: string) => {
+  const handleDeleteUser = useCallback(async (userId: string) => {
     setActionLoading(userId);
     try {
       const { error } = await supabase.rpc('delete_user_entirely', { target_user_id: userId });
@@ -126,9 +126,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast]);
 
-  const handleResetProgress = async (userId: string) => {
+  const handleResetProgress = useCallback(async (userId: string) => {
     if (!window.confirm('ATENÇÃO: Deseja realmente resetar TODO o progresso e avaliações deste aluno?')) return;
     setActionLoading(userId);
     try {
@@ -141,9 +141,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast, fetchUsers]);
 
-  const handleUpdateUserNucleo = async (userId: string, nucleoId: string) => {
+  const handleUpdateUserNucleo = useCallback(async (userId: string, nucleoId: string) => {
     try {
       const nucleoObj = allNucleos.find(n => n.id === nucleoId);
       const nucleoNome = nucleoObj ? nucleoObj.nome : 'Sem Núcleo';
@@ -158,9 +158,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } catch(err: any) {
       showToast(err.message, 'error');
     }
-  };
+  }, [showToast, allNucleos]);
 
-  const handleUpdateUserName = async (userId: string, newName: string) => {
+  const handleUpdateUserName = useCallback(async (userId: string, newName: string) => {
     if (!newName.trim()) return;
     setActionLoading(userId);
     try {
@@ -173,9 +173,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast]);
 
-  const handleDeleteNucleo = async (id: string) => {
+  const handleDeleteNucleo = useCallback(async (id: string) => {
     if (!window.confirm('Excluir este polo permanentemente?')) return;
     setActionLoading(id);
     try {
@@ -188,9 +188,9 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast]);
 
-  return {
+  return useMemo(() => ({
     users,
     pendingActivityByNucleo,
     allNucleos,
@@ -208,5 +208,23 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     handleUpdateUserNucleo,
     handleUpdateUserName,
     handleDeleteNucleo
-  };
+  }), [
+    users,
+    pendingActivityByNucleo,
+    allNucleos,
+    professors,
+    attendanceRecords,
+    loading,
+    actionLoading,
+    fetchUsers,
+    handleTypeChange,
+    handleApproveAccess,
+    handleToggleBlock,
+    handleToggleGratuidade,
+    handleDeleteUser,
+    handleResetProgress,
+    handleUpdateUserNucleo,
+    handleUpdateUserName,
+    handleDeleteNucleo
+  ]);
 };

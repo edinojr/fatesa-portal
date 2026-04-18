@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { QuizQuestion } from '../../../types/admin';
 
 export const useAdminUIState = () => {
@@ -30,12 +30,12 @@ export const useAdminUIState = () => {
   const [uploading, setUploading] = useState<string | null>(null);
   const [nucleosAutoOpenAdd, setNucleosAutoOpenAdd] = useState(false);
 
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+  const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
-  };
+  }, []);
 
-  return {
+  return useMemo(() => ({
     searchTerm, setSearchTerm,
     showAddTeacher, setShowAddTeacher,
     showAddAdmin, setShowAddAdmin,
@@ -60,5 +60,12 @@ export const useAdminUIState = () => {
     confirmDelete, setConfirmDelete,
     uploading, setUploading,
     nucleosAutoOpenAdd, setNucleosAutoOpenAdd
-  };
+  }), [
+    searchTerm, showAddTeacher, showAddAdmin, showAddCourse, showAddBook, 
+    showAddLesson, showAddContent, showRoleSwitcher, isMobileMenuOpen, 
+    selectedCourse, selectedBook, selectedLesson, editingItem, editingQuiz, 
+    quizQuestions, addingLessonType, addingBloco, editingLessonContent, 
+    lessonBlocks, lessonMaterials, toast, showToast, confirmDelete, 
+    uploading, nucleosAutoOpenAdd
+  ]);
 };

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
 
 export const useAdminContent = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
@@ -22,21 +22,24 @@ export const useAdminContent = (showToast: (msg: string, type?: 'success' | 'err
   }, [showToast]);
 
   const fetchBooks = useCallback(async (courseId: string) => {
+    if (!courseId) return;
     const { data } = await supabase.from('livros').select('*, aulas(count)').eq('curso_id', courseId).order('ordem');
     if (data) setBooks(data);
   }, []);
 
   const fetchLessons = useCallback(async (bookId: string) => {
+    if (!bookId) return;
     const { data } = await supabase.from('aulas').select('*, children:aulas(count)').eq('livro_id', bookId).eq('tipo', 'licao').order('ordem');
     if (data) setLessons(data);
   }, []);
 
   const fetchLessonItems = useCallback(async (lessonId: string) => {
+    if (!lessonId) return;
     const { data } = await supabase.from('aulas').select('*').eq('parent_aula_id', lessonId).order('ordem');
     if (data) setLessonItems(data);
   }, []);
 
-  const handleReorder = async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas') => {
+  const handleReorder = useCallback(async (id: string, direction: 'up' | 'down', items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas') => {
     const idx = items.findIndex(i => i.id === id);
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= items.length) return;
@@ -53,9 +56,9 @@ export const useAdminContent = (showToast: (msg: string, type?: 'success' | 'err
     } catch (err: any) {
       showToast('Erro ao reordenar: ' + err.message, 'error');
     }
-  };
+  }, [showToast]);
 
-  const handleMoveTo = async (id: string, targetId: string | null, items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas', targetBlocoId?: number | null) => {
+  const handleMoveTo = useCallback(async (id: string, targetId: string | null, items: any[], fetchFn: () => void, table: 'livros' | 'aulas' = 'aulas', targetBlocoId?: number | null) => {
     if (id === targetId) return;
     const newItems = [...items];
     const dragIdx = newItems.findIndex(i => i.id === id);
@@ -97,9 +100,9 @@ export const useAdminContent = (showToast: (msg: string, type?: 'success' | 'err
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast]);
 
-  return {
+  return useMemo(() => ({
     courses,
     books,
     lessons,
@@ -112,5 +115,18 @@ export const useAdminContent = (showToast: (msg: string, type?: 'success' | 'err
     fetchLessonItems,
     handleReorder,
     handleMoveTo
-  };
+  }), [
+    courses,
+    books,
+    lessons,
+    lessonItems,
+    loading,
+    actionLoading,
+    fetchCourses,
+    fetchBooks,
+    fetchLessons,
+    fetchLessonItems,
+    handleReorder,
+    handleMoveTo
+  ]);
 };

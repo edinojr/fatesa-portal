@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
 
 export const useAdminDashboardStats = () => {
@@ -40,7 +40,6 @@ export const useAdminDashboardStats = () => {
         .or('acesso_definitivo.is.null,acesso_definitivo.eq.false');
       setPendingStudentsCount(studentsCount || 0);
 
-      // Pending users per nucleus
       const { data: pendingUsersData } = await supabase.from('users').select('id, nucleo_id').or('acesso_definitivo.is.null,acesso_definitivo.eq.false');
       if (pendingUsersData) {
         const counts: Record<string, number> = {};
@@ -58,7 +57,7 @@ export const useAdminDashboardStats = () => {
     }
   }, []);
 
-  return {
+  return useMemo(() => ({
     userCount,
     courseCount,
     pendingCount,
@@ -69,5 +68,16 @@ export const useAdminDashboardStats = () => {
     pendingUsersByNucleo,
     loading,
     fetchStats
-  };
+  }), [
+    userCount,
+    courseCount,
+    pendingCount,
+    pendingProofsCount,
+    pendingDocsCount,
+    pendingPaysCount,
+    pendingStudentsCount,
+    pendingUsersByNucleo,
+    loading,
+    fetchStats
+  ]);
 };

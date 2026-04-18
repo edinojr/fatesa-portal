@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Users, 
@@ -507,8 +507,8 @@ const Admin = () => {
             pendingActivityByNucleo={pendingActivityByNucleo}
             users={(() => {
               let filtered = users;
-              if (userTypeFilter === 'administrativos') filtered = filtered.filter(u => ['admin', 'suporte', 'colaborador'].includes(u.tipo));
-              if (userTypeFilter === 'alunos') filtered = filtered.filter(u => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo));
+              if (userTypeFilter === 'administrativos') filtered = filtered.filter((u: any) => ['admin', 'suporte', 'colaborador'].includes(u.tipo));
+              if (userTypeFilter === 'alunos') filtered = filtered.filter((u: any) => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo));
               return filtered;
             })()}
             allNucleos={allNucleos}

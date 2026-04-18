@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
 
 export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
@@ -39,5 +39,10 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
     }
   }, [showToast]);
 
-  return { analyticsData, academicReport, loading, fetchAnalytics };
+  return useMemo(() => ({ 
+    analyticsData, 
+    academicReport, 
+    loading, 
+    fetchAnalytics 
+  }), [analyticsData, academicReport, loading, fetchAnalytics]);
 };

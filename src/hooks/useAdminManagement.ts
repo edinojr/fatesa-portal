@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from './useProfile'
 import { useAdminNavigation } from '../features/admin/hooks/useAdminNavigation'
@@ -33,7 +33,15 @@ export const useAdminManagement = () => {
     if (nav.activeTab === 'finance') finance.fetchFinanceData();
     if (nav.activeTab === 'analytics') analytics.fetchAnalytics();
     if (nav.activeTab === 'reports') finance.fetchFinanceReport();
-  }, [nav.activeTab, stats, users, content, finance, analytics]);
+  }, [
+    nav.activeTab, 
+    stats.fetchStats, 
+    users.fetchUsers, 
+    content.fetchCourses, 
+    finance.fetchFinanceData, 
+    finance.fetchFinanceReport, 
+    analytics.fetchAnalytics
+  ]);
 
   const actions = useAdminActions(ui.showToast, fetchData);
 
@@ -65,7 +73,7 @@ export const useAdminManagement = () => {
   }, [nav.activeTab, profile, profileLoading, fetchData]);
 
   // Return the unified interface (Bridge)
-  return {
+  return useMemo(() => ({
     ...ui,
     ...nav,
     ...stats,
@@ -79,5 +87,8 @@ export const useAdminManagement = () => {
     availableRoles: profile?.caminhos_acesso || [profile?.tipo].filter(Boolean),
     fetchData,
     loading: profileLoading || stats.loading || users.loading || content.loading || finance.loading || analytics.loading
-  };
+  }), [
+    ui, nav, stats, users, content, finance, analytics, actions, 
+    profile, profileLoading, fetchData
+  ]);
 };

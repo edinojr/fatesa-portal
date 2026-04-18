@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
 
 export const useAdminFinance = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
@@ -40,7 +40,7 @@ export const useAdminFinance = (showToast: (msg: string, type?: 'success' | 'err
     }
   }, [showToast]);
 
-  const handleValidar = async (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado', modulo?: string) => {
+  const handleValidar = useCallback(async (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado', modulo?: string) => {
     const feedback = status === 'rejeitado' ? prompt('Motivo da rejeição:') : null;
     if (status === 'rejeitado' && !feedback) return;
 
@@ -63,9 +63,9 @@ export const useAdminFinance = (showToast: (msg: string, type?: 'success' | 'err
     } finally {
       setActionLoading(null);
     }
-  };
+  }, [showToast, fetchFinanceData]);
 
-  return {
+  return useMemo(() => ({
     pendingDocs,
     pendingPaysValidation,
     financeReport,
@@ -74,5 +74,14 @@ export const useAdminFinance = (showToast: (msg: string, type?: 'success' | 'err
     fetchFinanceData,
     fetchFinanceReport,
     handleValidar
-  };
+  }), [
+    pendingDocs,
+    pendingPaysValidation,
+    financeReport,
+    loading,
+    actionLoading,
+    fetchFinanceData,
+    fetchFinanceReport,
+    handleValidar
+  ]);
 };
