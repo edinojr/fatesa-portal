@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { checkAccessStatus } from '../lib/paymentCycle';
 
+// Global cache to prevent race conditions (5000ms Lock error) when multiple components mount
+let globalProfilePromise: Promise<any> | null = null;
+let lastFetchTime = 0;
+
 export const useProfile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -25,8 +29,20 @@ export const useProfile = () => {
     };
   }, []);
 
-  const fetchProfile = async () => {
-    try {
+  const fetchProfile = async (forceRefresh = false) => {
+    // If there's an ongoing request or a very recent cache (within 2 seconds), reuse it
+    if (!forceRefresh && globalProfilePromise && (Date.now() - lastFetchTime < 2000)) {
+      try {
+        const cachedProfile = await globalProfilePromise;
+        setProfile(cachedProfile);
+        setLoading(false);
+        return;
+      } catch (e) {
+        // Fallthrough if the cached promise failed
+      }
+    }
+
+    const loadProfileTask = async () => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
@@ -60,9 +76,16 @@ export const useProfile = () => {
       }
       
       const accessStatus = checkAccessStatus(data);
-      // Map Joined Name to the profile.nucleo field for UI compatibility
       const refreshedNucleo = (data as any).nucleos?.nome || data.nucleo;
-      setProfile({ ...data, nucleo: refreshedNucleo, email: session.user.email, accessStatus });
+      return { ...data, nucleo: refreshedNucleo, email: session.user.email, accessStatus };
+    };
+
+    globalProfilePromise = loadProfileTask();
+    lastFetchTime = Date.now();
+
+    try {
+      const finalProfile = await globalProfilePromise;
+      setProfile(finalProfile);
     } catch (err: any) {
       console.error('Error fetching profile:', err);
       
