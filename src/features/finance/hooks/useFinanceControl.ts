@@ -46,7 +46,7 @@ export const useFinanceControl = (userProfile: any) => {
     } finally {
       setLoading(false);
     }
-  }, [userProfile]);
+  }, [userProfile?.id, userProfile?.extensao_pagamento_ate]);
 
   const requestExtension = async () => {
     if (!userProfile?.id) return { error: 'Usuário não encontrado' };

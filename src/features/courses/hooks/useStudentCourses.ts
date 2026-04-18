@@ -197,7 +197,15 @@ export const useStudentCourses = (profile: any) => {
     } finally {
       setLoading(false);
     }
-  }, [profile]);
+  }, [
+    profile?.id, 
+    profile?.curso_id, 
+    profile?.nucleo_id, 
+    profile?.tipo, 
+    profile?.bolsista, 
+    profile?.caminhos_acesso, 
+    profile?.created_at
+  ]);
 
   return {
     courses,

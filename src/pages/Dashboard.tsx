@@ -127,11 +127,11 @@ const Dashboard = () => {
   }, [courses, atividades]);
 
   useEffect(() => {
-    if (profile) {
+    if (profile?.id) {
       fetchStudentDashboardData();
       fetchPayments();
     }
-  }, [profile, fetchStudentDashboardData, fetchPayments]);
+  }, [profile?.id, fetchStudentDashboardData, fetchPayments]);
 
   useEffect(() => {
     if (pendingExams.length > 0) {
