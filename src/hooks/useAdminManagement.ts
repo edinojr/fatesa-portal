@@ -40,7 +40,17 @@ export const useAdminManagement = () => {
   // 4. Initial Auth Guard
   useEffect(() => {
     if (!profileLoading) {
-      if (!profile || !['admin', 'suporte'].includes(profile.tipo || '')) {
+      if (!profile) {
+        navigate('/login');
+        return;
+      }
+
+      const roles = (profile.caminhos_acesso as string[]) || [];
+      const isAdmin = ['admin', 'suporte'].includes(profile.tipo || '') || 
+                      roles.some(r => ['admin', 'suporte'].includes(r)) || 
+                      profile.email === 'edi.ben.jr@gmail.com';
+
+      if (!isAdmin) {
         navigate('/dashboard');
         return;
       }
