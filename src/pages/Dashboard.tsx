@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { 
   BookOpen, 
@@ -10,7 +10,6 @@ import {
   AlertCircle,
   CheckCircle2,
   XCircle,
-  Bell,
   MessageSquare,
   Home as HomeIcon,
   ChevronLeft,
@@ -91,7 +90,6 @@ const Dashboard = () => {
   const isAlumniData = (profile as any)?.isAlumni;
 
   // Exam notification state
-  const [activeExams, setActiveExams] = useState<{ id: string; titulo: string }[]>([]);
   const [showExamNotice, setShowExamNotice] = useState(false);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -110,7 +108,7 @@ const Dashboard = () => {
         if (!libro.isReleased || !libro.isCurrent) return;
 
         libro.aulas.forEach(aula => {
-          if ((aula.tipo === 'prova' || !!aula.is_bloco_final) && !aula.isHidden) {
+          if (libro.isReleased && (aula.tipo === 'prova' || !!aula.is_bloco_final) && !aula.isHidden) {
             const hasSubmission = atividades.some(sub => sub.lesson_id === aula.id);
             if (!hasSubmission) {
               pending.push({
