@@ -66,6 +66,7 @@ export const useAdminManagement = () => {
     ...actions,
     profile,
     userRole: profile?.tipo,
+    availableRoles: profile?.caminhos_acesso || [profile?.tipo].filter(Boolean),
     fetchData,
     loading: profileLoading || stats.loading || users.loading || content.loading || finance.loading || analytics.loading
   };

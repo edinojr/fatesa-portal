@@ -4,14 +4,28 @@ import { supabase } from '../../../lib/supabase';
 export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
   const [users, setUsers] = useState<any[]>([]);
   const [pendingActivityByNucleo, setPendingActivityByNucleo] = useState<Record<string, any>>({});
+  const [allNucleos, setAllNucleos] = useState<any[]>([]);
+  const [professors, setProfessors] = useState<any[]>([]);
+  const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const { data: usersData } = await supabase.from('users').select('*, nucleos(nome)').order('nome');
-      const { data: payIds } = await supabase.from('pagamentos').select('user_id').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)');
+      const [
+        { data: usersData }, 
+        { data: payIds },
+        { data: nucleosData },
+        { data: professorsData },
+        { data: attendanceData }
+      ] = await Promise.all([
+        supabase.from('users').select('*, nucleos(nome)').order('nome'),
+        supabase.from('pagamentos').select('user_id').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
+        supabase.from('nucleos').select('*').order('nome'),
+        supabase.from('users').select('*').eq('tipo', 'professor').order('nome'),
+        supabase.from('presencas').select('*, aluno:users!aluno_id(nome), professor:users!professor_id(nome), nucleo:nucleos(nome)').order('data', { ascending: false }).limit(200)
+      ]);
       
       const pendingUserIds = new Set(payIds?.map(p => p.user_id) || []);
 
@@ -36,8 +50,13 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
         });
         setPendingActivityByNucleo(activity);
       }
+
+      if (nucleosData) setAllNucleos(nucleosData);
+      if (professorsData) setProfessors(professorsData);
+      if (attendanceData) setAttendanceRecords(attendanceData);
+
     } catch (err: any) {
-      showToast('Erro ao buscar usuários: ' + err.message, 'error');
+      showToast('Erro ao buscar dados de usuários: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -124,7 +143,7 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     }
   };
 
-  const handleUpdateUserNucleo = async (userId: string, nucleoId: string, allNucleos: any[]) => {
+  const handleUpdateUserNucleo = async (userId: string, nucleoId: string) => {
     try {
       const nucleoObj = allNucleos.find(n => n.id === nucleoId);
       const nucleoNome = nucleoObj ? nucleoObj.nome : 'Sem Núcleo';
@@ -156,9 +175,27 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     }
   };
 
+  const handleDeleteNucleo = async (id: string) => {
+    if (!window.confirm('Excluir este polo permanentemente?')) return;
+    setActionLoading(id);
+    try {
+      const { error } = await supabase.from('nucleos').delete().eq('id', id);
+      if (error) throw error;
+      setAllNucleos(prev => prev.filter(n => n.id !== id));
+      showToast('Polo excluído.');
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   return {
     users,
     pendingActivityByNucleo,
+    allNucleos,
+    professors,
+    attendanceRecords,
     loading,
     actionLoading,
     fetchUsers,
@@ -169,6 +206,7 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     handleDeleteUser,
     handleResetProgress,
     handleUpdateUserNucleo,
-    handleUpdateUserName
+    handleUpdateUserName,
+    handleDeleteNucleo
   };
 };

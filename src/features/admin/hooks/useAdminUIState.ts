@@ -12,13 +12,23 @@ export const useAdminUIState = () => {
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  const [selectedCourse, setSelectedCourse] = useState<any | null>(null);
+  const [selectedBook, setSelectedBook] = useState<any | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<any | null>(null);
+  
   const [editingItem, setEditingItem] = useState<{ type: 'course' | 'book' | 'lesson' | 'content', data: any } | null>(null);
   const [editingQuiz, setEditingQuiz] = useState<any | null>(null);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [addingLessonType, setAddingLessonType] = useState<string>('gravada');
   const [addingBloco, setAddingBloco] = useState<number | null>(null);
+  const [editingLessonContent, setEditingLessonContent] = useState<any | null>(null);
+  const [lessonBlocks, setLessonBlocks] = useState<any[]>([]);
+  const [lessonMaterials, setLessonMaterials] = useState<any[]>([]);
+  
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'user' | 'content', id: string, table?: string, column?: string, title: string } | null>(null);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [nucleosAutoOpenAdd, setNucleosAutoOpenAdd] = useState(false);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -35,12 +45,20 @@ export const useAdminUIState = () => {
     showAddContent, setShowAddContent,
     showRoleSwitcher, setShowRoleSwitcher,
     isMobileMenuOpen, setIsMobileMenuOpen,
+    selectedCourse, setSelectedCourse,
+    selectedBook, setSelectedBook,
+    selectedLesson, setSelectedLesson,
     editingItem, setEditingItem,
     editingQuiz, setEditingQuiz,
     quizQuestions, setQuizQuestions,
     addingLessonType, setAddingLessonType,
     addingBloco, setAddingBloco,
+    editingLessonContent, setEditingLessonContent,
+    lessonBlocks, setLessonBlocks,
+    lessonMaterials, setLessonMaterials,
     toast, showToast,
-    confirmDelete, setConfirmDelete
+    confirmDelete, setConfirmDelete,
+    uploading, setUploading,
+    nucleosAutoOpenAdd, setNucleosAutoOpenAdd
   };
 };

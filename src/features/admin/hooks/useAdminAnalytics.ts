@@ -3,13 +3,19 @@ import { supabase } from '../../../lib/supabase';
 
 export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
   const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [academicReport, setAcademicReport] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await supabase.from('portal_access_logs').select('*').order('created_at', { ascending: false }).limit(5000);
-      if (data) {
+      const [logsResponse, academicResponse] = await Promise.all([
+        supabase.from('portal_access_logs').select('*').order('created_at', { ascending: false }).limit(5000),
+        supabase.from('view_student_academic_summary').select('*').order('aluno_nome')
+      ]);
+
+      if (logsResponse.data) {
+        const data = logsResponse.data;
         const totalViews = data.length;
         const uniqueSessions = new Set(data.map(l => l.session_id)).size;
         const registeredViews = data.filter(l => l.user_type === 'registrado').length;
@@ -22,6 +28,10 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
 
         setAnalyticsData({ totalViews, uniqueSessions, registeredViews, visitorViews, dau, activeLast7, logs: data.slice(0, 100) });
       }
+
+      if (academicResponse.data) {
+        setAcademicReport(academicResponse.data);
+      }
     } catch (err: any) {
       showToast(err.message, 'error');
     } finally {
@@ -29,5 +39,5 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
     }
   }, [showToast]);
 
-  return { analyticsData, loading, fetchAnalytics };
+  return { analyticsData, academicReport, loading, fetchAnalytics };
 };

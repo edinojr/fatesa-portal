@@ -236,7 +236,7 @@ const Admin = () => {
                 </button>
                 {showRoleSwitcher && (
                   <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '14px', padding: '0.5rem', zIndex: 1100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '200px', marginTop: '0.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-                    {availableRoles.filter(r => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map(r => (
+                    {availableRoles.filter((r: string) => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map((r: string) => (
                       <Link 
                         key={r} 
                         to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'}
@@ -556,11 +556,11 @@ const Admin = () => {
                     </td>
                   </tr>
                 ) : (
-                  attendanceRecords.filter(r => 
+                  attendanceRecords.filter((r: any) => 
                     r.aluno?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     r.professor?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     r.nucleo?.nome?.toLowerCase().includes(searchTerm.toLowerCase())
-                  ).map(record => (
+                  ).map((record: any) => (
                     <tr key={record.id}>
                       <td>{new Date(record.data).toLocaleDateString()}</td>
                       <td style={{ fontWeight: 600 }}>{record.aluno?.nome}</td>
