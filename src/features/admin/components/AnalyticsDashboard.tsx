@@ -67,19 +67,19 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ data }) => {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                  <span>Usuários Registrados</span>
-                 <span style={{ fontWeight: 700 }}>{((data.registeredViews / data.totalViews) * 100).toFixed(1)}%</span>
+                 <span style={{ fontWeight: 700 }}>{data.totalViews > 0 ? ((data.registeredViews / data.totalViews) * 100).toFixed(1) : '0.0'}%</span>
               </div>
               <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', background: 'var(--primary)', width: `${(data.registeredViews / data.totalViews) * 100}%` }}></div>
+                <div style={{ height: '100%', background: 'var(--primary)', width: `${data.totalViews > 0 ? (data.registeredViews / data.totalViews) * 100 : 0}%` }}></div>
               </div>
             </div>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
                  <span>Visitantes (Não logados)</span>
-                 <span style={{ fontWeight: 700 }}>{((data.visitorViews / data.totalViews) * 100).toFixed(1)}%</span>
+                 <span style={{ fontWeight: 700 }}>{data.totalViews > 0 ? ((data.visitorViews / data.totalViews) * 100).toFixed(1) : '0.0'}%</span>
               </div>
               <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', background: '#3b82f6', width: `${(data.visitorViews / data.totalViews) * 100}%` }}></div>
+                <div style={{ height: '100%', background: '#3b82f6', width: `${data.totalViews > 0 ? (data.visitorViews / data.totalViews) * 100 : 0}%` }}></div>
               </div>
             </div>
           </div>
