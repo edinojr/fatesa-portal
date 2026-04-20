@@ -158,7 +158,7 @@ const Dashboard = () => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${profile.id}_${Date.now()}.${fileExt}`;
-      const filePath = type === 'pay' ? `comprovantes/${fileName}` : fileName; 
+      const filePath = type === 'pay' ? `comprovantes/${fileName}` : `${profile.id}/${fileName}`; 
 
       const bucketName = type === 'pay' ? 'comprovantes' : 'pedagogico';
 

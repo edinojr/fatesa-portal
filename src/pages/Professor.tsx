@@ -27,6 +27,7 @@ import AvisosManagement from '../features/communication/components/AvisosManagem
 import MateriaisManagement from '../features/communication/components/MateriaisManagement'
 import AcademicHistory from '../features/admin/components/AcademicHistory'
 import AlumniManagement from '../features/users/components/AlumniManagement'
+import DocumentAnalysis from '../features/admin/components/DocumentAnalysis'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import Logo from '../components/common/Logo'
@@ -326,6 +327,12 @@ const Professor = () => {
                       <h3>Alumni / Formados</h3>
                       <p>Base histórica de alunos que já concluíram o curso.</p>
                     </div>
+
+                    <div className="admin-action-card" onClick={() => setActiveTab('documents')}>
+                      <div className="icon-wrapper"><FileText size={32} /></div>
+                      <h3>Arquivos e Documentos</h3>
+                      <p>Validação da documentação pessoal enviada pelos alunos.</p>
+                    </div>
                   </>
                 )}
 
@@ -441,6 +448,8 @@ const Professor = () => {
             )}
 
             {activeTab === 'alumni' && <AlumniManagement />}
+
+            {activeTab === 'documents' && <DocumentAnalysis />}
           </div>
         </div>
       </main>
