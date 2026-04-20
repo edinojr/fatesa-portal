@@ -9,6 +9,7 @@ export const useStudentCourses = (profile: any) => {
   const [atividades, setAtividades] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [finishedBasicCount, setFinishedBasicCount] = useState(0);
+  const [finishedMediumCount, setFinishedMediumCount] = useState(0);
   const [isBasicFinished, setIsBasicFinished] = useState(false);
 
   const fetchStudentDashboardData = useCallback(async () => {
@@ -135,14 +136,31 @@ export const useStudentCourses = (profile: any) => {
       setAtividades(resData);
       setProgressoAulas(progData || []);
 
-      const fBasicCount = (resData || []).filter(r => 
-        r.is_bloco_final && 
-        r.status === 'corrigida' && 
-        (r.nota || 0) >= 7.0 &&
-        (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
-      ).length;
+      // 5.5 Calcular Total de Módulos Básicos Únicos Finalizados para Trava Pedagógica
+      const finishedBasicModules = new Set((resData || [])
+        .filter(r => 
+          r.is_bloco_final && 
+          r.status === 'corrigida' && 
+          (r.nota || 0) >= 7.0 &&
+          (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
+        )
+        .map(r => r.book_id)
+      );
 
+      const fBasicCount = finishedBasicModules.size;
       setFinishedBasicCount(fBasicCount);
+
+      const finishedMediumModules = new Set((resData || [])
+        .filter(r => 
+          r.is_bloco_final && 
+          r.status === 'corrigida' && 
+          (r.nota || 0) >= 7.0 &&
+          (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('medio') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('médio'))
+        )
+        .map(r => r.book_id)
+      );
+
+      setFinishedMediumCount(finishedMediumModules.size);
       const isFinished = fBasicCount >= 27;
       setIsBasicFinished(isFinished);
 
@@ -277,6 +295,7 @@ export const useStudentCourses = (profile: any) => {
     loading,
     fetchStudentDashboardData,
     finishedBasicCount,
+    finishedMediumCount,
     isBasicFinished
   };
 };

@@ -71,6 +71,7 @@ const Dashboard = () => {
     atividades, 
     fetchStudentDashboardData,
     finishedBasicCount,
+    finishedMediumCount,
     isBasicFinished
   } = useStudentCourses(profile);
 
@@ -506,20 +507,12 @@ const Dashboard = () => {
                           <GraduationCap size={20} color={(finishedBasicCount || 0) < 27 ? 'var(--text-muted)' : 'var(--primary)'} />
                           <span style={{ fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Progresso Nível Médio</span>
                        </div>
-                       <span style={{ fontWeight: 900 }}>{Math.min(courses.reduce((acc, c) => {
-                          const isMed = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
-                          if (!isMed) return acc;
-                          return acc + (c.livros || []).filter(l => (atividades || []).some(a => a.book_id === l.id && a.is_bloco_final && a.status === 'corrigida' && (a.nota || 0) >= 7.0)).length;
-                       }, 0), 8)}/8</span>
+                       <span style={{ fontWeight: 900 }}>{Math.min(finishedMediumCount || 0, 8)}/8</span>
                     </div>
                     <div style={{ height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
                        <div style={{ 
                          height: '100%', 
-                         width: `${Math.min((courses.reduce((acc, c) => {
-                          const isMed = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
-                          if (!isMed) return acc;
-                          return acc + (c.livros || []).filter(l => (atividades || []).some(a => a.book_id === l.id && a.is_bloco_final && a.status === 'corrigida' && (a.nota || 0) >= 7.0)).length;
-                       }, 0) / 8) * 100, 100)}%`, 
+                         width: `${Math.min(((finishedMediumCount || 0) / 8) * 100, 100)}%`, 
                          background: (finishedBasicCount || 0) < 27 ? 'var(--text-muted)' : 'linear-gradient(90deg, #9333ea 0%, #7c3aed 100%)',
                          borderRadius: '10px',
                          transition: 'width 1s ease-out'
