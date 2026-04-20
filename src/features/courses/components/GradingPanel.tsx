@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users } from 'lucide-react'
+import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users, BookOpen, ClipboardList, ShieldCheck } from 'lucide-react'
 import { Submission } from '../../../types/professor'
 
 interface GradingPanelProps {

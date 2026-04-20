@@ -136,7 +136,7 @@ export const useProfessorManagement = () => {
       const isProfessor = profile.tipo === 'professor' || profile.caminhos_acesso?.includes('professor') || profile.email === 'edi.ben.jr@gmail.com';
       if (!isProfessor) { navigate('/dashboard'); return; }
 
-      let roles = profile.caminhos_acesso || [];
+      const roles = [...(profile.caminhos_acesso || [])];
       if (profile.email === 'edi.ben.jr@gmail.com') {
         const adminRoles = ['aluno', 'professor', 'suporte'];
         adminRoles.forEach(r => { if (!roles.includes(r)) roles.push(r); });
