@@ -264,7 +264,7 @@ const Dashboard = () => {
   const handleChangeNucleo = async (newNucleoId: string) => {
     if (!profile) return;
     try {
-      const { error } = await supabase.from('alunos').update({ nucleo_id: newNucleoId }).eq('id', profile.id);
+      const { error } = await supabase.from('users').update({ nucleo_id: newNucleoId }).eq('id', profile.id);
       if (error) throw error;
       refreshProfile();
       showToast('Núcleo alterado!');

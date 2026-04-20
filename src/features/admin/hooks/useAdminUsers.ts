@@ -24,7 +24,7 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
         supabase.from('pagamentos').select('user_id').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
         supabase.from('nucleos').select('*').order('nome'),
         supabase.from('users').select('*').eq('tipo', 'professor').order('nome'),
-        supabase.from('presencas').select('*, aluno:users!aluno_id(nome), professor:users!professor_id(nome), nucleo:nucleos(nome)').order('data', { ascending: false }).limit(200)
+        supabase.from('frequencia').select('*, aluno:users!aluno_id(nome), professor:users!professor_id(nome), nucleo:nucleos(nome)').order('data', { ascending: false }).limit(200)
       ]);
       
       const pendingUserIds = new Set(payIds?.map(p => p.user_id) || []);
@@ -75,7 +75,10 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
   const handleApproveAccess = useCallback(async (userId: string) => {
     setActionLoading(userId);
     try {
-      const { error } = await supabase.from('users').update({ acesso_definitivo: true }).eq('id', userId);
+      const { error } = await supabase.from('users').update({ 
+        acesso_definitivo: true,
+        status_nucleo: 'aprovado'
+      }).eq('id', userId);
       if (error) throw error;
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, acesso_definitivo: true } : u));
       showToast('Acesso definitivo concedido!');
@@ -153,7 +156,13 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
         status_nucleo: 'aprovado'
       }).eq('id', userId);
       if (error) throw error;
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, nucleo_id: nucleoId || null, nucleo: nucleoId ? nucleoNome : null, status_nucleo: 'aprovado' } : u));
+      setUsers(prev => prev.map(u => u.id === userId ? { 
+        ...u, 
+        nucleo_id: nucleoId || null, 
+        nucleo: nucleoId ? nucleoNome : null, 
+        status_nucleo: 'aprovado',
+        nucleos: nucleoId ? { nome: nucleoNome } : null
+      } : u));
       showToast('Polo atualizado.');
     } catch(err: any) {
       showToast(err.message, 'error');

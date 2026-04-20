@@ -237,7 +237,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     }
   }
 
-  const handleSaveQuestionnaire = async (atividadeId: string, questionnaireData: any[]) => {
+  const handleSaveQuestionnaire = async () => {
     setActionLoading('save_q')
     try {
       // Logic for saving questionnaire removed locally since atividades table is being dropped.
@@ -639,9 +639,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     const formData = new FormData(e.currentTarget)
     const atividade_id = formData.get('atividade_id') as string
     const nota = parseFloat(formData.get('nota') as string)
-    const feedback = formData.get('feedback') as string
-    
-    const { data: { session } } = await supabase.auth.getSession()
 
     try {
       if (atividade_id.startsWith('course:')) {
@@ -1239,7 +1236,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
                 <button 
                   className="btn btn-primary" 
                   style={{ width: 'auto', padding: '0.6rem 2rem' }}
-                  onClick={() => handleSaveQuestionnaire(editingQuestionnaire.id, editingQuestionnaire.questionario)}
+                  onClick={() => handleSaveQuestionnaire()}
                   disabled={actionLoading === 'save_q'}
                 >
                   {actionLoading === 'save_q' ? <Loader2 className="spinner" size={20} /> : 'Salvar Questionário'}

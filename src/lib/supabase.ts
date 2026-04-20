@@ -38,9 +38,23 @@ if (!isConfigured) {
 }
 
 // Usamos um fallback que não quebra o createClient mas sinaliza o erro
+// Configuração do Cliente Supabase com Blindagem Anti-Loop
 export const supabase = createClient(
   isConfigured ? supabaseUrl : 'https://jhqnitdmdlbagnfwwrwx.supabase.co',
-  isConfigured ? supabaseAnonKey : 'placeholder-key'
+  isConfigured ? supabaseAnonKey : 'placeholder-key',
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage: window.localStorage,
+      storageKey: 'fatesa-auth-token',
+      flowType: 'pkce'
+    },
+    global: {
+      headers: { 'x-application-name': 'fatesa-portal' }
+    }
+  }
 )
 
 export const isSupabaseConfigured = isConfigured

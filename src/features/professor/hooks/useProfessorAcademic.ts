@@ -5,6 +5,31 @@ export const useProfessorAcademic = () => {
   const [academicReport, setAcademicReport] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const fetchAcademicReport = useCallback(async (isAdmin: boolean) => {
+    setLoading(true);
+    try {
+      let query = supabase
+        .from('respostas_aulas')
+        .select(`
+          id, 
+          nota, 
+          status, 
+          updated_at,
+          aulas:aula_id ( id, titulo, is_bloco_final, livros ( id, titulo ) ), 
+          users:aluno_id ( id, nome, email, tipo, ano_graduacao, nucleos ( id, nome ) )
+        `)
+        .not('nota', 'is', null)
+        .order('updated_at', { ascending: false });
+      
+      const { data } = await query;
+      if (data) setAcademicReport(data);
+    } catch (err) {
+      console.error('Error fetching academic report:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const fetchAcademicHistory = useCallback(async (studentIds: string[]) => {
     if (studentIds.length === 0) return;
     setLoading(true);
@@ -30,5 +55,5 @@ export const useProfessorAcademic = () => {
     }
   }, []);
 
-  return { academicReport, loading, fetchAcademicHistory };
+  return { academicReport, loading, fetchAcademicHistory, fetchAcademicReport };
 };

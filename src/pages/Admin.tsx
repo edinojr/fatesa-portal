@@ -93,6 +93,9 @@ const Admin = () => {
     showAddAdmin,
     setShowAddAdmin,
     toast,
+    showToast,
+    allNucleos,
+    handleDeleteSubmission,
     selectedCourse,
     setSelectedCourse,
     selectedBook,
@@ -110,7 +113,6 @@ const Admin = () => {
     setShowAddLesson,
     showAddContent,
     setShowAddContent,
-    allNucleos,
     editingItem,
     setEditingItem,
     editingQuiz,
@@ -136,7 +138,6 @@ const Admin = () => {
     confirmDelete,
     setConfirmDelete,
     fetchData,
-    showToast,
     handleFileUpload,
     handleBatchUpload,
     handleReorder,
@@ -654,8 +655,12 @@ const Admin = () => {
           />
         )}
 
-         {activeTab === 'academic' && (
-          <AcademicHistory data={academicReport} searchTerm={searchTerm} />
+          {activeTab === 'academic' && (
+          <AcademicHistory 
+            data={academicReport} 
+            searchTerm={searchTerm} 
+            onDelete={handleDeleteSubmission}
+          />
         )}
 
         {activeTab === 'finance' && (

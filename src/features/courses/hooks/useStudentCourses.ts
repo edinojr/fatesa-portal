@@ -23,11 +23,21 @@ export const useStudentCourses = (profile: any) => {
         nucleoIsento = !!nucData?.isento;
       }
 
-      // 2. Livros do Curso
-      const { data: courseBooks } = await supabase.from('livros').select('id, ordem').eq('curso_id', profile.curso_id).order('ordem');
+      // 2. Determinar curso_id de forma segura
+      const cursoId = (profile.curso_id && profile.curso_id !== 'null') ? profile.curso_id : null;
+
+      let courseBooksQuery = supabase.from('livros').select('id, ordem');
       
-      // 3. Liberações do Núcleo
-      const { data: releases } = await supabase.from('liberacoes_nucleo').select('item_id, item_type, created_at').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
+      if (cursoId) {
+        courseBooksQuery = courseBooksQuery.eq('curso_id', cursoId);
+      }
+      
+      const { data: courseBooks } = await courseBooksQuery.order('ordem');
+      
+      // 3. Liberações do Núcleo (seguro se nucleo_id for nulo)
+      const { data: releases } = profile.nucleo_id
+        ? await supabase.from('liberacoes_nucleo').select('item_id, item_type, created_at').eq('nucleo_id', profile.nucleo_id).eq('liberado', true)
+        : { data: [] };
        
       const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
       const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
@@ -36,7 +46,9 @@ export const useStudentCourses = (profile: any) => {
       // 4. Provas / Atividades do Professor
       const { data: exams } = await supabase.from('aulas').select('id, livro_id, is_bloco_final, tipo').or('tipo.eq.prova,is_bloco_final.eq.true');
 
-      const exemptStatus = profile.bolsista || isStaff || nucleoIsento;
+      const isPresencial = profile?.tipo === 'presencial';
+      const temAcessoDefinitivo = profile?.acesso_definitivo === true;
+      const exemptStatus = profile.bolsista || isStaff || nucleoIsento || isPresencial || temAcessoDefinitivo;
 
       // Cálculo de liberação (Pagamentos + Provas)
       let releasedCount = 1;
@@ -51,17 +63,27 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
-      // Módulo Vigente: O maior módulo liberado manualmente pelo professor
+      // Módulo Vigente: determina o menor e o maior módulo com base nas ordens reais do curso
+      const bookOrdens = (courseBooks || []).map(b => b.ordem || 1).sort((a, b) => a - b);
+      const minBookOrdem = bookOrdens[0] || 1; // Primeiro módulo do curso (menor ordem)
+
       let maxReleasedModuleOrdem = 0;
       if (courseBooks && releases) {
         courseBooks.forEach(b => {
-          if (releasedModulos.includes(b.id) && (b.ordem || 0) > maxReleasedModuleOrdem) {
+          const isModuleReleased = releasedModulos.includes(b.id);
+          const isExamReleased = releasedExamBookIds.has(b.id);
+          
+          if (isModuleReleased && (b.ordem || 0) > maxReleasedModuleOrdem) {
             maxReleasedModuleOrdem = b.ordem;
+          }
+          if (isExamReleased && (b.ordem || 0) + 1 > maxReleasedModuleOrdem) {
+            maxReleasedModuleOrdem = (b.ordem || 0) + 1;
           }
         });
       }
 
-      const pedagogicalLimit = maxReleasedModuleOrdem > 0 ? maxReleasedModuleOrdem : 1;
+      // Se nenhum módulo foi liberado pelo professor, o primeiro módulo do curso é o vigente
+      const pedagogicalLimit = maxReleasedModuleOrdem > 0 ? maxReleasedModuleOrdem : minBookOrdem;
 
       if (exams && releases) {
         exams.forEach(exam => {
@@ -72,21 +94,33 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
-
-
       if (exemptStatus) {
-        releasedCount = pedagogicalLimit; 
+        // Isentos e staff veem todos os módulos até o limite pedagógico
+        releasedCount = Math.max(minBookOrdem, pedagogicalLimit); 
       } else {
         const { data: payRecords } = await supabase.from('pagamentos').select('status').eq('user_id', profile.id).eq('status', 'pago');
         const paidCount = payRecords?.length || 0;
-        
-        // Exige tanto financeiro quanto pedagógico para liberar
-        releasedCount = Math.min(paidCount + 1, pedagogicalLimit);
+        // Sempre libera pelo menos o primeiro módulo (minBookOrdem)
+        releasedCount = Math.max(minBookOrdem, Math.min(minBookOrdem + paidCount, pedagogicalLimit));
       }
 
-      // 5. Progresso e Notas
-      const { data: resDataRaw } = await supabase.from('view_submissions_detailed').select('*').eq('student_id', profile.id);
-      const resData = (resDataRaw || []).map((r: any) => ({ ...r, id: r.submission_id }));
+      // 5. Progresso e Notas - query direta sem depender da view
+      const { data: resDataRaw } = await supabase
+        .from('respostas_aulas')
+        .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, livros:livro_id(id, titulo))')
+        .eq('aluno_id', profile.id);
+      
+      const resData = (resDataRaw || []).map((r: any) => ({
+        ...r,
+        submission_id: r.id,
+        lesson_id: r.aula_id,
+        lesson_title: r.aulas?.titulo,
+        lesson_type: r.aulas?.tipo,
+        is_bloco_final: r.aulas?.is_bloco_final,
+        book_id: r.aulas?.livros?.id,
+        book_title: r.aulas?.livros?.titulo,
+        submitted_at: r.created_at,
+      }));
       
       const { data: progData } = await supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id);
       const { data: exceptions } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id);
@@ -99,8 +133,11 @@ export const useStudentCourses = (profile: any) => {
       setAtividades(resData);
       setProgressoAulas(progData || []);
 
-      // 6. Cursos
-      const { data: allCourses } = await supabase.from('cursos').select('id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final))');
+      // 6. Cursos - filtra pelo curso vinculado se existir, caso contrário busca todos
+      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final))';
+      const { data: allCourses } = cursoId
+        ? await supabase.from('cursos').select(courseSelect).eq('id', cursoId)
+        : await supabase.from('cursos').select(courseSelect);
       
       if (allCourses) {
         const mappedCourses: Course[] = allCourses.map((c: any) => {
@@ -113,7 +150,10 @@ export const useStudentCourses = (profile: any) => {
               const isManualModuleRelease = releasedModulos.includes(l.id);
               const isReleased = (
                 isStaff || 
-                (isManualModuleRelease && (exemptStatus || bookOrdem <= releasedCount || bookOrdem === pedagogicalLimit))
+                isManualModuleRelease || 
+                bookOrdem <= releasedCount || 
+                bookOrdem === pedagogicalLimit ||
+                bookOrdem === 1 // Garantia absoluta para o módulo 1
               );
               const isCurrent = !isStaff && !exemptStatus && (bookOrdem === pedagogicalLimit);
 
@@ -139,7 +179,7 @@ export const useStudentCourses = (profile: any) => {
                     .map((a: any) => {
                     if (isStaff) return { ...a, lockedByProfessor: false };
                     
-                    const matchesNucleo = !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
+                    const matchesNucleo = isStaff || !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
                     if (!matchesNucleo) return { ...a, isHidden: true };
 
                     let lockedByProfessor = false;
@@ -151,13 +191,16 @@ export const useStudentCourses = (profile: any) => {
                     if (isRestrictedType) {
                       let isItemReleased = false;
 
-                      // Liberação manual para Provas ou Vídeos restritos
-                      isItemReleased = (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final) 
-                        ? (releasedVideos.includes(a.id) || releasedAtividades.includes(a.id) || (a.tipo === 'prova' && releasedExamBookIds.has(l.id)))
-                        : true;
+                      // Liberação manual para Provas, Vídeos ou Atividades restritas
+                      isItemReleased = (releasedVideos.includes(a.id) || releasedAtividades.includes(a.id));
                       
+                      // Caso especial: Provas V1 liberam o bloco de prova se o livro estiver liberado e houver qualquer liberação de atividade para o livro
+                      if (!isItemReleased && (a.tipo === 'prova' || !!a.is_bloco_final)) {
+                        isItemReleased = releasedExamBookIds.has(l.id);
+                      }
+
                       // Conteúdo padrão é desbloqueado se o módulo pai estiver liberado (ou manual se restrito)
-                      lockedByProfessor = !isReleased && !isItemReleased;
+                      lockedByProfessor = !isReleased || (!isItemReleased && isRestrictedType);
                     }
 
                     let isHiddenItem = false;
@@ -189,7 +232,7 @@ export const useStudentCourses = (profile: any) => {
                 };
             }).filter(Boolean)
           };
-        }).filter((c: any) => c.livros.length > 0);
+        }).filter((c: any) => c.livros.length > 0 || isStaff);
         setCourses(mappedCourses);
       }
     } catch (err) {
@@ -202,7 +245,8 @@ export const useStudentCourses = (profile: any) => {
     profile?.curso_id, 
     profile?.nucleo_id, 
     profile?.tipo, 
-    profile?.bolsista, 
+    profile?.bolsista,
+    profile?.acesso_definitivo,
     profile?.caminhos_acesso, 
     profile?.created_at
   ]);

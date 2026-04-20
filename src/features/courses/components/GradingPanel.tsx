@@ -47,6 +47,62 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   const [selectedNucleoFilter, setSelectedNucleoFilter] = React.useState<string>('todos');
   const [activeStatusFilter, setActiveStatusFilter] = React.useState<'pendente' | 'aprovado' | 'reprovado'>('pendente');
 
+  const renderSubmissionCard = (sub: any) => (
+    <div key={sub.submission_id} style={{ 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      alignItems: 'center', 
+      padding: '1.25rem', 
+      background: 'rgba(255,255,255,0.02)', 
+      borderRadius: '16px', 
+      border: '1px solid rgba(255,255,255,0.05)',
+      transition: 'transform 0.2s',
+      cursor: 'default'
+    }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <div style={{ padding: '4px 8px', borderRadius: '6px', background: !sub.lesson_id ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.05)', fontSize: '0.65rem', fontWeight: 700, color: !sub.lesson_id ? 'var(--error)' : 'var(--text-muted)' }}>
+            {!sub.lesson_id ? '⚠️ CONTEÚDO REMOVIDO' : (activeStatusFilter === 'pendente' ? 'Pendente' : (activeStatusFilter === 'aprovado' ? 'Aprovado' : 'Reprovado'))}
+          </div>
+          <h4 style={{ margin: 0, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: !sub.lesson_id ? 'var(--error)' : 'inherit' }}>
+            {sub.lesson_title || sub.aulas?.titulo || 'Aula Inexistente'}
+          </h4>
+          <span style={{ fontSize: '0.7rem', padding: '2px 6px', background: 'rgba(var(--primary-rgb), 0.15)', color: 'var(--primary)', borderRadius: '4px', fontWeight: 800 }}>V{sub.tentativas || 1}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+          <Users size={14} color="var(--primary)" />
+          <strong style={{ color: 'var(--text)' }}>{sub.student_name || sub.users?.nome}</strong>
+        </div>
+        <p style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)' }}>
+          <AlertCircle size={10} /> {sub.submitted_at ? new Date(sub.submitted_at).toLocaleString() : 'N/A'}
+          {activeStatusFilter !== 'pendente' && (
+            <span style={{ marginLeft: '1rem', color: activeStatusFilter === 'aprovado' ? 'var(--success)' : 'var(--error)', fontWeight: 800 }}>
+              • NOTA: {sub.nota?.toFixed(1) || '0.0'}
+            </span>
+          )}
+        </p>
+      </div>
+      <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
+        <button 
+          className="btn btn-primary" 
+          style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem', background: activeStatusFilter !== 'pendente' ? 'rgba(255,255,255,0.1)' : 'var(--primary)', color: '#fff' }} 
+          onClick={() => handleSelectSubmission(sub)}
+        >
+          {activeStatusFilter === 'pendente' ? 'Corrigir' : 'Revisar'}
+        </button>
+        <button 
+          className="btn btn-icon" 
+          style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--error)', width: '38px', height: '38px' }}
+          onClick={() => handleDeleteSubmission(sub.submission_id)}
+          disabled={deleting === sub.submission_id}
+          title="Excluir submissão"
+        >
+          {deleting === sub.submission_id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
       {!selectedSubmission ? (
@@ -69,7 +125,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                (s as any).lesson_type === 'prova' || 
                (s as any).aulas?.is_bloco_final === true || 
                (s as any).is_bloco_final === true ||
-               (!(s as any).lesson_id && s.submission_id) // Include orphans
+               (!(s as any).lesson_id && s.submission_id)
              );
              if (professorNucleos.length === 0 || allExamsStats.length === 0) return null;
              
@@ -163,12 +219,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {(() => {
-              const finalExams = submissions.filter(s => {
-                const isOrphan = !(s as any).lesson_id && s.submission_id;
-                const isProva = (s as any).lesson_type === 'prova' || (s as any).aulas?.tipo === 'prova' || (s as any).is_bloco_final === true || (s as any).aulas?.is_bloco_final === true;
-                
-                if (!isProva && !isOrphan) return false;
-
+              const filteredSubmissions = submissions.filter(s => {
                 if (selectedNucleoFilter !== 'todos') {
                   const nName = s.nucleus_name || (s.users as any)?.nucleos?.nome || 'Sem Polo';
                   if (nName !== selectedNucleoFilter) return false;
@@ -183,19 +234,30 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 return false;
               });
 
-              if (finalExams.length === 0) {
+              if (filteredSubmissions.length === 0) {
                 return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Nenhum resultado de aluno {activeStatusFilter} no filtro atual.</p>;
               }
 
-              // Agrupar por Núcleo
-              const grouped = finalExams.reduce((acc: any, sub: any) => {
+              // 1. Group by Nucleo
+              const groupedByNucleo = filteredSubmissions.reduce((acc: any, sub: any) => {
                 const nucName = sub.nucleus_name || 'Sem Polo';
-                if (!acc[nucName]) acc[nucName] = [];
-                acc[nucName].push(sub);
+                if (!acc[nucName]) acc[nucName] = {};
+                
+                // 2. Group by Modulo (Book)
+                const modName = sub.book_title || 'Módulo Geral';
+                if (!acc[nucName][modName]) acc[nucName][modName] = { atividades: [], provas: [] };
+                
+                // 3. Separate by Type
+                const isProva = (sub as any).lesson_type === 'prova' || (sub as any).aulas?.tipo === 'prova' || (sub as any).is_bloco_final === true || (sub as any).aulas?.is_bloco_final === true;
+                if (isProva) {
+                  acc[nucName][modName].provas.push(sub);
+                } else {
+                  acc[nucName][modName].atividades.push(sub);
+                }
+                
                 return acc;
-              }, {} as Record<string, typeof finalExams>);
+              }, {} as Record<string, Record<string, { atividades: any[], provas: any[] }>>);
 
-              // Função para gerar uma cor baseada no nome
               const getNucleoColor = (name: string) => {
                 const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
                 let hash = 0;
@@ -205,94 +267,62 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 return colors[Math.abs(hash) % colors.length];
               };
 
-              return Object.keys(grouped).sort().map(nuc => {
+              return Object.keys(groupedByNucleo).sort().map(nuc => {
                 const color = getNucleoColor(nuc);
+                const modulos = groupedByNucleo[nuc];
+                
                 return (
-                  <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(255,255,255,0.01)', padding: '1.5rem', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+                    {/* NUCLEO HEADER */}
                     <div style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '1rem', 
-                      padding: '0.75rem 1.25rem', 
+                      padding: '1rem 1.5rem', 
                       background: `${color}15`, 
-                      borderRadius: '12px', 
+                      borderRadius: '16px', 
                       borderLeft: `4px solid ${color}`,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                     }}>
-                      <div style={{ 
-                        width: '32px', 
-                        height: '32px', 
-                        borderRadius: '8px', 
-                        background: color, 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        color: '#fff'
-                      }}>
-                        <MapPin size={18} />
+                      <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                        <MapPin size={20} />
                       </div>
                       <div>
-                        <span style={{ fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color }}>{nuc}</span>
-                        <div style={{ fontSize: '0.7rem', opacity: 0.6, marginTop: '-2px' }}>{grouped[nuc].length} submissão(ões)</div>
+                        <span style={{ fontWeight: 900, fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '1px', color }}>{nuc}</span>
+                        <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Núcleo de Ensino</div>
                       </div>
                     </div>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
-                      {grouped[nuc].map((sub: any, idx: number) => (
-                        <div key={sub.submission_id || `sub-${idx}`} style={{ 
-                          display: 'flex', 
-                          justifyContent: 'space-between', 
-                          alignItems: 'center', 
-                          padding: '1.25rem', 
-                          background: 'rgba(255,255,255,0.02)', 
-                          borderRadius: '16px', 
-                          border: '1px solid rgba(255,255,255,0.05)',
-                          transition: 'transform 0.2s',
-                          cursor: 'default'
-                        }}>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                              <div style={{ padding: '4px 8px', borderRadius: '6px', background: !sub.lesson_id ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.05)', fontSize: '0.65rem', fontWeight: 700, color: !sub.lesson_id ? 'var(--error)' : 'var(--text-muted)' }}>
-                                {!sub.lesson_id ? '⚠️ CONTEÚDO REMOVIDO' : (activeStatusFilter === 'pendente' ? 'MÓDULO / PENDENTE' : (activeStatusFilter === 'aprovado' ? 'MÓDULO / APROVADO' : 'MÓDULO / REPROVADO'))}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingLeft: '1rem' }}>
+                      {Object.keys(modulos).sort().map(mod => (
+                        <div key={mod} style={{ borderLeft: '2px dashed rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
+                          <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <BookOpen size={18} /> {mod}
+                          </h4>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                            {/* ATIVIDADES SECTION */}
+                            {modulos[mod].atividades.length > 0 && (
+                              <div>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  <ClipboardList size={14} /> Atividades ({modulos[mod].atividades.length})
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
+                                  {modulos[mod].atividades.map((sub: any) => renderSubmissionCard(sub))}
+                                </div>
                               </div>
-                              <h4 style={{ margin: 0, fontSize: '1rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: !sub.lesson_id ? 'var(--error)' : 'inherit' }}>
-                                {sub.lesson_title || sub.aulas?.titulo || 'Aula Inexistente no Sistema'}
-                              </h4>
-                              <span style={{ fontSize: '0.7rem', padding: '2px 6px', background: 'rgba(var(--primary-rgb), 0.15)', color: 'var(--primary)', borderRadius: '4px', fontWeight: 800 }}>V{sub.tentativas || 1}</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                              <Users size={14} color="var(--primary)" />
-                              <strong style={{ color: 'var(--text)' }}>{sub.student_name || sub.users?.nome}</strong>
-                            </div>
-                            <p style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)' }}>
-                              <AlertCircle size={10} /> Submetido em: {sub.submitted_at ? new Date(sub.submitted_at).toLocaleString() : 'N/A'}
-                              {activeStatusFilter !== 'pendente' && (
-                                <span style={{ marginLeft: '1rem', color: activeStatusFilter === 'aprovado' ? 'var(--success)' : 'var(--error)', fontWeight: 800 }}>
-                                  • NOTA GRAVADA: {sub.nota?.toFixed(1) || '0.0'}
-                                </span>
-                              )}
-                              {sub.status === 'pendente' && (sub.nota ?? 0) > 0 && (
-                                <span style={{ marginLeft: '1rem', color: 'var(--warning)', fontWeight: 800 }}>⚠️ RETORNADA PARA REVISÃO</span>
-                              )}
-                            </p>
-                          </div>
-                          <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
-                            <button 
-                              className="btn btn-primary" 
-                              style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem', background: activeStatusFilter !== 'pendente' ? 'rgba(255,255,255,0.1)' : 'var(--primary)', color: '#fff' }} 
-                              onClick={() => handleSelectSubmission(sub)}
-                            >
-                              {activeStatusFilter === 'pendente' ? 'Corrigir' : 'Revisar / Ver Respostas'}
-                            </button>
-                            <button 
-                              className="btn btn-icon" 
-                              style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--error)', width: '38px', height: '38px' }}
-                              onClick={() => handleDeleteSubmission(sub.submission_id)}
-                              disabled={deleting === sub.submission_id}
-                              title="Excluir submissão"
-                            >
-                              {deleting === sub.submission_id ? <Loader2 className="spinner" size={16} /> : <Trash2 size={16} />}
-                            </button>
+                            )}
+
+                            {/* PROVAS SECTION */}
+                            {modulos[mod].provas.length > 0 && (
+                              <div>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  <ShieldCheck size={14} /> Provas ({modulos[mod].provas.length})
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
+                                  {modulos[mod].provas.map((sub: any) => renderSubmissionCard(sub))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -302,8 +332,6 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               });
             })()}
           </div>
-
-
         </div>
       ) : (
         <div className="data-card" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -332,218 +360,119 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 <div className="admin-badge status-pendente" style={{ background: selectedSubmission.tentativas > 1 ? 'var(--warning-dark)' : 'rgba(var(--primary-rgb), 0.1)' }}>
                   {selectedSubmission.tentativas || 1}ª Tentativa (V{selectedSubmission.tentativas || 1})
                 </div>
-                {selectedSubmission.primeira_correcao_at && (
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                    Início da Recuperação: {new Date(selectedSubmission.primeira_correcao_at).toLocaleDateString()}
-                  </p>
-                )}
               </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '3rem' }}>
-            {Array.isArray(selectedSubmission.aulas?.questionario) && selectedSubmission.aulas.questionario.map((q: any, idx: number) => {
-              const studentAnswer = selectedSubmission.respostas?.[q.id || idx];
-              let displayAnswer: React.ReactNode = <em style={{ color: 'var(--text-muted)' }}>Sem resposta</em>;
+            {/* 1. Render questions from the Lesson Questionnaire */}
+            {Array.isArray(selectedSubmission.aulas?.questionario) ? (
+              selectedSubmission.aulas.questionario.map((q: any, idx: number) => {
+                const studentAnswer = selectedSubmission.respostas?.[q.id || idx];
+                let displayAnswer: React.ReactNode = <em style={{ color: 'var(--text-muted)' }}>Sem resposta</em>;
 
-              if (studentAnswer !== undefined && studentAnswer !== null && studentAnswer !== '') {
-                if (q.type === 'multiple_choice' || !q.type) {
-                  displayAnswer = <span><strong>Opção {parseInt(studentAnswer) + 1} selecionada:</strong> {q.options?.[studentAnswer]}</span>;
-                } else if (q.type === 'true_false') {
-                  displayAnswer = <span>Marcou como: <strong style={{ color: studentAnswer ? 'var(--success)' : 'var(--error)' }}>{studentAnswer ? 'Verdadeiro' : 'Falso'}</strong></span>;
-                } else if (q.type === 'matching') {
-                  const answerMap = studentAnswer as Record<string, string>;
-                  displayAnswer = (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                      <div style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '1px' }}>Associações Efetuadas:</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '1rem', alignItems: 'center' }}>
-                        {q.matchingPairs?.map((pair: any, pIdx: number) => {
-                          const selectedRightIdx = answerMap[pIdx];
-                          const idxNum = parseInt(selectedRightIdx);
-                          const selectedRight = (!isNaN(idxNum) && q.matchingPairs?.[idxNum]) 
-                            ? q.matchingPairs[idxNum].right 
-                            : (selectedRightIdx && typeof selectedRightIdx === 'string' && selectedRightIdx !== '' ? selectedRightIdx : '---');
-                            const isCorrect = String(answerMap[pIdx]) === String(pIdx);
-                            return (
-                              <React.Fragment key={pIdx}>
-                                <div style={{ 
-                                  padding: '0.8rem 1.2rem', 
-                                  background: 'rgba(255,255,255,0.03)', 
-                                  borderRadius: '12px', 
-                                  fontSize: '0.9rem', 
-                                  textAlign: 'right', 
-                                  fontWeight: 600, 
-                                  border: isCorrect ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)' 
-                                }}>
-                                  {pair.left}
-                                </div>
-                                <div style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', opacity: 0.8 }}>
-                                  {isCorrect ? <CheckCircle size={18} /> : <span>&rarr;</span>}
-                                </div>
-                                <div style={{ 
-                                  padding: '0.8rem 1.2rem', 
-                                  background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
-                                  borderRadius: '12px', 
-                                  fontSize: '0.9rem', 
-                                  color: '#fff', 
-                                  border: isCorrect ? '1px solid var(--success)' : '1px solid var(--error)', 
-                                  fontWeight: 600,
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  alignItems: 'center',
-                                  gap: '0.5rem'
-                                }}>
-                                  {selectedRight}
-                                  {!isCorrect && <span title={`Gabarito: ${pair.right}`} style={{ display: 'flex' }}><CheckCircle size={14} color="var(--success)" /></span>}
-                                </div>
-                              </React.Fragment>
-                            );
-                        })}
+                if (studentAnswer !== undefined && studentAnswer !== null && studentAnswer !== '') {
+                  if (q.type === 'multiple_choice' || !q.type) {
+                    displayAnswer = <span><strong>Opção {parseInt(studentAnswer) + 1} selecionada:</strong> {q.options?.[studentAnswer]}</span>;
+                  } else if (q.type === 'true_false') {
+                    displayAnswer = <span>Marcou como: <strong style={{ color: studentAnswer ? 'var(--success)' : 'var(--error)' }}>{studentAnswer ? 'Verdadeiro' : 'Falso'}</strong></span>;
+                  } else if (q.type === 'matching') {
+                    const answerMap = studentAnswer as Record<string, string>;
+                    displayAnswer = (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                        <div style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '1px' }}>Associações Efetuadas:</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '1rem', alignItems: 'center' }}>
+                          {q.matchingPairs?.map((pair: any, pIdx: number) => {
+                            const selectedRightIdx = answerMap[pIdx];
+                            const idxNum = parseInt(selectedRightIdx);
+                            const selectedRight = (!isNaN(idxNum) && q.matchingPairs?.[idxNum]) 
+                              ? q.matchingPairs[idxNum].right 
+                              : (selectedRightIdx && typeof selectedRightIdx === 'string' && selectedRightIdx !== '' ? selectedRightIdx : '---');
+                              const isCorrect = String(answerMap[pIdx]) === String(pIdx);
+                              return (
+                                <React.Fragment key={pIdx}>
+                                  <div style={{ padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', fontSize: '0.9rem', textAlign: 'right', fontWeight: 600, border: isCorrect ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)' }}>{pair.left}</div>
+                                  <div style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', opacity: 0.8 }}>{isCorrect ? <CheckCircle size={18} /> : <span>&rarr;</span>}</div>
+                                  <div style={{ padding: '0.8rem 1.2rem', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', border: isCorrect ? '1px solid var(--success)' : '1px solid var(--error)', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>{selectedRight}</div>
+                                </React.Fragment>
+                              );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
-                } else if (q.type === 'discursive') {
-                  displayAnswer = <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{studentAnswer}</div>;
+                    );
+                  } else if (q.type === 'discursive') {
+                    displayAnswer = <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{studentAnswer}</div>;
+                  }
                 }
-              }
 
-              return (
-                <div key={q.id || idx} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '20px' }}>
-                  <h4 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: 700 }}>
-                    <span style={{ opacity: 0.3, marginRight: '0.5rem' }}>{idx + 1}.</span> {q.text}
-                  </h4>
-                  
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {/* Exibição do Gabarito para o Professor */}
-                    <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderLeft: '4px solid var(--primary)', borderRadius: '12px', fontSize: '0.85rem' }}>
-                      <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        Gabarito Correto
-                      </div>
-                      <div style={{ color: 'rgba(255,255,255,0.9)', lineHeight: '1.5' }}>
-                        {q.type === 'multiple_choice' || !q.type ? (
-                          q.options?.[q.correct] ? (
-                            <span><strong style={{color: 'var(--primary)'}}>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>
-                          ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
-                        ) : q.type === 'true_false' ? (
-                          q.isTrue !== undefined ? (
+                return (
+                  <div key={q.id || idx} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '20px' }}>
+                    <h4 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: 700 }}>
+                      <span style={{ opacity: 0.3, marginRight: '0.5rem' }}>{idx + 1}.</span> {q.text}
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderLeft: '4px solid var(--primary)', borderRadius: '12px', fontSize: '0.85rem' }}>
+                        <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px' }}>Gabarito Correto</div>
+                        <div style={{ color: 'rgba(255,255,255,0.9)', lineHeight: '1.5' }}>
+                          {q.type === 'multiple_choice' || !q.type ? (
+                            q.options?.[q.correct] ? (<span><strong>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>) : <span>Não definido</span>
+                          ) : q.type === 'true_false' ? (
                             <strong style={{color: q.isTrue ? 'var(--success)' : 'var(--error)'}}>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
-                          ) : <span style={{ opacity: 0.5 }}>Gabarito não definido</span>
-                        ) : q.type === 'matching' ? (
-                          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
-                            {q.matchingPairs?.map((pair: any, pIdx: number) => (
-                              <React.Fragment key={pIdx}>
-                                <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
-                                <div style={{ color: 'var(--primary)', opacity: 0.5 }}><ChevronRight size={14} /></div>
-                                <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', fontSize: '0.8rem', color: '#fff' }}>{pair.right}</div>
-                              </React.Fragment>
-                            ))}
-                          </div>
-                        ) : q.type === 'discursive' ? (
-                          q.expectedAnswer ? (
-                            <p style={{ margin: 0 }}>{q.expectedAnswer}</p>
-                          ) : <span style={{ opacity: 0.5 }}>Palavras-chave não definidas para esta questão. Avaliação manual necessária.</span>
-                        ) : null}
+                          ) : q.type === 'matching' ? (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '0.5rem', alignItems: 'center' }}>
+                              {q.matchingPairs?.map((pair: any, pIdx: number) => (
+                                <React.Fragment key={pIdx}>
+                                  <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
+                                  <div style={{ color: 'var(--primary)', opacity: 0.5 }}><ChevronRight size={14} /></div>
+                                  <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', fontSize: '0.8rem', color: '#fff' }}>{pair.right}</div>
+                                </React.Fragment>
+                              ))}
+                            </div>
+                          ) : <p>{q.expectedAnswer || 'Avaliação manual necessária.'}</p>}
+                        </div>
                       </div>
-                    </div>
-
-                    <div style={{ padding: '1.25rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '14px', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
-                      <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px' }}>Resposta do Aluno:</div>
-                      <div style={{ fontSize: '1.05rem', color: '#fff' }}>{displayAnswer}</div>
-                      
-                      {/* Seção de Correção Manual e Justificativa */}
-                      {((q.type === 'discursive') || (selectedSubmission?.lesson_type === 'prova' || selectedSubmission?.aulas?.tipo === 'prova' || selectedSubmission?.is_bloco_final || selectedSubmission?.aulas?.is_bloco_final)) && (
+                      <div style={{ padding: '1.25rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '14px', border: '1px solid rgba(16, 185, 129, 0.1)' }}>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', marginBottom: '0.6rem' }}>Resposta do Aluno:</div>
+                        <div style={{ fontSize: '1.05rem', color: '#fff' }}>{displayAnswer}</div>
                         <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
                           <div style={{ display: 'flex', gap: '0.75rem' }}>
-                            <button 
-                              className="btn" 
-                              style={{ 
-                                width: 'auto', 
-                                padding: '0.4rem 1rem', 
-                                fontSize: '0.75rem', 
-                                background: questionEvaluations[q.id || idx] === true ? 'var(--success)' : 'rgba(255,255,255,0.05)',
-                                color: '#fff',
-                                border: 'none',
-                                opacity: questionEvaluations[q.id || idx] === true ? 1 : 0.6
-                              }}
-                              onClick={() => toggleEvaluation(q.id || idx, true)}
-                            >
-                              {questionEvaluations[q.id || idx] === true ? '✓ Correta' : 'Certa'}
-                            </button>
-                            <button 
-                              className="btn" 
-                              style={{ 
-                                width: 'auto', 
-                                padding: '0.4rem 1rem', 
-                                fontSize: '0.75rem', 
-                                background: questionEvaluations[q.id || idx] === false ? 'var(--error)' : 'rgba(255,255,255,0.05)',
-                                color: '#fff',
-                                border: 'none',
-                                opacity: questionEvaluations[q.id || idx] === false ? 1 : 0.6
-                              }}
-                              onClick={() => toggleEvaluation(q.id || idx, false)}
-                            >
-                              {questionEvaluations[q.id || idx] === false ? '✗ Incorreta' : 'Errada'}
-                            </button>
+                            <button className="btn" style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.75rem', background: questionEvaluations[q.id || idx] === true ? 'var(--success)' : 'rgba(255,255,255,0.05)' }} onClick={() => toggleEvaluation(q.id || idx, true)}>✓ Correta</button>
+                            <button className="btn" style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.75rem', background: questionEvaluations[q.id || idx] === false ? 'var(--error)' : 'rgba(255,255,255,0.05)' }} onClick={() => toggleEvaluation(q.id || idx, false)}>✗ Incorreta</button>
                           </div>
-
                           <div style={{ marginTop: '1rem' }}>
-                            <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'block', fontWeight: 700 }}>Justificativa / Comentário (Opcional)</label>
-                            <textarea 
-                              className="form-control" 
-                              rows={2} 
-                              value={questionComments[q.id || idx] || ''} 
-                              onChange={(e) => setQuestionComments(p => ({ ...p, [q.id || idx]: e.target.value }))}
-                              placeholder="Justificativa para esta correção..."
-                              style={{ background: 'rgba(255,255,255,0.03)', fontSize: '0.85rem' }}
-                            />
+                            <textarea className="form-control" rows={2} value={questionComments[q.id || idx] || ''} onChange={(e) => setQuestionComments(p => ({ ...p, [q.id || idx]: e.target.value }))} placeholder="Justificativa para esta correção..." style={{ background: 'rgba(255,255,255,0.03)', fontSize: '0.85rem' }} />
                           </div>
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
+                );
+              })
+            ) : (
+              /* 2. Fallback: If no questionnaire is found, show raw data so teacher can still grade */
+              <div style={{ background: 'rgba(234, 179, 8, 0.05)', border: '1px solid rgba(234, 179, 8, 0.2)', padding: '1.5rem', borderRadius: '20px' }}>
+                <h4 style={{ color: '#eab308', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><AlertCircle size={18} /> Visualização de Dados Brutos</h4>
+                <div style={{ background: '#000', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', maxHeight: '400px', overflowY: 'auto' }}>
+                  {selectedSubmission.respostas ? Object.entries(selectedSubmission.respostas).map(([key, val]: [string, any], i) => (
+                    <div key={i} style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--primary)', fontWeight: 800 }}>Questão/ID {key}:</div>
+                      <div style={{ fontSize: '1rem', color: '#fff', whiteSpace: 'pre-wrap' }}>{typeof val === 'object' ? JSON.stringify(val, null, 2) : String(val)}</div>
+                    </div>
+                  )) : <p>Nenhuma resposta encontrada.</p>}
                 </div>
-              )
-            })}
+              </div>
+            )}
           </div>
 
           <div style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid var(--success)', padding: '2rem', borderRadius: '16px', textAlign: 'center' }}>
             <h3 style={{ marginBottom: '1rem', color: 'var(--success)' }}>Resultado Final (0 a 10)</h3>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
-              <input 
-                type="number" 
-                min="0" 
-                max="10" 
-                step="0.1" 
-                className="form-control" 
-                style={{ fontSize: '2rem', width: '120px', textAlign: 'center', padding: '1rem', background: '#000' }} 
-                value={gradeInput}
-                onChange={e => setGradeInput(e.target.value)}
-                placeholder="Ex: 8.5"
-              />
-            </div>
-            
+            <input type="number" min="0" max="10" step="0.1" className="form-control" style={{ fontSize: '2rem', width: '120px', textAlign: 'center', margin: '0 auto', background: '#000' }} value={gradeInput} onChange={e => setGradeInput(e.target.value)} placeholder="Ex: 8.5" />
             <div style={{ marginTop: '2rem', textAlign: 'left' }}>
-              <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 700, color: 'var(--success)', fontSize: '0.9rem', textTransform: 'uppercase' }}>
-                Avaliação / Feedback (Obrigatório)
-              </label>
-              <textarea 
-                className="form-control" 
-                rows={4} 
-                style={{ background: '#000', borderRadius: '12px', border: '1px solid var(--success)', resize: 'vertical' }}
-                value={avaliacaoComentario}
-                onChange={e => setAvaliacaoComentario(e.target.value)}
-                placeholder="Escreva sua avaliação detalhada sobre a prova do aluno..."
-                required
-              ></textarea>
+              <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 700, color: 'var(--success)' }}>Avaliação / Feedback (Obrigatório)</label>
+              <textarea className="form-control" rows={4} style={{ background: '#000' }} value={avaliacaoComentario} onChange={e => setAvaliacaoComentario(e.target.value)} placeholder="Escreva sua avaliação detalhada..." required />
             </div>
-
             <div style={{ marginTop: '2rem' }}>
-              <button 
-                className="btn btn-primary" 
-                style={{ width: 'auto', padding: '1rem 3rem' }} 
-                disabled={savingGrade || gradeInput === '' || !avaliacaoComentario.trim()} 
-                onClick={handleSaveGrade}
-              >
+              <button className="btn btn-primary" style={{ width: 'auto', padding: '1rem 3rem' }} disabled={savingGrade || !gradeInput || !avaliacaoComentario.trim()} onClick={handleSaveGrade}>
                 {savingGrade ? <Loader2 className="spinner" /> : 'Salvar Nota e Finalizar'}
               </button>
             </div>
@@ -556,89 +485,33 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
         <div className="modal-overlay" onClick={() => setShowGabaritosModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '800px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>📖 Banco de Gabaritos</h2>
-              <button className="btn-icon" onClick={() => setShowGabaritosModal(false)}>
-                <span style={{ fontSize: '1.5rem', lineHeight: 1 }}>&times;</span>
-              </button>
+              <h2 style={{ margin: 0 }}>📖 Banco de Gabaritos</h2>
+              <button className="btn-icon" onClick={() => setShowGabaritosModal(false)}>&times;</button>
             </div>
-            
-            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-              Consulte as respostas esperadas para as atividades e provas deste portal. Selecione um módulo abaixo:
-            </p>
-
-            {courses.length === 0 && <p style={{ color: 'var(--text-muted)' }}>Nenhum conteúdo carregado.</p>}
-            
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               {courses.map(c => (
                 <div key={c.id}>
-                  <h3 style={{ fontSize: '1.2rem', color: 'var(--primary)', marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                    {c.nome}
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {c.livros?.map((l: any) => {
-                      const avaliacoes = (l.aulas || []).filter((a: any) => (a.tipo === 'atividade' || a.tipo === 'prova') && a.questionario?.length > 0);
-                      if (avaliacoes.length === 0) return null;
-                      
-                      return (
-                        <div key={l.id} style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                          <h4 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Módulo: {l.titulo}</h4>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {avaliacoes.map((av: any) => (
-                              <details key={av.id} style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px' }}>
-                                <summary style={{ cursor: 'pointer', fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                  <CheckCircle size={16} color="var(--success)" /> {av.titulo} ({av.tipo === 'prova' ? 'Prova' : 'Atividade'})
-                                </summary>
-                                <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                  {av.questionario.map((q: any, idx: number) => (
-                                    <div key={idx} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', borderLeft: '3px solid var(--primary)' }}>
-                                      <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.75rem', color: 'rgba(255,255,255,0.9)' }}>
-                                        <span style={{ opacity: 0.5, marginRight: '0.5rem' }}>{idx + 1}.</span> {q.text}
-                                      </div>
-                                      
-                                      <div style={{ padding: '0.75rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '6px', fontSize: '0.85rem' }}>
-                                        <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-                                          Gabarito:
-                                        </div>
-                                        {q.type === 'multiple_choice' || !q.type ? (
-                                          q.options?.[q.correct] ? (
-                                            <span><strong style={{color: 'var(--primary)'}}>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>
-                                          ) : <span style={{ opacity: 0.5 }}>Não definido</span>
-                                        ) : q.type === 'true_false' ? (
-                                          q.isTrue !== undefined ? (
-                                            <strong style={{color: q.isTrue ? 'var(--success)' : 'var(--error)'}}>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
-                                          ) : <span style={{ opacity: 0.5 }}>Não definido</span>
-                                        ) : q.type === 'matching' ? (
-                                          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, 1fr) auto minmax(100px, 1fr)', gap: '0.5rem', alignItems: 'center' }}>
-                                            {q.matchingPairs?.map((pair: any, pIdx: number) => (
-                                              <React.Fragment key={pIdx}>
-                                                <div style={{ textAlign: 'right', fontWeight: 600 }}>{pair.left}</div>
-                                                <div style={{ color: 'var(--primary)', opacity: 0.5 }}>&rarr;</div>
-                                                <div style={{ color: 'var(--success)' }}>{pair.right}</div>
-                                              </React.Fragment>
-                                            ))}
-                                          </div>
-                                        ) : q.type === 'discursive' ? (
-                                          <p style={{ margin: 0 }}>{q.expectedAnswer || <span style={{ opacity: 0.5 }}>Sem gabarito sugerido. Avaliação manual.</span>}</p>
-                                        ) : null}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </details>
+                  <h3 style={{ fontSize: '1.2rem', color: 'var(--primary)', marginBottom: '1rem' }}>{c.nome}</h3>
+                  {c.livros?.map((l: any) => (
+                    <div key={l.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', marginBottom: '1rem' }}>
+                      <h4 style={{ fontSize: '1rem' }}>{l.titulo}</h4>
+                      {(l.aulas || []).filter((a: any) => a.questionario?.length > 0).map((av: any) => (
+                        <details key={av.id} style={{ marginTop: '0.5rem' }}>
+                          <summary style={{ cursor: 'pointer' }}>{av.titulo}</summary>
+                          <div style={{ padding: '1rem' }}>
+                            {av.questionario.map((q: any, i: number) => (
+                              <div key={i} style={{ marginBottom: '1rem', borderLeft: '2px solid var(--primary)', paddingLeft: '1rem' }}>
+                                <p><strong>{i+1}. {q.text}</strong></p>
+                                <p style={{ color: 'var(--success)' }}>Gabarito: {q.type === 'multiple_choice' ? q.options[q.correct] : q.type === 'true_false' ? (q.isTrue ? 'V' : 'F') : q.expectedAnswer}</p>
+                              </div>
                             ))}
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        </details>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               ))}
-            </div>
-
-            <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-              <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1.5rem' }} onClick={() => setShowGabaritosModal(false)}>
-                Fechar
-              </button>
             </div>
           </div>
         </div>

@@ -27,8 +27,12 @@ export const useFinanceControl = (userProfile: any) => {
       const extensionDate = userProfile?.extensao_pagamento_ate;
       
       const isUnderExtension = extensionDate && todayStr <= extensionDate && day <= 15;
+      
+      const isPresencial = userProfile?.tipo === 'presencial';
+      const isStaff = ['admin', 'professor', 'suporte'].includes(userProfile?.tipo || '') || (userProfile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+      const isExempt = userProfile?.bolsista || isStaff || isPresencial;
 
-      if (hasOpenPayment) {
+      if (hasOpenPayment && !isExempt) {
         if (day > 12 && !isUnderExtension) {
           setIsBlockedDueToPayment(true);
         } else if (day >= 10 || (day > 12 && isUnderExtension)) {

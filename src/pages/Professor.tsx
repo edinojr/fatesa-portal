@@ -318,12 +318,6 @@ const Professor = () => {
                       <h3>Lista de Chamada</h3>
                       <p>Chamada diária separada por núcleo de ensino.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('students')}>
-                      <div className="icon-wrapper"><ShieldCheck size={32} /></div>
-                      <h3>Aceitação de Alunos</h3>
-                      <p>Confirme e autorize a entrada de novos alunos no núcleo.</p>
-                    </div>
                   </>
                 )}
 
@@ -357,7 +351,7 @@ const Professor = () => {
               </div>
             )}
 
-            {activeTab === 'nucleos' && <NucleosPanel userRole="professor" />}
+            {activeTab === 'nucleos' && <NucleosPanel userRole={profile?.tipo} />}
 
             {activeTab === 'students' && (
               <StudentsManagement 
@@ -393,7 +387,11 @@ const Professor = () => {
             )}
 
             {activeTab === 'academic' && (
-            <AcademicHistory data={academicReport} searchTerm={searchTerm} />
+            <AcademicHistory 
+              data={academicReport} 
+              searchTerm={searchTerm} 
+              onDelete={handleDeleteSubmission}
+            />
           )}
 
           {activeTab === 'grading' && (

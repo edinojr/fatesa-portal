@@ -228,6 +228,21 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
     }
   };
 
+  const handleDeleteSubmission = async (submissionId: string) => {
+    if (!window.confirm('Excluir esta atividade permanentemente? O aluno poderá refazê-la.')) return;
+    setActionLoading(submissionId);
+    try {
+      const { error } = await supabase.from('respostas_aulas').delete().eq('id', submissionId);
+      if (error) throw error;
+      showToast('Atividade excluída com sucesso.');
+      fetchData();
+    } catch (err: any) {
+      showToast('Erro ao excluir: ' + err.message, 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   return {
     actionLoading,
     setActionLoading,
@@ -246,6 +261,7 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
     handleBatchUpload,
     handleRemoveFileFinal,
     handleManualPayment,
-    handleDeleteValidation
+    handleDeleteValidation,
+    handleDeleteSubmission
   };
 };

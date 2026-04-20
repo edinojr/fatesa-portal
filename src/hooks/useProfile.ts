@@ -85,17 +85,19 @@ export const useProfile = () => {
 
     try {
       const finalProfile = await globalProfilePromise;
-      setProfile(finalProfile);
+      if (finalProfile) setProfile(finalProfile);
     } catch (err: any) {
       console.error('Error fetching profile:', err);
-      
-      // Prevent infinite redirect loops
-      const isPublicPath = ['/', '/login', '/signup', '/forgot-password', '/reset-password'].includes(window.location.pathname);
-      
-      if (!isPublicPath) {
-        localStorage.removeItem('fatesa_active_role');
-        await supabase.auth.signOut();
-        navigate('/login', { replace: true });
+      // Fallback: If we have a session but db failed, set a minimal profile to avoid loop
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setProfile({ 
+          id: session.user.id, 
+          email: session.user.email, 
+          tipo: 'aluno', 
+          accessStatus: 'active',
+          isTemporary: true 
+        });
       }
     } finally {
       setLoading(false);

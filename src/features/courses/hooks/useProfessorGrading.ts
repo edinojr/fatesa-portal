@@ -14,14 +14,41 @@ export const useProfessorGrading = () => {
 
   const setSortedSubmissions = useCallback((data: Submission[]) => {
     const sorted = [...data].sort((a, b) => {
-      const nameA = a.student_name || a.users?.nome || ''
-      const nameB = b.student_name || b.users?.nome || ''
-      return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' })
-    })
-    setSubmissions(sorted)
-  }, [])
+      const dateA = new Date(a.submitted_at || 0).getTime();
+      const dateB = new Date(b.submitted_at || 0).getTime();
+      return dateB - dateA;
+    });
+    setSubmissions(sorted);
+  }, []);
 
-  const handleSelectSubmission = (sub: Submission) => {
+  const fetchSubmissions = useCallback(async (_isAdmin: boolean) => {
+    try {
+      const { data } = await supabase
+        .from('respostas_aulas')
+        .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, questionario, livros:livro_id(id, titulo)), users:aluno_id(id, nome, email, nucleo_id, nucleos:nucleo_id(id, nome))')
+        .order('created_at', { ascending: false });
+      
+      const mapped = (data || []).map((r: any) => ({
+        ...r,
+        submission_id: r.id,
+        student_id: r.aluno_id,
+        lesson_id: r.aula_id,
+        lesson_title: r.aulas?.titulo,
+        lesson_type: r.aulas?.tipo,
+        is_bloco_final: r.aulas?.is_bloco_final,
+        student_name: r.users?.nome,
+        student_email: r.users?.email,
+        nucleus_id: r.users?.nucleos?.id,
+        nucleus_name: r.users?.nucleos?.nome || 'Sem Polo',
+        submitted_at: r.created_at,
+      }));
+      if (mapped) setSortedSubmissions(mapped);
+    } catch (err) {
+      console.error('Error fetching submissions:', err);
+    }
+  }, [setSortedSubmissions]);
+
+  const handleSelectSubmission = useCallback((sub: Submission) => {
     setSelectedSubmission(sub);
     setAvaliacaoComentario(sub.comentario_professor || '');
     
@@ -58,12 +85,10 @@ export const useProfessorGrading = () => {
         if (!q || !q.text) return acc;
         const qKey = q.id || qIdx;
         
-        // Se já houver avaliação salva, usa ela
         if (initialEvals[qKey] !== undefined) {
             return acc + (initialEvals[qKey] === true ? 1 : 0);
         }
 
-        // Caso contrário, auto-calcula para tipos objetivos
         const studentAns = sub.respostas?.[qKey];
         if (q.type === 'multiple_choice' || !q.type) {
             return acc + (String(studentAns) === String(q.correct) ? 1 : 0);
@@ -82,29 +107,31 @@ export const useProfessorGrading = () => {
     } else {
       setGradeInput('10.0'); 
     }
-  }
+  }, []);
 
-  const toggleEvaluation = (questionId: string, isCorrect: boolean) => {
-    const newEvals = { ...questionEvaluations, [questionId]: isCorrect };
-    setQuestionEvaluations(newEvals);
-    
-    const questionnaire = selectedSubmission?.questionario || selectedSubmission?.aulas?.questionario;
-    const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
-    const totalQuestions = validQuestions.length;
-    
-    if (totalQuestions > 0) {
-      const correctCount = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
-        if (!q || !q.text) return acc;
-        const qKey = q.id || qIdx;
-        return acc + (newEvals[qKey] === true ? 1 : 0);
-      }, 0);
+  const toggleEvaluation = useCallback((questionId: string, isCorrect: boolean) => {
+    setQuestionEvaluations(prev => {
+      const newEvals = { ...prev, [questionId]: isCorrect };
       
-      const calculatedGrade = (correctCount / totalQuestions) * 10;
-      setGradeInput(calculatedGrade.toFixed(1));
-    }
-  }
+      const questionnaire = selectedSubmission?.questionario || selectedSubmission?.aulas?.questionario;
+      const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
+      const totalQuestions = validQuestions.length;
+      
+      if (totalQuestions > 0) {
+        const correctCount = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
+          if (!q || !q.text) return acc;
+          const qKey = q.id || qIdx;
+          return acc + (newEvals[qKey] === true ? 1 : 0);
+        }, 0);
+        
+        const calculatedGrade = (correctCount / totalQuestions) * 10;
+        setGradeInput(calculatedGrade.toFixed(1));
+      }
+      return newEvals;
+    });
+  }, [selectedSubmission]);
 
-  const handleDeleteSubmission = async (subId: string, onSuccess?: () => void) => {
+  const handleDeleteSubmission = useCallback(async (subId: string, onSuccess?: () => void) => {
     if (!confirm('Deseja realmente excluir esta atividade do aluno? Isso permitirá que ele refaça a atividade novamente do zero.')) return
     
     setDeleting(subId)
@@ -119,16 +146,15 @@ export const useProfessorGrading = () => {
     } finally {
       setDeleting(null)
     }
-  }
+  }, [submissions]);
 
-  const handleSaveGrade = async (onSuccess?: () => void) => {
+  const handleSaveGrade = useCallback(async (onSuccess?: () => void) => {
     if(!selectedSubmission || gradeInput === '' || !avaliacaoComentario.trim()) {
       alert('A avaliação (comentário) e a nota são obrigatórias.')
       return
     }
     setSavingGrade(true)
     try {
-      // Mesclar comentários de questão no objeto de respostas
       const updatedRespostas = { ...(selectedSubmission.respostas || {}) };
       Object.entries(questionComments).forEach(([qId, comment]) => {
         if (comment.trim()) updatedRespostas[`${qId}_comentario`] = comment;
@@ -168,11 +194,13 @@ export const useProfessorGrading = () => {
     } finally {
       setSavingGrade(false)
     }
-  }
+  }, [selectedSubmission, gradeInput, avaliacaoComentario, questionComments, questionEvaluations]);
+
 
   return {
     submissions,
     setSubmissions: setSortedSubmissions,
+    fetchSubmissions,
     selectedSubmission,
     setSelectedSubmission,
     gradeInput,
@@ -190,3 +218,4 @@ export const useProfessorGrading = () => {
     handleSaveGrade
   }
 }
+

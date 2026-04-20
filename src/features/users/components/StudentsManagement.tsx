@@ -21,11 +21,16 @@ export default function StudentsManagement({
   handleApproveAccess, handleRejectAccess, handleDeleteUser,
   handleResetActivities, handleUpdateUserNucleo, userRole, allNucleos = []
 }: StudentsManagementProps) {
+  const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null);
+
   const filteredStudents = allStudents.filter(s => {
     // Excluir professores da gestão de alunos, exceto o Edino Junior
     const isProfessor = s.tipo === 'professor';
     const isEdino = s.nome?.toLowerCase().includes('edino junior');
     if (isProfessor && !isEdino) return false;
+
+    // Filtro por Núcleo selecionado nos cards
+    if (selectedNucleoId && s.nucleo_id !== selectedNucleoId) return false;
 
     return s.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
            s.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -38,12 +43,24 @@ export default function StudentsManagement({
     return acc;
   }, {})
 
+  // Cálculo de estatísticas para os cards
+  const nucleoStats = allNucleos.map(nuc => ({
+    ...nuc,
+    count: allStudents.filter(s => s.nucleo_id === nuc.id).length
+  }));
+
+  const selectedNucleoName = selectedNucleoId ? allNucleos.find(n => n.id === selectedNucleoId)?.nome : null;
+
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
-      <div className="mobile-wrap-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div className="mobile-wrap-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
         <div>
-          <h2>Gestão Unificada de Alunos</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Lista consolidada de todos os alunos vinculados aos seus pólos.</p>
+          <h2 style={{ fontSize: '2rem', fontWeight: 900 }}>
+            {selectedNucleoName || (allNucleos.length === 1 ? allNucleos[0].nome : 'Gestão de Alunos')}
+          </h2>
+          <p style={{ color: 'var(--text-muted)' }}>
+            {selectedNucleoId ? `Visualizando estudantes do polo ${selectedNucleoName}` : 'Gerencie os estudantes vinculados aos seus polos de ensino.'}
+          </p>
         </div>
         <div className="input-group" style={{ width: '100%', maxWidth: '300px', marginBottom: 0 }}>
           <input 
@@ -55,6 +72,59 @@ export default function StudentsManagement({
           />
         </div>
       </div>
+
+      {/* Cards de Núcleos (Apenas se houver mais de 1) */}
+      {allNucleos.length > 1 && (
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
+          gap: '1rem', 
+          marginBottom: '3rem' 
+        }}>
+          <div 
+            onClick={() => setSelectedNucleoId(null)}
+            style={{
+              padding: '1.5rem',
+              borderRadius: '20px',
+              background: !selectedNucleoId ? 'rgba(156, 39, 176, 0.15)' : 'var(--glass)',
+              border: `1px solid ${!selectedNucleoId ? 'var(--primary)' : 'var(--glass-border)'}`,
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              textAlign: 'center',
+              boxShadow: !selectedNucleoId ? '0 10px 20px var(--primary-glow)' : 'none',
+              transform: !selectedNucleoId ? 'translateY(-4px)' : 'none'
+            }}
+          >
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Todos</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{allStudents.length}</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Alunos Totais</div>
+          </div>
+
+          {nucleoStats.map(nuc => (
+            <div 
+              key={nuc.id}
+              onClick={() => setSelectedNucleoId(nuc.id)}
+              style={{
+                padding: '1.5rem',
+                borderRadius: '20px',
+                background: selectedNucleoId === nuc.id ? 'rgba(156, 39, 176, 0.15)' : 'var(--glass)',
+                border: `1px solid ${selectedNucleoId === nuc.id ? 'var(--primary)' : 'var(--glass-border)'}`,
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                textAlign: 'center',
+                boxShadow: selectedNucleoId === nuc.id ? '0 10px 20px var(--primary-glow)' : 'none',
+                transform: selectedNucleoId === nuc.id ? 'translateY(-4px)' : 'none'
+              }}
+            >
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {nuc.nome}
+              </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{nuc.count}</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Estudantes</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
         {Object.entries(groupedStudents)

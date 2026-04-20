@@ -27,14 +27,14 @@ const Lesson = () => {
   const [shuffledMatchingRows, setShuffledMatchingRows] = useState<Record<string, any[]>>({})
   const [showExamModal, setShowExamModal] = useState(false)
   const [examModalConfirmed, setExamModalConfirmed] = useState(false)
-  const [isModuleApproved, setIsModuleApproved] = useState(false)
+  const [isModuleApproved] = useState(false)
   
 
 
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [isExamStarted, setIsExamStarted] = useState(false)
-  const [deadlineInfo, setDeadlineInfo] = useState<{ deadline: Date, stage: number, expired: boolean } | null>(null)
+  const [deadlineInfo] = useState<{ deadline: Date, stage: number, expired: boolean } | null>(null)
   const [relatedExercise, setRelatedExercise] = useState<any>(null)
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
 
@@ -62,6 +62,7 @@ const Lesson = () => {
         .maybeSingle();
         
       if (lessonError) throw lessonError;
+      if (!lessonData) return;
       
       setLesson(lessonData)
       setBook(lessonData?.livros)
@@ -73,164 +74,99 @@ const Lesson = () => {
         const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
         setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, isStaff });
 
-        // Passe Livre de Módulo Concluído (Garante acesso retroativo a tudo na unidade)
+        // 1. Audit: Content Release Policy
         let modulePassed = false;
-        if (lessonData?.livro_id && user?.id) {
-            const { data: moduleExams } = await supabase.from('aulas')
-                .select('id')
-                .eq('livro_id', lessonData.livro_id)
-                .or('tipo.eq.prova,is_bloco_final.eq.true');
-            
-            if (moduleExams && moduleExams.length > 0) {
-                const { data: moduleSubs } = await supabase.from('respostas_aulas')
-                    .select('nota, status')
-                    .eq('aluno_id', user.id)
-                    .in('aula_id', moduleExams.map(ex => ex.id));
-                modulePassed = (moduleSubs || []).some(s => s.status === 'corrigida' && s.nota >= (lessonData.min_grade || 7.0));
-                if (modulePassed) setIsModuleApproved(true);
-            }
+        const { data: moduleExams } = await supabase.from('aulas').select('id').eq('livro_id', lessonData.livro_id).or('tipo.eq.prova,is_bloco_final.eq.true');
+        
+        if (lessonData.livro_id) {
+          const { data: moduleSubs } = await supabase.from('respostas_aulas')
+            .select('nota, status')
+            .eq('student_id', user.id)
+            .eq('book_id', lessonData.livro_id)
+            .eq('is_bloco_final', true)
+            .eq('status', 'corrigida')
+            .gte('nota', 7.0)
+            .maybeSingle();
+          if (moduleSubs) modulePassed = true;
         }
 
-        // Check Professor Release (liberacoes_nucleo)
-        if (!isStaff && profile?.nucleo_id && !modulePassed) {
-          const isRestrictedType = lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'prova' || !!lessonData.is_bloco_final;
-          
+        if (isStaff || modulePassed) {
+          setIsReleased(true);
+        } else {
+          const isRestrictedType = lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video' || lessonData.tipo === 'prova' || !!lessonData.is_bloco_final;
+          const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' : 'atividade';
+
           if (isRestrictedType) {
-            const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo') ? 'video' : 'atividade';
-            
-            const { data: releaseData } = await supabase
-              .from('liberacoes_nucleo')
+            const { data: releaseData } = await supabase.from('liberacoes_nucleo')
               .select('id')
-              .eq('nucleo_id', profile.nucleo_id)
+              .eq('nucleo_id', profile?.nucleo_id)
               .eq('item_id', id)
               .eq('item_type', itemType)
               .eq('liberado', true)
               .maybeSingle();
             
-            if (!releaseData) {
-              // Fallback: Se for prova, verifica se qualquer prova do mesmo livro está liberada
-              if (lessonData.tipo === 'prova' || lessonData.is_bloco_final) {
-                 const { data: siblingExams } = await supabase.from('aulas').select('id').eq('livro_id', lessonData.livro_id).eq('tipo', 'prova');
-                 const examIds = (siblingExams || []).map(e => e.id);
-                 
-                 const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
-                   .select('id')
-                   .eq('nucleo_id', profile.nucleo_id)
-                   .eq('item_type', 'atividade')
-                   .in('item_id', examIds)
-                   .eq('liberado', true)
-                   .maybeSingle();
-                 
-                 if (!siblingRel) {
-                    setIsReleased(false);
-                    setLoading(false);
-                    return;
-                 }
-              } else {
-                setIsReleased(false);
-                setLoading(false);
-                return;
-              }
+            if (releaseData) {
+              setIsReleased(true);
+            } else if (lessonData.tipo === 'prova' || lessonData.is_bloco_final) {
+              const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
+                .select('id')
+                .eq('nucleo_id', profile?.nucleo_id)
+                .eq('item_type', 'atividade')
+                .in('item_id', (moduleExams || []).map(ex => ex.id))
+                .eq('liberado', true)
+                .maybeSingle();
+              setIsReleased(!!siblingRel);
+            } else {
+              setIsReleased(false);
             }
+          } else {
+            setIsReleased(true);
           }
         }
 
-        // Access Control for Videos can now be removed as requested.
-        // It is now strictly handled by Professor Release in the section above.
-
-        // Linked Activity logic (for materials)
-        if (lessonData.tipo === 'material' && lessonData.bloco_id) {
-          const { data: blockItems } = await supabase.from('aulas').select('id, min_grade, questionario, tipo, is_bloco_final').eq('bloco_id', lessonData.bloco_id).eq('livro_id', lessonData.livro_id).eq('tipo', 'atividade').limit(1);
-          if (blockItems?.length) {
-            const linked = blockItems[0];
-            const { data: linkedSub } = await supabase.from('respostas_aulas').select('id, respostas, nota, status, tentativas').eq('aula_id', linked.id).eq('aluno_id', user.id).maybeSingle();
-            (lessonData as any).linkedActivity = linked;
-            (lessonData as any).linkedSubmission = linkedSub;
-            if (Array.isArray(linked.questionario)) setQuestions(linked.questionario);
-            if (linkedSub) {
-              setAnswers(linkedSub.respostas || {});
-              if (linkedSub.nota !== null) setResult({ score: linkedSub.nota, passed: linkedSub.nota >= (linked.min_grade || 0), pendingReview: linkedSub.status === 'pendente' });
-              setSubmitted(true);
-            }
-            const { data: pData } = await supabase.from('progresso').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
-            if (pData?.concluida) setComplete(true);
-          }
-        }
-
-        // Main submission fetch
-        const { data: subData } = await supabase.from('respostas_aulas').select('id, respostas, nota, status, start_time, data_liberacao, tentativas').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
+        // 2. Main Logic: Submission Fetch & Timer
+        const { data: subData } = await supabase.from('respostas_aulas').select('*').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
         if (subData) {
           setExistingSubmission(subData);
           setAnswers(subData.respostas || {});
           if (subData.nota !== null) setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
           
-          // Timer check for bloco_final
           if (lessonData.is_bloco_final && subData.start_time && subData.status === 'liberado') {
             const startTime = new Date(subData.start_time).getTime();
             const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            if (elapsed < 2400) { 
-              setTimeLeft(2400 - elapsed); 
-              setIsExamStarted(true); 
-            } else { 
-              setSubmitted(true); 
-              setIsExamStarted(false);
-              // Auto-submit if time ran out while away
-              if (subData.status === 'liberado') handleSubmit();
-            }
-          }
-
-          // Bloqueio de Reentrada para Provas Regulares (tipo === 'prova' e NÃO is_bloco_final)
-          if (lessonData.tipo === 'prova' && !lessonData.is_bloco_final && subData.status === 'liberado' && !isStaff) {
-            // Já iniciou mas não terminou — force submit or block
-            alert('Você saiu da prova antes de finalizar. Sua tentativa anterior foi registrada automaticamente e enviada para correção.');
-            // Auto-submit the empty/partial answers
-            await supabase.from('respostas_aulas').update({ 
-              status: 'pendente', 
-              updated_at: new Date().toISOString()
-            }).eq('id', subData.id);
-            navigate('/dashboard');
-            return;
+            if (elapsed < 2400) { setTimeLeft(2400 - elapsed); setIsExamStarted(true); } 
+            else { setSubmitted(true); setIsExamStarted(false); handleSubmit(); }
           }
 
           if (subData.status !== 'liberado') {
             setSubmitted(true);
-            
-            // Bloqueio de Reentrada para Provas (Apenas se ainda não estiver corrigida)
             if ((lessonData.tipo === 'prova' || lessonData.is_bloco_final) && subData.status !== 'corrigida' && !isStaff) {
-              alert('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor no seu boletim.');
+              alert('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor.');
               navigate('/dashboard');
               return;
             }
           }
         }
+
         const { data: progData } = await supabase.from('progresso').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
         if (progData?.concluida) setComplete(true);
 
-        // Enhanced Deadline & Version Logic
-        // Simplified Deadline Logic (Optional)
-        if (lessonData.is_bloco_final) {
-          const currentSub = subData;
-          if (currentSub?.data_liberacao) {
-            const libDate = new Date(currentSub.data_liberacao);
-            const now = new Date();
-            
-            // Standard 7 days deadline for any attempt
-            const deadline = new Date(libDate.getTime() + 7 * 24 * 3600 * 1000);
-            const expired = now > deadline;
-            setDeadlineInfo({ deadline, stage: lessonData.versao || 1, expired });
-
-            const canRetry = !expired && currentSub.status === 'corrigida' && (currentSub.nota || 0) < (lessonData.min_grade || 7);
-
-            if (canRetry && subData?.nota !== null) {
-              setResult(p => p ? { ...p, canRetry: true } : null);
-            }
-          }
+        // Linked Activity logic (for materials)
+        if (lessonData.tipo === 'material' && lessonData.bloco_id) {
+           const { data: blockItems } = await supabase.from('aulas').select('id, min_grade, questionario, tipo, is_bloco_final').eq('bloco_id', lessonData.bloco_id).eq('livro_id', lessonData.livro_id).eq('tipo', 'atividade').limit(1);
+           if (blockItems?.length) {
+              const linked = blockItems[0];
+              const { data: linkedSub } = await supabase.from('respostas_aulas').select('*').eq('aula_id', linked.id).eq('aluno_id', user.id).maybeSingle();
+              (lessonData as any).linkedActivity = linked;
+              if (linkedSub) {
+                 if (linkedSub.nota !== null) setResult({ score: linkedSub.nota, passed: linkedSub.nota >= (linked.min_grade || 0), pendingReview: linkedSub.status === 'pendente' });
+                 setSubmitted(true);
+              }
+           }
         }
       }
     } catch (err) { console.error(err); }
-    finally { 
-      setLoading(false); 
-    }
+    finally { setLoading(false); }
   }
 
   // Shuffle effect for matching questions

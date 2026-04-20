@@ -21,7 +21,7 @@ export const useProfessorAttendance = () => {
     }
   }, []);
 
-  const handleSaveAttendance = async (records: any[], refreshFn: () => void) => {
+  const handleSaveAttendance = useCallback(async (records: any[], refreshFn: () => void) => {
     try {
       const { error } = await supabase.from('frequencia').upsert(records);
       if (error) throw error;
@@ -31,7 +31,7 @@ export const useProfessorAttendance = () => {
       console.error(err);
       return { success: false, error: err.message };
     }
-  };
+  }, []);
 
   return { attendanceRecords, loading, fetchAttendance, handleSaveAttendance };
 };

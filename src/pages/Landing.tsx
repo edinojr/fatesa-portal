@@ -140,10 +140,10 @@ const Landing = () => {
           
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Baixar aplicativo teológico Fatesa na Apple Store" style={{ height: '40px' }} />
+              <img src="/app-store-badge.svg" alt="Baixar aplicativo teológico Fatesa na Apple Store" style={{ height: '40px' }} />
             </button>
             <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Baixar aplicativo teológico Fatesa no Google Play" style={{ height: '40px' }} />
+              <img src="/google-play-badge.svg" alt="Baixar aplicativo teológico Fatesa no Google Play" style={{ height: '40px' }} />
             </button>
           </div>
         </div>

@@ -15,26 +15,24 @@ export const useProfessorCourses = () => {
     setCourses(sorted)
   }, [])
 
-  const fetchBooks = async (courseId: string) => {
+  const fetchBooks = useCallback(async (courseId: string) => {
     const course = courses.find((c: any) => c.id === courseId)
     if (course) {
-      // Sort books by 'ordem' then by 'titulo'
       const sortedBooks = [...(course.livros || [])].sort((a: any, b: any) => {
         if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0)
         return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { sensitivity: 'base' })
       })
       setBooks(sortedBooks)
     }
-  }
+  }, [courses]);
 
-  const selectBookAndShowLessons = (book: any) => {
+  const selectBookAndShowLessons = useCallback((book: any) => {
     setSelectedBook(book)
-    // Sort lessons naturally (e.g. "Aula 1", "Aula 2", "Aula 10")
     const sortedLessons = [...(book.aulas || [])].sort((a: any, b: any) => 
       (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' })
     )
     setLessons(sortedLessons)
-  }
+  }, []);
 
   return {
     courses,

@@ -6,6 +6,7 @@ const supabase = createClient(url, anonKey);
 
 async function checkUser() {
   const { data, error } = await supabase.from('users').select('*').ilike('email', 'daise.vieira@yahoo.com.br');
+  if (error) console.error(error);
   console.log('User Data:', JSON.stringify(data, null, 2));
 }
 

@@ -50,36 +50,45 @@ const Login = () => {
       .eq('id', user.id)
       .maybeSingle();
     
-    // Auto-repair missing profile
-    if (!fetchError && !data) {
-      console.warn("Perfil não encontrado para o usuário. Tentando auto-reparo...", user.id);
+    // Auto-repair missing profile or handle errors for Admin
+    const isAdminEmail = user.email === 'edi.ben.jr@gmail.com' || user.email === 'ap.panisso@gmail.com';
+    
+    if ((!data && !fetchError) || (fetchError && isAdminEmail)) {
+      console.warn("Perfil não encontrado ou erro de RLS para Admin. Tentando auto-reparo...", user.id);
       const metadata = user.user_metadata || {};
-      const isAdminEmail = user.email === 'edi.ben.jr@gmail.com' || user.email === 'ap.panisso@gmail.com';
       const defaultTipo = isAdminEmail ? 'admin' : (metadata.student_type || 'online');
       
-      const { data: createdProfile, error: insertError } = await supabase.rpc('create_profile_if_missing', {
-        p_user_id: user.id,
-        p_email: user.email,
-        p_nome: metadata.full_name || 'Usuário',
-        p_tipo: defaultTipo,
-        p_nucleo_id: metadata.nucleo_id || null,
-        p_caminhos_acesso: isAdminEmail ? ['admin', 'suporte', 'professor', 'aluno'] : [defaultTipo]
-      });
+      try {
+        const { data: createdProfile, error: insertError } = await supabase.rpc('create_profile_if_missing', {
+          p_user_id: user.id,
+          p_email: user.email,
+          p_nome: metadata.full_name || (isAdminEmail ? 'Administrador' : 'Usuário'),
+          p_tipo: defaultTipo,
+          p_nucleo_id: metadata.nucleo_id || null,
+          p_caminhos_acesso: isAdminEmail ? ['admin', 'suporte', 'professor', 'aluno'] : [defaultTipo]
+        });
 
-      if (insertError) {
-        console.error("Erro ao criar perfil automaticamente:", insertError);
-        fetchError = insertError;
-      } else {
-        data = createdProfile;
+        if (!insertError && createdProfile) {
+          data = createdProfile;
+          fetchError = null;
+        } else if (insertError) {
+          console.error("Erro no RPC de reparo:", insertError);
+        }
+      } catch (e) {
+        console.error("Falha catastrófica no reparo:", e);
       }
     }
 
     if (fetchError || !data) {
+      if (isAdminEmail) {
+        console.warn("Admin profile missing but allowing bypass for persistence.");
+        navigate('/admin', { replace: true });
+        setLoading(false);
+        return;
+      }
       console.error("Erro ao buscar perfil:", fetchError, "UserId:", user.id);
       await supabase.auth.signOut();
-      const details = fetchError?.message || 'Nenhum dado retornado';
-      const code = fetchError?.code || 'Desconhecido';
-      setError(`Falha de sincronia na primeira tentativa [${code}]: ${details}. Por favor, clique em Entrar e tente novamente.`);
+      setError('Falha ao carregar perfil. Por favor, tente novamente em alguns instantes.');
       setLoading(false);
       return;
     }

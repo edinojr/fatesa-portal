@@ -65,6 +65,36 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     }
   }
 
+  const handleReleaseAll = async (nucleoId: string, book: any) => {
+    if (!window.confirm(`Liberar TODO o conteúdo do módulo "${book.titulo}" para o polo selecionado?`)) return;
+    
+    try {
+      const { data: allLessons } = await supabase.from('aulas').select('id, titulo, tipo, is_bloco_final').eq('livro_id', book.id);
+      if (!allLessons) return;
+
+      const releaseModulos = { nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo', liberado: true };
+      
+      const itemsToRelease = allLessons
+        .map(l => {
+          const isExam = l.tipo === 'prova' || !!l.is_bloco_final;
+          const isAutoExam = isExam && (l.titulo?.toUpperCase().includes('V2') || l.titulo?.toUpperCase().includes('V3'));
+          const itemType = isExam || l.tipo === 'atividade' || l.tipo === 'material' ? 'atividade' : (l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video') ? 'video' : null;
+          
+          if (!itemType || isAutoExam) return null;
+          return { nucleo_id: nucleoId, item_id: l.id, item_type: itemType, liberado: true };
+        })
+        .filter(Boolean);
+
+      const { error } = await supabase.from('liberacoes_nucleo').upsert([releaseModulos, ...itemsToRelease], { onConflict: 'nucleo_id,item_id,item_type' });
+      if (error) throw error;
+      
+      fetchReleases();
+      alert('Tudo liberado para este polo!');
+    } catch (err: any) {
+      alert('Erro ao liberar tudo: ' + err.message);
+    }
+  }
+
   // Count how many students passed/finished this book
   const getBookCompletionStats = (book: any) => {
     const bookLessonIds = (book.aulas || []).map((l: any) => l.id)
@@ -124,7 +154,45 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 800 }}>Liberação do Módulo:</p>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    {professorNucleos.map(n => {
+                      const isModReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo');
+                      return (
+                        <button 
+                          key={n.id}
+                          onClick={() => toggleRelease(n.id, book.id, 'modulo')}
+                          title={isModReleased ? 'Clique para Bloquear Módulo' : 'Clique para Liberar Módulo'}
+                          style={{ 
+                            fontSize: '0.65rem', 
+                            padding: '4px 8px', 
+                            borderRadius: '6px',
+                            background: isModReleased ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)',
+                            border: `1px solid ${isModReleased ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.1)'}`,
+                            color: isModReleased ? 'var(--success)' : 'var(--text-muted)',
+                            cursor: 'pointer',
+                            fontWeight: 700
+                          }}
+                        >
+                          {n.nome}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <div style={{ marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>
+                     <select 
+                      onChange={(e) => { if(e.target.value) handleReleaseAll(e.target.value, book); e.target.value = ''; }}
+                      className="form-control"
+                      style={{ fontSize: '0.7rem', height: '30px', padding: '0 0.5rem' }}
+                     >
+                        <option value="">🚀 Liberar TUDO para...</option>
+                        {professorNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
+                     </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem', marginTop: 'auto' }}>
                   <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => selectBookAndShowLessons(book)}>Gerenciar Aulas</button>
                   <Link 
                     className="btn btn-outline" 
@@ -161,14 +229,15 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               {(() => {
                 const isExam = lesson.tipo === 'prova' || !!lesson.is_bloco_final;
                 const isAutoExam = isExam && (lesson.titulo?.toUpperCase().includes('V2') || lesson.titulo?.toUpperCase().includes('V3'));
-                const itemType = isExam ? 'atividade' : (lesson.tipo === 'gravada') ? 'video' : null;
+                // All pedagogical items (video, exam, activity, material) can now be toggled
+                const itemType = isExam || lesson.tipo === 'atividade' || lesson.tipo === 'material' ? 'atividade' : (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video') ? 'video' : null;
 
                 if (!itemType || isAutoExam) return null;
 
                 return (
                   <div style={{ flex: 1, margin: '0 1rem', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>
-                      Controle de Acesso ({lesson.tipo === 'prova' ? 'Prova V1' : 'Vídeo-Aula'}):
+                      Controle de Acesso ({lesson.tipo === 'prova' ? 'Prova V1' : lesson.tipo === 'atividade' ? 'Atividade' : lesson.tipo === 'material' ? 'Material' : 'Vídeo'}):
                     </p>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {professorNucleos.map(n => {

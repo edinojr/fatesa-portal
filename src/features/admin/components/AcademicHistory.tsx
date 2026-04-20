@@ -10,15 +10,17 @@ import {
 interface AcademicHistoryProps {
   data: any[];
   searchTerm: string;
+  onDelete?: (id: string) => Promise<void>;
 }
 
-const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) => {
+const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete }) => {
+  const [showAllActivities, setShowAllActivities] = React.useState(false);
   // Filter and Category Logic
   const processedData = useMemo(() => {
     // 1. Initial Filtering (Term + Exam Type)
     const filtered = data.filter(item => {
       const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova';
-      if (!isExam) return false;
+      if (!showAllActivities && !isExam) return false;
 
       const term = searchTerm.toLowerCase();
       return (
@@ -49,7 +51,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
     });
 
     return { activeGroups, alumniGroups };
-  }, [data, searchTerm]);
+  }, [data, searchTerm, showAllActivities]);
 
   const exportToCSV = () => {
     // Flatten grouped data for CSV export to maintain current behavior
@@ -93,6 +95,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
             <th>Módulo / Bloco</th>
             <th style={{ textAlign: 'center' }}>Nota Final</th>
             <th style={{ textAlign: 'right' }}>Data</th>
+            {onDelete && <th style={{ textAlign: 'right' }}>Ação</th>}
           </tr>
         </thead>
         <tbody>
@@ -108,6 +111,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
                 <div style={{ fontSize: '0.8rem' }}>
                   <div style={{ fontWeight: 700, color: 'var(--primary)' }}>{item.aulas?.livros?.titulo}</div>
                   <div style={{ opacity: 0.6 }}>{item.aulas?.titulo}</div>
+                  {!showAllActivities && item.aulas?.tipo === 'prova' && <span style={{ fontSize: '0.6rem', background: 'var(--primary)', color: '#fff', padding: '1px 4px', borderRadius: '4px', fontWeight: 800 }}>PROVA</span>}
                 </div>
               </td>
               <td style={{ textAlign: 'center' }}>
@@ -125,6 +129,18 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
               <td style={{ textAlign: 'right', fontSize: '0.75rem', opacity: 0.5 }}>
                 {item.updated_at ? new Date(item.updated_at).toLocaleDateString() : '---'}
               </td>
+              {onDelete && (
+                <td style={{ textAlign: 'right' }}>
+                  <button 
+                    className="btn-icon" 
+                    onClick={() => onDelete(item.id)}
+                    style={{ color: 'var(--error)', padding: '4px' }}
+                    title="Excluir Atividade"
+                  >
+                    <Download size={14} style={{ transform: 'rotate(180deg)' }} /> 
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -146,9 +162,18 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm }) =
             </p>
           </div>
         </div>
-        <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.5rem', width: 'auto' }}>
-          <Download size={18} /> Exportar Geral
-        </button>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button 
+            className="btn btn-outline" 
+            onClick={() => setShowAllActivities(!showAllActivities)} 
+            style={{ width: 'auto', gap: '0.5rem', background: showAllActivities ? 'rgba(var(--primary-rgb), 0.1)' : 'transparent', borderColor: showAllActivities ? 'var(--primary)' : 'var(--glass-border)' }}
+          >
+            {showAllActivities ? 'Ocultar Exercícios' : 'Mostrar Tudo (Exercícios)'}
+          </button>
+          <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.5rem', width: 'auto' }}>
+            <Download size={18} /> Exportar Geral
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
