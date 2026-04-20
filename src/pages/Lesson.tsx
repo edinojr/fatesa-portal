@@ -297,7 +297,6 @@ const Lesson = () => {
     setSubmitting(true)
     try {
       let score = 0; 
-      let totalWeight = 0;
       
       const targetId = (lesson as any).linkedActivity?.id || id;
       const targetLesson = (lesson as any).linkedActivity || lesson;

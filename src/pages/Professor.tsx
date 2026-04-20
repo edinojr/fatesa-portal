@@ -26,6 +26,7 @@ import GradingPanel from '../features/courses/components/GradingPanel'
 import AvisosManagement from '../features/communication/components/AvisosManagement'
 import MateriaisManagement from '../features/communication/components/MateriaisManagement'
 import AcademicHistory from '../features/admin/components/AcademicHistory'
+import AlumniManagement from '../features/users/components/AlumniManagement'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import Logo from '../components/common/Logo'
@@ -190,7 +191,8 @@ const Professor = () => {
                  activeTab === 'grading' ? 'Correção de Provas' :
                  activeTab === 'avisos' ? 'Quadro de Avisos' :
                  activeTab === 'materiais' ? 'Materiais de Apoio' :
-                 activeTab === 'attendance' ? 'Lista de Presença' : 'Fórum da Comunidade'}
+                 activeTab === 'attendance' ? 'Lista de Presença' : 
+                 activeTab === 'alumni' ? 'Base de Formados (Alumni)' : 'Fórum da Comunidade'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
                 {activeTab === 'home' && dashboardView === 'main' ? 'Selecione uma categoria para começar.' : 
@@ -318,6 +320,12 @@ const Professor = () => {
                       <h3>Lista de Chamada</h3>
                       <p>Chamada diária separada por núcleo de ensino.</p>
                     </div>
+
+                    <div className="admin-action-card" onClick={() => setActiveTab('alumni')}>
+                      <div className="icon-wrapper"><GraduationCap size={32} /></div>
+                      <h3>Alumni / Formados</h3>
+                      <p>Base histórica de alunos que já concluíram o curso.</p>
+                    </div>
                   </>
                 )}
 
@@ -431,6 +439,8 @@ const Professor = () => {
                 professorId={profile?.id || ''}
               />
             )}
+
+            {activeTab === 'alumni' && <AlumniManagement />}
           </div>
         </div>
       </main>

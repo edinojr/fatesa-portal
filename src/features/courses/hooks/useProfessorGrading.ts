@@ -21,7 +21,7 @@ export const useProfessorGrading = () => {
     setSubmissions(sorted);
   }, []);
 
-  const fetchSubmissions = useCallback(async (_isAdmin: boolean) => {
+  const fetchSubmissions = useCallback(async () => {
     try {
       const { data } = await supabase
         .from('respostas_aulas')
@@ -120,9 +120,21 @@ export const useProfessorGrading = () => {
         const scoreSum = validQuestions.reduce((acc: number, q: any, qIdx: number) => {
           const qKey = q.id || qIdx;
           
+          if (q.type === 'matching' && q.matchingPairs) {
+            // Soma os pares individuais avaliados ou autocorrigidos
+            const studentAns = selectedSubmission?.respostas?.[qKey] || {};
+            return acc + q.matchingPairs.reduce((pAcc: number, _: any, mIdx: number) => {
+              const pairKey = `${qKey}_${mIdx}`;
+              if (newEvals[pairKey] !== undefined) {
+                return pAcc + (newEvals[pairKey] === true ? 0.5 : 0);
+              }
+              // Se não avaliado manualmente, usa autocorreção
+              return pAcc + (String(studentAns[mIdx]) === String(mIdx) ? 0.5 : 0);
+            }, 0);
+          }
+
           if (newEvals[qKey] !== undefined) {
-            const weight = q.type === 'matching' ? 3.0 : 0.5;
-            return acc + (newEvals[qKey] === true ? weight : 0);
+            return acc + (newEvals[qKey] === true ? 0.5 : 0);
           }
 
           const studentAns = selectedSubmission?.respostas?.[qKey];
@@ -130,10 +142,6 @@ export const useProfessorGrading = () => {
             return acc + (String(studentAns) === String(q.correct) ? 0.5 : 0);
           } else if (q.type === 'true_false') {
             return acc + (studentAns === q.isTrue ? 0.5 : 0);
-          } else if (q.type === 'matching' && q.matchingPairs) {
-            const answerMap = (studentAns || {}) as Record<string, string>;
-            const correctPairs = q.matchingPairs.filter((_: any, mIdx: number) => String(answerMap[mIdx]) === String(mIdx)).length;
-            return acc + Math.min(3.0, correctPairs * 0.5);
           }
           return acc;
         }, 0);

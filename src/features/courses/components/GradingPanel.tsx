@@ -370,20 +370,35 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                     const answerMap = studentAnswer as Record<string, string>;
                     displayAnswer = (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                        <div style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '1px' }}>Associações Efetuadas:</div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '1rem', alignItems: 'center' }}>
+                        <div style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '1px' }}>Associações Efetuadas (Correção Individual):</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr auto', gap: '1rem', alignItems: 'center' }}>
                           {q.matchingPairs?.map((pair: any, pIdx: number) => {
                             const selectedRightIdx = answerMap[pIdx];
                             const idxNum = parseInt(selectedRightIdx);
                             const selectedRight = (!isNaN(idxNum) && q.matchingPairs?.[idxNum]) 
                               ? q.matchingPairs[idxNum].right 
                               : (selectedRightIdx && typeof selectedRightIdx === 'string' && selectedRightIdx !== '' ? selectedRightIdx : '---');
-                              const isCorrect = String(answerMap[pIdx]) === String(pIdx);
+                              
+                              const pairKey = `${q.id || idx}_${pIdx}`;
+                              const isCorrect = questionEvaluations[pairKey] !== undefined 
+                                ? questionEvaluations[pairKey] === true 
+                                : String(answerMap[pIdx]) === String(pIdx);
+
                               return (
                                 <React.Fragment key={pIdx}>
                                   <div style={{ padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', fontSize: '0.9rem', textAlign: 'right', fontWeight: 600, border: isCorrect ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)' }}>{pair.left}</div>
                                   <div style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', opacity: 0.8 }}>{isCorrect ? <CheckCircle size={18} /> : <span>&rarr;</span>}</div>
                                   <div style={{ padding: '0.8rem 1.2rem', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', border: isCorrect ? '1px solid var(--success)' : '1px solid var(--error)', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>{selectedRight}</div>
+                                  <div style={{ display: 'flex', gap: '4px' }}>
+                                    <button 
+                                      onClick={() => toggleEvaluation(pairKey, true)}
+                                      style={{ padding: '4px 8px', borderRadius: '4px', border: 'none', background: questionEvaluations[pairKey] === true ? 'var(--success)' : 'rgba(255,255,255,0.05)', color: '#fff', cursor: 'pointer', fontSize: '0.7rem' }}
+                                    >V</button>
+                                    <button 
+                                      onClick={() => toggleEvaluation(pairKey, false)}
+                                      style={{ padding: '4px 8px', borderRadius: '4px', border: 'none', background: questionEvaluations[pairKey] === false ? 'var(--error)' : 'rgba(255,255,255,0.05)', color: '#fff', cursor: 'pointer', fontSize: '0.7rem' }}
+                                    >X</button>
+                                  </div>
                                 </React.Fragment>
                               );
                           })}

@@ -20,8 +20,8 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
   const modulesMap: Record<string, { title: string, id: string, items: any[] }> = {};
   
   atividades.forEach(a => {
-    const libroId = a.aulas?.livro?.id || 'outros';
-    const libroTitle = a.aulas?.livro?.titulo || 'Complementares';
+    const libroId = a.book_id || a.aulas?.livros?.id || 'outros';
+    const libroTitle = a.book_title || a.aulas?.livros?.titulo || 'Complementares';
     
     if (!modulesMap[libroId]) {
       modulesMap[libroId] = { title: libroTitle, id: libroId, items: [] };
@@ -55,7 +55,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
           const isExpanded = expandedModule === m.id;
           
           // Logic for Final Exams Versioning (V1, V2, V3)
-          const formative = m.items.filter(i => i.aulas?.tipo === 'atividade');
+          const formative = m.items.filter(i => (i.lesson_type || i.aulas?.tipo) === 'atividade');
 
           // We need to determine which version the student should see.
           // In a real scenario, the lessons list would contain all 3 versions as separate aula entries or one entry with stages.
@@ -93,10 +93,10 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                         const libro = (courses || []).flatMap(c => c.livros || []).find(l => l.id === m.id);
                         if (!libro) return <p style={{fontSize:'0.8rem', color:'var(--text-muted)'}}>Módulo não encontrado.</p>;
                         
-                        const allExams = (libro.aulas || []).filter((a: any) => a.tipo === 'prova').sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+                        const allExams = (libro.aulas || []).filter((a: any) => a.tipo === 'prova' || !!a.is_bloco_final).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
                         if (allExams.length === 0) return <p style={{fontSize:'0.8rem', color:'var(--text-muted)'}}>Sem provas configuradas.</p>;
 
-                        const submissions = m.items.filter(i => i.aulas?.tipo === 'prova').sort((a,b) => (a.tentativas || 1) - (b.tentativas || 1));
+                        const submissions = m.items.filter(i => (i.lesson_type || i.aulas?.tipo) === 'prova' || !!i.is_bloco_final).sort((a,b) => (a.tentativas || 1) - (b.tentativas || 1));
                         const approved = submissions.find(s => s.status === 'corrigida' && s.nota && s.nota >= 7);
                         
                         if (approved) {
@@ -244,7 +244,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
               <div>
                 <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 800 }}>Correção Detalhada</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
-                  {reviewSub.aulas?.titulo || 'Atividade'} • {reviewSub.aulas?.tipo === 'prova' ? 
+                  {(reviewSub.lesson_title || reviewSub.aulas?.titulo) || 'Atividade'} • {(reviewSub.lesson_type || reviewSub.aulas?.tipo) === 'prova' || reviewSub.is_bloco_final ? 
                     <>Nota Final: <strong style={{color: 'var(--primary)'}}>{reviewSub.status === 'pendente' ? 'Aguardando Correção' : (reviewSub.nota?.toFixed(1) || '---')}</strong></> : 
                     <strong style={{color: 'var(--success)'}}>{reviewSub.status === 'pendente' ? 'Em Correção' : 'Status: Concluída'}</strong>
                   }
@@ -262,7 +262,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                {(() => {
                  const aula = Array.isArray(reviewSub.aulas) ? (reviewSub.aulas as any)[0] : reviewSub.aulas;
-                 let questionnaire = aula?.questionario;
+                 const questionnaire = aula?.questionario;
                  
                  return Array.isArray(questionnaire) ? questionnaire.map((q: any, idx: number) => {
                  const qKey = q.id || idx;
@@ -276,7 +276,9 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                  const isManualCorrect = reviewSub.respostas?.[`${qKey}_avaliacao`];
                  if (isManualCorrect !== undefined) isCorrect = isManualCorrect === true;
  
-                  const showOfficialGabarito = aula?.tipo === 'atividade' || (aula?.tipo === 'prova' && reviewSub.nota >= 7);
+                 const isAtividade = (reviewSub.lesson_type || aula?.tipo) === 'atividade';
+                 const isApprovedExam = ((reviewSub.lesson_type || aula?.tipo) === 'prova' || !!reviewSub.is_bloco_final) && reviewSub.nota >= 7;
+                 const showOfficialGabarito = isAtividade || isApprovedExam;
 
                 return (
                   <div key={qKey} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: showOfficialGabarito ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)', position: 'relative' }}>

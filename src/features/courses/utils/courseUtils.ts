@@ -84,9 +84,24 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
 export const isCourseCompleted = (course: any, atividades: any[] = [], progressoAulas: any[] = []) => {
     if (!course || !course.livros || course.livros.length === 0) return false;
     
-    // Um curso (Nível) está completo se TODOS os seus livros estão finalizados
-    return course.livros.every((livro: any) => {
+    const finishedCount = course.livros.filter((livro: any) => {
         const stats = getBookStats(livro, atividades, progressoAulas);
         return stats.isFinished && stats.isApproved;
-    });
+    }).length;
+
+    const nivel = (course.nivel || '').toLowerCase();
+    
+    // Regras de Formatura da Fatesa:
+    // Nível Básico: 27 Módulos
+    // Nível Médio: 8 Módulos
+    if (nivel.includes('basico') || nivel.includes('básico')) {
+        return finishedCount >= 27;
+    }
+    
+    if (nivel.includes('medio') || nivel.includes('médio')) {
+        return finishedCount >= 8;
+    }
+
+    // Fallback: Se não for um dos níveis acima, exige todos os módulos do curso
+    return finishedCount >= course.livros.length && course.livros.length > 0;
 };

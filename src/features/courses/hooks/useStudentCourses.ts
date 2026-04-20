@@ -8,6 +8,8 @@ export const useStudentCourses = (profile: any) => {
   const [progressoAulas, setProgressoAulas] = useState<any[]>([]);
   const [atividades, setAtividades] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [finishedBasicCount, setFinishedBasicCount] = useState(0);
+  const [isBasicFinished, setIsBasicFinished] = useState(false);
 
   const fetchStudentDashboardData = useCallback(async () => {
     if (!profile) return;
@@ -107,7 +109,7 @@ export const useStudentCourses = (profile: any) => {
       // 5. Progresso e Notas - query direta sem depender da view
       const { data: resDataRaw } = await supabase
         .from('respostas_aulas')
-        .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, livros:livro_id(id, titulo))')
+        .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, questionario, livros:livro_id(id, titulo, cursos:curso_id(nivel)))')
         .eq('aluno_id', profile.id);
       
       const resData = (resDataRaw || []).map((r: any) => ({
@@ -133,8 +135,19 @@ export const useStudentCourses = (profile: any) => {
       setAtividades(resData);
       setProgressoAulas(progData || []);
 
+      const fBasicCount = (resData || []).filter(r => 
+        r.is_bloco_final && 
+        r.status === 'corrigida' && 
+        (r.nota || 0) >= 7.0 &&
+        (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
+      ).length;
+
+      setFinishedBasicCount(fBasicCount);
+      const isFinished = fBasicCount >= 27;
+      setIsBasicFinished(isFinished);
+
       // 6. Cursos - filtra pelo curso vinculado se existir, caso contrário busca todos
-      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final))';
+      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final), cursos:curso_id(nivel))';
       const { data: allCourses } = cursoId
         ? await supabase.from('cursos').select(courseSelect).eq('id', cursoId)
         : await supabase.from('cursos').select(courseSelect);
@@ -148,14 +161,20 @@ export const useStudentCourses = (profile: any) => {
             livros: sortedLivros.map((l: any) => {
               const bookOrdem = l.ordem || 1;
               const isManualModuleRelease = releasedModulos.includes(l.id);
-              const isReleased = (
-                isStaff || 
-                isManualModuleRelease || 
-                bookOrdem <= releasedCount || 
-                bookOrdem === pedagogicalLimit ||
-                bookOrdem === 1 // Garantia absoluta para o módulo 1
-              );
-              const isCurrent = !isStaff && !exemptStatus && (bookOrdem === pedagogicalLimit);
+                const isModuleReleased = (
+                  isStaff || 
+                  isManualModuleRelease || 
+                  bookOrdem <= releasedCount || 
+                  bookOrdem === pedagogicalLimit ||
+                  bookOrdem === 1 // Garantia absoluta para o módulo 1
+                );
+
+                // BLOQUEIO DE NÍVEL MÉDIO: Só libera se o básico estiver completo (27 módulos)
+                const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
+                const levelLocked = isMedium && !isFinished && !isStaff;
+
+                const isReleased = isModuleReleased && !levelLocked;
+                const isCurrent = !isStaff && !exemptStatus && (bookOrdem === pedagogicalLimit) && !levelLocked;
 
               const examReleaseDate = examReleaseDates[l.id];
               const userCreatedAt = new Date(profile.created_at).getTime();
@@ -256,6 +275,8 @@ export const useStudentCourses = (profile: any) => {
     progressoAulas,
     atividades,
     loading,
-    fetchStudentDashboardData
+    fetchStudentDashboardData,
+    finishedBasicCount,
+    isBasicFinished
   };
 };
