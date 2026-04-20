@@ -140,15 +140,25 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                               return (
                                 <div key={sub.id} style={{ padding: '0.75rem 1rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: '10px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: sub.status === 'pendente' ? 1 : 0.8 }}>
                                   <div style={{ fontSize: '0.8rem' }}>Tentativa {idx + 1} ({subAula?.titulo})</div>
-                                  <div style={{ fontWeight: 700, color: sub.status === 'pendente' ? 'var(--warning)' : (sub.nota && sub.nota >= 7 ? 'var(--success)' : 'var(--error)'), display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                    {sub.status === 'pendente' ? 'Em Correção' : (subAula?.tipo === 'prova' ? sub.nota?.toFixed(1) : 'Concluído')}
-                                    <button 
-                                      className="btn btn-primary" 
-                                      style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem', background: subAula?.tipo === 'prova' ? 'var(--primary)' : 'rgba(255,255,255,0.05)', border: 'none' }}
-                                      onClick={(e) => { e.stopPropagation(); setReviewSub(sub); }}
-                                    >
-                                      {subAula?.tipo === 'prova' ? 'Ver Correção' : 'Ver Gabarito'}
-                                    </button>
+                                  <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    {sub.status === 'pendente' ? (
+                                      <span style={{ color: 'var(--warning)' }}>Em Correção</span>
+                                    ) : (
+                                      <>
+                                        <span style={{ color: sub.nota && sub.nota >= 7 ? 'var(--success)' : 'var(--error)' }}>
+                                          {sub.nota && sub.nota >= 7 ? sub.nota.toFixed(1) : 'Não Aprovado'}
+                                        </span>
+                                        {(sub.nota && sub.nota >= 7) && (
+                                          <button 
+                                            className="btn btn-primary" 
+                                            style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem', background: 'var(--primary)', border: 'none' }}
+                                            onClick={(e) => { e.stopPropagation(); setReviewSub(sub); }}
+                                          >
+                                            Ver Correção
+                                          </button>
+                                        )}
+                                      </>
+                                    )}
                                   </div>
                                 </div>
                               );
@@ -289,7 +299,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                  const isManualCorrect = reviewSub.respostas?.[`${qKey}_avaliacao`];
                  if (isManualCorrect !== undefined) isCorrect = isManualCorrect === true;
  
-                 const showOfficialGabarito = reviewSub.status === 'corrigida' || aula?.tipo === 'atividade';
+                  const showOfficialGabarito = aula?.tipo === 'atividade' || (aula?.tipo === 'prova' && reviewSub.nota >= 7);
 
                 return (
                   <div key={qKey} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: showOfficialGabarito ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)', position: 'relative' }}>
