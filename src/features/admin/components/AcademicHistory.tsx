@@ -14,7 +14,7 @@ interface AcademicHistoryProps {
 }
 
 const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete }) => {
-  const [showAllActivities, setShowAllActivities] = React.useState(false);
+  const [showAllActivities, setShowAllActivities] = React.useState(true);
   // Filter and Category Logic
   const processedData = useMemo(() => {
     // 1. Initial Filtering (Term + Exam Type)
@@ -116,19 +116,19 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
               </td>
               <td style={{ textAlign: 'center' }}>
                 <span style={{ 
-                  padding: '2px 8px', 
-                  borderRadius: '4px', 
-                  background: item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                  color: item.nota >= 7 ? '#10b981' : '#ef4444',
-                  fontWeight: 800,
-                  fontSize: '0.85rem'
-                }}>
-                  {item.nota?.toFixed(1)}
-                </span>
-              </td>
-              <td style={{ textAlign: 'right', fontSize: '0.75rem', opacity: 0.5 }}>
-                {item.updated_at ? new Date(item.updated_at).toLocaleDateString() : '---'}
-              </td>
+                   padding: '2px 8px', 
+                   borderRadius: '4px', 
+                   background: item.nota !== null ? (item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(234, 179, 8, 0.1)',
+                   color: item.nota !== null ? (item.nota >= 7 ? '#10b981' : '#ef4444') : '#eab308',
+                   fontWeight: 800,
+                   fontSize: '0.85rem'
+                 }}>
+                   {item.nota !== null ? item.nota?.toFixed(1) : 'PENDENTE'}
+                 </span>
+               </td>
+               <td style={{ textAlign: 'right', fontSize: '0.75rem', opacity: 0.5 }}>
+                 {new Date(item.updated_at || item.created_at).toLocaleDateString()}
+               </td>
               {onDelete && (
                 <td style={{ textAlign: 'right' }}>
                   <button 

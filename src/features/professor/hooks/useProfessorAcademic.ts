@@ -15,10 +15,10 @@ export const useProfessorAcademic = () => {
           nota, 
           status, 
           updated_at,
-          aulas:aula_id ( id, titulo, is_bloco_final, livros ( id, titulo ) ), 
+          created_at,
+          aulas:aula_id ( id, titulo, is_bloco_final, tipo, livros ( id, titulo ) ), 
           users:aluno_id ( id, nome, email, tipo, ano_graduacao, nucleos ( id, nome ) )
         `)
-        .not('nota', 'is', null)
         .order('updated_at', { ascending: false });
       
       const { data } = await query;
@@ -41,11 +41,11 @@ export const useProfessorAcademic = () => {
           nota, 
           status, 
           updated_at,
-          aulas:aula_id ( id, titulo, is_bloco_final, livros ( id, titulo ) ), 
+          created_at,
+          aulas:aula_id ( id, titulo, is_bloco_final, tipo, livros ( id, titulo ) ), 
           users:aluno_id ( id, nome, email, tipo, ano_graduacao, nucleos ( id, nome ) )
         `)
         .in('aluno_id', studentIds)
-        .not('nota', 'is', null)
         .order('updated_at', { ascending: false });
       if (data) setAcademicReport(data);
     } catch (err) {
