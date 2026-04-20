@@ -668,6 +668,24 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      {/* Toast Notification */}
+      {toast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '2rem',
+          right: '2rem',
+          background: toast.type === 'success' ? '#10b981' : '#ef4444',
+          color: '#fff',
+          padding: '1rem 2rem',
+          borderRadius: '12px',
+          fontWeight: 600,
+          boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+          zIndex: 9999,
+          animation: 'fadeIn 0.3s ease-out'
+        }}>
+          {toast.message}
+        </div>
+      )}
     </div>
   )
 }
