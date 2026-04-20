@@ -139,7 +139,7 @@ export const useStudentCourses = (profile: any) => {
       // 5.5 Calcular Total de Módulos Básicos Únicos Finalizados para Trava Pedagógica
       const finishedBasicModules = new Set((resData || [])
         .filter(r => 
-          r.is_bloco_final && 
+          (r.is_bloco_final || r.lesson_type === 'prova' || r.aulas?.tipo === 'prova') && 
           r.status === 'corrigida' && 
           (r.nota || 0) >= 7.0 &&
           (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
@@ -152,7 +152,7 @@ export const useStudentCourses = (profile: any) => {
 
       const finishedMediumModules = new Set((resData || [])
         .filter(r => 
-          r.is_bloco_final && 
+          (r.is_bloco_final || r.lesson_type === 'prova' || r.aulas?.tipo === 'prova') && 
           r.status === 'corrigida' && 
           (r.nota || 0) >= 7.0 &&
           (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('medio') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('médio'))
