@@ -179,20 +179,26 @@ export const useStudentCourses = (profile: any) => {
             livros: sortedLivros.map((l: any) => {
               const bookOrdem = l.ordem || 1;
               const isManualModuleRelease = releasedModulos.includes(l.id);
+                // BLOQUEIO DE NÍVEL MÉDIO: Só libera se o básico estiver completo (27 módulos)
+                const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
+                const levelLocked = isMedium && !isBasicFinished && !isStaff;
+
+                // Regra de DP: Módulos em DP (3 reprovações)
+                const isDP = !isStaff && resData.some(s => {
+                  const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
+                  return sa?.book_id === l.id && (sa?.is_bloco_final || sa?.tipo === 'prova') && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < 7.0;
+                });
+
                 const isModuleReleased = (
                   isStaff || 
                   isManualModuleRelease || 
                   bookOrdem <= releasedCount || 
                   bookOrdem === pedagogicalLimit ||
-                  bookOrdem === 1 // Garantia absoluta para o módulo 1
+                  bookOrdem === 1
                 );
 
-                // BLOQUEIO DE NÍVEL MÉDIO: Só libera se o básico estiver completo (27 módulos)
-                const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
-                const levelLocked = isMedium && !isFinished && !isStaff;
-
-                const isReleased = isModuleReleased && !levelLocked;
-                const isCurrent = !isStaff && !exemptStatus && (bookOrdem === pedagogicalLimit) && !levelLocked;
+                const isReleased = isModuleReleased && !levelLocked && !isDP;
+                const isCurrent = !isStaff && !exemptStatus && (bookOrdem === pedagogicalLimit) && !levelLocked && !isDP;
 
               const examReleaseDate = examReleaseDates[l.id];
               const userCreatedAt = new Date(profile.created_at).getTime();
@@ -265,7 +271,11 @@ export const useStudentCourses = (profile: any) => {
                     return { ...a, titulo: displayTitle, lockedByProfessor, isHidden: isHiddenItem };
                   }).filter((a: any) => !a.isHidden),
                   isReleased,
-                  isCurrent: isCurrent && isReleased
+                  isCurrent: isCurrent && isReleased,
+                  isDP: !isStaff && resData.some(s => {
+                    const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
+                    return sa?.is_bloco_final && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < 7.0;
+                  })
                 };
             }).filter(Boolean)
           };
