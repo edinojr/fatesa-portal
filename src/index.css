@@ -3122,3 +3122,54 @@ select.form-control option {
 }
 
 /* ─────────────────────────────────────────── */
+
+/* --- GRADING PANEL RESPONSIVENESS (v1.6.1) --- */
+@media (max-width: 768px) {
+  .data-card.grading-area {
+    padding: 1rem 0.75rem !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .grading-question-card {
+    padding: 1rem !important;
+    border-radius: 12px !important;
+    margin: 0 -0.5rem !important;
+  }
+
+  .matching-grid-responsive {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  .matching-grid-responsive .matching-separator {
+    display: none !important;
+  }
+
+  .matching-grid-responsive .matching-item {
+    text-align: left !important;
+    padding: 0.75rem !important;
+  }
+
+  .grading-header-flex {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+
+  .grading-header-flex > div:last-child {
+    text-align: left !important;
+    width: 100% !important;
+  }
+
+  .grading-footer-card {
+    padding: 1.5rem 1rem !important;
+    border-radius: 12px !important;
+  }
+  
+  .grading-footer-card input {
+    width: 100% !important;
+    max-width: 150px !important;
+  }
+}

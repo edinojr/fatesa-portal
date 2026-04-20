@@ -324,13 +324,13 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
           </div>
         </div>
       ) : (
-        <div className="data-card" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div className="data-card grading-area" style={{ maxWidth: '800px', margin: '0 auto' }}>
           <button className="btn btn-outline" style={{ width: 'auto', marginBottom: '2rem', padding: '0.5rem 1rem' }} onClick={() => setSelectedSubmission(null)}>
             <ChevronLeft size={16} /> Voltar para Fila
           </button>
 
           <div style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="grading-header-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: !selectedSubmission.lesson_id ? 'var(--error)' : 'inherit' }}>
                   {selectedSubmission.lesson_title || selectedSubmission.aulas?.titulo || '⚠️ Prova de Aula Removida do Cadastro'}
@@ -371,7 +371,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                     displayAnswer = (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                         <div style={{ fontWeight: 600, color: 'var(--primary)', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '1px' }}>Associações Efetuadas (Correção Individual):</div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr auto', gap: '1rem', alignItems: 'center' }}>
+                        <div className="matching-grid-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr auto', gap: '1rem', alignItems: 'center' }}>
                           {q.matchingPairs?.map((pair: any, pIdx: number) => {
                             const selectedRightIdx = answerMap[pIdx];
                             const idxNum = parseInt(selectedRightIdx);
@@ -386,9 +386,9 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
 
                               return (
                                 <React.Fragment key={pIdx}>
-                                  <div style={{ padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', fontSize: '0.9rem', textAlign: 'right', fontWeight: 600, border: isCorrect ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)' }}>{pair.left}</div>
-                                  <div style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', opacity: 0.8 }}>{isCorrect ? <CheckCircle size={18} /> : <span>&rarr;</span>}</div>
-                                  <div style={{ padding: '0.8rem 1.2rem', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', border: isCorrect ? '1px solid var(--success)' : '1px solid var(--error)', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>{selectedRight}</div>
+                                  <div className="matching-item" style={{ padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', fontSize: '0.9rem', textAlign: 'right', fontWeight: 600, border: isCorrect ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)' }}>{pair.left}</div>
+                                  <div className="matching-separator" style={{ color: isCorrect ? 'var(--success)' : 'var(--error)', opacity: 0.8 }}>{isCorrect ? <CheckCircle size={18} /> : <span>&rarr;</span>}</div>
+                                  <div className="matching-item" style={{ padding: '0.8rem 1.2rem', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', border: isCorrect ? '1px solid var(--success)' : '1px solid var(--error)', fontWeight: 600, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>{selectedRight}</div>
                                   <div style={{ display: 'flex', gap: '4px' }}>
                                     <button 
                                       onClick={() => toggleEvaluation(pairKey, true)}
@@ -411,7 +411,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 }
 
                 return (
-                  <div key={q.id || idx} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '20px' }}>
+                  <div key={q.id || idx} className="grading-question-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '20px' }}>
                     <h4 style={{ marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: 700 }}>
                       <span style={{ opacity: 0.3, marginRight: '0.5rem' }}>{idx + 1}.</span> {q.text}
                     </h4>
@@ -424,12 +424,12 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                           ) : q.type === 'true_false' ? (
                             <strong style={{color: q.isTrue ? 'var(--success)' : 'var(--error)'}}>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
                           ) : q.type === 'matching' ? (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '0.5rem', alignItems: 'center' }}>
+                            <div className="matching-grid-responsive" style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) auto minmax(120px, 1fr)', gap: '0.5rem', alignItems: 'center' }}>
                               {q.matchingPairs?.map((pair: any, pIdx: number) => (
                                 <React.Fragment key={pIdx}>
-                                  <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
-                                  <div style={{ color: 'var(--primary)', opacity: 0.5 }}><ChevronRight size={14} /></div>
-                                  <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', fontSize: '0.8rem', color: '#fff' }}>{pair.right}</div>
+                                  <div className="matching-item" style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
+                                  <div className="matching-separator" style={{ color: 'var(--primary)', opacity: 0.5 }}><ChevronRight size={14} /></div>
+                                  <div className="matching-item" style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '8px', fontSize: '0.8rem', color: '#fff' }}>{pair.right}</div>
                                 </React.Fragment>
                               ))}
                             </div>
@@ -469,7 +469,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
             )}
           </div>
 
-          <div style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid var(--success)', padding: '2rem', borderRadius: '16px', textAlign: 'center' }}>
+          <div className="grading-footer-card" style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid var(--success)', padding: '2rem', borderRadius: '16px', textAlign: 'center' }}>
             <h3 style={{ marginBottom: '1rem', color: 'var(--success)' }}>Resultado Final (0 a 10)</h3>
             <input type="number" min="0" max="10" step="0.1" className="form-control" style={{ fontSize: '2rem', width: '120px', textAlign: 'center', margin: '0 auto', background: '#000' }} value={gradeInput} onChange={e => setGradeInput(e.target.value)} placeholder="Ex: 8.5" />
             <div style={{ marginTop: '2rem', textAlign: 'left' }}>
