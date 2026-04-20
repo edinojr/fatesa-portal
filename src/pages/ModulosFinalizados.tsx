@@ -12,7 +12,7 @@ import { graduationService } from '../services/graduationService'
 
 const ModulosFinalizados = () => {
     const { profile, loading: profileLoading } = useProfile();
-    const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData } = useStudentCourses(profile);
+    const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData, finishedBasicCount, finishedMediumCount } = useStudentCourses(profile);
     const navigate = useNavigate();
 
     const [showGraduationForm, setShowGraduationForm] = React.useState(false);
@@ -24,13 +24,23 @@ const ModulosFinalizados = () => {
     useEffect(() => {
         if (!coursesLoading && courses && courses.length > 0 && profile) {
             courses.forEach(course => {
-                if (isCourseCompleted(course, atividades, progressoAulas)) {
+                const isBasic = (course.nivel || '').toLowerCase().includes('basico') || (course.nivel || '').toLowerCase().includes('básico') || !course.nivel;
+                const isMedium = (course.nivel || '').toLowerCase().includes('medio') || (course.nivel || '').toLowerCase().includes('médio');
+
+                let meetsGraduationRequirement = false;
+                if (isBasic && (finishedBasicCount || 0) >= 27) {
+                    meetsGraduationRequirement = true;
+                } else if (isMedium && (finishedMediumCount || 0) >= 8) {
+                    meetsGraduationRequirement = true;
+                }
+
+                if (meetsGraduationRequirement) {
                     setCompletedCourse(course);
                     checkAlumni(profile.id);
                 }
             });
         }
-    }, [coursesLoading, courses, atividades, progressoAulas, profile]);
+    }, [coursesLoading, courses, finishedBasicCount, finishedMediumCount, profile]);
 
     const checkAlumni = async (userId: string) => {
         const record = await graduationService.checkAlumniStatus(userId);
