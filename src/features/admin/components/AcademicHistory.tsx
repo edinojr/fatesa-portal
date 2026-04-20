@@ -23,13 +23,6 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
   const [expandedStudents, setExpandedStudents] = useState<Record<string, boolean>>({});
   const [selectedNucleus, setSelectedNucleus] = useState<string | null>(null);
 
-  const nucleusSummary = useMemo(() => {
-    return Object.entries(hierarchicalData).map(([name, students]) => ({
-      name,
-      count: Object.keys(students).length
-    })).sort((a, b) => a.name.localeCompare(b.name));
-  }, [hierarchicalData]);
-
   const toggleStudent = (id: string) => {
     setExpandedStudents(prev => ({ ...prev, [id]: !prev[id] }));
   };
@@ -101,6 +94,13 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
 
     return groups;
   }, [data, searchTerm]);
+
+  const nucleusSummary = useMemo(() => {
+    return Object.entries(hierarchicalData).map(([name, students]) => ({
+      name,
+      count: Object.keys(students).length
+    })).sort((a, b) => a.name.localeCompare(b.name));
+  }, [hierarchicalData]);
 
   const exportToCSV = () => {
     const headers = ['Aluno', 'Email', 'Núcleo', 'Livro/Módulo', 'Atividade/Bloco', 'Nota', 'Data'];
