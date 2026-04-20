@@ -21,6 +21,14 @@ interface AcademicHistoryProps {
 
 const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete, allStudents }) => {
   const [expandedStudents, setExpandedStudents] = useState<Record<string, boolean>>({});
+  const [selectedNucleus, setSelectedNucleus] = useState<string | null>(null);
+
+  const nucleusSummary = useMemo(() => {
+    return Object.entries(hierarchicalData).map(([name, students]) => ({
+      name,
+      count: Object.keys(students).length
+    })).sort((a, b) => a.name.localeCompare(b.name));
+  }, [hierarchicalData]);
 
   const toggleStudent = (id: string) => {
     setExpandedStudents(prev => ({ ...prev, [id]: !prev[id] }));
@@ -149,6 +157,61 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+        {/* NUCLEUS SUMMARY CARDS */}
+        {Object.keys(hierarchicalData).length > 0 && (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+            gap: '1rem',
+            marginBottom: '1rem'
+          }}>
+            <div 
+              onClick={() => setSelectedNucleus(null)}
+              style={{ 
+                background: !selectedNucleus ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.02)',
+                border: !selectedNucleus ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
+                padding: '1.25rem',
+                borderRadius: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem'
+              }}
+            >
+              <div style={{ fontSize: '0.7rem', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase' }}>Visão Geral</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 900 }}>Todos os Polos</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>
+                {Object.values(hierarchicalData).reduce((acc, curr) => acc + Object.keys(curr).length, 0)} Alunos
+              </div>
+            </div>
+
+            {nucleusSummary.map(nuc => (
+              <div 
+                key={nuc.name}
+                onClick={() => setSelectedNucleus(nuc.name)}
+                style={{ 
+                  background: selectedNucleus === nuc.name ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.02)',
+                  border: selectedNucleus === nuc.name ? '1px solid var(--primary)' : '1px solid var(--glass-border)',
+                  padding: '1.25rem',
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  position: 'relative'
+                }}
+              >
+                <MapPin size={16} style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', opacity: 0.3 }} />
+                <div style={{ fontSize: '0.7rem', fontWeight: 900, opacity: 0.5, textTransform: 'uppercase' }}>Núcleo de Ensino</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{nuc.name}</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>{nuc.count} Alunos</div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {Object.keys(hierarchicalData).length === 0 ? (
           <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px dashed var(--glass-border)' }}>
             <Search size={48} style={{ margin: '0 auto 1.5rem', opacity: 0.2 }} />
@@ -156,11 +219,39 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             <p style={{ opacity: 0.3, maxWidth: '400px', margin: '0.5rem auto' }}>Tente ajustar os filtros de busca ou verifique se há alunos vinculados.</p>
           </div>
         ) : (
-          Object.entries(hierarchicalData).sort().map(([nucName, students]) => (
-            <section key={nucName} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 1rem', background: 'rgba(var(--primary-rgb), 0.1)', width: 'fit-content', borderRadius: '10px', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
-                <MapPin size={16} color="var(--primary)" />
-                <span style={{ fontWeight: 900, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary)' }}>{nucName}</span>
+          Object.entries(hierarchicalData)
+            .filter(([nucName]) => !selectedNucleus || nucName === selectedNucleus)
+            .sort()
+            .map(([nucName, students]) => (
+            <section key={nucName} style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '1.5rem',
+              padding: '1.5rem',
+              background: 'rgba(255,255,255,0.01)',
+              borderRadius: '24px',
+              border: '1px solid var(--glass-border)'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '1rem', 
+                paddingBottom: '1rem', 
+                borderBottom: '1px solid var(--glass-border)',
+                marginBottom: '0.5rem'
+              }}>
+                <div style={{ 
+                  background: 'rgba(var(--primary-rgb), 0.15)', 
+                  padding: '10px', 
+                  borderRadius: '12px',
+                  border: '1px solid rgba(var(--primary-rgb), 0.2)'
+                }}>
+                  <MapPin size={20} color="var(--primary)" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1.5px' }}>Núcleo / Polo</div>
+                  <div style={{ fontWeight: 900, fontSize: '1.25rem', letterSpacing: '-0.02em' }}>{nucName}</div>
+                </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
@@ -229,8 +320,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                                       display: 'flex',
                                       flexDirection: 'column',
                                       gap: '0.5rem',
-                                      position: 'relative',
-                                      group: 'true'
+                                      position: 'relative'
                                     }} className="activity-card">
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', lineHeight: 1.4, paddingRight: '2rem' }}>{item.aulas?.titulo}</div>

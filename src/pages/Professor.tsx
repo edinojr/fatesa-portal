@@ -193,7 +193,8 @@ const Professor = () => {
                  activeTab === 'avisos' ? 'Quadro de Avisos' :
                  activeTab === 'materiais' ? 'Materiais de Apoio' :
                  activeTab === 'attendance' ? 'Lista de Presença' : 
-                 activeTab === 'alumni' ? 'Base de Formados (Alumni)' : 'Fórum da Comunidade'}
+                 activeTab === 'alumni' ? 'Base de Formados (Alumni)' : 
+                 activeTab === 'documents' ? 'Análise de Documentos' : 'Fórum da Comunidade'}
               </h1>
               <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
                 {activeTab === 'home' && dashboardView === 'main' ? 'Selecione uma categoria para começar.' : 
