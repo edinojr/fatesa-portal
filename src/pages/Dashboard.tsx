@@ -209,10 +209,10 @@ const Dashboard = () => {
         }
       }
 
-      showToast('Arquivo enviado com sucesso!');
+      showToast('Documento inserido corretamente!', 'success');
       fetchPayments();
     } catch (err: any) {
-      showToast(err.message, 'error');
+      showToast('Erro ao inserir documento: ' + err.message, 'error');
     } finally {
       setUploading(null);
     }
