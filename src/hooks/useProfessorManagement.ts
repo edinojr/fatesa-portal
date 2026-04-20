@@ -162,6 +162,7 @@ export const useProfessorManagement = () => {
     handleUpdateUserNucleo: (id: string, nId: string, nNome: string) => studentHook.handleUpdateUserNucleo(id, nId, nNome, fetchData),
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),
     handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData),
+    handleUpdateUserType: (id: string, type: string) => studentHook.handleUpdateUserType(id, type, fetchData),
   }), [att, studentHook, gradingHook, fetchData]);
 
   return useMemo(() => ({

@@ -403,12 +403,13 @@ const Professor = () => {
             )}
 
             {activeTab === 'academic' && (
-             <AcademicHistory 
-               data={academicReport} 
-               searchTerm={searchTerm} 
-               onDelete={handleDeleteSubmission}
-               allStudents={allStudents}
-             />
+              <AcademicHistory 
+                data={academicReport} 
+                searchTerm={searchTerm} 
+                onDelete={handleDeleteSubmission}
+                onUpdateStatus={handleUpdateUserType}
+                allStudents={allStudents}
+              />
            )}
 
           {activeTab === 'grading' && (

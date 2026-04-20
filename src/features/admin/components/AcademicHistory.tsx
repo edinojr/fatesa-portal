@@ -16,10 +16,11 @@ interface AcademicHistoryProps {
   data: any[];
   searchTerm: string;
   onDelete?: (id: string) => Promise<void>;
+  onUpdateStatus?: (userId: string, newType: string) => Promise<void>;
   allStudents?: any[];
 }
 
-const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete, allStudents }) => {
+const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete, onUpdateStatus, allStudents }) => {
   const [expandedStudents, setExpandedStudents] = useState<Record<string, boolean>>({});
   const [selectedNucleus, setSelectedNucleus] = useState<string | null>(null);
 
@@ -78,15 +79,32 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
           name: studentName,
           email: item.users?.email,
           tipo: item.users?.tipo,
-          modulos: {}
+          modulos: {},
+          stats: {
+            finishedBasic: new Set<string>(),
+            finishedMedium: new Set<string>()
+          }
         };
       }
       if (!groups[nucName][studentId].modulos[modName]) {
         groups[nucName][studentId].modulos[modName] = { atividades: [], provas: [] };
       }
 
-      if (isExam) {
+      if (item.aulas?.tipo === 'prova' || item.aulas?.is_bloco_final) {
         groups[nucName][studentId].modulos[modName].provas.push(item);
+        
+        // Contabilizar para requisitos de formatura
+        if (item.status === 'corrigida' && (item.nota || 0) >= 7.0) {
+          const nivel = (item.aulas?.livros?.cursos?.nivel || '').toLowerCase();
+          const bookId = item.aulas?.livros?.id;
+          if (bookId) {
+            if (nivel.includes('basico') || nivel.includes('básico') || nivel === '') {
+              groups[nucName][studentId].stats.finishedBasic.add(bookId);
+            } else if (nivel.includes('medio') || nivel.includes('médio')) {
+              groups[nucName][studentId].stats.finishedMedium.add(bookId);
+            }
+          }
+        }
       } else {
         groups[nucName][studentId].modulos[modName].atividades.push(item);
       }
@@ -281,10 +299,72 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                         </div>
                         <div>
                           <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>{std.name}</h4>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>{std.email} • <span style={{ color: std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--success)' }}>{std.tipo === 'ex_aluno' ? 'ALUNO FORMADO' : 'ALUNO ATIVO'}</span></div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            {std.email} • 
+                            <span style={{ color: std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--success)', fontWeight: 700 }}>
+                              {std.tipo === 'ex_aluno' ? 'ALUNO FORMADO' : 'ALUNO ATIVO'}
+                            </span>
+                            {/* VALIDAÇÃO DE REGRA DE FORMATURA */}
+                            {(() => {
+                              const basicCount = std.stats.finishedBasic.size;
+                              const mediumCount = std.stats.finishedMedium.size;
+                              const isMarkedGraduated = std.tipo === 'ex_aluno';
+                              const meetsRequirement = basicCount >= 27 || mediumCount >= 8;
+
+                              if (isMarkedGraduated && !meetsRequirement) {
+                                return (
+                                  <span style={{ 
+                                    background: 'rgba(239, 68, 68, 0.1)', 
+                                    color: '#ef4444', 
+                                    padding: '2px 8px', 
+                                    borderRadius: '6px', 
+                                    fontSize: '0.7rem', 
+                                    fontWeight: 800,
+                                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                                    marginLeft: '0.5rem'
+                                  }}>
+                                    ⚠️ PENDENTE: {basicCount}/27 Módulos
+                                  </span>
+                                );
+                              }
+                              return null;
+                            })()}
+                          </div>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        {/* BOTÃO DE CORREÇÃO DE STATUS */}
+                        {(() => {
+                          const basicCount = std.stats.finishedBasic.size;
+                          const mediumCount = std.stats.finishedMedium.size;
+                          const isMarkedGraduated = std.tipo === 'ex_aluno';
+                          const meetsRequirement = basicCount >= 27 || mediumCount >= 8;
+
+                          if (isMarkedGraduated && !meetsRequirement && onUpdateStatus) {
+                            return (
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (window.confirm(`Deseja corrigir o status de ${std.name} para 'Aluno Ativo'? Este aluno ainda não completou os requisitos.`)) {
+                                    onUpdateStatus(stdId, 'aluno');
+                                  }
+                                }}
+                                className="nav-btn-premium"
+                                style={{ 
+                                  background: 'rgba(239, 68, 68, 0.1)', 
+                                  color: '#ef4444', 
+                                  borderColor: 'rgba(239, 68, 68, 0.2)',
+                                  fontSize: '0.75rem',
+                                  padding: '0.5rem 0.75rem'
+                                }}
+                              >
+                                Corrigir Status
+                              </button>
+                            );
+                          }
+                          return null;
+                        })()}
+
                         <div style={{ textAlign: 'right', marginRight: '1rem' }}>
                           <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Módulos em curso</div>
                           <div style={{ fontSize: '1.2rem', fontWeight: 900 }}>{Object.keys(std.modulos).length}</div>

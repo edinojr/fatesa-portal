@@ -115,6 +115,23 @@ export const useProfessorStudents = () => {
     }
   }
 
+  const handleUpdateUserType = async (userId: string, newType: string, onSuccess?: () => void) => {
+    setActionLoading(userId);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ tipo: newType })
+        .eq('id', userId);
+      
+      if (error) throw error;
+      if (onSuccess) onSuccess();
+    } catch (err: any) {
+      alert('Erro ao atualizar tipo: ' + err.message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   return {
     allStudents,
     setAllStudents: setSortedStudents,
@@ -125,6 +142,7 @@ export const useProfessorStudents = () => {
     handleRejectAccess,
     handleDeleteUser,
     handleResetProgress,
-    handleUpdateUserNucleo
+    handleUpdateUserNucleo,
+    handleUpdateUserType
   }
 }

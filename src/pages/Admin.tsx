@@ -660,6 +660,7 @@ const Admin = () => {
             data={academicReport} 
             searchTerm={searchTerm} 
             onDelete={handleDeleteSubmission}
+            onUpdateStatus={handleTypeChange}
           />
         )}
 
