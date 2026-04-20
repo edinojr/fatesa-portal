@@ -40,16 +40,6 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
         <p style={{ color: 'var(--text-muted)' }}>Acompanhe suas notas e realize suas provas finais por módulo.</p>
       </div>
       
-      {!profile?.nucleo_id && (
-        <div style={{ padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', borderRadius: '12px', border: '1px solid rgba(234, 179, 8, 0.2)', marginBottom: '2rem' }}>
-          <p style={{ color: '#EAB308', fontSize: '0.9rem', marginBottom: '1rem', fontWeight: 600 }}>Polo Educacional não vinculado. Escolha seu núcleo para liberar as avaliações:</p>
-          <select className="form-control" onChange={(e) => handleChangeNucleo(e.target.value)}>
-            <option value="">Escolha seu núcleo...</option>
-            {availableNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
-          </select>
-        </div>
-      )}
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {modules.map((m) => {
           const isExpanded = expandedModule === m.id;
