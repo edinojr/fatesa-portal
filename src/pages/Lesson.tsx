@@ -313,24 +313,27 @@ const Lesson = () => {
           const studentAns = answers[qKey];
           
           if (q.type === 'matching' && q.matchingPairs?.length) {
-            const pairsCount = q.matchingPairs.length;
-            totalWeight += pairsCount;
             const uA = studentAns || {};
             const correctPairs = q.matchingPairs.reduce((acc, _, mIdx) => {
               return acc + (String(uA[mIdx]) === String(mIdx) ? 1 : 0);
             }, 0);
-            score += correctPairs;
+            // Cada par vale 0,5 ponto, até o limite de 3,0 pontos por questão de matching
+            score += Math.min(3.0, correctPairs * 0.5);
           } else {
-            totalWeight += 1;
             if (q.type === 'multiple_choice' || !q.type) {
-              if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score++;
+              if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score += 0.5;
             }
-            else if (q.type === 'true_false' && studentAns === q.isTrue) score++;
+            else if (q.type === 'true_false' && studentAns === q.isTrue) score += 0.5;
+            else if (q.type === 'discursive') {
+              // Discursivas em exercícios (raro) somam 0,5 se houver conteúdo, 
+              // mas geralmente são usadas apenas em Provas que são corrigidas manualmente.
+              if (studentAns && studentAns.trim().length > 10) score += 0.5;
+            }
           }
         });
       }
 
-      const finalS = isFinal ? 0 : (totalWeight > 0 ? (score / totalWeight) * 10 : 0);
+      const finalS = isFinal ? 0 : Math.min(10, score);
       
       // Provas (regulares ou finais) exigem correção manual. Exercícios são auto-corrigidos.
       const status = (isFinal || lesson.tipo === 'prova') ? 'pendente' : 'corrigida';

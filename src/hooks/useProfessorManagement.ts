@@ -72,7 +72,7 @@ export const useProfessorManagement = () => {
           book_id: r.aulas?.livros?.id,
           book_title: r.aulas?.livros?.titulo || 'Módulo Geral',
           submitted_at: r.created_at,
-        }));
+        })).filter(s => s.lesson_type === 'prova' || s.is_bloco_final === true);
         if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
         
         acad.fetchAcademicReport(true);
@@ -108,7 +108,7 @@ export const useProfessorManagement = () => {
                 book_id: r.aulas?.livros?.id,
                 book_title: r.aulas?.livros?.titulo || 'Módulo Geral',
                 submitted_at: r.created_at,
-              }));
+              })).filter(s => s.lesson_type === 'prova' || s.is_bloco_final === true);
               if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
             }
           }

@@ -41,7 +41,8 @@ export const useProfessorGrading = () => {
         nucleus_id: r.users?.nucleos?.id,
         nucleus_name: r.users?.nucleos?.nome || 'Sem Polo',
         submitted_at: r.created_at,
-      }));
+      })).filter((s: any) => s.lesson_type === 'prova' || s.is_bloco_final === true);
+      
       if (mapped) setSortedSubmissions(mapped);
     } catch (err) {
       console.error('Error fetching submissions:', err);
@@ -78,32 +79,31 @@ export const useProfessorGrading = () => {
     setQuestionComments(initialComments);
     
     const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
-    const totalQuestions = validQuestions.length;
     
-    if (totalQuestions > 0) {
-      const scoreSum = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
-        if (!q || !q.text) return acc;
+    if (validQuestions.length > 0) {
+      const scoreSum = validQuestions.reduce((acc: number, q: any, qIdx: number) => {
         const qKey = q.id || qIdx;
         
-        if (initialEvals[qKey] !== undefined) {
-            return acc + (initialEvals[qKey] === true ? 1 : 0);
+        // Se houver avaliação manual (toggle), usamos o peso total da questão
+        if (questionEvaluations[qKey] !== undefined) {
+          const weight = q.type === 'matching' ? 3.0 : 0.5;
+          return acc + (questionEvaluations[qKey] === true ? weight : 0);
         }
 
         const studentAns = sub.respostas?.[qKey];
         if (q.type === 'multiple_choice' || !q.type) {
-            return acc + (String(studentAns) === String(q.correct) ? 1 : 0);
+          return acc + (String(studentAns) === String(q.correct) ? 0.5 : 0);
         } else if (q.type === 'true_false') {
-            return acc + (studentAns === q.isTrue ? 1 : 0);
+          return acc + (studentAns === q.isTrue ? 0.5 : 0);
         } else if (q.type === 'matching' && q.matchingPairs) {
-            const answerMap = (studentAns || {}) as Record<string, string>;
-            const correctPairs = q.matchingPairs.filter((_: any, mIdx: number) => String(answerMap[mIdx]) === String(mIdx)).length;
-            return acc + (correctPairs / q.matchingPairs.length);
+          const answerMap = (studentAns || {}) as Record<string, string>;
+          const correctPairs = q.matchingPairs.filter((_: any, mIdx: number) => String(answerMap[mIdx]) === String(mIdx)).length;
+          return acc + Math.min(3.0, correctPairs * 0.5);
         }
         
         return acc;
       }, 0);
-      const initialGrade = (scoreSum / totalQuestions) * 10;
-      setGradeInput(initialGrade.toFixed(1));
+      setGradeInput(Math.min(10, scoreSum).toFixed(1));
     } else {
       setGradeInput('10.0'); 
     }
@@ -115,17 +115,30 @@ export const useProfessorGrading = () => {
       
       const questionnaire = selectedSubmission?.questionario || selectedSubmission?.aulas?.questionario;
       const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
-      const totalQuestions = validQuestions.length;
       
-      if (totalQuestions > 0) {
-        const correctCount = (Array.isArray(questionnaire) ? questionnaire : []).reduce((acc: number, q: any, qIdx: number) => {
-          if (!q || !q.text) return acc;
+      if (validQuestions.length > 0) {
+        const scoreSum = validQuestions.reduce((acc: number, q: any, qIdx: number) => {
           const qKey = q.id || qIdx;
-          return acc + (newEvals[qKey] === true ? 1 : 0);
+          
+          if (newEvals[qKey] !== undefined) {
+            const weight = q.type === 'matching' ? 3.0 : 0.5;
+            return acc + (newEvals[qKey] === true ? weight : 0);
+          }
+
+          const studentAns = selectedSubmission?.respostas?.[qKey];
+          if (q.type === 'multiple_choice' || !q.type) {
+            return acc + (String(studentAns) === String(q.correct) ? 0.5 : 0);
+          } else if (q.type === 'true_false') {
+            return acc + (studentAns === q.isTrue ? 0.5 : 0);
+          } else if (q.type === 'matching' && q.matchingPairs) {
+            const answerMap = (studentAns || {}) as Record<string, string>;
+            const correctPairs = q.matchingPairs.filter((_: any, mIdx: number) => String(answerMap[mIdx]) === String(mIdx)).length;
+            return acc + Math.min(3.0, correctPairs * 0.5);
+          }
+          return acc;
         }, 0);
         
-        const calculatedGrade = (correctCount / totalQuestions) * 10;
-        setGradeInput(calculatedGrade.toFixed(1));
+        setGradeInput(Math.min(10, scoreSum).toFixed(1));
       }
       return newEvals;
     });

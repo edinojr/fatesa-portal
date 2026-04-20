@@ -16,13 +16,21 @@ interface AcademicHistoryProps {
   data: any[];
   searchTerm: string;
   onDelete?: (id: string) => Promise<void>;
+  allStudents?: any[];
 }
 
-const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete }) => {
+const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete, allStudents }) => {
   const [expandedStudents, setExpandedStudents] = useState<Record<string, boolean>>({});
 
   const toggleStudent = (id: string) => {
     setExpandedStudents(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (window.confirm('Tem certeza que deseja excluir este registro permanentemente?')) {
+      if (onDelete) await onDelete(id);
+    }
   };
 
   // Deep Hierarchy Logic
@@ -41,6 +49,20 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
 
     // 2. Grouping: Nucleo -> Aluno -> Modulo -> Type
     const groups: Record<string, any> = {};
+
+    // Ensure the admin edi.ben.jr@gmail.com is included if search matches or no search
+    const adminUser = (allStudents || []).find(s => s.email === 'edi.ben.jr@gmail.com');
+    if (adminUser && (!term || adminUser.nome?.toLowerCase().includes(term) || adminUser.email?.toLowerCase().includes(term))) {
+       const nucName = adminUser.nucleos?.nome || 'Administração';
+       const studentId = adminUser.id;
+       if (!groups[nucName]) groups[nucName] = {};
+       groups[nucName][studentId] = {
+         name: adminUser.nome,
+         email: adminUser.email,
+         tipo: adminUser.tipo,
+         modulos: {}
+       };
+    }
 
     filtered.forEach(item => {
       const nucName = item.users?.nucleos?.nome || 'Geral / Sem Núcleo';
@@ -206,19 +228,33 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                                       border: '1px solid rgba(59, 130, 246, 0.1)',
                                       display: 'flex',
                                       flexDirection: 'column',
-                                      gap: '0.5rem'
-                                    }}>
+                                      gap: '0.5rem',
+                                      position: 'relative',
+                                      group: 'true'
+                                    }} className="activity-card">
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', lineHeight: 1.4 }}>{item.aulas?.titulo}</div>
-                                        <div style={{ 
-                                          fontSize: '0.8rem', 
-                                          fontWeight: 900, 
-                                          color: item.nota !== null ? (item.nota >= 7 ? 'var(--success)' : 'var(--error)') : '#eab308',
-                                          background: item.nota !== null ? (item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(234, 179, 8, 0.1)',
-                                          padding: '2px 8px',
-                                          borderRadius: '6px'
-                                        }}>
-                                          {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
+                                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', lineHeight: 1.4, paddingRight: '2rem' }}>{item.aulas?.titulo}</div>
+                                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                          <div style={{ 
+                                            fontSize: '0.8rem', 
+                                            fontWeight: 900, 
+                                            color: item.nota !== null ? (item.nota >= 7 ? 'var(--success)' : 'var(--error)') : '#eab308',
+                                            background: item.nota !== null ? (item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(234, 179, 8, 0.1)',
+                                            padding: '2px 8px',
+                                            borderRadius: '6px'
+                                          }}>
+                                            {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
+                                          </div>
+                                          <button 
+                                            onClick={(e) => handleDelete(e, item.id)}
+                                            style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: 'var(--error)', padding: '4px', borderRadius: '6px', cursor: 'pointer' }}
+                                            title="Excluir Atividade"
+                                          >
+                                            <Search size={14} style={{ display: 'none' }} /> {/* dummy to avoid lucide issues if any */}
+                                            <div style={{ width: '14px', height: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </div>
+                                          </button>
                                         </div>
                                       </div>
                                       <div style={{ fontSize: '0.65rem', opacity: 0.5, fontWeight: 600 }}>Realizado em: {new Date(item.created_at).toLocaleDateString()}</div>
@@ -244,20 +280,32 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                                       display: 'flex',
                                       flexDirection: 'column',
                                       gap: '0.75rem',
-                                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.05)'
+                                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.05)',
+                                      position: 'relative'
                                     }}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#f59e0b' }}>{item.aulas?.titulo}</div>
-                                        <div style={{ 
-                                          fontSize: '1rem', 
-                                          fontWeight: 950, 
-                                          padding: '4px 10px',
-                                          borderRadius: '8px',
-                                          background: item.nota !== null ? (item.nota >= 7 ? 'var(--success)' : 'var(--error)') : 'rgba(255,255,255,0.05)',
-                                          color: '#fff',
-                                          boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
-                                        }}>
-                                          {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
+                                        <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#f59e0b', paddingRight: '2rem' }}>{item.aulas?.titulo}</div>
+                                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                                          <div style={{ 
+                                            fontSize: '1rem', 
+                                            fontWeight: 950, 
+                                            padding: '4px 10px',
+                                            borderRadius: '8px',
+                                            background: item.nota !== null ? (item.nota >= 7 ? 'var(--success)' : 'var(--error)') : 'rgba(255,255,255,0.05)',
+                                            color: '#fff',
+                                            boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+                                          }}>
+                                            {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
+                                          </div>
+                                          <button 
+                                            onClick={(e) => handleDelete(e, item.id)}
+                                            style={{ background: 'rgba(239, 68, 68, 0.15)', border: 'none', color: '#ff4d4d', padding: '6px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}
+                                            title="Excluir Prova"
+                                          >
+                                            <div style={{ width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </div>
+                                          </button>
                                         </div>
                                       </div>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

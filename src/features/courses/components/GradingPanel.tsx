@@ -119,15 +119,14 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
           </div>
 
           {/* ESTATÍSTICA DE AVALIAÇÕES POR NÚCLEO (CARDS) */}
-          {(() => {
-             const allExamsStats = submissions.filter(s => 
-               (s as any).aulas?.tipo === 'prova' || 
-               (s as any).lesson_type === 'prova' || 
-               (s as any).aulas?.is_bloco_final === true || 
-               (s as any).is_bloco_final === true ||
-               (!(s as any).lesson_id && s.submission_id)
-             );
-             if (professorNucleos.length === 0 || allExamsStats.length === 0) return null;
+            {(() => {
+              const allExamsStats = submissions.filter(s => 
+                (s as any).lesson_type === 'prova' || 
+                (s as any).aulas?.tipo === 'prova' || 
+                (s as any).is_bloco_final === true || 
+                (s as any).aulas?.is_bloco_final === true
+              );
+              if (professorNucleos.length === 0 || allExamsStats.length === 0) return null;
              
              return (
                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -220,6 +219,9 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {(() => {
               const filteredSubmissions = submissions.filter(s => {
+                const isProva = (s as any).lesson_type === 'prova' || (s as any).aulas?.tipo === 'prova' || (s as any).is_bloco_final === true || (s as any).aulas?.is_bloco_final === true;
+                if (!isProva) return false;
+
                 if (selectedNucleoFilter !== 'todos') {
                   const nName = s.nucleus_name || (s.users as any)?.nucleos?.nome || 'Sem Polo';
                   if (nName !== selectedNucleoFilter) return false;
@@ -245,20 +247,13 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 
                 if (!acc[nucName]) acc[nucName] = {};
                 
-                // 2. Group by Modulo (Book)
                 const modName = sub.book_title || 'Módulo Geral / Sem Título';
-                if (!acc[nucName][modName]) acc[nucName][modName] = { atividades: [], provas: [] };
+                if (!acc[nucName][modName]) acc[nucName][modName] = { provas: [] };
                 
-                // 3. Separate by Type
-                const isProva = (sub as any).lesson_type === 'prova' || (sub as any).aulas?.tipo === 'prova' || (sub as any).is_bloco_final === true || (sub as any).aulas?.is_bloco_final === true;
-                if (isProva) {
-                  acc[nucName][modName].provas.push(sub);
-                } else {
-                  acc[nucName][modName].atividades.push(sub);
-                }
+                acc[nucName][modName].provas.push(sub);
                 
                 return acc;
-              }, {} as Record<string, Record<string, { atividades: any[], provas: any[] }>>);
+              }, {} as Record<string, Record<string, { provas: any[] }>>);
 
               const getNucleoColor = (name: string) => {
                 if (name === 'Polo não identificado') return '#64748b';
@@ -307,23 +302,11 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                           </h4>
 
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            {/* ATIVIDADES SECTION */}
-                            {modulos[mod].atividades.length > 0 && (
-                              <div>
-                                <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                  <ClipboardList size={14} /> Atividades ({modulos[mod].atividades.length})
-                                </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
-                                  {modulos[mod].atividades.map((sub: any) => renderSubmissionCard(sub))}
-                                </div>
-                              </div>
-                            )}
-
                             {/* PROVAS SECTION */}
                             {modulos[mod].provas.length > 0 && (
                               <div>
                                 <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                  <ShieldCheck size={14} /> Provas ({modulos[mod].provas.length})
+                                  <ShieldCheck size={14} /> Fila de Provas ({modulos[mod].provas.length})
                                 </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
                                   {modulos[mod].provas.map((sub: any) => renderSubmissionCard(sub))}
