@@ -1,10 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { 
   Search, 
   Download,
   User,
   MapPin,
-  GraduationCap
+  GraduationCap,
+  BookOpen,
+  ClipboardList,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface AcademicHistoryProps {
@@ -14,64 +19,80 @@ interface AcademicHistoryProps {
 }
 
 const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete }) => {
-  const [showAllActivities, setShowAllActivities] = React.useState(true);
-  // Filter and Category Logic
-  const processedData = useMemo(() => {
-    // 1. Initial Filtering (Term + Exam Type)
-    const filtered = data.filter(item => {
-      const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova';
-      if (!showAllActivities && !isExam) return false;
+  const [expandedStudents, setExpandedStudents] = useState<Record<string, boolean>>({});
 
-      const term = searchTerm.toLowerCase();
+  const toggleStudent = (id: string) => {
+    setExpandedStudents(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  // Deep Hierarchy Logic
+  const hierarchicalData = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    
+    // 1. Initial Filtering
+    const filtered = data.filter(item => {
       return (
         item.users?.nome?.toLowerCase().includes(term) ||
         (item.users?.nucleos?.nome || 'N/A').toLowerCase().includes(term) ||
         item.aulas?.livros?.titulo?.toLowerCase().includes(term) ||
-        item.aulas?.titulo?.toLowerCase().includes(term) ||
-        (item.users?.ano_graduacao || '').includes(term)
+        item.aulas?.titulo?.toLowerCase().includes(term)
       );
     });
 
-    // 2. Grouping Logic
-    const activeGroups: Record<string, any[]> = {};
-    const alumniGroups: Record<string, any[]> = {};
+    // 2. Grouping: Nucleo -> Aluno -> Modulo -> Type
+    const groups: Record<string, any> = {};
 
     filtered.forEach(item => {
-      const isAlumni = item.users?.tipo === 'ex_aluno';
-      
-      if (isAlumni) {
-        const year = item.users?.ano_graduacao || 'Ano não informado';
-        if (!alumniGroups[year]) alumniGroups[year] = [];
-        alumniGroups[year].push(item);
+      const nucName = item.users?.nucleos?.nome || 'Geral / Sem Núcleo';
+      const studentId = item.users?.id || 'unknown';
+      const studentName = item.users?.nome || 'Aluno Desconhecido';
+      const modName = item.aulas?.livros?.titulo || 'Módulo Geral';
+      const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova';
+
+      if (!groups[nucName]) groups[nucName] = {};
+      if (!groups[nucName][studentId]) {
+        groups[nucName][studentId] = {
+          name: studentName,
+          email: item.users?.email,
+          tipo: item.users?.tipo,
+          modulos: {}
+        };
+      }
+      if (!groups[nucName][studentId].modulos[modName]) {
+        groups[nucName][studentId].modulos[modName] = { atividades: [], provas: [] };
+      }
+
+      if (isExam) {
+        groups[nucName][studentId].modulos[modName].provas.push(item);
       } else {
-        const nucleusName = item.users?.nucleos?.nome || 'Geral / Sem Núcleo';
-        if (!activeGroups[nucleusName]) activeGroups[nucleusName] = [];
-        activeGroups[nucleusName].push(item);
+        groups[nucName][studentId].modulos[modName].atividades.push(item);
       }
     });
 
-    return { activeGroups, alumniGroups };
-  }, [data, searchTerm, showAllActivities]);
+    return groups;
+  }, [data, searchTerm]);
 
   const exportToCSV = () => {
-    // Flatten grouped data for CSV export to maintain current behavior
-    const allFiltered = [
-      ...Object.values(processedData.activeGroups).flat(),
-      ...Object.values(processedData.alumniGroups).flat()
-    ];
+    const headers = ['Aluno', 'Email', 'Núcleo', 'Livro/Módulo', 'Atividade/Bloco', 'Nota', 'Data'];
+    const rows: string[][] = [];
 
-    const headers = ['Aluno', 'Email', 'Status', 'Núcleo', 'Ano Graduação', 'Livro/Módulo', 'Atividade/Bloco', 'Nota', 'Data Correção'];
-    const rows = allFiltered.map(item => [
-      item.users?.nome || 'N/A',
-      item.users?.email || 'N/A',
-      item.users?.tipo === 'ex_aluno' ? 'Formado' : 'Ativo',
-      item.users?.nucleos?.nome || 'Sem Núcleo',
-      item.users?.ano_graduacao || '---',
-      item.aulas?.livros?.titulo || 'N/A',
-      item.aulas?.titulo || 'N/A',
-      item.nota?.toFixed(1) || '0.0',
-      item.updated_at ? new Date(item.updated_at).toLocaleDateString() : 'N/A'
-    ]);
+    Object.entries(hierarchicalData).forEach(([nuc, students]) => {
+      Object.values(students).forEach((std: any) => {
+        Object.entries(std.modulos).forEach(([mod, content]: [string, any]) => {
+          [...content.atividades, ...content.provas].forEach(item => {
+            rows.push([
+              std.name,
+              std.email || 'N/A',
+              nuc,
+              mod,
+              item.aulas?.titulo || 'N/A',
+              item.nota !== null ? item.nota.toFixed(1) : 'Pendente',
+              new Date(item.updated_at || item.created_at).toLocaleDateString()
+            ]);
+          });
+        });
+      });
+    });
 
     const csvContent = "data:text/csv;charset=utf-8," 
       + headers.join(",") + "\n" 
@@ -80,148 +101,183 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `historico_academico_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `historico_detalhado_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const renderGroupTable = (items: any[]) => (
-    <div className="table-responsive" style={{ marginTop: '1rem' }}>
-      <table className="admin-table mini">
-        <thead>
-          <tr>
-            <th>Aluno</th>
-            <th>Módulo / Bloco</th>
-            <th style={{ textAlign: 'center' }}>Nota Final</th>
-            <th style={{ textAlign: 'right' }}>Data</th>
-            {onDelete && <th style={{ textAlign: 'right' }}>Ação</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.id}>
-              <td>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <User size={14} opacity={0.5} />
-                  <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>{item.users?.nome}</span>
-                </div>
-              </td>
-              <td>
-                <div style={{ fontSize: '0.8rem' }}>
-                  <div style={{ fontWeight: 700, color: 'var(--primary)' }}>{item.aulas?.livros?.titulo}</div>
-                  <div style={{ opacity: 0.6 }}>{item.aulas?.titulo}</div>
-                  {!showAllActivities && item.aulas?.tipo === 'prova' && <span style={{ fontSize: '0.6rem', background: 'var(--primary)', color: '#fff', padding: '1px 4px', borderRadius: '4px', fontWeight: 800 }}>PROVA</span>}
-                </div>
-              </td>
-              <td style={{ textAlign: 'center' }}>
-                <span style={{ 
-                   padding: '2px 8px', 
-                   borderRadius: '4px', 
-                   background: item.nota !== null ? (item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(234, 179, 8, 0.1)',
-                   color: item.nota !== null ? (item.nota >= 7 ? '#10b981' : '#ef4444') : '#eab308',
-                   fontWeight: 800,
-                   fontSize: '0.85rem'
-                 }}>
-                   {item.nota !== null ? item.nota?.toFixed(1) : 'PENDENTE'}
-                 </span>
-               </td>
-               <td style={{ textAlign: 'right', fontSize: '0.75rem', opacity: 0.5 }}>
-                 {new Date(item.updated_at || item.created_at).toLocaleDateString()}
-               </td>
-              {onDelete && (
-                <td style={{ textAlign: 'right' }}>
-                  <button 
-                    className="btn-icon" 
-                    onClick={() => onDelete(item.id)}
-                    style={{ color: 'var(--error)', padding: '4px' }}
-                    title="Excluir Atividade"
-                  >
-                    <Download size={14} style={{ transform: 'rotate(180deg)' }} /> 
-                  </button>
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-
   return (
-    <div className="academic-history-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '10px', borderRadius: '12px' }}>
-            <GraduationCap size={24} color="var(--primary)" />
+    <div className="academic-history-container" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%)', padding: '12px', borderRadius: '14px', boxShadow: '0 8px 20px rgba(124, 58, 237, 0.3)' }}>
+            <GraduationCap size={28} color="#fff" />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Histórico Acadêmico</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
-              Notas consolidadas agrupadas por unidade
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: 0, letterSpacing: '-0.02em' }}>Histórico Consolidado</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0, fontWeight: 500 }}>
+              Visão hierárquica por Núcleo e Desempenho do Aluno
             </p>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button 
-            className="btn btn-outline" 
-            onClick={() => setShowAllActivities(!showAllActivities)} 
-            style={{ width: 'auto', gap: '0.5rem', background: showAllActivities ? 'rgba(var(--primary-rgb), 0.1)' : 'transparent', borderColor: showAllActivities ? 'var(--primary)' : 'var(--glass-border)' }}
-          >
-            {showAllActivities ? 'Ocultar Exercícios' : 'Mostrar Tudo (Exercícios)'}
-          </button>
-          <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.5rem', width: 'auto' }}>
-            <Download size={18} /> Exportar Geral
-          </button>
-        </div>
+        <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.6rem', width: 'auto', padding: '0.75rem 1.5rem', borderRadius: '12px' }}>
+          <Download size={18} /> Exportar Relatório
+        </button>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-        {/* GRUPOS DE ALUNOS ATIVOS POR NÚCLEO */}
-        {Object.keys(processedData.activeGroups).length > 0 && (
-          <section>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <MapPin size={18} /> Alunos em Atividade por Núcleo
-            </h3>
-            <div className="groups-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '1.5rem' }}>
-              {Object.entries(processedData.activeGroups).sort().map(([name, items]) => (
-                <div key={name} className="card group-card" style={{ padding: '1.25rem', background: 'var(--bg-card)', border: '1px solid var(--glass-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.75rem' }}>
-                    <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{name}</span>
-                    <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>{items.length} registros</span>
-                  </div>
-                  {renderGroupTable(items)}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* GRUPOS DE EX-ALUNOS POR ANO */}
-        {Object.keys(processedData.alumniGroups).length > 0 && (
-          <section>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.25rem', color: '#EAB308', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <GraduationCap size={18} /> Alunos Formados (por Ano)
-            </h3>
-            <div className="groups-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '1.5rem' }}>
-              {Object.entries(processedData.alumniGroups).sort(([a], [b]) => b.localeCompare(a)).map(([year, items]) => (
-                <div key={year} className="card group-card" style={{ padding: '1.25rem', background: 'rgba(234, 179, 8, 0.03)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(234, 179, 8, 0.1)', paddingBottom: '0.75rem' }}>
-                    <span style={{ fontWeight: 800, fontSize: '0.9rem', color: '#EAB308' }}>🎓 Graduação {year}</span>
-                    <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>{items.length} registros</span>
-                  </div>
-                  {renderGroupTable(items)}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {Object.keys(processedData.activeGroups).length === 0 && Object.keys(processedData.alumniGroups).length === 0 && (
-          <div style={{ textAlign: 'center', padding: '4rem', opacity: 0.5 }}>
-            <Search size={48} style={{ margin: '0 auto 1rem' }} />
-            <p>Nenhum registro encontrado para os critérios de busca.</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+        {Object.keys(hierarchicalData).length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px dashed var(--glass-border)' }}>
+            <Search size={48} style={{ margin: '0 auto 1.5rem', opacity: 0.2 }} />
+            <h3 style={{ opacity: 0.5 }}>Nenhum registro localizado</h3>
+            <p style={{ opacity: 0.3, maxWidth: '400px', margin: '0.5rem auto' }}>Tente ajustar os filtros de busca ou verifique se há alunos vinculados.</p>
           </div>
+        ) : (
+          Object.entries(hierarchicalData).sort().map(([nucName, students]) => (
+            <section key={nucName} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 1rem', background: 'rgba(var(--primary-rgb), 0.1)', width: 'fit-content', borderRadius: '10px', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
+                <MapPin size={16} color="var(--primary)" />
+                <span style={{ fontWeight: 900, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary)' }}>{nucName}</span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                {Object.entries(students).map(([stdId, std]: [string, any]) => (
+                  <div key={stdId} className="card" style={{ 
+                    background: 'rgba(255,255,255,0.02)', 
+                    border: '1px solid var(--glass-border)', 
+                    borderRadius: '20px', 
+                    overflow: 'hidden',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    {/* STUDENT HEADER */}
+                    <div 
+                      onClick={() => toggleStudent(stdId)}
+                      style={{ 
+                        padding: '1.25rem 1.5rem', 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center', 
+                        cursor: 'pointer',
+                        background: expandedStudents[stdId] ? 'rgba(255,255,255,0.03)' : 'transparent'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)' }}>
+                          <User size={24} color={std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--primary)'} />
+                        </div>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>{std.name}</h4>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>{std.email} • <span style={{ color: std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--success)' }}>{std.tipo === 'ex_aluno' ? 'ALUNO FORMADO' : 'ALUNO ATIVO'}</span></div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        <div style={{ textAlign: 'right', marginRight: '1rem' }}>
+                          <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Módulos em curso</div>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 900 }}>{Object.keys(std.modulos).length}</div>
+                        </div>
+                        {expandedStudents[stdId] ? <ChevronUp size={20} opacity={0.5} /> : <ChevronDown size={20} opacity={0.5} />}
+                      </div>
+                    </div>
+
+                    {/* STUDENT CONTENT (MODULOS) */}
+                    {expandedStudents[stdId] && (
+                      <div style={{ padding: '0 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'slideDown 0.3s ease-out' }}>
+                        {Object.entries(std.modulos).map(([modName, content]: [string, any]) => (
+                          <div key={modName} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '16px', padding: '1.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <h5 style={{ margin: '0 0 1.25rem 0', fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <BookOpen size={18} /> {modName}
+                            </h5>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                              {/* EXERCICIOS SECTION */}
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  <ClipboardList size={14} /> Exercícios ({content.atividades.length})
+                                </div>
+                                {content.atividades.length === 0 ? (
+                                  <div style={{ fontSize: '0.8rem', opacity: 0.3, fontStyle: 'italic', padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', border: '1px dashed var(--glass-border)' }}>Nenhum exercício registrado</div>
+                                ) : (
+                                  content.atividades.map((item: any) => (
+                                    <div key={item.id} style={{ 
+                                      background: 'rgba(59, 130, 246, 0.05)', 
+                                      padding: '1rem', 
+                                      borderRadius: '14px', 
+                                      border: '1px solid rgba(59, 130, 246, 0.1)',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: '0.5rem'
+                                    }}>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', lineHeight: 1.4 }}>{item.aulas?.titulo}</div>
+                                        <div style={{ 
+                                          fontSize: '0.8rem', 
+                                          fontWeight: 900, 
+                                          color: item.nota !== null ? (item.nota >= 7 ? 'var(--success)' : 'var(--error)') : '#eab308',
+                                          background: item.nota !== null ? (item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(234, 179, 8, 0.1)',
+                                          padding: '2px 8px',
+                                          borderRadius: '6px'
+                                        }}>
+                                          {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
+                                        </div>
+                                      </div>
+                                      <div style={{ fontSize: '0.65rem', opacity: 0.5, fontWeight: 600 }}>Realizado em: {new Date(item.created_at).toLocaleDateString()}</div>
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+
+                              {/* PROVAS SECTION */}
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                  <ShieldCheck size={14} /> Provas Finais ({content.provas.length})
+                                </div>
+                                {content.provas.length === 0 ? (
+                                  <div style={{ fontSize: '0.8rem', opacity: 0.3, fontStyle: 'italic', padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', border: '1px dashed var(--glass-border)' }}>Nenhuma prova realizada</div>
+                                ) : (
+                                  content.provas.map((item: any) => (
+                                    <div key={item.id} style={{ 
+                                      background: 'rgba(245, 158, 11, 0.08)', 
+                                      padding: '1.25rem', 
+                                      borderRadius: '16px', 
+                                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: '0.75rem',
+                                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.05)'
+                                    }}>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#f59e0b' }}>{item.aulas?.titulo}</div>
+                                        <div style={{ 
+                                          fontSize: '1rem', 
+                                          fontWeight: 950, 
+                                          padding: '4px 10px',
+                                          borderRadius: '8px',
+                                          background: item.nota !== null ? (item.nota >= 7 ? 'var(--success)' : 'var(--error)') : 'rgba(255,255,255,0.05)',
+                                          color: '#fff',
+                                          boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+                                        }}>
+                                          {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
+                                        </div>
+                                      </div>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ fontSize: '0.65rem', color: '#f59e0b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Avaliação de Bloco</div>
+                                        <div style={{ fontSize: '0.65rem', opacity: 0.6, fontWeight: 600 }}>{new Date(item.created_at).toLocaleDateString()}</div>
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))
         )}
       </div>
     </div>
