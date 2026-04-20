@@ -240,11 +240,13 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
 
               // 1. Group by Nucleo
               const groupedByNucleo = filteredSubmissions.reduce((acc: any, sub: any) => {
-                const nucName = sub.nucleus_name || 'Sem Polo';
+                let nucName = sub.nucleus_name || (sub.users as any)?.nucleos?.nome;
+                if (!nucName || nucName === 'Sem Polo') nucName = 'Polo não identificado';
+                
                 if (!acc[nucName]) acc[nucName] = {};
                 
                 // 2. Group by Modulo (Book)
-                const modName = sub.book_title || 'Módulo Geral';
+                const modName = sub.book_title || 'Módulo Geral / Sem Título';
                 if (!acc[nucName][modName]) acc[nucName][modName] = { atividades: [], provas: [] };
                 
                 // 3. Separate by Type
@@ -259,6 +261,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               }, {} as Record<string, Record<string, { atividades: any[], provas: any[] }>>);
 
               const getNucleoColor = (name: string) => {
+                if (name === 'Polo não identificado') return '#64748b';
                 const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
                 let hash = 0;
                 for (let i = 0; i < name.length; i++) {
@@ -267,12 +270,16 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 return colors[Math.abs(hash) % colors.length];
               };
 
-              return Object.keys(groupedByNucleo).sort().map(nuc => {
+              return Object.keys(groupedByNucleo).sort((a, b) => {
+                if (a === 'Polo não identificado') return 1;
+                if (b === 'Polo não identificado') return -1;
+                return a.localeCompare(b);
+              }).map(nuc => {
                 const color = getNucleoColor(nuc);
                 const modulos = groupedByNucleo[nuc];
                 
                 return (
-                  <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(255,255,255,0.01)', padding: '1.5rem', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+                  <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(255,255,255,0.01)', padding: '1.5rem', borderRadius: '24px', border: nuc === 'Polo não identificado' ? '1px dashed var(--error)' : '1px solid var(--glass-border)' }}>
                     {/* NUCLEO HEADER */}
                     <div style={{ 
                       display: 'flex', 

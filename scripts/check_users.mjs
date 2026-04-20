@@ -1,22 +1,13 @@
-import { createClient } from '@supabase/supabase-js'
-import fs from 'fs'
+import { createClient } from '@supabase/supabase-js';
 
-const envContent = fs.readFileSync('.env', 'utf-8')
-const env = {}
-envContent.split('\n').forEach(line => {
-  const match = line.match(/^([^=]+)=(.*)$/)
-  if (match) env[match[1]] = match[2]
-})
+const supabase = createClient(
+  'https://jhqnitdmdlbagnfwwrwx.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpocW5pdGRtZGxiYWduZnd3cnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MDQ3NTEsImV4cCI6MjA4OTM4MDc1MX0.exQIEIRdWh0JNy_nD2BuA1LElwktRuqlfXIqVXVvSiI'
+);
 
-const supabaseUrl = env['VITE_SUPABASE_URL']
-const supabaseAnonKey = env['VITE_SUPABASE_ANON_KEY']
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-async function check() {
-  const { data, error } = await supabase.from('users').select('id, nome, nucleo, nucleo_id').limit(5)
-  console.log("Users:", data)
-  if (error) console.error("Error:", error)
+async function checkUsers() {
+  const { data: users } = await supabase.from('users').select('*').limit(5);
+  console.log('Sample users:', users);
 }
 
-check()
+checkUsers();

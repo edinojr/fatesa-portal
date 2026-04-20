@@ -231,7 +231,7 @@ const Professor = () => {
                         </div>
                         <div>
                           <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Provas p/ Corrigir</div>
-                          <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{submissions.length}</div>
+                          <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{submissions.filter(s => s.status === 'pendente').length}</div>
                         </div>
                       </div>
                       {submissions.length > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#9c27b0' }}></div>}
