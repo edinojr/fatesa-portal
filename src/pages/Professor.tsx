@@ -79,7 +79,8 @@ const Professor = () => {
     selectBookAndShowLessons,
     attendanceRecords,
     handleSaveAttendance,
-    academicReport
+    academicReport,
+    handleUpdateUserType
   } = useProfessorManagement();
 
   const navigate = useNavigate()
