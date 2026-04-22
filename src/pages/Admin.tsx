@@ -509,7 +509,7 @@ const Admin = () => {
             users={(() => {
               let filtered = users;
               if (userTypeFilter === 'administrativos') filtered = filtered.filter((u: any) => ['admin', 'suporte', 'colaborador'].includes(u.tipo));
-              if (userTypeFilter === 'alunos') filtered = filtered.filter((u: any) => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo));
+              if (userTypeFilter === 'alunos') filtered = filtered.filter((u: any) => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo) || u.email === 'edi.ben.jr@gmail.com');
               return filtered;
             })()}
             allNucleos={allNucleos}

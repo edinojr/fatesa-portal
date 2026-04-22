@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { 
   BookOpen, 
@@ -31,6 +31,7 @@ import ForumPanel from '../features/forum/components/ForumPanel'
 import AlumniCertificate from '../components/documents/AlumniCertificate'
 import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
+import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
 
 type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
 
@@ -72,7 +73,6 @@ const Dashboard = () => {
     fetchStudentDashboardData,
     finishedBasicCount,
     finishedMediumCount,
-    isBasicFinished
   } = useStudentCourses(profile);
 
   const { 
@@ -102,32 +102,51 @@ const Dashboard = () => {
 
   // Logica de Provas Pendentes e Recuperação
   const pendingExams = useMemo(() => {
-    if (!courses.length) return [];
+    // Se o perfil estiver bloqueado, não mostrar notificações de provas
+    if (!courses.length || profile?.bloqueado) return [];
     
     const pending: any[] = [];
     courses.forEach(course => {
       course.livros.forEach(libro => {
-        // Só mostrar provas de módulos liberados E vigentes
-        if (!libro.isReleased || !libro.isCurrent) return;
+        // Módulo precisa estar liberado
+        if (!libro.isReleased) return;
 
         libro.aulas.forEach(aula => {
-          if (libro.isReleased && (aula.tipo === 'prova' || !!aula.is_bloco_final) && !aula.isHidden) {
+          // É uma prova, não está oculta e não está bloqueada pelo professor
+          const title = aula.titulo || '';
+          const isExam = aula.tipo === 'prova' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
+          const isDoable = !aula.isHidden && !aula.lockedByProfessor;
+          
+          if (isExam && isDoable) {
             const hasSubmission = atividades.some(sub => sub.lesson_id === aula.id);
             if (!hasSubmission) {
               pending.push({
                 id: aula.id,
-                titulo: aula.titulo || 'Avaliação',
+                titulo: title || 'Avaliação',
                 livro: libro.titulo,
                 versao: aula.versao || 1,
-                isRecovery: (aula.versao || 1) > 1
+                isRecovery: (aula.versao || 1) > 1 || /V[2-3]|RECUPERAÇ/i.test(title)
               });
             }
           }
         });
       });
     });
-    return pending;
-  }, [courses, atividades]);
+
+    // Ordenar: primeiro as recuperações, depois por ordem de livro (implícito na iteração anterior)
+    return pending.sort((a, b) => (b.isRecovery ? 1 : 0) - (a.isRecovery ? 1 : 0));
+  }, [courses, atividades, profile?.bloqueado]);
+
+
+  // Filtra cursos para mostrar apenas o vigente no Dashboard (Home e Cursos)
+  const currentCourses = useMemo(() => {
+    if (isStaff || !courses.length) return courses;
+    
+    return courses.map(course => ({
+      ...course,
+      livros: course.livros.filter(libro => libro.isReleased)
+    })).filter(course => course.livros.length > 0);
+  }, [courses, isStaff]);
 
   useEffect(() => {
     if (profile?.id) {
@@ -137,11 +156,18 @@ const Dashboard = () => {
   }, [profile?.id, fetchStudentDashboardData, fetchPayments]);
 
   useEffect(() => {
-    if (pendingExams.length > 0) {
-      const dismissed = sessionStorage.getItem('fatesa_exam_notice_dismissed');
-      if (!dismissed) setShowExamNotice(true);
+    // Só mostrar o aviso se houver provas E se ainda não tiver sido mostrado nesta sessão para este usuário
+    if (pendingExams.length > 0 && profile?.id) {
+      const storageKey = `fatesa_exam_notice_v4_${profile.id}`;
+      const alreadyShown = sessionStorage.getItem(storageKey);
+      
+      if (!alreadyShown) {
+        setShowExamNotice(true);
+        // Marcar como mostrado imediatamente para não repetir em navegação ou refresh
+        sessionStorage.setItem(storageKey, '1');
+      }
     }
-  }, [pendingExams]);
+  }, [pendingExams, profile?.id]);
 
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>, 
@@ -540,7 +566,7 @@ const Dashboard = () => {
                 </button>
               </div>
               <CourseList 
-                courses={courses}
+                courses={currentCourses}
                 progressoAulas={progressoAulas}
                 atividades={atividades}
                 showOnlyOngoing={true}
@@ -589,84 +615,10 @@ const Dashboard = () => {
 
       {/* POP-UP DE PROVAS PENDENTES OU RECUPERAÇÃO */}
       {showExamNotice && pendingExams.length > 0 && (
-        <div className="modal-overlay" style={{ zIndex: 10000 }}>
-          <div className="modal-content" style={{ 
-            maxWidth: '500px', 
-            textAlign: 'center', 
-            padding: '2.5rem', 
-            background: 'var(--bg-card)', 
-            borderRadius: '32px',
-            border: `1px solid ${pendingExams.some(e => e.isRecovery) ? 'rgba(244, 63, 94, 0.4)' : 'rgba(245, 158, 11, 0.4)'}`,
-            boxShadow: '0 30px 60px rgba(0,0,0,0.8)'
-          }}>
-            <div style={{ 
-              width: '80px', 
-              height: '80px', 
-              borderRadius: '24px', 
-              background: pendingExams.some(e => e.isRecovery) ? 'rgba(244, 63, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              margin: '0 auto 1.5rem',
-              color: pendingExams.some(e => e.isRecovery) ? '#f43f5e' : '#f59e0b'
-            }}>
-              <AlertCircle size={40} />
-            </div>
-
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: '0.75rem' }}>
-              {pendingExams.some(e => e.isRecovery) ? '⚠️ Recuperação Disponível!' : '📋 Prova Pendente!'}
-            </h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.6 }}>
-              Identificamos que você possui {pendingExams.length} avaliação(ões) disponível(eis) no seu portal. 
-              {pendingExams.some(e => e.isRecovery) && ' Uma delas é uma prova de recuperação para ajudar você a alcançar a nota necessária.'}
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem', textAlign: 'left' }}>
-              {pendingExams.slice(0, 3).map(exam => (
-                <div key={exam.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ fontSize: '0.7rem', opacity: 0.6, textTransform: 'uppercase', letterSpacing: '1px' }}>{exam.livro}</div>
-                  <div style={{ fontWeight: 700, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>{exam.titulo}</span>
-                    <span style={{ 
-                      fontSize: '0.65rem', 
-                      padding: '2px 8px', 
-                      background: exam.isRecovery ? 'rgba(244, 63, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)', 
-                      color: exam.isRecovery ? '#f43f5e' : '#f59e0b',
-                      borderRadius: '50px',
-                      fontWeight: 800
-                    }}>
-                      {exam.isRecovery ? 'RECUPERAÇÃO' : 'VERSÃO V1'}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {pendingExams.length > 3 && (
-                <div style={{ fontSize: '0.8rem', textAlign: 'center', opacity: 0.5 }}>E mais {pendingExams.length - 3} avaliações...</div>
-              )}
-            </div>
-
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button 
-                className="btn btn-outline" 
-                onClick={() => { setShowExamNotice(false); sessionStorage.setItem('fatesa_exam_notice_dismissed', '1'); }}
-                style={{ flex: 1, height: '54px' }}
-              >
-                Depois
-              </button>
-              <button 
-                className="btn btn-primary" 
-                style={{ flex: 1.5, height: '54px', background: pendingExams.some(e => e.isRecovery) ? '#f43f5e' : 'var(--primary)' }}
-                onClick={() => {
-                  setShowExamNotice(false);
-                  sessionStorage.setItem('fatesa_exam_notice_dismissed', '1');
-                  navigate(`/lesson/${pendingExams[0].id}`);
-                }}
-              >
-                Fazer Prova Agora
-              </button>
-            </div>
-          </div>
-        </div>
+        <ExamNotificationModal 
+          exams={pendingExams}
+          onClose={() => setShowExamNotice(false)}
+        />
       )}
       {/* Toast Notification */}
       {toast && (

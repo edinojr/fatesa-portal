@@ -47,7 +47,10 @@ export const useStudentCourses = (profile: any) => {
       const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
       
       // 4. Provas / Atividades do Professor
-      const { data: exams } = await supabase.from('aulas').select('id, livro_id, is_bloco_final, tipo').or('tipo.eq.prova,is_bloco_final.eq.true');
+      const { data: exams } = await supabase
+        .from('aulas')
+        .select('id, livro_id, is_bloco_final, tipo, titulo')
+        .or('tipo.eq.prova,is_bloco_final.eq.true,titulo.ilike.%V1%,titulo.ilike.%V2%,titulo.ilike.%V3%,titulo.ilike.%RECUPERACAO%');
 
       const isPresencial = profile?.tipo === 'presencial';
       const temAcessoDefinitivo = profile?.acesso_definitivo === true;
@@ -186,7 +189,8 @@ export const useStudentCourses = (profile: any) => {
                 // Regra de DP: Módulos em DP (3 reprovações)
                 const isDP = !isStaff && resData.some(s => {
                   const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-                  return sa?.book_id === l.id && (sa?.is_bloco_final || sa?.tipo === 'prova') && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < 7.0;
+                  const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || (sa?.titulo && /V[1-3]|RECUPERAÇ/i.test(sa.titulo));
+                  return sa?.book_id === l.id && isEx && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < 7.0;
                 });
 
                 const isModuleReleased = (
@@ -198,7 +202,10 @@ export const useStudentCourses = (profile: any) => {
                 );
 
                 const isReleased = isModuleReleased && !levelLocked && !isDP;
-                const isCurrent = !isStaff && !exemptStatus && (bookOrdem === pedagogicalLimit) && !levelLocked && !isDP;
+                const isCurrent = (bookOrdem === pedagogicalLimit) && !levelLocked && !isDP;
+                
+                // Todo conteúdo liberado (manual ou automático) pode ser acessado
+                const isUnlocked = isReleased;
 
               const examReleaseDate = examReleaseDates[l.id];
               const userCreatedAt = new Date(profile.created_at).getTime();
@@ -251,7 +258,10 @@ export const useStudentCourses = (profile: any) => {
 
                     if (!isStaff && (v === 2 || v === 3)) {
                       const prevV = v - 1;
-                      const prevAula = (l.aulas || []).find((pa: any) => pa.versao === prevV && !!pa.is_bloco_final);
+                      const prevAula = (l.aulas || []).find((pa: any) => {
+                        const isEx = pa.tipo === 'prova' || !!pa.is_bloco_final || (pa.titulo && /V[1-3]|RECUPERAÇ/i.test(pa.titulo));
+                        return pa.versao === prevV && isEx;
+                      });
                       const prevSub = resData.find((s: any) => s.lesson_id === prevAula?.id);
                       
                       // Regras para esconder Recuperação:
@@ -260,7 +270,8 @@ export const useStudentCourses = (profile: any) => {
                       // 3. Se já passou na anterior ou em qualquer uma antes
                       const passedAnyPrevious = resData.some((s: any) => {
                         const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-                        return sa?.is_bloco_final && (sa?.versao || 0) < v && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
+                        const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || (sa?.titulo && /V[1-3]|RECUPERAÇ/i.test(sa.titulo));
+                        return isEx && (sa?.versao || 0) < v && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
                       });
 
                       if (!prevSub || prevSub.status !== 'corrigida' || passedAnyPrevious) {
@@ -272,6 +283,7 @@ export const useStudentCourses = (profile: any) => {
                   }).filter((a: any) => !a.isHidden),
                   isReleased,
                   isCurrent: isCurrent && isReleased,
+                  isUnlocked: isUnlocked && isReleased,
                   isDP: !isStaff && resData.some(s => {
                     const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
                     return sa?.is_bloco_final && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < 7.0;

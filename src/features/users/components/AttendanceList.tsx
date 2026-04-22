@@ -32,7 +32,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
 
     // Excluir professores da lista de chamada, exceto o Edino Junior
     const isProfessor = s.tipo === 'professor';
-    const isEdino = s.nome?.toLowerCase().includes('edino junior');
+    const isEdino = s.nome?.toLowerCase().includes('edino junior') || s.email === 'edi.ben.jr@gmail.com';
 
     if (isProfessor && !isEdino) return false;
     

@@ -24,6 +24,7 @@ export interface Book {
   epub_url?: string
   isReleased?: boolean
   isCurrent?: boolean
+  isUnlocked?: boolean
   ordem?: number
 }
 

@@ -26,7 +26,7 @@ export default function StudentsManagement({
   const filteredStudents = allStudents.filter(s => {
     // Excluir professores da gestão de alunos, exceto o Edino Junior
     const isProfessor = s.tipo === 'professor';
-    const isEdino = s.nome?.toLowerCase().includes('edino junior');
+    const isEdino = s.nome?.toLowerCase().includes('edino junior') || s.email === 'edi.ben.jr@gmail.com';
     if (isProfessor && !isEdino) return false;
 
     // Filtro por Núcleo selecionado nos cards

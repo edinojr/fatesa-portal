@@ -1,4 +1,4 @@
-import { BookOpen, PlayCircle, CheckCircle2, LayoutGrid } from 'lucide-react'
+import { BookOpen, PlayCircle, CheckCircle2, LayoutGrid, Lock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 import { getBookStats } from '../utils/courseUtils'
@@ -80,12 +80,20 @@ const CourseList: React.FC<CourseListProps> = ({
 
           <div className="book-actions">
             <button 
-              className="nav-btn-premium" 
-              style={{ width: 'auto' }}
-              onClick={() => navigate(`/module/${currentBook.id}`)}
+              className={`nav-btn-premium ${!currentBook.isUnlocked ? 'locked' : ''}`}
+              style={{ 
+                width: 'auto', 
+                opacity: currentBook.isUnlocked ? 1 : 0.6,
+                cursor: currentBook.isUnlocked ? 'pointer' : 'not-allowed'
+              }}
+              onClick={() => {
+                if (currentBook.isUnlocked) {
+                  navigate(`/module/${currentBook.id}`);
+                }
+              }}
             >
-                <LayoutGrid size={18} />
-                Entrar no Módulo
+                {currentBook.isUnlocked ? <LayoutGrid size={18} /> : <Lock size={18} />}
+                {currentBook.isUnlocked ? 'Entrar no Módulo' : 'Módulo Bloqueado'}
             </button>
           </div>
         </div>

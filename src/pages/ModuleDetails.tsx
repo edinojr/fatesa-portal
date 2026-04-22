@@ -56,15 +56,15 @@ const ModuleDetails = () => {
 
     const { book } = currentBook;
 
-    // Security Check: If the module is not released yet, redirect back
-    if (!book.isReleased) {
+    // Security Check: If the module is not unlocked yet, redirect back
+    if (!book.isUnlocked) {
         return (
             <div className="auth-container">
                 <Lock size={64} color="var(--primary)" style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
                 <h2>Módulo Bloqueado</h2>
                 <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto 2rem' }}>
                     Este módulo ainda não foi liberado para o seu perfil. 
-                    Continue estudando os módulos anteriores para desbloquear este conteúdo.
+                    Aguarde a liberação pelo seu professor ou polo.
                 </p>
                 <button onClick={() => navigate('/dashboard')} className="btn btn-primary" style={{ width: 'auto' }}>Voltar ao Painel</button>
             </div>
