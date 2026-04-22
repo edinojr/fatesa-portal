@@ -213,8 +213,10 @@ const Signup = () => {
 
         <form onSubmit={handleSignup}>
           <div className="form-group">
-            <label>Nome Completo</label>
+            <label htmlFor="signup-nome">Nome Completo</label>
             <input
+              id="signup-nome"
+              name="nome"
               type="text"
               className="form-control"
               placeholder="Digite seu nome"
@@ -223,13 +225,16 @@ const Signup = () => {
               required
               readOnly={!!preRegistered}
               style={{ opacity: preRegistered ? 0.7 : 1 }}
+              autoComplete="name"
             />
           </div>
 
           {!(isProfessor || isAdmin || (preRegistered && (preRegistered.tipo === 'professor' || preRegistered.tipo === 'admin'))) && (
             <div className="form-group">
-              <label>Tipo de Cadastro</label>
+              <label htmlFor="signup-tipo">Tipo de Cadastro</label>
               <select 
+                id="signup-tipo"
+                name="tipo"
                 className="form-control" 
                 value={tipo} 
                 onChange={(e) => setTipo(e.target.value as any)}
@@ -274,8 +279,10 @@ const Signup = () => {
 
           {tipo === 'presencial' && (
             <div className="form-group">
-              <label>Seu Núcleo de Origem</label>
+              <label htmlFor="signup-nucleo">Seu Núcleo de Origem</label>
               <select 
+                id="signup-nucleo"
+                name="nucleo"
                 className="form-control" 
                 value={nucleo}
                 onChange={(e) => setNucleo(e.target.value)}
@@ -291,14 +298,17 @@ const Signup = () => {
           )}
 
           <div className="form-group">
-            <label>E-mail</label>
+            <label htmlFor="signup-email">E-mail</label>
             <input
+              id="signup-email"
+              name="email"
               type="email"
               className="form-control"
               placeholder="seu@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
             {checkingEmail && <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Verificando cadastro...</p>}
             {(isProfessor || isAdmin) && (
@@ -321,15 +331,18 @@ const Signup = () => {
           </div>
 
           <div className="form-group">
-            <label>Crie uma Senha</label>
+            <label htmlFor="signup-password">Crie uma Senha</label>
             <div className="password-field">
               <input
+                id="signup-password"
+                name="password"
                 type={showPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="Mín. 8 caracteres, A-z, 0-9"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="new-password"
               />
               <button 
                 type="button" 
@@ -345,15 +358,18 @@ const Signup = () => {
           </div>
 
           <div className="form-group">
-            <label>Confirme sua Senha</label>
+            <label htmlFor="signup-confirm-password">Confirme sua Senha</label>
             <div className="password-field">
               <input
+                id="signup-confirm-password"
+                name="confirm-password"
                 type={showConfirmPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="Repita a senha"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                autoComplete="new-password"
               />
               <button 
                 type="button" 

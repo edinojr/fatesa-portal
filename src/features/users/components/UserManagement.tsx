@@ -52,6 +52,9 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
       </td>
       <td>
         <select
+          id={`user-type-${user.id}`}
+          name={`type-${user.id}`}
+          aria-label="Tipo de conta do usuário"
           className="form-control"
           style={{ width: '130px', fontSize: '0.85rem', padding: '0.5rem' }}
           value={user.tipo}
@@ -69,6 +72,9 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
       </td>
       <td>
         <select
+          id={`user-nucleo-${user.id}`}
+          name={`nucleo-${user.id}`}
+          aria-label="Vínculo de núcleo/polo do usuário"
           className="form-control"
           style={{ width: '180px', fontSize: '0.85rem', padding: '0.5rem' }}
           value={user.nucleo_id || ''}

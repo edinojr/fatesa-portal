@@ -88,15 +88,18 @@ const ResetPassword = () => {
 
         <form onSubmit={handleReset}>
           <div className="form-group">
-            <label>Crie a Nova Senha</label>
+            <label htmlFor="reset-new-password">Crie a Nova Senha</label>
             <div className="password-field" style={{ position: 'relative' }}>
               <input
+                id="reset-new-password"
+                name="new-password"
                 type={showPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="Mínimo de 8 caracteres seguros"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="new-password"
               />
               <button 
                 type="button" 
@@ -111,15 +114,18 @@ const ResetPassword = () => {
           </div>
 
           <div className="form-group" style={{ marginTop: '1.5rem' }}>
-            <label>Repita para Confirmar</label>
+            <label htmlFor="reset-confirm-password">Repita para Confirmar</label>
             <div className="password-field" style={{ position: 'relative' }}>
               <input
+                id="reset-confirm-password"
+                name="confirm-password"
                 type={showConfirmPassword ? "text" : "password"}
                 className="form-control"
                 placeholder="Digite a senha idêntica acima"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                autoComplete="new-password"
               />
               <button 
                 type="button" 

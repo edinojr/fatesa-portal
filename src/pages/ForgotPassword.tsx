@@ -57,14 +57,17 @@ const ForgotPassword = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>E-mail Cadastrado</label>
+            <label htmlFor="forgot-email">E-mail Cadastrado</label>
             <input
+              id="forgot-email"
+              name="email"
               type="email"
               className="form-control"
               placeholder="aluno@fatesa.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
           </div>
 

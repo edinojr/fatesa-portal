@@ -79,22 +79,46 @@ const CourseList: React.FC<CourseListProps> = ({
           </div>
 
           <div className="book-actions">
-            <button 
-              className={`nav-btn-premium ${!currentBook.isUnlocked ? 'locked' : ''}`}
-              style={{ 
-                width: 'auto', 
-                opacity: currentBook.isUnlocked ? 1 : 0.6,
-                cursor: currentBook.isUnlocked ? 'pointer' : 'not-allowed'
-              }}
-              onClick={() => {
-                if (currentBook.isUnlocked) {
-                  navigate(`/module/${currentBook.id}`);
-                }
-              }}
-            >
-                {currentBook.isUnlocked ? <LayoutGrid size={18} /> : <Lock size={18} />}
-                {currentBook.isUnlocked ? 'Entrar no Módulo' : 'Módulo Bloqueado'}
-            </button>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {currentBook.isUnlocked ? (
+                (() => {
+                  const firstLesson = currentBook.aulas?.find((a: any) => !a.isHidden);
+                  return (
+                    <button 
+                      className="nav-btn-premium"
+                      style={{ width: 'auto' }}
+                      onClick={() => {
+                        if (firstLesson) {
+                          if (firstLesson.tipo === 'material' || firstLesson.pdf_url || firstLesson.arquivo_url) {
+                            navigate(`/book/${firstLesson.id}?type=aula`);
+                          } else {
+                            navigate(`/lesson/${firstLesson.id}`);
+                          }
+                        } else {
+                          navigate(`/module/${currentBook.id}`);
+                        }
+                      }}
+                    >
+                      <PlayCircle size={18} /> Continuar Estudando
+                    </button>
+                  );
+                })()
+              ) : (
+                <button className="nav-btn-premium locked" style={{ width: 'auto', opacity: 0.6, cursor: 'not-allowed' }}>
+                  <Lock size={18} /> Módulo Bloqueado
+                </button>
+              )}
+              
+              {currentBook.isUnlocked && (
+                <button 
+                  className="btn btn-outline"
+                  style={{ width: 'auto', padding: '0.6rem 1.2rem', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', borderColor: 'var(--glass-border)' }}
+                  onClick={() => navigate(`/module/${currentBook.id}`)}
+                >
+                  <LayoutGrid size={18} /> Ver Tudo
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

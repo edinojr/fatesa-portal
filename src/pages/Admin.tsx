@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Users, 
@@ -327,7 +327,16 @@ const Admin = () => {
                 </button>
               )}
               <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
-                <input type="text" placeholder="Pesquisar..." className="form-control" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>
+                <input 
+                  id="admin-global-search"
+                  name="admin-search"
+                  type="text" 
+                  placeholder="Pesquisar..." 
+                  className="form-control" 
+                  value={searchTerm} 
+                  onChange={(e) => setSearchTerm(e.target.value)} 
+                />
               </div>
             </div>
           </header>
@@ -822,39 +831,31 @@ const Admin = () => {
                 <button className="btn btn-outline" onClick={() => setConfirmDelete(null)} disabled={!!actionLoading}>Cancelar</button>
                 <button 
                   className="btn" 
-                  style={{ background: 'var(--error)', color: '#fff' }} 
-                  onClick={() => {
+                  style={{ background: 'var(--error)', color: '#fff', flex: 1 }} 
+                  onClick={async () => {
                     if (confirmDelete.type === 'user') {
-                      handleDeleteUser(confirmDelete.id);
-                    } else if (confirmDelete.type === 'content' && confirmDelete.column) {
-                      handleRemoveFileFinal(confirmDelete.table as any, confirmDelete.id, confirmDelete.column as any);
+                      await handleDeleteUser(confirmDelete.id);
+                    } else if (confirmDelete.type === 'content' && (confirmDelete as any).column) {
+                      await handleRemoveFileFinal(confirmDelete.table as any, confirmDelete.id, (confirmDelete as any).column as any);
                     } else if (confirmDelete.type === 'content') {
-                      const table = confirmDelete.table as 'cursos' | 'livros' | 'aulas';
-                      const id = confirmDelete.id;
+                      const { table, id } = confirmDelete;
                       setActionLoading(id);
-                      (async () => {
-                        try {
-                          const { error } = await supabase.from(table).delete().eq('id', id);
-                          if (error) {
-                            showToast(error.message, 'error');
-                          } else {
-                            showToast('Excluído com sucesso!');
-                            if (table === 'cursos') fetchData();
-                            else if (table === 'livros' && selectedCourse?.id) fetchBooks(selectedCourse.id);
-                            else if (table === 'aulas' && selectedBook?.id) fetchLessons(selectedBook.id);
-                          }
-                        } catch (err: any) {
-                          showToast('Erro: ' + err.message, 'error');
-                        } finally {
-                          setActionLoading(null);
-                          setConfirmDelete(null);
-                        }
-                      })();
+                      try {
+                        const { error } = await supabase.from(table as any).delete().eq('id', id);
+                        if (error) throw error;
+                        showToast('Item excluído com sucesso');
+                        await fetchData();
+                      } catch (err: any) {
+                        showToast('Erro ao excluir: ' + err.message);
+                      } finally {
+                        setActionLoading(null);
+                      }
                     }
+                    setConfirmDelete(null);
                   }}
                   disabled={!!actionLoading}
                 >
-                  {actionLoading ? <Loader2 className="spinner" size={18} /> : 'Excluir'}
+                  {actionLoading ? <Loader2 className="spinner" size={18} /> : 'Excluir Definitivamente'}
                 </button>
               </div>
             </div>

@@ -42,7 +42,7 @@ const Login = () => {
   const checkSessionRoles = async (user: any) => {
     // FIX RACE CONDITION: Delay estratégico para garantir que o Headers Locais do Supabase
     // estejam sincronizados antes do PostgREST validar o Row Level Security.
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 400));
 
     let { data, error: fetchError } = await supabase
       .from('users')
@@ -160,30 +160,36 @@ const Login = () => {
         <div className="auth-form-container">
           <form onSubmit={handleLogin}>
             <div className="form-group">
-              <label>E-mail Institucional</label>
+              <label htmlFor="login-email">E-mail Institucional</label>
               <input
+                id="login-email"
+                name="email"
                 type="email"
                 className="form-control"
                 placeholder="usuario@fatesa.edu.br"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             
             <div className="form-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <label style={{ margin: 0 }}>Senha de Acesso</label>
+                <label htmlFor="login-password" style={{ margin: 0 }}>Senha de Acesso</label>
                 <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>Esqueceu a senha?</Link>
               </div>
               <div className="password-field">
                 <input
+                  id="login-password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   className="form-control"
                   placeholder="Sua senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  autoComplete="current-password"
                 />
                 <button 
                   type="button" 

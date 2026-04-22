@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { 
   BookOpen, 
@@ -117,18 +117,31 @@ const Dashboard = () => {
           const isExam = aula.tipo === 'prova' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
           const isDoable = !aula.isHidden && !aula.lockedByProfessor;
           
-          if (isExam && isDoable) {
-            const hasSubmission = atividades.some(sub => sub.lesson_id === aula.id);
-            if (!hasSubmission) {
-              pending.push({
-                id: aula.id,
-                titulo: title || 'Avaliação',
-                livro: libro.titulo,
-                versao: aula.versao || 1,
-                isRecovery: (aula.versao || 1) > 1 || /V[2-3]|RECUPERAÇ/i.test(title)
-              });
+        if (isExam && isDoable) {
+          const sub = atividades.find(s => s.lesson_id === aula.id);
+          if (!sub) {
+            pending.push({
+              id: aula.id,
+              titulo: title || 'Avaliação',
+              livro: libro.titulo,
+              versao: aula.versao || 1,
+              isRecovery: (aula.versao || 1) > 1 || /V[2-3]|RECUPERAÇ/i.test(title)
+            });
+          } else {
+            // Se já tem submissão, checa se é uma reprova que permite recuperação (V2/V3)
+            const isFailed = sub.status === 'corrigida' && sub.nota !== null && sub.nota < 7.0;
+            if (isFailed && !aula.isHidden) {
+               pending.push({
+                 id: aula.id,
+                 titulo: title || 'Avaliação',
+                 livro: libro.titulo,
+                 versao: aula.versao || 1,
+                 isRecovery: true,
+                 failed: true
+               });
             }
           }
+        }
         });
       });
     });

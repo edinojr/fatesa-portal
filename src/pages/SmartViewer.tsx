@@ -427,7 +427,7 @@ const SmartViewer = () => {
 
             {nextLesson ? (
               <button 
-                onClick={() => { setLoading(true); navigate(`/book/${nextLesson.id}?type=aula`); window.location.reload(); }} 
+                onClick={() => { setLoading(true); navigate(`/book/${nextLesson.id}?type=aula`); }} 
                 className="btn btn-primary"
                 style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px' }}
               >

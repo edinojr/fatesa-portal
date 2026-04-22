@@ -137,8 +137,11 @@ const DocsArchive: React.FC<DocsArchiveProps> = ({ allNucleos }) => {
           </div>
 
           <div style={{ position: 'relative', flexGrow: 1, maxWidth: '400px' }}>
+            <label htmlFor="docs-search-input" style={{ display: 'none' }}>Buscar aluno ou formado</label>
             <Search style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} size={18} />
             <input 
+              id="docs-search-input"
+              name="docs-search"
               type="text" 
               className="form-control" 
               placeholder={`Buscar ${viewType === 'ativos' ? 'aluno' : 'formado'}...`}
