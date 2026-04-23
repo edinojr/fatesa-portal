@@ -28,6 +28,9 @@ export interface Book {
   isReleased?: boolean
   isCurrent?: boolean
   isUnlocked?: boolean
+  isFinished?: boolean
+  isApproved?: boolean
+  isDP?: boolean
   ordem?: number
 }
 

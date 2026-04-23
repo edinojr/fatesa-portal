@@ -22,12 +22,14 @@ export interface Submission {
   // Informações do Livro
   book_id?: string;
   book_title?: string;
+  aula_id?: string;
   
   // Informações do Aluno (Flattened)
   student_id: string;
   student_name: string;
   student_email: string;
   student_graduation_year?: string;
+  aluno_id?: string;
   
   // Informações do Núcleo (Flattened)
   nucleus_id: string;
