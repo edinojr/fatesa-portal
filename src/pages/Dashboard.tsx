@@ -115,33 +115,51 @@ const Dashboard = () => {
           // É uma prova, não está oculta e não está bloqueada pelo professor
           const title = aula.titulo || '';
           const isExam = aula.tipo === 'prova' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
-          const isDoable = !aula.isHidden && !aula.lockedByProfessor;
           
-        if (isExam && isDoable) {
-          const sub = atividades.find(s => s.lesson_id === aula.id);
-          if (!sub) {
-            pending.push({
-              id: aula.id,
-              titulo: title || 'Avaliação',
-              livro: libro.titulo,
-              versao: aula.versao || 1,
-              isRecovery: (aula.versao || 1) > 1 || /V[2-3]|RECUPERAÇ/i.test(title)
+          // REGRA 1: status_liberacao === true E data_liberacao <= hoje
+          const isReleasedNow = (aula as any).status_liberacao !== false && 
+                                (!(aula as any).data_liberacao || new Date((aula as any).data_liberacao) <= new Date());
+          
+          const isDoable = !aula.isHidden && !aula.lockedByProfessor && isReleasedNow;
+          
+          if (isExam && isDoable) {
+            // REGRA 2 & 3: Se já aprovado no módulo ou em versão anterior, oculta
+            const bookSubmissions = atividades.filter(s => s.book_id === libro.id);
+            const isApprovedInModule = bookSubmissions.some(s => {
+              const sa = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
+              const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || /V[1-3]|RECUPERAÇ/i.test(sa?.titulo || '');
+              return isEx && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
             });
-          } else {
-            // Se já tem submissão, checa se é uma reprova que permite recuperação (V2/V3)
-            const isFailed = sub.status === 'corrigida' && sub.nota !== null && sub.nota < 7.0;
-            if (isFailed && !aula.isHidden) {
-               pending.push({
-                 id: aula.id,
-                 titulo: title || 'Avaliação',
-                 livro: libro.titulo,
-                 versao: aula.versao || 1,
-                 isRecovery: true,
-                 failed: true
-               });
+
+            if (isApprovedInModule) return; // Se já aprovado, ignora todas as provas deste módulo
+
+            const sub = atividades.find(s => s.lesson_id === aula.id);
+            const versao = (aula as any).versao || 1;
+
+            if (!sub) {
+              // Se é V2/V3, só mostra se a anterior foi feita e reprovada (handled by isHidden in hook, but double check here)
+              pending.push({
+                id: aula.id,
+                titulo: title || 'Avaliação',
+                livro: libro.titulo,
+                versao: versao,
+                isRecovery: versao > 1 || /V[2-3]|RECUPERAÇ/i.test(title)
+              });
+            } else {
+              // Se já tem submissão, checa se é uma reprova que permite recuperação (V2/V3)
+              const isFailed = sub.status === 'corrigida' && sub.nota !== null && sub.nota < 7.0;
+              if (isFailed && !aula.isHidden) {
+                 pending.push({
+                   id: aula.id,
+                   titulo: title || 'Avaliação',
+                   livro: libro.titulo,
+                   versao: versao,
+                   isRecovery: true,
+                   failed: true
+                 });
+              }
             }
           }
-        }
         });
       });
     });

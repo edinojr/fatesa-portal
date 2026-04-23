@@ -1,4 +1,4 @@
-import { BookOpen, PlayCircle, CheckCircle2, LayoutGrid, Lock } from 'lucide-react'
+import { BookOpen, PlayCircle, CheckCircle2, LayoutGrid, Lock, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 import { getBookStats } from '../utils/courseUtils'
@@ -44,14 +44,14 @@ const CourseList: React.FC<CourseListProps> = ({
                   <span style={{ 
                     fontSize: '0.85rem', 
                     fontWeight: 800, 
-                    color: stats.hasExam ? (stats.isApproved ? 'var(--success)' : 'var(--error)') : 'var(--primary)',
-                    background: stats.hasExam ? (stats.isApproved ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(var(--primary-rgb), 0.1)',
+                    color: stats.hasExam ? (stats.isApproved ? 'var(--success)' : '#eab308') : 'var(--primary)',
+                    background: stats.hasExam ? (stats.isApproved ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)') : 'rgba(var(--primary-rgb), 0.1)',
                     padding: '2px 10px',
                     borderRadius: '6px',
                     marginBottom: '4px'
                   }}>
                     {stats.hasExam 
-                      ? (stats.isApproved ? 'FINALIZADO' : 'REPROVADO - REFAZER NO FINAL')
+                      ? (stats.isApproved ? 'FINALIZADO' : 'PENDENTE DE REINGRESSO (D.P.)')
                       : 'FINALIZADO'}
                   </span>
                   {stats.hasExam && <span style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>Nota: {stats.examGrade.toFixed(1)}</span>}
@@ -131,7 +131,7 @@ const CourseList: React.FC<CourseListProps> = ({
   const renderNivelSection = (label: string, coursesList: Course[]) => {
     if (coursesList.length === 0) return null;
     return (
-      <div style={{ marginBottom: '5rem', animation: 'fadeIn 0.6s' }}>
+      <div key={label} style={{ marginBottom: '5rem', animation: 'fadeIn 0.6s' }}>
         <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--primary)' }}>
           <div style={{ width: '8px', height: '36px', background: 'var(--primary)', borderRadius: '10px' }}></div>
           {label}
@@ -139,12 +139,12 @@ const CourseList: React.FC<CourseListProps> = ({
 
         {coursesList.map(course => {
           const releasedBooks = (course.livros || []).filter(l => l.isReleased);
-          const ongoingBooks = releasedBooks.filter(b => !getBookStatsWrapper(b).isFinished).sort((a,b) => {
-            if (a.isCurrent) return -1;
-            if (b.isCurrent) return 1;
-            return (a.ordem || 0) - (b.ordem || 0);
-          });
-          const finishedBooks = releasedBooks.filter(b => getBookStatsWrapper(b).isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
+          
+          // Módulos em Curso: Liberados e não finalizados
+          const ongoingBooks = releasedBooks.filter(b => !b.isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
+          
+          // Módulos Finalizados: Já concluídos (Aprovado ou D.P.)
+          const finishedBooks = releasedBooks.filter(b => b.isFinished).sort((a,b) => (a.ordem || 0) - (b.ordem || 0));
 
           return (
             <div key={course.id} style={{ marginBottom: '3.5rem' }}>
@@ -152,10 +152,11 @@ const CourseList: React.FC<CourseListProps> = ({
                 <BookOpen size={24} /> {course.nome}
               </h3>
 
+              {/* SEÇÃO SUPERIOR: Módulo em Curso */}
               {!showOnlyFinished && ongoingBooks.length > 0 && (
-                <div style={{ marginBottom: '2.5rem' }}>
-                  <h4 style={{ color: 'var(--primary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <PlayCircle size={16} /> Módulos em Andamento
+                <div style={{ marginBottom: '3.5rem' }}>
+                  <h4 style={{ color: 'var(--primary)', fontSize: '1rem', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.1em', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(var(--primary-rgb), 0.05)', padding: '0.75rem 1.5rem', borderRadius: '12px', borderLeft: '4px solid var(--primary)' }}>
+                    <PlayCircle size={20} /> Módulos em Curso
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {ongoingBooks.map(renderBookCard)}
@@ -163,13 +164,59 @@ const CourseList: React.FC<CourseListProps> = ({
                 </div>
               )}
 
+              {/* SEÇÃO INFERIOR: Meus Módulos Finalizados */}
               {!showOnlyOngoing && finishedBooks.length > 0 && (
                 <div>
-                  <h4 style={{ color: 'var(--success)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <CheckCircle2 size={16} /> Módulos Finalizados
+                  <h4 style={{ color: 'var(--success)', fontSize: '0.9rem', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0 1rem' }}>
+                    <CheckCircle2 size={16} /> Meus Módulos Finalizados
                   </h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    {finishedBooks.map(renderBookCard)}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                    {finishedBooks.map(b => (
+                       <div 
+                         key={b.id} 
+                         onClick={() => navigate(`/module/${b.id}`)}
+                         className="book-card-finished" 
+                         style={{ 
+                           padding: '1.25rem', 
+                           background: 'var(--glass)', 
+                           border: '1px solid var(--glass-border)', 
+                           borderRadius: '16px', 
+                           display: 'flex', 
+                           alignItems: 'center', 
+                           gap: '1.25rem', 
+                           cursor: 'pointer',
+                           transition: 'transform 0.2s ease'
+                         }}
+                         onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                         onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                       >
+                          <div style={{ 
+                            width: '60px', 
+                            height: '80px', 
+                            borderRadius: '8px', 
+                            background: b.capa_url ? `url(${b.capa_url}) center/cover` : 'rgba(255,255,255,0.05)',
+                            flexShrink: 0
+                          }}></div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.95rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.titulo}</h5>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span style={{ 
+                                fontSize: '0.65rem', 
+                                fontWeight: 900, 
+                                padding: '3px 8px', 
+                                borderRadius: '50px',
+                                background: b.isApproved ? 'rgba(16, 185, 129, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                                color: b.isApproved ? 'var(--success)' : '#eab308',
+                                border: `1px solid ${b.isApproved ? 'rgba(16, 185, 129, 0.2)' : 'rgba(234, 179, 8, 0.2)'}`
+                              }}>
+                                {b.isApproved ? 'APROVADO' : 'D.P.'}
+                              </span>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>Somente Leitura</span>
+                            </div>
+                          </div>
+                          <ChevronRight size={18} style={{ opacity: 0.3 }} />
+                       </div>
+                    ))}
                   </div>
                 </div>
               )}

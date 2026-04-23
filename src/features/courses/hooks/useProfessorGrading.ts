@@ -202,6 +202,16 @@ export const useProfessorGrading = () => {
       
       if(error) throw error
       
+      // REGRA: Se nota >= 7.0, marcar módulo como concluído no progresso (Parte 2)
+      if (parseFloat(gradeInput) >= 7.0) {
+        await supabase.from('progresso').upsert({
+          aluno_id: selectedSubmission.student_id || (selectedSubmission as any).aluno_id,
+          aula_id: (selectedSubmission as any).lesson_id || selectedSubmission.aula_id,
+          concluida: true,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'aluno_id,aula_id' });
+      }
+
       const moduloNome = (selectedSubmission as any).lesson_title || (selectedSubmission as any).aulas?.livros?.titulo || 'Módulo';
       alert(`Nota [${gradeInput}] do módulo [${moduloNome}] salva com sucesso!`)
       setSelectedSubmission(null)

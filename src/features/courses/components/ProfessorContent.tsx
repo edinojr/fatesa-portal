@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock } from 'lucide-react'
+import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock, Lock, Unlock } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
@@ -77,11 +77,14 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
       const itemsToRelease = allLessons
         .map(l => {
           const isExam = l.tipo === 'prova' || !!l.is_bloco_final;
-          const isAutoExam = isExam && (l.titulo?.toUpperCase().includes('V2') || l.titulo?.toUpperCase().includes('V3'));
-          const itemType = isExam || l.tipo === 'atividade' || l.tipo === 'material' ? 'atividade' : (l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video') ? 'video' : null;
+          const isV1 = l.titulo?.toUpperCase().includes('V1');
+          const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video';
           
-          if (!itemType || isAutoExam) return null;
-          return { nucleo_id: nucleoId, item_id: l.id, item_type: itemType, liberado: true };
+          // REQUISITO: Somente Vídeos e Provas V1 são passíveis de liberação manual individual
+          if (isVideo) return { nucleo_id: nucleoId, item_id: l.id, item_type: 'video', liberado: true };
+          if (isExam && isV1) return { nucleo_id: nucleoId, item_id: l.id, item_type: 'atividade', liberado: true };
+          
+          return null;
         })
         .filter(Boolean);
 
@@ -154,28 +157,46 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '12px', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 800 }}>Liberação do Módulo:</p>
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '16px', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.75rem', textTransform: 'uppercase', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <ShieldCheck size={14} /> Controle de Acesso por Polo:
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.6rem' }}>
                     {professorNucleos.map(n => {
                       const isModReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo');
                       return (
                         <button 
                           key={n.id}
                           onClick={() => toggleRelease(n.id, book.id, 'modulo')}
-                          title={isModReleased ? 'Clique para Bloquear Módulo' : 'Clique para Liberar Módulo'}
                           style={{ 
-                            fontSize: '0.65rem', 
-                            padding: '4px 8px', 
-                            borderRadius: '6px',
-                            background: isModReleased ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)',
-                            border: `1px solid ${isModReleased ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.1)'}`,
-                            color: isModReleased ? 'var(--success)' : 'var(--text-muted)',
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0.75rem 1rem',
+                            borderRadius: '12px',
+                            background: isModReleased ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.05)',
+                            border: `1px solid ${isModReleased ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255,255,255,0.1)'}`,
+                            color: isModReleased ? '#fff' : 'var(--text-muted)',
                             cursor: 'pointer',
-                            fontWeight: 700
+                            transition: 'all 0.2s ease'
                           }}
                         >
-                          {n.nome}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            {isModReleased ? <Unlock size={16} color="#10b981" /> : <Lock size={16} />}
+                            <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>{n.nome}</span>
+                          </div>
+                          <span style={{ 
+                            fontSize: '0.65rem', 
+                            fontWeight: 800, 
+                            textTransform: 'uppercase',
+                            background: isModReleased ? '#10b981' : 'rgba(255,255,255,0.1)',
+                            color: isModReleased ? '#fff' : 'inherit',
+                            padding: '4px 10px',
+                            borderRadius: '20px'
+                          }}>
+                            {isModReleased ? 'Liberar Módulo' : 'Liberar'}
+                          </span>
                         </button>
                       )
                     })}
@@ -228,40 +249,49 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
               {(() => {
                 const isExam = lesson.tipo === 'prova' || !!lesson.is_bloco_final;
-                const isAutoExam = isExam && (lesson.titulo?.toUpperCase().includes('V2') || lesson.titulo?.toUpperCase().includes('V3'));
-                // All pedagogical items (video, exam, activity, material) can now be toggled
-                const itemType = isExam || lesson.tipo === 'atividade' || lesson.tipo === 'material' ? 'atividade' : (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video') ? 'video' : null;
+                const isV1 = isExam && (lesson.titulo?.toUpperCase().includes('V1') || lesson.is_bloco_final);
+                const isVideo = lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video';
+                
+                // REQUISITO: Somente Vídeos e Provas V1 aparecem para controle manual
+                const itemType = isVideo ? 'video' : (isV1 ? 'atividade' : null);
 
-                if (!itemType || isAutoExam) return null;
+                if (!itemType) return null;
 
                 return (
-                  <div style={{ flex: 1, margin: '0 1rem', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>
-                      Controle de Acesso ({lesson.tipo === 'prova' ? 'Prova V1' : lesson.tipo === 'atividade' ? 'Atividade' : lesson.tipo === 'material' ? 'Material' : 'Vídeo'}):
+                  <div style={{ flex: 1, margin: '0 1rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.75rem', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <ShieldCheck size={14} /> {lesson.tipo === 'prova' ? 'Liberar Prova V1' : 'Controle de Acesso'}:
                     </p>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                       {professorNucleos.map(n => {
                         const isReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === lesson.id && r.item_type === itemType);
                         return (
-                          <div key={n.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.25rem 0.25rem 0.25rem 0.75rem', borderRadius: '8px', border: `1px solid ${isReleased ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255,255,255,0.1)'}` }}>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isReleased ? '#fff' : 'rgba(255,255,255,0.5)' }}>{n.nome}</span>
-                            <button 
-                              onClick={() => toggleRelease(n.id, lesson.id, itemType)}
-                              style={{ 
-                                fontSize: '0.65rem', 
-                                padding: '4px 8px', 
-                                borderRadius: '6px',
-                                background: isReleased ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                                border: `1px solid ${isReleased ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`,
-                                color: isReleased ? 'var(--error)' : 'var(--success)',
-                                cursor: 'pointer',
-                                fontWeight: 700,
-                                textTransform: 'uppercase'
-                              }}
-                            >
-                              {isReleased ? 'Desativar' : 'Ativar'}
-                            </button>
-                          </div>
+                          <button 
+                            key={n.id} 
+                            onClick={() => toggleRelease(n.id, lesson.id, itemType)}
+                            style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: '0.6rem', 
+                              background: isReleased ? 'rgba(16, 185, 129, 0.15)' : 'rgba(0,0,0,0.2)', 
+                              padding: '0.5rem 1rem', 
+                              borderRadius: '10px', 
+                              border: `1px solid ${isReleased ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255,255,255,0.1)'}`,
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            {isReleased ? <Unlock size={14} color="#10b981" /> : <Lock size={14} opacity={0.5} />}
+                            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: isReleased ? '#fff' : 'rgba(255,255,255,0.5)' }}>{n.nome}</span>
+                            <span style={{ 
+                              fontSize: '0.6rem', 
+                              fontWeight: 900,
+                              color: isReleased ? '#10b981' : 'rgba(255,255,255,0.3)',
+                              textTransform: 'uppercase'
+                            }}>
+                              {isReleased ? 'ATIVO' : 'INATIVO'}
+                            </span>
+                          </button>
                         )
                       })}
                     </div>

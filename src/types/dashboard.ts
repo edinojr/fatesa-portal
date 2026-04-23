@@ -12,6 +12,9 @@ export interface Lesson {
   is_bloco_final?: boolean
   isHidden?: boolean
   versao?: number
+  status_liberacao?: boolean
+  data_liberacao?: string
+  professor_active?: boolean
 }
 
 export interface Book {

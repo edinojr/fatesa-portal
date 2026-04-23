@@ -28,6 +28,7 @@ const Lesson = () => {
   const [showExamModal, setShowExamModal] = useState(false)
   const [examModalConfirmed, setExamModalConfirmed] = useState(false)
   const [isModuleApproved] = useState(false)
+  const [isModuleFinished, setIsModuleFinished] = useState(false)
   
 
 
@@ -163,6 +164,17 @@ const Lesson = () => {
                  setSubmitted(true);
               }
            }
+        }
+        // 3. Check if module is finished
+        if (lessonData.livro_id) {
+          const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id').eq('livro_id', lessonData.livro_id);
+          const { data: bookSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id').eq('aluno_id', user.id).eq('book_id', lessonData.livro_id);
+          
+          const finished = (bookSubs || []).some(s => {
+            const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.is_bloco_final));
+            return isEx && s.status === 'corrigida' && ((s.nota || 0) >= 7.0 || s.tentativas >= 3);
+          });
+          setIsModuleFinished(finished);
         }
       }
     } catch (err) { console.error(err); }
@@ -656,7 +668,14 @@ const Lesson = () => {
                   </div>
                 );
               })}
-              {!submitted && <button className="btn btn-primary" onClick={handleSubmit} disabled={submitting}>{submitting ? <Loader2 className="spinner"/> : 'Finalizar e Enviar'}</button>}
+              {isModuleFinished && (
+                <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--primary)', textAlign: 'center', marginBottom: '2rem' }}>
+                  <Lock size={24} color="var(--primary)" style={{ marginBottom: '0.5rem' }} />
+                  <h4 style={{ margin: 0, color: 'var(--primary)', fontWeight: 800 }}>MODO SOMENTE LEITURA</h4>
+                  <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Este módulo já foi finalizado. Você pode revisar o conteúdo e o gabarito, mas não pode enviar novas respostas.</p>
+                </div>
+              )}
+              {!submitted && !isModuleFinished && <button className="btn btn-primary" onClick={handleSubmit} disabled={submitting}>{submitting ? <Loader2 className="spinner"/> : 'Finalizar e Enviar'}</button>}
               {submitted && result && (
                 <div style={{textAlign:'center', marginTop:'2rem', padding:'2rem', background:'var(--glass)', borderRadius:'16px', border: '1px solid var(--glass-border)'}}>
                   {((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && (existingSubmission?.status !== 'corrigida' && result.pendingReview)) ? (

@@ -100,20 +100,10 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
-      if (exemptStatus) {
-        // Isentos e staff veem todos os módulos até o limite pedagógico
-        releasedCount = Math.max(minBookOrdem, pedagogicalLimit); 
-      } else {
-        const { data: payRecords } = await supabase.from('pagamentos').select('status').eq('user_id', profile.id).eq('status', 'pago');
-        const paidCount = payRecords?.length || 0;
-        // Sempre libera pelo menos o primeiro módulo (minBookOrdem)
-        releasedCount = Math.max(minBookOrdem, Math.min(minBookOrdem + paidCount, pedagogicalLimit));
-      }
-
       // 5. Progresso e Notas - query direta sem depender da view
       const { data: resDataRaw } = await supabase
         .from('respostas_aulas')
-        .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, questionario, livros:livro_id(id, titulo, cursos:curso_id(nivel)))')
+        .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, status_liberacao, data_liberacao, professor_active, questionario, livros:livro_id(id, titulo, cursos:curso_id(nivel)))')
         .eq('aluno_id', profile.id);
       
       const resData = (resDataRaw || []).map((r: any) => ({
@@ -168,7 +158,7 @@ export const useStudentCourses = (profile: any) => {
       setIsBasicFinished(isFinished);
 
       // 6. Cursos - filtra pelo curso vinculado se existir, caso contrário busca todos
-      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final), cursos:curso_id(nivel))';
+      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, ordem, nucleo_id, versao, is_bloco_final, status_liberacao, data_liberacao, professor_active), cursos:curso_id(nivel))';
       const { data: allCourses } = cursoId
         ? await supabase.from('cursos').select(courseSelect).eq('id', cursoId)
         : await supabase.from('cursos').select(courseSelect);
@@ -193,18 +183,45 @@ export const useStudentCourses = (profile: any) => {
                   return sa?.book_id === l.id && isEx && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < 7.0;
                 });
 
+                // REQUISITO: O Módulo [N] é finalizado se:
+                // 1. O aluno foi aprovado (nota >= 7.0)
+                // 2. O aluno entrou em D.P. (reprovou na V3)
+                const isApproved = resData.some(s => {
+                  const isEx = s.is_bloco_final || s.lesson_type === 'prova';
+                  return s.book_id === l.id && isEx && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
+                });
+                const isFinished = isApproved || isDP;
+
+                // REGRA DE PROGRESSÃO FLUIDA (Requisito 1)
+                // O Módulo [N] é liberado se:
+                // 1. É o primeiro módulo (bookOrdem === 1)
+                // 2. O professor liberou manualmente este módulo (isManualModuleRelease)
+                // 3. O professor liberou a PROVA V1 do módulo anterior [N-1]
+                // 4. O módulo anterior [N-1] foi FINALIZADO (Aprovado ou D.P.)
+                const isPreviousFinishedOrReleased = bookOrdem === 1 || Array.from(releasedExamBookIds).some(rid => {
+                  const prevBook = sortedLivros.find((sl: any) => sl.id === rid);
+                  // IMPORTANTE: O livro anterior deve pertencer a este mesmo curso
+                  return prevBook && (prevBook.ordem === bookOrdem - 1) && (prevBook.curso_id === c.id);
+                }) || sortedLivros.some((sl: any) => {
+                  if (sl.ordem !== bookOrdem - 1) return false;
+                  // Verifica se o anterior está finalizado no resData
+                  return resData.some(s => {
+                    const isEx = s.is_bloco_final || s.lesson_type === 'prova';
+                    const passed = (s.nota || 0) >= 7.0;
+                    const failedV3 = (s.nota || 0) < 7.0 && s.tentativas >= 3;
+                    return s.book_id === sl.id && isEx && s.status === 'corrigida' && (passed || failedV3);
+                  });
+                });
+
                 const isModuleReleased = (
                   isStaff || 
                   isManualModuleRelease || 
-                  bookOrdem <= releasedCount || 
-                  bookOrdem === pedagogicalLimit ||
-                  bookOrdem === 1
+                  isPreviousFinishedOrReleased
                 );
 
-                const isReleased = isModuleReleased && !levelLocked && !isDP;
-                const isCurrent = (bookOrdem === pedagogicalLimit) && !levelLocked && !isDP;
+                const isReleased = isModuleReleased && !levelLocked;
+                const isCurrent = (bookOrdem === pedagogicalLimit || isPreviousFinishedOrReleased) && !levelLocked;
                 
-                // Todo conteúdo liberado (manual ou automático) pode ser acessado
                 const isUnlocked = isReleased;
 
               const examReleaseDate = examReleaseDates[l.id];
@@ -234,27 +251,34 @@ export const useStudentCourses = (profile: any) => {
 
                     let lockedByProfessor = false;
                     const displayTitle = a.titulo || '';
+                    const v = a.versao || 1;
+                    const isVideo = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
+                    const isExam = a.tipo === 'prova' || !!a.is_bloco_final;
                     
-                    // Apenas vídeos e provas finais exigem liberação manual do professor
-                    const isRestrictedType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
+                    // REQUISITO: Vídeos e Provas V1 sempre com trava manual (controle de presencialidade)
+                    // Lições e Exercícios são automáticos assim que o módulo libera
+                    const isManualType = isVideo || (isExam && v === 1);
+                    const isRestrictedType = isManualType || (isExam && v > 1);
                     
                     if (isRestrictedType) {
                       let isItemReleased = false;
 
-                      // Liberação manual para Provas, Vídeos ou Atividades restritas
+                      // Liberação manual para Provas V1, Vídeos ou Atividades específicas
                       isItemReleased = (releasedVideos.includes(a.id) || releasedAtividades.includes(a.id));
                       
-                      // Caso especial: Provas V1 liberam o bloco de prova se o livro estiver liberado e houver qualquer liberação de atividade para o livro
-                      if (!isItemReleased && (a.tipo === 'prova' || !!a.is_bloco_final)) {
-                        isItemReleased = releasedExamBookIds.has(l.id);
+                      // V2 e V3 são liberados automaticamente se o módulo estiver ativo
+                      if (isExam && v > 1) {
+                        lockedByProfessor = !isReleased;
+                      } else {
+                        // Vídeos e V1: Exigem liberação manual do professor (isItemReleased)
+                        lockedByProfessor = !isReleased || !isItemReleased;
                       }
-
-                      // Conteúdo padrão é desbloqueado se o módulo pai estiver liberado (ou manual se restrito)
-                      lockedByProfessor = !isReleased || (!isItemReleased && isRestrictedType);
+                    } else {
+                      // Conteúdo nativo (Lições/Exercícios): Liberado se o módulo pai estiver liberado
+                      lockedByProfessor = !isReleased;
                     }
 
                     let isHiddenItem = false;
-                    const v = a.versao || 1;
 
                     if (!isStaff && (v === 2 || v === 3)) {
                       const prevV = v - 1;
@@ -279,15 +303,29 @@ export const useStudentCourses = (profile: any) => {
                       }
                     }
 
-                    return { ...a, titulo: displayTitle, lockedByProfessor, isHidden: isHiddenItem };
+                    return { 
+                      ...a, 
+                      titulo: displayTitle, 
+                      lockedByProfessor, 
+                      isHidden: isHiddenItem,
+                      status_liberacao: a.status_liberacao,
+                      data_liberacao: a.data_liberacao,
+                      professor_active: a.professor_active
+                    };
+                  }).map(a => {
+                    // REGRA DE FILTRO NATIVO VS BLOQUEADO (Parte 4)
+                    const isMediaOrExam = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
+                    if (isMediaOrExam && a.professor_active === false && !isStaff) {
+                      return { ...a, isHidden: true };
+                    }
+                    return a;
                   }).filter((a: any) => !a.isHidden),
                   isReleased,
                   isCurrent: isCurrent && isReleased,
                   isUnlocked: isUnlocked && isReleased,
-                  isDP: !isStaff && resData.some(s => {
-                    const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-                    return sa?.is_bloco_final && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < 7.0;
-                  })
+                  isFinished,
+                  isApproved,
+                  isDP: isDP
                 };
             }).filter(Boolean)
           };

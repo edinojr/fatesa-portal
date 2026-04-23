@@ -57,6 +57,16 @@ export const useAdminFinance = (showToast: (msg: string, type?: 'success' | 'err
       }
 
       showToast(`${target === 'doc' ? 'Documento' : 'Pagamento'} ${status} com sucesso!`);
+      
+      // Atualização de estado local imediata (Sem Refresh)
+      if (target === 'pay') {
+        setPendingPaysValidation(prev => prev.filter(p => p.id !== id));
+        setFinanceReport(prev => prev.map(p => p.id === id ? { ...p, status: finalStatus, feedback } : p));
+      } else {
+        setPendingDocs(prev => prev.filter(d => d.id !== id));
+      }
+
+      // Refresh em background para garantir sincronia com o banco
       fetchFinanceData();
     } catch (err: any) {
       showToast(err.message, 'error');
