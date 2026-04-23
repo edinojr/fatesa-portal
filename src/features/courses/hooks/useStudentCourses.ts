@@ -54,10 +54,6 @@ export const useStudentCourses = (profile: any) => {
 
       const isPresencial = profile?.tipo === 'presencial';
       const temAcessoDefinitivo = profile?.acesso_definitivo === true;
-      const exemptStatus = profile.bolsista || isStaff || nucleoIsento || isPresencial || temAcessoDefinitivo;
-
-      // Cálculo de liberação (Pagamentos + Provas)
-      let releasedCount = 1;
 
       // Limite Pedagógico: Módulo Vigente
       const examReleaseDates: Record<string, string> = {};
