@@ -7,7 +7,8 @@ export const useCoordinatorData = (profile: any) => {
   const [metrics, setMetrics] = useState({
     totalStudents: 0,
     presenceRate: 0,
-    evasionAlerts: 0
+    evasionAlerts: 0,
+    approvalRate: 0
   });
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
@@ -68,10 +69,22 @@ export const useCoordinatorData = (profile: any) => {
       const activeIds = new Set(inactiveStudents?.map(i => i.aluno_id));
       const evasionCount = (studentData || []).filter(s => !activeIds.has(s.id)).length;
 
+      // Academic Success (Students with at least one approval >= 7.0)
+      const { data: allSubmissions } = await supabase
+        .from('respostas_aulas')
+        .select('aluno_id, nota')
+        .eq('status', 'corrigida')
+        .gte('nota', 7.0);
+      
+      const approvedIds = new Set(allSubmissions?.map(s => s.aluno_id));
+      const approvedCount = (studentData || []).filter(s => approvedIds.has(s.id)).length;
+      const appRate = (studentData || []).length > 0 ? (approvedCount / (studentData || []).length) * 100 : 0;
+
       setMetrics({
         totalStudents: activeCount || 0,
         presenceRate: Math.round(rate),
-        evasionAlerts: evasionCount
+        evasionAlerts: evasionCount,
+        approvalRate: Math.round(appRate)
       });
 
     } catch (err) {

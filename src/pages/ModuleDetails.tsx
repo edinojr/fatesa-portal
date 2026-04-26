@@ -129,7 +129,7 @@ const ModuleDetails = () => {
         return (
             <Link 
                 key={item.id}
-                to={ (item.arquivo_url || item.pdf_url) ? `/book/${item.id}?type=aula` : `/lesson/${item.id}`}
+                to={ (item.arquivo_url || item.pdf_url) && item.tipo !== 'prova' && !item.is_bloco_final ? `/book/${item.id}?type=aula` : `/lesson/${item.id}`}
                 className={`content-icon-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`}
                 style={{ 
                     position: 'relative',

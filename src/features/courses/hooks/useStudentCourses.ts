@@ -89,9 +89,16 @@ export const useStudentCourses = (profile: any) => {
 
       if (exams && releases) {
         exams.forEach(exam => {
-          if (exam.is_bloco_final) {
+          // Captura a data de liberação de qualquer prova/bloco final do módulo
+          const isEx = exam.is_bloco_final || exam.tipo === 'prova' || (exam.titulo && /V[1-3]|RECUPERAÇ/i.test(exam.titulo));
+          if (isEx) {
             const rel = (releases as any[]).find(r => r.item_id === exam.id && r.item_type === 'atividade');
-            if (rel) examReleaseDates[exam.livro_id] = rel.created_at;
+            if (rel) {
+               // Mantemos a data da primeira liberação de prova encontrada para este livro
+               if (!examReleaseDates[exam.livro_id]) {
+                 examReleaseDates[exam.livro_id] = rel.created_at;
+               }
+            }
           }
         });
       }
@@ -224,7 +231,9 @@ export const useStudentCourses = (profile: any) => {
               const userCreatedAt = new Date(profile.created_at).getTime();
               const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
               
-              const isPastModule = releaseTime > 0 && userCreatedAt > (releaseTime + 86400000);
+              // REGRA DE NOVOS ALUNOS: Se o aluno entrou APÓS a liberação da prova do módulo N, 
+              // ele não tem acesso ao módulo N (fica oculto), apenas ao N+1.
+              const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
               const hasException = exceptionIds.includes(l.id);
               const hasStarted = userHasActivityInModule(l.id);
               

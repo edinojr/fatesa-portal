@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, ChevronRight, GraduationCap, ArrowRight } from 'lucide-react';
+import { AlertCircle, ChevronRight, GraduationCap, ArrowRight, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface PendingExam {
@@ -27,6 +27,7 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
   };
 
   const isRecoveryMode = exams.some(e => e.isRecovery);
+  const hasFailures = exams.some(e => (e as any).status === 'reprovado');
 
   return (
     <div className="modal-overlay" style={{ 
@@ -50,11 +51,38 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
         padding: '2rem 1.5rem', 
         background: 'rgba(15, 16, 18, 0.98)', 
         borderRadius: '32px',
-        border: `1px solid ${isRecoveryMode ? 'rgba(244, 63, 94, 0.4)' : 'rgba(245, 158, 11, 0.4)'}`,
+        border: `1px solid ${hasFailures ? 'rgba(244, 63, 94, 0.4)' : isRecoveryMode ? 'rgba(245, 158, 11, 0.4)' : 'rgba(124, 58, 237, 0.4)'}`,
         boxShadow: '0 40px 100px rgba(0,0,0,0.9)',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        animation: 'zoomIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
       }}>
+        {/* Close Button Top Right */}
+        <button 
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '1.5rem',
+            right: '1.5rem',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: 'rgba(255,255,255,0.4)',
+            width: '32px',
+            height: '32px',
+            borderRadius: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            zIndex: 10,
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.4)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+        >
+          <X size={18} />
+        </button>
+
         {/* Decorative Background Element */}
         <div style={{ 
           position: 'absolute', 
@@ -62,7 +90,7 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
           right: '-80px', 
           width: '200px', 
           height: '200px', 
-          background: isRecoveryMode ? 'rgba(244, 63, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+          background: hasFailures ? 'rgba(244, 63, 94, 0.1)' : 'rgba(124, 58, 237, 0.1)',
           filter: 'blur(50px)',
           borderRadius: '50%',
           zIndex: 0
@@ -73,39 +101,46 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
             width: '64px', 
             height: '64px', 
             borderRadius: '20px', 
-            background: isRecoveryMode ? 'linear-gradient(135deg, #f43f5e 0%, #be123c 100%)' : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
+            background: hasFailures ? 'linear-gradient(135deg, #f43f5e 0%, #be123c 100%)' : isRecoveryMode ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
             margin: '0 auto 1.25rem',
             color: '#fff',
-            boxShadow: isRecoveryMode ? '0 10px 20px rgba(244, 63, 94, 0.3)' : '0 10px 20px rgba(245, 158, 11, 0.3)',
+            boxShadow: hasFailures ? '0 10px 20px rgba(244, 63, 94, 0.3)' : '0 10px 20px rgba(124, 58, 237, 0.3)',
             transform: 'rotate(-5deg)'
           }}>
             <AlertCircle size={32} strokeWidth={2.5} />
           </div>
 
           <h2 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
-            {isRecoveryMode ? 'Recuperação Disponível!' : 'Prova Pendente!'}
+            {hasFailures ? 'Atenção: Resultado de Prova' : isRecoveryMode ? 'Recuperação Disponível!' : 'Avisos Pedagógicos'}
           </h2>
           
           <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: 1.5, fontSize: '0.9rem' }}>
-            Identificamos que você possui <strong>{exams.length} avaliação(ões)</strong> pendente(s). 
-            {isRecoveryMode ? ' Uma delas é uma prova de recuperação para ajudar em sua média.' : ' Complete-as para progredir em sua trilha de aprendizado.'}
+            {hasFailures 
+              ? 'Você possui resultados que exigem atenção ou uma nova tentativa de avaliação.' 
+              : 'Identificamos atividades pendentes importantes para sua progressão acadêmica.'}
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem', textAlign: 'left' }}>
             {exams.slice(0, 3).map(exam => (
-              <div key={exam.id} style={{ 
-                padding: '1rem', 
-                background: 'rgba(255,255,255,0.02)', 
-                borderRadius: '16px', 
-                border: '1px solid rgba(255,255,255,0.05)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                transition: 'all 0.2s ease'
-              }}>
+              <div 
+                key={exam.id} 
+                onClick={() => { onClose(); navigate(`/lesson/${exam.id}`); }}
+                className="modal-list-item-hover"
+                style={{ 
+                  padding: '1rem', 
+                  background: 'rgba(255,255,255,0.02)', 
+                  borderRadius: '16px', 
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
                 <div style={{ 
                   width: '36px', 
                   height: '36px', 
@@ -127,17 +162,20 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
                     {exam.titulo}
                   </div>
                 </div>
-                <div style={{ 
-                  fontSize: '0.6rem', 
-                  padding: '3px 8px', 
-                  background: exam.isRecovery ? 'rgba(244, 63, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)', 
-                  color: exam.isRecovery ? '#f43f5e' : '#f59e0b',
-                  borderRadius: '6px',
-                  fontWeight: 900,
-                  border: `1px solid ${exam.isRecovery ? 'rgba(244, 63, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)'}`,
-                  flexShrink: 0
-                }}>
-                  {exam.isRecovery ? 'RECUPERAÇÃO' : 'V1'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ 
+                    fontSize: '0.6rem', 
+                    padding: '3px 8px', 
+                    background: (exam as any).status === 'reprovado' ? 'rgba(244, 63, 94, 0.15)' : (exam as any).status === 'recuperacao' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(124, 58, 237, 0.15)', 
+                    color: (exam as any).status === 'reprovado' ? '#f43f5e' : (exam as any).status === 'recuperacao' ? '#f59e0b' : '#7c3aed',
+                    borderRadius: '6px',
+                    fontWeight: 900,
+                    border: `1px solid ${(exam as any).status === 'reprovado' ? 'rgba(244, 63, 94, 0.2)' : (exam as any).status === 'recuperacao' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(124, 58, 237, 0.2)'}`,
+                    flexShrink: 0
+                  }}>
+                    {(exam as any).status === 'reprovado' ? `NOTA ${(exam as any).nota || 'INS.'}` : (exam as any).status === 'recuperacao' ? 'RECUPERAÇÃO' : 'PENDENTE'}
+                  </div>
+                  <ChevronRight size={14} className="mobile-hide" style={{ opacity: 0.3 }} />
                 </div>
               </div>
             ))}
@@ -159,28 +197,29 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
 
           <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button 
-              className="nav-btn-premium" 
+              className="btn btn-outline" 
               onClick={onClose}
-              style={{ flex: 1, height: '48px', justifyContent: 'center', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', fontSize: '0.9rem' }}
+              style={{ flex: 1, height: '48px', justifyContent: 'center', borderRadius: '14px', background: 'rgba(255,255,255,0.02)', fontSize: '0.9rem', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
             >
-              Depois
+              Fechar
             </button>
             <button 
-              className="nav-btn-premium active" 
+              className="btn btn-primary" 
               style={{ 
                 flex: 1.5, 
                 height: '48px', 
                 justifyContent: 'center', 
                 borderRadius: '14px', 
-                background: isRecoveryMode ? 'linear-gradient(135deg, #f43f5e 0%, #be123c 100%)' : 'var(--primary)',
+                background: isRecoveryMode ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' : 'var(--primary)',
                 border: 'none',
                 fontSize: '0.9rem',
                 fontWeight: 800,
-                boxShadow: isRecoveryMode ? '0 10px 20px rgba(244, 63, 94, 0.2)' : '0 10px 20px rgba(var(--primary-rgb), 0.2)'
+                color: '#fff',
+                boxShadow: isRecoveryMode ? '0 10px 20px rgba(245, 158, 11, 0.2)' : '0 10px 20px rgba(var(--primary-rgb), 0.2)'
               }}
               onClick={handleAction}
             >
-              Iniciar Prova <ArrowRight size={18} style={{ marginLeft: '0.4rem' }} />
+              Iniciar Tudo <ArrowRight size={18} style={{ marginLeft: '0.4rem' }} />
             </button>
           </div>
         </div>

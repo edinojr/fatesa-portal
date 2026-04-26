@@ -1,17 +1,18 @@
 import React from 'react';
-import { Users, CheckCircle2, AlertTriangle, TrendingUp } from 'lucide-react';
+import { Users, CheckCircle2, AlertTriangle, TrendingUp, Award } from 'lucide-react';
 
 interface MetricsProps {
   metrics: {
     totalStudents: number;
     presenceRate: number;
     evasionAlerts: number;
+    approvalRate: number;
   };
 }
 
 const MetricsCards: React.FC<MetricsProps> = ({ metrics }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       {/* Total Students */}
       <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-md hover:border-primary/50 transition-all group">
         <div className="flex items-center justify-between mb-4">
@@ -24,6 +25,24 @@ const MetricsCards: React.FC<MetricsProps> = ({ metrics }) => {
         </div>
         <h3 className="text-gray-400 text-sm font-semibold uppercase tracking-wider">Alunos Ativos</h3>
         <p className="text-3xl font-black text-white mt-1">{metrics.totalStudents}</p>
+      </div>
+
+      {/* Academic Approval */}
+      <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-md hover:border-success/50 transition-all group">
+        <div className="flex items-center justify-between mb-4">
+          <div className="p-3 bg-success/20 text-success rounded-xl group-hover:scale-110 transition-transform">
+            <Award size={24} />
+          </div>
+          <span className="text-xs font-bold text-success">Métrica: 7.0</span>
+        </div>
+        <h3 className="text-gray-400 text-sm font-semibold uppercase tracking-wider">Desempenho (Apr.)</h3>
+        <p className="text-3xl font-black text-white mt-1">{metrics.approvalRate}%</p>
+        <div className="w-full bg-white/5 h-1.5 rounded-full mt-4 overflow-hidden">
+          <div 
+            className="h-full bg-success rounded-full transition-all duration-1000" 
+            style={{ width: `${metrics.approvalRate}%` }}
+          ></div>
+        </div>
       </div>
 
       {/* Presence Rate */}
@@ -54,7 +73,7 @@ const MetricsCards: React.FC<MetricsProps> = ({ metrics }) => {
         </div>
         <h3 className="text-gray-400 text-sm font-semibold uppercase tracking-wider">Alertas de Evasão</h3>
         <p className="text-3xl font-black text-white mt-1">{metrics.evasionAlerts}</p>
-        <p className="text-xs text-red-400/70 mt-2 font-medium">Alunos inativos há &gt;15 dias</p>
+        <p className="text-xs text-red-400/70 mt-2 font-medium">Inativos há &gt;15 dias</p>
       </div>
     </div>
   );

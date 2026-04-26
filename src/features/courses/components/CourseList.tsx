@@ -89,7 +89,8 @@ const CourseList: React.FC<CourseListProps> = ({
                       style={{ width: 'auto' }}
                       onClick={() => {
                         if (firstLesson) {
-                          if (firstLesson.tipo === 'material' || firstLesson.pdf_url || firstLesson.arquivo_url) {
+                          const isReader = (firstLesson.tipo === 'material' || firstLesson.pdf_url || firstLesson.arquivo_url) && firstLesson.tipo !== 'prova' && !firstLesson.is_bloco_final;
+                          if (isReader) {
                             navigate(`/book/${firstLesson.id}?type=aula`);
                           } else {
                             navigate(`/lesson/${firstLesson.id}`);

@@ -100,73 +100,98 @@ const Dashboard = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Logica de Provas Pendentes e Recuperação
+  // Logica de Provas Pendentes e Recuperação (Refinada para Aprovação/Reprovação)
   const pendingExams = useMemo(() => {
-    // Se o perfil estiver bloqueado, não mostrar notificações de provas
     if (!courses.length || profile?.bloqueado) return [];
     
     const pending: any[] = [];
     courses.forEach(course => {
       course.livros.forEach(libro => {
-        // Módulo precisa estar liberado
         if (!libro.isReleased) return;
 
+        // Verifica se o aluno já foi aprovado ou está em DP no módulo
+        const bookSubmissions = atividades.filter(s => s.book_id === libro.id);
+        const isApproved = bookSubmissions.some(s => {
+          const sa = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
+          const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || /V[1-3]|RECUPERAÇ/i.test(sa?.titulo || '');
+          return isEx && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
+        });
+
+        if (isApproved) return;
+
         libro.aulas.forEach(aula => {
-          // É uma prova, não está oculta e não está bloqueada pelo professor
           const title = aula.titulo || '';
           const isExam = aula.tipo === 'prova' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
           
-          // REGRA 1: status_liberacao === true E data_liberacao <= hoje
           const isReleasedNow = (aula as any).status_liberacao !== false && 
                                 (!(aula as any).data_liberacao || new Date((aula as any).data_liberacao) <= new Date());
           
           const isDoable = !aula.isHidden && !aula.lockedByProfessor && isReleasedNow;
           
           if (isExam && isDoable) {
-            // REGRA 2 & 3: Se já aprovado no módulo ou em versão anterior, oculta
-            const bookSubmissions = atividades.filter(s => s.book_id === libro.id);
-            const isApprovedInModule = bookSubmissions.some(s => {
-              const sa = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-              const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || /V[1-3]|RECUPERAÇ/i.test(sa?.titulo || '');
-              return isEx && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
-            });
-
-            if (isApprovedInModule) return; // Se já aprovado, ignora todas as provas deste módulo
-
             const sub = atividades.find(s => s.lesson_id === aula.id);
             const versao = (aula as any).versao || 1;
 
             if (!sub) {
-              // Se é V2/V3, só mostra se a anterior foi feita e reprovada (handled by isHidden in hook, but double check here)
+              // Caso 1: Aluno não fez a prova
+              // Caso 3: Aluno em recuperação (se for V2 ou V3)
               pending.push({
                 id: aula.id,
                 titulo: title || 'Avaliação',
                 livro: libro.titulo,
                 versao: versao,
-                isRecovery: versao > 1 || /V[2-3]|RECUPERAÇ/i.test(title)
+                isRecovery: versao > 1 || /V[2-3]|RECUPERAÇ/i.test(title),
+                status: versao === 1 ? 'pendente' : 'recuperacao'
               });
-            } else {
-              // Se já tem submissão, checa se é uma reprova que permite recuperação (V2/V3)
-              const isFailed = sub.status === 'corrigida' && sub.nota !== null && sub.nota < 7.0;
-              if (isFailed && !aula.isHidden) {
-                 pending.push({
-                   id: aula.id,
-                   titulo: title || 'Avaliação',
-                   livro: libro.titulo,
-                   versao: versao,
-                   isRecovery: true,
-                   failed: true
-                 });
-              }
+            } else if (sub.status === 'corrigida' && (sub.nota || 0) < 7.0) {
+              // Caso 2: Aluno reprovou na prova
+              // Nota: Normalmente se ele reprova, a próxima versão (V2/V3) será liberada e cairá no "if (!sub)" acima.
+              // Mas mostramos aqui caso ele ainda esteja olhando para a prova reprovada.
+              pending.push({
+                id: aula.id,
+                titulo: title || 'Avaliação',
+                livro: libro.titulo,
+                versao: versao,
+                isRecovery: versao > 1 || /V[2-3]|RECUPERAÇ/i.test(title),
+                status: 'reprovado',
+                failed: true,
+                nota: sub.nota
+              });
             }
           }
         });
       });
     });
 
-    // Ordenar: primeiro as recuperações, depois por ordem de livro (implícito na iteração anterior)
-    return pending.sort((a, b) => (b.isRecovery ? 1 : 0) - (a.isRecovery ? 1 : 0));
+    // Ordenar: primeiro as recuperações, depois os reprovados, depois pendentes
+    return pending.sort((a, b) => {
+      if (a.status === 'recuperacao' && b.status !== 'recuperacao') return -1;
+      if (a.status === 'reprovado' && b.status === 'pendente') return -1;
+      return 0;
+    });
   }, [courses, atividades, profile?.bloqueado]);
+
+  // Toast de Sucesso para Aprovações Recentes
+  useEffect(() => {
+    if (!atividades.length || !profile?.id) return;
+    
+    const storageKey = `fatesa_approval_toast_${profile.id}`;
+    const shownApprovals = JSON.parse(sessionStorage.getItem(storageKey) || '[]');
+    
+    const recentApprovals = atividades.filter(s => {
+      const isEx = s.is_bloco_final || s.lesson_type === 'prova';
+      const isRecent = new Date(s.updated_at || s.submitted_at).getTime() > Date.now() - 86400000; // Últimas 24h
+      return isEx && s.status === 'corrigida' && (s.nota || 0) >= 7.0 && isRecent && !shownApprovals.includes(s.submission_id);
+    });
+
+    if (recentApprovals.length > 0) {
+      const last = recentApprovals[0];
+      showToast(`Parabéns! Você foi aprovado em ${last.lesson_title} com nota ${last.nota?.toFixed(1)}!`, 'success');
+      
+      const newShown = [...shownApprovals, ...recentApprovals.map(r => r.submission_id)];
+      sessionStorage.setItem(storageKey, JSON.stringify(newShown));
+    }
+  }, [atividades, profile?.id]);
 
 
   // Filtra cursos para mostrar apenas o vigente no Dashboard (Home e Cursos)

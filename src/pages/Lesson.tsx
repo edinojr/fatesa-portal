@@ -80,14 +80,16 @@ const Lesson = () => {
         const { data: moduleExams } = await supabase.from('aulas').select('id').eq('livro_id', lessonData.livro_id).or('tipo.eq.prova,is_bloco_final.eq.true');
         
         if (lessonData.livro_id) {
-          const { data: moduleSubs } = await supabase.from('respostas_aulas')
-            .select('nota, status')
-            .eq('student_id', user.id)
-            .eq('book_id', lessonData.livro_id)
-            .eq('is_bloco_final', true)
-            .eq('status', 'corrigida')
-            .gte('nota', 7.0)
-            .maybeSingle();
+          const { data: rawModuleSubs } = await supabase.from('respostas_aulas')
+            .select('nota, status, aulas:aula_id(livro_id, is_bloco_final)')
+            .eq('aluno_id', user.id);
+          
+          const moduleSubs = (rawModuleSubs || []).find((s: any) => 
+            s.aulas?.livro_id === lessonData.livro_id && 
+            s.aulas?.is_bloco_final && 
+            s.status === 'corrigida' && 
+            (s.nota || 0) >= 7.0
+          );
           if (moduleSubs) modulePassed = true;
         }
 
@@ -149,6 +151,41 @@ const Lesson = () => {
           }
         }
 
+        // 2.5 BLOQUEIO DE RECUPERAÇÃO: Se for V2/V3 e já passou na V1/V2, ou não fez a anterior
+        const versao = lessonData.versao || 1;
+        if (!isStaff && (versao === 2 || versao === 3)) {
+          // Precisamos buscar as submissões deste livro (módulo) de forma segura
+          const { data: previousSubs } = await supabase
+            .from('respostas_aulas')
+            .select('nota, status, aula_id, aulas:aula_id(versao, tipo, is_bloco_final, livro_id)')
+            .eq('aluno_id', user.id);
+          
+          // Filtramos pelo livro_id no JS para evitar erros de sintaxe complexa no join filter do PostgREST
+          const moduleSubs = (previousSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
+
+          const passedAny = moduleSubs.some(s => {
+            const v = (s.aulas as any)?.versao || 1;
+            return v < versao && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
+          });
+
+          const didPrevious = moduleSubs.some(s => {
+            const v = (s.aulas as any)?.versao || 1;
+            return v === versao - 1;
+          });
+
+          if (passedAny) {
+            alert('Você já foi aprovado nesta avaliação em uma versão anterior.');
+            navigate('/dashboard');
+            return;
+          }
+
+          if (!didPrevious) {
+            alert('Você precisa realizar a versão anterior desta prova antes de acessar a recuperação.');
+            navigate('/dashboard');
+            return;
+          }
+        }
+
         const { data: progData } = await supabase.from('progresso').select('concluida').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
         if (progData?.concluida) setComplete(true);
 
@@ -168,9 +205,10 @@ const Lesson = () => {
         // 3. Check if module is finished
         if (lessonData.livro_id) {
           const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id').eq('livro_id', lessonData.livro_id);
-          const { data: bookSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id').eq('aluno_id', user.id).eq('book_id', lessonData.livro_id);
+          const { data: rawSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id, aulas:aula_id(livro_id)').eq('aluno_id', user.id);
+          const bookSubs = (rawSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
-          const finished = (bookSubs || []).some(s => {
+          const finished = bookSubs.some(s => {
             const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.is_bloco_final));
             return isEx && s.status === 'corrigida' && ((s.nota || 0) >= 7.0 || s.tentativas >= 3);
           });
