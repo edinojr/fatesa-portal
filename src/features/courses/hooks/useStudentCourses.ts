@@ -20,11 +20,6 @@ export const useStudentCourses = (profile: any) => {
                       (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
 
       // 1. Verificar Isenção do Núcleo
-      let nucleoIsento = false;
-      if (profile.nucleo_id) {
-        const { data: nucData } = await supabase.from('nucleos').select('isento').eq('id', profile.nucleo_id).maybeSingle();
-        nucleoIsento = !!nucData?.isento;
-      }
 
       // 2. Determinar curso_id de forma segura
       const cursoId = (profile.curso_id && profile.curso_id !== 'null') ? profile.curso_id : null;
@@ -52,8 +47,6 @@ export const useStudentCourses = (profile: any) => {
         .select('id, livro_id, is_bloco_final, tipo, titulo')
         .or('tipo.eq.prova,is_bloco_final.eq.true,titulo.ilike.%V1%,titulo.ilike.%V2%,titulo.ilike.%V3%,titulo.ilike.%RECUPERACAO%');
 
-      const isPresencial = profile?.tipo === 'presencial';
-      const temAcessoDefinitivo = profile?.acesso_definitivo === true;
 
       // Limite Pedagógico: Módulo Vigente
       const examReleaseDates: Record<string, string> = {};
