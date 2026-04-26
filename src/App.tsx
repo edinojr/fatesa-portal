@@ -25,6 +25,7 @@ const Admin = lazy(() => import('./pages/Admin'))
 const Professor = lazy(() => import('./pages/Professor'))
 const BlockedAccess = lazy(() => import('./pages/BlockedAccess'))
 const AppConstruction = lazy(() => import('./pages/AppConstruction'))
+const Coordinator = lazy(() => import('./pages/Coordinator'))
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <Route path="/module/:id" element={<ProtectedRoute><ModuleDetails /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
+          <Route path="/coordenador" element={<ProtectedRoute requiredRole="coordenador_polo"><Coordinator /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

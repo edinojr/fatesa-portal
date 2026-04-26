@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
-  requiredRole?: 'admin' | 'professor' | 'suporte'
+  requiredRole?: 'admin' | 'professor' | 'suporte' | 'coordenador_polo'
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
@@ -65,11 +65,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   // Is professor if tipo is professor OR if caminhos_acesso contains professor OR if specialized email OR if is Admin
   const isProfessor = userType === 'professor' || roles.includes('professor') || isAdmin
 
+  const isCoordinator = userType === 'coordenador_polo' || roles.includes('coordenador_polo') || isAdmin
+
   if (requiredRole === 'admin' && !isAdmin) {
     return <Navigate to="/dashboard" replace />
   }
 
   if (requiredRole === 'professor' && !isProfessor) {
+    return <Navigate to="/dashboard" replace />
+  }
+
+  if (requiredRole === 'coordenador_polo' && !isCoordinator) {
     return <Navigate to="/dashboard" replace />
   }
 
