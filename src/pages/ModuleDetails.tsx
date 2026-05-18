@@ -8,8 +8,7 @@ import {
   Award, 
   ClipboardList, 
   FileText, 
-  Lock,
-  LayoutGrid
+  Lock
 } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
@@ -72,44 +71,51 @@ const ModuleDetails = () => {
     }
     const allAulasRaw = book.aulas || [];
     
-    // Filter out placeholders that are just titles with no content, but keep the first one if requested
-    const seenPlaceholders = new Set();
-    const allAulas = allAulasRaw.filter((a: any) => {
-        const titleTrimmed = a.titulo.trim();
-        const isPlaceholder = (titleTrimmed === book.titulo.trim() || titleTrimmed === 'Espirito Santo') && !a.pdf_url && !a.video_url;
+    // Sort first to ensure we know which one is truly "Card 01"
+    const sortedAulasRaw = [...allAulasRaw].sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+    
+    const allAulas = sortedAulasRaw.filter((a: any, index: number) => {
+        // If it's explicitly an interactive item or media, it's valid
+        const isInteractive = a.tipo === 'atividade' || a.tipo === 'exercicio' || a.tipo === 'questionario' || a.tipo === 'prova' || !!a.is_bloco_final;
+        const hasMedia = !!(a.pdf_url || a.arquivo_url || a.video_url || a.url_video || a.tipo === 'gravada' || a.tipo === 'video' || a.tipo === 'ao_vivo');
         
-        if (isPlaceholder) {
-            if (seenPlaceholders.has(titleTrimmed)) return false; // Duplicate
-            seenPlaceholders.add(titleTrimmed);
-            return true; // Keep the first one
+        // Target specifically "Card 01" (index 0) or the old known dummy titles
+        const isDummyTitle = a.titulo.trim() === book.titulo.trim() || a.titulo.trim() === 'Espirito Santo' || a.titulo.trim() === 'Introdução';
+        
+        // Hide the card ONLY if it is completely empty of media/activities AND it is the first card or has a dummy title.
+        const isEmptyDummy = (!hasMedia && !isInteractive) && (index === 0 || isDummyTitle);
+        
+        if (isEmptyDummy) {
+            return false; // Hide "Card 01" and specific dummy titles
         }
-        return true;
+        
+        return true; // Keep all other lessons visible!
     });
 
     const watchedIds = (progressoAulas || []).filter((p: any) => p.concluida).map((p: any) => p.aula_id);
 
-    // Categorization Logic - Broad and inclusive, respecting Polo-based visibility
-    const licoes = allAulas.filter((a: any) => 
-        !a.isHidden && 
-        (a.tipo === 'licao' || a.tipo === 'aula' || a.tipo === 'conteudo' || a.pdf_url || a.arquivo_url) &&
-        !(a.video_url || a.url_video) // Only reading: Exclude if has video
-    ).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
-
+    // Categorization Logic - Strict filtering for specific types, fallback for lessons
     const exercicios = allAulas.filter((a: any) => 
         !a.isHidden && (a.tipo === 'atividade' || a.tipo === 'exercicio' || a.tipo === 'questionario') && a.tipo !== 'prova'
     ).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
 
-    const provas = allAulas.filter((a: any) => 
-        !a.isHidden && (a.tipo === 'prova' || (a.titulo && a.titulo.toUpperCase().includes('V1')) || !!a.is_bloco_final)
-    ).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
-
     const videos = allAulas.filter((a: any) => 
-        !a.isHidden && (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'aula_video' || a.video_url || a.url_video)
+        !a.isHidden && (a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'aula_video' || a.video_url || a.url_video) &&
+        a.tipo !== 'atividade' && a.tipo !== 'exercicio' && a.tipo !== 'prova'
     ).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
 
-    // Fallback for any content that didn't fit
-    const categorizedIds = new Set([...licoes, ...exercicios, ...provas, ...videos].map(x => x.id));
-    const outros = allAulas.filter((a: any) => !a.isHidden && !categorizedIds.has(a.id));
+    // "Avaliações = somente a Avaliação liberada" -> filter out locked exams
+    const provas = allAulas.filter((a: any) => 
+        !a.isHidden && 
+        (a.tipo === 'prova' || (a.titulo && a.titulo.toUpperCase().includes('V1')) || !!a.is_bloco_final) &&
+        !a.lockedByProfessor
+    ).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+
+    // Any content that is not an exercise, video, or exam is considered a Lesson (Lição)
+    const categorizedIds = new Set([...exercicios, ...videos, ...provas].map(x => x.id));
+    const licoes = allAulas.filter((a: any) => 
+        !a.isHidden && !categorizedIds.has(a.id)
+    ).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
 
     const renderItemCard = (item: any, index: number) => {
         const submission = (atividades || []).find((at: any) => at.aula_id === item.id);
@@ -117,23 +123,44 @@ const ModuleDetails = () => {
         const isPendingCorrection = (item.tipo === 'prova' || item.is_bloco_final) && submission && submission.status !== 'corrigida';
         const isLocked = item.lockedByProfessor || (item.tipo === 'prova' && isPendingCorrection);
         
-        const iconStyle = { size: 24, color: 'currentColor' };
         const getIcon = () => {
-            if (item.tipo === 'gravada' || item.tipo === 'video' || item.tipo === 'ao_vivo' || item.video_url) return <PlayCircle {...iconStyle} />;
-            if (item.tipo === 'prova' || item.is_bloco_final) return <Award {...iconStyle} />;
-            if (item.tipo === 'atividade' || item.tipo === 'exercicio') return <ClipboardList {...iconStyle} />;
-            if (item.pdf_url || item.arquivo_url) return <FileText {...iconStyle} />;
-            return <BookOpen {...iconStyle} />;
+            if (item.tipo === 'gravada' || item.tipo === 'video' || item.tipo === 'ao_vivo' || item.video_url) return <PlayCircle size={36} color="var(--primary)" />;
+            if (item.tipo === 'prova' || item.is_bloco_final) return <Award size={36} color="#EAB308" />;
+            if (item.tipo === 'atividade' || item.tipo === 'exercicio') return <ClipboardList size={36} color="var(--success)" />;
+            if (item.pdf_url || item.arquivo_url) return <FileText size={36} color="var(--primary)" />;
+            return <BookOpen size={36} color="var(--primary)" />;
+        };
+
+        const getCategoryName = () => {
+            if (item.tipo === 'gravada' || item.tipo === 'video' || item.tipo === 'ao_vivo' || item.video_url) return "Vídeo Aula";
+            if (item.tipo === 'prova' || item.is_bloco_final) return "Avaliação";
+            if (item.tipo === 'atividade' || item.tipo === 'exercicio') return "Exercício de Fixação";
+            if (item.pdf_url || item.arquivo_url) return "Lição (PDF/Texto)";
+            return "Conteúdo";
         };
 
         return (
             <Link 
                 key={item.id}
-                to={ (item.arquivo_url || item.pdf_url) && item.tipo !== 'prova' && !item.is_bloco_final ? `/book/${item.id}?type=aula` : `/lesson/${item.id}`}
+                to={ (item.pdf_url || (item.arquivo_url && !/\.html?$/i.test(item.arquivo_url))) && item.tipo !== 'prova' && !item.is_bloco_final ? `/book/${item.id}?type=aula` : `/lesson/${item.id}`}
                 className={`content-icon-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`}
                 style={{ 
                     position: 'relative',
-                    pointerEvents: isLocked ? 'none' : 'auto' 
+                    pointerEvents: isLocked ? 'none' : 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    padding: '2rem 1.5rem',
+                    background: 'var(--glass)',
+                    border: '1px solid var(--glass-border)',
+                    borderRadius: '20px',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    gap: '1rem',
+                    opacity: isLocked ? 0.6 : 1,
+                    transition: 'all 0.3s ease'
                 }}
             >
                 {/* Number Badge */}
@@ -141,24 +168,31 @@ const ModuleDetails = () => {
                     position: 'absolute', 
                     top: '12px', 
                     left: '12px', 
-                    background: isCompleted ? 'var(--success)' : 'rgba(255,255,255,0.1)', 
+                    background: isCompleted ? 'var(--success)' : 'rgba(255,255,255,0.05)', 
                     color: '#fff', 
-                    fontSize: '0.7rem', 
+                    fontSize: '0.8rem', 
                     fontWeight: 900, 
-                    padding: '2px 8px', 
-                    borderRadius: '6px',
+                    padding: '4px 10px', 
+                    borderRadius: '8px',
                     border: '1px solid rgba(255,255,255,0.1)'
                 }}>
                     {String(index + 1).padStart(2, '0')}
                 </div>
 
-                <div className="icon-placeholder">
-                    {isLocked ? <Lock size={24} /> : getIcon()}
+                <div className="icon-placeholder" style={{ width: '72px', height: '72px', borderRadius: '20px', background: 'rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    {isLocked ? <Lock size={36} color="var(--text-muted)" /> : getIcon()}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, display: 'block' }}>{item.titulo}</span>
-                    {isCompleted && <span style={{ fontSize: '0.7rem', color: 'var(--success)', fontWeight: 700 }}>CONCLUÍDO</span>}
-                    {isLocked && <span style={{ fontSize: '0.7rem', color: '#f43f5e', fontWeight: 700 }}>{isPendingCorrection ? 'EM CORREÇÃO' : 'BLOQUEADO'}</span>}
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary)' }}>
+                        {getCategoryName()}
+                    </span>
+                    <span style={{ fontSize: '1.1rem', fontWeight: 700, display: 'block', lineHeight: 1.3 }}>{item.titulo}</span>
+                    
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                        {isCompleted && <span style={{ fontSize: '0.7rem', color: '#fff', background: 'var(--success)', padding: '2px 8px', borderRadius: '6px', fontWeight: 700 }}>CONCLUÍDO</span>}
+                        {isLocked && <span style={{ fontSize: '0.7rem', color: '#fff', background: '#f43f5e', padding: '2px 8px', borderRadius: '6px', fontWeight: 700 }}>{isPendingCorrection ? 'EM CORREÇÃO' : 'BLOQUEADO'}</span>}
+                    </div>
                 </div>
             </Link>
         );
@@ -192,9 +226,11 @@ const ModuleDetails = () => {
                     {licoes.length > 0 && (
                         <section>
                             <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', opacity: 0.8, fontSize: '1.2rem', fontWeight: 800 }}>
-                                <BookOpen size={24} color="var(--primary)" /> Lições e Materiais
+                                <BookOpen size={24} color="var(--primary)" /> Lições
                             </h4>
-                            <div className="horizontal-content-row">{licoes.map((item, i) => renderItemCard(item, i))}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                                {licoes.map((item, i) => renderItemCard(item, i))}
+                            </div>
                         </section>
                     )}
 
@@ -202,9 +238,11 @@ const ModuleDetails = () => {
                     {exercicios.length > 0 && (
                         <section>
                             <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', opacity: 0.8, fontSize: '1.2rem', fontWeight: 800 }}>
-                                <ClipboardList size={24} color="var(--primary)" /> Exercícios de Fixação
+                                <ClipboardList size={24} color="var(--primary)" /> Exercícios
                             </h4>
-                            <div className="horizontal-content-row">{exercicios.map((item, i) => renderItemCard(item, i))}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                                {exercicios.map((item, i) => renderItemCard(item, i))}
+                            </div>
                         </section>
                     )}
 
@@ -212,9 +250,11 @@ const ModuleDetails = () => {
                     {videos.length > 0 && (
                         <section>
                             <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', opacity: 0.8, fontSize: '1.2rem', fontWeight: 800 }}>
-                                <PlayCircle size={24} color="var(--primary)" /> Aulas em Vídeo
+                                <PlayCircle size={24} color="var(--primary)" /> Vídeos
                             </h4>
-                            <div className="horizontal-content-row">{videos.map((item, i) => renderItemCard(item, i))}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                                {videos.map((item, i) => renderItemCard(item, i))}
+                            </div>
                         </section>
                     )}
 
@@ -222,19 +262,11 @@ const ModuleDetails = () => {
                     {provas.length > 0 && (
                         <section>
                             <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', opacity: 0.8, fontSize: '1.2rem', fontWeight: 800 }}>
-                                <Award size={24} color="#EAB308" /> Provas e Avaliações
+                                <Award size={24} color="#EAB308" /> Avaliações
                             </h4>
-                            <div className="horizontal-content-row">{provas.map((item, i) => renderItemCard(item, i))}</div>
-                        </section>
-                    )}
-
-                    {/* Row 5: Others */}
-                    {outros.length > 0 && (
-                        <section>
-                            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', opacity: 0.8, fontSize: '1.2rem', fontWeight: 800 }}>
-                                <LayoutGrid size={24} color="var(--text-muted)" /> Outros Conteúdos
-                            </h4>
-                            <div className="horizontal-content-row">{outros.map((item, i) => renderItemCard(item, i))}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                                {provas.map((item, i) => renderItemCard(item, i))}
+                            </div>
                         </section>
                     )}
 
