@@ -244,7 +244,7 @@ export const useStudentCourses = (profile: any) => {
                     .map((a: any) => {
                     if (isStaff) return { ...a, lockedByProfessor: false };
                     
-                    const matchesNucleo = isStaff || !a.nucleo_id || a.nucleo_id === profile?.nucleo_id;
+                    const matchesNucleo = isStaff || !a.nucleo_id || !profile?.nucleo_id || a.nucleo_id === profile?.nucleo_id;
                     if (!matchesNucleo) return { ...a, isHidden: true };
 
                     let lockedByProfessor = false;
@@ -311,7 +311,6 @@ export const useStudentCourses = (profile: any) => {
                       professor_active: a.professor_active
                     };
                   }).map(a => {
-                    // REGRA DE FILTRO NATIVO VS BLOQUEADO (Parte 4)
                     const isMediaOrExam = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
                     if (isMediaOrExam && a.professor_active === false && !isStaff) {
                       return { ...a, isHidden: true };

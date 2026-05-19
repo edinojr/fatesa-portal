@@ -19,11 +19,12 @@ export const useCoordinatorData = (profile: any) => {
 
     setLoading(true);
     try {
-      // 1. Fetch Students (Paginated)
+      // 1. Fetch Students (Paginated) - exclude blocked users
       const { data: studentData, count, error: studentError } = await supabase
         .from('users')
         .select('*', { count: 'exact' })
         .eq('nucleo_id', profile.nucleo_id)
+        .eq('bloqueado', false)
         .in('tipo', ['online', 'presencial'])
         .range((page - 1) * pageSize, page * pageSize - 1)
         .order('nome', { ascending: true });

@@ -43,10 +43,24 @@ export const useProfile = () => {
     }
 
     const loadProfileTask = async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      let session = null;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const { data: { session: s }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.error('Session Error:', sessionError);
+          setLoading(false);
+          return;
+        }
+        if (s) {
+          session = s;
+          break;
+        }
+        if (attempt < 2) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
       
-      if (sessionError || !session) {
-        // Se não houver sessão, apenas setamos loading false e deixamos o ProtectedRoute decidir
+      if (!session) {
         setLoading(false);
         return;
       }

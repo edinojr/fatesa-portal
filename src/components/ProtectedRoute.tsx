@@ -13,11 +13,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
 
   useEffect(() => {
     const checkSessionActivity = async () => {
-      const SIX_HOURS = 6 * 60 * 60 * 1000;
+      const THIRTY_MINUTES = 30 * 60 * 1000;
       const lastActivity = localStorage.getItem('fatesa_last_activity');
       const now = Date.now();
 
-      if (lastActivity && (now - parseInt(lastActivity, 10)) > SIX_HOURS) {
+      if (lastActivity && (now - parseInt(lastActivity, 10)) > THIRTY_MINUTES) {
         localStorage.removeItem('fatesa_last_activity');
         await supabase.auth.signOut();
         window.location.href = '/login';
@@ -28,17 +28,42 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     
     checkSessionActivity();
 
+    // Verificação contínua a cada 1 minuto
+    const intervalId = setInterval(() => {
+      const THIRTY_MINUTES = 30 * 60 * 1000;
+      const lastActivity = localStorage.getItem('fatesa_last_activity');
+      const now = Date.now();
+      if (lastActivity && (now - parseInt(lastActivity, 10)) > THIRTY_MINUTES) {
+        localStorage.removeItem('fatesa_last_activity');
+        supabase.auth.signOut().then(() => {
+          window.location.href = '/login';
+        });
+      }
+    }, 60000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkSessionActivity();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     const updateActivity = () => localStorage.setItem('fatesa_last_activity', Date.now().toString());
     window.addEventListener('mousemove', updateActivity, { passive: true });
     window.addEventListener('keydown', updateActivity, { passive: true });
     window.addEventListener('scroll', updateActivity, { passive: true });
     window.addEventListener('click', updateActivity, { passive: true });
+    window.addEventListener('touchstart', updateActivity, { passive: true });
 
     return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('mousemove', updateActivity);
       window.removeEventListener('keydown', updateActivity);
       window.removeEventListener('scroll', updateActivity);
       window.removeEventListener('click', updateActivity);
+      window.removeEventListener('touchstart', updateActivity);
     };
   }, []);
 

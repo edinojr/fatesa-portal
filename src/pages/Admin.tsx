@@ -346,7 +346,7 @@ const Admin = () => {
               {/* CENTRAL DE ATIVIDADES (SINALIZAÇÃO) */}
               {dashboardView === 'main' && (
                 <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
-                  <div className="activity-signal-card" onClick={() => { setActiveTab('users'); setUserTypeFilter('alunos'); }} style={{ background: 'rgba(var(--primary-rgb), 0.05)', border: '1px solid rgba(var(--primary-rgb), 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
+                  <div className="activity-signal-card" onClick={() => updateParams({ tab: 'users', filter: 'pendentes', view: 'main' })} style={{ background: 'rgba(var(--primary-rgb), 0.05)', border: '1px solid rgba(var(--primary-rgb), 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                       <div style={{ background: 'var(--primary)', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Users size={24} />
@@ -518,9 +518,10 @@ const Admin = () => {
             users={(() => {
               let filtered = users;
               if (userTypeFilter === 'administrativos') filtered = filtered.filter((u: any) => ['admin', 'suporte', 'colaborador'].includes(u.tipo));
-              if (userTypeFilter === 'alunos') filtered = filtered.filter((u: any) => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo) || u.email === 'edi.ben.jr@gmail.com');
+              if (userTypeFilter === 'alunos' || userTypeFilter === 'pendentes') filtered = filtered.filter((u: any) => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo) || u.email === 'edi.ben.jr@gmail.com');
               return filtered;
             })()}
+            userTypeFilter={userTypeFilter || undefined}
             allNucleos={allNucleos}
             searchTerm={searchTerm}
             actionLoading={actionLoading}

@@ -1,5 +1,5 @@
-import React from 'react'
-import { FileText, Trash2, Edit, Upload, Loader2, Plus } from 'lucide-react'
+import React, { useState } from 'react'
+import { FileText, Trash2, Edit, Upload, Loader2, Plus, BookOpen, ExternalLink } from 'lucide-react'
 
 interface LessonContentEditorModalProps {
   editingLessonContent: any
@@ -36,6 +36,21 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
   selectedLesson,
   normalizeFileName
 }) => {
+  // Extract references from lessonBlocks
+  const referencesBlock = lessonBlocks.find(b => b.type === 'references');
+  const referencesData = referencesBlock?.data || [];
+
+  const setReferencesData = (newRefs: any[]) => {
+    const filtered = lessonBlocks.filter(b => b.type !== 'references');
+    if (newRefs.length > 0) {
+      setLessonBlocks([...filtered, { type: 'references', data: newRefs }]);
+    } else {
+      setLessonBlocks(filtered);
+    }
+  };
+
+  const [editingRef, setEditingRef] = useState<{ id: string; text: string; source: string } | null>(null);
+
   if (!editingLessonContent) return null;
 
   return (
@@ -191,6 +206,98 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
           </button>
           <button className="btn btn-outline" style={{ width: 'auto', display: 'flex', gap: '0.75rem' }} onClick={() => setLessonBlocks([...lessonBlocks, { type: 'image', content: '' }])}>
             <Plus size={20} /> Adicionar Imagem
+          </button>
+        </div>
+
+        {/* References Section */}
+        <div style={{ marginTop: '3rem', padding: '2rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}><BookOpen size={20} /> Referências da Aula</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+            Adicione referências (citações, fontes, legendas) que serão exibidas ao final da lição.
+            Marque as citações no texto com <code style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px' }}>{'<sup data-ref="1">1</sup>'}</code> para vincular à referência.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
+            {referencesData.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                Nenhuma referência cadastrada.
+              </div>
+            )}
+            {referencesData.map((ref: any, rIdx: number) => (
+              <div key={rIdx} style={{
+                display: 'flex', gap: '1rem', alignItems: 'flex-start',
+                padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px',
+                border: editingRef?.id === ref.id ? '1px solid var(--primary)' : '1px solid transparent'
+              }}>
+                <div style={{
+                  width: '28px', height: '28px', borderRadius: '50%',
+                  background: 'rgba(var(--primary-rgb), 0.15)', color: 'var(--primary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: 800, fontSize: '0.8rem', flexShrink: 0
+                }}>
+                  {ref.id}
+                </div>
+                {editingRef?.id === ref.id && editingRef ? (
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <input className="form-control" placeholder="ID da referência"
+                      value={editingRef.id}
+                      onChange={e => setEditingRef(prev => prev ? { ...prev, id: e.target.value } : prev)} />
+                    <textarea className="form-control" rows={2} placeholder="Texto da referência..."
+                      value={editingRef.text}
+                      onChange={e => setEditingRef(prev => prev ? { ...prev, text: e.target.value } : prev)} />
+                    <input className="form-control" placeholder="URL/Source (opcional)"
+                      value={editingRef.source}
+                      onChange={e => setEditingRef(prev => prev ? { ...prev, source: e.target.value } : prev)} />
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button className="btn btn-primary" style={{ width: 'auto', padding: '0.3rem 1rem', fontSize: '0.8rem' }}
+                        onClick={() => {
+                          const newRefs = [...referencesData];
+                          const idx = newRefs.findIndex((r: any) => r.id === ref.id);
+                          if (idx >= 0) newRefs[idx] = editingRef;
+                          else newRefs.push(editingRef);
+                          setReferencesData(newRefs);
+                          setEditingRef(null);
+                        }}>
+                        Salvar
+                      </button>
+                      <button className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 1rem', fontSize: '0.8rem' }}
+                        onClick={() => setEditingRef(null)}>
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{ref.text}</div>
+                      {ref.source && (
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <ExternalLink size={12} /> {ref.source}
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
+                      <button className="btn btn-outline" style={{ padding: '0.3rem', width: 'auto' }}
+                        onClick={() => setEditingRef({ id: ref.id, text: ref.text, source: ref.source })}>
+                        <Edit size={14} />
+                      </button>
+                      <button className="btn btn-outline" style={{ padding: '0.3rem', width: 'auto', color: 'var(--error)' }}
+                        onClick={() => setReferencesData(referencesData.filter((_: any, i: number) => i !== rIdx))}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <button className="btn btn-outline" style={{ width: 'auto', display: 'flex', gap: '0.5rem', fontSize: '0.85rem' }}
+            onClick={() => {
+              const nextId = String(referencesData.length + 1);
+              setEditingRef({ id: nextId, text: '', source: '' });
+            }}>
+            <Plus size={16} /> Adicionar Referência
           </button>
         </div>
 

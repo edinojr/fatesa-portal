@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import { 
   Users, 
   BookOpen, 
@@ -14,7 +15,6 @@ import {
   ExternalLink,
   MapPin,
   GraduationCap,
-  ShieldCheck,
   Video,
   History
 } from 'lucide-react'
@@ -80,7 +80,8 @@ const Professor = () => {
     attendanceRecords,
     handleSaveAttendance,
     academicReport,
-    handleUpdateUserType
+    handleUpdateUserType,
+    handleGrantModuleException
   } = useProfessorManagement();
 
   const navigate = useNavigate()
@@ -381,8 +382,11 @@ const Professor = () => {
                 handleDeleteUser={handleDeleteUser}
                 handleResetActivities={handleResetProgress}
                 handleUpdateUserNucleo={handleUpdateUserNucleo}
+                handleUpdateUserType={handleUpdateUserType}
+                handleGrantModuleException={handleGrantModuleException}
                 userRole={profile?.tipo}
                 allNucleos={professorNucleos}
+                courses={courses}
               />
             )}
 
@@ -410,6 +414,40 @@ const Professor = () => {
                 onDelete={handleDeleteSubmission}
                 onUpdateStatus={handleUpdateUserType}
                 allStudents={allStudents}
+                onCorrect={async (id) => {
+                  let sub = submissions.find(s => s.submission_id === id);
+                  if (!sub) {
+                    const { data, error } = await supabase
+                      .from('respostas_aulas')
+                      .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, questionario, livros:livro_id(id, titulo)), users:aluno_id(id, nome, email, nucleo_id, nucleos:nucleo_id(id, nome))')
+                      .eq('id', id)
+                      .single();
+                    if (data && !error) {
+                      sub = {
+                        ...data,
+                        submission_id: data.id,
+                        student_id: data.aluno_id,
+                        lesson_id: data.aula_id,
+                        lesson_title: data.aulas?.titulo,
+                        lesson_type: data.aulas?.tipo,
+                        is_bloco_final: data.aulas?.is_bloco_final,
+                        student_name: data.users?.nome,
+                        student_email: data.users?.email,
+                        nucleus_id: data.users?.nucleos?.id,
+                        nucleus_name: data.users?.nucleos?.nome || 'Sem Polo',
+                        book_id: data.aulas?.livros?.id,
+                        book_title: data.aulas?.livros?.titulo || 'Módulo Geral',
+                        submitted_at: data.created_at,
+                      } as any;
+                    }
+                  }
+                  if (sub) {
+                    handleSelectSubmission(sub);
+                    setActiveTab('grading');
+                  } else {
+                    alert('Os dados completos desta avaliação não estão carregados para correção no momento.');
+                  }
+                }}
               />
            )}
 

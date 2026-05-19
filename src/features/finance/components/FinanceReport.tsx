@@ -104,7 +104,7 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
         </thead>
         <tbody>
           {payments.map((payment: any) => (
-            <tr key={payment.id} style={{ opacity: payment.status === 'rejeitado' ? 0.6 : 1 }}>
+            <tr key={payment.id} style={{ opacity: payment.status === 'rejeitado' ? 0.6 : 1, cursor: payment.comprovante_url ? 'pointer' : 'default' }} onClick={() => { if (payment.comprovante_url) setSelectedPayment(payment); }}>
               <td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--glass)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -138,7 +138,7 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
                 <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                   {payment.comprovante_url && (
                     <button 
-                      onClick={() => setSelectedPayment(payment)}
+                      onClick={(e) => { e.stopPropagation(); setSelectedPayment(payment); }}
                       className="btn btn-outline" 
                       style={{ width: 'auto', padding: '0.4rem', border: 'none', color: 'var(--primary)', background: 'rgba(var(--primary-rgb), 0.1)' }} 
                       title="Ver Comprovante no Pop-up"
@@ -152,7 +152,7 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
                       <button 
                         className="btn btn-primary" 
                         style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.75rem', background: '#10b981', display: 'flex', gap: '0.3rem' }}
-                        onClick={() => handleValidar('pay', payment.id, 'aprovado', payment.modulo?.toString() || '1')}
+                        onClick={(e) => { e.stopPropagation(); handleValidar('pay', payment.id, 'aprovado', payment.modulo?.toString() || '1'); }}
                         disabled={actionLoading === payment.id}
                       >
                         <CheckCircle2 size={14} /> APROVAR
@@ -160,7 +160,7 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
                       <button 
                         className="btn" 
                         style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.75rem', background: 'rgba(244, 63, 94, 0.1)', color: 'var(--error)' }}
-                        onClick={() => handleValidar('pay', payment.id, 'rejeitado')}
+                        onClick={(e) => { e.stopPropagation(); handleValidar('pay', payment.id, 'rejeitado'); }}
                         disabled={actionLoading === payment.id}
                       >
                         RECUSAR
@@ -172,7 +172,8 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
                     <button 
                       className="btn btn-outline" 
                       style={{ width: 'auto', padding: '0.4rem', color: 'var(--error)', border: 'none' }} 
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         if (window.confirm('Excluir este registro permanentemente?')) {
                           handleDeleteValidation('pay', payment.id)
                         }

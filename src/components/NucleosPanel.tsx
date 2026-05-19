@@ -78,8 +78,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
 
-    // All nucleos
-    const resNuc = await supabase.from('nucleos').select('*').order('nome')
+    // All nucleos (admin sees all, non-admin only sees non-hidden)
+    const nucQuery = supabase.from('nucleos').select('*').order('nome')
+    if (!isAdmin) nucQuery.filter('is_hidden', 'eq', false)
+    const resNuc = await nucQuery
     if (resNuc.data) setNucleos(resNuc.data)
 
     // My nucleos
@@ -400,7 +402,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
 
     const finalNucleoData = {
       ...nucleoData,
-      horario_aulas: horarioStr || (formData.get('horario_aulas') as string)
+      horario_aulas: horarioStr || (formData.get('horario_aulas') as string),
+      is_hidden: formData.get('is_hidden') === 'on',
+      is_active: formData.get('is_active') !== 'off'
     }
     
     try {
@@ -845,6 +849,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
                 {nuc.isento && (
                   <span style={{ marginLeft: '0.5rem', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(34,197,94,0.2)', color: 'var(--success)', fontWeight: 700, verticalAlign: 'middle' }}>
                     ISENTO
+                  </span>
+                )}
+                {nuc.is_hidden && (
+                  <span style={{ marginLeft: '0.3rem', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(245,158,11,0.2)', color: '#f59e0b', fontWeight: 700, verticalAlign: 'middle' }}>
+                    OCULTO
                   </span>
                 )}
               </h3>

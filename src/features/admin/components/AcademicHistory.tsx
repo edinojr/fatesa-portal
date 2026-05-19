@@ -18,9 +18,10 @@ interface AcademicHistoryProps {
   onDelete?: (id: string) => Promise<void>;
   onUpdateStatus?: (userId: string, newType: string) => Promise<void>;
   allStudents?: any[];
+  onCorrect?: (id: string) => void;
 }
 
-const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete, onUpdateStatus, allStudents }) => {
+const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete, onUpdateStatus, allStudents, onCorrect }) => {
   const [expandedStudents, setExpandedStudents] = useState<Record<string, boolean>>({});
   const [selectedNucleus, setSelectedNucleus] = useState<string | null>(null);
 
@@ -62,7 +63,11 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
          name: adminUser.nome,
          email: adminUser.email,
          tipo: adminUser.tipo,
-         modulos: {}
+         modulos: {},
+         stats: {
+           finishedBasic: new Set<string>(),
+           finishedMedium: new Set<string>()
+         }
        };
     }
 
@@ -90,7 +95,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
         groups[nucName][studentId].modulos[modName] = { atividades: [], provas: [] };
       }
 
-      if (item.aulas?.tipo === 'prova' || item.aulas?.is_bloco_final) {
+      if (isExam) {
         groups[nucName][studentId].modulos[modName].provas.push(item);
         
         // Contabilizar para requisitos de formatura
@@ -415,6 +420,17 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                                           }}>
                                             {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
                                           </div>
+                                          {item.nota === null && onCorrect && (
+                                            <button 
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                onCorrect(item.id);
+                                              }}
+                                              style={{ background: 'rgba(59, 130, 246, 0.15)', border: 'none', color: '#3b82f6', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 800 }}
+                                            >
+                                              Corrigir
+                                            </button>
+                                          )}
                                           <button 
                                             onClick={(e) => handleDelete(e, item.id)}
                                             style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: 'var(--error)', padding: '4px', borderRadius: '6px', cursor: 'pointer' }}
@@ -467,6 +483,17 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                                           }}>
                                             {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
                                           </div>
+                                          {item.nota === null && onCorrect && (
+                                            <button 
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                onCorrect(item.id);
+                                              }}
+                                              style={{ background: 'rgba(59, 130, 246, 0.2)', border: 'none', color: '#60a5fa', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.85rem', fontWeight: 800 }}
+                                            >
+                                              Corrigir
+                                            </button>
+                                          )}
                                           <button 
                                             onClick={(e) => handleDelete(e, item.id)}
                                             style={{ background: 'rgba(239, 68, 68, 0.15)', border: 'none', color: '#ff4d4d', padding: '6px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}

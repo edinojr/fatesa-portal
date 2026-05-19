@@ -82,7 +82,8 @@ const CourseList: React.FC<CourseListProps> = ({
             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               {currentBook.isUnlocked ? (
                 (() => {
-                  const firstLesson = currentBook.aulas?.find((a: any) => !a.isHidden);
+                  const sortedAulas = (currentBook.aulas || []).slice().sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+                  const firstLesson = sortedAulas.find((a: any) => !a.isHidden);
                   return (
                     <button 
                       className="nav-btn-premium"

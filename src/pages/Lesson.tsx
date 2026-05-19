@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { QuizQuestion } from '../types/admin'
 
@@ -26,9 +26,15 @@ const Lesson = () => {
   const [shuffledOptions, setShuffledOptions] = useState<Record<string, string[]>>({})
   const [shuffledMatchingRows, setShuffledMatchingRows] = useState<Record<string, any[]>>({})
   const [showExamModal, setShowExamModal] = useState(false)
+  const [activeReference, setActiveReference] = useState<{ id: string; text: string; source: string } | null>(null)
+  const [htmlContent, setHtmlContent] = useState<string | null>(null)
+  const [htmlLoading, setHtmlLoading] = useState(false)
   const [examModalConfirmed, setExamModalConfirmed] = useState(false)
   const [isModuleApproved] = useState(false)
   const [isModuleFinished, setIsModuleFinished] = useState(false)
+  const [tabSwitchCount, setTabSwitchCount] = useState(0)
+  const submittedRef = useRef(submitted)
+  submittedRef.current = submitted
   
 
 
@@ -68,6 +74,24 @@ const Lesson = () => {
       setLesson(lessonData)
       setBook(lessonData?.livros)
       setQuestions(Array.isArray(lessonData?.questionario) ? lessonData.questionario : [])
+
+      // Fetch HTML content from arquivo_url if it's a supported type
+      if (lessonData.arquivo_url) {
+        const isHtml = /\.html?$/i.test(lessonData.arquivo_url);
+        const isPdf = /\.pdf$/i.test(lessonData.arquivo_url);
+        if (isHtml && !isPdf) {
+          setHtmlLoading(true);
+          try {
+            const resp = await fetch(lessonData.arquivo_url);
+            const text = await resp.text();
+            setHtmlContent(text);
+          } catch (err) {
+            console.error('Failed to fetch HTML content:', err);
+          } finally {
+            setHtmlLoading(false);
+          }
+        }
+      }
 
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -475,6 +499,166 @@ const Lesson = () => {
     return () => clearInterval(int);
   }, [isExamStarted, timeLeft]);
 
+  // Lock window: prevent close/tab switch/cache while exam is active
+  useEffect(() => {
+    const isActive = !submittedRef.current && !userProfile?.isStaff &&
+      ((lesson?.tipo === 'prova' && examModalConfirmed) || (lesson?.is_bloco_final && isExamStarted));
+    
+    if (!isActive) return;
+
+    // ——— beforeunload: warn on close/refresh ———
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+
+    // ——— visibilitychange: detect tab switches ———
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        setTabSwitchCount(prev => prev + 1);
+      }
+    };
+
+    // ——— fullscreenchange: re-apply fullscreen ———
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement && !submittedRef.current) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    };
+
+    // ——— popstate: trap back button ———
+    const onPopState = () => {
+      window.history.pushState(null, '', window.location.href);
+    };
+
+    // ——— pageshow: detect bfcache restore ———
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        window.location.reload();
+      }
+    };
+
+    // ——— Cache-prevention meta tags ———
+    const metaCache = document.createElement('meta');
+    metaCache.httpEquiv = 'Cache-Control';
+    metaCache.content = 'no-cache, no-store, must-revalidate';
+    document.head.appendChild(metaCache);
+
+    const metaPragma = document.createElement('meta');
+    metaPragma.httpEquiv = 'Pragma';
+    metaPragma.content = 'no-cache';
+    document.head.appendChild(metaPragma);
+
+    const metaExpires = document.createElement('meta');
+    metaExpires.httpEquiv = 'Expires';
+    metaExpires.content = '0';
+    document.head.appendChild(metaExpires);
+
+    // ——— Trap back navigation ———
+    window.history.pushState(null, '', window.location.href);
+
+    // ——— Register all ———
+    window.addEventListener('beforeunload', onBeforeUnload);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    window.addEventListener('popstate', onPopState);
+    window.addEventListener('pageshow', onPageShow);
+
+    // ——— Request fullscreen ———
+    document.documentElement.requestFullscreen().catch(() => {});
+
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      window.removeEventListener('popstate', onPopState);
+      window.removeEventListener('pageshow', onPageShow);
+
+      metaCache.remove();
+      metaPragma.remove();
+      metaExpires.remove();
+
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+    };
+  }, [examModalConfirmed, isExamStarted, lesson, submitted]);
+
+  // Extract references from lesson conteudo
+  const lessonReferences: { id: string; text: string; source: string }[] = React.useMemo(() => {
+    if (!lesson?.conteudo) return [];
+    const refBlock = (Array.isArray(lesson.conteudo) ? lesson.conteudo : []).find((b: any) => b.type === 'references');
+    return refBlock?.data || [];
+  }, [lesson]);
+
+  // Render text content with reference markers as clickable pop-ups
+  const renderContentBlock = (block: any, idx: number) => {
+    if (block.type === 'image') {
+      return (
+        <div key={idx} style={{ marginBottom: '2rem' }}>
+          <img src={block.content} alt="" style={{ maxWidth: '100%', borderRadius: '16px' }} />
+        </div>
+      );
+    }
+    if (block.type === 'text') {
+      // Replace <sup data-ref="X"> with clickable reference buttons
+      const processedHtml = block.content.replace(
+        /<sup\s+data-ref="([^"]+)"[^>]*>.*?<\/sup>/g,
+        (_: string, refId: string) => {
+          const ref = lessonReferences.find(r => r.id === refId);
+          return `<button type="button" class="ref-btn" data-ref="${refId}" style="
+            background: rgba(var(--primary-rgb), 0.15);
+            border: none;
+            color: var(--primary);
+            font-size: 0.7em;
+            font-weight: 800;
+            padding: 0.1em 0.45em;
+            border-radius: 6px;
+            cursor: pointer;
+            vertical-align: super;
+            line-height: 1;
+            transition: background 0.2s;
+          " title="${ref?.text || ''}">${refId}</button>`;
+        }
+      );
+      return (
+        <div key={idx} style={{ marginBottom: '2rem', lineHeight: 1.8 }}
+          onClick={(e) => {
+            const btn = (e.target as HTMLElement).closest('.ref-btn');
+            if (btn) {
+              const refId = btn.getAttribute('data-ref');
+              const ref = lessonReferences.find(r => r.id === refId);
+              if (ref) setActiveReference(ref);
+            }
+          }}
+          dangerouslySetInnerHTML={{ __html: processedHtml }}
+        />
+      );
+    }
+    return null;
+  };
+
+  const hasContentBlocks = lesson?.conteudo && Array.isArray(lesson.conteudo) && lesson.conteudo.some((b: any) => b.type === 'text' || b.type === 'image');
+  const hasHtmlFile = htmlContent !== null;
+
+  const renderHtmlWithReferences = (html: string) => {
+    const processed = html.replace(
+      /<sup\s+data-ref="([^"]+)"[^>]*>.*?<\/sup>/g,
+      (_: string, refId: string) => {
+        const ref = lessonReferences.find(r => r.id === refId);
+        return `<button type="button" class="ref-btn" data-ref="${refId}" style="
+          background: rgba(var(--primary-rgb), 0.15);
+          border: none; color: var(--primary);
+          font-size: 0.7em; font-weight: 800;
+          padding: 0.1em 0.45em; border-radius: 6px;
+          cursor: pointer; vertical-align: super;
+          line-height: 1; transition: background 0.2s;
+        " title="${ref?.text || ''}">${refId}</button>`;
+      }
+    );
+    return processed;
+  };
+
   if (loading) return <div className="auth-container"><Loader2 className="spinner" /></div>
 
   if (!isReleased) {
@@ -498,6 +682,54 @@ const Lesson = () => {
               Status: Sua tentativa anterior está aguardando correção manual do professor.
             </p>
           )}
+        </div>
+      </div>
+    )
+  }
+
+  if (!lesson) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card text-center" style={{ textAlign: 'center', maxWidth: '500px', padding: '3rem' }}>
+          <FileText size={64} color="var(--primary)" style={{ margin: '0 auto 1.5rem', opacity: 0.5 }} />
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Lição Indisponível</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>
+            Esta lição ainda não possui conteúdo disponível. Acesse pelo módulo para ver todas as lições.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button onClick={() => navigate(-1)} className="btn btn-outline">Voltar</button>
+            <button onClick={() => navigate('/dashboard')} className="btn btn-primary">Ir para o Dashboard</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const hasDisplayableContent = 
+    (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video') ||
+    lesson.tipo === 'material' ||
+    lesson.tipo === 'licao' ||
+    hasHtmlFile ||
+    hasContentBlocks ||
+    lesson.arquivo_url ||
+    lesson.pdf_url ||
+    lesson.tipo === 'atividade' ||
+    lesson.tipo === 'prova' ||
+    questions.length > 0;
+
+  if (!hasDisplayableContent && lesson.livro_id) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card text-center" style={{ textAlign: 'center', maxWidth: '500px', padding: '3rem' }}>
+          <BookOpen size={64} color="var(--primary)" style={{ margin: '0 auto 1.5rem', opacity: 0.5 }} />
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Lição sem Conteúdo</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>
+            Esta lição ainda não possui conteúdo disponível para visualização direta. Acesse todas as lições pelo módulo.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button onClick={() => navigate(-1)} className="btn btn-outline">Voltar</button>
+            <button onClick={() => navigate(`/module/${lesson.livro_id}`)} className="btn btn-primary">Ver Módulo</button>
+          </div>
         </div>
       </div>
     )
@@ -536,6 +768,48 @@ const Lesson = () => {
             <button className="btn btn-primary" onClick={() => navigate(`/book/${lesson.id}?type=aula`)} style={{width:'auto'}}>Ver Conteúdo</button>
             {!complete && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto'}}>Concluir Leitura</button>}
           </div>
+        </div>
+      )}
+
+      {lesson.tipo === 'licao' && (lesson.arquivo_url || lesson.pdf_url) && (
+        <div style={{ background: 'var(--glass)', padding: '4rem 2rem', borderRadius: '24px', textAlign: 'center', marginBottom: '4rem', border: '1px solid var(--glass-border)' }}>
+          <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+            <FileText size={40} color="var(--primary)" />
+          </div>
+          <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{lesson.titulo}</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Conteúdo da lição disponível para leitura. Clique abaixo para abrir o material.</p>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button className="btn btn-primary" onClick={() => navigate(`/book/${lesson.id}?type=aula`)} style={{width:'auto'}}>Abrir Lição</button>
+            {!complete && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto'}}>Concluir Leitura</button>}
+          </div>
+        </div>
+      )}
+
+      {/* Lesson Content: HTML file or content blocks */}
+      {htmlLoading && (
+        <div style={{ textAlign: 'center', padding: '4rem' }}>
+          <Loader2 className="spinner" size={32} />
+          <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>Carregando conteúdo...</p>
+        </div>
+      )}
+
+      {hasHtmlFile && !htmlLoading && (
+        <div className="lesson-content" style={{ marginBottom: '4rem', lineHeight: 1.8, maxWidth: '100%', overflow: 'auto' }}
+          onClick={(e) => {
+            const btn = (e.target as HTMLElement).closest('.ref-btn');
+            if (btn) {
+              const refId = btn.getAttribute('data-ref');
+              const ref = lessonReferences.find(r => r.id === refId);
+              if (ref) setActiveReference(ref);
+            }
+          }}
+          dangerouslySetInnerHTML={{ __html: renderHtmlWithReferences(htmlContent!) }}
+        />
+      )}
+
+      {hasContentBlocks && !hasHtmlFile && (
+        <div className="lesson-content" style={{ marginBottom: '4rem' }}>
+          {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
         </div>
       )}
 
@@ -821,6 +1095,46 @@ const Lesson = () => {
         </button>
       </div>
 
+      {/* References Section */}
+      {lessonReferences.length > 0 && (
+        <div style={{ marginTop: '3rem', padding: '2.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+          <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <FileText size={20} color="var(--primary)" /> Referências
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {lessonReferences.map((ref, rIdx) => (
+              <div key={rIdx} style={{
+                display: 'flex', gap: '1rem', alignItems: 'flex-start',
+                padding: '1rem 1.25rem', background: 'rgba(255,255,255,0.03)',
+                borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)',
+                cursor: 'pointer', transition: 'all 0.2s'
+              }}
+                onClick={() => setActiveReference(ref)}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(var(--primary-rgb), 0.08)' }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)' }}
+              >
+                <div style={{
+                  width: '32px', height: '32px', borderRadius: '50%',
+                  background: 'rgba(var(--primary-rgb), 0.12)', color: 'var(--primary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: 800, fontSize: '0.85rem', flexShrink: 0
+                }}>
+                  {ref.id}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '0.95rem', lineHeight: 1.5 }}>{ref.text}</div>
+                  {ref.source && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <ExternalLink size={12} /> {ref.source}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="lesson-footer-responsive">
         <button onClick={() => navigate(-1)} className="btn btn-outline" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Voltar">
           <ChevronLeft size={24} style={{marginRight:'0.5rem'}}/> Aula Anterior
@@ -996,6 +1310,64 @@ const Lesson = () => {
               background: rgba(255, 255, 255, 0.15);
             }
           `}</style>
+        </div>
+      )}
+
+      {/* REFERENCE POP-UP MODAL */}
+      {activeReference && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(8px)', zIndex: 9999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '2rem', animation: 'fadeIn 0.2s ease-out'
+        }} onClick={() => setActiveReference(null)}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+            borderRadius: '24px', padding: '2.5rem',
+            maxWidth: '520px', width: '100%',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 40px 80px rgba(0,0,0,0.5)',
+            animation: 'slideUp 0.25s ease-out',
+            position: 'relative'
+          }} onClick={e => e.stopPropagation()}>
+            <button onClick={() => setActiveReference(null)} style={{
+              position: 'absolute', top: '1rem', right: '1rem',
+              background: 'rgba(255,255,255,0.05)', border: 'none',
+              borderRadius: '50%', width: '32px', height: '32px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: 'var(--text-muted)'
+            }}><X size={18} /></button>
+
+            <div style={{
+              width: '40px', height: '40px', borderRadius: '50%',
+              background: 'rgba(var(--primary-rgb), 0.12)', color: 'var(--primary)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem'
+            }}>
+              {activeReference.id}
+            </div>
+
+            <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+              Referência {activeReference.id}
+            </h4>
+
+            <p style={{ fontSize: '1.05rem', lineHeight: 1.6, margin: 0 }}>
+              {activeReference.text}
+            </p>
+
+            {activeReference.source && (
+              <a href={activeReference.source} target="_blank" rel="noopener noreferrer" style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                marginTop: '1.5rem', padding: '0.6rem 1.2rem',
+                background: 'rgba(var(--primary-rgb), 0.1)',
+                borderRadius: '10px', color: 'var(--primary)',
+                textDecoration: 'none', fontSize: '0.85rem',
+                fontWeight: 600, transition: 'background 0.2s'
+              }}>
+                <ExternalLink size={16} /> Acessar Fonte
+              </a>
+            )}
+          </div>
         </div>
       )}
     </div>

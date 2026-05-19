@@ -640,7 +640,7 @@ const Dashboard = () => {
 
           {activeTab === 'financeiro' && (
             <FinancePanel 
-              isExempt={isStaff || profile?.bolsista}
+              isExempt={isStaff || profile?.bolsista || profile?.tipo === 'presencial'}
               pixConfig={pixConfig}
               payments={payments}
               uploading={uploading}

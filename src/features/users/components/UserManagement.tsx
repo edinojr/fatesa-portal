@@ -5,7 +5,8 @@ import Badge from '../../../components/ui/Badge'
 interface UserManagementProps {
   users: any[]
   allNucleos: any[]
-  searchTerm: string,
+  searchTerm: string
+  userTypeFilter?: string
   actionLoading: string | null
   handleTypeChange: (userId: string, newType: string) => Promise<void>
   handleApproveAccess: (userId: string) => Promise<void>
@@ -31,6 +32,11 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
       <td>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ fontWeight: 600, marginRight: '0.5rem' }}>{user.nome}</div>
+          {user.bloqueado && (
+            <span style={{ marginRight: '0.4rem', fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: 'rgba(255,77,77,0.2)', color: 'var(--error)', fontWeight: 700, lineHeight: 1.4 }}>
+              BLOQUEADO
+            </span>
+          )}
           {user.hasPendingPayment && (
             <span title="Comprovante pendente de validação" style={{ display: 'flex', alignItems: 'center', marginRight: '0.4rem' }}>
               <CreditCard size={14} color="var(--primary)" style={{ animation: 'pulse 2s infinite' }} />
@@ -252,15 +258,20 @@ const UserManagement: React.FC<UserManagementProps> = ({
   handleToggleGratuidade, handleUpdateUserNucleo, handleUpdateUserName,
   handleDeleteUser, handleResetActivities, handleManualPayment, setShowAddAdmin, onAddNucleo,
   pendingActivityByNucleo = {},
-  handleDeleteNucleo
+  handleDeleteNucleo,
+  userTypeFilter
 }) => {
     const [selectedNucleoFilter, setSelectedNucleoFilter] = React.useState<string | null>(null)
+    const [showBlocked, setShowBlocked] = React.useState(true)
+    const [showPendingOnly, setShowPendingOnly] = React.useState(userTypeFilter === 'pendentes')
   
     const filteredUsers = users.filter(u => {
       const matchSearch = u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           u.email?.toLowerCase().includes(searchTerm.toLowerCase())
       const matchNucleo = !selectedNucleoFilter || u.nucleo_id === selectedNucleoFilter
-      return matchSearch && matchNucleo
+      const matchBlocked = showBlocked || !u.bloqueado
+      const matchPending = !showPendingOnly || (u.acesso_definitivo === false || u.acesso_definitivo === null)
+      return matchSearch && matchNucleo && matchBlocked && matchPending
     })
   
     const groupedByNucleo = filteredUsers.reduce((acc: any, user: any) => {
@@ -302,7 +313,21 @@ const UserManagement: React.FC<UserManagementProps> = ({
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button
+              className="btn btn-outline"
+              onClick={() => setShowPendingOnly(!showPendingOnly)}
+              style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass)', borderColor: showPendingOnly ? 'var(--primary)' : 'var(--glass-border)', color: showPendingOnly ? 'var(--primary)' : 'var(--text-main)' }}
+            >
+              <Users size={18} /> {showPendingOnly ? 'Mostrando Novos Alunos' : 'Filtrar Novos Alunos'}
+            </button>
+            <button
+              className="btn btn-outline"
+              onClick={() => setShowBlocked(!showBlocked)}
+              style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--glass)', borderColor: !showBlocked ? 'var(--error)' : 'var(--glass-border)', color: !showBlocked ? 'var(--error)' : 'var(--text-muted)' }}
+            >
+              <Users size={18} /> {showBlocked ? 'Ocultar Bloqueados' : 'Mostrar Bloqueados'}
+            </button>
             <button
               className="btn btn-outline"
               onClick={onAddNucleo}
@@ -321,7 +346,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
         </div>
 
         {/* Global Search Results override OR Polo Selection Grid */}
-        {(!selectedNucleoFilter && !searchTerm) ? (
+        {(!selectedNucleoFilter && !searchTerm && !showPendingOnly) ? (
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
@@ -426,6 +451,12 @@ const UserManagement: React.FC<UserManagementProps> = ({
             {searchTerm && (
               <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '12px', border: '1px solid rgba(var(--primary-rgb), 0.1)' }}>
                 <span style={{ fontWeight: 700 }}>Busca Global ativa por "{searchTerm}":</span> {filteredUsers.length} resultados encontrados.
+              </div>
+            )}
+
+            {Object.keys(groupedByNucleo).length === 0 && (
+              <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                Nenhum usuário encontrado com os filtros atuais.
               </div>
             )}
 

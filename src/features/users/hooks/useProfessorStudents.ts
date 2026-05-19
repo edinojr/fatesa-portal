@@ -132,6 +132,29 @@ export const useProfessorStudents = () => {
     }
   }
 
+  const handleGrantModuleException = async (userId: string, bookId: string, onSuccess?: () => void) => {
+    setActionLoading(userId);
+    try {
+      const { error } = await supabase
+        .from('liberacoes_excecao')
+        .insert({ user_id: userId, livro_id: bookId });
+      
+      if (error) {
+        if (error.code === '23505') {
+           alert('Este módulo já está liberado para este aluno.');
+           return;
+        }
+        throw error;
+      }
+      alert('Módulo liberado com sucesso!');
+      if (onSuccess) onSuccess();
+    } catch (err: any) {
+      alert('Erro ao liberar módulo: ' + err.message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   return {
     allStudents,
     setAllStudents: setSortedStudents,
@@ -143,6 +166,7 @@ export const useProfessorStudents = () => {
     handleDeleteUser,
     handleResetProgress,
     handleUpdateUserNucleo,
-    handleUpdateUserType
+    handleUpdateUserType,
+    handleGrantModuleException
   }
 }

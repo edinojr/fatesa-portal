@@ -19,15 +19,7 @@ const Login = () => {
   });
 
   useEffect(() => {
-    // 1. Escuta mudanças globais na sessão para garantir sincronia 100% segura do JWT
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      // Quando logado com sucesso, chama a verificação
-      if (event === 'SIGNED_IN' && session?.user) {
-        await checkSessionRoles(session.user);
-      }
-    });
-
-    // 2. Validação inicial se já existe sessão no cache
+    // Verifica se já existe sessão no cache (ex.: refresh da página)
     const initCheck = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -35,20 +27,39 @@ const Login = () => {
       }
     };
     initCheck();
-
-    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const checkSessionRoles = async (user: any) => {
-    // FIX RACE CONDITION: Delay estratégico para garantir que o Headers Locais do Supabase
-    // estejam sincronizados antes do PostgREST validar o Row Level Security.
-    await new Promise(resolve => setTimeout(resolve, 400));
+    await new Promise<void>((resolve) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session?.user?.id === user.id) {
+          subscription.unsubscribe();
+          resolve();
+        }
+      });
+      setTimeout(() => {
+        subscription.unsubscribe();
+        resolve();
+      }, 2000);
+    });
 
-    let { data, error: fetchError } = await supabase
-      .from('users')
-      .select('tipo, bloqueado, caminhos_acesso')
-      .eq('id', user.id)
-      .maybeSingle();
+    const fetchProfile = async () => {
+      return await supabase
+        .from('users')
+        .select('tipo, bloqueado, caminhos_acesso')
+        .eq('id', user.id)
+        .maybeSingle();
+    };
+
+    let { data, error: fetchError } = await fetchProfile();
+
+    if (!data && !fetchError) {
+      console.warn("Perfil não encontrado na 1ª tentativa. Aguardando sincronização de JWT e tentando novamente...");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const retryFetch = await fetchProfile();
+      data = retryFetch.data;
+      fetchError = retryFetch.error;
+    }
     
     // Auto-repair missing profile or handle errors for Admin
     const isAdminEmail = user.email === 'edi.ben.jr@gmail.com' || user.email === 'ap.panisso@gmail.com';
@@ -88,7 +99,7 @@ const Login = () => {
       }
       console.error("Erro ao buscar perfil:", fetchError, "UserId:", user.id);
       await supabase.auth.signOut();
-      setError('Falha ao carregar perfil. Por favor, tente novamente em alguns instantes.');
+      setError('Falha ao carregar perfil. Por favor, tente novamente.');
       setLoading(false);
       return;
     }
@@ -133,10 +144,7 @@ const Login = () => {
 
       if (authError || !authResult.user) throw authError || new Error('Falha na autenticação');
       
-      // O handleLogin termina aqui! 
-      // Não navegamos nem buscamos o banco. O onAuthStateChange listener
-      // que configuramos no useEffect detectará o 'SIGNED_IN' nativamente e executará o `checkSessionRoles`
-      // com segurança!
+      await checkSessionRoles(authResult.user);
       
     } catch (err: any) {
       setError(err.message === 'Invalid login credentials' ? 'Credenciais incorretas para este e-mail.' : err.message);

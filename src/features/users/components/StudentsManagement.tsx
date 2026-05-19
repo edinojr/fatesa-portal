@@ -11,15 +11,20 @@ interface StudentsManagementProps {
   handleRejectAccess: (userId: string) => Promise<void>
   handleDeleteUser: (userId: string) => Promise<void>
   handleResetActivities: (userId: string) => Promise<void>
-  handleUpdateUserNucleo: (userId: string, nucleoId: string, nucleoNome: string) => Promise<void>
+  handleUpdateUserNucleo: (userId: string, nId: string, nNome: string) => Promise<void>
+  handleUpdateUserType: (userId: string, type: string) => Promise<void>
+  handleGrantModuleException?: (userId: string, bookId: string) => Promise<void>
   userRole?: string | null
   allNucleos?: any[]
+  courses?: any[]
 }
 
 export default function StudentsManagement({ 
   allStudents, searchTerm, setSearchTerm, actionLoading,
   handleApproveAccess, handleRejectAccess, handleDeleteUser,
-  handleResetActivities, handleUpdateUserNucleo, userRole, allNucleos = []
+  handleResetActivities, handleUpdateUserNucleo, handleUpdateUserType,
+  handleGrantModuleException,
+  userRole, allNucleos = [], courses = []
 }: StudentsManagementProps) {
   const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null);
 
@@ -228,6 +233,29 @@ export default function StudentsManagement({
                                 <option value="" disabled>Trocar Pólo...</option>
                                 {allNucleos.map((n: any) => (
                                   <option key={n.id} value={n.id}>{n.nome}</option>
+                                ))}
+                              </select>
+
+                              {/* LIBERAÇÃO MANUAL DE MÓDULOS */}
+                              <select 
+                                className="form-control"
+                                style={{ width: '150px', fontSize: '0.75rem', padding: '0.2rem', height: 'auto', background: 'rgba(168, 85, 247, 0.1)', color: 'var(--primary)', border: '1px solid rgba(168, 85, 247, 0.2)', fontWeight: 700 }}
+                                value=""
+                                onChange={(e) => {
+                                  const bId = e.target.value;
+                                  if (bId && handleGrantModuleException) {
+                                    handleGrantModuleException(student.id, bId);
+                                  }
+                                }}
+                                disabled={actionLoading === student.id}
+                              >
+                                <option value="" disabled>🔓 Liberar Módulo...</option>
+                                {courses.map((c: any) => (
+                                  <optgroup key={c.id} label={c.nome}>
+                                    {(c.livros || []).map((l: any) => (
+                                      <option key={l.id} value={l.id}>{l.titulo}</option>
+                                    ))}
+                                  </optgroup>
                                 ))}
                               </select>
                             </div>

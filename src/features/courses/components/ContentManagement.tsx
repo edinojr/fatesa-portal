@@ -518,7 +518,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                               </label>
                             )}
 
-                            {(item.tipo === 'gravada' || item.tipo === 'ao_vivo') && (
+                            {(item.tipo === 'gravada' || item.tipo === 'ao_vivo' || item.tipo === 'licao') && (
                               <button className="btn btn-outline" style={{ width: 'auto', padding: '0.4rem' }}
                                 onClick={() => { setEditingLessonContent(item); setLessonBlocks(Array.isArray(item.conteudo) ? item.conteudo : []); setLessonMaterials(Array.isArray(item.materiais) ? item.materiais : []); }}
                                 title="Editar Conteúdo">

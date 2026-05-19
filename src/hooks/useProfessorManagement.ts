@@ -163,6 +163,7 @@ export const useProfessorManagement = () => {
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),
     handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData),
     handleUpdateUserType: (id: string, type: string) => studentHook.handleUpdateUserType(id, type, fetchData),
+    handleGrantModuleException: (uId: string, bId: string) => studentHook.handleGrantModuleException(uId, bId, fetchData),
   }), [att, studentHook, gradingHook, fetchData]);
 
   return useMemo(() => ({
