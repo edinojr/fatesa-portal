@@ -423,21 +423,22 @@ const Professor = () => {
                       .eq('id', id)
                       .single();
                     if (data && !error) {
+                      const rawData = data as any;
                       sub = {
-                        ...data,
-                        submission_id: data.id,
-                        student_id: data.aluno_id,
-                        lesson_id: data.aula_id,
-                        lesson_title: data.aulas?.titulo,
-                        lesson_type: data.aulas?.tipo,
-                        is_bloco_final: data.aulas?.is_bloco_final,
-                        student_name: data.users?.nome,
-                        student_email: data.users?.email,
-                        nucleus_id: data.users?.nucleos?.id,
-                        nucleus_name: data.users?.nucleos?.nome || 'Sem Polo',
-                        book_id: data.aulas?.livros?.id,
-                        book_title: data.aulas?.livros?.titulo || 'Módulo Geral',
-                        submitted_at: data.created_at,
+                        ...rawData,
+                        submission_id: rawData.id,
+                        student_id: rawData.aluno_id,
+                        lesson_id: rawData.aula_id,
+                        lesson_title: rawData.aulas?.titulo,
+                        lesson_type: rawData.aulas?.tipo,
+                        is_bloco_final: rawData.aulas?.is_bloco_final,
+                        student_name: rawData.users?.nome,
+                        student_email: rawData.users?.email,
+                        nucleus_id: rawData.users?.nucleos?.id,
+                        nucleus_name: rawData.users?.nucleos?.nome || 'Sem Polo',
+                        book_id: rawData.aulas?.livros?.id,
+                        book_title: rawData.aulas?.livros?.titulo || 'Módulo Geral',
+                        submitted_at: rawData.created_at,
                       } as any;
                     }
                   }
