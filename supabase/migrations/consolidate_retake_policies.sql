@@ -18,8 +18,9 @@ CREATE POLICY "Estudantes atualizam retentativa" ON respostas_aulas
 FOR UPDATE TO authenticated
 USING (
   (auth.uid() = aluno_id) AND (
-    -- Permite se ainda não foi corrigida (nota null) 
+    -- Permite se status for liberado, ou se ainda não foi corrigida (nota null) 
     -- OU se nota < 7 E tentativas < 3 E (está nos primeiros 30 dias se já foi corrigida uma vez)
+    (status = 'liberado') OR
     (nota IS NULL) OR (
       (nota < 7) AND 
       (tentativas < 3) AND 

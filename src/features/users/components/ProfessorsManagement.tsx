@@ -1,12 +1,15 @@
 import React from 'react'
-import { User, Mail, GraduationCap, MapPin, Users as UsersIcon } from 'lucide-react'
+import { User, Mail, GraduationCap, MapPin, Users as UsersIcon, Trash2 } from 'lucide-react'
 
 interface ProfessorsManagementProps {
   professors: any[]
+  allNucleos: any[]
   searchTerm: string
+  actionLoading: string | null
+  handleUpdateProfessorNucleo: (professorId: string, nucleoId: string) => Promise<void>
 }
 
-const ProfessorsManagement: React.FC<ProfessorsManagementProps> = ({ professors, searchTerm }) => {
+const ProfessorsManagement: React.FC<ProfessorsManagementProps> = ({ professors, allNucleos, searchTerm, actionLoading, handleUpdateProfessorNucleo }) => {
   const filteredProfessors = professors.filter(p => 
     p.nome?.toLowerCase().includes(searchTerm.toLowerCase()) || 
     p.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -37,30 +40,44 @@ const ProfessorsManagement: React.FC<ProfessorsManagementProps> = ({ professors,
 
               <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: 'var(--primary)', fontWeight: 600, fontSize: '0.9rem' }}>
-                  <GraduationCap size={16} /> Núcleos de Atuação
+                  <GraduationCap size={16} /> Núcleo de Atuação
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  {professor.professor_nucleo && professor.professor_nucleo.length > 0 ? (
-                    professor.professor_nucleo.map((pn: any, idx: number) => (
-                      <span key={idx} style={{ 
-                        background: 'rgba(var(--primary-rgb), 0.1)', 
-                        color: 'var(--primary)', 
-                        padding: '4px 12px', 
-                        borderRadius: '20px', 
-                        fontSize: '0.75rem', 
-                        fontWeight: 600,
-                        border: '1px solid rgba(var(--primary-rgb), 0.2)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem'
-                      }}>
-                        <MapPin size={12} /> {pn.nucleos?.nome}
-                      </span>
-                    ))
-                  ) : (
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic' }}>Nenhum núcleo vinculado.</span>
-                  )}
-                </div>
+                <select
+                  className="form-control"
+                  style={{ width: '100%', fontSize: '0.85rem', padding: '0.5rem' }}
+                  value={professor.nucleo_id || ''}
+                  onChange={(e) => {
+                    const nucleoId = e.target.value;
+                    if (window.confirm(`Deseja vincular este professor ao núcleo "${allNucleos.find(n => n.id === nucleoId)?.nome || 'Sem Núcleo'}"?`)) {
+                      handleUpdateProfessorNucleo(professor.id, nucleoId);
+                    }
+                  }}
+                  disabled={actionLoading === professor.id}
+                >
+                  <option value="">Sem Núcleo</option>
+                  {allNucleos.map((n: any) => (
+                    <option key={n.id} value={n.id}>{n.nome}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                <button
+                  className="btn"
+                  style={{ 
+                    width: 'auto', 
+                    background: 'rgba(255, 77, 77, 0.1)', 
+                    color: 'var(--error)', 
+                    padding: '0.4rem 0.8rem',
+                    fontSize: '0.8rem',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  title="Excluir Professor"
+                >
+                  <Trash2 size={16} />
+                  Excluir
+                </button>
               </div>
             </div>
           ))

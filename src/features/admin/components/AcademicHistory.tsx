@@ -99,7 +99,8 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
         groups[nucName][studentId].modulos[modName].provas.push(item);
         
         // Contabilizar para requisitos de formatura
-        if (item.status === 'corrigida' && (item.nota || 0) >= 7.0) {
+        const minGrade = item.aulas?.min_grade || 7.0;
+        if (item.status === 'corrigida' && (item.nota || 0) >= minGrade) {
           const nivel = (item.aulas?.livros?.cursos?.nivel || '').toLowerCase();
           const bookId = item.aulas?.livros?.id;
           if (bookId) {

@@ -5,7 +5,9 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     // Função auxiliar para pegar o ID da aula independente do formato (view ou tabela direta)
     const getSubAulaId = (at: any) => at.aula_id || at.lesson_id || at.aulas?.id;
 
-    const submittedIds = (atividades || []).map(getSubAulaId);
+    const submittedIds = (atividades || [])
+        .filter(at => at.status === 'corrigida' || at.status === 'concluido')
+        .map(getSubAulaId);
     const watchedIds = (progressoAulas || []).filter(p => p.concluida).map(p => p.aula_id || p.lesson_id);
 
     const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'licao');
@@ -21,15 +23,7 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     // Identificação Robusta de Avaliações Finais
     const finalExams = allAulas.filter((a: any) => 
       a.tipo === 'prova' || 
-      !!a.is_bloco_final || 
-      (a.titulo && (
-          a.titulo.toUpperCase().includes('V1') || 
-          a.titulo.toUpperCase().includes('V2') || 
-          a.titulo.toUpperCase().includes('V3') ||
-          a.titulo.toUpperCase().includes('PROVA FINAL') ||
-          a.titulo.toUpperCase().includes('AVALIAÇÃO') ||
-          a.titulo.toUpperCase().includes('EXAME FINAL')
-      ))
+      !!a.is_bloco_final
     );
     
     let isApproved = false;
@@ -38,31 +32,47 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     let isFinished = false;
     
     if (finalExams.length > 0) {
+      // APENAS submissões corrigidas contam como tentativas válidas (não 'pendente')
       const examSubmissions = (atividades || []).filter(at => 
-          finalExams.some((ex: any) => ex.id === getSubAulaId(at))
+          finalExams.some((ex: any) => ex.id === getSubAulaId(at)) &&
+          (at.status === 'corrigida' || at.status === 'concluido')
       );
       attemptsCount = examSubmissions.length;
+
+      // Filtrar submissões para pegar apenas as que possuem nota válida
+      const gradedSubs = examSubmissions.filter(s => s.status === 'corrigida' && s.nota !== undefined && s.nota !== null);
       
-      const approvedSub = examSubmissions.find(sub => {
-         const exam = finalExams.find((ex: any) => ex.id === getSubAulaId(sub));
-         const status = (sub.status || '').toLowerCase();
-         const grade = sub.nota || 0;
-         const minGrade = exam?.min_grade || 7.0;
-         
-         // Aprovado se status é corrigida OU se tirou nota acima da média
-         return (status === 'corrigida' || grade >= minGrade) && grade >= minGrade;
+      if (gradedSubs.length > 0) {
+        // Encontrar a submissão com a maior versão
+        const subsWithVersion = gradedSubs.map(sub => {
+          const exam = finalExams.find((ex: any) => ex.id === getSubAulaId(sub));
+          return {
+            sub,
+            exam,
+            versao: exam?.versao || 1,
+            minGrade: exam?.min_grade || 7.0
+          };
+        });
+
+        // Ordenar por versão (descendente)
+        subsWithVersion.sort((a, b) => b.versao - a.versao);
+        
+        // A avaliação que conta é a de maior versão que o aluno fez
+        const latestAttempt = subsWithVersion[0];
+        
+        if (latestAttempt) {
+          examGrade = latestAttempt.sub.nota || 0;
+          isApproved = examGrade >= latestAttempt.minGrade;
+        }
+      }
+
+      // DP (Dependência) = reprovou na V3 (consistente com useStudentCourses)
+      const hasFailedV3 = gradedSubs.some(s => {
+        const exam = finalExams.find((ex: any) => ex.id === getSubAulaId(s));
+        return exam?.versao === 3 && (s.nota || 0) < (exam?.min_grade || 7.0);
       });
 
-      if (approvedSub) {
-         isApproved = true;
-         examGrade = approvedSub.nota || 0;
-         isFinished = true;
-      } else {
-         const bestSub = examSubmissions.sort((a,b) => (b.nota || 0) - (a.nota || 0))[0];
-         examGrade = bestSub ? bestSub.nota || 0 : 0;
-         isApproved = false;
-         isFinished = attemptsCount >= 3; // Estourou 3 tentativas sem passar
-      }
+      isFinished = isApproved || hasFailedV3;
     } else {
       isApproved = false;
       // Se não tem prova, finaliza quando completar todos os itens

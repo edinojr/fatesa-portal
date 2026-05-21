@@ -21,6 +21,7 @@ interface GradingPanelProps {
   toggleEvaluation: (id: string, correct: boolean) => void
   savingGrade: boolean
   handleSaveGrade: () => void
+  allStudents?: any[]
 }
 
 const GradingPanel: React.FC<GradingPanelProps> = ({
@@ -41,7 +42,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   setQuestionComments,
   toggleEvaluation,
   savingGrade,
-  handleSaveGrade
+  handleSaveGrade,
+  allStudents = []
 }) => {
   const [showGabaritosModal, setShowGabaritosModal] = React.useState(false);
   const [selectedNucleoFilter, setSelectedNucleoFilter] = React.useState<string>('todos');
@@ -240,17 +242,16 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 return <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>Nenhum resultado de aluno {activeStatusFilter} no filtro atual.</p>;
               }
 
-              // 1. Group by Nucleo
-              const groupedByNucleo = filteredSubmissions.reduce((acc: any, sub: any) => {
+              // 1. Group by Module -> Nucleo
+              const groupedByModule = filteredSubmissions.reduce((acc: any, sub: any) => {
+                const modName = sub.book_title || 'Módulo Geral / Sem Título';
                 let nucName = sub.nucleus_name || (sub.users as any)?.nucleos?.nome;
                 if (!nucName || nucName === 'Sem Polo') nucName = 'Polo não identificado';
                 
-                if (!acc[nucName]) acc[nucName] = {};
+                if (!acc[modName]) acc[modName] = {};
+                if (!acc[modName][nucName]) acc[modName][nucName] = { provas: [] };
                 
-                const modName = sub.book_title || 'Módulo Geral / Sem Título';
-                if (!acc[nucName][modName]) acc[nucName][modName] = { provas: [] };
-                
-                acc[nucName][modName].provas.push(sub);
+                acc[modName][nucName].provas.push(sub);
                 
                 return acc;
               }, {} as Record<string, Record<string, { provas: any[] }>>);
@@ -265,57 +266,90 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                 return colors[Math.abs(hash) % colors.length];
               };
 
-              return Object.keys(groupedByNucleo).sort((a, b) => {
-                if (a === 'Polo não identificado') return 1;
-                if (b === 'Polo não identificado') return -1;
-                return a.localeCompare(b);
-              }).map(nuc => {
-                const color = getNucleoColor(nuc);
-                const modulos = groupedByNucleo[nuc];
+              return Object.keys(groupedByModule).sort().map(mod => {
+                const nucleos = groupedByModule[mod];
                 
+                // Helper to check if a specific nucleo is archived for this module
+                const isArchived = (nucName: string) => {
+                  if (!allStudents || allStudents.length === 0) return false;
+                  
+                  const nucleoStudents = allStudents.filter(s => s.nucleos?.nome === nucName || (nucName === 'Polo não identificado' && !s.nucleos?.nome));
+                  if (nucleoStudents.length === 0) return false;
+
+                  const moduleSubs = submissions.filter(s => {
+                    const sNucName = s.nucleus_name || (s.users as any)?.nucleos?.nome || 'Polo não identificado';
+                    const sModName = s.book_title || 'Módulo Geral / Sem Título';
+                    return sNucName === nucName && sModName === mod;
+                  });
+
+                  let finishedCount = 0;
+                  for (const student of nucleoStudents) {
+                    const studentSubs = moduleSubs.filter(s => s.student_id === student.id);
+                    const hasPassed = studentSubs.some(s => s.status === 'corrigida' && (s.nota || 0) >= ((s as any).aulas?.min_grade || (s as any).min_grade || 7.0));
+                    const failedCount = studentSubs.filter(s => s.status === 'corrigida' && (s.nota || 0) < ((s as any).aulas?.min_grade || (s as any).min_grade || 7.0)).length;
+                    
+                    if (hasPassed || failedCount >= 3) {
+                      finishedCount++;
+                    }
+                  }
+                  return finishedCount >= nucleoStudents.length;
+                };
+
+                // Filter out archived nucleos for this module
+                const activeNucleos = Object.keys(nucleos).filter(nuc => !isArchived(nuc));
+                
+                if (activeNucleos.length === 0) return null; // All nucleos for this module are archived
+
                 return (
-                  <div key={nuc} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(255,255,255,0.01)', padding: '1.5rem', borderRadius: '24px', border: nuc === 'Polo não identificado' ? '1px dashed var(--error)' : '1px solid var(--glass-border)' }}>
-                    {/* NUCLEO HEADER */}
+                  <div key={mod} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'rgba(255,255,255,0.01)', padding: '1.5rem', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+                    {/* MODULE HEADER */}
                     <div style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '1rem', 
                       padding: '1rem 1.5rem', 
-                      background: `${color}15`, 
+                      background: 'rgba(var(--primary-rgb), 0.1)', 
                       borderRadius: '16px', 
-                      borderLeft: `4px solid ${color}`,
+                      borderLeft: '4px solid var(--primary)',
                     }}>
-                      <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                        <MapPin size={20} />
+                      <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                        <BookOpen size={20} />
                       </div>
                       <div>
-                        <span style={{ fontWeight: 900, fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '1px', color }}>{nuc}</span>
-                        <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Núcleo de Ensino</div>
+                        <span style={{ fontWeight: 900, fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primary)' }}>{mod}</span>
+                        <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Módulo do Curso</div>
                       </div>
                     </div>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingLeft: '1rem' }}>
-                      {Object.keys(modulos).sort().map(mod => (
-                        <div key={mod} style={{ borderLeft: '2px dashed rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
-                          <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.25rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <BookOpen size={18} /> {mod}
-                          </h4>
+                      {activeNucleos.sort((a, b) => {
+                        if (a === 'Polo não identificado') return 1;
+                        if (b === 'Polo não identificado') return -1;
+                        return a.localeCompare(b);
+                      }).map(nuc => {
+                        const color = getNucleoColor(nuc);
+                        return (
+                          <div key={nuc} style={{ borderLeft: `2px dashed ${color}40`, paddingLeft: '1.5rem' }}>
+                            <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.25rem', color, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <MapPin size={18} /> {nuc}
+                            </h4>
 
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            {/* PROVAS SECTION */}
-                            {modulos[mod].provas.length > 0 && (
-                              <div>
-                                <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                  <ShieldCheck size={14} /> Fila de Provas ({modulos[mod].provas.length})
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                              {/* PROVAS SECTION */}
+                              {nucleos[nuc].provas.length > 0 && (
+                                <div>
+                                  <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <ShieldCheck size={14} /> Fila de Provas ({nucleos[nuc].provas.length})
+                                  </div>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
+                                    {nucleos[nuc].provas.map((sub: any) => renderSubmissionCard(sub))}
+                                  </div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
-                                  {modulos[mod].provas.map((sub: any) => renderSubmissionCard(sub))}
-                                </div>
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 );

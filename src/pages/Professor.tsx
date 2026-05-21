@@ -456,6 +456,7 @@ const Professor = () => {
               <GradingPanel 
                 courses={courses}
                 submissions={submissions}
+                allStudents={allStudents}
                 professorNucleos={professorNucleos}
                 selectedSubmission={selectedSubmission}
                 setSelectedSubmission={setSelectedSubmission}

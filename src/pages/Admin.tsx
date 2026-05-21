@@ -543,7 +543,10 @@ const Admin = () => {
         {activeTab === 'professors' && (
           <ProfessorsManagement 
             professors={professors}
+            allNucleos={allNucleos}
             searchTerm={searchTerm}
+            actionLoading={actionLoading}
+            handleUpdateProfessorNucleo={handleUpdateUserNucleo}
           />
         )}
 

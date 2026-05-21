@@ -23,7 +23,7 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
         supabase.from('users').select('*, nucleos(nome)').order('nome'),
         supabase.from('pagamentos').select('user_id').not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
         supabase.from('nucleos').select('*').order('nome'),
-        supabase.from('users').select('*').eq('tipo', 'professor').order('nome'),
+        supabase.from('users').select('*, nucleo_id, nucleos(nome)').eq('tipo', 'professor').order('nome'),
         supabase.from('frequencia').select('*, aluno:users!aluno_id(nome), professor:users!professor_id(nome), nucleo:nucleos(nome)').order('data', { ascending: false }).limit(200)
       ]);
       

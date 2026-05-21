@@ -11,7 +11,11 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
     try {
       const [logsResponse, academicResponse] = await Promise.all([
         supabase.from('portal_access_logs').select('*').order('created_at', { ascending: false }).limit(5000),
-        supabase.from('view_student_academic_summary').select('*').order('aluno_nome')
+        supabase.from('respostas_aulas').select(`
+            *,
+            users:aluno_id(id, nome, email, tipo, nucleos:nucleo_id(id, nome)),
+            aulas:aula_id(id, titulo, tipo, is_bloco_final, versao, min_grade, livros:livro_id(id, titulo, cursos:curso_id(id, nivel)))
+          `)
       ]);
 
       if (logsResponse.data) {

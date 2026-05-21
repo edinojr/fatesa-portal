@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, Trash2, Loader2, Save, Plus } from 'lucide-react';
+import { Award, Trash2, Loader2, Save, Plus, Unlock, Lock, AlertCircle } from 'lucide-react';
 
 interface StudentDetailsModalProps {
   student: any;
@@ -18,6 +18,9 @@ interface StudentDetailsModalProps {
   studentCourseLivros: any[];
   studentExceptions: string[];
   handleToggleException: (sId: string, lId: string, current: boolean) => void;
+  studentExams?: any[];
+  studentExamExceptions?: string[];
+  handleToggleExamException?: (sId: string, aulaId: string, current: boolean) => void;
 }
 
 const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
@@ -36,7 +39,10 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
   isProfessor,
   studentCourseLivros,
   studentExceptions,
-  handleToggleException
+  handleToggleException,
+  studentExams = [],
+  studentExamExceptions = [],
+  handleToggleExamException
 }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -75,6 +81,121 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                       disabled={actionLoading === `toggle_exception_${livro.id}`}
                     >
                       {actionLoading === `toggle_exception_${livro.id}` ? <Loader2 className="spinner" size={12} /> : isAuthorized ? 'Autorizado' : 'Bloqueado'}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* SEÇÃO DE CORREÇÃO DE PROVAS FANTASMAS */}
+        {isProfessor && courseSubmissions.length > 0 && (
+          <div style={{ marginBottom: '2rem', padding: '1.25rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+            <h4 style={{ color: 'var(--error)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+               <AlertCircle size={18} /> Correção de Provas Indevidas
+            </h4>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Identifique e remova submissões de provas que foram iniciadas mas nunca enviadas, evitando aprovações indevidas.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {courseSubmissions
+                .filter(sub => 
+                  (sub.aulas?.tipo === 'prova' || sub.aulas?.is_bloco_final) && 
+                  (sub.status === 'liberado' || sub.status === 'pendente') &&
+                  (!sub.respostas || Object.keys(sub.respostas || {}).length === 0)
+                )
+                .map(sub => (
+                  <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px' }}>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--error)' }}>
+                        ⚠ {sub.aulas?.titulo || 'Prova'}
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>
+                        (Status: {sub.status} - Sem respostas)
+                      </span>
+                    </div>
+                    <button 
+                      className="btn" 
+                      style={{ 
+                        width: 'auto', 
+                        padding: '0.3rem 0.8rem', 
+                        fontSize: '0.75rem', 
+                        background: 'var(--error)',
+                        color: '#fff',
+                        border: 'none'
+                      }}
+                      onClick={() => {
+                        if (window.confirm(`Deseja remover esta submissão indevida de "${sub.aulas?.titulo}"? O aluno poderá refazer a prova.`)) {
+                          handleDeleteSubmission(sub.id);
+                        }
+                      }}
+                      disabled={actionLoading === `delete_sub_${sub.id}`}
+                    >
+                      {actionLoading === `delete_sub_${sub.id}` ? <Loader2 className="spinner" size={12} /> : 'Remover'}
+                    </button>
+                  </div>
+                ))}
+              {courseSubmissions.filter(sub => 
+                (sub.aulas?.tipo === 'prova' || sub.aulas?.is_bloco_final) && 
+                (sub.status === 'liberado' || sub.status === 'pendente') &&
+                (!sub.respostas || Object.keys(sub.respostas || {}).length === 0)
+              ).length === 0 && (
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', padding: '0.5rem' }}>
+                  Nenhuma submissão indevida encontrada.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* SEÇÃO DE LIBERAÇÃO INDIVIDUAL DE PROVAS */}
+        {isProfessor && studentExams.length > 0 && handleToggleExamException && (
+          <div style={{ marginBottom: '2rem', padding: '1.25rem', background: 'rgba(16, 185, 129, 0.05)', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+            <h4 style={{ color: 'var(--success)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+               <Unlock size={18} /> Liberação Individual de Provas
+            </h4>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Libere provas específicas (V1, V2, V3) individualmente para este aluno.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {studentExams.map(exam => {
+                const isReleased = studentExamExceptions.includes(exam.id);
+                const versao = exam.versao || 1;
+                const moduloNome = exam.livros?.titulo || '';
+                return (
+                  <div key={exam.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                        {exam.titulo || `Prova V${versao}`}
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>
+                        ({moduloNome})
+                      </span>
+                    </div>
+                    <button 
+                      className="btn" 
+                      style={{ 
+                        width: 'auto', 
+                        padding: '0.3rem 0.8rem', 
+                        fontSize: '0.75rem', 
+                        background: isReleased ? 'var(--success)' : 'rgba(255,255,255,0.1)',
+                        color: '#fff',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.3rem'
+                      }}
+                      onClick={() => handleToggleExamException!(student.id, exam.id, isReleased)}
+                      disabled={actionLoading === `toggle_exam_exception_${exam.id}`}
+                    >
+                      {actionLoading === `toggle_exam_exception_${exam.id}` ? (
+                        <Loader2 className="spinner" size={12} />
+                      ) : isReleased ? (
+                        <><Unlock size={12} /> Liberada</>
+                      ) : (
+                        <><Lock size={12} /> Bloqueada</>
+                      )}
                     </button>
                   </div>
                 );

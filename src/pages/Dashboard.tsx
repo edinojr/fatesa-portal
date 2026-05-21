@@ -111,13 +111,46 @@ const Dashboard = () => {
 
         // Verifica se o aluno já foi aprovado ou está em DP no módulo
         const bookSubmissions = atividades.filter(s => s.book_id === libro.id);
-        const isApproved = bookSubmissions.some(s => {
+        const examSubs = bookSubmissions.filter(s => {
           const sa = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
           const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || /V[1-3]|RECUPERAÇ/i.test(sa?.titulo || '');
-          return isEx && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
+          return isEx && s.status === 'corrigida';
         });
 
-        if (isApproved) return;
+        let isApproved = false;
+        if (examSubs.length > 0) {
+          const highestExam = examSubs.reduce((prev, current) => {
+            const prevAula = (libro.aulas || []).find((pa: any) => pa.id === prev.lesson_id);
+            const currAula = (libro.aulas || []).find((pa: any) => pa.id === current.lesson_id);
+            const prevV = (prevAula as any)?.versao || 1;
+            const currV = (currAula as any)?.versao || 1;
+            if (currV > prevV) return current;
+            if (currV < prevV) return prev;
+            return new Date(current.created_at || 0).getTime() > new Date(prev.created_at || 0).getTime() ? current : prev;
+          });
+          const highestAula = (libro.aulas || []).find((pa: any) => pa.id === highestExam.lesson_id);
+          const minGrade = (highestAula as any)?.min_grade || 7.0;
+          isApproved = (highestExam.nota || 0) >= minGrade;
+        }
+        const failedExamsCount = bookSubmissions.filter(s => s.status === 'corrigida' && (s.nota || 0) < 7.0).length;
+        const isRetido = failedExamsCount >= 3;
+
+        // Se há alguma aula que foi explicitamente liberada individualmente, ignoramos o bloqueio de isApproved
+        // Nota: A API não nos dá o examExceptionIds aqui diretamente, mas se aula.isHidden === false 
+        // e aula.lockedByProfessor === false para uma V2/V3 quando não deveria, 
+        // podemos deixar a lógica do loop abaixo lidar com isso.
+        
+        // Vamos apenas verificar se há provas pendentes e forçar a exibição se necessário
+        if (isApproved || isRetido) {
+           // Checa se há alguma exceção manual (se a aula não está oculta e não está travada pelo professor, mas é uma prova)
+           const hasManualOverride = libro.aulas.some((a: any) => 
+              (a.tipo === 'prova' || !!a.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(a.titulo || '')) &&
+              !a.isHidden && !a.lockedByProfessor &&
+              ((a.versao || 1) > 1) // É uma prova de recuperação
+           );
+           
+           if (!hasManualOverride) return;
+        }
 
         libro.aulas.forEach(aula => {
           const title = aula.titulo || '';
@@ -640,7 +673,7 @@ const Dashboard = () => {
 
           {activeTab === 'financeiro' && (
             <FinancePanel 
-              isExempt={isStaff || profile?.bolsista || profile?.tipo === 'presencial'}
+              isExempt={isStaff}
               pixConfig={pixConfig}
               payments={payments}
               uploading={uploading}

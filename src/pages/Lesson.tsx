@@ -35,6 +35,7 @@ const Lesson = () => {
   const [tabSwitchCount, setTabSwitchCount] = useState(0)
   const submittedRef = useRef(submitted)
   submittedRef.current = submitted
+  const [alreadyApproved, setAlreadyApproved] = useState(false)
   
 
 
@@ -156,7 +157,7 @@ const Lesson = () => {
         if (subData) {
           setExistingSubmission(subData);
           setAnswers(subData.respostas || {});
-          if (subData.nota !== null) setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
+          if (subData.nota !== null && subData.status !== 'liberado') setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
           
           if (lessonData.is_bloco_final && subData.start_time && subData.status === 'liberado') {
             const startTime = new Date(subData.start_time).getTime();
@@ -166,8 +167,13 @@ const Lesson = () => {
           }
 
           if (subData.status !== 'liberado') {
-            setSubmitted(true);
-            if ((lessonData.tipo === 'prova' || lessonData.is_bloco_final) && subData.status !== 'corrigida' && !isStaff) {
+            const isExam = lessonData.tipo === 'prova' || lessonData.is_bloco_final;
+            const canRetake = isExam && subData.status === 'corrigida' && subData.nota !== null && subData.nota < (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)) && (subData.tentativas || 0) < 3;
+            
+            if (!canRetake) {
+              setSubmitted(true);
+            }
+            if (isExam && subData.status !== 'corrigida' && !isStaff) {
               alert('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor.');
               navigate('/dashboard');
               return;
@@ -181,29 +187,58 @@ const Lesson = () => {
           // Precisamos buscar as submissões deste livro (módulo) de forma segura
           const { data: previousSubs } = await supabase
             .from('respostas_aulas')
-            .select('nota, status, aula_id, aulas:aula_id(versao, tipo, is_bloco_final, livro_id)')
+            .select('nota, status, aula_id, aulas:aula_id(versao, tipo, is_bloco_final, livro_id, min_grade, titulo)')
             .eq('aluno_id', user.id);
           
           // Filtramos pelo livro_id no JS para evitar erros de sintaxe complexa no join filter do PostgREST
           const moduleSubs = (previousSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
-
-          const passedAny = moduleSubs.some(s => {
-            const v = (s.aulas as any)?.versao || 1;
-            return v < versao && s.status === 'corrigida' && (s.nota || 0) >= 7.0;
+          
+          // Check if student already passed the HIGHEST version of the exam for this module
+          const examSubs = moduleSubs.filter(s => {
+            const aula = s.aulas as any;
+            return aula?.tipo === 'prova' || aula?.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(aula?.titulo || '');
           });
-
-          const didPrevious = moduleSubs.some(s => {
-            const v = (s.aulas as any)?.versao || 1;
-            return v === versao - 1;
-          });
-
-          if (passedAny) {
-            alert('Você já foi aprovado nesta avaliação em uma versão anterior.');
-            navigate('/dashboard');
-            return;
+          
+          let passedAny = false;
+          if (examSubs.length > 0) {
+            const highestExam = examSubs.reduce((prev, current) => {
+              const prevV = (prev.aulas as any)?.versao || 1;
+              const currV = (current.aulas as any)?.versao || 1;
+              if (currV > prevV) return current;
+              if (currV < prevV) return prev;
+              return new Date(current.created_at || 0).getTime() > new Date(prev.created_at || 0).getTime() ? current : prev;
+            });
+            const highestAula = highestExam.aulas as any;
+            const minGrade = highestAula?.min_grade || 7.0;
+            // Se a última prova feita tem versão menor que a atual, e ele passou nela, então alreadyApproved
+            if (((highestAula?.versao || 1) < versao) && highestExam.status === 'corrigida' && (highestExam.nota || 0) >= minGrade) {
+              passedAny = true;
+            }
           }
 
-          if (!didPrevious) {
+          const { data: individualRelease } = await supabase
+            .from('liberacoes_excecao_atividade')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('aula_id', id)
+            .maybeSingle();
+            
+          const hasIndividualRelease = !!individualRelease;
+
+          if (!hasIndividualRelease && passedAny) {
+            setAlreadyApproved(true);
+            setLoading(false);
+            return;
+          }
+          
+          const didPrevious = moduleSubs.some(s => {
+            const aula = s.aulas as any;
+            const isExam = aula?.tipo === 'prova' || aula?.is_bloco_final;
+            const v = aula?.versao || 1;
+            return isExam && v === versao - 1 && s.status === 'corrigida';
+          });
+
+          if (!hasIndividualRelease && !didPrevious) {
             alert('Você precisa realizar a versão anterior desta prova antes de acessar a recuperação.');
             navigate('/dashboard');
             return;
@@ -234,7 +269,7 @@ const Lesson = () => {
           
           const finished = bookSubs.some(s => {
             const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.is_bloco_final));
-            return isEx && s.status === 'corrigida' && ((s.nota || 0) >= 7.0 || s.tentativas >= 3);
+            return isEx && s.status === 'corrigida' && ((s.nota || 0) >= 7.0);
           });
           setIsModuleFinished(finished);
         }
@@ -347,23 +382,32 @@ const Lesson = () => {
     setTimeLeft(2400); 
     setIsExamStarted(true);
     setExamModalConfirmed(true);
+    setSubmitted(false);
   }
 
   const handleStartRegularProva = async () => {
     if (!lesson || !userProfile) return;
     const now = new Date().toISOString();
-    const { error } = await supabase.from('respostas_aulas').upsert({ 
+    const payload: any = { 
       aluno_id: userProfile.id, 
       aula_id: id, 
-      start_time: now, 
+      start_time: existingSubmission?.start_time || now, 
       status: 'liberado', 
-      respostas: {},
       updated_at: now 
-    }, { onConflict: 'aluno_id,aula_id' });
+    };
+    // Only initialize respostas for NEW exams; preserve existing answers for in-progress exams
+    if (!existingSubmission) {
+      payload.respostas = {};
+    } else if (existingSubmission.status !== 'liberado') {
+      payload.respostas = answers;
+    }
+    if (existingSubmission?.id) payload.id = existingSubmission.id;
+    const { error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
     if (error) return alert('Não foi possível iniciar a prova: ' + error.message);
     const { data: sub } = await supabase.from('respostas_aulas').select('id').eq('aula_id', id as string).eq('aluno_id', userProfile.id).maybeSingle();
     if (sub) setExistingSubmission(sub);
     setExamModalConfirmed(true);
+    setSubmitted(false);
   }
 
   const handleSubmit = async () => {
@@ -661,6 +705,23 @@ const Lesson = () => {
 
   if (loading) return <div className="auth-container"><Loader2 className="spinner" /></div>
 
+  if (alreadyApproved) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card text-center" style={{ textAlign: 'center', maxWidth: '500px', padding: '3rem' }}>
+          <CheckCircle size={64} color="var(--success)" style={{ margin: '0 auto 1.5rem' }} />
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Avaliação Concluída</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>
+            Você já foi aprovado nesta avaliação em uma versão anterior. Não é necessário realizar a recuperação.
+          </p>
+          <button onClick={() => navigate('/dashboard')} className="btn btn-primary">
+            Ir para o Dashboard
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (!isReleased) {
     return (
       <div className="auth-container">
@@ -824,8 +885,8 @@ const Lesson = () => {
             )}
           </div>
 
-          {/* REGULAR PROVA — show warning gate */}
-          {lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && (
+          {/* REGULAR PROVA — show warning gate (only if NOT already in progress) */}
+          {lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && existingSubmission?.status !== 'liberado' && (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
               <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
               <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Prova: {lesson.titulo}</h3>
@@ -854,7 +915,7 @@ const Lesson = () => {
                 </button>
               )}
             </div>
-          ) : (lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff) ? null : (
+          ) : (lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && existingSubmission?.status !== 'liberado') ? null : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               {questions.map((q, idx) => {
                 const qKey = q.id || idx;

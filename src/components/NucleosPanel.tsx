@@ -53,6 +53,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const [questionEvaluations, setQuestionEvaluations] = useState<Record<string, boolean>>({})
   const [studentCourseLivros, setStudentCourseLivros] = useState<any[]>([])
   const [studentExceptions, setStudentExceptions] = useState<string[]>([])
+  const [studentExamExceptions, setStudentExamExceptions] = useState<string[]>([])
+  const [studentExams, setStudentExams] = useState<any[]>([])
 
   const isAdmin = userRole === 'admin'
   const isProfessor = userRole === 'professor'
@@ -553,9 +555,26 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     
     setActionLoading(`delete_sub_${subId}`)
     try {
+      // Buscar informações da submissão antes de deletar
+      const { data: subData } = await supabase
+        .from('respostas_aulas')
+        .select('aula_id, aluno_id')
+        .eq('id', subId)
+        .single()
+
+      // Deletar a submissão
       const { error } = await supabase.from('respostas_aulas').delete().eq('id', subId)
       if (error) throw error
-      alert('Atividade removida com sucesso.')
+
+      // Se era uma prova, também resetar o progresso associado
+      if (subData?.aula_id && subData?.aluno_id) {
+        await supabase
+          .from('progresso')
+          .update({ concluida: false, updated_at: new Date().toISOString() })
+          .match({ aluno_id: subData.aluno_id, aula_id: subData.aula_id })
+      }
+
+      alert('Atividade removida com sucesso. Progresso associado foi resetado.')
       // Refresh current student modal data
       openStudent(showStudentModal)
     } catch (err: any) {
@@ -601,11 +620,27 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       // Fetch student's course modules and exceptions
       if (student.curso_id) {
         const { data: bData } = await supabase.from('livros').select('*').eq('curso_id', student.curso_id).order('ordem')
-        if (bData) setStudentCourseLivros(bData)
+        if (bData) {
+          setStudentCourseLivros(bData)
+          
+          // Fetch all exams (provas) from student's modules
+          const { data: aulasData } = await supabase
+            .from('aulas')
+            .select('id, titulo, tipo, is_bloco_final, versao, livro_id, livros(titulo)')
+            .in('livro_id', bData.map((l: any) => l.id))
+            .or('tipo.eq.prova,is_bloco_final.eq.true')
+            .order('livro_id')
+          
+          if (aulasData) setStudentExams(aulasData)
+        }
       }
       
       const { data: exData } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', student.id)
       if (exData) setStudentExceptions(exData.map(e => e.livro_id))
+
+      // Fetch individual exam releases
+      const { data: examExData } = await supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', student.id)
+      if (examExData) setStudentExamExceptions(examExData.map(e => e.aula_id))
     } finally {
       setLoading(false)
     }
@@ -631,6 +666,31 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       }
     } catch (err: any) {
       alert('Erro ao alterar autorização: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleToggleExamException = async (studentId: string, aulaId: string, currentStatus: boolean) => {
+    setActionLoading(`toggle_exam_exception_${aulaId}`)
+    try {
+      if (!currentStatus) {
+        const { data: { user } } = await supabase.auth.getUser()
+        await supabase.from('liberacoes_excecao_atividade').insert({
+          user_id: studentId,
+          aula_id: aulaId,
+          granted_by: user?.id
+        })
+        setStudentExamExceptions([...studentExamExceptions, aulaId])
+      } else {
+        await supabase.from('liberacoes_excecao_atividade').delete().match({
+          user_id: studentId,
+          aula_id: aulaId
+        })
+        setStudentExamExceptions(studentExamExceptions.filter(id => id !== aulaId))
+      }
+    } catch (err: any) {
+      alert('Erro ao alterar liberação da prova: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -1023,6 +1083,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           studentCourseLivros={studentCourseLivros}
           studentExceptions={studentExceptions}
           handleToggleException={handleToggleException}
+          studentExams={studentExams}
+          studentExamExceptions={studentExamExceptions}
+          handleToggleExamException={handleToggleExamException}
         />
       )}
 

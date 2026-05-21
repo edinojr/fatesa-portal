@@ -119,7 +119,9 @@ const ModuleDetails = () => {
 
     const renderItemCard = (item: any, index: number) => {
         const submission = (atividades || []).find((at: any) => at.aula_id === item.id);
-        const isCompleted = (item.tipo === 'atividade' || item.tipo === 'prova' || !!item.is_bloco_final) ? !!submission : watchedIds.includes(item.id);
+        const isCompleted = (item.tipo === 'atividade' || item.tipo === 'prova' || !!item.is_bloco_final) 
+            ? (submission && (submission.status === 'corrigida' || submission.status === 'concluido')) 
+            : watchedIds.includes(item.id);
         const isPendingCorrection = (item.tipo === 'prova' || item.is_bloco_final) && submission && submission.status !== 'corrigida';
         const isLocked = item.lockedByProfessor || (item.tipo === 'prova' && isPendingCorrection);
         
