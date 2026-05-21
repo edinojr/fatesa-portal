@@ -187,7 +187,7 @@ const Lesson = () => {
           // Precisamos buscar as submissões deste livro (módulo) de forma segura
           const { data: previousSubs } = await supabase
             .from('respostas_aulas')
-            .select('nota, status, aula_id, aulas:aula_id(versao, tipo, is_bloco_final, livro_id, min_grade, titulo)')
+            .select('nota, status, aula_id, created_at, aulas:aula_id(versao, tipo, is_bloco_final, livro_id, min_grade, titulo)')
             .eq('aluno_id', user.id);
           
           // Filtramos pelo livro_id no JS para evitar erros de sintaxe complexa no join filter do PostgREST
