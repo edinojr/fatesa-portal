@@ -2,6 +2,19 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
 
+const missingTables = new Set<string>();
+const tableMissing = (name: string) => missingTables.has(name);
+const markTableMissing = (name: string) => missingTables.add(name);
+
+function extractTableName(query: any): string | null {
+  try {
+    const url: string = query?.url || '';
+    const match = url.match(/\/rest\/v1\/([^?]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch {
+    return null;
+  }
+}
 
 export const useStudentCourses = (profile: any) => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -16,58 +29,98 @@ export const useStudentCourses = (profile: any) => {
     if (!profile) return;
     setLoading(true);
     try {
-      const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || 
+      const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') ||
                       (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
 
-      // 1. Verificar Isenção do Núcleo
-
-      // 2. Determinar curso_id de forma segura
       const cursoId = (profile.curso_id && profile.curso_id !== 'null') ? profile.curso_id : null;
 
+      const safeSelect = async (queryPromise: PromiseLike<{ data: any; error: any }>) => {
+        const tableName = extractTableName(queryPromise)
+        if (tableName && tableMissing(tableName)) {
+          console.warn(`[safeSelect] Table ${tableName} previously marked as missing, skipping query.`);
+          return { data: null, error: null }
+        }
+        try {
+          const r = await queryPromise
+          if (r.error) {
+            console.error(`[safeSelect] Error on table ${tableName}:`, r.error.message, r.error.code);
+            if (r.error.code === '42P01' || /does not exist/i.test(r.error.message)) {
+              if (tableName) markTableMissing(tableName)
+            }
+            return { data: null, error: null }
+          }
+          return r
+        } catch (e) {
+          console.error(`[safeSelect] Exception on table ${tableName}:`, e);
+          if (tableName) markTableMissing(tableName)
+          return { data: null, error: null }
+        }
+      }
+
       let courseBooksQuery = supabase.from('livros').select('id, ordem');
-      
       if (cursoId) {
         courseBooksQuery = courseBooksQuery.eq('curso_id', cursoId);
       }
-      
-      const { data: courseBooks } = await courseBooksQuery.order('ordem');
-      
-      // 3. Liberações do Núcleo (seguro se nucleo_id for nulo)
-      const { data: releases } = profile.nucleo_id
-        ? await supabase.from('liberacoes_nucleo').select('item_id, item_type, created_at').eq('nucleo_id', profile.nucleo_id).eq('liberado', true)
-        : { data: [] };
-       
-      const releasedModulos = (releases || []).filter(r => r.item_type === 'modulo').map(r => r.item_id);
-      const releasedAtividades = (releases || []).filter(r => r.item_type === 'atividade').map(r => r.item_id);
-      const releasedVideos = (releases || []).filter(r => r.item_type === 'video').map(r => r.item_id);
-      
-      // 4. Provas / Atividades do Professor
-      const { data: exams } = await supabase
+      const { data: courseBooks } = await safeSelect(courseBooksQuery.order('ordem'));
+
+      const { data: releases } = await safeSelect(
+        profile.nucleo_id
+          ? supabase.from('liberacoes_nucleo')
+              .select('item_id, item_type, created_at')
+               .or(`nucleo_id.eq."${profile.nucleo_id}",nucleo_id.is.null`)
+               .eq('liberado', true)
+           : supabase.from('liberacoes_nucleo')
+               .select('item_id, item_type, created_at')
+               .is('nucleo_id', null)
+               .eq('liberado', true)
+
+      );
+
+      const { data: exams } = await safeSelect(supabase
         .from('aulas')
-        .select('id, livro_id, is_bloco_final, tipo, titulo')
-        .or('tipo.eq.prova,is_bloco_final.eq.true,titulo.ilike.%V1%,titulo.ilike.%V2%,titulo.ilike.%V3%,titulo.ilike.%RECUPERACAO%');
+        .select('id, livro_id, tipo, titulo, is_bloco_final')
+        .or('tipo.eq.prova,is_bloco_final.eq.true,titulo.ilike.%V1%,titulo.ilike.%V2%,titulo.ilike.%V3%,titulo.ilike.%RECUPERACAO%'));
 
-
-      // Limite Pedagógico: Módulo Vigente
-      const examReleaseDates: Record<string, string> = {};
+      const releasedModulos = (releases || []).filter((r: any) => r.item_type === 'modulo').map((r: any) => r.item_id);
+      const releasedAtividades = (releases || []).filter((r: any) => r.item_type === 'atividade').map((r: any) => r.item_id);
+      const releasedItems = (releases || []).filter((r: any) => ['video', 'licao', 'atividade'].includes(r.item_type)).map((r: any) => r.item_id);
+       
+      const releasedBookIdsFromItems = new Set<string>();
       const releasedExamBookIds = new Set<string>();
-
       if (exams && releases) {
-        exams.filter(exam => releasedAtividades.includes(exam.id)).forEach(exam => {
-          releasedExamBookIds.add(exam.livro_id);
+        exams.forEach((exam: any) => {
+          if (releasedItems.includes(exam.id)) {
+            releasedBookIdsFromItems.add(exam.livro_id);
+          }
+          if (releasedAtividades.includes(exam.id)) {
+            releasedExamBookIds.add(exam.livro_id);
+          }
         });
       }
 
-      // Módulo Vigente: determina o menor e o maior módulo com base nas ordens reais do curso
-      const bookOrdens = (courseBooks || []).map(b => b.ordem || 1).sort((a, b) => a - b);
-      const minBookOrdem = bookOrdens[0] || 1; // Primeiro módulo do curso (menor ordem)
+      const examReleaseDates: Record<string, string> = {};
+      if (exams && releases) {
+        exams.forEach((exam: any) => {
+          const isEx = exam.is_bloco_final || exam.tipo === 'prova' || (exam.titulo && /V[1-3]|RECUPERAÇ/i.test(exam.titulo));
+          if (isEx) {
+            const rel = (releases as any[]).find((r: any) => r.item_id === exam.id && r.item_type === 'atividade');
+            if (rel) {
+              if (!examReleaseDates[exam.livro_id]) {
+                examReleaseDates[exam.livro_id] = rel.created_at;
+              }
+            }
+          }
+        });
+      }
+
+      const bookOrdens = (courseBooks || []).map((b: any) => b.ordem || 1).sort((a: number, b: number) => a - b);
+      const minBookOrdem = bookOrdens[0] || 1;
 
       let maxReleasedModuleOrdem = 0;
       if (courseBooks && releases) {
-        courseBooks.forEach(b => {
+        courseBooks.forEach((b: any) => {
           const isModuleReleased = releasedModulos.includes(b.id);
           const isExamReleased = releasedExamBookIds.has(b.id);
-          
           if (isModuleReleased && (b.ordem || 0) > maxReleasedModuleOrdem) {
             maxReleasedModuleOrdem = b.ordem;
           }
@@ -77,120 +130,131 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
-      // Se nenhum módulo foi liberado pelo professor, o primeiro módulo do curso é o vigente
       const pedagogicalLimit = maxReleasedModuleOrdem > 0 ? maxReleasedModuleOrdem : minBookOrdem;
 
-      if (exams && releases) {
-        exams.forEach(exam => {
-          // Captura a data de liberação de qualquer prova/bloco final do módulo
-          const isEx = exam.is_bloco_final || exam.tipo === 'prova' || (exam.titulo && /V[1-3]|RECUPERAÇ/i.test(exam.titulo));
-          if (isEx) {
-            const rel = (releases as any[]).find(r => r.item_id === exam.id && r.item_type === 'atividade');
-            if (rel) {
-               // Mantemos a data da primeira liberação de prova encontrada para este livro
-               if (!examReleaseDates[exam.livro_id]) {
-                 examReleaseDates[exam.livro_id] = rel.created_at;
-               }
-            }
+      const { data: resDataRaw } = await safeSelect(supabase
+        .from('respostas_aulas')
+        .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+        .eq('aluno_id', profile.id));
+
+      const aulaIds = Array.from(new Set((resDataRaw || []).map((r: any) => r.aula_id).filter(Boolean)))
+      let aulasMap: Record<string, any> = {}
+      let livrosMap: Record<string, any> = {}
+      let cursosNivelMap: Record<string, string> = {}
+
+      if (aulaIds.length > 0) {
+        const { data: aulasData } = await safeSelect(supabase
+          .from('aulas')
+          .select('id, titulo, tipo, versao, min_grade, status_liberacao, data_liberacao, professor_active, questionario, livro_id')
+          .in('id', aulaIds))
+        ;(aulasData || []).forEach((a: any) => { aulasMap[a.id] = a })
+
+        const livroIds = Array.from(new Set((aulasData || []).map((a: any) => a.livro_id).filter(Boolean)))
+        if (livroIds.length > 0) {
+          const { data: livrosData } = await safeSelect(supabase
+            .from('livros')
+            .select('id, titulo, curso_id')
+            .in('id', livroIds))
+          ;(livrosData || []).forEach((l: any) => { livrosMap[l.id] = l })
+
+          const cursoIds = Array.from(new Set((livrosData || []).map((l: any) => l.curso_id).filter(Boolean)))
+          if (cursoIds.length > 0) {
+            const { data: cursosData } = await safeSelect(supabase
+              .from('cursos')
+              .select('id, nivel')
+              .in('id', cursoIds))
+            ;(cursosData || []).forEach((c: any) => { cursosNivelMap[c.id] = c.nivel })
           }
-        });
+        }
       }
 
-      // 5. Progresso e Notas - query direta sem depender da view
-      const { data: resDataRaw } = await supabase
-        .from('respostas_aulas')
-        .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, versao, min_grade, is_bloco_final, status_liberacao, data_liberacao, professor_active, questionario, livros:livro_id(id, titulo, cursos:curso_id(nivel)))')
-        .eq('aluno_id', profile.id);
+      const resData = (resDataRaw || []).map((r: any) => {
+        const aula = aulasMap[r.aula_id]
+        const livro = aula ? livrosMap[aula.livro_id] : null
+        const nivel = livro ? cursosNivelMap[livro.curso_id] : null
+        return {
+          ...r,
+          submission_id: r.id,
+          lesson_id: r.aula_id,
+          lesson_title: aula?.titulo,
+          lesson_type: aula?.tipo,
+          is_bloco_final: aula?.is_bloco_final,
+          book_id: livro?.id,
+          book_title: livro?.titulo,
+          curso_nivel: nivel,
+          submitted_at: r.created_at,
+          aulas: aula ? { ...aula, livros: livro ? { ...livro, cursos: { nivel } } : null } : null
+        }
+      });
+
+      const { data: progData } = await safeSelect(supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id));
+      const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id));
+      const { data: examExceptions } = await safeSelect(supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id));
       
-      const resData = (resDataRaw || []).map((r: any) => ({
-        ...r,
-        submission_id: r.id,
-        lesson_id: r.aula_id,
-        lesson_title: r.aulas?.titulo,
-        lesson_type: r.aulas?.tipo,
-        is_bloco_final: r.aulas?.is_bloco_final,
-        book_id: r.aulas?.livros?.id,
-        book_title: r.aulas?.livros?.titulo,
-        submitted_at: r.created_at,
-      }));
-      
-      const { data: progData } = await supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id);
-      const { data: exceptions } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id);
-      const { data: examExceptions } = await supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id);
-      
-      const exceptionIds = (exceptions || []).map(e => e.livro_id);
-      const examExceptionIds = (examExceptions || []).map(e => e.aula_id);
+      const exceptionIds = (exceptions || []).map((e: any) => e.livro_id);
+      const examExceptionIds = (examExceptions || []).map((e: any) => e.aula_id);
       const userHasActivityInModule = (livroId: string) => {
-        return resData.some(res => res.book_id === livroId);
+        return resData.some((res: any) => res.book_id === livroId);
       };
 
       setAtividades(resData);
       setProgressoAulas(progData || []);
 
-      // 5.5 Calcular Total de Módulos Básicos Únicos Finalizados para Trava Pedagógica
       const finishedBasicModules = new Set((resData || [])
-        .filter(r => {
+        .filter((r: any) => {
           const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.aulas?.tipo === 'prova';
           const minGrade = r.aulas?.min_grade || 7.0;
-          return isEx && 
-            r.status === 'corrigida' && 
-            (r.nota || 0) >= minGrade &&
-            (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
+          return isEx && r.status === 'corrigida' && (r.nota || 0) >= minGrade && (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
         })
-        .map(r => r.book_id)
+        .map((r: any) => r.book_id)
       );
 
       const fBasicCount = finishedBasicModules.size;
       setFinishedBasicCount(fBasicCount);
 
       const finishedMediumModules = new Set((resData || [])
-        .filter(r => {
+        .filter((r: any) => {
           const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.aulas?.tipo === 'prova';
           const minGrade = r.aulas?.min_grade || 7.0;
-          return isEx && 
-            r.status === 'corrigida' && 
-            (r.nota || 0) >= minGrade &&
-            (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('medio') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('médio'))
+          return isEx && r.status === 'corrigida' && (r.nota || 0) >= minGrade && (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('medio') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('médio'))
         })
-        .map(r => r.book_id)
+        .map((r: any) => r.book_id)
       );
 
       setFinishedMediumCount(finishedMediumModules.size);
       const isFinished = fBasicCount >= 27;
       setIsBasicFinished(isFinished);
 
-      // 6. Cursos - filtra pelo curso vinculado se existir, caso contrário busca todos
-      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, versao, min_grade, ordem, nucleo_id, is_bloco_final, status_liberacao, data_liberacao, professor_active), cursos:curso_id(nivel))';
-      const { data: allCourses } = cursoId
-        ? await supabase.from('cursos').select(courseSelect).eq('id', cursoId)
-        : await supabase.from('cursos').select(courseSelect);
+      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, versao, min_grade, ordem, nucleo_id, status_liberacao, data_liberacao, professor_active))';
+      const { data: allCourses } = await safeSelect(
+        supabase.from('cursos').select(courseSelect)
+      );
+
       
-      if (allCourses) {
-        const mappedCourses: Course[] = allCourses.map((c: any) => {
-          const sortedLivros = (c.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
-          return {
-            id: c.id,
-            nome: c.nome,
-            livros: sortedLivros.map((l: any) => {
-              const bookOrdem = l.ordem || 1;
-              const isManualModuleRelease = releasedModulos.includes(l.id);
-                // BLOQUEIO DE NÍVEL MÉDIO: Só libera se o básico estiver completo (27 módulos)
+       console.log('[useStudentCourses] allCourses raw:', allCourses);
+       console.log('[useStudentCourses] allCourses count:', allCourses?.length);
+
+       if (allCourses && allCourses.length > 0) {
+         const mappedCourses: Course[] = allCourses.map((c: any) => {
+           const sortedLivros = (c.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+           return {
+             id: c.id,
+             nome: c.nome,
+             nivel: c.nivel,
+             livros: sortedLivros.map((l: any) => {
+               const bookOrdem = l.ordem || 1;
+                const isManualModuleRelease = releasedModulos.includes(l.id);
                 const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
                 const levelLocked = isMedium && !isBasicFinished && !isStaff;
 
-                // Regra de DP: Módulos em DP (3 reprovações)
-                const isDP = !isStaff && resData.some(s => {
+                const isDP = !isStaff && resData.some((s: any) => {
                   const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
                   const isEx = sa?.is_bloco_final || sa?.tipo === 'prova';
                   const minGrade = sa?.min_grade || 7.0;
                   return sa?.book_id === l.id && isEx && sa?.versao === 3 && s.status === 'corrigida' && (s.nota || 0) < minGrade;
                 });
 
-                // REQUISITO: O Módulo [N] é finalizado se:
-                // 1. O aluno foi aprovado (nota >= min_grade)
-                // 2. O aluno entrou em D.P. (reprovou na V3)
-                // REQUISITO: O Módulo [N] é finalizado se a ÚLTIMA prova feita (maior versão) foi aprovada
-                const examSubs = resData.filter(s => {
+                const examSubs = resData.filter((s: any) => {
                   const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
                   const isEx = s.is_bloco_final || s.lesson_type === 'prova';
                   return s.book_id === l.id && isEx && s.status === 'corrigida';
@@ -198,7 +262,7 @@ export const useStudentCourses = (profile: any) => {
                 
                 let isApproved = false;
                 if (examSubs.length > 0) {
-                  const highestExam = examSubs.reduce((prev, current) => {
+                  const highestExam = examSubs.reduce((prev: any, current: any) => {
                     const prevAula = (l.aulas || []).find((pa: any) => pa.id === prev.lesson_id);
                     const currAula = (l.aulas || []).find((pa: any) => pa.id === current.lesson_id);
                     const prevV = prevAula?.versao || 1;
@@ -207,27 +271,18 @@ export const useStudentCourses = (profile: any) => {
                     if (currV < prevV) return prev;
                     return new Date(current.created_at || 0).getTime() > new Date(prev.created_at || 0).getTime() ? current : prev;
                   });
-                  
                   const highestAula = (l.aulas || []).find((pa: any) => pa.id === highestExam.lesson_id);
                   const minGrade = highestAula?.min_grade || 7.0;
                   isApproved = (highestExam.nota || 0) >= minGrade;
                 }
                 const isFinished = isApproved || isDP;
 
-                // REGRA DE PROGRESSÃO FLUIDA (Requisito 1)
-                // O Módulo [N] é liberado se:
-                // 1. É o primeiro módulo (bookOrdem === 1)
-                // 2. O professor liberou manualmente este módulo (isManualModuleRelease)
-                // 3. O professor liberou a PROVA V1 do módulo anterior [N-1]
-                // 4. O módulo anterior [N-1] foi FINALIZADO (Aprovado ou D.P.)
                 const isPreviousFinishedOrReleased = bookOrdem === 1 || Array.from(releasedExamBookIds).some(rid => {
                   const prevBook = sortedLivros.find((sl: any) => sl.id === rid);
-                  // IMPORTANTE: O livro anterior deve pertencer a este mesmo curso
                   return prevBook && (prevBook.ordem === bookOrdem - 1) && (prevBook.curso_id === c.id);
                 }) || sortedLivros.some((sl: any) => {
                   if (sl.ordem !== bookOrdem - 1) return false;
-                  // Verifica se o anterior está finalizado no resData
-                  return resData.some(s => {
+                  return resData.some((s: any) => {
                     const isEx = s.is_bloco_final || s.lesson_type === 'prova';
                     const sa = (sl.aulas || []).find((pa: any) => pa.id === s.lesson_id);
                     const minGrade = sa?.min_grade || 7.0;
@@ -237,152 +292,76 @@ export const useStudentCourses = (profile: any) => {
                   });
                 });
 
-                const isModuleReleased = (
-                  isStaff || 
-                  isManualModuleRelease || 
-                  isPreviousFinishedOrReleased
-                );
+                 const isModuleReleased = isManualModuleRelease || isFinished || isPreviousFinishedOrReleased;
+                 const effectivelyLevelLocked = levelLocked && !isManualModuleRelease && !isFinished;
+                 const isReleased = isModuleReleased && !effectivelyLevelLocked;
+                 const isCurrent = isModuleReleased && !isFinished;
+                 const isUnlocked = isReleased;
 
-                const isReleased = isModuleReleased && !levelLocked;
-                const isCurrent = (bookOrdem === pedagogicalLimit || isPreviousFinishedOrReleased) && !levelLocked;
+                const examReleaseDate = examReleaseDates[l.id];
+                const userCreatedAt = new Date(profile.created_at).getTime();
+                const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
+                const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
+                const hasException = exceptionIds.includes(l.id);
+                const hasStarted = userHasActivityInModule(l.id);
+                const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
                 
-                const isUnlocked = isReleased;
+                // Módulo é visível se: é staff, tem exceção, já começou, tem prova individual, OU foi liberado pelo professor
+                const isHidden = !isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease;
 
-              const examReleaseDate = examReleaseDates[l.id];
-              const userCreatedAt = new Date(profile.created_at).getTime();
-              const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
-              
-              // REGRA DE NOVOS ALUNOS: Se o aluno entrou APÓS a liberação da prova do módulo N, 
-              // ele não tem acesso ao módulo N (fica oculto), apenas ao N+1.
-              const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
-              const hasException = exceptionIds.includes(l.id);
-              const hasStarted = userHasActivityInModule(l.id);
-              const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
-              
-              const isHidden = isPastModule && !hasException && !hasStarted && !isStaff && !hasIndividualExamInModule;
+                if (isHidden) return null;
 
-              if (isHidden) return null;
+               return {
+                 ...l,
+                 aulas: [...(l.aulas || [])]
+                   .sort((a: any, b: any) => {
+                     if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
+                     return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' });
+                   })
+                   .map((a: any) => {
+                     if (isStaff) return { ...a, lockedByProfessor: false };
+                     const matchesNucleo = isStaff || !a.nucleo_id || !profile?.nucleo_id || a.nucleo_id === profile?.nucleo_id;
+                     if (!matchesNucleo) return { ...a, isHidden: true };
 
-                return {
-                  ...l,
-                  aulas: [...(l.aulas || [])]
-                    .sort((a: any, b: any) => {
-                      if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);
-                      return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true, sensitivity: 'base' });
-                    })
-                    .map((a: any) => {
-                    if (isStaff) return { ...a, lockedByProfessor: false };
-                    
-                    const matchesNucleo = isStaff || !a.nucleo_id || !profile?.nucleo_id || a.nucleo_id === profile?.nucleo_id;
-                    if (!matchesNucleo) return { ...a, isHidden: true };
+                      let lockedByProfessor = false;
+                      const displayTitle = a.titulo || '';
+                      const v = a.versao || 1;
 
-                    let lockedByProfessor = false;
-                    const displayTitle = a.titulo || '';
-                    const v = a.versao || 1;
-                    const isVideo = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
-                    const isExam = a.tipo === 'prova' || !!a.is_bloco_final;
-                    
-                    // REQUISITO: Vídeos e Provas V1 sempre com trava manual (controle de presencialidade)
-                    // Lições e Exercícios são automáticos assim que o módulo libera
-                    const isManualType = isVideo || (isExam && v === 1);
-                    const isRestrictedType = isManualType || (isExam && v > 1);
-                    
-                    if (isRestrictedType) {
-                      let isItemReleased = false;
+                      let isHiddenItem = false;
 
-                      // Liberação manual para Provas V1, Vídeos ou Atividades específicas
-                      isItemReleased = (releasedVideos.includes(a.id) || releasedAtividades.includes(a.id));
-                      
-                      // Verifica se há liberação individual desta prova para o aluno
-                      const hasIndividualExamRelease = isExam && examExceptionIds.includes(a.id);
-                      
-                      // V2 e V3 são liberados automaticamente se o módulo estiver ativo
-                      if (isExam && v > 1) {
-                        lockedByProfessor = !isReleased && !hasIndividualExamRelease;
-                      } else {
-                        // Vídeos e V1: Exigem liberação manual do professor (isItemReleased) ou liberação individual
-                        lockedByProfessor = !isReleased || (!isItemReleased && !hasIndividualExamRelease);
-                      }
-                    } else {
-                      // Conteúdo nativo (Lições/Exercícios): Liberado se o módulo pai estiver liberado
-                      lockedByProfessor = !isReleased;
-                    }
-
-                    let isHiddenItem = false;
-
-                    if (!isStaff && (v === 2 || v === 3)) {
-                      const prevV = v - 1;
-                      const prevAula = (l.aulas || []).find((pa: any) => {
-                        const isEx = pa.tipo === 'prova' || !!pa.is_bloco_final;
-                        return (pa.versao || 1) === prevV && isEx;
-                      });
-                      const prevSub = resData.find((s: any) => s.lesson_id === prevAula?.id);
-                      
-                      // Verifica se há liberação individual desta prova de recuperação
-                      const hasIndividualExamRelease = examExceptionIds.includes(a.id);
-                      
-                      // Regras para esconder Recuperação:
-                      // 1. Se ainda não fez a anterior
-                      // 2. Se a anterior ainda não foi corrigida
-                      // 3. Se já passou na anterior ou em qualquer uma antes
-                      // EXCEÇÃO: Se professor liberou individualmente, mostra independente das regras
-                      const previousExamSubs = resData.filter((s: any) => {
-                        const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-                        const isEx = sa?.is_bloco_final || sa?.tipo === 'prova';
-                        return isEx && (sa?.versao || 1) < v && s.status === 'corrigida';
-                      });
-                      
-                      let passedAnyPrevious = false;
-                      if (previousExamSubs.length > 0) {
-                        const highestPrevExam = previousExamSubs.reduce((prev: any, current: any) => {
-                          const prevAula = (l.aulas || []).find((pa: any) => pa.id === prev.lesson_id);
-                          const currAula = (l.aulas || []).find((pa: any) => pa.id === current.lesson_id);
-                          const prevV = prevAula?.versao || 1;
-                          const currV = currAula?.versao || 1;
-                          if (currV > prevV) return current;
-                          if (currV < prevV) return prev;
-                          return new Date(current.created_at || 0).getTime() > new Date(prev.created_at || 0).getTime() ? current : prev;
-                        });
-                        const highestPrevAula = (l.aulas || []).find((pa: any) => pa.id === highestPrevExam.lesson_id);
-                        const minGrade = highestPrevAula?.min_grade || 7.0;
-                        if ((highestPrevExam.nota || 0) >= minGrade) {
-                          passedAnyPrevious = true;
-                        }
-                      }
-
-                      if (!hasIndividualExamRelease && (!prevSub || prevSub.status !== 'corrigida' || passedAnyPrevious)) {
-                        isHiddenItem = true;
-                      }
-                    }
-
-                    return { 
-                      ...a, 
-                      titulo: displayTitle, 
-                      lockedByProfessor, 
-                      isHidden: isHiddenItem,
-                      status_liberacao: a.status_liberacao,
-                      data_liberacao: a.data_liberacao,
-                      professor_active: a.professor_active
-                    };
-                  }).map(a => {
-                    const isMediaOrExam = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
-                    if (isMediaOrExam && a.professor_active === false && !isStaff) {
-                      return { ...a, isHidden: true };
-                    }
-                    return a;
-                  }).filter((a: any) => !a.isHidden),
-                  isReleased,
-                  isCurrent: isCurrent && isReleased,
-                  isUnlocked: isUnlocked && isReleased,
-                  isFinished,
-                  isApproved,
-                  isDP: isDP
-                };
-            }).filter(Boolean)
-          };
-        }).filter((c: any) => c.livros.length > 0 || isStaff);
-        setCourses(mappedCourses);
-      }
+                     return { 
+                       ...a, 
+                       titulo: displayTitle, 
+                       lockedByProfessor, 
+                       isHidden: isHiddenItem,
+                       status_liberacao: a.status_liberacao,
+                       data_liberacao: a.data_liberacao,
+                       professor_active: a.professor_active
+                     };
+                   }).map(a => {
+                     const isMediaOrExam = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video' || a.tipo === 'prova' || !!a.is_bloco_final;
+                     if (isMediaOrExam && a.professor_active === false && !isStaff) {
+                       return { ...a, isHidden: true };
+                     }
+                     return a;
+                   }).filter((a: any) => !a.isHidden),
+                   isReleased,
+                   isCurrent: isCurrent && isReleased,
+                   isUnlocked: isUnlocked && isReleased,
+                   isFinished,
+                   isApproved,
+                   isDP: isDP
+                 };
+             }).filter(Boolean)
+           };
+         }).filter(Boolean);
+         setCourses(mappedCourses);
+         console.log('[useStudentCourses] mappedCourses set:', mappedCourses.length, 'courses');
+         console.log('[useStudentCourses] mappedCourses detail:', JSON.stringify(mappedCourses.map(c => ({ nome: c.nome, nivel: c.nivel, livrosCount: c.livros?.length }))));
+       } else {
+         console.warn('[useStudentCourses] allCourses is empty or null!', allCourses);
+         setCourses([]);
+       }
     } catch (err) {
       console.error(err);
     } finally {

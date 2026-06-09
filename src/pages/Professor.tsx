@@ -5,7 +5,6 @@ import {
   Users, 
   BookOpen, 
   LogOut, 
-  ChevronLeft,
   Loader2,
   AlertCircle,
   FileText,
@@ -16,7 +15,9 @@ import {
   MapPin,
   GraduationCap,
   Video,
-  History
+   History,
+   ShieldCheck,
+   ArrowLeft,
 } from 'lucide-react'
 import AttendanceList from '../features/users/components/AttendanceList'
 import NucleosPanel from '../components/NucleosPanel'
@@ -28,6 +29,7 @@ import MateriaisManagement from '../features/communication/components/MateriaisM
 import AcademicHistory from '../features/admin/components/AcademicHistory'
 import AlumniManagement from '../features/users/components/AlumniManagement'
 import DocumentAnalysis from '../features/admin/components/DocumentAnalysis'
+import ForumPanel from '../features/forum/components/ForumPanel'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import Logo from '../components/common/Logo'
@@ -88,6 +90,13 @@ const Professor = () => {
   const location = useLocation()
   const [dashboardView, setDashboardView] = React.useState<'main' | 'nucleos' | 'alunos' | 'conteudo'>('main');
 
+  const goToPanel = () => {
+    const role = profile?.tipo;
+    const roles = (profile?.caminhos_acesso as string[]) || [];
+    const isAdmin = role === 'admin' || roles.includes('admin') || roles.includes('suporte');
+    navigate(isAdmin ? '/admin' : '/professor');
+  };
+
   React.useEffect(() => {
     localStorage.setItem('fatesa_active_role', 'professor');
     if (location.state?.activeTab) {
@@ -95,7 +104,7 @@ const Professor = () => {
     } else if (!activeTab) {
       setActiveTab('home');
     }
-  }, [location.state, setActiveTab, activeTab]);
+  }, [location.state, setActiveTab]);
 
   const handleGlobalBack = () => {
     if (selectedSubmission) { setSelectedSubmission(null); return; }
@@ -110,168 +119,40 @@ const Professor = () => {
 
   return (
     <div className="admin-layout">
-      {/* COMPACT ICON HEADER */}
-      <header className="dashboard-header-modern">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <Logo size={140} />
-          
-          <div style={{ display: 'flex', gap: '0.75rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.5rem' }}>
-            {activeTab !== 'home' && (
-              <button 
-                className="nav-btn-premium" 
-                onClick={handleGlobalBack}
-                title="Voltar ao Painel Ativo"
-              >
-                <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
-              </button>
-            )}
-            {!isAtRoot && (
-              <button className="nav-btn-premium" onClick={() => { setActiveTab('home'); setDashboardView('main'); }}>
-                <LayoutGrid size={18} /> <span className="mobile-hide">Menu Principal</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div className="mobile-hide" style={{ textAlign: 'right', marginRight: '0.5rem' }}>
-            <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>{profile?.nome_completo}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Professor</div>
-          </div>
-          
-          {availableRoles.length > 0 && (availableRoles.some(r => r === 'admin' || r === 'suporte' || profile?.email === 'edi.ben.jr@gmail.com')) && (
-            <div style={{ position: 'relative' }}>
-              <button 
-                className="nav-btn-premium" 
-                onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
-              >
-                <Users size={18} /> <span className="mobile-hide">Alternar Visão</span>
-              </button>
-              {showRoleSwitcher && (
-                <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '14px', padding: '0.5rem', zIndex: 1100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '200px', marginTop: '0.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-                  {availableRoles.filter(r => ['aluno', 'admin'].includes(r)).map(r => (
-                    <button 
-                      key={r} 
-                      className="nav-btn-premium" 
-                      style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent' }}
-                      onClick={() => navigate(r === 'aluno' ? '/dashboard' : '/admin')}
-                    >
-                      {r === 'aluno' ? 'Painel do Aluno' : 'Painel Administrativo'}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          <button onClick={() => navigate('/dashboard')} className="nav-btn-premium">
-            <ExternalLink size={18} /> <span className="mobile-hide">Área do Aluno</span>
-          </button>
-
-          <button className="nav-btn-premium danger" onClick={handleLogout} title="Sair">
-            <LogOut size={18} /> <span className="mobile-hide">Sair</span>
-          </button>
-        </div>
-      </header>
-
-      <main className="admin-main">
-        <div className="admin-scroll-content">
-          <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-            <div>
-              <h1 style={{ 
-                fontSize: '2.2rem', 
-                fontWeight: 900, 
-                letterSpacing: '-0.04em',
-                background: 'linear-gradient(135deg, var(--text) 0%, var(--primary) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                marginBottom: '0.25rem'
-              }}>
-                {activeTab === 'home' && dashboardView === 'main' ? 'Portal do Professor' :
-                 activeTab === 'home' && dashboardView === 'nucleos' ? 'Gestão de Núcleos' :
-                 activeTab === 'home' && dashboardView === 'alunos' ? 'Gerenciamento de Alunos' :
-                 activeTab === 'content' ? 'Gestão de Conteúdo' : 
-                 activeTab === 'grading' ? 'Correção de Provas' :
-                 activeTab === 'avisos' ? 'Quadro de Avisos' :
-                 activeTab === 'materiais' ? 'Materiais de Apoio' :
-                 activeTab === 'attendance' ? 'Lista de Presença' : 
-                 activeTab === 'alumni' ? 'Base de Formados (Alumni)' : 
-                 activeTab === 'documents' ? 'Análise de Documentos' : 'Fórum da Comunidade'}
-              </h1>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
-                {activeTab === 'home' && dashboardView === 'main' ? 'Selecione uma categoria para começar.' : 
-                 activeTab === 'home' && dashboardView === 'nucleos' ? 'Administre conteúdos, vídeos e provas dos seus núcleos.' :
-                 activeTab === 'home' && dashboardView === 'alunos' ? 'Controle frequência, notas e matrículas.' :
-                 'Bem-vindo de volta, Professor.'}
-              </p>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div className="input-group" style={{ marginBottom: 0, width: '300px' }}>
-                <input type="text" placeholder="Pesquisar..." className="form-control" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-              </div>
-            </div>
-          </header>
-
-          <div className="tab-content">
-            {activeTab === 'home' && (
+      {/* SIMPLIFIED HEADER */}
+       <header className="dashboard-header-modern" style={{ justifyContent: 'space-between', padding: '1rem 2.5rem' }}>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+           <button onClick={goToPanel} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }}>
+             <ArrowLeft size={18} />
+           </button>
+           <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+             PAINEL PROFESSOR
+           </div>
+         </div>
+         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+           <button onClick={() => navigate('/dashboard')} className="nav-btn-premium" style={{ width: 'auto' }}>
+             <ExternalLink size={18} /> <span className="mobile-hide">Painel Aluno</span>
+           </button>
+           {(profile?.tipo === 'admin' || (profile?.caminhos_acesso as string[])?.includes('admin')) && (
+             <button onClick={() => navigate('/admin')} className="nav-btn-premium" style={{ width: 'auto' }}>
+               <ShieldCheck size={18} /> <span className="mobile-hide">Painel Admin</span>
+             </button>
+           )}
+           <button className="nav-btn-premium danger" onClick={handleLogout} title="Sair" style={{ width: 'auto' }}>
+             <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+           </button>
+         </div>
+       </header>
+ 
+        <main className="admin-main">
+         <div className="admin-scroll-content">
+           <div className="tab-content">
+             {activeTab === 'home' && (
               <div className="admin-dashboard-grid transition-fade-in" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
                 {dashboardView === 'main' && (
-                  <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
-                    <div 
-                      className="activity-signal-card" 
-                      onClick={() => setActiveTab('grading')} 
-                      style={{ 
-                        background: 'rgba(156, 39, 176, 0.05)', 
-                        border: '1px solid rgba(156, 39, 176, 0.2)', 
-                        padding: '1.5rem', 
-                        borderRadius: '18px', 
-                        cursor: 'pointer', 
-                        position: 'relative', 
-                        overflow: 'hidden' 
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ background: '#9c27b0', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <GraduationCap size={24} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Provas p/ Corrigir</div>
-                          <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{submissions.filter(s => s.status === 'pendente').length}</div>
-                        </div>
-                      </div>
-                      {submissions.length > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#9c27b0' }}></div>}
-                    </div>
-
-                    <div 
-                      className="activity-signal-card" 
-                      onClick={() => setActiveTab('academic')} 
-                      style={{ 
-                        background: 'rgba(var(--primary-rgb), 0.05)', 
-                        border: '1px solid rgba(var(--primary-rgb), 0.2)', 
-                        padding: '1.5rem', 
-                        borderRadius: '18px', 
-                        cursor: 'pointer', 
-                        position: 'relative', 
-                        overflow: 'hidden' 
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ background: 'var(--primary)', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <History size={24} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Histórico dos Alunos</div>
-                          <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{academicReport.length}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {dashboardView === 'main' && (
                   <>
-                    <div className="admin-action-card" onClick={() => setActiveTab('nucleos')}>
+                    <div className="admin-action-card" onClick={() => setActiveTab('nucleos')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Núcleo</span>
                       <div className="icon-wrapper"><MapPin size={32} /></div>
                       <h3>Meus Núcleos</h3>
                       <p>Visualize todos os núcleos vinculados ao seu perfil.</p>
@@ -279,8 +160,9 @@ const Professor = () => {
                         {professorNucleos.length} ATIVOS
                       </span>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setDashboardView('alunos')}>
+ 
+                    <div className="admin-action-card" onClick={() => setDashboardView('alunos')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Alunos</span>
                       <div className="icon-wrapper"><Users size={32} /></div>
                       <h3>Alunos</h3>
                       <p>Chamada, aceite de novos alunos e lista geral.</p>
@@ -290,82 +172,94 @@ const Professor = () => {
                         </span>
                       )}
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setDashboardView('conteudo')}>
+ 
+                    <div className="admin-action-card" onClick={() => setDashboardView('conteudo')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Conteúdo</span>
                       <div className="icon-wrapper"><BookOpen size={32} /></div>
                       <h3>Conteúdo</h3>
                       <p>Liberação de vídeos, provas e módulos do curso.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('avisos')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('avisos')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Comunicação</span>
                       <div className="icon-wrapper"><AlertCircle size={32} /></div>
                       <h3>Quadro de Avisos</h3>
                       <p>Publique comunicados para seus núcleos.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('forum')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('forum')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Comunicação</span>
                       <div className="icon-wrapper"><MessageSquare size={32} /></div>
                       <h3>Fórum da Comunidade</h3>
                       <p>Interaja e tire dúvidas dos estudantes.</p>
                     </div>
                   </>
                 )}
-
+ 
                 {dashboardView === 'alunos' && (
                   <>
-                    <div className="admin-action-card" onClick={() => setActiveTab('students')}>
+                    <div className="admin-action-card" onClick={() => setActiveTab('students')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Alunos</span>
                       <div className="icon-wrapper"><Users size={32} /></div>
                       <h3>Alunos do Núcleo</h3>
                       <p>Lista completa de alunos vinculados aos seus polos.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('attendance')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('attendance')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Alunos</span>
                       <div className="icon-wrapper"><ClipboardList size={32} /></div>
                       <h3>Lista de Chamada</h3>
                       <p>Chamada diária separada por núcleo de ensino.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('alumni')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('alumni')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Alunos</span>
                       <div className="icon-wrapper"><GraduationCap size={32} /></div>
                       <h3>Alumni / Formados</h3>
                       <p>Base histórica de alunos que já concluíram o curso.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('documents')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('documents')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Alunos</span>
                       <div className="icon-wrapper"><FileText size={32} /></div>
                       <h3>Arquivos e Documentos</h3>
                       <p>Validação da documentação pessoal enviada pelos alunos.</p>
                     </div>
                   </>
                 )}
-
+ 
                 {dashboardView === 'conteudo' && (
                   <>
-                    <div className="admin-action-card" onClick={() => setActiveTab('content')}>
+                    <div className="admin-action-card" onClick={() => setActiveTab('content')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Conteúdo</span>
                       <div className="icon-wrapper"><Video size={32} /></div>
                       <h3>Liberação / Vídeo Aula</h3>
                       <p>Gerencie o acesso às aulas gravadas para os alunos.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('grading')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('grading')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Conteúdo</span>
                       <div className="icon-wrapper"><GraduationCap size={32} /></div>
                       <h3>Provas</h3>
                       <p>Correção e acompanhamento das avaliações do curso.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('content')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('modules')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Conteúdo</span>
                       <div className="icon-wrapper"><LayoutGrid size={32} /></div>
                       <h3>Módulos e Lições</h3>
                       <p>Estrutura pedagógica de matérias e atividades.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => setActiveTab('materiais')}>
+ 
+                    <div className="admin-action-card" onClick={() => setActiveTab('materiais')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Conteúdo</span>
                       <div className="icon-wrapper"><FileText size={32} /></div>
                       <h3>Conteúdo Adicional</h3>
                       <p>Material de apoio, PDFs e leituras extras.</p>
                     </div>
                   </>
                 )}
+
               </div>
             )}
 
@@ -407,6 +301,24 @@ const Professor = () => {
               />
             )}
 
+            {activeTab === 'modules' && (
+              <ProfessorContent 
+                courses={courses}
+                selectedCourse={selectedCourse}
+                setSelectedCourse={setSelectedCourse}
+                books={books}
+                selectedBook={selectedBook}
+                setSelectedBook={setSelectedBook}
+                lessons={lessons}
+                fetchBooks={fetchBooks}
+                selectBookAndShowLessons={selectBookAndShowLessons}
+                profile={profile}
+                professorNucleos={professorNucleos}
+                submissions={submissions}
+                hideReleaseControls={true}
+              />
+            )}
+
             {activeTab === 'academic' && (
               <AcademicHistory 
                 data={academicReport} 
@@ -417,11 +329,11 @@ const Professor = () => {
                 onCorrect={async (id) => {
                   let sub = submissions.find(s => s.submission_id === id);
                   if (!sub) {
-                    const { data, error } = await supabase
-                      .from('respostas_aulas')
-                      .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, questionario, livros:livro_id(id, titulo)), users:aluno_id(id, nome, email, nucleo_id, nucleos:nucleo_id(id, nome))')
-                      .eq('id', id)
-                      .single();
+                       const { data, error } = await supabase
+                         .from('respostas_aulas')
+                         .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, questionario, is_bloco_final, livros:livro_id(id, titulo)), users:aluno_id(id, nome, email, nucleo_id, nucleos:nucleo_id(id, nome))')
+                         .eq('id', id)
+                         .single();
                     if (data && !error) {
                       const rawData = data as any;
                       sub = {
@@ -493,6 +405,8 @@ const Professor = () => {
             {activeTab === 'alumni' && <AlumniManagement />}
 
             {activeTab === 'documents' && <DocumentAnalysis />}
+
+            {activeTab === 'forum' && <ForumPanel />}
           </div>
         </div>
       </main>

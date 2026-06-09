@@ -109,5 +109,32 @@ export const graduationService = {
 
     if (error) throw error;
     return data && data.length > 0 ? data[0] : null;
+  },
+
+  /**
+   * Atualiza o nome em um registro de alumni (admin).
+   */
+  async updateAlumniName(recordId: string, newName: string) {
+    const { error } = await supabase
+      .from('registros_alumni')
+      .update({ nome: newName.toUpperCase() })
+      .eq('id', recordId);
+
+    if (error) throw error;
+    return true;
+  },
+
+  /**
+   * Busca registro de alumni por ID.
+   */
+  async getAlumniRecord(recordId: string) {
+    const { data, error } = await supabase
+      .from('registros_alumni')
+      .select('*')
+      .eq('id', recordId)
+      .single();
+
+    if (error) return null;
+    return data;
   }
 };
