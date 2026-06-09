@@ -7,6 +7,7 @@ import {
   Lock,
   CheckCircle,
 } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 
@@ -15,6 +16,7 @@ const ModuleDetails = () => {
     const navigate = useNavigate();
     const { profile, loading: profileLoading } = useProfile();
     const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData } = useStudentCourses(profile);
+    const [nucleusReleases, setNucleusReleases] = useState<any[]>([]);
 
     const goToPanel = () => {
         const stored = localStorage.getItem('fatesa_active_role');
@@ -49,8 +51,15 @@ const ModuleDetails = () => {
     useEffect(() => {
         if (!profileLoading && profile) {
             fetchStudentDashboardData();
+            fetchNucleusReleases();
         }
     }, [profileLoading, profile, fetchStudentDashboardData]);
+
+    const fetchNucleusReleases = async () => {
+      if (!profile?.nucleo_id) return;
+      const { data } = await supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
+      if (data) setNucleusReleases(data);
+    };
 
     if (profileLoading || coursesLoading) {
         return (
@@ -139,6 +148,13 @@ const ModuleDetails = () => {
       return false;
     };
     const isActuallyLocked = (item: any) => {
+      // Se houver liberação explícita para o núcleo, está desbloqueado
+      const hasNucleusRelease = nucleusReleases.some(r => 
+        r.item_id === item.id && 
+        (r.item_type === 'atividade' || r.item_type === 'video' || r.item_type === 'modulo')
+      );
+      if (hasNucleusRelease) return false;
+
       if (!isStaff && !!item.lockedByProfessor) return true;
       return isLocked(item);
     };
