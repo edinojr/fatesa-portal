@@ -737,7 +737,7 @@ const Admin = () => {
           setShowAddContent={setShowAddContent}
           selectedLesson={selectedLesson}
           selectedBook={selectedBook}
-          addingLessonType={addingLessonType}
+           addingLessonType={addingLessonType || ''}
           actionLoading={actionLoading}
           setActionLoading={setActionLoading}
           supabase={supabase}
