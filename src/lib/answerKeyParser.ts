@@ -71,7 +71,7 @@ export function extractAnswerKey(html: string): { cleanedHtml: string; answerKey
         // Remove everything from this heading to the next heading or end
         let el: Element | null = h;
         while (el) {
-          const next = el.nextElementSibling;
+          const next: Element | null = el.nextElementSibling;
           el.remove();
           el = next;
           if (el && /^H[1-6]$/.test(el.tagName)) break;

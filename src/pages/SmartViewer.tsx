@@ -10,7 +10,8 @@ import {
   Maximize, 
   Minimize, 
   BookOpen,
-  List
+  List,
+  Menu
 } from 'lucide-react';
 
 import { Document, Page, pdfjs } from 'react-pdf';

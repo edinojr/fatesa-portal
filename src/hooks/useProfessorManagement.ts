@@ -122,8 +122,8 @@ export const useProfessorManagement = () => {
                   alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
                 ]);
 
-                const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {});
-                const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {});
+const aulasMap = (aulasRes.data || []).reduce((acc: Record<string, any>, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
+const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
 
                 const subDataMapped = subDataRaw.map((r: any) => {
                   const aula = aulasMap[r.aula_id];

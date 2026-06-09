@@ -44,8 +44,8 @@ export const useProfessorGrading = () => {
             : Promise.resolve({ data: [] })
         ]);
 
-        const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {});
-        const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {});
+        const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
+        const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
 
         const mapped = subDataRaw.map((r: any) => {
           const aula = aulasMap[r.aula_id];
