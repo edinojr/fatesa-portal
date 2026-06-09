@@ -186,9 +186,12 @@ const ModuleDetails = () => {
       else if (isExercicio) borderColor = '#10b981';
       
       return (
-        <div 
-          onClick={() => navigate(`/lesson/${item.id}`)}
-          style={{ 
+         <div 
+           onClick={() => {
+             if (locked) return;
+             navigate(`/lesson/${item.id}`);
+           }}
+           style={{ 
             padding: '1rem', 
             background: locked ? 'rgba(255,255,255,0.02)' : 'var(--glass)', 
             border: `1px solid ${borderColor}`,

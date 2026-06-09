@@ -131,10 +131,8 @@ const Lesson = () => {
          if (isStaff || modulePassed) {
            setIsReleased(true);
          } else {
-            // ALL content now requires explicit release for the student's nucleus
-             const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' : 
-                              (lessonData.tipo === 'prova' || !!lessonData.is_bloco_final) ? 'atividade' : 
-                              (lessonData.tipo === 'atividade' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'atividade' : 'licao';
+             // ALL content now requires explicit release for the student's nucleus
+              const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' : 'atividade';
 
 
            const { data: releaseData } = await supabase.from('liberacoes_nucleo')
