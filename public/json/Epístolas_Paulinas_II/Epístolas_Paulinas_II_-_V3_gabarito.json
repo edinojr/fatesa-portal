@@ -1,0 +1,134 @@
+{
+  "id": "EPPII_3",
+  "title": "Epístolas Paulinas II - V3",
+  "tfQuestions": [
+    {
+      "id": "eppii3-tf-1",
+      "question": "Mesmo estando vivo, fisicamente, o homem pode estar morto no sentido espiritual.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii3-tf-2",
+      "question": "Faltando filhos podemos afirmar que a família está incompleta.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii3-tf-3",
+      "question": "A igreja de Filipos ajudou Paulo, financeiramente, quando esteve preso em Roma.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii3-tf-4",
+      "question": "É certo que ao ir para Roma, Epafras abandonou a igreja de Colosso.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii3-tf-5",
+      "question": "As pessoas que foram ressuscitadas por Jesus não tornaram a morrer.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii3-tf-6",
+      "question": "Na expressão usada por João a \"besta que subiu do mar\" refere-se ao Anticristo.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii3-tf-7",
+      "question": "O pastor era, ao mesmo tempo, chamado de ancião, de presbítero e de bispo.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii3-tf-8",
+      "question": "Antes do ano 64 dC. todas as perseguições aos cristãos eram movidas pelos judeus.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii3-tf-9",
+      "question": "Sabemos, pela Bíblia, que Tito foi o fundador da igreja na ilha de Creta.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii3-tf-10",
+      "question": "Liberto da escravidão do pecado, Onésimo não podia mais ser escravo de um cristão.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "eppii3-mc-1",
+      "question": "Em Éfeso, uma das sete maravilhas do mundo antigo -",
+      "options": [
+        "Mausoléu de Halicarnasso",
+        "Pirâmide de Gisé",
+        "Estátua de Zeus",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "eppii3-mc-2",
+      "question": "Satanás dará ao Anticristo -",
+      "options": [
+        "Seu trono",
+        "Seu poder",
+        "Seu grande poderio",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "eppii3-mc-3",
+      "question": "Escrita na segunda prisão de Paulo -",
+      "options": [
+        "II Timóteo",
+        "II Timóteo e Tito",
+        "I e II Timóteo",
+        "II Timóteo e Filemon"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "eppii3-mc-4",
+      "question": "Ano em que Paulo foi executado –",
+      "options": [
+        "64 dC",
+        "67 dC",
+        "68 dC",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "eppii3-mp-1",
+      "left": "Em Filipos, hospedou Paulo em sua casa",
+      "right": "Lídia"
+    },
+    {
+      "id": "eppii3-mp-2",
+      "left": "Levou a epístola de Paulo aos filipenses",
+      "right": "Epafrodito"
+    },
+    {
+      "id": "eppii3-mp-3",
+      "left": "Fundador da cidade chamada Filipos",
+      "right": "Rei Filipe II"
+    },
+    {
+      "id": "eppii3-mp-4",
+      "left": "Juntou-se a Paulo em Listra",
+      "right": "Timóteo"
+    },
+    {
+      "id": "eppii3-mp-5",
+      "left": "Companheiro de Paulo desde Antioquia",
+      "right": "Silas"
+    },
+    {
+      "id": "eppii3-mp-6",
+      "left": "Intercedeu em favor de Paulo",
+      "right": "Centurião Júlio"
+    }
+  ]
+}

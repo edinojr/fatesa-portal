@@ -1,0 +1,134 @@
+{
+  "id": "EPPI_3",
+  "title": "Epístolas Paulinas 1 - V3",
+  "tfQuestions": [
+    {
+      "id": "eppi3-tf-1",
+      "question": "A justificação pela graça é o tema da Epístola aos Romanos.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi3-tf-2",
+      "question": "Segundo afirmou Paulo, a expressão “segundo Adão” diz respeito a Cristo.",
+      "answer": "V"
+    },
+    {
+      "id": "eppi3-tf-3",
+      "question": "Após o novo nascimento o homem está livre das consequências do pecado.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi3-tf-4",
+      "question": "No Antigo Testamento Israel é chamado por Deus de Seu povo, mas, não de seu filho.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi3-tf-5",
+      "question": "Falando com Pilatos, Jesus deixou claro que o poder para governar vem de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "eppi3-tf-6",
+      "question": "O espírito de rebelião, de divisão e de rebeldia sempre está presente na vida de um crente fraco.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi3-tf-7",
+      "question": "Gálatas faz a apologia da liberdade cristã contra todas as formas de legalismo.",
+      "answer": "V"
+    },
+    {
+      "id": "eppi3-tf-8",
+      "question": "Acusado pelos mestres judaizantes de não ser apóstolo, Paulo não procurou defender seu apostolado.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi3-tf-9",
+      "question": "Existe “carga” que temos de levar sozinho, sem qualquer ajuda humana.",
+      "answer": "V"
+    },
+    {
+      "id": "eppi3-tf-10",
+      "question": "Pela lei da semeadura sabemos que um só pecado pode produzir diversas consequências.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "eppi3-mc-1",
+      "question": "Paulo afirmou que a Lei trouxe -",
+      "options": [
+        "A salvação",
+        "O Salvador",
+        "Esperança aos judeus e aos gentios",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "eppi3-mc-2",
+      "question": "Paulo subiu a Jerusalém por -",
+      "options": [
+        "Uma decisão pessoal",
+        "Convocação dos apóstolos",
+        "Uma revelação",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "eppi3-mc-3",
+      "question": "Entre a Lei e a Graça não existe -",
+      "options": [
+        "Concorrência",
+        "Rivalidade",
+        "Superioridade",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "eppi3-mc-4",
+      "question": "Pelo novo nascimento o homem não fica livre –",
+      "options": [
+        "Das consequências do pecado",
+        "Da culpa do pecado",
+        "Do poder do pecado",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "eppi3-mp-1",
+      "left": "Justiça",
+      "right": "Dá o que o homem merece"
+    },
+    {
+      "id": "eppi3-mp-2",
+      "left": "Misericórdia",
+      "right": "Dá o que o homem precisa sem merecer"
+    },
+    {
+      "id": "eppi3-mp-3",
+      "left": "Amor",
+      "right": "Não procura defeitos"
+    },
+    {
+      "id": "eppi3-mp-4",
+      "left": "Tolerância",
+      "right": "Respeitar opiniões contrárias"
+    },
+    {
+      "id": "eppi3-mp-5",
+      "left": "Nega as verdades bíblicas",
+      "right": "Herege"
+    },
+    {
+      "id": "eppi3-mp-6",
+      "left": "Promotor de escândalos",
+      "right": "Desordeiro"
+    }
+  ]
+}

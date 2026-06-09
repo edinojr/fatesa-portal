@@ -1,0 +1,1194 @@
+{
+  "id": "pentateuco",
+  "title": "Pentateuco",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O Pentateuco , quando foi escrito, era composto por apenas um volume.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Jesus, em seu ministério, não fez nenhuma citação do Pentateuco.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo seu autor, Moisés dividiu o Livro de Gênesis em 50 capítulos",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não podemos afirmar, com segurança, que tudo começou no ano 4004 aC.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Segundo a Bíblia, os céus e a terra não foram criados por evolução.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "É certo que a criação da luz ocorreu no primeiro dia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Deus proibiu o homem de comer de todas as árvores, exceto uma.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Deus interrogou o homem e a mulher, mas não interrogou a serpente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Após toda sua família entrar na arca, então Noé fechou sua porta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Antes do dilúvio a carne não era consumida como alimento do homem.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quando e por quem o Pentateuco foi dividido em 5 livros.",
+          "answer": "POR VOLTA DO ANO 250 aC PELOS TRADUTORES DA SEPTUAGINTA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar em qual monte a Arca pousou e onde podemos encontra-lo hoje.",
+          "answer": "POUSOU NO MONTE ARARÁ, NA ARMÊNIA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Deus não amaldiçoou —",
+          "options": [
+            "Eva",
+            "a terra",
+            "a serpente",
+            "todas estão erradas"
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "A justiça de Deus revelou-se —",
+          "options": [
+            "elegendo",
+            "vendo",
+            "transformando",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Destaca a soberania de Deus",
+          "Destaca a benevolência de Deus",
+          "Destaca o poder de Deus",
+          "Destaca a santidade de Deus",
+          "Destaca a fidelidade de Deus",
+          "A natureza carnal e a morte"
+        ],
+        "columnB": [
+          "sobreviventes do dilúvio",
+          "Levítico",
+          "Números",
+          "Deuteronômio",
+          "Êxodo",
+          "Gênesis"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A Bíblia cita, nominalmente, Abraão como tendo sido idolatra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Ao chamar Abraão, Deus não fez qualquer referência em relação a Sara.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "É certo que Abraão permaneceu em Harã por pouco tempo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em Harã Abraão prosperou mesmo estando em desacordo com a vontade de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Ao encontrar a terra prometida ocupada Abraão sentiu-se enganado por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao sair de Betel o propósito de Abraão não era ir para o Egito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Embora sendo esposa, Sara era também irmã de Abraão por parte de pai.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Tendo chegado rico no Egito, Abraão saiu de lá muito pobre.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sobre a separação de Abraão, embora Ló tenha consultado Deus, não obteve resposta",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Embriaguez e incesto são os dois últimos registros sobre Ló.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Após ver a terra prometida, cite qual promessa feita por Deus.",
+          "answer": "QUE A DARIA À SUA DESCENDÊNCIA, OU A SUA SEMENTE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantos e quem eram os soldados que formaram o exército de Abraão.",
+          "answer": "318 E ERAM SEUS CRIADOS NASCIDOS EM SUA CASA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Para descrever 25 anos da idade de Abraão foram usados —",
+          "options": [
+            "25 capítulos",
+            "14 capítulos",
+            "10 capítulos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Em Harã —",
+          "options": [
+            "Abraão prosperou",
+            "morreu Tera",
+            "Abraão estava no meio do caminho",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Erro de Abraão ao sair de UR",
+          "Liderou a caravana até Harã",
+          "Hoje, o país onde Harâ esta situado",
+          "Povo que habitava em Canaã",
+          "Ao deixar Canaã para onde foi Abraão",
+          "Chamada de a Casa de Deus"
+        ],
+        "columnB": [
+          "Egito",
+          "cananeus",
+          "levar Tera e Ló",
+          "Síria",
+          "Betel",
+          "Tera"
+        ],
+        "answers": [
+          5,
+          4,
+          1,
+          3,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A frente de um exército bem treinado Abraão voltou vitorioso da guerra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Rei de Salém, um tipo de Jesus, trouxe para Abraão pão e vinho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sodoma é um símbolo do mundo e seu rei um tipo de Satanás.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Como partes contratantes, Abraão e Deus passaram entre os altares.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Houve um erro no casamento de Abraão por Sara ser sua meia irmã.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "É certo que Abraão e Sara buscaram solução humana sem antes falar com Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Tendo no ventre um filho de Abraão, Agar não podia ser abandonada por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Abraão amava Agar e foi difícil despedi-la de sua casa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Após sua chamada em UR, Deus nunca deixou de falar com Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "O sacrifício de Isaque foi a prova mais difícil pela qual passou Abraão.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a possível idade de Abraão quando saiu de UR, na Caldeia.",
+          "answer": "60 ANOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Entre Gênesis 16:16 e 17:5, cite quanto tempo pode ter durado o silêncio de Deus.",
+          "answer": "DUROU CERCA DE 14 ANOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Sabemos que Sara era—",
+          "options": [
+            "estéril",
+            "uma linda mulher",
+            "filha de Tera",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Não foi esposa de Abraão —",
+          "options": [
+            "Sara",
+            "Agar",
+            "Quetura",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Chamou Abraão de amigo de Deus",
+          "Um rei gentio",
+          "Não era um mercenário",
+          "Foi ao encontro de Agar no deserto",
+          "Descendentes de Ismael",
+          "Descendentes de Isaque"
+        ],
+        "columnB": [
+          "o Anjo do Senhor",
+          "o Rei Josafá",
+          "os árabes",
+          "Abraão",
+          "os israelitas",
+          "Quedarlaome"
+        ],
+        "answers": [
+          4,
+          1,
+          5,
+          3,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Para Eliezer, somente com oração, encontraria a noiva escolhida para Isaque",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Como costume, os pais de Rebeca decidiram sobre seu casamento com Isaque.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Numa causa na qual está Jesus não pode haver qualquer tipo de problema.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sendo estéril, Rebeca orou, instantemente, para que Deus lhe desse um filho.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Isaque cometeu em Gerar o mesmo erro que Abraão cometera no Egito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que Isaque tinha um espírito pacífico, ordeiro e trabalhador.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "De Jacó, após seu nascimento, nada se diz sobre sua infância.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Atendendo pedido de Jacó, Rebeca induziu Isaque, seu esposo, ao erro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Embora tendo sido difícil, Labão conseguiu enganar Jacó.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Quando Jacó retornou, encontrou seu pai, porém, sua mãe já havia falecido.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite qual era a idade de Isaque quando casou e quando nasceram seus dois filhos.",
+          "answer": "CASOU AOS 40 E TEVE FILHOS AOS 60"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual foi a causa da morte de Raquel",
+          "answer": "MORREU DURANTE O PARTO DE SEU FILHO BENJAMIM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Em Berseba, Isaque —",
+          "options": [
+            "edificou um altar",
+            "armou sua tenda",
+            "cavou um poço",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Jacó morreu e foi sepultado —",
+          "options": [
+            "no Egito",
+            "em Canaã",
+            "em Harã",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Descendentes de Esaú",
+          "Descendentes de Jacó",
+          "Significado do nome Israel",
+          "Filho de Raquel",
+          "Filho de Bila",
+          "Filho de Leia"
+        ],
+        "columnB": [
+          "Dã",
+          "José",
+          "Judá",
+          "israelitas",
+          "edomitas",
+          "“príncipe com Deus”"
+        ],
+        "answers": [
+          5,
+          4,
+          6,
+          2,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Num primeiro momento os irmãos de José o colocaram numa cisterna.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "José foi vendido aos cananeus por vinte moedas de ouro",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A Bíblia não revela o valor pelo qual José foi vendido no Egito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "José, de simples escravo, foi promovido a gerente dos negócios de seu senhor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "José permaneceu seis meses na casa de Potifar, sendo depois colocado na prisão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sendo vitima de uma grande injustiça, aparentemente, Deus nada fez por ele.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sabendo ser inocente, num primeiro momento, José demonstrou profunda revolta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O copeiro jamais se lembrou do que José havia feito por ele na prisão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Submetendo seus irmãos à prova, José se convenceu de que eles haviam mudado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Próximo da morte, Jacó fez José jurar que seu corpo não seria sepultado no Egito.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o que José falava ao seu pai acerca de seus irmãos",
+          "answer": "FALAVA SOBRE A MÁ FAMA DELES"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que fez com que o copeiro se lembrasse de José .",
+          "answer": "O SONHO DE FARAÓ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "José revelou o sonho —",
+          "options": [
+            "de Faraó",
+            "do copeiro",
+            "do padeiro",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "No Egito, José permaneceu na prisão —",
+          "options": [
+            "três anos",
+            "treze anos",
+            "tempo indeterminado",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Evitou que José fosse morto",
+          "Comprou José dos ismaelitas",
+          "Filho de José",
+          "Filho mais novo de Jacó",
+          "Nome dado por Faraó a José",
+          "Sogro de José"
+        ],
+        "columnB": [
+          "Manassés",
+          "Rubens",
+          "Potifar",
+          "Potifera",
+          "Benjamim",
+          "Zafenate Panéia"
+        ],
+        "answers": [
+          3,
+          1,
+          2,
+          6,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Moisés não chamou o povo para a disputa com Faraó",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "No Livro de Êxodo podemos vem em Moisés uma figura de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O nascimento de Moisés nada teve a ver com o clamor do povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Quando chamado por Deus, Moisés pastoreava seu rebanho em Midiã.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A Bíblia diz que Deus quis matar Moisés numa estalagem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Com as dez pragas Deus ministrou aos egípcios dez aulas para comprovar seu poder.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O propósito de Deus foi levar o povo por um caminho mais longo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Caminhando na vontade de Deus não teremos problemas ou dificuldades.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A Lei Moral já existia muitos anos antes que Israel fosse o povo de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A Lei exigia e proibia, mas não dava condições para o homem fazer ou deixar de fazer.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual é o tema, ou o assunto central, do Livro de Êxodo.",
+          "answer": "A REDENÇÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas e quais as partes que compunham a Lei de Moisés",
+          "answer": "TRÊS - A LEI MORAL, A CIVIL E A RELIGIOSA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Chamado por Deus, Moisés alegou —",
+          "options": [
+            "falta de sabedoria",
+            "falta de eloquência",
+            "sua incapacidade",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Porta voz de Moisés —",
+          "options": [
+            "o Espírito Santo",
+            "Josué",
+            "Arão",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeiro a peregrinar no Egito",
+          "Sogro de Moisés",
+          "Filho de Moisés",
+          "Não conheceu José",
+          "Primeiro israelita levado para o Egito",
+          "Neto de Esaú"
+        ],
+        "columnB": [
+          "José",
+          "Amaleque",
+          "Jetro",
+          "Amosis I",
+          "Abraão",
+          "Eliézer"
+        ],
+        "answers": [
+          5,
+          6,
+          2,
+          4,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O Tabernáculo foi construído no deserto num período de nove meses.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "O recurso para construção do Tabernáculo veio parte de Deus e parte do povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo um símbolo da igreja, no Tabernáculo tinha apenas uma porta.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "As cinzas do holocausto, símbolo do corpo de Jesus, tinham que ser guardados num lugar seguro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na tenda, no lugar santo, somente o sumo sacerdote podia entrar uma vez no ano.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Visto de fora a cobertura da tenda não era uma visão agradável aos olhos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O espaço do lugar santíssimo era maior do que o do lugar santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Os pães da proposição deviam ser comidos por Arão e seus filhos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O lugar santo era também chamado de propiciatório.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Mesmo tendo resistido, não foi obrigado a construir um bezerro de ouro.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem deu o modelo e qual era a simbologia do Tabernáculo",
+          "answer": "O MODELO FOI DADO POR DEUS E ERA UM SÍMBOLO DA IGREJA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantos e quais eram o conteúdo da Arca",
+          "answer": "TRÊS — UM VASO DE OURO COM MANÁ; A VARA DE ARÃO; AS TÁBUAS DO CONCERTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Prata no Tabernáculo fala de —",
+          "options": [
+            "amor",
+            "justiça",
+            "redenção",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Num segundo momento as tábuas de pedra foram preparadas —",
+          "options": [
+            "por Deus",
+            "por Moisés",
+            "por Moisés e Arão",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Simbolismo da porta do Tabernáculo",
+          "Simbolismo da bacia de cobre",
+          "Quem podia entrar no Lugar Santíssimo",
+          "Tinham acesso ao lugar Santo",
+          "Castiçal de ouro",
+          ""
+        ],
+        "columnB": [
+          "sacerdotes",
+          "oração",
+          "santificação",
+          "igreja",
+          "sumo sacerdote"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Levítico, o “Livro das Leis”, é chamado pelos judeus de “Vaicrá”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na educação judaica, Levítico era o primeiro livro ensinado para as crianças.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No altar do holocausto alguns animais eram queimados até virar cinzas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Nas ofertas pacíficas a carne do animal era comida pelos ofertantes e sacerdotes.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O Sumo Sacerdote era escolhido pelos sacerdotes e não pelo povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os filhos de Arão foram ungidos sacerdotes pelo próprio Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A palavra expiação, no hebraico, significa perdoar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No Dia da Expiação somente o Sumo Sacerdote podia entrar no Lugar Santo dos Santos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Não existe qualquer simbolismo entre a Páscoa e a Ceia do Senhor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Israel, hoje, continua celebrando as sete festas instituídas por Deus.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual é a palavra chave do Livro de Levítico e quantas vezes ela é encontrada.",
+          "answer": "CHAVE— “SANTIDADE; ENCONTRADA 87 VEZES"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quem matou os filhos de Arão e porque foram mortos.",
+          "answer": "FORAM MORTOS POR DEUS PORQUE TROUXERAM FOGO EXTRANHO PERANTE SUA FACE."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Na oferta de manjares havia —",
+          "options": [
+            "farinha",
+            "azeite",
+            "incenso",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A palavra “Kipur” significa —",
+          "options": [
+            "perdão",
+            "confissão",
+            "cobertura",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um sacrifício oferecido em favor de todos",
+          "Uma figura da redenção",
+          "Simbolismo do “forno” na oferta de manjares",
+          "Uma santa convocação",
+          "Festa relacionada com o arrebatamento da igreja",
+          "Israel no milênio"
+        ],
+        "columnB": [
+          "trombetas",
+          "sofrimento de Jesus",
+          "expiação",
+          "Festa dos Tabernáculos",
+          "Dia da Expiação",
+          "Páscoa"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No deserto, por duas vezes, Moisés ordenou a contagem do povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Dos que saíram do Egito com mais de vinte anos todos morreram no deserto.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sabemos que as datas, dias, meses e anos, citados neste livro, não são precisas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Todo sacerdote era levita, mas nem todo levita podia ser sacerdote.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Não podemos afirmar, com certeza, o tempo que Israel permaneceu no Sinai.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que a murmuração e a incredulidade agridem a honra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sabemos, pela Bíblia, que Miriâ, irmã de Moisés, era uma sacerdotisa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Não se pode afirmar, com precisão, o tempo que Israel permaneceu no deserto.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na vontade permissiva de Deus as coisas podem dar certo, ou não.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Não sendo israelita, podemos afirmar que Balaão era um falso profeta.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome que os judeus deram para o quarto livro do Antigo Testamento",
+          "answer": "O NOME DADO PELOS JUDEUS FOI “NO DESERTO”"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem eram os que foram chamados de “vulgo”.",
+          "answer": "ERAM PRINCIPALMENTE OS EGIPCIOS QUE ACOMPANHARAM OS ISRAELITAS."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Coré não era —",
+          "options": [
+            "da tribo de Levi",
+            "sacerdote",
+            "levita",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "No caminho de Moabe, falou, ou falaram com Balaão —",
+          "options": [
+            "os enviados de Baraque",
+            "um anjo",
+            "um jumento",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Encontramos o homem perdido",
+          "Vemos o homem redimido",
+          "O homem em adoração",
+          "A caminhada da igreja em direção a Canaã",
+          "Deuteronômio, literalmente, significa",
+          "A tradição judaica intitula Deuteronômio"
+        ],
+        "columnB": [
+          "cópia, repetição",
+          "“Mishanet Torah”",
+          "Gênesis",
+          "Êxodo",
+          "Números",
+          "Levítico"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Moisés dividiu o Livro de Deuteronômio em 34 capítulos e 959 versículos",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Repetição, ou cópia da lei, é como a tradição judaica intitula o Livro de Deuteronômio",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Deuteronômio fala da morte de Moisés, assim, não pode ser ele o autor do livro",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Todos os que saíram do Egito com mais de vinte anos não entraram na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Ao saber que ia morrer, o coração de Moisés voltou-se para a obra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em seu último discurso, Moisés lamentou não poder entrar na terra",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Moisés recomenda a nova geração ser grata, obediente a Deus na nova terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Moisés lembrou o povo sobre a escolha da Tribo de Levi para o serviço sagrado",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No deserto Deus falou que Israel não teria um rei tal como as outras nações.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Morto, Moisés, seu corpo foi enterrado pelo povo nas campinas de Moabe.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Ao saber que ia morrer, cite quem Moisés indicou como seu substituto",
+          "answer": "MOISÉS NÃO FEZ NENHUMA INDICAÇÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Após acampar em Moabe, cite por quanto tempo Moisés falou sobre o que está escrito em Deuteronômio",
+          "answer": "FALOU PELO ESPAÇO DE UM MÊS."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Moisés falou sobre a necessidade de celebrar a festa -",
+          "options": [
+            "da Páscoa",
+            "do Pentecoste",
+            "do Tabernáculo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Com relação a entrar na terra, Moisés —",
+          "options": [
+            "sabia que não entraria",
+            "cria que poderia entrar",
+            "não queria entrar",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Local do último acampamento",
+          "Local do episódio com os dez espias",
+          "Olhando para trás",
+          "Olhando para o alto",
+          "Olhando para a frente",
+          "Exortação à fidelidade"
+        ],
+        "columnB": [
+          "terceiro discurso",
+          "quarto discurso",
+          "Cades Barneia",
+          "primeiro discurso",
+          "Moabe",
+          "segundo discurso"
+        ],
+        "answers": [
+          5,
+          6,
+          2,
+          3,
+          1,
+          4
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "EVAN_2",
+  "title": "Os Evangelhos - V2",
+  "tfQuestions": [
+    {
+      "id": "evan2-tf-1",
+      "question": "Foram quatro os evangelhos para que tivéssemos uma biografia completa de Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "evan2-tf-2",
+      "question": "Jesus deixou claro a impossibilidade da edificação de uma casa sobre a areia.",
+      "answer": "F"
+    },
+    {
+      "id": "evan2-tf-3",
+      "question": "Onde não era desejado Jesus não insistia em permanecer.",
+      "answer": "V"
+    },
+    {
+      "id": "evan2-tf-4",
+      "question": "Segundo profetizou Isaías a glória do segundo templo seria maior que a do primeiro.",
+      "answer": "F"
+    },
+    {
+      "id": "evan2-tf-5",
+      "question": "Marcos não deu destaque a Jesus como sendo um grande mestre",
+      "answer": "V"
+    },
+    {
+      "id": "evan2-tf-6",
+      "question": "Jesus negou o pedido que lhe foi feito pelo gardareno.",
+      "answer": "V"
+    },
+    {
+      "id": "evan2-tf-7",
+      "question": "Dos quatro evangelhos, foi Lucas que mais detalhou a infância de Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "evan2-tf-8",
+      "question": "Pela lei romana os condenados à morte de cruz eram pregados e não amarrados na cruz.",
+      "answer": "F"
+    },
+    {
+      "id": "evan2-tf-9",
+      "question": "Em seu evangelho João procurou mostrar Jesus como um homem perfeito.",
+      "answer": "F"
+    },
+    {
+      "id": "evan2-tf-10",
+      "question": "Convencer o mundo do pecado, da justiça e do juízo é uma missão do Espírito Santo.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "evan2-mc-1",
+      "question": "A única diferença entre as dez virgens -",
+      "options": [
+        "Estava nas suas vestes",
+        "Algumas não tinham lâmpadas",
+        "Algumas dormiram",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "evan2-mc-2",
+      "question": "Em relação à morte de Jesus, os dois discípulos deixaram Jerusalém -",
+      "options": [
+        "Oito dias depois",
+        "No dia de sua morte",
+        "No terceiro dia",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "evan2-mc-3",
+      "question": "Para levar alguém a Jesus é preciso —",
+      "options": [
+        "Conhecer Jesus",
+        "Amor pelas almas",
+        "Persistência para vencer dificuldades",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "evan2-mc-4",
+      "question": "Ao cego de nascença Jesus ordenou —",
+      "options": [
+        "Que seria curado no tanque de Betesda",
+        "Ir lavar no tanque de Betesada",
+        "Que ao lavar seria curado",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "evan2-mp-1",
+      "left": "Divindade de Jesus como Filho de Deus",
+      "right": "Evangelho de João"
+    },
+    {
+      "id": "evan2-mp-2",
+      "left": "Humanidade de Jesus como servo",
+      "right": "Evangelho de Marcos"
+    },
+    {
+      "id": "evan2-mp-3",
+      "left": "Humanidade de Jesus como homem perfeito",
+      "right": "Evangelho de Lucas"
+    },
+    {
+      "id": "evan2-mp-4",
+      "left": "Soberania de Jesus como Rei",
+      "right": "Evangelho de Mateus"
+    },
+    {
+      "id": "evan2-mp-5",
+      "left": "Fixou residência após deixar Nazaré",
+      "right": "Cafarnaum"
+    },
+    {
+      "id": "evan2-mp-6",
+      "left": "Lugar onde Jesus libertou uma endemoninhada",
+      "right": "Fenícia"
+    }
+  ]
+}

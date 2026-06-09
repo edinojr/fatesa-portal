@@ -1,0 +1,134 @@
+{
+  "id": "HISI_3",
+  "title": "História de Israel 1 - V3",
+  "tfQuestions": [
+    {
+      "id": "hisi3-tf-1",
+      "question": "Foram poucas as vezes, na história, que Deus deixou de se comunicar com os homens.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi3-tf-2",
+      "question": "Após a formação de Israel Deus não mais tratava, diretamente, com as demais nações existentes.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi3-tf-3",
+      "question": "Pela Bíblia podemos afirmar que Abraão permaneceu em Harã por muito pouco tempo.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi3-tf-4",
+      "question": "A história de José encontra-se no Livro de Gênesis do capítulo 37 a 50.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi3-tf-5",
+      "question": "Em Gilgal, após a primeira colheita de trigo, Deus não mandou mais o maná.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi3-tf-6",
+      "question": "A ciência não comprovou o relato bíblico de que o sol e a lua pararam “quase um dia inteiro”.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi3-tf-7",
+      "question": "Jefté, por ser filho bastardo, foi rejeitado por seus irmãos, mas foi aprovado por Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi3-tf-8",
+      "question": "A colocação de Rute na genealogia de Jesus é uma simbologia da salvação dos gentios.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi3-tf-9",
+      "question": "A monarquia foi o sistema de governo, em Israel, até ser levado para o cativeiro.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi3-tf-10",
+      "question": "Quanto ao conteúdo não há diferença entre I e II Crônicas e I e II Paralelipômenos.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "hisi3-mc-1",
+      "question": "Um descendente de Abel -",
+      "options": [
+        "Enoque",
+        "Noé",
+        "Jesus",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "hisi3-mc-2",
+      "question": "Nome do esposo de Ester na história secular -",
+      "options": [
+        "Assuero",
+        "Xerxes I",
+        "Artaxerxes",
+        "Cambisis II"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "hisi3-mc-3",
+      "question": "O ponto fraco do Rei Saul –",
+      "options": [
+        "Envolvimento com mulheres",
+        "Apego à riqueza",
+        "Apego ao poder",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisi3-mc-4",
+      "question": "Primeiro desafio de Josué -",
+      "options": [
+        "Tomar Jericó",
+        "Atravessar o Jordão",
+        "Conquistar Gilgal",
+        "Circuncidar os israelitas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "hisi3-mp-1",
+      "left": "Feriu 600 homens com um ferrão",
+      "right": "Sangar"
+    },
+    {
+      "id": "hisi3-mp-2",
+      "left": "Venceu um exército tocando buzinas",
+      "right": "Gideão"
+    },
+    {
+      "id": "hisi3-mp-3",
+      "left": "Juiz morto por uma mulher",
+      "right": "Abimeleque"
+    },
+    {
+      "id": "hisi3-mp-4",
+      "left": "Libertou Israel do jugo de Moabe",
+      "right": "Eúde"
+    },
+    {
+      "id": "hisi3-mp-5",
+      "left": "Nenhum registro de sua obra",
+      "right": "Elom"
+    },
+    {
+      "id": "hisi3-mp-6",
+      "left": "Local onde a mulher de um levita foi morta",
+      "right": "Gibeá"
+    }
+  ]
+}

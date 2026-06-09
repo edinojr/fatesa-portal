@@ -9,16 +9,30 @@ const DashboardBridge = () => {
 
   useEffect(() => {
     if (!loading && profile) {
-      const activeRole = localStorage.getItem('fatesa_active_role')
       const roles = (profile.caminhos_acesso as string[]) || []
+      const storedRole = localStorage.getItem('fatesa_active_role')
+
+      const isAdminUser = profile.tipo === 'admin' || roles.includes('admin') || roles.includes('suporte')
+      const isProfessorUser = profile.tipo === 'professor' || roles.includes('professor')
+
+      // Se o usuário escolheu um papel específico, redirecionar para ele
+      if (storedRole === 'aluno') {
+        // Admin/professor escolheu ver como aluno - fica no dashboard
+        return
+      }
       
-      // If the user has a stored role that they actually possess, redirect them there
-      if (activeRole === 'admin' && (profile.tipo === 'admin' || roles.includes('admin') || roles.includes('suporte'))) {
+      if (storedRole === 'professor' && (isAdminUser || isProfessorUser)) {
+        navigate('/professor', { replace: true })
+        return
+      }
+
+      // Admin vai para admin por padrão
+      if (isAdminUser) {
         navigate('/admin', { replace: true })
-      } else if (activeRole === 'professor' && (profile.tipo === 'professor' || roles.includes('professor'))) {
+      } else if (isProfessorUser) {
         navigate('/professor', { replace: true })
       }
-      // Otherwise, they stay here and render the Student Dashboard (the default)
+      // Aluno fica no Dashboard
     }
   }, [profile, loading, navigate])
 
@@ -36,7 +50,7 @@ const DashboardBridge = () => {
     return <Navigate to="/login" replace />
   }
 
-  // If no redirection happened, it means Student is the active role (or default)
+  // Se nenhum redirecionamento aconteceu, é porque é Aluno (ou admin/professor escolheu ver como aluno)
   return <Dashboard />
 }
 

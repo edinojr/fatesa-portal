@@ -1,0 +1,134 @@
+{
+  "id": "DOUD_2",
+  "title": "Doutrina de Deus - V2",
+  "tfQuestions": [
+    {
+      "id": "doud2-tf-1",
+      "question": "No Antigo Testamento, com exceção de Israel, todos os povos adoravam ídolos.",
+      "answer": "F"
+    },
+    {
+      "id": "doud2-tf-2",
+      "question": "Segundo afirmou Paulo, Deus fez o homem reto, mas ele buscou muitas invenções.",
+      "answer": "F"
+    },
+    {
+      "id": "doud2-tf-3",
+      "question": "O panteísmo ensina que, no universo, Deus é tudo e tudo é Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "doud2-tf-4",
+      "question": "Embora seja o Senhor dos céus, Deus não é o Senhor da terra porque ela está sob o domínio de Satanás.",
+      "answer": "F"
+    },
+    {
+      "id": "doud2-tf-5",
+      "question": "Pela Bíblia sabemos que, quando necessário, Deus interfere no sentido de mudar o curso da história.",
+      "answer": "V"
+    },
+    {
+      "id": "doud2-tf-6",
+      "question": "Todos os atributos de Deus são comunicáveis em relação aos seus filhos.",
+      "answer": "F"
+    },
+    {
+      "id": "doud2-tf-7",
+      "question": "Sendo bom, por natureza, tudo que Deus faz tem como objetivo o bem.",
+      "answer": "V"
+    },
+    {
+      "id": "doud2-tf-8",
+      "question": "Para a solução de problemas, Salomão declarou ser melhor o valente do que o longânimo.",
+      "answer": "F"
+    },
+    {
+      "id": "doud2-tf-9",
+      "question": "Embora criado à imagem e semelhança de Deus, o homem foi criado menor que os anjos.",
+      "answer": "V"
+    },
+    {
+      "id": "doud2-tf-10",
+      "question": "A sequência, Pai, Filho e Espírito Santo, relaciona-se ao tempo da existência de cada um.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "doud2-mc-1",
+      "question": "Destruiu a serpente de metal -",
+      "options": [
+        "Moisés",
+        "Arão",
+        "Ezequias",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "doud2-mc-2",
+      "question": "Deus fez primeiro -",
+      "options": [
+        "Os céus",
+        "O homem",
+        "Os animais",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "doud2-mc-3",
+      "question": "Os céus manifestam -",
+      "options": [
+        "O juízo de Deus",
+        "A misericórdia de Deus",
+        "A glória de Deus",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "doud2-mc-4",
+      "question": "O Antigo Testamento condena a doutrina -",
+      "options": [
+        "Da Trindade",
+        "O monoteísmo",
+        "O politeísmo",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "doud2-mp-1",
+      "left": "Imanência",
+      "right": "Deus perto"
+    },
+    {
+      "id": "doud2-mp-2",
+      "left": "Transcendência",
+      "right": "Deus distante"
+    },
+    {
+      "id": "doud2-mp-3",
+      "left": "Humanismo",
+      "right": "Nega a personalidade de Deus"
+    },
+    {
+      "id": "doud2-mp-4",
+      "left": "Panteísmo",
+      "right": "Tudo é Deus"
+    },
+    {
+      "id": "doud2-mp-5",
+      "left": "Personalidade",
+      "right": "Inteligência, sentimento, vontade"
+    },
+    {
+      "id": "doud2-mp-6",
+      "left": "Humanidade",
+      "right": "Objeto do amor de Deus"
+    }
+  ]
+}

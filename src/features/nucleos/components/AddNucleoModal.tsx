@@ -258,7 +258,7 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
               </div>
 
               {(isAdmin || isEditing) && (
-                <div style={{ padding: '1.25rem', background: 'rgba(156, 39, 176, 0.03)', borderRadius: '12px', border: '1px solid rgba(156, 39, 176, 0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ padding: '1.25rem', background: 'rgba(0, 86, 179, 0.03)', borderRadius: '12px', border: '1px solid rgba(0, 86, 179, 0.1)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     Controles de Visibilidade
                   </h4>

@@ -1,0 +1,134 @@
+{
+  "id": "ESP_2",
+  "title": "Espírito Santo - V2",
+  "tfQuestions": [
+    {
+      "id": "esp2-tf-1",
+      "question": "A expressão “quando vier o Consolador” refere se ao dia do arrebatamento da igreja",
+      "answer": "F"
+    },
+    {
+      "id": "esp2-tf-2",
+      "question": "Podemos afirmar que o Espírito Santo nunca fala de si mesmo.",
+      "answer": "V"
+    },
+    {
+      "id": "esp2-tf-3",
+      "question": "Ser ungido com o Espírito Santo foi uma concessão especial feita a Jesus",
+      "answer": "F"
+    },
+    {
+      "id": "esp2-tf-4",
+      "question": "Com a presença do Espírito Santo, Jesus não tinha muita necessidade de orar.",
+      "answer": "F"
+    },
+    {
+      "id": "esp2-tf-5",
+      "question": "Ao aceitar Jesus como Salvador o homem é selado com o Espírito Santo.",
+      "answer": "V"
+    },
+    {
+      "id": "esp2-tf-6",
+      "question": "A formação do fruto do Espírito não acontece num único ato.",
+      "answer": "V"
+    },
+    {
+      "id": "esp2-tf-7",
+      "question": "Mansidão não pode ser confundida com falta de autoridade nem covardia.",
+      "answer": "V"
+    },
+    {
+      "id": "esp2-tf-8",
+      "question": "O dom espiritual tem como objetivo a santificação daquele que o recebe.",
+      "answer": "F"
+    },
+    {
+      "id": "esp2-tf-9",
+      "question": "Somente Jesus é quem pode doar ao homem os dons do Espírito.",
+      "answer": "F"
+    },
+    {
+      "id": "esp2-tf-10",
+      "question": "Não mais pela graça, mas haverá salvação durante a Grande Tribulação.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "esp2-mc-1",
+      "question": "O Espírito Santo concedeu a Jesus a unção para ser -",
+      "options": [
+        "Sacerdote",
+        "Profeta",
+        "Rei",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esp2-mc-2",
+      "question": "É uma concessão feita pelo Pai",
+      "options": [
+        "Dons espirituais",
+        "Dons de serviços",
+        "Dons naturais",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "esp2-mc-3",
+      "question": "O Espírito Santo no arrebatamento —",
+      "options": [
+        "Ressuscitará os mortos",
+        "Transformara os vivos",
+        "Levará a igreja",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "esp2-mc-4",
+      "question": "Os dons espirituais são dados como —",
+      "options": [
+        "Presentes",
+        "Instrumento de trabalho",
+        "Premio por serviços prestados",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "esp2-mp-1",
+      "left": "Capacidade de liderança",
+      "right": "Dom natural"
+    },
+    {
+      "id": "esp2-mp-2",
+      "left": "Exortar e exercer misericórdia",
+      "right": "Dons assistenciais"
+    },
+    {
+      "id": "esp2-mp-3",
+      "left": "Manifestação sobrenatural do poder de Deus",
+      "right": "Dons espirituais"
+    },
+    {
+      "id": "esp2-mp-4",
+      "left": "Semelhança com os dons espirituais",
+      "right": "Dons de inspiração diabólica"
+    },
+    {
+      "id": "esp2-mp-5",
+      "left": "Concessão dos dons ministeriais",
+      "right": "Jesus"
+    },
+    {
+      "id": "esp2-mp-6",
+      "left": "Concessão dos dons naturais",
+      "right": "Deus Pai"
+    }
+  ]
+}

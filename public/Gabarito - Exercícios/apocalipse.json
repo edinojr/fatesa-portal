@@ -1,0 +1,1196 @@
+{
+  "id": "apocalipse",
+  "title": "Apocalipse",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A expressão apocalipse, em português, significa revelação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sendo um livro de difícil interpretação foram poucos os autores que escreveram sobre Apocalipse.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Alguns teólogos colocam dúvidas sobre quem é o autor do livro de Apocalipse.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A literatura apocalíptica usava código e era quase sempre anônima.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Segundo a Bíblia, João foi colocado num barril de óleo fervente.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O Imperador Romano foi usado por Deus para colocar João na Ilha de Pátmos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A correção foi o instrumento usado por Deus para levar João à Ilha de Pátmos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O assunto central do Livro de Apocalipse é o arrebatamento da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "João declarou ter visto no céu um trono branco e Jesus assentado nele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "A grande tribulação terminará com a manifestação de Jesus em glória.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar no território de qual país situa-se a Ilha de Pátmos -",
+          "answer": "GRÉCIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o sentido das expressões “Alfa” e “Ômega”",
+          "answer": "PRINCÍPIO E FIM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O Livro de Apocalipse foi escrito por João —",
+          "options": [
+            "irmão de Tiago",
+            "apóstolo",
+            "filho de Zebedeu",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "O Apocalipse é um livro —",
+          "options": [
+            "histórico",
+            "apócrifo",
+            "escatológico",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Igreja da qual João era bispo",
+          "Mandou prender João",
+          "Libertou João",
+          "Lugar onde João esteve preso",
+          "Os acusadores de João",
+          "Lugar onde João foi julgado’"
+        ],
+        "columnB": [
+          "Roma",
+          "os judeus",
+          "Ilha de Pátmos",
+          "Imperador Nerva",
+          "Imperador Domiciano",
+          "Éfeso"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não podemos afirmar, com segurança, ter Jesus ressuscitado num domingo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para os judeus a única finalidade do castiçal era a de iluminar o tabernáculo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os braços do castiçal não eram iguais, uns eram maiores e outros menores.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Entre os castiçais João viu Jesus vestido como um sacerdote.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É Jesus quem renova em nós o azeite para que nossa lâmpada permaneça acesa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "João declarou ter visto Jesus entre os sete anjos das igrejas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão “Filho do Homem” identifica Jesus como sendo a “semente da mulher”",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Jesus sempre se identificou como “Filho de Deus” e não como “Filho do Homem”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na mão direita de Jesus, João declarou ter visto os sete pastores das sete igrejas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Jesus enumerou os acertos e também os erros das sete igrejas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas vezes a expressão “Filho do Homem” é encontrada no Apocalipse.",
+          "answer": "APENAS DUAS VEZES"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas e de onde eram as chaves que João viu na mão de Jesus.",
+          "answer": "DUAS — DA MORTE E DO INFERNO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Instituiu o domingo como dia do Senhor —",
+          "options": [
+            "Lei de Moisés",
+            "Jesus",
+            "Imperador Constantino",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "As sete igrejas do Apocalipse estavam localizadas —",
+          "options": [
+            "em Israel",
+            "na Ásia",
+            "uma em cada país",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Olhos como chama de fogo",
+          "Pés semelhantes a latão reluzente",
+          "Voz como de muitas águas",
+          "Espada aguda de dois fios",
+          "Desmaiou na presença de Deus",
+          "Caiu aos pés de Jesus como morto"
+        ],
+        "columnB": [
+          "um apóstolo",
+          "um profeta",
+          "Palavra de Deus",
+          "barulho do mar",
+          "juízo a ser executado",
+          "onisciência de Deus"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Dentre centenas de igrejas locais, as sete foram selecionadas por Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Tal como Jesus, também Paulo enviou epístolas para sete igrejas locais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "É certo haver um sentido místico que diferencia o número sete dos outros números.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que vivemos hoje no período das igrejas de Éfeso e Laodiceia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Apenas de passagem, Paulo esteve em Éfeso em sua segunda viagem missionária.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A igreja de Éfeso recebeu de Jesus elogios e nenhuma censura.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Para a igreja de Esmirna, Jesus se identificou como aquele “que foi morto e reviveu”",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A igreja de Esmirna se destacou por ser uma igreja rica e também abençoada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A igreja de Pérgamo recebeu de Jesus elogios e nenhuma censura.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que a doutrina dos “nicolaitas” ainda pode ser encontradas, hoje, entre os evangélicos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas cartas a igreja de Éfeso recebeu e quais foram seus eminentes.",
+          "answer": "DUAS, UMA DE JESUS E A OUTRA DE PAULO"
+        },
+        {
+          "id": "sa2",
+          "question": "Das sete igrejas, citar qual foi a mais idólatra.",
+          "answer": "A IGREJA DE PÉRGAMO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Recebeu de Jesus uma declaração de amor —",
+          "options": [
+            "igreja de Laudiceia",
+            "igreja de Filadélfia",
+            "igreja de Éfeso",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "As sete igrejas situavam-se —",
+          "options": [
+            "em Israel",
+            "na Turquia",
+            "na Grécia",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Igreja perseguida",
+          "Igreja apostólica",
+          "Igreja morna",
+          "Igreja mundana",
+          "Igreja profana",
+          "Igreja morta"
+        ],
+        "columnB": [
+          "Éfeso",
+          "Laudiceia",
+          "Pérgamo",
+          "Tiatira",
+          "Sardes",
+          "Esmirna"
+        ],
+        "answers": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Tiatira era a maior dentre as sete igrejas mencionadas em Apocalipse.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Há quem pense que o evangelho chegou a Tiatira através de Lídia, vendedora de púrpura.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O pastor da igreja de Tiatira recebeu elogios de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em Tiatira havia uma igreja fiel ao lado de uma igreja profana.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sardes era uma igreja pobre no sentido material e morta no sentido espiritual.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "o “anjo” da igreja de Sardes recebeu um elogio de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Ao afirmar “eu sei as tuas obras”, Jesus reprovou o “anjo’ da igreja de Filadélfia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A igreja de Filadélfia era uma igreja pequena entre as demais igrejas mencionadas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A igreja de Laodicéia recebeu elogios e nenhuma censura de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "No sentido material a igreja de Laodicéia era rica e poderosa.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas vezes a expressão “Filho de Deus” é citada no Livro de Apocalipse.",
+          "answer": "APENAS UMA VEZ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar, hoje, em qual país situavam-se as sete igrejas do Apocalipse.",
+          "answer": "NA TURQUIA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Igreja onde Jezabel foi citada—",
+          "options": [
+            "Éfeso",
+            "Tiatira",
+            "Sardes",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Uma igreja que amava a Palavra de Deus —",
+          "options": [
+            "Laodiceia",
+            "Pérgamo",
+            "Filadélfia",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pés como “latão reluzente”",
+          "Igreja profana",
+          "Os “sete espíritos”",
+          "Não recebeu censura ou repreensão",
+          "Recebeu de Jesus uma declaração de amor",
+          "Igreja que deixou Jesus do lado de fora"
+        ],
+        "columnB": [
+          "Filadélfia",
+          "Laodicéia",
+          "Espírito Santo",
+          "Tiatira",
+          "juízo prestes a ser executado",
+          "Smirna"
+        ],
+        "answers": [
+          5,
+          6,
+          3,
+          2,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Apocalipse, do capítulo 4 ao 22, tem um sentido escatológico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A prisão de João era ilegal visto que o Imperador não sendo juiz,",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Por ordem de Jesus, um anjo libertou João e o levou para o céu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em relação ao arrebatamento da igreja não existe um pensamento uniforme.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "É um fato inconteste de que o arrebatamento da igreja ocorrerá antes da grande tribulação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A grande tribulação é descrita como o grande dia da ira de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "João viu um trono branco posto no céu e Jesus assentado sobre ele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Nada indica que haverá misericórdia durante o período da grande tribulação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na Bíblia, chifre é símbolo de poder e o número sete é o número da perfeição.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Os juízos da grande tribulação são chamados de “Juízo de endurecimento”.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que pode simbolizar o arrebatamento de João.",
+          "answer": "PODE SIMBOLIZAR O ARREBATAMENTO DA IGREJA"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação ao arrebatamento da igreja, citar o que deve ser essencial para nós.",
+          "answer": "O ESSENCIAL É ESTARMOS PREPARADOS PARA O DIA DO ARREBATAMENTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Cavalo amarelo —",
+          "options": [
+            "morte",
+            "carestia",
+            "paz",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "A grande tribulação atingirá —",
+          "options": [
+            "somente Israel",
+            "todo Oriente",
+            "toda terra",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Símbolo de governo, de poder",
+          "Misericórdia de Deus",
+          "Santos do Antigo e Novo Testamento",
+          "Plenitude do Espírito Santo",
+          "Relâmpagos, trovões, vozes",
+          "Cordeiro mais forte que um dragão"
+        ],
+        "columnB": [
+          "Jesus",
+          "juízo",
+          "sete espíritos",
+          "24 anciãos",
+          "Arcos Iris",
+          "Trono"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sendo, como é, redonda, não é correto, biblicamente, falar em quatro cantos da terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A Bíblia, em Apocalipse, deixa claro que haverá salvação durante a grande tribulação",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os 144 mil citados em Apocalipse, serão escolhidos entre judeus e gentios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Como povo de Deus, a igreja não ocupou o lugar dos judeus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "As pragas mencionadas no toque das trombetas são simbólicas e não literais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os juízos das três últimas trombetas serão piores do que os das quatro primeiras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão “estrela da manhã”, na Bíblia, refere-se tão somente a Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na Bíblia, chave é símbolo de poder e autoridade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na Bíblia, a expressão “por o pé” significa tomar posse de um lugar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que as “duas testemunhas”, do Apocalipse, são Moisés e Elias.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No toque da segunda trombeta cite o que João viu ardendo em fogo.",
+          "answer": "DECLAROU TER VISTO ALGO PARECIDO COM UM GRANDE MONTE"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que João tomou da mão do anjo e comeu",
+          "answer": "UM LIVRINHO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Imperador usado por Deus para libertar João —",
+          "options": [
+            "Dominiciano",
+            "Trajano",
+            "Nerva",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Na Bíblia, medir fala de —",
+          "options": [
+            "misericórdia",
+            "juízo",
+            "comércio",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeira trombeta",
+          "Segunda trombeta",
+          "Terceira trombeta",
+          "Quarta trombeta",
+          "Quinta trombeta",
+          "Sexta trombeta"
+        ],
+        "columnB": [
+          "revelação das profundezas de Satanás",
+          "a cavalaria infernal",
+          "terça parte da terra queimada",
+          "terça parte do mar atingida",
+          "parte do sol, lua e estrelas",
+          "terça parte dos rios e fontes de água"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que a “mulher vestida de sol” fala sobre a igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No início de seu governo o Anticristo fará uma aliança com Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "João declarou ter visto um grande Dragão vermelho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não há nenhuma simbologia referente a cor vermelha do grande dragão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Todos os comentaristas concordam ser Jesus o chamado “filho varão”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A “mulher que fugiu para o deserto” nada tem a ver com Maria, mãe de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O antigo Impero Romano ressuscitado será a base do governo do Anticristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Falso Profeta exercerá a função de um líder religioso.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Não há qualquer semelhança entre os 144 mil mencionados no capítulo 7 com os do capítulo 14.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que durante a grande tribulação não haverá mensagem de “boas novas”.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Na Bíblia, cite qual é a simbologia do “chifre”.",
+          "answer": "É SIMBOLO DE FORÇA E PODER"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a quem Paulo se referiu quando afirmou “vós sabeis o que o detém”",
+          "answer": "AO ESPÍRITO SANTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A “mulher vestida de sol” fala provavelmente, sobre —",
+          "options": [
+            "Maria",
+            "Israel",
+            "igreja",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Na “grande tribulação” os homens estarão debaixo da —",
+          "options": [
+            "ira de Deus",
+            "ira de Satanás",
+            "ira do Cordeiro",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Lua debaixo dos pés",
+          "Filho Varão",
+          "“Besta que subiu da terra”",
+          "Grande Dragão, antiga serpente",
+          "Batalhou contra o Dragão",
+          "Terça parte das estrelas do céu"
+        ],
+        "columnB": [
+          "Satanás",
+          "Arcanjo Miguel",
+          "anjos caídos",
+          "Nação de Israel",
+          "o Filho do Homem",
+          "Falso Profeta"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sendo, como é, amor, não é correto falar sobre a ira de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Durante a grande tribulação não haverá salvação pela graça.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "João declarou ter visto um mar de vidro misturado com fogo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "No juízo das sete taças não haverá nenhuma interrupção.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Não há qualquer semelhança entre os juízos do Apocalipse e os do Egito.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A expressão trono da besta diz respeito ao trono do Anticristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Não é correto falar em prodígios que serão feitos por demônios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A expressão Rio Eufrates deve ser vista no sentido simbólico e não literal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A expressão babilônia mística não fala de uma cidade real e literal.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Babilônia será reconstruída e também será o maior centro financeiro da terra.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar em que as pragas das taças são diferentes das pragas das trombetas.",
+          "answer": "SÃO DIFERENTES QUANTO AO ALCANSE, OU ABRANGÊNCIA DAS MESMAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que o sétimo anjo mostrou a João num deserto",
+          "answer": "UMA MULHER ASSENTADA SOBRE UMA BESTA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Babilônia mística —",
+          "options": [
+            "fundada por Ninrode",
+            "está situada no Iraque",
+            "não é uma cidade real",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Os convidados para as Bodas do Cordeiro —",
+          "options": [
+            "a igreja",
+            "os santos do Antigo Testamento",
+            "os anjos",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeira taça",
+          "Segunda taça",
+          "Terceira taça",
+          "Quarta taça",
+          "Quinta taça",
+          "Sexta taça"
+        ],
+        "columnB": [
+          "Rio Eufrates",
+          "sol",
+          "mar",
+          "trono da besta",
+          "águas potáveis",
+          "terra"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A expressão segunda vinda de Jesus refere-se ao arrebatamento da igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Uma das esperanças da igreja é a vitória do bem sobre o mal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "No arrebatamento Jesus não virá à terra, mas receberá a igreja nas nuvens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A Batalha do Armagedom acontecerá no Dia da Revelação de Jesus em glória.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O Dia de Cristo será o período entre o arrebatamento e o Dia da Revelação de Jesus em glória.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A prisão de Satanás deve ser vista como simbólica e não literal",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "João declarou ter visto o Arcanjo Miguel com uma “cadeia” em sua mão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na Bíblia a expressão milênio não é encontrada nenhuma vez.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "É certo que no milênio o trono de Jesus estará na Jerusalém celestial.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "A Bíblia não fala nenhuma vez sobre o julgamento futuro de Satanás.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual é a grande esperança da igreja.",
+          "answer": "O DIA DO ARREBATAMENTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Após o arrebatamento, citar quantos e quais serão os eventos em relação à igreja",
+          "answer": "DOIS– O JULGAMENTO PERANTE O TRIBUNAL DE CRISTO E AS BODAS DO CORDEIRO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Cavalo, na Bíblia, é símbolo de —",
+          "options": [
+            "violência",
+            "paz",
+            "força",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Morte no milênio —",
+          "options": [
+            "não haverá",
+            "haverá de forma restrita",
+            "haverá só para os velhos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeira vinda de Jesus",
+          "Em poder e grande glória",
+          "Anticristo e Falso Profeta",
+          "Satanás",
+          "Jesus visto só pelos salvos",
+          "Dia da Revelação, em glória"
+        ],
+        "columnB": [
+          "lago de fogo e enxofre",
+          "veio em fraqueza",
+          "Dia da Revelação do Senhor",
+          "Dia do Arrebatamento",
+          "Monte das Oliveiras",
+          "preso por mil anos"
+        ],
+        "answers": [
+          3,
+          1,
+          2,
+          5,
+          6,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Todos os ímpios, vivos e mortos serão julgados no Juízo do Trono Branco.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Os ímpios ressuscitarão em corpos imortais, porém, sem nenhuma glória.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os chamados de outros mortos são todos os que morreram no Antigo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O Trono Branco será grande porque nele estarão assentados as Três Pessoas da Trindade",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A Bíblia não revela o lugar onde o Trono Branco será colocado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "O fato de João não ter visto o arco íris no Trono Branco não muda a forma do juízo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "No final do milênio a Jerusalém terrestre será ampliada para ser a Jerusalém celestial.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que a Jerusalém celestial não é um símbolo da igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O Apóstolo João declarou ter visto a formosa Jerusalém celestial.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "João procurou descrever, com detalhes, o “grande e alto muro” da Jerusalém celestial.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar como serão os corpos dos ímpios que estarão diante do Trono Branco",
+          "answer": "SERÃO CORPOS IMORTAIS, PORÉM, SEM NENHUMA GLÓRIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como Daniel afirmou que os ímpios ressuscitariam",
+          "answer": "PARA VERGONHA E DESPREZO ETERNO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os ímpios ressuscitarão —",
+          "options": [
+            "em duas etapas",
+            "todos num só momento",
+            "em três etapas",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Os chamados “outros mortos” são —",
+          "options": [
+            "os judeus",
+            "os do Antigo Testamento",
+            "todos os ímpios",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Julgamento dos nossos pecados",
+          "Julgamento dos ímpios mortos",
+          "Julgamento das obras dos santos",
+          "Julgamento das nações vivas",
+          "Julgamento de Israel",
+          "Julgamento dos santos"
+        ],
+        "columnB": [
+          "Tribunal de Cristo",
+          "Cruz do Calvário",
+          "Trono Branco",
+          "não serão julgados",
+          "na terra",
+          "grande tribulação"
+        ],
+        "answers": [
+          3,
+          1,
+          2,
+          6,
+          4,
+          5
+        ]
+      }
+    }
+  ]
+}

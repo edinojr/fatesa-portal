@@ -1,0 +1,1196 @@
+{
+  "id": "eclesiologia",
+  "title": "Eclesiologia",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O homem foi o único ser criado para viver na terra e também no céu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Num primeiro momento Deus não tinha como comunicar-se com o homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Ao chamar Abraão, em Ur, Deus prometeu, apenas, mostrar-lhe uma terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não estava no projeto de Deus que seu povo fosse viver, por uns tempos, no Egito",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Biblicamente, não se pode confundir a igreja com a nação de Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "São poucas as vezes que encontramos promessas espirituais para a nação de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Senhor Jesus deixou claro que o paraíso para a igreja não será aqui na terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Plantada num terreno fértil, a vinha de Israel tinha tudo para produzir bons frutos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "É difícil, na prática, entender a diferença entre a vinha do Antigo e do Novo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos ver nos apóstolos os trabalhadores convocados na primeira hora do dia.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas são as chamadas grandes doutrinas bíblicas.",
+          "answer": "DEZ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas e quais as chamadas vinhas do Senhor.",
+          "answer": "DUAS—ISRAEL E A IGREJA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Possui duas naturezas—",
+          "options": [
+            "Deus",
+            "homem",
+            "os anjos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Ao chamar Abraão, em Ur, Deus prometeu -",
+          "options": [
+            "mostrar lhe uma terra",
+            "dar ao seus descendentes uma terra",
+            "dar a ele uma terra",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Uma vocação terrena",
+          "Uma vocação celestial",
+          "Uma promessa terrena para a igreja",
+          "Aproximando a noite",
+          "Um dos símbolos de Israel",
+          "Primeiros trabalhadores recrutados"
+        ],
+        "columnB": [
+          "doze apóstolos",
+          "figueira",
+          "Israel",
+          "aflição",
+          "igreja",
+          "término do Dia da Graça"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em relação ao céu não existe nenhuma promessa para a Nação de Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "No Sinai Israel se tornou um povo completamente livre.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Ao levar a proposta de Deus, Moisés deu três dias para que o povo pensasse.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Onde Israel falhou, a igreja, hoje, não pode falhar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Embora sendo um homem, na Bíblia não encontramos nenhum erro grave de Moisés.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que a escolha de Israel foi um ato unilateral de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Coube a segunda geração de Israel executar a ordem de Deus exterminando o povo da terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Ser um reino sacerdotal foi uma ordem de Deus que Israel não conseguiu cumprir.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que o plano de Deus começava e terminava com Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ninguém pode ser peculiar para Deus sem ser também santo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas e quais as condições para que Israel fosse um povo especial para Deus.",
+          "answer": "TRÊS - SER PECULIAR, SER UM REINO SACERDOTAL E POVO SANTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Da Lei de Moisés, cite quantas exigências foram confirmadas no Concílio de Jerusalém",
+          "answer": "NENHUMA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Em Jesus a Lei Cerimonial foi –",
+          "options": [
+            "revogada",
+            "modificada",
+            "cumprida",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "É uma maneira de fazer a obra de Deus –",
+          "options": [
+            "indo",
+            "orando",
+            "contribuindo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Ser um reino sacerdotal",
+          "Ser um povo santo",
+          "Ser um povo especial",
+          "Na Nova Aliança não mudou",
+          "Na Nova Aliança mudou",
+          "promessas de Deus para Israel"
+        ],
+        "columnB": [
+          "o Sumo Sacerdote",
+          "terrenas",
+          "segundo condição",
+          "terceira condição",
+          "o mediador",
+          "primeira condição"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Todas as nações gentílicas falharam na Dispensação da Lei.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Todos os propósitos de Deus em relação a Israel foram cumpridos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Israel fazia parte do plano, mas Israel não era o plano de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Apesar de Israel ter lutado contra o mal é certo que não conseguiu vencê-lo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Quanto a salvação os judeus não têm nenhum privilégio nesta Dispensação da Graça.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "É certo que o objetivo da lei de Moisés era o de trazer o Salvador e a salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A Dispensação da Graça terminará com o arrebatamento da igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para o judeu, hoje, aceitar Jesus como Salvador é mais difícil do que para o gentio.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Deus, até hoje, não conseguiu cumprir todas as promessas feitas a Abraão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "No milênio o Senhor fará brotar a justiça e o louvor para quase todas as nações.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos e quais os propósitos de Deus em relação a Israel.",
+          "answer": "TRÊS—MOSTRAR SEU PODER A TODAS AS GENTES; DAR AO MUNDO SUA PALAVRA; TRAZER SEU FILHO JESUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto a salvação citar qual o privilégio que Deus reservou para Israel nesta dispensação",
+          "answer": "NENHUM PRIVILÉGIO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Na expressão todos os homens não estão incluídos –",
+          "options": [
+            "os ateus",
+            "os muçulmanos",
+            "os crentes desviados",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Falou sobre Israel no milênio–",
+          "options": [
+            "Paulo",
+            "Jeremias",
+            "Oséias",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Israel no passado",
+          "Israel no presente",
+          "Israel no futuro",
+          "Israel curado da idolatria",
+          "Todos os perigos e ameaças banidos",
+          "União permanente entre Deus e seu povo"
+        ],
+        "columnB": [
+          "Oséias 2:19-20",
+          "Oséias 2:16-17",
+          "Oséias 2:18",
+          "Romanos capitulo 11",
+          "Romanos capitulo 10",
+          "Romanos capitulo 9"
+        ],
+        "answers": [
+          6,
+          4,
+          5,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Após a criação do homem, Deus incluiu no seu propósito a formação da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A igreja foi um mistério guardado no coração de Deus desde a fundação do mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No Antigo Testamento Deus não revelou a nenhum profeta seu projeto em relação a igreja",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A expressão, “o último Adão” feito “em espírito vivificante” fala a respeito da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em Cesareia, quando Jesus fez a revelação sobre a igreja, Judas não estava presente.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Jesus, como homem, não tinha a revelação do mistério que envolvia a igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A palavra “ekklesia”, entre os gregos, não tinha sentido religioso.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A igreja não é um edifício, mas, sim, uma organização mundial.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os doze apóstolos, num primeiro momento, não pregaram o evangelho aos gentios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Com a expressão, “ide por todo mundo”, Jesus não excluiu ninguém de ouvir a pregação do evangelho.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o sentido literal da expressão “Ekklesia”.",
+          "answer": "CHAMADOS PARA FORA"
+        },
+        {
+          "id": "sa2",
+          "question": "Num primeiro momento, citar quem eram os crentes na igreja de Jerusalém.",
+          "answer": "SOMENTE OS JUDEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A palavra igreja é encontrada no Antigo Testamento –",
+          "options": [
+            "112 vezes",
+            "apenas uma vez",
+            "nenhuma vez",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A igreja não é –",
+          "options": [
+            "uma instituição divina",
+            "uma instituição humana",
+            "um edifício",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "A igreja decidida a dizer — irei",
+          "Amou um pastor sem saber que ele era um rei",
+          "Seu esposo foi chamado de salvador do mundo",
+          "Uma moabita como tipo da igreja",
+          "De esposa de um tirano a esposa de um rei",
+          "Reconheceu o sacrifício que seu esposo fez por ela"
+        ],
+        "columnB": [
+          "Raquel",
+          "Rute",
+          "Sunamita",
+          "Abigail",
+          "Azenate",
+          "Rebeca"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A igreja foi projetada por Deus antes da criação dos céus e da terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Foi o Espírito Santo quem revelou e continua revelando quem é Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sabemos, pela Bíblia, que Cristo não poderia ser o redentor do homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo a Bíblia podemos afirmar que a igreja foi fundada por Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Segundo a Bíblia depois de iniciar seu ministério Jesus precisou ser ajudado por seus irmãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A natureza espiritual da igreja veio de Cristo e não de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Paulo foi o único apóstolo que identificou Jesus como sendo a “pedra”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela Bíblia sabemos que Jesus deu a Pedro as chaves do céu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "No Dia de Pentecostes estavam reunidos no Senáculo cento e vinte pessoas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "A palavra igreja é encontrada no Novo Testamento no singular e também no plural",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o sentido literal de “petra” e “petros”.",
+          "answer": "“PETRA” - ROCHA; “PETROS” - PEDRA PEQUENA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar, no Novo Testamento, a simbologia do Tabernáculo",
+          "answer": "UM SÍMBOLO DA IGREJA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A igreja foi fundada por",
+          "options": [
+            "Deus",
+            "Jesus Cristo",
+            "pelo Espírito Santo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "O nome de Jesus foi uma escolha de —",
+          "options": [
+            "Deus",
+            "José",
+            "José e Maria",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Igreja visível",
+          "Igreja invisível",
+          "Jesus",
+          "Cristo",
+          "Jesus Cristo",
+          "Necessita de dinheiro"
+        ],
+        "columnB": [
+          "parente do homem",
+          "igreja visível",
+          "um organismo vivo",
+          "fundador da igreja",
+          "uma organização",
+          "segunda pessoa da trindade"
+        ],
+        "answers": [
+          3,
+          6,
+          2,
+          5,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A igreja dos primogênitos é chamada de a Universal Assembleia de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na universal assembleia, ou igreja dos primogênitos, não existe virgem louca.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Numa igreja local é possível haver crentes batizados nas águas sem o novo nascimento",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sendo invisível, a igreja universal não pode ser comparada a um edifício.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Paulo afirmou que ninguém pode por outro fundamento visto que o fundamento é Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Num edifício o síndico é um tipo de Jesus e a Bíblia simboliza o registro interno",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A igreja local é onde nós nos reunimos para adorar e para cultuar a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Um crente, pai de família, tem a obrigação de cuidar de sua família e também ajudar os necessitados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A autoridade do pastor está delimitada pela Bíblia, a Palavra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Paulo afirmou ser “impossível que não venham escândalos” na igreja.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Quem se referiu à igreja como sendo a “Universal Assembleia e igreja dos primogênitos”",
+          "answer": "O ESCRITOR DA EPÍSTOLA AO HEBREUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas vezes e onde encontramos nos evangelhos o vocábulo igreja",
+          "answer": "DUAS—EM MATEUS 16:8 E MATEUS 18:17"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Na chamada “universal assembleia” pode existir –",
+          "options": [
+            "peixe ruim",
+            "virgens loucas",
+            "joio",
+            "todas estão erradas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Afirmou ser impossível não haver escândalos na igreja –",
+          "options": [
+            "Paulo",
+            "Jesus",
+            "Pedro",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Igreja universal",
+          "Igreja local",
+          "Ingresso na igreja universal",
+          "Ingresso na igreja local",
+          "Virgens loucas e peixes ruins",
+          "Virgens prudentes e peixes bons"
+        ],
+        "columnB": [
+          "igreja universal",
+          "batismo no corpo de Cristo",
+          "igreja local",
+          "igreja militante",
+          "batismo nas água",
+          "igreja triunfante"
+        ],
+        "answers": [
+          6,
+          3,
+          5,
+          2,
+          4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Jesus não deu um nome para a igreja que ele chamou de minha.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Paulo alertou sobre a vinda de lobos cruéis que atacariam o rebanho.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Lutero não conseguiu manter a homogeneidade dos postulados da Reforma.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Jesus desaconselhou as pessoas de ouvirem os ensinos dos escribas e dos fariseus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na Idade Média a única verdade aceita pela igreja de Roma era o ensino de seus teólogos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Na religião ortodoxa não se admite nenhuma espécie de ícone.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O primeiro ato da Reforma Protestante aconteceu no dia 31 de outubro de 1517.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Durante a Idade Média a leitura da Bíblia era proibida para o povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A doutrina pentecostal surgiu de uma inovação ocorrida dentro do cristianismo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "O número das igrejas pentecostais conhecidas até hoje é de 271 no Brasil.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas e quais as verdades destacadas pela doutrina da igreja",
+          "answer": "DUAS — O CARATER UNIVERSAL DA IGREJA E AS IGREJAS LOCAIS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como o Credo de Niceno de fé define a Igreja Ortodoxa",
+          "answer": "DEFINE COMO IGREJA UNA, SANTA, CATÓLICA E APOSTÓLICA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Lemas dos evangélicos ao redor do mundo–",
+          "options": [
+            "só as Escrituras",
+            "só a fé",
+            "só a graça",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Foi o primeiro a falar sobre o pentecostes –",
+          "options": [
+            "Pedro",
+            "João Batista",
+            "Joel",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "John Smyth e Tomás Helwys—1600",
+          "João Calvino—1541",
+          "Martinho Lutero—1517",
+          "John Kmox—1567",
+          "Henrique VIII",
+          "John Wesley— 1730"
+        ],
+        "columnB": [
+          "metodismo",
+          "presbiterianismo",
+          "calvinismo",
+          "anglicanismo—1534",
+          "protestantismo",
+          "batistas."
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A palavra “sacramento” só é encontrada na Bíblia relacionada a Ceia do Senhor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Segundo a Bíblia o batismo nas águas não é um meio para alcançar a salvação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No Antigo Testamento não existe nenhuma ordenança instituído por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sem o “crer” é certo que ninguém pode ser batizado nas águas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Nenhum dos discípulos foi batizado nas águas por Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "O batismo nas águas não é um complemento da salvação, mas é uma necessidade para os salvos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sabemos, pela Bíblia, não ser correto batizar alguém antes de completar doze anos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Biblicamente existe uma razão para a presença da Trindade no ato do batismo nas águas",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A Bíblia fala de pessoas que foram batizadas nas águas em sua própria casa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O batismo de João Batista tinha um objetivo diferente daquele ordenado por Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos e quais os sacramentos que foram instituídos por Jesus.",
+          "answer": "BIBLICAMENTE NENHUM"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar, pela ordem, quem batiza o homem nas águas, com o Espírito Santo e no corpo de Cristo",
+          "answer": "NAS ÁGUAS — O HOMEM; COM O ESPÍRITO SANTO — JESUS; NO CORPO DE CRISTO — O ESPÍRITO SANTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Exigida pela Bíblia como sinal de salvação–",
+          "options": [
+            "penitência",
+            "extrema unção",
+            "batismo nas águas",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Pela Bíblia o batismo nas águas deve ser feito em nome –",
+          "options": [
+            "do Pai",
+            "do Filho",
+            "do Espírito Santo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "É uma exigência para os salvos",
+          "Santas Ordens",
+          "Eucaristia",
+          "Não é necessário para a salvação",
+          "Confirmação",
+          "Como o batismo é efetuado"
+        ],
+        "columnB": [
+          "forma",
+          "penitência",
+          "consagração de obreiros",
+          "batismo com o Espírito Santo",
+          "batismo nas águas",
+          "Ceia do Senhor"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Diferente, da Igreja Católica Romana, para nós a Ceia do Senhor não é um sacramento",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Separar o que é sacramento do que é ordenança é quase impossível.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Segundo a doutrina da Igreja Católica Romana o pão se transforma, literalmente, no corpo de Cristo",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A eucaristia dos católicos romanos corresponde ao que chamamos de Ceia do Senhor",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Transubstanciação significa mudança de uma substância em outra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Tal como os católicos romanos, nós também cremos na transubstanciação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "É certo que a páscoa celebrada pelos judeus é igual a ceia dos cristãos",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No “pão asmo” podemos ver um símbolo de pureza e santidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que a Ceia do Senhor tem relação com o arrebatamento da igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sendo um símbolo da páscoa, a Ceia do Senhor deveria ser celebrada anualmente.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual foi o Papa que inventou a Doutrina da Transubstanciação",
+          "answer": "ESSA DOUTRINA NÃO FOI INVENTADA POR UM PAPA"
+        },
+        {
+          "id": "sa2",
+          "question": "Quantos e quais eram os componentes necessários na celebração da páscoa judaica.",
+          "answer": "UM CORDEIO, PÃES ASMOS E ERVAS AMARGAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A participação da ceia do Senhor é para o filho de Deus –",
+          "options": [
+            "um ato voluntário",
+            "uma necessidade",
+            "uma exigência da igreja",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Na celebração da Ceia do Senhor comemoramos –",
+          "options": [
+            "a morte de Jesus",
+            "sua segunda vinda",
+            "nossa libertação do jugo do pecado",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Corpo de Jesus",
+          "Sangue de Jesus",
+          "Escravidão no Egito",
+          "Santidade completa de Cristo",
+          "Pecado",
+          "Jesus"
+        ],
+        "columnB": [
+          "cordeiro",
+          "fermento",
+          "vinho",
+          "ervas amargas",
+          "pão",
+          "pães asmos"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Deus, para si próprio, não precisa do homem e nem seus bens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Deus é o Criador e o Senhor, mas não o dono de tudo que existe na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Foi com Melquisedeque que Abraão aprendeu que deveria ser dizimista.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O dizimo foi criado pela Lei de Moisés e somente para a Nação de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Quem entrega o dizimo não deve se preocupar como ele vai ser aplicado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A vara dada por Deus a Moisés foi usada para gerar recursos para o Tabernáculo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Biblicamente é difícil entender a diferença entre dízimos e ofertas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que Deus olha primeiro para a oferta no altar, depois para o ofertante.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A oferta alçada tem o objetivo definido e só e solicitado em casos especiais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Não é quantidade, mas, sim, a qualidade de nossa oferta que agrada a Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar onde Abraão aprendeu sobre a prática do dizimo.",
+          "answer": "EM SUA TERRA, OU SEJA EM UR, NA CALDEIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual a principal e maior oferta que Deus recebe do homem.",
+          "answer": "NOSSA PRÓPRIA VIDA NO ALTAR COMO OFERTA DE SACRIFICIO DE AMOR E ADORAÇÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É um dos componentes do corpo humano–",
+          "options": [
+            "oxigênio",
+            "cobre",
+            "enxofre",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Pela Lei de Moisés estavam dispensados de dar o dizimo–",
+          "options": [
+            "os levitas",
+            "os sacerdotes",
+            "os pobres",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Deus rejeitou sua oferta",
+          "Deus aceitou sua oferta",
+          "Deve ter um objetivo",
+          "Os recursos estavam com o povo",
+          "É um componente do corpo humano",
+          "Tem valor estipulado"
+        ],
+        "columnB": [
+          "dízimo",
+          "construção do Tabernáculo",
+          "viúva pobre",
+          "ferro",
+          "oferta alçada",
+          "Caim"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    }
+  ]
+}

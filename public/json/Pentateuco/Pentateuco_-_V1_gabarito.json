@@ -1,0 +1,134 @@
+{
+  "id": "PENT_1",
+  "title": "Pentateuco - V1",
+  "tfQuestions": [
+    {
+      "id": "pent1-tf-1",
+      "question": "Um dos objetivos da Bíblia é provar a existência de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "pent1-tf-2",
+      "question": "Em Harã, Abraão prosperou mesmo estando em desacordo com a vontade de Deus",
+      "answer": "V"
+    },
+    {
+      "id": "pent1-tf-3",
+      "question": "É certo que Jesus esteve, pessoalmente, nas casas de Abraão e de Ló.",
+      "answer": "F"
+    },
+    {
+      "id": "pent1-tf-4",
+      "question": "Quando Jacó retornou, encontrou seu pai, mas sua mãe já havia morrido",
+      "answer": "V"
+    },
+    {
+      "id": "pent1-tf-5",
+      "question": "José foi vendido por seus irmãos por trinta moedas de prata.",
+      "answer": "F"
+    },
+    {
+      "id": "pent1-tf-6",
+      "question": "A Bíblia diz que Deus quis matar Moisés numa estalagem.",
+      "answer": "V"
+    },
+    {
+      "id": "pent1-tf-7",
+      "question": "Parte dos recursos para a construção do Tabernáculo foi dada por Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "pent1-tf-8",
+      "question": "Nas ofertas pacíficas a carne do animal era comida pelos ofertantes e sacerdotes",
+      "answer": "V"
+    },
+    {
+      "id": "pent1-tf-9",
+      "question": "É certo que Balaão era um falso profeta.",
+      "answer": "F"
+    },
+    {
+      "id": "pent1-tf-10",
+      "question": "Morto, Moisés, seu corpo foi enterrado pelo povo nas campinas de Moabe",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pent1-mc-1",
+      "question": "Não foi esposa de Abraão-",
+      "options": [
+        "Sara",
+        "Agar",
+        "Quetura",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "pent1-mc-2",
+      "question": "Chamado por Deus, Moisés alegou-",
+      "options": [
+        "Falta de sabedoria",
+        "Ser incapaz",
+        "Não ser eloquente",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pent1-mc-3",
+      "question": "Compunham a Lei de Moisés.",
+      "options": [
+        "Lei Moral",
+        "Lei Civil",
+        "Lei Religiosa",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pent1-mc-4",
+      "question": "Não foi esposa de Abraão —",
+      "options": [
+        "Sara",
+        "Agar",
+        "Quetura",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pent1-mp-1",
+      "left": "Evitou que José fosse morto",
+      "right": "Rubens"
+    },
+    {
+      "id": "pent1-mp-2",
+      "left": "Comprou José dos ismaelitas",
+      "right": "Potifar"
+    },
+    {
+      "id": "pent1-mp-3",
+      "left": "Filho de José",
+      "right": "Manassés"
+    },
+    {
+      "id": "pent1-mp-4",
+      "left": "Filho mais novo de Jacó",
+      "right": "Benjamim"
+    },
+    {
+      "id": "pent1-mp-5",
+      "left": "Nome dado por Faraó a José",
+      "right": "Zafenate Panéia"
+    },
+    {
+      "id": "pent1-mp-6",
+      "left": "Sogro de José",
+      "right": "Potifera"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "ANGE_1",
+  "title": "Angelologia - V1",
+  "tfQuestions": [
+    {
+      "id": "ange1-tf-1",
+      "question": "A expressão anjo nunca foi e não pode ser usada em relação ao homem",
+      "answer": "F"
+    },
+    {
+      "id": "ange1-tf-2",
+      "question": "Quando Jesus fez uso da expressão “manietar o valente” ele referia-se ao Espírito Santo.",
+      "answer": "V"
+    },
+    {
+      "id": "ange1-tf-3",
+      "question": "Diferentemente da igreja os anjos não podem adorar a Cristo como Redentor.",
+      "answer": "V"
+    },
+    {
+      "id": "ange1-tf-4",
+      "question": "Evolucionismo e criacionismo são as duas teorias bíblicas sobre a origem do homem.",
+      "answer": "F"
+    },
+    {
+      "id": "ange1-tf-5",
+      "question": "Mordomia fala da administração de bens alheios e que, no futuro, poderão pertencer ao mordomo.",
+      "answer": "F"
+    },
+    {
+      "id": "ange1-tf-6",
+      "question": "Para um crente fiel é fácil arrancar ou neutralizar uma raiz de amargura.",
+      "answer": "F"
+    },
+    {
+      "id": "ange1-tf-7",
+      "question": "Alma e espírito não podem ser separados nesta vida e nem na eternidade.",
+      "answer": "V"
+    },
+    {
+      "id": "ange1-tf-8",
+      "question": "Indiretamente, Adão procurou transferir sua culpa para o próprio Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "ange1-tf-9",
+      "question": "O preço a ser pago pela redenção do homem foi uma exigência da justiça de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "ange1-tf-10",
+      "question": "Podemos afirmar que se a pessoa sente que pecou contra o Espírito Santo é sinal de que ela não pecou.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ange1-mc-1",
+      "question": "É chamado de “grande príncipe” -",
+      "options": [
+        "Jesus",
+        "Miguel",
+        "Lúcifer",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "ange1-mc-2",
+      "question": "O pecado -",
+      "options": [
+        "Existia antes do homem",
+        "Foi criado com o homem",
+        "Foi criado pelo homem",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "ange1-mc-3",
+      "question": "Os anjos não possuem -",
+      "options": [
+        "Inteligência",
+        "Corpo espiritual",
+        "Vida eterna",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ange1-mc-4",
+      "question": "Os anjos foram criados –",
+      "options": [
+        "Pela palavra de Deus",
+        "Pelas mãos de Deus",
+        "De matéria pré-existente",
+        "Pelo sopro de Deus"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ange1-mp-1",
+      "left": "Corpo, alma e espírito",
+      "right": "Homem"
+    },
+    {
+      "id": "ange1-mp-2",
+      "left": "Corpo e alma",
+      "right": "Animal irracional"
+    },
+    {
+      "id": "ange1-mp-3",
+      "left": "Homem natural",
+      "right": "Homem velho"
+    },
+    {
+      "id": "ange1-mp-4",
+      "left": "Homem espiritual",
+      "right": "Homem novo"
+    },
+    {
+      "id": "ange1-mp-5",
+      "left": "Iniquidade",
+      "right": "Faz divisão entre homem e Deus"
+    },
+    {
+      "id": "ange1-mp-6",
+      "left": "O nascer do Espírito",
+      "right": "Regeneração"
+    }
+  ]
+}

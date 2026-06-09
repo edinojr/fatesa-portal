@@ -233,8 +233,8 @@ const Dashboard = () => {
     
     return courses.map(course => ({
       ...course,
-      livros: course.livros.filter(libro => libro.isReleased)
-    })).filter(course => course.livros.length > 0);
+      livros: course.livros || []
+    }));
   }, [courses, isStaff]);
 
   useEffect(() => {
@@ -454,63 +454,29 @@ const Dashboard = () => {
            )}
         </nav>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {(profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.caminhos_acesso?.includes('admin') || profile?.email === 'edi.ben.jr@gmail.com') && (
-            <div style={{ position: 'relative' }}>
-              <button 
-                className="nav-btn-premium" 
-                onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
-              >
-                <GraduationCap size={18} /> <span className="mobile-hide">Trocar Painel</span>
-              </button>
-              {showRoleSwitcher && (
-                <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '14px', padding: '0.5rem', zIndex: 110, display: 'flex', flexDirection: 'column', gap: '0.25rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)', minWidth: '180px', marginTop: '0.5rem' }}>
-                  <button className="nav-btn-premium" style={{ width: '100%', justifyContent: 'flex-start', background: 'transparent', border: 'none' }} onClick={() => navigate('/professor')}>Painel do Professor</button>
-                  <button className="nav-btn-premium" style={{ width: '100%', justifyContent: 'flex-start', background: 'transparent', border: 'none' }} onClick={() => navigate('/admin')}>Painel Administrativo</button>
-                </div>
-              )}
-            </div>
-          )}
-          <button className="nav-btn-premium danger" onClick={() => signOut()}>
-            <LogOut size={18} /> <span className="mobile-hide">Sair</span>
-          </button>
-        </div>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+           {(profile?.tipo === 'admin' || profile?.tipo === 'professor' || profile?.caminhos_acesso?.includes('admin') || profile?.email === 'edi.ben.jr@gmail.com') && (
+             <div style={{ display: 'flex', gap: '0.5rem', marginRight: '0.5rem' }}>
+               {profile?.tipo === 'professor' || profile?.caminhos_acesso?.includes('professor') ? (
+                 <button onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
+                   <GraduationCap size={18} /> <span className="mobile-hide">Painel Professor</span>
+                 </button>
+               ) : null}
+               {profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin') ? (
+                 <button onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
+                   <LayoutGrid size={18} /> <span className="mobile-hide">Painel Admin</span>
+                 </button>
+               ) : null}
+             </div>
+           )}
+           <button className="nav-btn-premium danger" onClick={() => signOut()}>
+             <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+           </button>
+         </div>
       </header>
 
       <main className="admin-main">
-        <header className="mobile-col-flex" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
-              {activeTab === 'home' && 'Área do Aluno'}
-              {activeTab === 'cursos' && 'Meus Cursos'}
-              {activeTab === 'documentos' && 'Meus Documentos'}
-              {activeTab === 'financeiro' && 'Meus Pagamentos'}
-              {activeTab === 'boletim' && 'Meu Boletim'}
-              {activeTab === 'forum' && 'Fórum da Comunidade'}
-            </h1>
-            <p style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-              Bem-vindo de volta, {profile?.nome || 'Aluno'}. 
-              {profile?.nucleo && (
-                <span className="badge" style={{ 
-                  fontSize: '0.75rem', 
-                  background: 'rgba(var(--primary-rgb), 0.1)', 
-                  color: 'var(--primary)', 
-                  padding: '0.2rem 0.75rem', 
-                  borderRadius: '50px',
-                  border: '1px solid var(--primary)',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem'
-                }}>
-                  <GraduationCap size={14} /> Polo: {profile.nucleo}
-                </span>
-              )}
-            </p>
-          </div>
-        </header>
-
-        <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
+         <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
           {activeTab === 'home' && (
             <div className="admin-dashboard-grid transition-fade-in" style={{ marginTop: '1rem' }}>
               <div className="admin-action-card" onClick={() => setActiveTab('cursos')}>
@@ -654,12 +620,11 @@ const Dashboard = () => {
                   <Award size={20} /> <span className="hide-mobile">Módulos Finalizados</span>
                 </button>
               </div>
-              <CourseList 
-                courses={currentCourses}
-                progressoAulas={progressoAulas}
-                atividades={atividades}
-                showOnlyOngoing={true}
-              />
+               <CourseList 
+                 courses={currentCourses}
+                 progressoAulas={progressoAulas}
+                 atividades={atividades}
+               />
             </>
           )}
 
@@ -709,24 +674,7 @@ const Dashboard = () => {
           onClose={() => setShowExamNotice(false)}
         />
       )}
-      {/* Toast Notification */}
-      {toast && (
-        <div style={{
-          position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
-          background: toast.type === 'success' ? '#10b981' : '#ef4444',
-          color: '#fff',
-          padding: '1rem 2rem',
-          borderRadius: '12px',
-          fontWeight: 600,
-          boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-          zIndex: 9999,
-          animation: 'fadeIn 0.3s ease-out'
-        }}>
-          {toast.message}
-        </div>
-      )}
+
     </div>
   )
 }

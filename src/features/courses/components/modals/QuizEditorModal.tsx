@@ -7,6 +7,8 @@ interface QuizEditorModalProps {
   setEditingQuiz: (val: any) => void
   quizQuestions: QuizQuestion[]
   setQuizQuestions: (questions: QuizQuestion[]) => void
+  pendingExamMeta?: { livroId: string; titulo: string; arquivoUrl: string; ordem: number } | null
+  setPendingExamMeta?: (val: { livroId: string; titulo: string; arquivoUrl: string; ordem: number } | null) => void
   actionLoading: string | null
   setActionLoading: (val: string | null) => void
   supabase: any
@@ -22,6 +24,8 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
   setEditingQuiz,
   quizQuestions,
   setQuizQuestions,
+  pendingExamMeta,
+  setPendingExamMeta,
   actionLoading,
   setActionLoading,
   supabase,
@@ -214,6 +218,14 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
         )}
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          
+          <div style={{ padding: '1rem 1.5rem', background: 'rgba(var(--primary-rgb), 0.08)', border: '1px solid rgba(var(--primary-rgb), 0.2)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Award size={20} color="var(--primary)" />
+            <span style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>
+              As respostas que você marcar abaixo serão o <strong>gabarito oficial</strong>. O aluno só verá o gabarito após enviar suas respostas.
+            </span>
+          </div>
+
           {quizQuestions.map((q, qIdx) => (
             <div key={q.id || qIdx} style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
@@ -434,8 +446,9 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <button className="btn btn-outline" onClick={() => setEditingQuiz(null)}>Cancelar e Voltar</button>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+            <button className="btn btn-outline" onClick={() => { setEditingQuiz(null); setPendingExamMeta?.(null); }}>Cancelar e Voltar</button>
+
             <button className="btn btn-primary" onClick={async () => {
               // Validation for Final Assesment
               if (editingQuiz.is_bloco_final) {
@@ -454,19 +467,38 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
               }
 
               setActionLoading('save-quiz');
-              const { error } = await supabase.from('aulas').update({ 'questionario': quizQuestions }).eq('id', editingQuiz.id);
+              
+              let error;
+              if (editingQuiz._isNew && pendingExamMeta) {
+                const result = await supabase.from('aulas').insert({
+                  livro_id: pendingExamMeta.livroId,
+                  titulo: pendingExamMeta.titulo,
+                  tipo: 'prova',
+                  min_grade: 7,
+                  ordem: pendingExamMeta.ordem,
+                  versao: 1,
+                  is_bloco_final: false,
+                  questionario: quizQuestions,
+                  arquivo_url: pendingExamMeta.arquivoUrl
+                });
+                error = result.error;
+              } else {
+                const result = await supabase.from('aulas').update({ 'questionario': quizQuestions }).eq('id', editingQuiz.id);
+                error = result.error;
+              }
+              
               if (error) showToast(error.message, 'error');
               else {
-                showToast(`Questões salvas com sucesso!`);
+                showToast(editingQuiz._isNew ? `Avaliação criada com sucesso!` : `Questionário salvo! As respostas que você definiu são o gabarito oficial.`, 'success');
                 setEditingQuiz(null);
+                setPendingExamMeta?.(null);
                 
-                // Refresh both layers just in case
                 if (selectedBook?.id) fetchLessons(selectedBook.id);
                 if (selectedLesson?.id) fetchLessonItems(selectedLesson.id);
               }
               setActionLoading(null);
             }} disabled={actionLoading === 'save-quiz'}>
-              {actionLoading === 'save-quiz' ? <Loader2 className="spinner" /> : `Salvar Gabarito Oficial`}
+              {actionLoading === 'save-quiz' ? <Loader2 className="spinner" /> : (editingQuiz._isNew ? 'Criar e Enviar' : 'Salvar e Enviar')}
             </button>
           </div>
         </div>

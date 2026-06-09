@@ -1,0 +1,134 @@
+{
+  "id": "HISII_2",
+  "title": "História de Israel 2 - V2",
+  "tfQuestions": [
+    {
+      "id": "hisii2-tf-1",
+      "question": "Nenhum ato de rebelião iria dividir o reino no reinado de Salomão.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii2-tf-2",
+      "question": "Por sua apostasia Deus não pôde dar sequência ao seu plano na vida de Jeroboão.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii2-tf-3",
+      "question": "Pela Bíblia podemos dizer que foi Satanás quem deu o poder a Acabe e Jezabel.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii2-tf-4",
+      "question": "Elias foi impedido por Deus de cumprir sua ordem de ungir Jeú como rei.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii2-tf-5",
+      "question": "No mundo espiritual a maior batalha da história foi travada no Monte Carmelo.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii2-tf-6",
+      "question": "A Bíblia declara que Elias foi levado ao céu num “carro de fogo”.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii2-tf-7",
+      "question": "Enquanto viveu o sacerdote Joiada, Joás fez o que era reto aos olhos do Senhor.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii2-tf-8",
+      "question": "Quando o homem perde a visão de Deus as coisas do mundo tornam-se mais atraentes aos seus olhos.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii2-tf-9",
+      "question": "O Rei Zedequias jurou e cumpriu seu juramento feito a Nabucodonosor.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii2-tf-10",
+      "question": "Em I e II Crônicas não há registro da história do Reino de Israel.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "hisii2-mc-1",
+      "question": "Elias profetizou sobre a morte do rei",
+      "options": [
+        "Acabe",
+        "Jorão",
+        "Acazias",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisii2-mc-2",
+      "question": "Mensageiro enviado por Jezabel a Elias -",
+      "options": [
+        "Anônimo",
+        "Obadias",
+        "Elizeu",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "hisii2-mc-3",
+      "question": "Do Reino de Judá fizeram “o que era reto aos olhos do Senhor” -",
+      "options": [
+        "Todos, com exceção de Atalia",
+        "Ezequias e Josias",
+        "Oito reis",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisii2-mc-4",
+      "question": "Profetizou a morte do Rei Acabe –",
+      "options": [
+        "Um profeta de Baal",
+        "Um profeta de Judá",
+        "O Profeta Micaías",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "hisii2-mp-1",
+      "left": "Um rei morto pelos seus servos",
+      "right": "Amon"
+    },
+    {
+      "id": "hisii2-mp-2",
+      "left": "Sacrificou seus próprios filhos ao deus maloque",
+      "right": "Acáz"
+    },
+    {
+      "id": "hisii2-mp-3",
+      "left": "Um rei que começou muito mal e terminou bem",
+      "right": "Manassés"
+    },
+    {
+      "id": "hisii2-mp-4",
+      "left": "Construtor do túnel e do tanque de Siloé",
+      "right": "Ezequias"
+    },
+    {
+      "id": "hisii2-mp-5",
+      "left": "Rei que morreu com uma doença incurável",
+      "right": "Jeorão"
+    },
+    {
+      "id": "hisii2-mp-6",
+      "left": "Amon",
+      "right": "Pai de Josias"
+    }
+  ]
+}

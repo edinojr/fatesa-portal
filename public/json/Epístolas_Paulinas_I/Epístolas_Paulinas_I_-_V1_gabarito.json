@@ -1,0 +1,134 @@
+{
+  "id": "EPPI_1",
+  "title": "Epístolas Paulinas 1 - V1",
+  "tfQuestions": [
+    {
+      "id": "eppi1-tf-1",
+      "question": "A justificação pela graça é o tema da Epístola aos Romanos.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-2",
+      "question": "Pela Bíblia podemos afirmar que, de forma unilateral, Deus não pode justificar o homem",
+      "answer": "V"
+    },
+    {
+      "id": "eppi1-tf-3",
+      "question": "“Amados, não estranheis a ardente prova que vem sobre vós...”, afirmou Paulo.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-4",
+      "question": "Deus, na sua Soberania, pode fazer vasos para honra e também para desonra.",
+      "answer": "V"
+    },
+    {
+      "id": "eppi1-tf-5",
+      "question": "Jesus reconheceu o poder que o Imperador de Roma deu a Pilatos.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-6",
+      "question": "O ideal bíblico é sempre ensinar a criança a pensar e agir como um adulto.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-7",
+      "question": "O judeu poderia ser salvo pela Lei se cumprisse os 613 preceitos extraídos dela",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-8",
+      "question": "A revelação do mistério que envolvia o evangelho foi dada, diretamente, por Jesus a Paulo.",
+      "answer": "V"
+    },
+    {
+      "id": "eppi1-tf-9",
+      "question": "Segundo ensinou Paulo, um irmão surpreendido numa ofensa deve ser repreendido.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-10",
+      "question": "Podemos ver na lei da semeadura consequências positivas ou negativas na relação dos filhos com seus pais.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "eppi1-mc-1",
+      "question": "Entre a Lei e a Graça não existe -",
+      "options": [
+        "Concorrência",
+        "Rivalidade",
+        "Superioridade",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "eppi1-mc-2",
+      "question": "O crente fraco é o -",
+      "options": [
+        "Herege",
+        "O que, embora errado, quer acertar",
+        "Desordeiro",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "eppi1-mc-3",
+      "question": "A trilogia que forma o processo da justificação.",
+      "options": [
+        "Graça de Deus",
+        "A fé do pecador",
+        "O sangue de Jesus",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "eppi1-mc-4",
+      "question": "Paulo afirmou que a Lei trouxe -",
+      "options": [
+        "A salvação",
+        "O Salvador",
+        "Esperança aos judeus e aos gentios",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "eppi1-mp-1",
+      "left": "Cristo fez em nós",
+      "right": "Removeu o poder pecado"
+    },
+    {
+      "id": "eppi1-mp-2",
+      "left": "Cristo fez por nós",
+      "right": "Removeu a culpa do pecado"
+    },
+    {
+      "id": "eppi1-mp-3",
+      "left": "Fonte da justificação",
+      "right": "A graça de Deus"
+    },
+    {
+      "id": "eppi1-mp-4",
+      "left": "Instrumento da justificação",
+      "right": "Sangue de Jesus"
+    },
+    {
+      "id": "eppi1-mp-5",
+      "left": "Meio para alcançar a justificação",
+      "right": "A fé"
+    },
+    {
+      "id": "eppi1-mp-6",
+      "left": "Pecador não perdoado",
+      "right": "Fugitivo de Deus"
+    }
+  ]
+}

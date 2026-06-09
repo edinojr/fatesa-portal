@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import MainLayout from './components/layout/MainLayout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Landing from './pages/Landing'
@@ -33,29 +34,29 @@ function App() {
       <AnalyticsTracker />
       <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0a', color: 'var(--primary)' }}>Carregando...</div>}>
         <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/sobre" element={<Sobre />} />
-          <Route path="/metodologia" element={<Metodologia />} />
-          <Route path="/patrono" element={<Patrono />} />
-          <Route path="/cursos" element={<CursosPublic />} />
-          <Route path="/contato" element={<Contato />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/matricula" element={<Matricula />} />
-          <Route path="/verificacao" element={<CertificateVerification />} />
-          <Route path="/verificacao/:code" element={<CertificateVerification />} />
-          <Route path="/app-mobile" element={<AppConstruction />} />
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardBridge /></ProtectedRoute>} />
-          <Route path="/modulos-finalizados" element={<ProtectedRoute><ModulosFinalizados /></ProtectedRoute>} />
-          <Route path="/vencido" element={<BlockedAccess />} />
-          <Route path="/lesson/:id" element={<ProtectedRoute><Lesson /></ProtectedRoute>} />
-          <Route path="/book/:id" element={<ProtectedRoute><SmartViewer /></ProtectedRoute>} />
-          <Route path="/module/:id" element={<ProtectedRoute><ModuleDetails /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
-          <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
-          <Route path="/coordenador" element={<ProtectedRoute requiredRole="coordenador_polo"><Coordinator /></ProtectedRoute>} />
+          <Route path="/" element={<MainLayout><Landing /></MainLayout>} />
+          <Route path="/sobre" element={<MainLayout><Sobre /></MainLayout>} />
+          <Route path="/metodologia" element={<MainLayout><Metodologia /></MainLayout>} />
+          <Route path="/patrono" element={<MainLayout><Patrono /></MainLayout>} />
+          <Route path="/cursos" element={<MainLayout><CursosPublic /></MainLayout>} />
+          <Route path="/contato" element={<MainLayout><Contato /></MainLayout>} />
+          <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
+          <Route path="/signup" element={<MainLayout><Signup /></MainLayout>} />
+          <Route path="/forgot-password" element={<MainLayout><ForgotPassword /></MainLayout>} />
+          <Route path="/reset-password" element={<MainLayout><ResetPassword /></MainLayout>} />
+          <Route path="/matricula" element={<MainLayout><Matricula /></MainLayout>} />
+          <Route path="/verificacao" element={<MainLayout><CertificateVerification /></MainLayout>} />
+          <Route path="/verificacao/:code" element={<MainLayout><CertificateVerification /></MainLayout>} />
+          <Route path="/app-mobile" element={<MainLayout><AppConstruction /></MainLayout>} />
+          <Route path="/dashboard" element={<ProtectedRoute><MainLayout><DashboardBridge /></MainLayout></ProtectedRoute>} />
+          <Route path="/modulos-finalizados" element={<ProtectedRoute><MainLayout><ModulosFinalizados /></MainLayout></ProtectedRoute>} />
+          <Route path="/vencido" element={<ProtectedRoute><MainLayout><BlockedAccess /></MainLayout></ProtectedRoute>} />
+          <Route path="/lesson/:id" element={<ProtectedRoute><MainLayout><Lesson /></MainLayout></ProtectedRoute>} />
+          <Route path="/book/:id" element={<ProtectedRoute><MainLayout><SmartViewer /></MainLayout></ProtectedRoute>} />
+          <Route path="/module/:id" element={<ProtectedRoute><MainLayout><ModuleDetails /></MainLayout></ProtectedRoute>} />
+           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
+           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
+           <Route path="/coordenador" element={<ProtectedRoute requiredRole="coordenador_polo"><Coordinator /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

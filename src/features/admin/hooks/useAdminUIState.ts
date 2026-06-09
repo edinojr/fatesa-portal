@@ -19,6 +19,7 @@ export const useAdminUIState = () => {
   const [editingItem, setEditingItem] = useState<{ type: 'course' | 'book' | 'lesson' | 'content', data: any } | null>(null);
   const [editingQuiz, setEditingQuiz] = useState<any | null>(null);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [pendingExamMeta, setPendingExamMeta] = useState<{ livroId: string; titulo: string; arquivoUrl: string; ordem: number } | null>(null);
   const [addingLessonType, setAddingLessonType] = useState<string>('gravada');
   const [addingBloco, setAddingBloco] = useState<number | null>(null);
   const [editingLessonContent, setEditingLessonContent] = useState<any | null>(null);
@@ -51,6 +52,7 @@ export const useAdminUIState = () => {
     editingItem, setEditingItem,
     editingQuiz, setEditingQuiz,
     quizQuestions, setQuizQuestions,
+    pendingExamMeta, setPendingExamMeta,
     addingLessonType, setAddingLessonType,
     addingBloco, setAddingBloco,
     editingLessonContent, setEditingLessonContent,
@@ -64,7 +66,7 @@ export const useAdminUIState = () => {
     searchTerm, showAddTeacher, showAddAdmin, showAddCourse, showAddBook, 
     showAddLesson, showAddContent, showRoleSwitcher, isMobileMenuOpen, 
     selectedCourse, selectedBook, selectedLesson, editingItem, editingQuiz, 
-    quizQuestions, addingLessonType, addingBloco, editingLessonContent, 
+    quizQuestions, pendingExamMeta, addingLessonType, addingBloco, editingLessonContent, 
     lessonBlocks, lessonMaterials, toast, showToast, confirmDelete, 
     uploading, nucleosAutoOpenAdd
   ]);

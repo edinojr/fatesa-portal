@@ -1,0 +1,134 @@
+{
+  "id": "DOUD_3",
+  "title": "Doutrina de Deus - V3",
+  "tfQuestions": [
+    {
+      "id": "doud3-tf-1",
+      "question": "Pela Lei de Moisés, em Israel, a pena de morte era aplicada a quem adorasse o sol e a lua.",
+      "answer": "V"
+    },
+    {
+      "id": "doud3-tf-2",
+      "question": "O conhecimento teórico não leva o homem a Deus e não traz Deus ao homem.",
+      "answer": "V"
+    },
+    {
+      "id": "doud3-tf-3",
+      "question": "De várias formas as Escrituras procuram provar aos homens a existência de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "doud3-tf-4",
+      "question": "“De um só fez toda geração dos homens, para habitar sobre toda face da terra”, afirmou Pedro, no Sinédrio.",
+      "answer": "F"
+    },
+    {
+      "id": "doud3-tf-5",
+      "question": "Pela Bíblia sabemos que, sempre que necessário, Deus interfere no sentido de mudar o curso da história.",
+      "answer": "V"
+    },
+    {
+      "id": "doud3-tf-6",
+      "question": "Todos os atributos de Deus são comunicáveis em relação aos seus filhos.",
+      "answer": "F"
+    },
+    {
+      "id": "doud3-tf-7",
+      "question": "Ser ou não ser santo é uma decisão daqueles que são filhos de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "doud3-tf-8",
+      "question": "No sentido bíblico, benignidade não é sinônimo de bondade.",
+      "answer": "V"
+    },
+    {
+      "id": "doud3-tf-9",
+      "question": "A queda de Satanás foi a provável causa da terra ter-se tornado caótica.",
+      "answer": "V"
+    },
+    {
+      "id": "doud3-tf-10",
+      "question": "Mesmo os filhos de Deus não podem entender, por nenhum meio, o mistério da Trindade.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "doud3-mc-1",
+      "question": "O Deus que conhecemos é -",
+      "options": [
+        "A difícil de perdoar",
+        "Sem compaixão",
+        "Grande e terrível",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "doud3-mc-2",
+      "question": "A obra do sétimo dia -",
+      "options": [
+        "Criação do homem",
+        "A criação dos anjos",
+        "Criação de animais",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "doud3-mc-3",
+      "question": "É onipresente –",
+      "options": [
+        "Satanás",
+        "O arcanjo Miguel",
+        "Jesus",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "doud3-mc-4",
+      "question": "A obra do sétimo dia –",
+      "options": [
+        "A criação do homem",
+        "A criação dos anjos",
+        "A criação dos animais",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "doud3-mp-1",
+      "left": "Deus na visão do judaísmo",
+      "right": "Deus revelado no Antigo Testamento"
+    },
+    {
+      "id": "doud3-mp-2",
+      "left": "Deus na visão do islamismo",
+      "right": "Ultra transcendental"
+    },
+    {
+      "id": "doud3-mp-3",
+      "left": "Deus na visão do budismo",
+      "right": "Uma forma impessoal"
+    },
+    {
+      "id": "doud3-mp-4",
+      "left": "Deus na visão dos materialistas",
+      "right": "Não existe"
+    },
+    {
+      "id": "doud3-mp-5",
+      "left": "Deus na visão do cristianismo",
+      "right": "Criador e Senhor"
+    },
+    {
+      "id": "doud3-mp-6",
+      "left": "Deus na visão da Bíblia",
+      "right": "O Grande Eu sou"
+    }
+  ]
+}

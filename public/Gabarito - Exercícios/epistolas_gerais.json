@@ -1,0 +1,1169 @@
+{
+  "id": "ep-gerais",
+  "title": "Epístolas Gerais",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "As Epístolas Gerais foram denominadas de \"Epístolas Católicas\" por Orígenes.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Ao que tudo indica foi Tiago, irmão do Senhor, o autor da Epístola de Tiago.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "É pacífico o entendimento de que são sete as Epístolas Gerais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Tiago, irmão do Senhor, não está entre os doze apóstolos escolhidos por Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A expressão \"Tiago, irmão do Senhor\", deve ser entendida num sentido espiritual e não literal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Não podemos afirmar que Tiago, autor da Epístola, estava no Cenáculo no Dia de Pentecostes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Embora tendo apenas cinco capítulos a Epístola de Tiago contém 54 mandamentos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Em sua Epístola Tiago se destaca como sendo um grande doutrinador.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "As palavras chaves na Epístola de Tiago são o amor e a santificação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Tiago exortou os irmãos a se alegrarem diante das tribulações.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Segundo a história, cite como morreu Tiago o autor da Epístola.",
+          "answer": "MORREU APEDREJADO POR ORDEM DO SUMO SACERDOTE ANANO."
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o tema e as palavras chaves da Epístola de Tiago.",
+          "answer": "TEMA: A RELIGIÃO PURA ; PALAVRAS CHAVE – FÉ E OBRAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A palavra \"católico\" significa -",
+          "options": [
+            "o nome de uma religião",
+            "uma heresia",
+            "universal",
+            "apostasia."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Tiago fala de -",
+          "options": [
+            "dois tipos de fé",
+            "dois tipos de sabedoria",
+            "dois tipos de tentação",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Escrita informal",
+          "Escrita formal",
+          "Tema da Epístola de Tiago",
+          "Amós do Novo Testamento",
+          "Judeus cristãos na \"Diáspora\"",
+          "morto por ordem de Herodes"
+        ],
+        "columnB": [
+          "Tiago, filho de Zebedeu",
+          "Tiago, irmão do Senhor",
+          "epístola",
+          "Epístola de Tiago",
+          "a religião pura",
+          "carta"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo Tiago, não há possibilidade de um crente viver sempre alegre.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Frequentes doenças e sofrimentos indicam que o crente está em pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Andando \"em Espírito\" um crente não será dominado pelas obras da carne.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Existe um limite para a resistência de um crente ao diabo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Nem sempre um homem de Deus pode culpar Satanás pelos seus sofrimentos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sem permissão de Deus dificilmente Satanás faz uso da correção contra um crente fiel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo Tiago o conhecimento bíblico pode ser adquirido pela oração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Um crente que está sempre sendo tentado pode não estar bem com Deus",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Biblicamente não se pode confundir o corpo com a carne.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Satanás tentaria Jesus mesmo que ele não quisesse ser tentado.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite quantas e quais as fontes geradoras de sofrimento.",
+          "answer": "TRÊS. O PRÓPRIO HOMEM; SATANÁS; DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite, em relação ao crente, quando Satanás faz uso da correção.",
+          "answer": "NUNCA. SATANÁS NÃO USA A CORREÇÃO CONTRA O CRENTE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Pode ser causa de sofrimento -",
+          "options": [
+            "emprestar o cartão de crédito",
+            "ser fiador de alguém",
+            "uso indevido da língua",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Se alguém tem falta de sabedoria deve -",
+          "options": [
+            "cursar uma faculdade",
+            "fazer um curso de teologia",
+            "pedir a Deus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Tentado em tudo",
+          "Tentado, cedeu e pecou",
+          "Tentado, resistiu e venceu",
+          "Fonte geradora de sofrimento",
+          "Instrumento de Satanás",
+          "Instrumento de Deus"
+        ],
+        "columnB": [
+          "correção",
+          "tentação",
+          "Jesus",
+          "José",
+          "Davi",
+          "Satanás"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar ser a Epístola de Tiago um manual prático da vida cristã.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para pregadores e professores o importante é o conhecimento da Palavra e o saber ministrá-la.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Um homem prudente precisa aprender a ouvir mais e a falar menos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Na igreja nunca deve haver qualquer tipo de tratamento diferenciado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em alguns momentos Jesus fez uso da acepção no trato com seus discípulos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os pais, embora tendo, não devem revelar sua predileção por nenhum de seus filhos",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A salvação não pode ser pregada da mesma forma aos ricos e pobre.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para Tiago o crente só pode comprovar sua fé através de suas obras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Segundo Paulo, para a justificação não é exigido qualquer tipo de obras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Salomão afirmou que a boca do homem é um instrumento de destruição.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar porque o \"Talmud\" compara a língua do homem com a abelha.",
+          "answer": "PORQUE TAL COMO ABELHA, TAMBÉM A LÍNGUA TEM \"MEL\" E \"FERRÃO\"."
+        },
+        {
+          "id": "sa2",
+          "question": "Citar três causas que podem motivar a falta de controle da língua.",
+          "answer": "1- FALTA DE DISCIPLINA PESSOAL; 2 – DOENÇAS; 3- POSSESSÃO DEMONÍACA."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Melhor é ouvir -",
+          "options": [
+            "a crítica de um tolo",
+            "o elogio de um sábio",
+            "a repreensão de um sábio",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Tiago, em sua epistola, fala sobre -",
+          "options": [
+            "a inutilidade da fé",
+            "as obras como prova da fé",
+            "a salvação pelas obras",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Necessidade das obras",
+          "Inutilidade das obras",
+          "O Senhor prova",
+          "A garganta do ímpio",
+          "A boca do tolo",
+          "Palavra dita a seu tempo"
+        ],
+        "columnB": [
+          "sepulcro aberto",
+          "maçãs de ouro em salva de prata",
+          "justificação",
+          "uma destruição",
+          "vida cristã",
+          "o justo"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Um homem inteligente, culto e educado, mesmo não sendo crente, demonstra ter a sabedoria de Deus",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Um crente fiel pode adquirir a sabedoria humana através da oração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Um cientista, mesmo não sendo filho de Deus, pode colocar sua sabedoria somente a serviço do bem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Um dos objetivos da sabedoria que vem do alto é capacitar o homem a grandes descobertas cientificas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Tiago deixa claro que na igreja não pode haver guerras, pelejas, divisões.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Para Tiago a amizade dos crentes com o mundo era considerado adultério espiritual.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão \"sujeitar-se a Deus\" tem o sentido de aceitar, de forma incondicional, Sua vontade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Tiago, bem como toda a Bíblia, não condena ninguém pelo fato de ser rico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No tempo de Tiago não havia crentes fiéis empregados ou servos ricos e infiéis.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Há momentos em que a única coisa que devemos fazer é sentar, descansar com paciência.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite como podemos demonstrar ter sabedoria que vem do alto.",
+          "answer": "ATRAVÉS DE UMA CONDUTA CRISTÃ IRREPREENSÍVEL"
+        },
+        {
+          "id": "sa2",
+          "question": "Diante de situações adversas e incômodas, cite o que Tiago recomendava fazer.",
+          "answer": "SER PACIENTE ATÉ A VINDA DO SENHOR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A Bíblia ensina que devemos -",
+          "options": [
+            "ter medo do diabo",
+            "resistir o diabo",
+            "fugir do diabo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "É um tipo de sabedoria -",
+          "options": [
+            "humana",
+            "divina",
+            "diabólica",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pesar pela prosperidade de outrem",
+          "Ambição desmedida",
+          "Prazer, gozo",
+          "Inquietação causada por suspeita",
+          "Gloriar em nossas presunções",
+          "Não fazer o que deve ser feito"
+        ],
+        "columnB": [
+          "pecado de omissão",
+          "ciúme",
+          "cobiça",
+          "glória maligna",
+          "deleite",
+          "inveja"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Para o conhecimento bíblico a vida e as circunstâncias em que seus autores escreveram não tem importância.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Tudo o que sabemos sobre Pedro é o que está na Bíblia e no \"Talmud\", o livro das tradições judaicas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pedro, hoje, em algumas denominações evangélicas não passaria num teste para ser obreiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Face as muitas fraquezas de Pedro, por pouco Jesus não desistiu de tê-lo em seu ministério.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sendo um homem indouto, Pedro ditou suas epístolas e um escriba as escreveu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pedro deixa claro em sua epístola que o primeiro dever do homem é o de obedecer a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo Pedro, ser santo para o crente é uma opção e não uma obrigação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No sentido dinâmico a santificação se manifesta na maneira de viver do cristão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na falta de alimento espiritual o espírito do homem tem que se alimentar de coisas materiais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que ninguém na terra é mais livre do que um crente fiel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o tema destacado por Pedro em sua primeira epístola.",
+          "answer": "A SANTIFICAÇÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o sentido bíblico da palavra \"santo\".",
+          "answer": "SEPARADO E CONSAGRADO PARA USO DO SENHOR."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A igreja é hoje -",
+          "options": [
+            "geração eleita",
+            "o sacerdócio real",
+            "a nação santa",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Pela Bíblia sabemos que Pedro foi -",
+          "options": [
+            "o príncipe dos apóstolos",
+            "o primeiro papa",
+            "um homem cheio de fraquezas",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Levou Pedro a Jesus",
+          "Pedro",
+          "Nome de Pedro em aramaico",
+          "Nome do pai de Pedro",
+          "Nome da sogra de Pedro",
+          "Nome hebraico de Pedro"
+        ],
+        "columnB": [
+          "Jonas",
+          "Simão",
+          "nome grego de Simão",
+          "ignorado",
+          "André",
+          "Cefas"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A doutrina da sujeição da mulher ao marido não deve mais ser ensinada hoje.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Uma mulher que tem um marido que não é crente deve desprezá-lo para forçar a conversão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Alguns rabinos chegavam a afirmar que as mulheres não tinham alma.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Considerada como \"vaso mais fraco\" não se pode exigir que a mulher faça serviços de homens.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Chamada de \"vaso mais fraco\" fica claro que para Deus a mulher é um vaso inferior.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pedro afirma que os crentes não podem ter divergências na forma de pensar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar que um crente identifica-se com Cristo quando sofre por amor a verdade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pedro ensinou que através do amor podemos receber o perdão de nossos pecados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O sofrimento em consequência dos nossos pecados não pode ser motivo de alegria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ao se identificar como presbítero, ou pastor, Pedro revela sua profunda humildade.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quando o sofrimento não deve ser motivo de alegria.",
+          "answer": "QUANDO TEM COMO CAUSA O PECADO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que podemos afirmar ser a Primeira Epístola de Pedro.",
+          "answer": "A ESPÍSTOLA DA ESPERANÇA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Crentes salvos precisam ter -",
+          "options": [
+            "um mesmo pensamento",
+            "um mesmo sentimento",
+            "um mesmo projeto de vida",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "No judaísmo a mulher devia -",
+          "options": [
+            "ser honrada",
+            "ser ida em alta estima",
+            "ser tratada como inferior",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pedro ensina que a paz pode ser multiplicada pelo conhecimento de Deus e de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para alguns teólogos não se pode afirmar ser Pedro o autor desta Epístola.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A segunda Epístola de Pedro foi enviada à igreja bem como para todos os judeus e gentios",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar, com certeza, que Pedro morreu em Roma entre os anos 67 e 68 dC",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Pedro destaca, nesta epístola, a necessidade do conhecimento da Palavra de Deus para evitar as heresias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pedro destaca que Jesus nos dará tudo que precisamos para uma vida de santificação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Porque a igreja primitiva falhou na missão de ensinar, Satanás introduziu nela suas heresias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Segundo Pedro , nos últimos dias, Satanás, através de seus obreiros, colocaria em dúvida a vinda de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O arrebatamento da igreja não foi o único evento escatológico mencionado por Pedro",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Pedro deixou claro que esta terra será totalmente renovada e purificada.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o instrumento usado pelos profetas para enganar o povo de Deus.",
+          "answer": "A PALAVRA DE DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o tema da Segunda Epístola de Pedro.",
+          "answer": "A NECESSIDADE DO CONHECIMENTO BÍBLICO PARA COMBATER AS HERESIAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "As profecias foram -",
+          "options": [
+            "ditadas aos profetas",
+            "elaboradas pelos sacerdotes",
+            "inspiradas pelo Espírito Santo",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Um obreiro precisa ter -",
+          "options": [
+            "boa cultura secular",
+            "conhecimento bíblico",
+            "boa situação financeira",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Encorajar a enfrentar o sofrimento",
+          "Advertência contra falsos obreiros",
+          "Doutrinas de demônios",
+          "Chamado por Pedro de justo",
+          "Tornou-se um falso profeta",
+          "Falsos obreiros"
+        ],
+        "columnB": [
+          "Segunda Epístola de Pedro",
+          "Ló",
+          "escarnecedores",
+          "Balaão",
+          "heresias",
+          "Primeira Epístola de Pedro"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não pode haver dúvidas de que o autor do evangelho de João é o mesmo que escreveu esta epístola.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar que Maria, mãe de Jesus, morreu em Efeso, na casa de João.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Tendo o Apóstolo João como pastor, podemos afirmar que nenhum deixava a igreja para seguir uma heresia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo João, o homem que vive em pecado não pode ter comunhão com Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A vida cristã deve ser comprovada pela nossa maneira de viver e não por nossa palavras",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao falar de \"filhinhos\", \"jovens\" e \"pais\", João está se referindo aos estágios da nossa vida cronológica.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo o ensino de João, podemos afirmar que nem todo homem é filho de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Não fazendo acepção de Deus, é certo que todos os homens têm livre acesso ao seu trono.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Segundo ensinou João, ao se tornar filho de Deus, o homem não conseguirá mais pecar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Pela Bíblia sabemos ser possível provar se um espírito é ou não de Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a diferença entre o Evangelho e a Primeira Epístola de João.",
+          "answer": "O EVANGELHO TRATA O FUNDAMENTO DA FÉ; A EPÍSTOLA DO FUNDAMENTO DA VIDA CRISTÃ."
+        },
+        {
+          "id": "sa2",
+          "question": "Citar as duas verdades centrais da doutrina cristã.",
+          "answer": "A ENCARNAÇÃO DO VERBO E A EXPIAÇÃO PELO SANGUE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É uma fonte de profecia -",
+          "options": [
+            "o Espírito Santo",
+            "os demônios",
+            "a carne",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Uma doutrina fundamenta negada por Cerinto -",
+          "options": [
+            "a dos judaizantes",
+            "a dos saduceus",
+            "a expiação pelo sangue",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "\"Filhinhos\"",
+          "\"Mancebos\"",
+          "\"Pais\"",
+          "Não guardam os mandamentos",
+          "Filhos de Deus",
+          "Embora adultos, eram \"filhinhos\""
+        ],
+        "columnB": [
+          "crentes estruturados na Palavra",
+          "os ja que estiverem na linha de frente",
+          "novos convertidos",
+          "crentes hebreus",
+          "não esta na verdade",
+          "os que nasceram de novo"
+        ],
+        "answers": [
+          2,
+          3,
+          1,
+          6,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Por ser uma epístola anônima não se pode afirmar ser João o autor desta epistola.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Esta epístola tinha por objetivo advertir as igrejas contra as heresias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Um crente fundamentado na Palavra não tem motivos para não conviver com os hereges",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que a \"senhora eleita\" para a qual João escreveu uma epístola era Maria, mãe de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A igreja, pela Bíblia, é representada como uma mãe e os crentes como seus filhos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A segunda Epistola de João pode ser o único livro da Bíblia escrito para uma mulher.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A igreja primitiva era ensinada a cooperar com a manutenção dos mestres.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que hoje não existe mais ministério de mestres e doutores.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Segundo João para os obreiros enganadores a hospitalidade deveria ser negada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo João quem faz o bem é de Deus e quem faz o mal não tem visto a Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quais são as palavras chaves na Segunda Epístola de João.",
+          "answer": "AMOR E VERDADE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas vezes, literalmente, encontramos a expressão Espírito Santo na segunda e terceira epístola de João.",
+          "answer": "NENHUMA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Dos filhos da \"senhora eleita\" -",
+          "options": [
+            "todos andaram na verdade",
+            "nenhum andava na verdade",
+            "alguns andavam na verdade",
+            "só um andava na verdade."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "O menor livro da Bíblia",
+          "options": [
+            "Segunda Epístola de João",
+            "Terceira Epístola de João",
+            "Obadias",
+            "Filemon."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um obreiro rebelde",
+          "Um obreiro de bom testemunho",
+          "Um obreiro humilde",
+          "Um obreiro hospitaleiro",
+          "Ancião, bispo e presbítero",
+          "Um livro com um só capítulo"
+        ],
+        "columnB": [
+          "Obadias",
+          "pastor",
+          "Diótrefes",
+          "Demétrio",
+          "Gaio",
+          "João"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Tudo indica que o autor desta epístola de Judas, foi Judas, o irmão de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que a Epístola de Judas foi escrita em Jerusalém antes do ano 70.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Aprendemos com Judas que nem sempre Deus confirma nossos propósitos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A Epístola de Judas é sobremodo enérgica na defesa da santificação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Judas destacou a importância de lembrarmos dos ensinos ministrados pelos apóstolos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A fé natural é um atributo concedido por Deus a todos os seus filhos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Judas exortou os crentes a orar pedindo a fé santíssima.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Ter uma casa espiritual maior ou menor depende da fé de cada um.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que a formação do fruto do Espírito nada tem a ver com o crescimento da fé.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sobre as verdades fundamentais da Bíblia não pode haver discordância entre os filhos de Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome de um profeta que profetizou antes do dilúvio.",
+          "answer": "ENOQUE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantos e quais os tipos de fé mencionados na Bíblia.",
+          "answer": "DOIS – FÉ NATURAL E FÉ ESPIRITUAL"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Judas fez referência -",
+          "options": [
+            "ao juízo dos anjos caídos",
+            "a destruição de Sodoma",
+            "ao Arcanjo Miguel",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A Epístola de Judas destaca -",
+          "options": [
+            "o amor ao próximo",
+            "o arrebatamento da igreja",
+            "a batalhar pela fé",
+            "a santificação da igreja."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Vitória que vence o mundo",
+          "Fé como firme fundamento",
+          "Forma de adquirir fé",
+          "Impossível agradar a Deus",
+          "Falsos mestres",
+          "Ser um homem de fé"
+        ],
+        "columnB": [
+          "ouvir a Palavra de Deus",
+          "árvores murchas",
+          "a nossa fé",
+          "nosso objetivo",
+          "fé espiritual",
+          "sem fé"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

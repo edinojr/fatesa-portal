@@ -1,0 +1,134 @@
+{
+  "id": "ECL_3",
+  "title": "Eclesiologia - V3",
+  "tfQuestions": [
+    {
+      "id": "ecl3-tf-1",
+      "question": "É difícil, na prática, entender a diferença entre a vinha do Antigo e do Novo Testamento.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl3-tf-2",
+      "question": "As condições exigidas por Deus em relação à igreja são diferentes em relação as de Israel.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl3-tf-3",
+      "question": "Quanto à salvação os judeus não têm nenhum privilégio nesta Dispensação da Graça.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl3-tf-4",
+      "question": "A expressão “vindo a plenitude dos tempos” refere-se ao arrebatamento da igreja",
+      "answer": "F"
+    },
+    {
+      "id": "ecl3-tf-5",
+      "question": "A palavra igreja é encontrada na Bíblia no singular e também no plural.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl3-tf-6",
+      "question": "O batismo no corpo místico de Cristo é realizado pelo Espírito Santo.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl3-tf-7",
+      "question": "A doutrina pentecostal não é uma inovação doutrinária ocorrida dentro do cristianismo.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl3-tf-8",
+      "question": "O batismo nas águas só pode ser realizado após o candidato completar doze anos de idade.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl3-tf-9",
+      "question": "É certo que a Ceia do Senhor não tem qualquer relação com o arrebatamento da igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl3-tf-10",
+      "question": "A oferta que mais agrada a Deus é uma vida santa de seus filhos no altar.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ecl3-mc-1",
+      "question": "Em Jesus a Lei Cerimonial foi -",
+      "options": [
+        "Revogada",
+        "Modificada",
+        "Cumprida",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ecl3-mc-2",
+      "question": "A salvação foi e ainda é -",
+      "options": [
+        "Planejada pelo Pai",
+        "Executada por Jesus",
+        "Aplicada pelo Espírito Santo",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "ecl3-mc-3",
+      "question": "Na celebração da Ceia do Senhor comemoramos –",
+      "options": [
+        "A morte de Jesus",
+        "Sua segunda vinda",
+        "Nossa libertação do jugo do pecado",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "ecl3-mc-4",
+      "question": "A igreja não é –",
+      "options": [
+        "Uma instituição divina",
+        "Uma instituição humana",
+        "Um edifício",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ecl3-mp-1",
+      "left": "Igreja universal",
+      "right": "Igreja triunfante"
+    },
+    {
+      "id": "ecl3-mp-2",
+      "left": "Igreja local",
+      "right": "Igreja militante"
+    },
+    {
+      "id": "ecl3-mp-3",
+      "left": "Ingresso na igreja universal",
+      "right": "Batismo no corpo de Cristo"
+    },
+    {
+      "id": "ecl3-mp-4",
+      "left": "Ingresso na igreja local",
+      "right": "Batismo nas águas"
+    },
+    {
+      "id": "ecl3-mp-5",
+      "left": "Virgens loucas e peixes ruins",
+      "right": "Igreja local"
+    },
+    {
+      "id": "ecl3-mp-6",
+      "left": "Virgens prudentes e peixes bons",
+      "right": "Igreja universal"
+    }
+  ]
+}

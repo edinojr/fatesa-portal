@@ -1,0 +1,1196 @@
+{
+  "id": "hist-israel-1",
+  "title": "História de Israel I",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os 66 livros da Bíblia não estão colocados na ordem cronológica em que foram escritos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "No Antigo Testamento o único povo com o qual Deus tratava era o de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "As datas, na Idade Antiga, quase sempre são contraditórias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Foram poucas as vezes, na história, que Deus não manteve comunicação com os homens.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A exigência do \"santos sereis porque eu, o Senhor vosso Deus, sou santo\" não existia antes da Lei de Moisés.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "É certo que Enoque pertencia à descendência santa oriunda de Abel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Ser casado e tendo uma família para cuidar não impediu Enoque de andar com Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que na época em que viveu Enoque era muito mais fácil andar com Deus do que hoje.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A experiência de passar para a eternidade sem ver a morte não mais será repetida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Noé é um exemplo bíblico de que é possível ser fiel a Deus em qualquer tempo e lugar.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas e quais são as épocas da história do povo de Deus, segundo a Bíblia.",
+          "answer": "TRÊS- A ÉPOCA PRÉ ABRAÂMICA, A DE ISRAEL E A DO CRISTIANISMO."
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas e quais as pessoas que foram salvas do Dilúvio",
+          "answer": "OITO - NOÉ, SUA ESPOSA, SEUS TRÊS FILHOS E SUAS TRÊS NORAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Andou com Deus e não morreu –",
+          "options": [
+            "Enoque",
+            "Adão",
+            "Noé",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "A arca permaneceu com sua porta aberta -",
+          "options": [
+            "três dias",
+            "sete dias",
+            "dez dias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pai de Enoque",
+          "Filho de Enoque",
+          "Filho de Noé",
+          "Contemporâneo de Enoque",
+          "Bígamo e assassino",
+          "Pós-dilúvio"
+        ],
+        "columnB": [
+          "Lameque",
+          "Abraão",
+          "Adão",
+          "Sem",
+          "Jarede",
+          "Matusalém"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No princípio a história começou com Adão e Eva e num segundo momento ela reiniciou com Noé e sua esposa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Noé, sua família e todos os animais permaneceram na arca 57 dias após ela pousar no cume do monte.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A aliança que Deus celebrou com Noé tinha um caráter universal e perpétuo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O pecado de Cão se agravou pelo fato de ter zombado de seu pai.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Cão não apenas foi amaldiçoado pelo seu pai como também foi repreendido pelos seus irmãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Após o dilúvio Noé e sua família retornaram à sua terra primitiva.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Quando da chamada de Abraão somente sua família não era idólatra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Não há comprovação de que Sem tenha sido contemporâneo de Abraão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Ao criar a nação de Israel Deus rejeitou para sempre os gentios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Hebreus, israelitas e judeus, biblicamente, trata-se de um só povo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o número de pessoas que sobreviveram ao dilúvio.",
+          "answer": "OITO PESSOAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que caracterizava as nações gentílicas no tempo de Paulo.",
+          "answer": "GROSSEIRA IDOLATRIA E IMORALIDADE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Ao sair da arca Noé - primeiro -",
+          "options": [
+            "construiu sua casa",
+            "plantou uma vinha",
+            "edificou um altar",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A nova civilização teve origem –",
+          "options": [
+            "em Sinar",
+            "na Armênia",
+            "em Israel",
+            "no Egito."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeiro imperialista",
+          "Primeiro a ser chamado de hebreu",
+          "Lugar onde a arca pousou",
+          "Descendentes de Sem",
+          "Sobreviveram ao dilúvio",
+          "Declaração profética de Noé"
+        ],
+        "columnB": [
+          "arabes e hebreus",
+          "Ninrode",
+          "morte e a natureza carnal",
+          "Armênia",
+          "relação entre Jeová e Sem",
+          "Abraão"
+        ],
+        "answers": [
+          4,
+          1,
+          5,
+          3,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Caso Abraão fosse nosso contemporâneo ele seria iraquiano.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Por mais de dois mil anos Deus tratava com todos os povos e nações; não havia um povo especial.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Ao chamar Abraão, Deus mencionou também a chamada de Sara, sua esposa",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sendo seu pai já velho e Ló, seu sobrinho, órfão, Abraão não poderia deixa- los sós.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Pela Bíblia podemos afirmar que Abraão permaneceu em Harã por muito pouco tempo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao chegar em Canaã a terra que Deus havia prometido dar a Abraão estava ocupada pelos cananeus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Ao chegar em Canaã, Abraão edificou um altar ao seu Deus que lhe aparecera em Hur.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Com base na tipologia bíblica podemos afirmar que a igreja ocupou o lugar de Israel como povo de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "É certo que, num lar constituído na direção de Deus, não pode haver problemas",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Os doze filhos de Jacó deram origem às doze tribos que formaram a nação de Israel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que disse Josué sobre a família de Abraão.",
+          "answer": "QUE ERA IDÓLATRA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o número dos filhos e o nome da filha de Jacó .",
+          "answer": "FILHOS – DOZE; NOME DA FILHA: DINÁ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Deusa adorada em Ur, -",
+          "options": [
+            "asterote",
+            "vênus",
+            "nina",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Idade que Isaque gerou seus filhos -",
+          "options": [
+            "sessenta anos",
+            "quarenta anos",
+            "trinta",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Cidade natal de Abraão",
+          "Terra de Abraão",
+          "Cidade onde Abraão morou",
+          "Irmão de Abraão",
+          "Cunhada de Abraão",
+          "Avó paterna de Abraão"
+        ],
+        "columnB": [
+          "Harã",
+          "Milca",
+          "Bíblia não menciona",
+          "Caldeia",
+          "Naor",
+          "Ur"
+        ],
+        "answers": [
+          3,
+          5,
+          6,
+          2,
+          4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "José foi vendido aos egípcios por trinta moedas de prata.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para contar a história de José, no Egito, Moisés ocupou treze capítulos do livro de Gênesis",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O único motivo de José ter sido levado para o Egito foi a maldade de seus irmãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sabemos haver uma contradição sobre o número da família de Jacó que desceu ao Egito",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Jacó fez José jurar que seu corpo não seria sepultado no Egito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A honra de ter seus corpos embalsamados era reservada somente aos reis do Egito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Caso dependesse da escolha dos filhos de Israel eles jamais deixariam o Egito",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A opressão contra os descendentes de Jacó começou logo após a morte de José",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Foi por ordem de José que Jacó e seus descendentes foram habitar na terra de Gósen.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que o nascimento de Moisés foi uma resposta de Deus ao clamor dos filhos de Israel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o tempo que durou a escravidão de Israel no Egito",
+          "answer": "DUROU CERCA DE 80 ANOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quanto tempo José viveu no Egito.",
+          "answer": "VIVEU CERCA DE 93 ANOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Grau de parentesco da mãe de Moisés em relação ao seu pai -",
+          "options": [
+            "irmã",
+            "tia",
+            "nenhum",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Em Gênesis o Espírito Santo reservou para José –",
+          "options": [
+            "do capítulo 37 ao 50",
+            "13 capítulos",
+            "14 capítulos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Moisés até 40 anos",
+          "Moisés dos 40 a 80 anos",
+          "Moisés dos 80 a 120 anos",
+          "Irmão de Moisés",
+          "Pai de Moisés",
+          "Filho de Moisés"
+        ],
+        "columnB": [
+          "Eliezer",
+          "Anrão",
+          "aprendeu não ser ninguém",
+          "aprendeu ser alguém",
+          "Arão",
+          "aprendeu que Deus é tudo"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Dúvida não poder existir de que Josué escreveu, inteiramente, seu livro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Livro de Josué ocupa, no tempo, um período de cerca de 25 anos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Josué, enquanto jovem, não demonstrava muito interesse pela palavra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo o \"Talmude\", Josué era da idade de quase vinte anos quando saiu do Egito.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "No sentido literal a primeira batalha da qual Josué participou foi contra os amalequitas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Com base no Livro de Josué, podemos afirmar que na obra de Deus não há lugar para tímidos e medrosos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Tendo sido indicado por Moisés, Josué assumiu a liderança do povo após sua morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "As lideranças de Israel tiveram dificuldades para aceitar Josué como líder do povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Após a primeira colheita de trigo Deus não mandou mais maná.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Todos os israelitas que nasceram no deserto foram circuncidados em Gilgal.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a condição para que as águas do Rio Jordão se abrisse.",
+          "answer": "O TOQUE DOS PÉS DOS SACERDOTES QUE LEVAVAM A ARCA"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite contra qual cidade Israel sofreu sua primeira derrota",
+          "answer": "AI"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Primeiro desafio de Josué -",
+          "options": [
+            "tomar Jericó",
+            "atravessar o Jordão",
+            "conquistar Gilgal",
+            "circuncidar os israelitas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "O nome original de Josué era –",
+          "options": [
+            "Efraim",
+            "Jesus",
+            "Oseias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeira Páscoa",
+          "Segunda Páscoa",
+          "Terceira Páscoa",
+          "Última Páscoa",
+          "Impecílio para sair do Egito",
+          "Impacílio para entrar em Canaã"
+        ],
+        "columnB": [
+          "Mar Vermelho",
+          "Gilgal",
+          "Egito",
+          "Rio Jordão",
+          "Jerusalém",
+          "Sinai"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Do ponto de vista moral nada podemos encontrar na vida de Josué que comprometa sua conduta.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Segundo a Bíblia, usando-se da astúcia, os gebeonitas enganaram Josué e seus príncipes.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os heveus que habitavam em Gibeom não estavam entre as nações que Josué deveria destruir.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O erro de Josué foi tomar uma decisão sem consultar seus príncipes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na oração de Jesus ele não pediu ao Pai que nos tirasse do mundo, mas pediu que nos livrasse do mal.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Com o erro de Josué aprendemos a não tomar decisão sem pedir \"conselho à boca do Senhor\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Durante o período de conquistas poucas foram as vezes que Josué e seu exército retornaram a Gilgal",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O período de conquistas da terra durou cerca de 25 anos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Terminadas as guerras de conquistas a terra foi dividida entre as doze tribos de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Josué morreu com 110 anos, porém, não indicou ninguém como seu sucessor",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar porque Josué não poderia ter feito aliança com os gebeonitas.",
+          "answer": "PORQUE ELES ESTAVAM ENTRE AS NAÇÕES QUE DEUS MANDOU DESTRUIR"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite qual foi a decisão que Josué declarou ter tomado.",
+          "answer": "\"EU E MINHA CASA SERVIREMOS AO SENHOR\""
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Disse Deus a Josué -",
+          "options": [
+            "tem bom ânimo",
+            "esforça-te",
+            "não te espantes",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Uma cidade de refúgio -",
+          "options": [
+            "Jerusalém",
+            "Siquém",
+            "Belém",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Gibeão",
+          "Josué",
+          "Tottem",
+          "Jabim",
+          "Gola",
+          "Eliazar"
+        ],
+        "columnB": [
+          "astrônomo",
+          "cidade de refúgio",
+          "sacerdote",
+          "heveus",
+          "rei cananeu",
+          "hábil administrador"
+        ],
+        "answers": [
+          3,
+          5,
+          6,
+          1,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar, com certeza, ter sido Samuel o autor do Livro de Juízes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Juízes relata a história de um povo que começou mal, mas terminou bem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Ao contrário do Livro de Josué, juízes é conhecido como o Livro dos Fracassos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo a Bíblia, a segunda geração depois de Josué não conhecia ao Senhor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Todo período que durou o governo dos juízes, Israel foi muito abençoado por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Baraque, com um pequeno exército, derrotou o grande e poderoso exército de Sísera.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Após a grande vitória dada por Deus a Gideão, Israel teve paz por quarenta anos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Jefté, por ser filho bastardo, foi rejeitado por seus irmãos, mas foi aprovado por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A Bíblia não relata nenhum sacrifício humano que tenha sido aceito por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "\"Cada um fazia o que parecia reto aos seus olhos” é como termina o Livro de Juízes.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a relação existente entre o veterano Calebe e o primeiro Juiz de Israel.",
+          "answer": "SOGRO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas e quais as mulheres que governaram Israel no tempo de juízes",
+          "answer": "APENAS UMA, DÉBORA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Israel teve ao todo –",
+          "options": [
+            "15 juízes",
+            "12 juízes",
+            "24 juízes",
+            "número indeterminado."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Juiz pai de 30 filhas e 30 filhos -",
+          "options": [
+            "Adom",
+            "Abimeleque",
+            "Eude",
+            "Ibsã."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Feriu 600 homens com um ferrão",
+          "Venceu um exército tocando buzinas",
+          "Juiz morto por uma mulher",
+          "Libertou Israel do jugo de Moabe",
+          "Nenhum registro de sua obra",
+          "Local onde a mulher de um levita foi morta"
+        ],
+        "columnB": [
+          "Eúde",
+          "Gibeá",
+          "Gideão",
+          "Elom",
+          "Sangar",
+          "Abimeleque"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar, com certeza, que o Livro de Rute foi escrito por Samuel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Rute foi uma gentia fiel na terra dos judeus e Ester foi uma judia fiel na terra dos gentios",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo gentios, não havia qualquer relação de parentesco entre os moabitas e os israelitas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Na tipologia bíblica podemos ver em Rute uma figura da salvação dos gentios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O Livro de Rute relata a história de uma família que saiu de Belém e só retornou dez anos depois.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Para acompanhar sua sogra, Rute renunciou sua terra, seu povo e seus deuses.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos ver em Boaz a figura de Jesus como nosso parente remidor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na tradução aprovada pela Igreja Católica, I e II Samuel aparecem como I e II Reis.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Eli, sacerdote e juiz, após julgar Israel por quarenta anos, teve um fim feliz.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Cerca de quinhentos anos depois de sua morte o nome de Samuel foi mencionado de forma honrosa por Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Por ter cumprido seu voto, cite como Deus recompensou a fidelidade de Ana.",
+          "answer": "DANDO-LHE TRÊS FILHOS E DUAS FILHAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quantos e quais os reis de Israel ungidos por Samuel.",
+          "answer": "DOIS – SAUL E DAVI"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Samuel foi -",
+          "options": [
+            "profeta",
+            "juiz",
+            "sacerdote",
+            "todas estão corretas.."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Deus nivelou Samuel com –",
+          "options": [
+            "Elias",
+            "Davi",
+            "Moisés",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Filho de Noemi",
+          "Filho de Rute",
+          "Filho de Salmar",
+          "Filho de Obede",
+          "Filho de Samuel",
+          "Filho de Eli"
+        ],
+        "columnB": [
+          "Hofni",
+          "Jessé",
+          "Obede",
+          "Joel",
+          "Boás",
+          "Malom"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar que quando Israel pediu um rei, Davi ainda não tinha nascido",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A monarquia sempre foi o sistema de governo, em Israel, até ser levado para o cativeiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Saul não foi um escolhido e nem ungido por ordem de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Saul, não sabendo ter sido abandonado por Deus, continuou como rei até sua morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Todo reinado de Saul, que durou quarenta anos, é descrito no Livro de I Samuel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Entre a unção de Davi até tornar-se rei temos um período de cerca de 14 anos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Após a morte de Saul, Davi, com idade de trinta anos, assumiu o trono de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Os mensageiros que levaram a Davi a notícia da morte de Saul foram por ele condecorados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jerusalém, conhecida como “Cidade de Davi”, era habitada e estava em poder dos jebuseus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Pela aliança que Deus fez com Davi, jamais faltaria descendente seu para o trono de Israel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quanto tempo durou o Reino Unido de Israel e quais foram seus reis.",
+          "answer": "DUROU 120 ANOS; SEUS REIS FORAM SAUL, DAVI, E SALOMÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Ao exigir um dote para dar sua filha em casamento a Davi, cite qual era a intenção de Saul.",
+          "answer": "QUE DAVI FOSSE MORTO PELOS FILISTEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Saul foi escolhido rei -",
+          "options": [
+            "por Deus",
+            "pelo povo",
+            "por Samuel",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "O ponto fraco do Rei Saul –",
+          "options": [
+            "envolvimento com mulheres",
+            "apego à riqueza",
+            "apego ao poder",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Forma de governo no período dos juízes",
+          "Forma de governo no período dos reis",
+          "Rejeitado por Deus, Saul",
+          "História do reinado de Saul",
+          "Abrangência do Livro II Samuel",
+          "Substituiu Saul após sua morte"
+        ],
+        "columnB": [
+          "Isbosete",
+          "Reinado de Davi",
+          "monarquia",
+          "teocracia",
+          "I Samuel",
+          "consultou uma feiticeira"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A história relatada em I Reis vai desde a morte do Rei Davi até a morte do Rei Josafá.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Salomão foi escolhido para suceder Davi, como rei, por ser seu filho maisvelho.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Davi já avançado em idade, preferiu deixar para Salomão a responsabilidade da construção do templo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A suntuosidade do templo e o material ser de primeira qualidade foi uma exigência de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na história de Israel podemos afirmar que Salomão foi de herói a vilão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Por não ter ouvido o conselho dos anciãos e tratado o povo com dureza, Roboão provocou a divisão do reino.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Na Bíblia, na tradução aprovada pela Igreja Católica, não existem os Livros I e II Crônicas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Em I e II Crônicas os fatos negativos da história de Israel não foram registrados.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os livros de Esdras, Neemias e Ester, contam a história de Israel após o retorno do cativeiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Esdras voltou para Jerusalém para construir o templo e Neemias para construir os muros da cidade.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Na tipologia bíblica, cite como podemos ver Davi e Salomão.",
+          "answer": "DAVI COMO FIGURA DE JESUS E SALOMÃO COMO FIGURA DO ESPÍRITO SANTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar três coisas proibidas multiplicadas por Salomão.",
+          "answer": "MULHERES, CAVALOS E RIQUEZAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O templo de Salomão foi construído em -",
+          "options": [
+            "sete anos",
+            "dez anos",
+            "quinze anos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Personagens centrais em I Reis –",
+          "options": [
+            "Davi e Salomão",
+            "Davi e Josafá",
+            "Salomão e Elias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Reino de Sul",
+          "Reino do Norte",
+          "Reinaram no Sul",
+          "Reinaram no Norte",
+          "Cativeiro do Reino Sul",
+          "Cativeiro do Reino do Norte"
+        ],
+        "columnB": [
+          "dezenove reis e uma rainha",
+          "Babilônia",
+          "Reino de Judá",
+          "Assíria",
+          "dezenove reis",
+          "Reino de Israel"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}

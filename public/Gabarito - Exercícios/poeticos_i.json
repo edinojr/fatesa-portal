@@ -1,0 +1,1196 @@
+{
+  "id": "poeticos-1",
+  "title": "Poéticos I",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pelo que a Bíblia relata não é possível duvidar da existência de um homem chamado Jó.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Embora seja chamado de poético, nada existe de poesia no livro de Jó.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Segundo o “Talmude”, Moisés escreveu o Livro de Jó quando estava em Midiã",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Nada mais sabemos de Jó além do que está registrado no seu livro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Geograficamente é possível identificar hoje onde situava-se o lugar que Jó residia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sabemos ser por temor que Jó se aproximava de Deus e não pelo medo de perder sua riqueza.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo, como era, um homem muito rico, Jó descuidou do cuidado de sua família",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Casado apenas com uma mulher Jó gerou, ao todo, sete filhas e três filhos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Ao dizer que sua esposa falava como “qualquer doida” Jó revelou toda sua grosseria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Nos banquetes realizados pelos filhos de Jó podemos ver uma família bem estruturada.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite porque a avestruz não cuida de seus ovos e de seus filhotes.",
+          "answer": "PORQUE DEUS A PRIVOU DE SABEDORIA E ENTENDIMENTO."
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quantos dias os amigos de Jó ficaram sentados com ele em silêncio.",
+          "answer": "DURANTE SETE DIAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Pela Bíblia sabemos que Jó era um homem –",
+          "options": [
+            "trabalhador",
+            "muito rico",
+            "de bom caráter",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Antes de sua provação Jó gerou dez filhos com –",
+          "options": [
+            "duas mulheres",
+            "diversas mulheres",
+            "uma só mulher",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Atribuiu o sofrimento de Jó ao pecado",
+          "Sugeriu ser Jó um hipócrita",
+          "Afirmou que Jó merecia um sofrimento maior",
+          "Afirmou faltar humildade para Jó",
+          "Declarou ser Jó um homem sincero",
+          "Um homem que desviava do mal"
+        ],
+        "columnB": [
+          "Deus",
+          "Eliú",
+          "Jó",
+          "Bildade",
+          "Elifaz",
+          "Zofar"
+        ],
+        "answers": [
+          5,
+          4,
+          6,
+          2,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Um crente fiel pode viver o “dia da adversidade”, mas o “dia da calamidade”, não",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Pela Bíblia podemos afirmar que Deus ainda prova os justos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na simbologia bíblica, “águas” falam de provação e “fogo” fala de lutas, dificuldades.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Determinar a rejeição das dificuldades e exigir as bênçãos de Deus não tem fundamento bíblico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os filhos de Jó não teriam sido mortos naquele dia se não estivessem numa festa, comendo e bebendo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que Satanás, quando quer, pode usar as forças da natureza.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A guerra entre o Reino de Deus e o reino das trevas e travada, hoje, aqui na terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Buscando o Reino de Deus temos a promessa de que todas as demais coisas nos são acrescentadas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jó deixou-nos o exemplo de que é possível adorar a Deus mesmo no “dia da adversidade”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A idolatria é uma das formas pelas quais, indiretamente, Satanás é adorado.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Segundo a Bíblia, citar quem o Senhor corrige e açoita .",
+          "answer": "OS QUE ELE AMA E RECEBE POR FILHO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite um sonho que Satanás nunca pôde realizar.",
+          "answer": "SER ADORADO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O que faz a “chaga” e a “liga” -",
+          "options": [
+            "Satanás",
+            "homem",
+            "Deus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Um crente fiel está livre das –",
+          "options": [
+            "“águas amargas”",
+            "“serpente ardente”",
+            "“fornalhas de fogo”",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "O fogo queimou",
+          "O vento matou",
+          "Os sabeus roubaram",
+          "Os caldeus roubaram",
+          "Permissão de Deus a Satanás",
+          "proibição de Deus a Satanás"
+        ],
+        "columnB": [
+          "usar as forças da natureza",
+          "os bois e jumentas",
+          "os camelos",
+          "os filhos de Jó",
+          "tirar a vida de Jó",
+          "ovelhas e pastores"
+        ],
+        "answers": [
+          5,
+          3,
+          4,
+          2,
+          6,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pela Bíblia podemos entender porque Deus permitiu a presença de Satanás no céu",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Embora Satanás nada tivesse dito, Deus, contudo, não havia esquecido de Jó.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Podemos afirmar que na igreja somo amigos de todos e que todos são nossos amigos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A visita dos amigos de Jó durou pouco tempo, pois suas feridas cheiravam mal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Depois de sete dias, ao falar, Jó demonstrou estar no uso pleno de suas faculdades mentais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pecar, Jó não pecou, porém, como homem revelou todas suas fraquezas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Jó externou sua gratidão a Deus agradecendo-o pelo dia do seu nascimento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora sendo um homem de Deus, podemos afirmar que Jó era apenas um homem",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Pela Bíblia sabemos que Jesus foi o único homem que não desejou evitar o sofrimento e a dor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Nosso dia de maior aflição pode ser o responsável pela nossa eternidade no céu",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No Livro de Jó, cite quantas vezes Satanás, juntamente com os anjos, compareceu à presença de Deus no céu.",
+          "answer": "DUAS VEZES"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a provável causa do silêncio de Jó por sete dias.",
+          "answer": "JÓ ESTAVA DE LUTO PELA MORTE DE SEUS DEZ FILHOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O mais novo dos quatro amigos de Jó -",
+          "options": [
+            "Bildade",
+            "Eliú",
+            "zofar",
+            "Elifaz."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Para seus amigos, Jó era um homem –",
+          "options": [
+            "justo",
+            "inocente",
+            "um grande pecador",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Abandonaram Jó",
+          "Choraram pelo sofrimento de Jó",
+          "Desejou a morte de Jó",
+          "Um desejo de Jó",
+          "Pensou que Jó blasfemaria",
+          "Manifestou sua confiança em Jó"
+        ],
+        "columnB": [
+          "Deus",
+          "Satanás",
+          "parentes e empregados",
+          "sua esposa",
+          "ter morrido ao nascer",
+          "seus amigos"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Elifaz começou seu discurso com uma palavra de critica e censura contra Jó.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Segundo Elifaz a solução do problema de Jó dependia, exclusivamente, dele e não de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Jó afirmou que seus amigos eram inventores de mentiras e médicos que não curavam ninguém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo a teologia de Elifaz, o homem poderia, através de boas obras, comprar o favor de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para Bildade, Jó era pior que os ímpios, pois estes podiam viver uma longa vida com segurança.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Jó, no mais profundo sofrimento, demonstrou firme convicção de não estar em pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Zofar exaltou-se com a teimosia de Jó de que seus sofrimentos não era consequência de seu pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que hoje nenhum obreiro pensa e ensina como os amigos de Jó.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Dos amigos de Jó, Eliú, embora sendo o mais jovem, demonstrou maior humildade",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para Eliú o sofrimento é um instrumento de Deus pelo qual ele fala com o homem.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a causa do sofrimento de Jó, segundo Elifaz.",
+          "answer": "SEU SOFRIMENTO ERA CONSEQUÊNCIA DE SEU PECADO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem acusou Jó de tagarela e se propôs a ensiná-lo.",
+          "answer": "ELIÚ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um teólogo pode ser –",
+          "options": [
+            "um homem de Deus",
+            "um ateu",
+            "um materialista",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Jó chamou seus amigos de -",
+          "options": [
+            "amigos leais",
+            "homens abençoados",
+            "inventores de mentiras",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Afirmou que os filhos de Jó pecarm",
+          "Pediu que Deus castigasse Jó até o fim",
+          "Jó não era inocente e nem sincero",
+          "Afirmou que Jó merecia um castigo maior",
+          "Elifaz",
+          "Eliú"
+        ],
+        "columnB": [
+          "o mais novo",
+          "o mais velho",
+          "Eliú",
+          "Bildade",
+          "Zofar",
+          "Elifaz"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A tortura imposta por Satanás a Jó incluiu seu corpo sua alma e seu espírito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Não havendo uma legislação trabalhista, não se pode dizer que Jó respeitava o direito de seus empregados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo um instrumento exclusivo de Deus, Satanás nunca pode usar a provação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "De Jó, Satanás sabia tudo, seu passado, seu presente e seu futuro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Mesmo que Jó tivesse pedido, Deus não poderia ajudá-lo a vencer aquela provação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sem qualquer interrupção Deus permitiu que todos falassem contra Jó e mesmo contra ele.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Imaginando-se cheio de razões, era o desejo de Jó defender-se diante de Deus",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na presença de Deus, Jó cumpriu o seu desejo e apresentou as provas de sua inocência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Após ouvir as razões apresentadas por Jó, Deus revelou a ele sua grandeza na obra da criação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para aqueles que são fiéis a Deus, segundo a Bíblia, sempre haverá um final feliz.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "De forma direta, cite em quais capítulos podemos encontrar Satanás no Livro de Jó.",
+          "answer": "APENAS NOS CAPÍTULOS 01 E 02."
+        },
+        {
+          "id": "sa2",
+          "question": "Dos que falaram com Jó cite quem não lhe atribuiu nenhuma condenação.",
+          "answer": "APENAS DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Personagem central do Livro de Jó -",
+          "options": [
+            "Jó",
+            "Deus",
+            "Satanás",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Jó declarou ter feito um concerto com -",
+          "options": [
+            "Deus",
+            "seus olhos",
+            "sua esposa",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Duvidar de Deus",
+          "Desprezar os pobres, órfãos e viúvas",
+          "Adultério e corrupção de menores",
+          "Integridade espiritual",
+          "Um final feliz espiritual",
+          "Um final feliz material e espiritual"
+        ],
+        "columnB": [
+          "Jó e José",
+          "Paulo e Isaías",
+          "provação da alma",
+          "provação do corpo",
+          "corpo, alma e espírito",
+          "provação do espírito"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          3,
+          4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Israel usava o livro dos Salmos tanto para suas orações como também para o louvor",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "“Provai e vede que o Senhor é bom” foi o que afirmou um dos salmistas anônimo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Podemos afirmar que é somente através da oração que podemos adorar a Deus",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A igreja foi constituída e chamada, antes de tudo, para pregar o evangelho.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Lendo um salmo por dia podemos completar a leitura do Livro de Salmos em cinco meses.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os Salmos eram cânticos para serem entoados com acompanhamento de instrumentos de corda",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo o autor da maioria dos Salmos é correto usar sempre a expressão Salmo de Davi para todos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Nominalmente, como autores dos salmos, podemos identificar sete personagens",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sendo, como é, um livro poético, não pode haver qualquer semelhança entre salmos e os livros de Moisés.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Quanto ao conteúdo, o Livro de Salmos na Bíblia “chamada católica” é diferente da “nossa” Bíblia.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em relação a nós, cite do que fala a adoração.",
+          "answer": "FALA DO QUE SOMOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o provável tempo existente entre os Salmos 90 e 126.",
+          "answer": "CERCA DE MIL ANOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um salmista neto do Profeta Samuel -",
+          "options": [
+            "Heman",
+            "Etã",
+            "Asafe",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Saltério, sentido literal -",
+          "options": [
+            "pandeiro",
+            "flauta",
+            "instrumento de corda",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pentateuco de Deus para Israel",
+          "Pentateuco de Israel para Deus",
+          "Livro de Deuteronômio",
+          "Livro de Êxodo",
+          "Livro de Gênesis",
+          "Livro de Levítico"
+        ],
+        "columnB": [
+          "salmos 73 a 89",
+          "salmos 42 a 72",
+          "Livro dos Salmos",
+          "Salmos 1 a 41",
+          "Livros de Moisés",
+          "Salmos 107 a 150"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos conhecer melhor Davi através dos Salmos, porque, a história de Israel pouco fala sobre ele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No sentido profético Jesus é o personagem de maior destaque no Livro de Salmos",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Por ser poeta, Davi não precisou da inspiração do Espírito Santo para compor os seus salmos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Davi se destacou na história por ser um grande rei e um poderoso guerreiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A informação bíblica que temos de Davi é a de que ele era um pastor de ovelhas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Foi para testar a coragem de Davi que Saul, como dote para casar com sua filha, exigiu cem prepúcios de filisteus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Depois de ser ungido por Samuel, Davi soube esperar pelo tempo de Deus para ocupar o trono.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora traído por Absalão, Davi chorou muito ao saber de sua morte.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O Livro de Salmos é, talvez, o livro da Bíblia mais rico em informações sobre Jesus",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo afirmou Pedro, a expressão “sejam poucos os seus dias” referia-se a Jesus",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar como era a vida de oração de Davi.",
+          "answer": "ORAVA TRÊS VEZES AO DIA: DE TARDE, DE MANHÃ, E AO MEIO DIA."
+        },
+        {
+          "id": "sa2",
+          "question": "Com relação as vestes e a túnica de Jesus, cite o que previa o Salmo 22:18",
+          "answer": "SUAS VESTES SERIAM REPARTIDAS E A TÚNICA SERIA SORTEADA."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Davi seria conhecido em todo mundo como -",
+          "options": [
+            "Rei de Israel",
+            "um grande guerreiro",
+            "salmista",
+            "homem que matou Golias."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Os dois principais personagens do Livro de Salmos -",
+          "options": [
+            "Davi e Salomão",
+            "Davi e Jesus",
+            "Davi e Moisés",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Não matar Saul",
+          "Enfrentar Golias",
+          "Um pastor de ovelhas",
+          "Chorar pela morte de Absalão",
+          "Saber esperar",
+          "Orar três vezes ao dia"
+        ],
+        "columnB": [
+          "exemplo de paciência",
+          "exemplo como trabalhador",
+          "exemplo de temor de Deus",
+          "exemplo de dependência de Deus",
+          "exemplo de amor paterno",
+          "exemplo de fé"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Tendo sido gerado por Deus, como afirma o Salmo 2, então Jesus não é eterno.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Salmo 2 se cumprirá na sua plenitude durante o milênio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Segundo o Pentateuco em cada degrau do templo os peregrinos deveriam entoar um Salmo de peregrinação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "“Contemplar a formosura do Senhor e aprender no seu templo” era um desejo de Davi",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A história de Israel só pode ser conhecida através das doze livros históricos da Bíblia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "No Salmo 78 Davi exorta os pais a contarem aos seus filhos o que Deus fez por Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Salmo 29 deixa claro a interferência de Satanás nas grandes tempestades.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que Deus não apenas criou, mas que também cuida da sua criação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sendo rei, Davi demonstrou sua confiança em Deus e também no seu exército",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Vemos, pelos Salmos, que Deus deu ao homem capacidade de domínio sobre sua criação.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Ao tratar com as nações, cite porque o cetro de Jesus será de ferro e não de ouro.",
+          "answer": "PORQUE O “FERRO” FALA DE CASTIGO E JUÍZO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas vezes a voz do Senhor é mencionado no Salmo 29.",
+          "answer": "SETE VEZES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Salmo que fala sobre o riso de Deus -",
+          "options": [
+            "Salmo 37",
+            "Salmo 2",
+            "Salmo 59",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Tipo de Salmo cantado pelos peregrinos -",
+          "options": [
+            "Salmo de peregrinação",
+            "Salmo dos degraus",
+            "Salmo de romagem",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Falam do passado",
+          "Falam do futuro",
+          "Falam do poder de Deus",
+          "Falam de socorro",
+          "Falam da importância do templo",
+          "Falam de escatologia"
+        ],
+        "columnB": [
+          "Salmo de Peregrinação",
+          "Salmo dois",
+          "Salmos históricos",
+          "Salmos Messiânicos",
+          "Salmos de súplicas",
+          "Salmos da natureza"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Nos Salmos Imprecatórios a expressão imprecar tem o sentido de pedir.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que hoje, biblicamente, não se pode mais falar em guerra santa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Para Israel tomar posse da terra prometida Deus não prometeu lutar ao lado do povo",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Deus proibiu qualquer aliança de paz entre Israel e os povos que ocupavam a terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "No sentido literal, penitência significava castigo, sofrimento, penalidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Biblicamente, é possível falar em penitência como sendo uma forma de obter a salvação",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo um homem “segundo o coração de Deus”, Davi teve facilidade para alcançar o perdão pelo seu pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora vivendo na Dispensação da Lei, Davi sentiu necessidade de uma purificação interna e externa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O “Cântico de louvores” é uma das formas de demonstramos a Deus nossa gratidão",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "No sentido literal é certo que se o choro durar uma noite, a alegria virá pela manhã.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a diferença entre as armas e os inimigos no Antigo e no Novo Testamento.",
+          "answer": "NO ANTIGO TESTAMENTO ERAM REAIS E MATERIAIS; NO NOVO SÃO REAIS E ESPIRITUAIS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantos e quais os inimigos do crente, hoje.",
+          "answer": "TRÊS- SATANÁS, O MUNDO E A CARNE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Salmista que falou de Davi em seu Salmo -",
+          "options": [
+            "Salomão",
+            "Asafe",
+            "Etã",
+            "Hemã."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Penitência -",
+          "options": [
+            "forma de obter perdão",
+            "sofrimento",
+            "gratidão",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Uma ordem dada por Deus",
+          "Um ensino de Jesus",
+          "Ordem dada por Jesus",
+          "Um ensino de Paulo",
+          "Um Salmo imprecatório",
+          "Um Salmo de penitência"
+        ],
+        "columnB": [
+          "Salmo 109",
+          "Salmo 51",
+          "destruir os inimigos",
+          "amar os inimigos",
+          "alimentar os inimigos",
+          "guardar a espada"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No Antigo Testamento as expressões Lei, juízos, estatutos referem-se à Bíblia, no seu todo",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Salmo 119 é um poema acróstico composto pelas 22 letras do alfabeto hebraico",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os Salmos didáticos ensinam o homem a buscar a direção e o auxilio de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não pode haver dúvida de ser Davi o autor do Salmo 91.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A expressão “aleluia” é a tradução da expressão hebraica que significa “louve ao Senhor”",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Com certeza o hino que Jesus cantou com seus discípulos na última páscoa, foi o Salmo 136.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar que os hinos que Paulo e Silas cantaram na prisão foram alguns dos salmos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Adoração, através do louvor, é um instrumento mais poderoso do que gemidos e lágrimas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "“Selá” tem origem na expressão selar e tem o sentido de confirmar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "O termo “mictão”, ao que tudo indica, fala de salmos de lamentações e arrependimento",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Sobre Deus, citar três coisas que podemos extrair do Salmo 46.",
+          "answer": "O QUE É DEUS, ONDE ESTÁ DEUS E O QUE DEUS FAZ POR NÓS"
+        },
+        {
+          "id": "sa2",
+          "question": "No Salmo 119, cite o significado da Palavra lei.",
+          "answer": "PALAVRA “LEI” REFERE-SE À PALAVRA DE DEUS OU À BÍBLIA NO SEU TODO."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A expressão “didática” significa -",
+          "options": [
+            "uma forma de pregar",
+            "uma forma de estudar",
+            "a arte de ensinar",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "É o autor do salmo 119 -",
+          "options": [
+            "Davi",
+            "autoria ignorado",
+            "Esdras",
+            "Moisés."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um Salmo Didático",
+          "Um Salmo de Aleluia",
+          "Um Salmo da Lei",
+          "“Mictão de Davi",
+          "“Dalete”, “Num” e “chim”",
+          "Epígrafe"
+        ],
+        "columnB": [
+          "Salmos 60",
+          "letras do alfabeto hebraico",
+          "Salmo 23",
+          "Salmo 19",
+          "título",
+          "Salmo 136"
+        ],
+        "answers": [
+          4,
+          5,
+          1,
+          3,
+          6,
+          2
+        ]
+      }
+    }
+  ]
+}

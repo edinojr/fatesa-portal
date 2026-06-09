@@ -1,0 +1,134 @@
+{
+  "id": "APOC_1",
+  "title": "Apocalipse - V1",
+  "tfQuestions": [
+    {
+      "id": "apoc1-tf-1",
+      "question": "O Imperador Romano foi usado por Deus para colocar João na Ilha de Pátmos.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc1-tf-2",
+      "question": "Sendo uma igreja mundana, o pastor de Pérgamo não foi visto na mão de Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc1-tf-3",
+      "question": "Tal como Jesus, Paulo também enviou epístolas para sete igrejas locais.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc1-tf-4",
+      "question": "Sendo amor, a Bíblia não afirma ser Deus um fogo consumidor.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc1-tf-5",
+      "question": "Nada indica que haverá misericórdia durante a grande tribulação.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc1-tf-6",
+      "question": "Sabemos que um dia Satanás irá abrir o “poço do abismo”.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc1-tf-7",
+      "question": "No início de seu governo o Anticristo fará uma aliança com Israel.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc1-tf-8",
+      "question": "Logo após o arrebatamento a igreja será julgada diante do Tribunal de Cristo.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc1-tf-9",
+      "question": "A Bíblia não fala nenhuma vez sobre o julgamento futuro de Satanás.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc1-tf-10",
+      "question": "Diante do Trono Branco e expressão grandes e pequenos fala sobre adultos e crianças.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "apoc1-mc-1",
+      "question": "A Grande Tribulação atingirá-",
+      "options": [
+        "Somente Israel",
+        "Todo oriente",
+        "Toda terra",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "apoc1-mc-2",
+      "question": "A Nova Jerusalém será uma cidade -",
+      "options": [
+        "Visível",
+        "Palpável",
+        "Real",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "apoc1-mc-3",
+      "question": "A expressão Filho de Deus é mencionada no Livro de Apocalipse.",
+      "options": [
+        "Apenas uma vez",
+        "Nenhuma vez",
+        "Três vezes",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "apoc1-mc-4",
+      "question": "Os personagens que serão lançados vivos no lago ardente de fogo e enxofre.",
+      "options": [
+        "Anticristo e o falso profeta",
+        "Os idolatras",
+        "Os gentios",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "apoc1-mp-1",
+      "left": "Lua debaixo dos pés",
+      "right": "Nação de Israel"
+    },
+    {
+      "id": "apoc1-mp-2",
+      "left": "Filho Varão",
+      "right": "O Filho do Homem"
+    },
+    {
+      "id": "apoc1-mp-3",
+      "left": "“Besta que subiu da terra”",
+      "right": "Falso Profeta"
+    },
+    {
+      "id": "apoc1-mp-4",
+      "left": "Grande Dragão, antiga serpente",
+      "right": "Satanás"
+    },
+    {
+      "id": "apoc1-mp-5",
+      "left": "Batalhou contra o Dragão",
+      "right": "Arcanjo Miguel"
+    },
+    {
+      "id": "apoc1-mp-6",
+      "left": "Terça parte das estrelas do céu",
+      "right": "Anjos caídos"
+    }
+  ]
+}

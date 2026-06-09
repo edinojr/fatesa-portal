@@ -1,0 +1,134 @@
+{
+  "id": "EP3_1",
+  "title": "Epístolas Paulinas III - V1",
+  "tfQuestions": [
+    {
+      "id": "ep31-tf-1",
+      "question": "É certo que, dificilmente, Satanás consegue tocar num crente santificado.",
+      "answer": "F"
+    },
+    {
+      "id": "ep31-tf-2",
+      "question": "Numa igreja local o importante deve ser a qualidade e não a quantidade de membros.",
+      "answer": "V"
+    },
+    {
+      "id": "ep31-tf-3",
+      "question": "A igreja de Corinto sobreviveu através do ensino ministrado por Paulo.",
+      "answer": "V"
+    },
+    {
+      "id": "ep31-tf-4",
+      "question": "A Bíblia condena o adultério e a prostituição, mas nada fala sobre fornicação.",
+      "answer": "F"
+    },
+    {
+      "id": "ep31-tf-5",
+      "question": "Para os membros da igreja a Santa Ceia não é uma opção, é obrigação.",
+      "answer": "V"
+    },
+    {
+      "id": "ep31-tf-6",
+      "question": "Os crentes fiéis são identificados através da posse dos dons espirituais.",
+      "answer": "F"
+    },
+    {
+      "id": "ep31-tf-7",
+      "question": "É certo que a coleta levantada na Macedônia era para os pobres de Jerusalém.",
+      "answer": "F"
+    },
+    {
+      "id": "ep31-tf-8",
+      "question": "Foi pelas mãos de Tito que Paulo enviou aos coríntios sua segunda epístola.",
+      "answer": "V"
+    },
+    {
+      "id": "ep31-tf-9",
+      "question": "A igreja visível enquanto estiver aqui na terra necessita de recursos financeiros.",
+      "answer": "V"
+    },
+    {
+      "id": "ep31-tf-10",
+      "question": "Paulo afirmou que Satanás pode transfigurar-se em anjo de luz.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ep31-mc-1",
+      "question": "Paulo elogiou os que disseram ser de -",
+      "options": [
+        "Paulo",
+        "Cefas",
+        "Cristo",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "ep31-mc-2",
+      "question": "Aquele irmão abençoado enviado com Tito era -",
+      "options": [
+        "Nome ignorado",
+        "Timóteo",
+        "Barnabé",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "ep31-mc-3",
+      "question": "Paulo afirmou que os crentes de Corinto eram -",
+      "options": [
+        "Santificados em Cristo",
+        "Rebeldes",
+        "Mundanos",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "ep31-mc-4",
+      "question": "Apolo era –",
+      "options": [
+        "Pregador itinerante",
+        "Natural de Alexandria",
+        "Um pregador eloquente",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ep31-mp-1",
+      "left": "É um dom natural",
+      "right": "Eloquência"
+    },
+    {
+      "id": "ep31-mp-2",
+      "left": "É um dom de poder",
+      "right": "Operação de maravilhas"
+    },
+    {
+      "id": "ep31-mp-3",
+      "left": "É um dom de revelação",
+      "right": "Palavra de ciência"
+    },
+    {
+      "id": "ep31-mp-4",
+      "left": "É um dom de inspiração",
+      "right": "Profecia"
+    },
+    {
+      "id": "ep31-mp-5",
+      "left": "Um caminho mais excelente",
+      "right": "Amor"
+    },
+    {
+      "id": "ep31-mp-6",
+      "left": "Identifica um bom crente",
+      "right": "Fruto do Espírito"
+    }
+  ]
+}

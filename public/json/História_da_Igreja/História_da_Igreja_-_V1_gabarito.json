@@ -1,0 +1,134 @@
+{
+  "id": "HIGR_1",
+  "title": "História da Igreja - V1",
+  "tfQuestions": [
+    {
+      "id": "higr1-tf-1",
+      "question": "Sabemos, pela Bíblia, que a grande esperança dos judeus era a vinda de Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "higr1-tf-2",
+      "question": "Sabemos, pela história, que a igreja foi constituída por dois povos, judeus e gentios.",
+      "answer": "F"
+    },
+    {
+      "id": "higr1-tf-3",
+      "question": "A história comprova que a igreja de Jerusalém era uma igreja solidária.",
+      "answer": "V"
+    },
+    {
+      "id": "higr1-tf-4",
+      "question": "Vender as propriedades e entregar o dinheiro aos apóstolos era uma decisão pessoal e não uma doutrina.",
+      "answer": "V"
+    },
+    {
+      "id": "higr1-tf-5",
+      "question": "Podemos afirmar que na igreja que Jesus chamou de minha não havia preconceito racial.",
+      "answer": "V"
+    },
+    {
+      "id": "higr1-tf-6",
+      "question": "Num primeiro momento o cristianismo não foi reconhecido por Roma como uma religião.",
+      "answer": "V"
+    },
+    {
+      "id": "higr1-tf-7",
+      "question": "Pela Bíblia e pela história não há fundamento para se falar em “Pais da Igreja”.",
+      "answer": "F"
+    },
+    {
+      "id": "higr1-tf-8",
+      "question": "A doutrina cristã, num primeiro momento, era ensinada oralmente.",
+      "answer": "V"
+    },
+    {
+      "id": "higr1-tf-9",
+      "question": "No reinado do Imperador Teodósio o cristianismo foi declarado a religião oficial do império.",
+      "answer": "F"
+    },
+    {
+      "id": "higr1-tf-10",
+      "question": "Na história da igreja foram poucas as vezes que Deus não teve fiéis na terra.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "higr1-mc-1",
+      "question": "A igreja de Jerusalém era formada -",
+      "options": [
+        "Somente por judeus",
+        "Por judeus e gentios",
+        "Por judeus e gregos",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "higr1-mc-2",
+      "question": "Com o Imperador Constantino a igreja tornou-se -",
+      "options": [
+        "Corrupta",
+        "Rica",
+        "Respeitada",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "higr1-mc-3",
+      "question": "A igreja foi inaugurada",
+      "options": [
+        "No nascimento de Jesus",
+        "No dia do Pentecoste",
+        "No dia da ressurreição de Jesus",
+        "Na cruz do calvário"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "higr1-mc-4",
+      "question": "Com o Imperador Constantino a igreja tornou-se",
+      "options": [
+        "Corrupta",
+        "Rica",
+        "Respeitada",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "higr1-mp-1",
+      "left": "Aproxima o homem de Deus",
+      "right": "Temor"
+    },
+    {
+      "id": "higr1-mp-2",
+      "left": "Igreja evangélica",
+      "right": "Biblicamente estruturada"
+    },
+    {
+      "id": "higr1-mp-3",
+      "left": "Afasta o homem de Deus",
+      "right": "Medo"
+    },
+    {
+      "id": "higr1-mp-4",
+      "left": "Igreja evangelística",
+      "right": "Uma igreja que cresce"
+    },
+    {
+      "id": "higr1-mp-5",
+      "left": "A igreja de Jerusalém",
+      "right": "Evangélica e evangelística"
+    },
+    {
+      "id": "higr1-mp-6",
+      "left": "“Para que sejam um”",
+      "right": "Comunhão"
+    }
+  ]
+}

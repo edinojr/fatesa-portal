@@ -1,0 +1,134 @@
+{
+  "id": "CRIS_3",
+  "title": "Cristologia - V3",
+  "tfQuestions": [
+    {
+      "id": "cris3-tf-1",
+      "question": "É certo que que nunca houve um pensamento único sobre quem era Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "cris3-tf-2",
+      "question": "Sendo Jesus a segunda pessoa da trindade podemos afirmar que o Pai existiu antes dele.",
+      "answer": "F"
+    },
+    {
+      "id": "cris3-tf-3",
+      "question": "Através do Antigo Testamento nada podemos saber sobre Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "cris3-tf-4",
+      "question": "Quase tudo que estava escrito sobre Jesus no Antigo Testamento teria que se cumprir e cumpriu.",
+      "answer": "F"
+    },
+    {
+      "id": "cris3-tf-5",
+      "question": "Sendo um menino judeu, Jesus foi apresentado no templo no oitavo dia e circuncidado aos quarenta dias.",
+      "answer": "F"
+    },
+    {
+      "id": "cris3-tf-6",
+      "question": "Com certeza ninguém pode afirmar o mês e o dia do nascimento de Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "cris3-tf-7",
+      "question": "Vendo que Jesus já estava morto os soldados não quebraram suas pernas.",
+      "answer": "V"
+    },
+    {
+      "id": "cris3-tf-8",
+      "question": "Podemos afirmar que “hades”, “sheol” e inferno falam de um só lugar.",
+      "answer": "V"
+    },
+    {
+      "id": "cris3-tf-9",
+      "question": "Pela Lei de Moisés os sacerdotes eram intercessores e mediadores entre Deus e o homem.",
+      "answer": "F"
+    },
+    {
+      "id": "cris3-tf-10",
+      "question": "Deus, sendo amor, mesmo no julgamento do Trono Branco haverá misericórdia.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "cris3-mc-1",
+      "question": "Morrer em lugar de outrem é uma morte -",
+      "options": [
+        "Expiatória",
+        "Vicária",
+        "Propiciatória",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "cris3-mc-2",
+      "question": "Diante de Josué, o Anjo do Senhor -",
+      "options": [
+        "Aceitou adoração",
+        "Foi chamado de Senhor",
+        "Santificou o lugar",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "cris3-mc-3",
+      "question": "O significado da palavra “Emanuel”",
+      "options": [
+        "Deus conosco",
+        "Deus forte",
+        "Deus provedor",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "cris3-mc-4",
+      "question": "Jesus fez uso emprestado de -",
+      "options": [
+        "Um jumentinho",
+        "Um cenáculo",
+        "Um túmulo",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "cris3-mp-1",
+      "left": "Arrebatamento da igreja",
+      "right": "Jesus não virá à terra"
+    },
+    {
+      "id": "cris3-mp-2",
+      "left": "Dia da Revelação do Senhor",
+      "right": "Jesus virá à terra"
+    },
+    {
+      "id": "cris3-mp-3",
+      "left": "Judeus reconhecerão Jesus como Messias",
+      "right": "Dia da revelação em glória"
+    },
+    {
+      "id": "cris3-mp-4",
+      "left": "A esperança da igreja",
+      "right": "Vinda de Jesus"
+    },
+    {
+      "id": "cris3-mp-5",
+      "left": "Primeira vinda de Jesus",
+      "right": "Como homem, em fraqueza"
+    },
+    {
+      "id": "cris3-mp-6",
+      "left": "Segunda vinda de Jesus",
+      "right": "Como Rei dos reis"
+    }
+  ]
+}

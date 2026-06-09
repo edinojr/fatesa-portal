@@ -1,0 +1,134 @@
+{
+  "id": "ECL_1",
+  "title": "Eclesiologia - V1",
+  "tfQuestions": [
+    {
+      "id": "ecl1-tf-1",
+      "question": "Entre os primeiros trabalhadores da vinha do Novo Testamento estava João Batista.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl1-tf-2",
+      "question": "Embora sendo um homem, na Bíblia não encontramos nenhum erro grave de Moisés.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl1-tf-3",
+      "question": "Podemos afirmar que os dons de Deus são sem arrependimento.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl1-tf-4",
+      "question": "Jesus, em seu ministério, não tinha a revelação do mistério que envolvia a igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl1-tf-5",
+      "question": "As duas naturezas da igreja, material e espiritual, são encontradas em Jesus Cristo.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl1-tf-6",
+      "question": "Numa igreja local é possível haver crentes batizados nas águas sem o novo nascimento.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl1-tf-7",
+      "question": "Paulo condenou a pregação do evangelho quando feita sem amor.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl1-tf-8",
+      "question": "Biblicamente existe uma razão para a presença da Trindade no ato do batismo nas águas.",
+      "answer": "V"
+    },
+    {
+      "id": "ecl1-tf-9",
+      "question": "Não existe qualquer simbolismo entre a Ceia do Senhor e a Páscoa Judaica.",
+      "answer": "F"
+    },
+    {
+      "id": "ecl1-tf-10",
+      "question": "A oferta alçada tem um objetivo definido e só é solicitada em casos especiais.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ecl1-mc-1",
+      "question": "A vocação da igreja é -",
+      "options": [
+        "Terrena",
+        "Celestial",
+        "Terrena e celestial",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "ecl1-mc-2",
+      "question": "A participação da ceia do Senhor é para o filho de Deus -",
+      "options": [
+        "Um ato voluntário",
+        "Uma necessidade",
+        "Uma exigência da igreja",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "ecl1-mc-3",
+      "question": "O sentido literal das expressões “petra” e “petros” -",
+      "options": [
+        "“Pedra” – rocha; “Petros” – Pedra pequena",
+        "“Petros” – rocha; “Pedra” – Pedra pequena",
+        "“Pedra” e “Petros” tem o mesmo sentido",
+        "Todas as alternativas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "ecl1-mc-4",
+      "question": "A igreja foi fundada por -",
+      "options": [
+        "Deus",
+        "Jesus Cristo",
+        "Pelo Espírito Santo",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ecl1-mp-1",
+      "left": "Igreja visível",
+      "right": "Uma organização"
+    },
+    {
+      "id": "ecl1-mp-2",
+      "left": "Igreja invisível",
+      "right": "Um organismo vivo"
+    },
+    {
+      "id": "ecl1-mp-3",
+      "left": "Jesus",
+      "right": "Parente do homem"
+    },
+    {
+      "id": "ecl1-mp-4",
+      "left": "Cristo",
+      "right": "Segunda pessoa da Trindade"
+    },
+    {
+      "id": "ecl1-mp-5",
+      "left": "Jesus Cristo",
+      "right": "Fundador da igreja"
+    },
+    {
+      "id": "ecl1-mp-6",
+      "left": "Necessita de dinheiro",
+      "right": "Igreja visível"
+    }
+  ]
+}

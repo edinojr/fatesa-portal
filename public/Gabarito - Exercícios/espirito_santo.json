@@ -1,0 +1,1196 @@
+{
+  "id": "espirito-santo",
+  "title": "Espírito Santo",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Pneumatologia trata, especificamente, do estudo do Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "A Doutrina da Trindade não pode ser aceita pela razão ou pela inteligência.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Pela fé podemos ver na trindade a presença de três divindades.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "A realidade da existência da trindade só pode ser aceita pela fé.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Podemos dizer que a personalidade do Espírito Santo é espiritual e incorpórea",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Sendo uma pessoa, o Espírito Santo possui intelecto, sentimento e vontade.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Em Eliezer, como guia de Rebeca, podemos ver um tipo de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Em Gênesis 1:2 a expressão Espírito de Deus está se referindo ao Pai.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "No Antigo Testamento não encontramos a expressão Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Podemos afirmar que foi o Espírito Santo quem ressuscitou Jesus dentre os mortos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar como podemos entender, pela razão, a Doutrina da Trindade.",
+          "answer": "NÃO PODEMOS"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Em relação a glória de Deus, cite como o Espírito Santo é chamado",
+          "answer": "ELE É CHAMADO DE \"ESPÍRITO DA GLÓRIA DE DEUS\""
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Segundo a Bíblia, Deus é —",
+          "options": [
+            "o Pai;",
+            "o Filho;",
+            "o Espírito Santo;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Pedro afirmou que Ananias mentiu ao —",
+          "options": [
+            "Pai;",
+            "Filho;",
+            "Espírito Santo;",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Espírito Santo",
+          "Crer na trindade",
+          "\"Parakleto\"",
+          "Creem haver um só Deus",
+          "Luz",
+          "Divina"
+        ],
+        "columnB": [
+          "símbolo da Trindade",
+          "\"advocatus\"",
+          "outro Consolador",
+          "natureza da Trindade",
+          "os demônios",
+          "somente pela fé"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Divindade fala de Jesus e deidade fala do Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Podemos afirmar que o Espírito Santo nunca fala de si mesmo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "O pecado de Ananias não teve perdão porque ele pecou contra o Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "O Espírito Santo é chamado, na Bíblia, de Espírito Eterno.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "É o Espírito Santo quem opera no homem o milagre do novo nascimento.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "É certo que o homem não tem parte no processo da regeneração.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Podemos afirmar que a Trindade quando em ação forma uma unidade.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Estando, hoje, na terra é certo que o Espírito Santo trabalha isolado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "O Antigo Testamento sendo o Ministério do Pai não há nenhuma referência ao Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Por ter sido inspirado pelo Espírito Santo a Bíblia é a infalível Palavra de Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Na execução do processo da regeneração cite qual é a participação do Espírito Santo",
+          "answer": "É O ESPÍRITO SANTO QUEM APLICA A PALAVRA NO CORAÇÃO DO HOMEM"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Cite a participação do Espírito Santo na ressurreição de Jesus",
+          "answer": "FOI ELE QUEM RESSUSCITOU JESUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "A unção no Antigo Testamento era somente para —",
+          "options": [
+            "os sacerdotes;",
+            "os reis;",
+            "os profetas;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Ministro é —",
+          "options": [
+            "um cargo superior;",
+            "uma posição de destaque;",
+            "aquele que serve;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Recebeu a unção para reinar",
+          "Recebeu a unção para liderar",
+          "Recebeu a unção para inventar",
+          "Recebeu a unção para profetizar",
+          "Falaram inspirados pelo Espírito Santo",
+          "Recebeu a unção para julgar"
+        ],
+        "columnB": [
+          "os profetas",
+          "Otoniel",
+          "Bezaliel",
+          "Davi",
+          "Eliseu",
+          "Gideão"
+        ],
+        "answers": [
+          5,
+          6,
+          3,
+          1,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "O nascimento de Jesus foi uma promessa feita pelo Pai lá no Éden.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Coube a João Batista o privilégio de introduzir Jesus na raça humana.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Coube ao anjo Gabriel o privilégio de gerar Jesus no ventre de Maria.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "João Batista foi gerado no ventre de sua mãe por seu pai Zacarias.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Jesus, até os trinta anos, não realizou nenhum milagre.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "No Antigo Testamento somente Deus Pai trabalhou para trazer a \"semente da mulher\".",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Aos trinta anos Jesus foi conduzido ao deserto por Satanás para ser por ele tentado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "O redentor tinha que ser parente do homem escravizado para poder libertá-lo",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Nos milagres feitos por Jesus, ele usou o poder do Espírito Santo que estava sobre ele",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Após sua morte Jesus desceu ao Hades como Deus e não como homem.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar quem conduziu Jesus ao deserto para ser tentado",
+          "answer": "O ESPÍRITO SANTO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Como homem, citar quantas vezes Jesus fez uso dos atributos exclusivos de Deus.",
+          "answer": "NENHUMA VEZ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Ao vir à terra Jesus perdeu a —",
+          "options": [
+            "onipotência;",
+            "onisciência;",
+            "onipresença;",
+            "todos estão errados."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Realizou milagres pelo poder do Espírito Santo —",
+          "options": [
+            "Jesus;",
+            "Josué;",
+            "Moisés;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Pela virtude do Espírito Santo, Eliseu",
+          "Pela virtude do Espírito Santo, Jesus",
+          "Pela virtude do Espírito Santo, Sansão",
+          "Pela virtude do Espírito Santo, Josué",
+          "Pela virtude do Espírito Santo, Davi",
+          "Pela virtude do Espírito Santo, Moisés"
+        ],
+        "columnB": [
+          "parou o tempo",
+          "abriu um mar",
+          "andou sobre as águas",
+          "curou um leproso",
+          "feriu mil homens",
+          "matou um gigante"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Durante o ministério de Jesus o Espírito Santo nada falou de si mesmo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "É certo que Eliezer pode ser visto como um tipo de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Sendo Jesus o Salvador, não temos necessidade de conhecer o Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "No Pentecoste o Espírito Santo desceu como uma tocha de fogo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "O profeta Joel usou a chuva como símbolo do Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Com a presença do Espírito Santo, Jesus não tinha muita necessidade de orar.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Para Deus o importante é o sacrifício, não importando como esteja o altar.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "O orvalho simboliza a ação santificadora do Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "\"Água viva\" é um dos símbolos representativo do Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Tal como a pomba, o Espírito Santo não habita onde houver impurezas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar o único símbolo do Espírito Santo que possui vida.",
+          "answer": "A POMBA"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar como podemos ver na simbologia do rio um avivamento espiritual",
+          "answer": "NAS CACHOEIRAS NELE EXISTENTES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "O fogo como símbolo do Espírito Santo —",
+          "options": [
+            "queima a palha;",
+            "endurece o barro;",
+            "purifica o ouro;",
+            ".todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "É um símbolo do Espírito Santo —",
+          "options": [
+            "o sangue de Jesus;",
+            "a Palavra de Deus;",
+            "o orvalho;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Faz vir à tona sujeira de um lago",
+          "Afugenta os animais bravios",
+          "O \"sangue de Jesus\"",
+          "\"Águas\", na Bíblia",
+          "Rio de águas vivas",
+          "As cachoeiras dos rios"
+        ],
+        "columnB": [
+          "Espírito Santo",
+          "avivamentos",
+          "povos, nações",
+          "fonte purificadora",
+          "o vento",
+          "o fogo"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "No Novo Testamento o primeiro a falar sobre o Espírito Santo foi João Batista",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Antes do Pentecostes somente os apóstolos havia recebido a salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "O batismo no Espírito Santo é a maior bênção que Deus concedeu à igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "O Espírito Santo veio para preparar e levar a igreja entregando-a Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Antes do Pentecostes somente Jesus podia expulsar demônios.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "É em Jesus e através de Jesus que o homem recebe o Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Não podemos afirmar que o novo nascimento e regeneração é a mesma coisa.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Na casa de Cornélio todos foram batizados com o Espírito Santo antes da salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Ser \"selado\" com Espírito Santo não significa ser batizado com o Espírito Santo",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Em relação à igreja, o trabalho do Espírito Santo começou no pentecoste e terminará com o arrebatamento.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar quando os filhos de Deus receberam o \"selo\" do Espírito.",
+          "answer": "NO MOMENTO DO NOVO NASCIMENTO OU REGENERAÇÃO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Simbolicamente, cite o que existe entre o calvário e a Canaã celestial",
+          "answer": "UM GRANDE DESERTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Baseado em Gênesis, capítulo 24, o Espírito Santo foi enviado —",
+          "options": [
+            "pelo Pai;",
+            "pelo Filho;",
+            "pelo Pai e pelo Filho;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "q-3-2",
+          "question": "Antes da salvação o homem não pode receber —",
+          "options": [
+            "a cura divina;",
+            "o batismo com o Espírito Santo;",
+            "as bênçãos materiais;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Não ter o Espírito Santo",
+          "Ter o \"selo\" do Espírito",
+          "Recebe–se o Espírito Santos",
+          "Ser salvo",
+          "Reflete a glória de Deus",
+          "Fazer a Obra de Deus"
+        ],
+        "columnB": [
+          "azeite na mão",
+          "azeite no rosto",
+          "ter o Espírito Santo",
+          "sinal que não é salvo",
+          "sinal de ser salvo",
+          "através de Jesus"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "O fruto do Espírito atesta o que o crente faz e dons o que o crente é.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Mesmo antes da conversão o fruto do Espírito começa a ser formado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "A formação do fruto do Espírito não acontece num único ato.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "O fruto do Espírito e os dons espirituais são duas coisas diferentes.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "O doador dos dons espirituais ao crente salvo é dado pelo seu Salvador.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Somente após o batismo nas águas é que o crente recebe os dons do Espírito.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Dons espirituais não credencia o crente para o ministério.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Paulo deixou claro que são nove as manifestações do fruto do Espírito.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Viver \"no fruto do Espírito\" nada mais é do que viver a vida cristã.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Em relação ao fruto do Espírito existe uma semelhança com os sacerdotes no Antigo Testamento.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Em relação ao tempo cite a diferença entre a concessão dos dons e a formação do fruto",
+          "answer": "A CONCESSÃO DOS DONS É INSTANTANEA; A FORMAÇÃO DO FRUTO E DEMORADA"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar a simbologia existente entre as campainhas e as romãs na orla da veste dos sacerdotes",
+          "answer": "\"CAMPAINHAS\" SIMBOLIZAM \"PODER\" OU ORAÇÃO; \"ROMÃS\" A PALAVRA DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "O fruto do Espírito fala do que —",
+          "options": [
+            "o crente faz;",
+            "o crente é;",
+            "o crente pensa;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "q-3-2",
+          "question": "É parte do fruto do Espírito —",
+          "options": [
+            "mansidão;",
+            "amor;",
+            "temperança;",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Vem de fora para dentro",
+          "Gerado no coração do homem",
+          "Fruto do Espírito",
+          "Uso correto dos dons espirituais",
+          "Dom espiritual",
+          "Símbolo do poder de Deus"
+        ],
+        "columnB": [
+          "\"campainhas\"",
+          "dom do Espírito",
+          "ensino da Palavra de Deus",
+          "recebido para uso imediato",
+          "único e indivisível",
+          "fruto do Espírito"
+        ],
+        "answers": [
+          6,
+          1,
+          4,
+          5,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "A carne será sempre carne e não poderá gerar o fruto do Espírito.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "O fruto do Espírito só será produzido após o batismo com o Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Há uma pequena diferença entre o novo nascimento e a regeneração.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Pela ação do Espírito Santo o amor de Deus passa a fazer parte da natureza do homem.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Dependendo das circunstâncias um homem de Deus torna-se um homem triste",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "A oração é o único meio pelo qual um homem de Deus recebe a paz.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Biblicamente não há diferença entre paciência e longanimidade.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Não podemos afirmar que o dilúvio foi uma bondade da parte de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Um homem rude, grosseiro, mal educado não pode ser um homem benigno.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Podemos afirmar que o amor é uma das expressões da bondade.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar quando o fruto do Espírito começa a ser formado na vida de um homem",
+          "answer": "APÓS O NOVO NASCIMENTO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "No sentido espiritual, cite a diferença entre gozo e alegria.",
+          "answer": "NÃO HÁ DIFERENÇA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Biblicamente, mansidão não se confunde com —",
+          "options": [
+            "medo;",
+            "timidez;",
+            "falta de autoridade;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "O Senhor é paz, afirmou —",
+          "options": [
+            "Davi;",
+            "Gideão;",
+            "Abraão;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Ter prazer em fazer o bem",
+          "Uma expressão do amor",
+          "Capacidade de esperar com calma",
+          "Ter equilíbrio, ser moderado",
+          "Não se confunde com fraqueza",
+          "Traço distintivo de uma pessoa"
+        ],
+        "columnB": [
+          "mansidão",
+          "longanimidade",
+          "benignidade",
+          "caráter",
+          "temperança",
+          "bondade"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "O dom espiritual tem como objetivo a santificação daquele que o recebe.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Os dons espirituais não se confundem com os dons naturais.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Para a doutrina pentecostal, dons espirituais e dom do Espírito são diferentes.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "A salvação é a condição primeira de quem deseja receber o dom do Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Apenas alguns dons espirituais não tem utilidade na obra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "O dom espiritual é um presente de Deus que o homem pode ou não usar na sua obra.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "O homem pode ou não usar os dons naturais no serviço do Reino de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Satanás pode imitar, com perfeição, todos os dons espirituais.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Os dons espirituais não se confundem com os dons ministeriais.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Os dons de servir são muito parecidos com os dons ministeriais.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Biblicamente, citar quantos são os dons ministeriais e espirituais mencionados por Paulo",
+          "answer": "MINISTERIAIS - 5; ESPIRITUAIS - 9"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Quanto a atualidade dos dons, citar a diferença de pensamento entre pentecostais e não pentecostais",
+          "answer": "NÃO PENTECOSTAIS ELES FORAM USADOS ATÉ COMPLETAR OS LIVROS BIBLICOS; PENTECOSTAIS ATÉ O ARREBATAMENTO DA IGREJA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "É uma concessão feita pelo Pai —",
+          "options": [
+            "dons espirituais;",
+            "dons de serviços;",
+            "dons naturais;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "Os dons espirituais são dados como —",
+          "options": [
+            "presentes;",
+            "instrumento de trabalho;",
+            "premio por serviços prestados;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Capacidade de liderança",
+          "Exortar e exercer misericórdia",
+          "Manifestação sobrenatural do poder de Deus",
+          "Semelhança com os dons espirituais",
+          "Concessão dos dons ministeriais",
+          "Concessão dos dons naturais"
+        ],
+        "columnB": [
+          "dons de inspiração diabólica",
+          "Deus Pai",
+          "dons assistenciais",
+          "Jesus",
+          "dom natural",
+          "dons espirituais"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Não existe uma regra uniforme para a distribuição dos dons espirituais.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Os dons espirituais não são presentes dados por Deus aos seus filhos.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Usados, corretamente, a igreja pode ser dirigida através dos dons espirituais.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Todo crente precisa receber pelo menos um dos nove dons espirituais.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "A ignorância no uso dos dons espirituais pode levar um crente ao fanatismo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Não se pode nunca duvidar de uma mensagem profética proferida na igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "O fato de numa igreja haver todos os dons espirituais, dispensa o ensino da Palavra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "No sentido bíblico, quem recebe um dom espiritual tem necessidade de usá-lo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Sendo muitas as enfermidades, existe também uma diversidade no dom de curar",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Não se pode confundir liberdade do Espírito com desorganização.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar o sentido literal do termo elocução",
+          "answer": "É A MANEIRA DE EXPRIMIR-SE FALANDO OU ESCREVENDO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar quantos e quais os objetivos do dom de profecia",
+          "answer": "SÃO TRÊS - EDIFICAÇÃO, EXORTAÇÃO E CONSOLAÇÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Não havendo intérprete, o dom de língua edifica —",
+          "options": [
+            "a igreja;",
+            "o que fala;",
+            "não edifica ninguém;",
+            "todas estão erradas.."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "q-3-2",
+          "question": "É um dom de poder —",
+          "options": [
+            "o dom de fé;",
+            "o dom de curar;",
+            "operação de maravilhas ;",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Capacidade para agir",
+          "Capacidade para saber",
+          "Capacidade para falar",
+          "Capacidade profissional",
+          "Concessão dos dons espirituais",
+          "Concessão dos dons naturais"
+        ],
+        "columnB": [
+          "Deus Pai",
+          "dons naturais",
+          "dons de revelação",
+          "Espírito Santo",
+          "dons de elocução",
+          "dons de poder"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 010",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Desde o pentecostes o Espírito Santo está preparando a igreja para apresenta-la a Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Em relação à igreja, o arrebatamento será o último ato do Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Jesus disse que o Espírito Santo não sabe quando ocorrerá o arrebatamento.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Não sendo onisciente, Satanás não tem certeza sobre o arrebatamento da igreja",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Um dos sinais da vinda de Jesus é a incredulidade em relação a ela.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Na Parábola das Dez Virgens o azeite simboliza o Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Após o arrebatamento o Espírito Santo não estará mais na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "É o Espírito Santo quem aplica a salvação no coração do homem",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Não mais pela graça, mas haverá salvação durante a Grande Tribulação.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Durante o milênio haverá um grande derramamento do Espírito Santo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar três dos grandes eventos escatológicos previstos na Bíblia",
+          "answer": "ARREBATAMENTO DA IGREJA, GRANDE TRIBULAÇAO E O MILÊNIO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Em relação ao Espírito Santo, quanto ao azeite, citar a diferença entre as Dez Virgens",
+          "answer": "AS PRUDENTES TINHAM O ESPÍRITO SANTO, AS LOUCAS, NÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Têm o Espírito Santo —",
+          "options": [
+            "as virgens prudentes;",
+            "os \"peixes ruins\";",
+            "o \"homem sem veste nupcial\";",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "q-3-2",
+          "question": "O Espírito Santo no arrebatamento —",
+          "options": [
+            "ressuscitará os mortos;",
+            "transformara os vivos;",
+            "levará a igreja;",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Escatologia",
+          "Em relação à igreja, última missão do Espírito Santo",
+          "Chegada do Espírito Santo na terra",
+          "É um símbolo do Espírito Santo",
+          "Não sabe o dia do Arrebatamento",
+          "Enchei-vos do Espírito"
+        ],
+        "columnB": [
+          "Pentecostes",
+          "Satanás",
+          "últimas coisas",
+          "crentes salvos",
+          "arrebatamento",
+          "azeite"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

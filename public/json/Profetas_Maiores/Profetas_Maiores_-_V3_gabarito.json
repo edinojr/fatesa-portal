@@ -1,0 +1,134 @@
+{
+  "id": "PM_3",
+  "title": "Profetas Maiores - V3",
+  "tfQuestions": [
+    {
+      "id": "pm3-tf-1",
+      "question": "Segundo alguns teólogos o Livro de Isaías não foi escrito por um só autor.",
+      "answer": "V"
+    },
+    {
+      "id": "pm3-tf-2",
+      "question": "Isaías começou seu ministério depois da morte do Rei Uzias.",
+      "answer": "F"
+    },
+    {
+      "id": "pm3-tf-3",
+      "question": "Em Isaías 14:12 a expressão “Estrela da manhã” refere-se a Satanás.",
+      "answer": "V"
+    },
+    {
+      "id": "pm3-tf-4",
+      "question": "Jerusalém somente terá sua glória restituída no dia do arrebatamento da igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "pm3-tf-5",
+      "question": "Como homem de Deus, Jeremias foi respeitado e amado pelo povo e por sua família.",
+      "answer": "F"
+    },
+    {
+      "id": "pm3-tf-6",
+      "question": "O Livro de lamentações foi escrito por Jeremias quando estava no Egito",
+      "answer": "F"
+    },
+    {
+      "id": "pm3-tf-7",
+      "question": "Deus proibiu que Ezequiel revelasse tristeza em razão da morte de sua esposa.",
+      "answer": "V"
+    },
+    {
+      "id": "pm3-tf-8",
+      "question": "No milênio, estando Jesus presente na terra, não haverá necessidade de templo.",
+      "answer": "F"
+    },
+    {
+      "id": "pm3-tf-9",
+      "question": "É certo que o Império Gentílico começou a ser formado com Ninrode.",
+      "answer": "V"
+    },
+    {
+      "id": "pm3-tf-10",
+      "question": "Ao jovem Daniel, Deus deu a Belsazar a interpretação de sua visão",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pm3-mc-1",
+      "question": "Na Bíblia a expressão “peso” pode significar -",
+      "options": [
+        "Carga",
+        "Oráculo",
+        "Mensagem pesada",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pm3-mc-2",
+      "question": "Ezequiel viu saindo do templo",
+      "options": [
+        "Raios e trovões",
+        "Um rio caudaloso",
+        "Como um fio de água",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pm3-mc-3",
+      "question": "A mensagem de Jeremias falava de -",
+      "options": [
+        "Arrependimento",
+        "Perdão",
+        "Mudança de vida",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pm3-mc-4",
+      "question": "Ezequiel foi orientado por Deus a pregar -",
+      "options": [
+        "Com amor",
+        "Com dureza",
+        "Através de símbolos",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pm3-mp-1",
+      "left": "Pai de Ezequiel",
+      "right": "Buzi, o sacerdote"
+    },
+    {
+      "id": "pm3-mp-2",
+      "left": "Residência de Ezequiel na Babilônia",
+      "right": "Tel Abide"
+    },
+    {
+      "id": "pm3-mp-3",
+      "left": "Ordem dada por Deus a Ezequiel",
+      "right": "Comer um livro"
+    },
+    {
+      "id": "pm3-mp-4",
+      "left": "Segunda grande águia",
+      "right": "Faraó Neco"
+    },
+    {
+      "id": "pm3-mp-5",
+      "left": "Sentenciado a morrer em Babilônia",
+      "right": "Rei Zedequias"
+    },
+    {
+      "id": "pm3-mp-6",
+      "left": "Deixou o templo e a cidade de Jerusalém",
+      "right": "A glória de Deus"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "ESP_3",
+  "title": "Espírito Santo - V3",
+  "tfQuestions": [
+    {
+      "id": "esp3-tf-1",
+      "question": "Pela Bíblia o único nome da Terceira Pessoa da Trindade é Espírito Santo.",
+      "answer": "F"
+    },
+    {
+      "id": "esp3-tf-2",
+      "question": "O pecado de Ananias não teve perdão porque ele pecou contra o Espírito Santo.",
+      "answer": "F"
+    },
+    {
+      "id": "esp3-tf-3",
+      "question": "Ser cheio do Espírito Santo desde o ventre de sua mãe não foi um privilégio só de Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "esp3-tf-4",
+      "question": "Para Deus o importante é o sacrifício, não importando como esteja o altar.",
+      "answer": "F"
+    },
+    {
+      "id": "esp3-tf-5",
+      "question": "Podemos afirmar que todo salvo está selado com o Espírito Santo.",
+      "answer": "V"
+    },
+    {
+      "id": "esp3-tf-6",
+      "question": "Dons espirituais não credenciam o crente para o ministério.",
+      "answer": "V"
+    },
+    {
+      "id": "esp3-tf-7",
+      "question": "A tristeza, em sua forma crônica, é uma doença da alma.",
+      "answer": "F"
+    },
+    {
+      "id": "esp3-tf-8",
+      "question": "Os dons espirituais não se confundem com os dons ministeriais.",
+      "answer": "V"
+    },
+    {
+      "id": "esp3-tf-9",
+      "question": "Podemos afirmar, segundo ensinou Paulo, que são nove os dons do Espírito.",
+      "answer": "F"
+    },
+    {
+      "id": "esp3-tf-10",
+      "question": "Em relação à igreja, o arrebatamento será o último ato do Espírito Santo.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "esp3-mc-1",
+      "question": "O Espírito Santo concedeu a Jesus a unção para ser -",
+      "options": [
+        "Profeta",
+        "Sacerdote",
+        "Rei",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esp3-mc-2",
+      "question": "Não havendo intérprete, o dom de língua edifica -",
+      "options": [
+        "A igreja",
+        "O que fala",
+        "Não edifica ninguém",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "esp3-mc-3",
+      "question": "A unção no Antigo Testamento era somente para —",
+      "options": [
+        "Os sacerdotes",
+        "Os reis",
+        "Os profetas",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esp3-mc-4",
+      "question": "É um símbolo do Espírito Santo —",
+      "options": [
+        "O sangue de Jesus",
+        "A Palavra de Deus",
+        "O orvalho",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "esp3-mp-1",
+      "left": "Recebeu a unção para reinar",
+      "right": "Davi"
+    },
+    {
+      "id": "esp3-mp-2",
+      "left": "Recebeu a unção para liderar",
+      "right": "Gideão"
+    },
+    {
+      "id": "esp3-mp-3",
+      "left": "Recebeu a unção para inventar",
+      "right": "Bezaliel"
+    },
+    {
+      "id": "esp3-mp-4",
+      "left": "Recebeu a unção para profetizar",
+      "right": "Eliseu"
+    },
+    {
+      "id": "esp3-mp-5",
+      "left": "Falaram inspirados pelo Espírito Santo",
+      "right": "Os profetas"
+    },
+    {
+      "id": "esp3-mp-6",
+      "left": "Recebeu a unção para julgar",
+      "right": "Otoniel"
+    }
+  ]
+}

@@ -14,4 +14,6 @@ export interface QuizQuestion {
   // Discursive Specific
   expectedAnswer?: string;
   explanation?: string; // New field for feedback/gabarito
+  // Points for graded assessments
+  points?: number;
 }

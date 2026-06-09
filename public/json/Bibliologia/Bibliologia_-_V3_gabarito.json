@@ -1,0 +1,134 @@
+{
+  "id": "BIBL_3",
+  "title": "Bibliologia - V3",
+  "tfQuestions": [
+    {
+      "id": "bibl3-tf-1",
+      "question": "Como manual do cristão a Bíblia mostra o caminho da salvação e da santificação.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl3-tf-2",
+      "question": "No Livro de Ezequiel, Jesus pode ser visto como sendo o quarto homem na fornalha de fogo.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-3",
+      "question": "Sabendo sobre a crueldade dos ninivitas, Jonas decidiu não ir para lá.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-4",
+      "question": "Tanto Jesus, como também Paulo, ensinaram os judeus com base no Antigo Testamento.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl3-tf-5",
+      "question": "Jesus, como “Filho do Homem”, podia falar em todas as línguas existentes na terra.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-6",
+      "question": "Não estava no plano de Deus tornar o hebraico uma língua universal.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl3-tf-7",
+      "question": "A Bíblia foi escrita por inspiração e também por revelação do Espírito Santo.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl3-tf-8",
+      "question": "Dos 19 reis do norte somente 8 fizeram “o que era reto aos olhos do Senhor”.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-9",
+      "question": "No período do domínio persa os sacerdotes eram os reis de Israel.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-10",
+      "question": "Paulo declarou ter sido membro da seita ortodoxa dos fariseus.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "bibl3-mc-1",
+      "question": "Um livro do Antigo Testamento com um só capítulo:",
+      "options": [
+        "Obadias",
+        "Naum",
+        "Sofonias",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "bibl3-mc-2",
+      "question": "Não é uma língua considerada sagrada:",
+      "options": [
+        "Sânscrito",
+        "Árabe",
+        "Hebraico",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "bibl3-mc-3",
+      "question": "Em que época Deus deixou de comunicar-se com o homem:",
+      "options": [
+        "Juízes",
+        "Nunca",
+        "Reis",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "bibl3-mc-4",
+      "question": "Movimento histórico criado por Theodor Herzt:",
+      "options": [
+        "Nenhum",
+        "Movimento secreto",
+        "\"Movimento sionista\"",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "bibl3-mp-1",
+      "left": "Um rei do Reino Unido de Israel",
+      "right": "Salomão"
+    },
+    {
+      "id": "bibl3-mp-2",
+      "left": "Primeiro Rei do Reino do Norte",
+      "right": "Jeroboão"
+    },
+    {
+      "id": "bibl3-mp-3",
+      "left": "Último Juiz de Israel",
+      "right": "Samuel"
+    },
+    {
+      "id": "bibl3-mp-4",
+      "left": "Último Rei do Norte",
+      "right": "Oséias"
+    },
+    {
+      "id": "bibl3-mp-5",
+      "left": "Último Rei do Sul",
+      "right": "Zedequias"
+    },
+    {
+      "id": "bibl3-mp-6",
+      "left": "Liderou a terceira turma na volta do cativeiro",
+      "right": "Neemias"
+    }
+  ]
+}

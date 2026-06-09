@@ -1,0 +1,134 @@
+{
+  "id": "EVAN_1",
+  "title": "Os Evangelhos - V1",
+  "tfQuestions": [
+    {
+      "id": "evan1-tf-1",
+      "question": "Em seu evangelho João teve como objetivo defender a divindade e materialização de Jesus",
+      "answer": "V"
+    },
+    {
+      "id": "evan1-tf-2",
+      "question": "Somente o crente que tem o dom de discernir é que pode fazer julgamento.",
+      "answer": "F"
+    },
+    {
+      "id": "evan1-tf-3",
+      "question": "Podemos afirmar que Jesus gostava de ser chamado de Mestre.",
+      "answer": "V"
+    },
+    {
+      "id": "evan1-tf-4",
+      "question": "No Sermão do Monte das Oliveiras somente Pedro, Tiago e João estavam presentes.",
+      "answer": "F"
+    },
+    {
+      "id": "evan1-tf-5",
+      "question": "Ao curar um leproso, Jesus evitou colocar suas mãos sobre ele.",
+      "answer": "F"
+    },
+    {
+      "id": "evan1-tf-6",
+      "question": "O Sinédrio, a Suprema Corte de Israel, não podia executar pena de morte.",
+      "answer": "V"
+    },
+    {
+      "id": "evan1-tf-7",
+      "question": "O nome de João Batista foi dado pelo anjo Gabriel a seus pais Zacarias e Isabel.",
+      "answer": "F"
+    },
+    {
+      "id": "evan1-tf-8",
+      "question": "Pela Bíblia sabemos que Deus dificilmente faz acepção de pessoas.",
+      "answer": "F"
+    },
+    {
+      "id": "evan1-tf-9",
+      "question": "Jesus evitou ir para Jerusalém na companhia de seus irmãos.",
+      "answer": "V"
+    },
+    {
+      "id": "evan1-tf-10",
+      "question": "Nada tendo para deixar aos seus discípulos, então Jesus deixou-lhes o amor.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "evan1-mc-1",
+      "question": "Mar no qual Pedro e João eram pescadores -",
+      "options": [
+        "Da Galileia",
+        "De Tiberíades",
+        "De Quenerite",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "evan1-mc-2",
+      "question": "Ao cego de nascença Jesus ordenou -",
+      "options": [
+        "Que seria curado no tanque de Betesda",
+        "Que ao lavar seria curado",
+        "Ir lavar no tanque de Betesda",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "evan1-mc-3",
+      "question": "Um crente salvo não está sujeito a —",
+      "options": [
+        "Opressão",
+        "Possessão",
+        "Tentação",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "evan1-mc-4",
+      "question": "A missão primeira de um obreiro é —",
+      "options": [
+        "Defender o cristianismo",
+        "Condenar o pecado",
+        "Semear a Palavra de Deus",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "evan1-mp-1",
+      "left": "Templo purificado por Jesus",
+      "right": "Zorobabel"
+    },
+    {
+      "id": "evan1-mp-2",
+      "left": "Missão de Jesus",
+      "right": "Salvar o pecador"
+    },
+    {
+      "id": "evan1-mp-3",
+      "left": "Missão do Espírito Santo",
+      "right": "Convencer o homem"
+    },
+    {
+      "id": "evan1-mp-4",
+      "left": "Missão do homem",
+      "right": "Pregar a Palavra de Deus"
+    },
+    {
+      "id": "evan1-mp-5",
+      "left": "Campo da semeadura",
+      "right": "Terra"
+    },
+    {
+      "id": "evan1-mp-6",
+      "left": "Ensino por parábolas",
+      "right": "Antigo e Novo Testamento"
+    }
+  ]
+}

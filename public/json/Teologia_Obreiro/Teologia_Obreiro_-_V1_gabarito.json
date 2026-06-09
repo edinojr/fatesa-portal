@@ -1,0 +1,134 @@
+{
+  "id": "TO_1",
+  "title": "Teologia Obreiro - V1",
+  "tfQuestions": [
+    {
+      "id": "to1-tf-1",
+      "question": "Nem todo crente, embora salvo, pode ser chamado de obreiro.",
+      "answer": "F"
+    },
+    {
+      "id": "to1-tf-2",
+      "question": "Numa igreja local somente o pastor deve ser considerado um sacerdote.",
+      "answer": "F"
+    },
+    {
+      "id": "to1-tf-3",
+      "question": "Na construção do Tabernáculo os recursos estavam com o povo e não com Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "to1-tf-4",
+      "question": "É certo que nossa vida particular nada tem a ver com nossa religião.",
+      "answer": "F"
+    },
+    {
+      "id": "to1-tf-5",
+      "question": "Entre a unção e o trono, Davi esperou por cerca de quinze anos.",
+      "answer": "V"
+    },
+    {
+      "id": "to1-tf-6",
+      "question": "O salário a ser pago foi ajustado somente com os primeiros trabalhadores chamados.",
+      "answer": "V"
+    },
+    {
+      "id": "to1-tf-7",
+      "question": "Chamado por Cristo, o homem deve entender qual é a sua vocação ministerial.",
+      "answer": "V"
+    },
+    {
+      "id": "to1-tf-8",
+      "question": "Mesmo que a exigência não seja bíblica devemos sempre obedecer nosso pastor.",
+      "answer": "F"
+    },
+    {
+      "id": "to1-tf-9",
+      "question": "Segundo afirmou Paulo é certo que são nove os dons espirituais.",
+      "answer": "F"
+    },
+    {
+      "id": "to1-tf-10",
+      "question": "Biblicamente, no aspecto ministerial, não há diferença entre presbítero, ancião e bispo.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "to1-mc-1",
+      "question": "Os primeiros missionários partiram de -",
+      "options": [
+        "Jerusalém",
+        "Antioquia",
+        "Samaria",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "to1-mc-2",
+      "question": "Foi um dos doze apóstolos de Jesus -",
+      "options": [
+        "Paulo",
+        "Lebeu",
+        "Tiago, irmão do Senhor",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "to1-mc-3",
+      "question": "Dons concedidos pelos Espírito Santo para o serviço da obra de Deus-",
+      "options": [
+        "Dom de profecia",
+        "Dom de mestre",
+        "Dom de maravilhas",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "to1-mc-4",
+      "question": "Dons concedidos por Jesus a sua igreja -",
+      "options": [
+        "Dons espirituais",
+        "Dons de serviços",
+        "Dons ministeriais",
+        "Todos estão corretos"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "to1-mp-1",
+      "left": "Bezalel e seus cooperadores",
+      "right": "Construtores de objetos úteis à obra"
+    },
+    {
+      "id": "to1-mp-2",
+      "left": "Joana e Suzana",
+      "right": "Contribuição financeira"
+    },
+    {
+      "id": "to1-mp-3",
+      "left": "Círculo de oração",
+      "right": "Contribuição espiritual"
+    },
+    {
+      "id": "to1-mp-4",
+      "left": "Vão à floresta em busca de madeira",
+      "right": "Evangelistas"
+    },
+    {
+      "id": "to1-mp-5",
+      "left": "Na linha de frente ou na retaguarda",
+      "right": "Recompensa igual"
+    },
+    {
+      "id": "to1-mp-6",
+      "left": "Jesus pregava e ensinava",
+      "right": "Em todos os lugares"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "ATOS_2",
+  "title": "Atos dos Apóstolos - V2",
+  "tfQuestions": [
+    {
+      "id": "atos2-tf-1",
+      "question": "Permanecer no cenáculo não foi uma ordem dada por Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "atos2-tf-2",
+      "question": "Após celebrar a Páscoa, Jesus celebrou a primeira “Santa Ceia”.",
+      "answer": "V"
+    },
+    {
+      "id": "atos2-tf-3",
+      "question": "Sendo a hora terceira, ou seja, três horas da manhã, ninguém podia estar embriagado.",
+      "answer": "F"
+    },
+    {
+      "id": "atos2-tf-4",
+      "question": "Em obediência à Lei de Moisés os judeus oravam três vezes ao dia.",
+      "answer": "F"
+    },
+    {
+      "id": "atos2-tf-5",
+      "question": "Em Samaria, Filipe falou de Jesus, mas nada falou do Espírito Santo.",
+      "answer": "V"
+    },
+    {
+      "id": "atos2-tf-6",
+      "question": "Na casa de Cornélio houve batismo com o Espírito Santo antes da salvação.",
+      "answer": "F"
+    },
+    {
+      "id": "atos2-tf-7",
+      "question": "Podemos afirmar que Tiago, irmão de Jesus, foi pastor da igreja de Jerusalém.",
+      "answer": "V"
+    },
+    {
+      "id": "atos2-tf-8",
+      "question": "A expressão “mulher de Corinto” significava “mulher de vida fácil”.",
+      "answer": "V"
+    },
+    {
+      "id": "atos2-tf-9",
+      "question": "Éfeso situava em território que hoje pertence à Grécia.",
+      "answer": "F"
+    },
+    {
+      "id": "atos2-tf-10",
+      "question": "Em Roma, sem qualquer restrição, Paulo permaneceu em prisão domiciliar.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "atos2-mc-1",
+      "question": "Ao deixar Samaria, Filipe foi para -",
+      "options": [
+        "Jerusalém",
+        "Gaza",
+        "Uma estrada deserta",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "atos2-mc-2",
+      "question": "Ao sair de Bereia, Paulo foi para -",
+      "options": [
+        "Tessalônica",
+        "Corinto",
+        "Atenas",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "atos2-mc-3",
+      "question": "Após sua ressurreição, Jesus permaneceu na terra -",
+      "options": [
+        "Vinte dias",
+        "Noventa dias",
+        "Quarenta dias",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "atos2-mc-4",
+      "question": "A conversão de Paulo aconteceu —",
+      "options": [
+        "Em Jerusalém",
+        "Na Síria",
+        "Na Turquia",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "atos2-mp-1",
+      "left": "Deixado como pastor em Creta",
+      "right": "Tito"
+    },
+    {
+      "id": "atos2-mp-2",
+      "left": "Deixado como pastor em Éfeso",
+      "right": "Timóteo"
+    },
+    {
+      "id": "atos2-mp-3",
+      "left": "Permaneceu com Paulo até o fim",
+      "right": "Lucas"
+    },
+    {
+      "id": "atos2-mp-4",
+      "left": "Abandonou Paulo na prisão",
+      "right": "Demas"
+    },
+    {
+      "id": "atos2-mp-5",
+      "left": "Epístola escrita na segunda prisão",
+      "right": "II Timóteo"
+    },
+    {
+      "id": "atos2-mp-6",
+      "left": "Epístola escrita na primeira prisão",
+      "right": "Filemon"
+    }
+  ]
+}

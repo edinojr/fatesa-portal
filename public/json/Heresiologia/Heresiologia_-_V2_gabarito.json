@@ -1,0 +1,134 @@
+{
+  "id": "HER_2",
+  "title": "Heresiologia - V2",
+  "tfQuestions": [
+    {
+      "id": "her2-tf-1",
+      "question": "Em relação ao cristianismo a religião muçulmana não é uma seita.",
+      "answer": "V"
+    },
+    {
+      "id": "her2-tf-2",
+      "question": "Pela Bíblia podemos afirmar não haver qualquer indício de que Pedro esteve em Roma",
+      "answer": "V"
+    },
+    {
+      "id": "her2-tf-3",
+      "question": "Transubstanciação fala da presença real e corporal de Jesus na hóstia.",
+      "answer": "V"
+    },
+    {
+      "id": "her2-tf-4",
+      "question": "A escolha de Maria foi a mais difícil de todas as escolhas feitas por Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "her2-tf-5",
+      "question": "A reencarnação ensinada na doutrina espírita é a mesma das doutrinas orientais.",
+      "answer": "F"
+    },
+    {
+      "id": "her2-tf-6",
+      "question": "Para traduzir as escrituras das placas de ouro Joseph Smith precisou estudar a língua egípcia.",
+      "answer": "F"
+    },
+    {
+      "id": "her2-tf-7",
+      "question": "A \"Tradução Novo Mundo\" é a Bíblia oficial das \"Testemunhas de Jeová\".",
+      "answer": "V"
+    },
+    {
+      "id": "her2-tf-8",
+      "question": "A bênção e a maldição não estão nos bens, mas na forma de fazer uso deles.",
+      "answer": "V"
+    },
+    {
+      "id": "her2-tf-9",
+      "question": "Não é um propósito da Nova Era substituir a medicina convencional pela alternativa.",
+      "answer": "F"
+    },
+    {
+      "id": "her2-tf-10",
+      "question": "Consciente ou não todos os meios de comunicação estão colaborando com Nova Era",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "her2-mc-1",
+      "question": "É uma unção com azeite -",
+      "options": [
+        "O batismo",
+        "A extrema unção",
+        "O casamento",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "her2-mc-2",
+      "question": "O deus da Nova Era é -",
+      "options": [
+        "O criador do universo",
+        "\"Avatar\"",
+        "A energia mística e impessoal",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "her2-mc-3",
+      "question": "A Teologia da Prosperidade prega -",
+      "options": [
+        "Uma mensagem materialista",
+        "O bem estar do corpo",
+        "A aquisição de riquezas",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "her2-mc-4",
+      "question": "A Nova Era está infiltrada na —",
+      "options": [
+        "Religião",
+        "Política",
+        "Literatura",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "her2-mp-1",
+      "left": "Maria declarada \"mãe de Deus\"",
+      "right": "Concílio de Éfeso"
+    },
+    {
+      "id": "her2-mp-2",
+      "left": "Instituído o culto a Maria",
+      "right": "Concílio de Niceia"
+    },
+    {
+      "id": "her2-mp-3",
+      "left": "Maria declarada Imaculada Conceição",
+      "right": "Papa Pio IX"
+    },
+    {
+      "id": "her2-mp-4",
+      "left": "Declarou a Assunção de Maria",
+      "right": "Papa Pio XII"
+    },
+    {
+      "id": "her2-mp-5",
+      "left": "Proclamada a virgindade de Maria",
+      "right": "Concílio de Latrão"
+    },
+    {
+      "id": "her2-mp-6",
+      "left": "Instituiu a reza da \"Ave Maria\"",
+      "right": "Papa João XXII"
+    }
+  ]
+}

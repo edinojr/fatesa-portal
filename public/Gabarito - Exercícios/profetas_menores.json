@@ -1,0 +1,1196 @@
+{
+  "id": "profetas-menores",
+  "title": "Profetas Menores",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Oséias profetizou no Reino de Judá até a morte do Rei Ezequias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na tipologia bíblica Oséias é um tipo de Deus Pai.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Não encontramos no livro de Oseias nenhum evento escatológico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "É certo que as promessas de Deus não contemplam apenas a Nação de Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Gomêr, a mulher que Deus preparou para Oséias, foi fiel a ele por toda sua vida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Um bom lugar para aprendermos a ouvir e obedecer a voz de Deus é o deserto.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos ver em Gomêr, esposa de Oséias, uma figura da Nação de Israel",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na época de Oséias, em Israel, não havia escravização humana.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos ver uma semelhança entre Gômer e o filho pródigo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O processo de restauração de Israel como povo de Deus ainda está em andamento.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o que a Bíblia revela sobre Oséias antes de sua chamada ministerial.",
+          "answer": "A BÍBLIA NADA RELATA SOBRE SEU PASSADO"
+        },
+        {
+          "id": "sa2",
+          "question": "Ao deixar Oséias, após seu casamento, cite para onde foi Gômer.",
+          "answer": "VOLTOU À PROSTITUIÇÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Namorado de Gômer -",
+          "options": [
+            "Baal",
+            "Moloque",
+            "Astorete",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Antes de ser esposa de Oséias, Gômer era uma -",
+          "options": [
+            "moça virgem",
+            "prostituta “rameira”",
+            "prostituta sagrada",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pai do Profeta Oséias",
+          "Rei de Judá contemporâneo de Oseias",
+          "Rei de Israel contemporâneo de Oséias",
+          "“Vale de Acor”",
+          "“Deus espalha”",
+          "“Não meu povo”"
+        ],
+        "columnB": [
+          "Jisrrel",
+          "Jeroboão",
+          "Beeri",
+          "Lo-Ami",
+          "Jotão",
+          "Grande Tribulação"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Nos dias de Oséias sacerdotes e povo se igualavam na vida pecaminosa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Dos sacerdotes no tempo de Oséias se dizia que alimentavam do pecado do povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O Profeta Amós proibiu Amazias de profetizar no Reino do Norte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em 722 aC. o Reino de Judá acabou e o Rei Oséias foi levado para o cativeiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Israel, em plena decadência espiritual, prosperou materialmente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Na expressão “eu serei a correção de todos “não estava incluído os sacerdotes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Quando Israel buscou o Senhor, então o socorro veio do céu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Reino de Israel, ou do Norte, era também chamado de Efraim.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Formalismo religioso, mesmo com sacrifícios, não move o coração de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na escolha de seus governantes Israel sempre buscava a orientação de Deus.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas vezes a família de Oseias foi mencionada após o capítulo 4.",
+          "answer": "NENHUMA VEZ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar os outros nomes pelos quais o Reino de Israel era chamado.",
+          "answer": "REINO DO NORTE E EFRAIM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Deus acusou o Reino de Judá de –",
+          "options": [
+            "mentir",
+            "perjurar",
+            "adulterar",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Rei de Israel levado para o cativeiro –",
+          "options": [
+            "Joaquim",
+            "Oséias",
+            "Pecaías",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Implantou a idolatria em Israel",
+          "Profetizou no Reino do Norte",
+          "Houve grande prosperidade em Israel",
+          "“Chicote” de Deus contra Israel",
+          "Reinou um mês e foi assassinado",
+          "Rei do Norte levado para o cativeiro"
+        ],
+        "columnB": [
+          "Assíria",
+          "Jeroboão II",
+          "Jeroboão I",
+          "Oséias",
+          "Amós",
+          "Salum"
+        ],
+        "answers": [
+          4,
+          3,
+          1,
+          6,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O desejo de Deus era o isolamento de Israel em relação as demais nações.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Deus não aceita adoração de quem queima incenso em dois altares.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Israel, sem fermento, seria como pão asmo, pequeno mas nutriente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Embora Israel tenha clamado, Deus não veio em seu socorro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O culto ao “bezerro” foi uma criação do Reino de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Hoje não e correto falar na existência de idolatria na igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Em relação à adoração podemos afirmar que Deus é exclusivista.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Tendo chegado no limite da iniquidade Israel seria castigado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Em suas fraquezas Israel era muito parecido com Jacó.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Como homem de Deus, Oséias não podia dar a Gômer carta de divórcio.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar, no sentido literal, o significado da expressão “um bolo que não foi virado”",
+          "answer": "QUEIMADO POR BAIXO E CRU POR CIMA"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que Deus fez com Admá e Zeboim e que não faria com Israel.",
+          "answer": "NÃO DESTRUIRIA TAL COMO DESTRUIU AQUELAS DUAS CIDADES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os sacerdotes de Israel eram –",
+          "options": [
+            "da Tribo de Levi",
+            "escolhidos pelo sumo sacerdote",
+            "escolhidos pelo rei",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Israel voltou do cativeiro–",
+          "options": [
+            "setenta anos depois",
+            "nunca mais voltou",
+            "junto com Neemias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Altar de Israel",
+          "Altar do “Eu”",
+          "Altar da “carne”",
+          "Altar do mundo",
+          "Arco enganoso",
+          "Vir como águia"
+        ],
+        "columnB": [
+          "perigo iminente",
+          "errar o alvo",
+          "idolatria",
+          "orgulho",
+          "costumes nocivos",
+          "concupiscência dos olhos"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não há unanimidade de pensamento sobre a época em que viveu Joel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar que Joel profetizou no Reino de Judá.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O grande e terrível Dia do Senhor, referido por Joel, fala do julgamento do Trono Branco",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A praga de gafanhotos, referida por Joel, foi simbólica, não real.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A mensagem de arrependimento pregada por Joel foi aceita pelo povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Joel falou sobre uma mensagem de derramamento do Espírito Santo havida no seu tempo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão “Dia de Deus”, referida por Joel, fala da eternidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A expressão “toda carne” por certo que inclui também os animais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O tempo chamado de “últimos dias” começou no pentecostes e ainda não terminou.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que no “grande e terrível Dia do Senhor” morrerão milhões de judeus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quais são os três grandes dias referidos pela Bíblia.",
+          "answer": "DIA DO SENHOR; DIA DE CRISTO; DIA DE DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite como alguns comentaristas costumam chamar Joel",
+          "answer": "“O PROFETA DO AVIVAMENTO”"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Falou sobre o “Dia do Senhor” –",
+          "options": [
+            "Joel",
+            "Sofonias",
+            "Jesus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "O Dia do Senhor será –",
+          "options": [
+            "dia de salvação",
+            "dia de perdão",
+            "dia de indignação",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Forte apelo do Livro de Joel",
+          "Objetivo do chamado feito ao povo",
+          "Praga dos gafanhotos",
+          "Resultado do apelo feito por Joel",
+          "Início do tempo chamado de “últimos dias”",
+          "Sentido da expressão “naquele dia”"
+        ],
+        "columnB": [
+          "Dia de Pentecostes",
+          "precursora do “dia do Senhor”",
+          "arrependimento",
+          "milênio",
+          "santificação",
+          "retorno ao Senhor"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Amós foi um profeta missionário nascido em Judá e enviado para pregar em Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "De Amós nada mais sabemos além do fato de ter sido um profeta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Afirmamos que Amós foi aplaudido no Reino do Norte num primeiro momento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "No reinado de Jeroboão II, Israel estava, materialmente, muito bem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "No tempo de Amós a Síria se notabilizou pela crueldade aplicada aos seus inimigos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Segundo Amós, Deus prometeu entregar Judá e Israel ao chicote do Rei da Síria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Face a rebeldia de Israel, Amós profetizou que o castigo seria inevitável.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Apesar da intercessão de Amós o Senhor afirmou que Israel seria totalmente destruído.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Face as fortes oposições sofridas Amós chegou a duvidar de sua chamada profética.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Com o Reino de Israel aprendemos que prosperidade material não significa estar bem com Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar onde vivia Amós e o que fazia antes de ser profeta",
+          "answer": "VIVIA EM TECOA, ERA BOEIRO E PLANTADOR DE SICÔMOROS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o nome do sacerdote que ameaçou Amós",
+          "answer": "AMAZIAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Falou sobre o terremoto profetizado por Amós–",
+          "options": [
+            "Jesus",
+            "o Profeta Zacarias",
+            "o Profeta Isaias",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Deus prometeu enviar sobre a terra fome—",
+          "options": [
+            "de pão",
+            "de carne",
+            "da Palavra",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "O pecado da Síria",
+          "O pecado de Gaza",
+          "O pecado de Tiro",
+          "O pecado de Amom",
+          "O pecado de Israel",
+          "O pecado de Judá"
+        ],
+        "columnB": [
+          "crueldade com mulheres judias",
+          "corrupção e opressão",
+          "desrespeito à Lei do Senhor",
+          "crueldade com os vencidos",
+          "tráfico de escravos",
+          "espírito de orgulho"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Obadias foi um nacionalista, porém, piedoso e temente a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que o Livro de Obadias foi escrito antes da divisão do Reino Unido de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Obadias relata a tumultuada relação entre os israelitas e os moabitas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Petra, uma cidade edificada numa montanha rochosa, era quase inconquistável.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Não existe, hoje, na terra, nenhum descendente de Edom.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os judeus não colocam nomes, ou sobrenomes de animais em seus filhos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Entre os teólogos não existe unanimidade de pensamento sobre a existência de Jonas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Biblicamente, podemos afirmar que o objetivo da chamada de Jonas não ficou bem definido.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sendo, como era, um homem, Jonas, com medo de ser morto não foi para Nineve.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Jonas é um exemplo de que Deus pode dar uma segunda oportunidade ao homem.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem foi o patriarca da nação de Edom.",
+          "answer": "ESAÚ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar os cinco “degraus” da descida de Jonas.",
+          "answer": "DA GALILEIA DESCEU A JOPE; DESCEU AO NAVIO; DESCEU AO PORÃO; DESCEU AO MAR E DESCEU AO FUNDO DO MAR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Profeta que profetizou contra Edom –",
+          "options": [
+            "Obadias",
+            "Isaías",
+            "Amós",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "O nome de Jonas significa –",
+          "options": [
+            "o que foge de Deus",
+            "pomba",
+            "ovelha",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Obadias",
+          "Habitação de Esaú",
+          "Consequência de uma obediência",
+          "Jonas no ventre do “peixe”",
+          "Jonas devolvido à terra",
+          "Jonas lançado no mar"
+        ],
+        "columnB": [
+          "retorno de Israel a sua terra",
+          "sepultura de Jesus",
+          "Israel espalhado pela terra",
+          "adoradores de Jeová",
+          "salvação de uma grande cidade",
+          "Edom"
+        ],
+        "answers": [
+          5,
+          4,
+          6,
+          1,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O Profeta Miquéias é também conhecido como sendo Micaías.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Miquéias profetizou no tempo dos reis Jotão, Acaz e do profeta Jeremias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Dos profetas menores Miquéias foi o único que profetizou sobre os Reinos de Judá e Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Miquéias, embora sendo um dos profetas menores, profetizou sobre o milênio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Miquéias profetizou que Jerusalém seria transformada num “montão de pedras”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Segundo Miquéias a situação religiosa e social de Jerusalém estava igual a de Samaria",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar que o juízo de Deus pode ser usado como um meio e não apenas como um fim.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que Cafarnaum é a cidade Natal do profeta Naum.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Naum deixou claro que o Senhor ao culpado não tem por inocente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Naum afirmou que Deus não destruiria Nínive por que havia perdoado os ninivitas.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite qual dos profetas falou a respeito de Miquéias",
+          "answer": "JEREMIAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação à ira, cite como Deus costuma agir",
+          "answer": "É TARDIO EM IRAR-SE, MAS IRA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Nínive foi destruída –",
+          "options": [
+            "pela Assíria",
+            "pelos Medos-Persas",
+            "por Babilônia",
+            "pelos romanos."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Miquéias profetizou sobre –",
+          "options": [
+            "o Reino de Judá",
+            "sobre Judá e Israel",
+            "somente sobre o Reino do Norte",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Revelação sobre a tribo de Judá",
+          "Jesus descenderia da “casa de Davi”",
+          "Jesus nasceria em Belém",
+          "Imperador da Assíria",
+          "Usado como “chicote de Deus”",
+          "Instrumento de Deus para destruir Ninive"
+        ],
+        "columnB": [
+          "Senaqueribe",
+          "Tiglete-Pileser",
+          "Nobopolassar",
+          "Jacó",
+          "Natã",
+          "Miquéias"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Habacuque foi sacerdote, não profeta, porque não há profecia em seu livro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Livro de Habacuque relata uma discussão entre o profeta e Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Deus fez Habacuque entender que não concordaria com sua queixa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A expressão “o justo, pela fé viverá” foi escrita primeiramente por Habacuque e não por Paulo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sofonias descendia de uma família real, sendo neto do Rei Josias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sofonias profetizou sobre a “Grande Tribulação” e não sobre o milênio.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Ao falar sobre o juízo de Deus, Sofonias não excluiu Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na construção do templo, Zorobabel não aceitou ajuda dos samaritanos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na construção do templo os profetas atuaram como auxiliares de Zorobabel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Deus declarou que a glória do templo de Zorobabel seria menor que ao de Salomão",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual a nação que Deus chamou de “amarga”",
+          "answer": "A NAÇÃO DOS CAUDEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto à liderança, citar as funções de Zorobabel e Josué",
+          "answer": "ZOROBABEL ERA O LIDER CIVIL E JOSUÉ O LIDER RELIGIOSO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "“Ouvi, Senhor, a tua voz e temi, declarou –",
+          "options": [
+            "Ageu",
+            "Habacuque",
+            "Josué",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Profeta do pós cativeiro –",
+          "options": [
+            "Sofonias",
+            "Habacuque",
+            "Ageu",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um profeta musico e poeta",
+          "“ O Senhor escondeu”",
+          "Seu nome significa “festivo”",
+          "Auxiliares de Zorobabel",
+          "Sofonias",
+          "Autorizou a construção do Templo"
+        ],
+        "columnB": [
+          "profeta do juízo universal",
+          "Ageu e Zacarias",
+          "Sofonias",
+          "Ciro",
+          "Ageu",
+          "Habacuque"
+        ],
+        "answers": [
+          5,
+          4,
+          2,
+          6,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Zacarias nasceu em Jerusalém sendo depois levado para o cativeiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Ageu já era profeta quando Zacarias começou a profetizar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Zacarias foi chamado por Deus quando ainda estava no cativeiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que Zacarias foi o mais messiânico de todos os profetas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O Livro de Zacarias é o maior e o mais importante dentre os profetas menores.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "As expressões “ainda” e “será” apontam para um cumprimento futuro da profecia de Zacarias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Zacarias, em visão, viu Satanás à direita do Sacerdote Josué.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que Zacarias foi também um profeta messiânico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Entre a obediência e o jejum, sabemos que Deus prefere primeiro a obediência.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Zacarias falou sobre o arrebatamento da igreja logo após sua manifestação em glória",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem é o homem montado num cavalo vermelho na visão de Zacarias.",
+          "answer": "O PRÓPRIO JESUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite, hoje, onde podemos encontrar o “Vale de Josafá” citado por Zacarias",
+          "answer": "ESSE VALE ATÉ HOJE NUNCA EXISTIU"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Zacarias nasceu–",
+          "options": [
+            "em Jerusalém",
+            "na Judeia",
+            "no cativeiro",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "As cinco primeiras visões falam de –",
+          "options": [
+            "castigo",
+            "consolação",
+            "perdão",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "“Ferreiro” para Babilônia",
+          "“Ferreiro” para Pérsia",
+          "“Ferreiro” para Grécia",
+          "“Ferreiro” para Roma",
+          "Fala de encorajamento",
+          "Fala de livramento"
+        ],
+        "columnB": [
+          "primeira visão",
+          "segunda visão",
+          "Alexandre",
+          "Ciro",
+          "Gália",
+          "Império Romano"
+        ],
+        "answers": [
+          5,
+          6,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Malaquias, um profeta do pós-cativeiro, foi contemporâneo de Ageu e Zacarias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No tempo de Malaquias Israel estava, politicamente, desorganizado e sem rei.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Desanimado, o povo duvidava das vantagens de ser fiel a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O Livro de Malaquias termina com uma mensagem de esperança para o povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Malaquias é o único profeta levantado por Deus no período interbíblico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A liderança espiritual do povo em Israel era representada pela classe sacerdotal.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O nome de uma igreja não garante a presença de Deus dentro dela.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Em Israel ser sacerdote era uma bênção e não podia ser amaldiçoado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O pecado é o único critério que faz a diferença entre os justos e os injustos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O remanescente fiel referido em Malaquias aponta para a existência da igreja.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite, na Bíblia, o sentido da expressão “peso”.",
+          "answer": "MENSAGEM DURA, PALAVRA DE JUÍZO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a causa pela qual Israel não podia ser destruído.",
+          "answer": "O AMOR DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "No tempo de Malaquias o povo estava –",
+          "options": [
+            "politicamente desorganizado",
+            "sob o domínio persa",
+            "sem rei",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A expressão “eis que envio o meu anjo” fala de –",
+          "options": [
+            "Gabriel",
+            "Miguel",
+            "João Batista",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Início do Livro de Malaquias",
+          "Final do Livro de Malaquias",
+          "Israel no tempo de Malaquias",
+          "Sacerdócio no tempo de Malaquias",
+          "Pensamento do povo no tempo de Malaquias",
+          "Faz a diferença entre o justo e ímpio"
+        ],
+        "columnB": [
+          "sem visão espiritual",
+          "um povo sem esperança",
+          "um “peso”",
+          "início do período interbiblico",
+          "Deus",
+          "inútil servir a Deus"
+        ],
+        "answers": [
+          4,
+          3,
+          1,
+          2,
+          6,
+          5
+        ]
+      }
+    }
+  ]
+}

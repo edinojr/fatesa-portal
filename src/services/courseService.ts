@@ -31,9 +31,8 @@ export const courseService = {
   async getLessonsByBook(bookId: string) {
     const { data, error } = await supabase
       .from('aulas')
-      .select('id, titulo, descricao, livro_id, ordem, tipo, children:aulas(count)')
+      .select('id, titulo, descricao, livro_id, ordem, tipo, arquivo_url, children:aulas(count)')
       .eq('livro_id', bookId)
-      .eq('tipo', 'licao')
       .order('ordem');
     if (error) throw error;
     return data;

@@ -32,3 +32,48 @@ dist-ssr
 
 # SQL files (opcional, se quiser ignorar os scripts de fix do root)
 # *.sql
+
+# Pastas/arquivos de manutencao, debug e rascunhos (nao fazem parte do build)
+maintenance/
+scratch/
+scripts/
+
+# Scripts de debug na raiz (check_*.mjs, update_*.js, etc.)
+/check_*.mjs
+/check_*.js
+/update_*.js
+/update_*.mjs
+/update_*.cjs
+/debug_*.ts
+/debug_*.mjs
+/inspect_*.mjs
+/diagnostic*.mjs
+/find_*.mjs
+/clean_*.mjs
+/insert_*.mjs
+/rebuild_*.mjs
+/create_*.mjs
+/fix_*.mjs
+/test_*.mjs
+/list_*.mjs
+/postgrest_*.mjs
+/full_*.mjs
+
+# Logs e dumps gerados por ferramentas (tsc, eslint, vercel, etc.)
+/compile_*.txt
+/errors*.txt
+/lint_*.txt
+/eslint_*.txt
+/eslint_*.json
+/tsc_*.txt
+/tsc_*.json
+/vercel_*.txt
+/compile_*.txt
+/safebox_*.json
+/lost_*.txt
+/Novo(a) Documento de Texto.txt
+
+# Conteudo de licoes nao versionado (rebuild sob demanda)
+/public/licoes/
+/public/capas/
+/public/gabaritos/

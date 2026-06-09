@@ -1,0 +1,134 @@
+{
+  "id": "POETII_3",
+  "title": "Poéticos 2 - V3",
+  "tfQuestions": [
+    {
+      "id": "poetii3-tf-1",
+      "question": "Sendo o décimo filho, do ponto de vista humano, Salomão jamais seria Rei de Israel.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii3-tf-2",
+      "question": "Deus deu a Salomão grande prestígio com as demais nações e esta foi a causa de seu fracasso.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-3",
+      "question": "O homem, de acordo com sua maneira de viver, pode aumentar ou diminuir seus dias de vida",
+      "answer": "V"
+    },
+    {
+      "id": "poetii3-tf-4",
+      "question": "Tendo se envolvido com muitas mulheres Salomão não pôde ensinar os jovens.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-5",
+      "question": "Podemos ver na sabedoria descrita em Provérbios capítulos 8 e 9 a personificação de Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-6",
+      "question": "Segundo o Rei Lamuel “toda palavra de Deus é pura”.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-7",
+      "question": "A expressão “guarda o teu pé” fala do respeito e temor quando se está na “casa do Senhor”.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii3-tf-8",
+      "question": "Salomão declarou ter visto os príncipes a cavalo e os servos andando a pé.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-9",
+      "question": "Lido com olhos ungidos Cantares exala uma suave fragrância do Espírito.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii3-tf-10",
+      "question": "Para Sunamita era fácil identificar, entre dez mil, o seu amado.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "poetii3-mc-1",
+      "question": "Falou sobre a Rainha de Sabá o -",
+      "options": [
+        "Antigo Testamente",
+        "“Talmude”",
+        "Alcorão",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "poetii3-mc-2",
+      "question": "É “como joia de ouro em focinho de porca” a mulher -",
+      "options": [
+        "Virtuosa",
+        "Insensata",
+        "Adultera",
+        "Prostituta"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "poetii3-mc-3",
+      "question": "Salomão, em Provérbios, adverte contra -",
+      "options": [
+        "As más companhias",
+        "A ociosidade",
+        "A sociedade com os ímpios",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "poetii3-mc-4",
+      "question": "O Senhor reserva a verdadeira sabedoria para os -",
+      "options": [
+        "Inteligentes",
+        "Homens",
+        "Retos",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "poetii3-mp-1",
+      "left": "Fala de um homem velho e triste",
+      "right": "Eclesiastes"
+    },
+    {
+      "id": "poetii3-mp-2",
+      "left": "Fala de um jovem feliz e sonhador",
+      "right": "Cantares"
+    },
+    {
+      "id": "poetii3-mp-3",
+      "left": "Fala de um homem adulto e sábio",
+      "right": "Provérbios"
+    },
+    {
+      "id": "poetii3-mp-4",
+      "left": "Provérbios",
+      "right": "Dá instruções, sabedoria"
+    },
+    {
+      "id": "poetii3-mp-5",
+      "left": "Eclesiastes",
+      "right": "Deus é temido e julga o homem"
+    },
+    {
+      "id": "poetii3-mp-6",
+      "left": "Cantares",
+      "right": "Deus é o alvo dos crentes"
+    }
+  ]
+}

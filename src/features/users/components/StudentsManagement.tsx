@@ -91,7 +91,7 @@ export default function StudentsManagement({
             style={{
               padding: '1.5rem',
               borderRadius: '20px',
-              background: !selectedNucleoId ? 'rgba(156, 39, 176, 0.15)' : 'var(--glass)',
+              background: !selectedNucleoId ? 'rgba(0, 86, 179, 0.15)' : 'var(--glass)',
               border: `1px solid ${!selectedNucleoId ? 'var(--primary)' : 'var(--glass-border)'}`,
               cursor: 'pointer',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -112,7 +112,7 @@ export default function StudentsManagement({
               style={{
                 padding: '1.5rem',
                 borderRadius: '20px',
-                background: selectedNucleoId === nuc.id ? 'rgba(156, 39, 176, 0.15)' : 'var(--glass)',
+                background: selectedNucleoId === nuc.id ? 'rgba(0, 86, 179, 0.15)' : 'var(--glass)',
                 border: `1px solid ${selectedNucleoId === nuc.id ? 'var(--primary)' : 'var(--glass-border)'}`,
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',

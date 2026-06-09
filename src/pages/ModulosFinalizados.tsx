@@ -15,6 +15,21 @@ const ModulosFinalizados = () => {
     const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData, finishedBasicCount, finishedMediumCount } = useStudentCourses(profile);
     const navigate = useNavigate();
 
+    const goToPanel = () => {
+        const role = profile?.tipo;
+        const roles = (profile?.caminhos_acesso as string[]) || [];
+        const isAdmin = role === 'admin' || roles.includes('admin') || roles.includes('suporte');
+        const isProfessor = role === 'professor' || roles.includes('professor');
+        if (isAdmin) navigate('/admin');
+        else if (isProfessor) navigate('/professor');
+        else {
+            const stored = localStorage.getItem('fatesa_active_role');
+            if (stored === 'admin') navigate('/admin');
+            else if (stored === 'professor') navigate('/professor');
+            else navigate('/dashboard');
+        }
+    };
+
     const [showGraduationForm, setShowGraduationForm] = React.useState(false);
     const [showCertificate, setShowCertificate] = React.useState(false);
     const [completedCourse, setCompletedCourse] = React.useState<any>(null);
@@ -90,7 +105,7 @@ const ModulosFinalizados = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                     <Logo size={120} />
                     <div style={{ display: 'flex', gap: '0.75rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.5rem' }}>
-                        <button onClick={() => navigate('/dashboard')} className="nav-btn-premium" title="Voltar ao Painel">
+                        <button onClick={() => goToPanel()} className="nav-btn-premium" title="Voltar ao Painel">
                             <ChevronLeft size={18} /> <span className="mobile-hide">Painel do Aluno</span>
                         </button>
                     </div>
@@ -152,7 +167,7 @@ const ModulosFinalizados = () => {
                         <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '0.5rem auto 2rem' }}>
                             Continue seus estudos para ver aqui suas conquistas e certificados.
                         </p>
-                        <button onClick={() => navigate('/dashboard')} className="btn btn-primary" style={{ width: 'auto' }}>Ir para Meus Cursos</button>
+                        <button onClick={() => goToPanel()} className="btn btn-primary" style={{ width: 'auto' }}>Ir para Meus Cursos</button>
                     </div>
                 ) : (
                     <CourseList 

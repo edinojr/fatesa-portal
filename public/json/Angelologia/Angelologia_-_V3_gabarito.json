@@ -1,0 +1,134 @@
+{
+  "id": "ANGE_3",
+  "title": "Angelologia - V3",
+  "tfQuestions": [
+    {
+      "id": "ange3-tf-1",
+      "question": "No ministério de Jesus a Bíblia declara que os anjos o serviram.",
+      "answer": "V"
+    },
+    {
+      "id": "ange3-tf-2",
+      "question": "Os profetas Isaías e Ezequiel nunca souberam que haviam escrito sobre a queda de Satanás.",
+      "answer": "V"
+    },
+    {
+      "id": "ange3-tf-3",
+      "question": "Jó afirmou que quando Deus lançava os fundamentos da terra os anjos já existiam.",
+      "answer": "F"
+    },
+    {
+      "id": "ange3-tf-4",
+      "question": "Ao pecar, o homem conservou a semelhança, mas perdeu a imagem de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "ange3-tf-5",
+      "question": "Biblicamente uma sábia politica ambiental, global e local, pode salvar a terra da ação destruidora do homem.",
+      "answer": "F"
+    },
+    {
+      "id": "ange3-tf-6",
+      "question": "Tanto a idolatria como o desprezo do corpo são erros bíblicos que devem ser evitados.",
+      "answer": "V"
+    },
+    {
+      "id": "ange3-tf-7",
+      "question": "Num casamento entre pessoas do mesmo sexo a geração de filhos só será possível através de métodos científicos.",
+      "answer": "F"
+    },
+    {
+      "id": "ange3-tf-8",
+      "question": "Deus, embora amando o pecador, abomina e não pode suportar o pecado.",
+      "answer": "V"
+    },
+    {
+      "id": "ange3-tf-9",
+      "question": "Tirar o pecado, resgatando o homem da escravidão, foi o objetivo do sacrifício de Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "ange3-tf-10",
+      "question": "Podemos afirmar não ser bíblica a classificação dos pecados em mortais e veniais.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ange3-mc-1",
+      "question": "Paulo afirma que não temos que lutar contra -",
+      "options": [
+        "A carne e sangue",
+        "As potestades",
+        "Os principados",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "ange3-mc-2",
+      "question": "Condições para o perdão do pecado -",
+      "options": [
+        "Reconhecimento do pecado",
+        "Confissão e pedido de perdão",
+        "Arrependimento",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "ange3-mc-3",
+      "question": "Os serafins são mencionados na Bíblia –",
+      "options": [
+        "Inúmeras vezes",
+        "Apenas três",
+        "Uma única vez",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ange3-mc-4",
+      "question": "Passar de homem natural para espiritual –",
+      "options": [
+        "Só com muita oração",
+        "Só com a morte física",
+        "Só pelo novo nascimento",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ange3-mp-1",
+      "left": "Liga o homem aos irracionais",
+      "right": "Evolucionismo"
+    },
+    {
+      "id": "ange3-mp-2",
+      "left": "Liga o homem a Deus",
+      "right": "Criacionismo"
+    },
+    {
+      "id": "ange3-mp-3",
+      "left": "Nega a existência de um Criador",
+      "right": "Ateísmo"
+    },
+    {
+      "id": "ange3-mp-4",
+      "left": "Identifica Deus com a obra da criação",
+      "right": "Panteísmo"
+    },
+    {
+      "id": "ange3-mp-5",
+      "left": "Não existe um Deus único",
+      "right": "Politeísmo"
+    },
+    {
+      "id": "ange3-mp-6",
+      "left": "Deus como Criador do homem",
+      "right": "Doutrina bíblica"
+    }
+  ]
+}

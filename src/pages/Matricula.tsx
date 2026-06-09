@@ -9,7 +9,8 @@ import {
   CreditCard,
   AlertTriangle,
   ArrowRight,
-  Search
+  Search,
+  ArrowLeft
 } from 'lucide-react'
 import Logo from '../components/common/Logo'
 
@@ -126,7 +127,10 @@ const Matricula = () => {
   }
 
   return (
-    <div className="auth-container" style={{ padding: '4rem 1rem' }}>
+    <div className="auth-container" style={{ padding: '4rem 1rem', position: 'relative' }}>
+      <Link to="/" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, background: 'var(--primary)', padding: '0.6rem 1.2rem', borderRadius: '50px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', zIndex: 9999 }}>
+        <ArrowLeft size={18} /> Voltar
+      </Link>
       <div className="auth-card" style={{ maxWidth: '700px', padding: '4rem' }}>
         <div className="auth-header" style={{ marginBottom: '4rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>

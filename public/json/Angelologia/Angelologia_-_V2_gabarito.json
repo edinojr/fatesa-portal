@@ -1,0 +1,134 @@
+{
+  "id": "ANGE_2",
+  "title": "Angelologia - V2",
+  "tfQuestions": [
+    {
+      "id": "ange2-tf-1",
+      "question": "Em relação ao homem os anjos só não foram maiores do que o homem chamado Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "ange2-tf-2",
+      "question": "A rebelião dos anjos comprovou que nem todos foram criados por Deus em santidade.",
+      "answer": "F"
+    },
+    {
+      "id": "ange2-tf-3",
+      "question": "A expressão “príncipe do reino da Pérsia” dita pelo Anjo Gabriel refere-se a Ciro contemporâneo de Daniel.",
+      "answer": "F"
+    },
+    {
+      "id": "ange2-tf-4",
+      "question": "Dentre tudo que foi criado por Deus somente o homem não veio à existência pelo poder da palavra de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "ange2-tf-5",
+      "question": "Sabemos, pela Bíblia, que a maldição lançada por Deus sobre a terra jamais será revogada.",
+      "answer": "F"
+    },
+    {
+      "id": "ange2-tf-6",
+      "question": "Paulo ensinou ser preciso castigar o corpo para melhor servir a Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "ange2-tf-7",
+      "question": "É através do espírito que o homem tem consciência de Deus e pode relacionar-se com ele.",
+      "answer": "V"
+    },
+    {
+      "id": "ange2-tf-8",
+      "question": "Por não haver possibilidade de perdão, Deus não interrogou a “serpente”.",
+      "answer": "V"
+    },
+    {
+      "id": "ange2-tf-9",
+      "question": "Na Bíblia a expressão “paixões infames” refere-se aos sentimentos vergonhosos e desonrosos.",
+      "answer": "V"
+    },
+    {
+      "id": "ange2-tf-10",
+      "question": "Quando o homem deixa de fazer algo exigido pela Bíblia ele peca por omissão.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ange2-mc-1",
+      "question": "Um bem que o homem pode dizer que é seu-",
+      "options": [
+        "O corpo",
+        "A vida",
+        "O espírito",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "ange2-mc-2",
+      "question": "Hoje a maior desgraça da humanidade -",
+      "options": [
+        "São as drogas",
+        "A fome",
+        "O pecado",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ange2-mc-3",
+      "question": "O Senhor está entronizado entre os -",
+      "options": [
+        "Anjos",
+        "Arcanjos",
+        "Querubins",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ange2-mc-4",
+      "question": "Um componente da alma -",
+      "options": [
+        "Consciência",
+        "A fé",
+        "A razão",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ange2-mp-1",
+      "left": "Liga o homem aos irracionais",
+      "right": "Evolucionismo"
+    },
+    {
+      "id": "ange2-mp-2",
+      "left": "Liga o homem a Deus",
+      "right": "Criacionismo"
+    },
+    {
+      "id": "ange2-mp-3",
+      "left": "Nega a existência de um Criador",
+      "right": "Ateísmo"
+    },
+    {
+      "id": "ange2-mp-4",
+      "left": "Identifica Deus com a obra da criação",
+      "right": "Panteísmo"
+    },
+    {
+      "id": "ange2-mp-5",
+      "left": "Não existe um Deus único",
+      "right": "Politeísmo"
+    },
+    {
+      "id": "ange2-mp-6",
+      "left": "Deus como Criador do homem",
+      "right": "Doutrina bíblica"
+    }
+  ]
+}

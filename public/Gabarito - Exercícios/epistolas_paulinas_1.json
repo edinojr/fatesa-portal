@@ -1,0 +1,1196 @@
+{
+  "id": "ep-paulinas-1",
+  "title": "Epístolas Paulinas 1",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "É de Paulo a autoria da expressão \"...o justo viverá pela fé\".",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Roma dava liberdade religiosa a todos os povos que adoravam também os deuses romanos.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Pela Bíblia, ao falarmos sobre a igreja de Roma , estamos falando da Igreja Católica Romana.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Podemos afirmar que o fundador da Igreja de Roma foi Paulo e não Pedro.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Segundo ensinou Paulo, o homem justificado não sente desejo de pecar.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Sabemos que Deus cumpriu o desejo manifestado por Paulo de ir a Roma.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Podemos afirmar que a ira de Deus nunca se manifesta contra seus filhos.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Mesmo não tendo a Palavra de Deus os romanos podiam conhecer o Criador",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Pela Bíblia, a idolatria não é um pecado tão grave quanto a feitiçaria.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Quanto ao fator pecaminosidade o mundo, hoje, está melhor do que no tempo de Paulo.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Cite quem escreveu e quem foi o emissário da Epístola de Paulo aos Romanos.",
+          "answer": "TÉRCIO ESCREVEU E A EMISSÁRIA FOI FEBE"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar duas razões pelas quais os judeus consideravam ser superiores e com direito de julgar os gentios.",
+          "answer": "PORQUE ERAM DESCENDENTES DE ABRAÃO E DETENTORES DA LEI"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Quando escreveu a Epístola aos Romanos, Paulo estava –",
+          "options": [
+            "na Galácia;",
+            "em Corínto;",
+            "em Éfeso;",
+            "em Antioquia."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "q-3-2",
+          "question": "Depravação é –",
+          "options": [
+            "degeneração;",
+            "perversão;",
+            "corrupção;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Fundador da Igreja de Roma",
+          "Foi para Roma como prisioneiro",
+          "Não há provas de que esteve em Roma",
+          "Deus criado pelo Senado Romano",
+          "Chefe do Estado do Vaticano",
+          "Paulo"
+        ],
+        "columnB": [
+          "Papa",
+          "Pedro",
+          "ignorado",
+          "chamado para ser apóstolo",
+          "Paulo",
+          "Imperador"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "No Antigo Testamento a justificação era pelas obras, hoje é somente pela fé.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Não houve qualquer relação entre a justificação e a circuncisão no caso de Abraão",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Podemos afirmar que é pela fé que nós passamos da morte para a vida.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Pela justiça própria dificilmente um homem poderá ser justificado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Pela Bíblia podemos afirmar que, de forma unilateral, Deus não pode justificar o homem.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "A justificação é como uma declaração legal pela qual o homem está isento de culpa.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "O fato de Jesus ter sido crucificado entre dois malfeitores foi pura coincidência.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Sobre a justificação há um conflito entre o pensamento de Tiago e o de Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Podemos afirmar não haver qualquer relação entre tribulação e paciência.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Segundo afirmou Paulo, a expressão \"segundo Adão\" diz respeito a Cristo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Cite a trilogia que forma o processo da justificação.",
+          "answer": "A GRAÇA DE DEUS, O SANGUE DE JESUS E A FÉ DO HOMEM"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Cite a diferença fundamental entre justificação e perdão.",
+          "answer": "A JUSTIFICAÇÃO EXIGE PAGAMENTO E O PERDÃO É GRATUITO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "O uso correto do sangue de Jesus –",
+          "options": [
+            "curar enfermos;",
+            "expulsar demônios;",
+            "purifica pecados;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "A tribulação produz –",
+          "options": [
+            "paciência;",
+            "enfraquecimento na fé;",
+            "desânimo;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Cristo fez em nós",
+          "Cristo fez por nós",
+          "Fonte da justificação",
+          "Instrumento da justificação",
+          "Meio para alcançar a justificação",
+          "Pecador não perdoado"
+        ],
+        "columnB": [
+          "fugitivo de Deus",
+          "removeu a culpa do pecado",
+          "sangue de Jesus",
+          "a graça de Deus",
+          "removeu o poder pecado",
+          "a fé"
+        ],
+        "answers": [
+          6,
+          2,
+          4,
+          3,
+          1,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Embora sem merecer a salvação, por Jesus o homem tem acesso a ela pela graça.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Segundo Paulo, somente a salvação dos gentios seria pela graça, mediante a fé",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Não existe incompatibilidade entre o viver em Cristo e a prática do pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Somente através do novo nascimento é que o homem torna-se livre do domínio do pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "A expressão, \"o corpo do pecado seja desfeito\", fala da morte física.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Segundo a Bíblia, não há qualquer tipo de rivalidade entre a lei e a graça",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "O objetivo espiritual da lei foi o de trazer o Salvador e não a salvação.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Liberdade é a capacidade concedida por Deus a todos os seres viventes de poder escolher.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "A expressão \"a mulher está sujeita ao marido enquanto ele viver\" deixa claro a superioridade do homem.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Podemos afirmar que a \"redenção da criação\" só acontecerá no milênio.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Para ser salvo pela Lei, cite quantos mandamentos positivos e negativos os judeus precisavam cumprir.",
+          "answer": "248 POSITIVOS E 365 NEGATIVOS"
+        },
+        {
+          "id": "q-2-2",
+          "question": "No capítulo 8, de Romanos, cite quantas são as citações ao \"EU\" e ao Espírito Santo.",
+          "answer": "\"EU\", NENHUMA VEZ; ESPIRITO SANTO, 21 VEZES."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Pelo novo nascimento o homem não fica livre –",
+          "options": [
+            "das consequências do pecado;",
+            "do poder do pecado;",
+            "da culpa do pecado;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "q-3-2",
+          "question": "Entre a Lei e a Graça não existe –",
+          "options": [
+            "concorrência;",
+            "superioridade;",
+            "rivalidade;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Vida vitoriosa no Espírito",
+          "O cristão e suas duas naturezas",
+          "Objetivo espiritual da Lei",
+          "Objetivo material da Lei",
+          "Assegura a glória futura dos filhos",
+          "Precede a glória futura"
+        ],
+        "columnB": [
+          "Espírito Santo",
+          "experiência do sofrimento",
+          "Romanos, capítulo 7",
+          "Romanos, capítulo 8",
+          "proteger a nação de Israel",
+          "revelar e não tirar o pecado"
+        ],
+        "answers": [
+          5,
+          6,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Tendo rejeitado a graça, a Nação de Israel foi excluída do plano de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Nesta Dispensação da Graça todo judeu que aceitar Jesus como Salvador será salvo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "O termo soberania quando aplicado a Deus, não se encontra na Bíblia.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "No Antigo Testamento Israel é chamado por Deus de Seu povo, mas, não de seu filho.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Deus, na Sua soberania, pode fazer vasos para honra e também para desonra.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Paulo afirmou que orava em favor da salvação dos judeus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Os judeus entenderam, facilmente, que o objetivo da Lei foi trazer o Salvador e não a salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Por ser Seu povo escolhido, Deus, ainda no Egito, celebrou uma aliança com Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Podemos afirmar que, em virtude de sua eleição, a rejeição de Israel é temporária.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Pensar que a Lei era um fim em si mesmo e não um meio foi um erro de Israel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Cite o fundamento no qual se apoiou a escolha de Jacó e a rejeição de Esaú.",
+          "answer": "NA SOBERANIA DE DEUS"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar quem são os escolhidos mencionados em Mateus 24:22.",
+          "answer": "OS JUDEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Romanos fala do sofrimento de Paulo pela –",
+          "options": [
+            "conversão dos gentios;",
+            "conversão dos romanos;",
+            "conversão de judeus;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "Aliança do Sinai foi celebrada –",
+          "options": [
+            "com Israel e os gentios;",
+            "somente com Israel;",
+            "somente com os gentios;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Romanos até capítulo 8",
+          "Romanos capítulo 9",
+          "Romanos capítulo 10",
+          "Romanos capítulo 11",
+          "Sinal da rejeição por Israel",
+          "Aliança do Sinai"
+        ],
+        "columnB": [
+          "Israel",
+          "Israel no futuro",
+          "Israel no passado",
+          "cruz",
+          "Israel no presente",
+          "plano divino da salvação"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Na revelação de seu plano que envolve a salvação, Deus nada pediu ao homem.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Revelado seu plano de salvação, Deus pede ao homem seu corpo e seus bens no altar.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Na Lei de Moisés, em todo tipo de sacrifício, o animal tinha que ser morto.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Conformar com o mundo tem o sentido de tomar a forma do mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Para que um corpo seja perfeito é necessário que todos seus membros sejam iguais.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Em nenhum momento Paulo exorta os romanos a observar os preceitos sociais.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "A Bíblia deixa claro que a vingança pertence a Deus e o homem não deve fazer uso dela",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Um homem de Deus, necessariamente, precisa ter paz com todos os homens.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Mesmo sabendo que a autoridade é corrupta, o crente tem o dever de obedecê-la.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Um homem honesto é incapaz de mentir, enganar e fazer falsas promessas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Biblicamente, cite qual é a única fonte do poder.",
+          "answer": "DEUS"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Havendo conflito entre as leis dos reinos da terra e do céu, cite qual deve ser a conduta do cristão.",
+          "answer": "OBEDECER AS LEIS DO REINO DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Crente salvo precisa amar –",
+          "options": [
+            "seus familiares;",
+            "seus inimigos;",
+            "seus amigos;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Um cristão deve obedecer –",
+          "options": [
+            "Deus;",
+            "as autoridades eclesiásticas;",
+            "as autoridades constituídas;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Única forma de se tornar cidadão do céu",
+          "Condição fundamental para viver como salvo",
+          "Autoridade vinda de Deus",
+          "Autoridade civil",
+          "Autoridade militar",
+          "Autoridade eclesiástica"
+        ],
+        "columnB": [
+          "Pilatos",
+          "toda autoridade",
+          "novo nascimento",
+          "Apóstolo Paulo",
+          "ser salvo",
+          "Centurião romano"
+        ],
+        "answers": [
+          4,
+          3,
+          1,
+          6,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Tolerância significa estar de acordo com o pensamento de outra pessoa, sem criticá-la.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Através da formação do fruto do Espírito o crente adquire condições de ser tolerante.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "O espírito de rebelião, de divisão e de rebeldia sempre está presente na vida de um crente fraco.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "O ideal bíblico é sempre ensinar a criança a pensar e agir como um adulto.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Podemos afirmar que Pedro era o bispo de Roma quando Paulo esteve lá como prisioneiro",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Um crente fraco pode agir como se fosse um crente forte.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Em relação a Pedro, Jesus deixou o exemplo de como ajudar um crente fraco.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Como filhos de Deus temos capacidade para julgar e corrigir nossos irmãos mais fracos.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Com Paulo aprendemos que nem todos nossos sonhos se realizam como desejamos.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "É certo que Paulo nunca admitia que mulheres fizessem a obra de Deus.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar de quem Paulo nos mandou afastar.",
+          "answer": "DOS HEREGES"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Cite quantas irmãs Paulo comentou sobre o trabalho delas.",
+          "answer": "CINCO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Como suportar um crente fraco –",
+          "options": [
+            "com amor, muito amor;",
+            "com humildade;",
+            "sendo cheio do Espírito Santo;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Um desejo manifestado por Paulo –",
+          "options": [
+            "o de ir a Roma;",
+            "o de retornar a Antioquia",
+            "o de ir a Espanha;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Justiça",
+          "Misericórdia",
+          "Amor",
+          "Tolerância",
+          "Nega as verdades bíblicas",
+          "Promotor de escândalos"
+        ],
+        "columnB": [
+          "dá o que o homem precisa sem merecer",
+          "respeitar opiniões contrárias",
+          "desordeiro",
+          "herege",
+          "não procura defeitos",
+          "dá o que o homem merece"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Na Galácia existiam diversas igrejas quando Paulo escreveu a Epístola aos Gálatas.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Não foi comprovado que a primeira igreja da Gálacia tenha sido fundada por Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Segundo Paulo, a salvação sendo um ato da graça de Deus, o homem é salvo pela fé",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Como era de seu feitio, Paulo começa a Epístola aos Gálatas elogiando os crentes da Galácia.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Podemos afirmar que o objetivo dos judaizantes era transformar a igreja numa seita judaica.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Morando em Jerusalém, não há dúvidas de que Paulo conheceu Jesus em vida.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Na defesa de seu ministério Paulo invocou a convicção de sua chamada apostólica.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Podemos afirmar que os mestres judaizantes foram enviados a Galácia pela igreja de Jerusalém.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Segundo o ensino de Paulo, um crente salvo não está sujeito a qualquer forma de controle.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Quando um servo era liberto, ele podia, caso quisesse, permanecer servindo seu senhor.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar o motivo pelo qual a Epístola aos Gálatas foi escrita.",
+          "answer": "PARA SALVAR O CRISTIANISMO DO LEGALISMO JUDAICO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Na defesa de seu ministério, cite qual a segunda razão apresentada por Paulo.",
+          "answer": "OS FRUTOS DO SEU MINISTÉRIO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Os Gálatas eram descendentes dos –",
+          "options": [
+            "gregos;",
+            "cananeus;",
+            "gauleses e celtas;",
+            "romanos."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "Obreiro que fala mal de alguém demonstra falta de –",
+          "options": [
+            "temor de Deus;",
+            "ética ministerial;",
+            "conhecimento da Palavra;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Liberdade crista",
+          "Licenciosidade",
+          "Respeito aos direitos de terceiros",
+          "Lei de Moises",
+          "Graça",
+          "Judaizantes"
+        ],
+        "columnB": [
+          "falsos obreiros",
+          "controle interno",
+          "Epístola aos gálatas",
+          "liberdade",
+          "controle externo",
+          "Império da desordem"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Paulo afirmou que seu conhecimento da Palavra de Deus foi lhe dado por Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Pela Bíblia sabemos que Paulo não conheceu Jesus, pessoalmente.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Acusado pelos mestres judaizantes de não ser apóstolo, Paulo não procurou defender seu apostolado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "A revelação do mistério que envolvia o evangelho foi dada, diretamente, por Jesus a Paulo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "A Bíblia menciona diversos evangelhos, sendo difícil saber qual é o verdadeiro.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Concílio de Jerusalém foi convocado para resolver uma questão doutrinária levantada pelos judaizantes.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "No Concílio de Jerusalém os apóstolos concordaram, em parte, como os ensinos de Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Paulo concordou com a exigência dos judaizantes e Tito foi circuncidado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Em Antioquia Pedro confirmou sua superioridade apostólica ao repreender Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Paulo manifestou sua perplexidade com a rapidez com que os gálatas desviaram da fé.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar o que Paulo afirmou não ter recebido de \"homem algum, mas pela revelação de Jesus Cristo\".",
+          "answer": "O MISTÉRIO DO EVANGELHO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar como começou e como terminou o Concílio de Jerusalém.",
+          "answer": "COMEÇOU MUITO TENSO E TERMINOU COM MUITA PAZ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Paulo subiu a Jerusalém por -",
+          "options": [
+            "uma decisão pessoal;",
+            "uma revelação;",
+            "convocação dos apóstolos;",
+            "exigência dos judaizantes."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "q-3-2",
+          "question": "O propósito de Deus para justificar os gentios era -",
+          "options": [
+            "pela Lei de Moisés;",
+            "pela Lei e pela fé;",
+            "pela fé;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Evangelho da circuncisão",
+          "Evangelho da incircuncisão",
+          "Não foi justificado pela circuncisão",
+          "Paulo não aceitou sua circuncisão",
+          "Circuncidado por iniciativa de Paulo",
+          "Para a salvação, exigiam a circuncisão"
+        ],
+        "columnB": [
+          "judaizantes",
+          "Abraão",
+          "Timóteo",
+          "Pedro",
+          "Tito",
+          "Paulo"
+        ],
+        "answers": [
+          6,
+          3,
+          5,
+          1,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "O objetivo material da Lei foi o de revelar, expressamente, o pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Crente que conhece a Palavra de Deus não pode ser contra a Lei de Moisés.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Ser salvo significa tornar-se filho de Deus e isto ocorre através do novo nascimento.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Segundo a Bíblia não é correto querer imitar a fé de nosso pastor.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Paulo declarou ter ministrado o evangelho aos gálatas estando em fraqueza.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Paulo manifesta seu desejo de ver os gálatas libertos do jugo da Lei.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Para Paulo não podia haver incompatibilidade entre a Lei e a Graça.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Para os judaizantes, sem o controle da Lei, o cristianismo se tornaria em anarquia.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Pela Bíblia sabemos que existem determinadas cargas que temos que levar sozinhos.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Um crente espiritual deve cooperar na fiscalização das ações de seus irmãos.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Cite qual era o objetivo espiritual da Lei.",
+          "answer": "REVELAR O PECADO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Como filhos amados, cite o que devemos ser em relação a Deus.",
+          "answer": "DEVEMOS SER SEUS IMITADORES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "É um aspecto do fruto do Espírito -",
+          "options": [
+            "a fé;",
+            "a paz;",
+            "a benignidade;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Como devemos tratar o irmão faltoso -",
+          "options": [
+            "com mansidão;",
+            "com dureza;",
+            "com desprezo;",
+            "como incrédulo."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Jerusalem que agora existe",
+          "Jerusalém celestial",
+          "Judaísmo legalista",
+          "Filho da promessa",
+          "Posteridade",
+          "Aio"
+        ],
+        "columnB": [
+          "Ismael",
+          "Agar",
+          "Cristo",
+          "Sara",
+          "escravo culto",
+          "Isaque"
+        ],
+        "answers": [
+          3,
+          1,
+          5,
+          2,
+          6,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 010",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "A semente mencionada por Paulo em Gálatas é a mesma usado por Jesus na Parábola do Semeador.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Satanás pode semear e frutificar sementes do mal no coração de um homem de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Mesmo depois de semeada, um homem espiritual pode mudar a natureza da semente.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Pela lei da semeadura sabemos que um só pecado pode produzir diversas consequências.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Pela lei da semeadura sabemos que a colheita sempre será maior do que a quantidade das sementes plantadas.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "No sentido bíblico podemos aplicar a Lei da Semeadura em relação à nossa contribuição.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Somente havendo condições favoráveis no tempo de semear, é o que o semeador deve semear",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Podemos ver na lei da semeadura consequências positivas e negativas na relação dos filhos com seus pais.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Como os pais tratam seus filhos, há consequências segundo a lei da semeadura.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Paulo afirmou ter marcas em seu corpo , portanto ele tinha tatuagem em seu corpo.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Cite o nome de um homem que foi morto em virtude da semeadura que fez em relação a um rei",
+          "answer": "SIMEI"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Cite o nome de um rei que colheu o mesmo fruto da semeadura feita por ele em relação a outros reis.",
+          "answer": "ADONI-BEZEQUE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Fez uma grande semeadura no campo da natureza carnal -",
+          "options": [
+            "Sansão;",
+            "José;",
+            "Daniel;",
+            "Paulo."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "q-3-2",
+          "question": "Semeou ou semearam iniquidades",
+          "options": [
+            "os irmãos de José;",
+            "Saul;",
+            "Hamã;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "A terra",
+          "Natureza carnal",
+          "Natureza espiritual",
+          "Semeadura feita na carne",
+          "Semeadura feita no Espírito",
+          "A semente"
+        ],
+        "columnB": [
+          "vida eterna",
+          "pensamento, desejo",
+          "natureza do homem",
+          "fruto do Espírito",
+          "corrupção",
+          "obras da carne"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}

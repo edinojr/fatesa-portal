@@ -195,7 +195,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         (course.livros || []).forEach((livro: any) => {
           itemsToProcess.push({ item_id: livro.id, item_type: 'modulo' });
           (livro.aulas || []).forEach((aula: any) => {
-            if (aula.tipo === 'atividade' || aula.tipo === 'prova') {
+            if (aula.tipo === 'atividade' || aula.tipo === 'exercicio' || aula.tipo === 'avaliacao' || aula.tipo === 'prova') {
               itemsToProcess.push({ item_id: aula.id, item_type: 'atividade' })
             } else if (aula.tipo === 'gravada' || aula.tipo === 'ao_vivo') {
               itemsToProcess.push({ item_id: aula.id, item_type: 'video' })
@@ -639,8 +639,12 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       if (exData) setStudentExceptions(exData.map(e => e.livro_id))
 
       // Fetch individual exam releases
-      const { data: examExData } = await supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', student.id)
-      if (examExData) setStudentExamExceptions(examExData.map(e => e.aula_id))
+      const { data: examExData, error: examExErr } = await supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', student.id)
+      if (examExErr && (examExErr.code === '42P01' || /does not exist/i.test(examExErr.message))) {
+        setStudentExamExceptions([])
+      } else if (examExData) {
+        setStudentExamExceptions(examExData.map(e => e.aula_id))
+      }
     } finally {
       setLoading(false)
     }
@@ -676,17 +680,19 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       if (!currentStatus) {
         const { data: { user } } = await supabase.auth.getUser()
-        await supabase.from('liberacoes_excecao_atividade').insert({
+        const { error: insErr } = await supabase.from('liberacoes_excecao_atividade').insert({
           user_id: studentId,
           aula_id: aulaId,
           granted_by: user?.id
         })
+        if (insErr) throw insErr
         setStudentExamExceptions([...studentExamExceptions, aulaId])
       } else {
-        await supabase.from('liberacoes_excecao_atividade').delete().match({
+        const { error: delErr } = await supabase.from('liberacoes_excecao_atividade').delete().match({
           user_id: studentId,
           aula_id: aulaId
         })
+        if (delErr) throw delErr
         setStudentExamExceptions(studentExamExceptions.filter(id => id !== aulaId))
       }
     } catch (err: any) {

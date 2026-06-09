@@ -42,8 +42,8 @@ const Landing = () => {
             Aprofunde seu conhecimento nas Escrituras com uma metodologia transformadora e professores renomados.
           </p>
           <div className="hero-btns" style={{ justifyContent: 'center' }}>
-            <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ padding: '1rem 3rem', borderRadius: '50px', fontSize: '1rem', fontWeight: 800, letterSpacing: '1px', boxShadow: '0 15px 30px rgba(156, 39, 176, 0.3)' }}>
-              ENTRAR NO PORTAL <ChevronRight size={20} />
+            <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ padding: '1rem 3rem', borderRadius: '50px', fontSize: '1rem', fontWeight: 800, letterSpacing: '1px', boxShadow: '0 15px 30px var(--primary-glow)' }}>
+               ENTRAR NO PORTAL <ChevronRight size={20} />
             </button>
           </div>
         </div>
@@ -53,10 +53,10 @@ const Landing = () => {
       <section className="landing-hub" style={{ padding: '2rem' }}>
         <div className="hub-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
           
-          <Link to="/sobre" className="nav-card-premium" style={{ textDecoration: 'none' }}>
-            <div className="icon-badge-premium" style={{ background: 'rgba(156, 39, 176, 0.1)', color: '#9c27b0' }}>
-              <Info size={24} />
-            </div>
+           <Link to="/sobre" className="nav-card-premium" style={{ textDecoration: 'none' }}>
+             <div className="icon-badge-premium" style={{ background: 'rgba(0, 86, 179, 0.1)', color: 'var(--primary)' }}>
+               <Info size={24} />
+             </div>
             <div className="nav-card-content">
               <h2>A Fatesa</h2>
               <p>Nossa história e missão.</p>
@@ -119,10 +119,10 @@ const Landing = () => {
             <ArrowRight className="card-arrow" />
           </Link>
 
-          <Link to="/login" className="nav-card-premium active" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(156, 39, 176, 0.05))', border: '1px solid rgba(156, 39, 176, 0.2)' }}>
-            <div className="icon-badge-premium" style={{ background: 'var(--primary)', color: '#fff' }}>
-              <LogIn size={24} />
-            </div>
+           <Link to="/login" className="nav-card-premium active" style={{ textDecoration: 'none', background: 'linear-gradient(135deg, rgba(0, 86, 179, 0.15), rgba(0, 86, 179, 0.05))', border: '1px solid rgba(0, 86, 179, 0.2)' }}>
+             <div className="icon-badge-premium" style={{ background: 'var(--primary)', color: '#fff' }}>
+               <LogIn size={24} />
+             </div>
             <div className="nav-card-content">
               <h2>Portal</h2>
               <p>Acesse seu painel exclusivo.</p>

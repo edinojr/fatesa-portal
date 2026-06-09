@@ -1,0 +1,134 @@
+{
+  "id": "DSAL_3",
+  "title": "Doutrina da Salvação - V3",
+  "tfQuestions": [
+    {
+      "id": "dsal3-tf-1",
+      "question": "As expressões salvação e salvador têm o mesmo sentido nos dois testamentos.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal3-tf-2",
+      "question": "A glorificação representa o capítulo final da salvação pela graça.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal3-tf-3",
+      "question": "Na Bíblia, as expressões expiação e redenção têm o mesmo significado.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal3-tf-4",
+      "question": "Para Deus o importante é como vivemos e não como pensamos.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal3-tf-5",
+      "question": "Para a conversão o homem pode fazer uso de sua fé natural.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal3-tf-6",
+      "question": "A expressão regenerar significa uma reforma total realizada no homem.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal3-tf-7",
+      "question": "Biblicamente, podemos afirmar que nem todos os homens são filhos de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal3-tf-8",
+      "question": "Justificação é como uma declaração legal de que o homem está isento de culpa.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal3-tf-9",
+      "question": "Vestidos alvos em todo tempo fala de santificação permanente.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal3-tf-10",
+      "question": "Pela Bíblia sabemos que o corpo glorioso que receberemos é espiritual e material",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "dsal3-mc-1",
+      "question": "A Bíblia foi escrita para contar a -",
+      "options": [
+        "Queda de Satanás",
+        "História da redenção do homem",
+        "História da humanidade",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "dsal3-mc-2",
+      "question": "Nascer da água significa -",
+      "options": [
+        "Batismo nas águas",
+        "Transformação pela Palavra",
+        "Batismo com o Espírito Santo",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "dsal3-mc-3",
+      "question": "A regeneração é também chamada de —",
+      "options": [
+        "A nova vida",
+        "Uma nova criação",
+        "Novo nascimento",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "dsal3-mc-4",
+      "question": "Degenerar significa -",
+      "options": [
+        "Perder a qualidade original",
+        "Corromper-se",
+        "Mudar para pior",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "dsal3-mp-1",
+      "left": "A bodas vistas por João",
+      "right": "União de Cristo com a igreja"
+    },
+    {
+      "id": "dsal3-mp-2",
+      "left": "O “filho” na Festa das Bodas”",
+      "right": "Jesus"
+    },
+    {
+      "id": "dsal3-mp-3",
+      "left": "O Rei que preparou a “Ceia”",
+      "right": "Deus Pai"
+    },
+    {
+      "id": "dsal3-mp-4",
+      "left": "Rejeitaram o convite para as bodas",
+      "right": "Os judeus"
+    },
+    {
+      "id": "dsal3-mp-5",
+      "left": "Tem aparência de salvo",
+      "right": "Joio"
+    },
+    {
+      "id": "dsal3-mp-6",
+      "left": "Não tem aparência de salvo",
+      "right": "Peixes ruins"
+    }
+  ]
+}

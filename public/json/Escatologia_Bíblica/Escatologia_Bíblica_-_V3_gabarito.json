@@ -1,0 +1,134 @@
+{
+  "id": "ESCA_3",
+  "title": "Escatologia Bíblica - V3",
+  "tfQuestions": [
+    {
+      "id": "esca3-tf-1",
+      "question": "A Bíblia condena a astrologia, os astrólogos e os que a eles recorrem.",
+      "answer": "V"
+    },
+    {
+      "id": "esca3-tf-2",
+      "question": "Os chamados “outros mortos” ressuscitarão para o juízo do grande “Trono Branco”.",
+      "answer": "V"
+    },
+    {
+      "id": "esca3-tf-3",
+      "question": "No Antigo Testamento os mortos ímpios iam para o “Hades” e no Novo Testamento para o “Sheol”.",
+      "answer": "F"
+    },
+    {
+      "id": "esca3-tf-4",
+      "question": "Depois do arrebatamento da igreja não haverá mais ressurreição de salvos.",
+      "answer": "F"
+    },
+    {
+      "id": "esca3-tf-5",
+      "question": "No Antigo Testamento a videira era um símbolo de Israel e no Novo a figueira simboliza a igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "esca3-tf-6",
+      "question": "Na Parábola das Dez Virgens a expressão “meia- noite” fala do fim do Dia da Graça.",
+      "answer": "V"
+    },
+    {
+      "id": "esca3-tf-7",
+      "question": "Após o arrebatamento da igreja não haverá mais eventos escatológicos na terra.",
+      "answer": "F"
+    },
+    {
+      "id": "esca3-tf-8",
+      "question": "Entre os evangélicos não há um consenso em relação ao arrebatamento da igreja e a grande tribulação.",
+      "answer": "V"
+    },
+    {
+      "id": "esca3-tf-9",
+      "question": "O termo milênio, no sentido literal, não se encontra na Bíblia.",
+      "answer": "V"
+    },
+    {
+      "id": "esca3-tf-10",
+      "question": "Os “outros mortos” são todos aquele que morreram durante o Antigo Testamento.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "esca3-mc-1",
+      "question": "A Bíblia fala sobre morte -",
+      "options": [
+        "Física",
+        "Espiritual",
+        "Eterna",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esca3-mc-2",
+      "question": "No milênio Satanás estará no -",
+      "options": [
+        "“Lago de fogo”",
+        "“Hades”",
+        "Abismo",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "esca3-mc-3",
+      "question": "No milênio haverá paz entre -",
+      "options": [
+        "As nações",
+        "Os homens",
+        "Os animais",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esca3-mc-4",
+      "question": "Réus no julgamento final -",
+      "options": [
+        "Os mortos na grande tribulação",
+        "Todos os judeus",
+        "Todos os mortos ímpios",
+        "Só os gentios mortos"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "esca3-mp-1",
+      "left": "Um animal terrível e espantoso",
+      "right": "Império Romano"
+    },
+    {
+      "id": "esca3-mp-2",
+      "left": "Um grande monte que encheu a terra",
+      "right": "Milênio"
+    },
+    {
+      "id": "esca3-mp-3",
+      "left": "Pedra cortada sem mãos",
+      "right": "Jesus"
+    },
+    {
+      "id": "esca3-mp-4",
+      "left": "Ponta pequena vista por Daniel",
+      "right": "Anticristo"
+    },
+    {
+      "id": "esca3-mp-5",
+      "left": "Pragana das eiras no estio",
+      "right": "Fim do império gentílico"
+    },
+    {
+      "id": "esca3-mp-6",
+      "left": "O menor dos sete reinos",
+      "right": "Reino do Anticristo"
+    }
+  ]
+}

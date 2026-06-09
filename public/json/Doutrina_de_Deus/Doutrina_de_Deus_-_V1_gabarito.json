@@ -1,0 +1,134 @@
+{
+  "id": "DOUD_1",
+  "title": "Doutrina de Deus - V1",
+  "tfQuestions": [
+    {
+      "id": "doud1-tf-1",
+      "question": "Podemos afirmar que hoje o politeísmo tem predominância sobre todas as religiões existentes.",
+      "answer": "F"
+    },
+    {
+      "id": "doud1-tf-2",
+      "question": "No Salmo 90 o salmista Davi afirma que Deus é Deus de eternidade a eternidade.",
+      "answer": "F"
+    },
+    {
+      "id": "doud1-tf-3",
+      "question": "É certo que o livro de Gênesis fala da origem de tudo e de todos os seres existentes.",
+      "answer": "F"
+    },
+    {
+      "id": "doud1-tf-4",
+      "question": "Nenhum argumento racional da existência de Deus convencerá o homem que não quiser crer n’Ele.",
+      "answer": "V"
+    },
+    {
+      "id": "doud1-tf-5",
+      "question": "É bíblico afirmar que Deus é transcendente e também imanente.",
+      "answer": "V"
+    },
+    {
+      "id": "doud1-tf-6",
+      "question": "Os atributos morais de Deus não são comunicáveis ao homem.",
+      "answer": "F"
+    },
+    {
+      "id": "doud1-tf-7",
+      "question": "Sendo que sua natureza é má, segue-se que Satanás não pode praticar o bem.",
+      "answer": "V"
+    },
+    {
+      "id": "doud1-tf-8",
+      "question": "No sentido bíblico não se pode fazer diferença entre benignidade e bondade.",
+      "answer": "F"
+    },
+    {
+      "id": "doud1-tf-9",
+      "question": "A redenção do reino vegetal e animal só ocorrerá no milênio.",
+      "answer": "V"
+    },
+    {
+      "id": "doud1-tf-10",
+      "question": "Mesmo os filhos de Deus não podem entender por nenhum meio o mistério da Trindade.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "doud1-mc-1",
+      "question": "O Deus que conhecemos é -",
+      "options": [
+        "A difícil de perdoar",
+        "Sem compaixão",
+        "Grande e terrível",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "doud1-mc-2",
+      "question": "Os céus manifestam -",
+      "options": [
+        "O juízo de Deus",
+        "A glória de Deus",
+        "A misericórdia de Deus",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "doud1-mc-3",
+      "question": "Destruiu a serpente de metal -",
+      "options": [
+        "Moisés",
+        "Ezequias",
+        "Josué",
+        "Davi"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "doud1-mc-4",
+      "question": "É onipresente –",
+      "options": [
+        "Satanás",
+        "O arcanjo Miguel",
+        "Jesus",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "doud1-mp-1",
+      "left": "Panteísmo",
+      "right": "Tudo é Deus"
+    },
+    {
+      "id": "doud1-mp-2",
+      "left": "Cristianismo",
+      "right": "Deus é espírito"
+    },
+    {
+      "id": "doud1-mp-3",
+      "left": "Agnosticismo",
+      "right": "Deus pode ou não existir"
+    },
+    {
+      "id": "doud1-mp-4",
+      "left": "Materialismo",
+      "right": "A eternidade da matéria"
+    },
+    {
+      "id": "doud1-mp-5",
+      "left": "Ateísmo",
+      "right": "Nega a existência de Deus"
+    },
+    {
+      "id": "doud1-mp-6",
+      "left": "Modo errado de viver",
+      "right": "Forma de negar a existência de Deus"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "ATOS_3",
+  "title": "Atos dos Apóstolos - V3",
+  "tfQuestions": [
+    {
+      "id": "atos3-tf-1",
+      "question": "No aspecto humano, os nomes que mais se destacaram em Atos são os de Pedro e João.",
+      "answer": "F"
+    },
+    {
+      "id": "atos3-tf-2",
+      "question": "Os judeus, ainda hoje, continuam celebrando a Festa de Pentecostes, embora com limitação.",
+      "answer": "V"
+    },
+    {
+      "id": "atos3-tf-3",
+      "question": "Não pode haver avivamento genuíno e duradouro sem ensino da Palavra de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "atos3-tf-4",
+      "question": "Paulo levantou uma grande coleta para os pobres de Jerusalém.",
+      "answer": "F"
+    },
+    {
+      "id": "atos3-tf-5",
+      "question": "Face a existência do templo, em Jerusalém não havia sinagogas.",
+      "answer": "F"
+    },
+    {
+      "id": "atos3-tf-6",
+      "question": "Sabemos, pela Bíblia, que perseguir um crente fiel significa perseguir o próprio Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "atos3-tf-7",
+      "question": "Em Listra, Paulo e Barnabé foram recebidos como deuses.",
+      "answer": "V"
+    },
+    {
+      "id": "atos3-tf-8",
+      "question": "Quanto à forma de fazer a obra de Deus pode haver divergências entre obreiros.",
+      "answer": "V"
+    },
+    {
+      "id": "atos3-tf-9",
+      "question": "Tal como Ágabo, também as filhas de Filipe eram profetas.",
+      "answer": "F"
+    },
+    {
+      "id": "atos3-tf-10",
+      "question": "As atividades de Paulo, após deixar a prisão, não foram registradas por Lucas.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "atos3-mc-1",
+      "question": "Na igreja de Jerusalém não havia crentes -",
+      "options": [
+        "Ricos",
+        "Pobres",
+        "Necessitados",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "atos3-mc-2",
+      "question": "Paulo esteve em Éfeso pela primeira vez em sua -",
+      "options": [
+        "Primeira viagem",
+        "Segunda viagem",
+        "Terceira viagem",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "atos3-mc-3",
+      "question": "Foi professor de Paulo, em Jerusalém —",
+      "options": [
+        "Hilel",
+        "Nicodemos",
+        "Gamaliel",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "atos3-mc-4",
+      "question": "No retorno de Jerusalém, acompanharam Paulo e Barnabé —",
+      "options": [
+        "Tiago e João",
+        "Tiago e Pedro",
+        "Judas e Silas",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "atos3-mp-1",
+      "left": "Capacidade para fazer a obra de Deus",
+      "right": "Azeite na mão"
+    },
+    {
+      "id": "atos3-mp-2",
+      "left": "Capacidade para refletir a glória de Deus",
+      "right": "Azeite no rosto"
+    },
+    {
+      "id": "atos3-mp-3",
+      "left": "Capacidade para andar com Deus",
+      "right": "Azeite no pé"
+    },
+    {
+      "id": "atos3-mp-4",
+      "left": "Capacidade para ouvir a voz de Deus",
+      "right": "Azeite na orelha"
+    },
+    {
+      "id": "atos3-mp-5",
+      "left": "Um símbolo do Espírito Santo",
+      "right": "Azeite"
+    },
+    {
+      "id": "atos3-mp-6",
+      "left": "Obreiros cheios do Espírito Santo",
+      "right": "Vasilhas cheias de azeite"
+    }
+  ]
+}

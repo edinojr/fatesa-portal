@@ -1,0 +1,1194 @@
+{
+  "id": "atos",
+  "title": "Atos dos Apóstolos",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em Atos dos Apóstolos o personagem central é o Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Lucas passou a acompanhar Paulo durante sua segunda viagem missionária.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No aspecto humano os dois nomes que mais se destacam em Atos são o de Pedro e João.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O Livro de Atos descreve o primeiro capítulo da História da Igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Dentre os anjos somente o Arcanjo Miguel sabe o dia da vinda Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "No retorno de Jesus à terra ele descerá sobre o Monte das Oliveiras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sabemos, pela Bíblia, que os apóstolos sempre habitaram em Jerusalém.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Permanecer no cenáculo não foi uma ordem dada por Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Pela Bíblia, a última notícia sobre Maria é a de que ela estava no Cenáculo, em Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Tudo indica que a escolha de Matias foi legítima e confirmada por Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas vezes o nome do Espírito Santo é mencionado em Atos dos Apóstolos.",
+          "answer": "CERCA DE SETENTA VEZES"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar um trabalho que pode ser executado por todos os salvos.",
+          "answer": "SER UMA TESTEMUNHO DE JESUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Em Atos destaca-se —",
+          "options": [
+            "a doutrina da igreja",
+            "os milagres de Jesus",
+            "a obra missionária",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "No Cenáculo, na Páscoa, estavam reunidas —",
+          "options": [
+            "doze apóstolos",
+            "onze apóstolos",
+            "doze apóstolos e Jesus",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Sonho de liberdade de Israel",
+          "Tempo da história do Livro de Atos",
+          "Estavam no Cenáculo",
+          "Esperaram pelo Pentecostes",
+          "Lucas juntou-se a Paulo",
+          "Estavam com Paulo e Lucas"
+        ],
+        "columnB": [
+          "Trôade",
+          "os irmãos de Jesus",
+          "mais de 600 anos",
+          "Silas e Timóteo",
+          "dez dias",
+          "34 anos"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Para os judeus, hoje, a Festa do Pentecostes não tem o mesmo sentido que tinha.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A Festa da Páscoa foi celebrada pela primeira vez no deserto.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A Festa do Pentecostes era também chamada de Festa da Colheita.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que para a igreja a Festa do Pentecostes ainda não terminou.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Foram poucas as vezes que uma das pessoas da Trindade trabalhou isoladamente.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A missão de Jesus de buscar e salvar o que se havia perdido não terminou.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Jesus veio como enviado do Pai e o Espírito Santo como enviado de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Nesta dispensação o óleo, ou azeite, não é mais um símbolo do Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Hoje, Evangelho que não suaviza a dor, não é o Evangelho de Cristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que no Dia do Pentecostes veio do céu um vento veemente",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Das sete festas judaicas cite quais eram as três principais.",
+          "answer": "PÁSCOA, PENTECOSTES E TABERNÁCULOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Na Festa do Pentecostes, cite a simbologia dos dois pães.",
+          "answer": "OS DOIS POVOS– JUDEUS E GENTIOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Última das festas anuais —",
+          "options": [
+            "Festa da Colheita",
+            "Festa dos Tabernáculos",
+            "Festa da Páscoa",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Profetizaram ou anunciaram a vinda do Espírito Santo —",
+          "options": [
+            "Joel",
+            "Isaías",
+            "João Batista",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Capacidade para fazer a obra de Deus",
+          "Capacidade para refletir a glória de Deus",
+          "Capacidade para andar com Deus",
+          "Capacidade para ouvir a voz de Deus",
+          "Azeite",
+          "Obreiros cheios do Espírito Santo"
+        ],
+        "columnB": [
+          "azeite no pé",
+          "um símbolo do Espírito Santo",
+          "azeite na mão",
+          "vasilha cheia de azeite",
+          "azeite no rosto",
+          "azeite na orelha"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os gentios presentes em Jerusalém, perguntaram “Que quer isto dizer ?”",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Foram os judeus, varões religiosos, os que disseram “estão cheios de mosto”",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo a “hora terceira”, ou seja, três horas da manhã, ninguém podia estar embriagado",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não há diferença entre igreja pentecostal e movimento pentecostal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Embora não sendo um escriba, nem doutor da Lei, Pedro demonstrou ser conhecedor das Escrituras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Não pode existir avivamento genuíno e duradouro sem ensino da Palavra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Gunnar Vingren era pastor de uma Igreja Batista na Suécia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Escolhido pelos apóstolos, Pedro foi pregador no Dia de Pentecostes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para falar da ressurreição de Jesus, Pedro citou um dos Salmos de Davi.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na igreja de Jerusalém ninguém dizia que “agora eu sou crente em casa”",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar duas características de uma Igreja Pentecostal.",
+          "answer": "AVIVADA E DOUTRINADA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o nome da primeira pessoa batizada com o Espírito Santo no Brasil.",
+          "answer": "CELINA ALBUQUERQUE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Apóstolos enviados a Samaria —",
+          "options": [
+            "Filipe e Tiago",
+            "João e Pedro",
+            "Pedro e Tiago",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Na igreja de Jerusalém havia —",
+          "options": [
+            "temor de Deus",
+            "ensino da Palavra",
+            "comunhão",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Grande movimento pentecostal",
+          "Igreja Pentecostal problemática",
+          "Amor à Palavra de Deus",
+          "Autêntica Igreja Pentecostal",
+          "Varões religiosos e zombadores",
+          "Aproxima e afasta o homem de Deus"
+        ],
+        "columnB": [
+          "temor e tremor",
+          "Igreja de Jerusalém",
+          "Corinto",
+          "Judeus",
+          "cheio do Espírito Santo",
+          "Samaria"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os judeus, pela Lei de Moisés, tinham que orar três vezes ao dia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Nos dias de Jesus, na adoração judaica não havia nenhum vestígio de idolatria",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No modo de vida dos cristãos primitivos não existia qualquer vestígio do regime comunista.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A cura de um paralítico aconteceu quando Pedro e João estavam retornando do templo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo que se Pedro e João tivessem uma moeda o coxo não seria curado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pedro deixou claro que Ananias não estava obrigado a dar o dinheiro da venda de sua propriedade",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "É certo que na Igreja de Jerusalém o Espírito Santo tinha liberdade plena de operar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pedro afirmou que Ananias havia mentido à igreja e ao Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os fariseus não criam na ressurreição, em anjos e nem em espíritos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sob o domínio dos romanos, os judeus não podiam aplicar pena de morte.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Até o capítulo 3 de Atos, cite quantas mensagens foram pregadas por Pedro.",
+          "answer": "TRÊS"
+        },
+        {
+          "id": "sa2",
+          "question": "Entre os judeus, cite qual era a pena máxima no caso de açoites .",
+          "answer": "40 AÇOITES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Na igreja de Jerusalém não havia —",
+          "options": [
+            "crentes ricos",
+            "crentes pobres",
+            "crentes necessitados",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Sumo sacerdote colocado pelos romanos —",
+          "options": [
+            "Arão",
+            "Caifás",
+            "Anás",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Oravam três vezes ao dia",
+          "Primeiros cristãos açoitados",
+          "Sogro de Caifás",
+          "Mentiram a Deus",
+          "Defendeu os apóstolos no Sinédrio",
+          "Nome do coxo curado"
+        ],
+        "columnB": [
+          "Gamaliel",
+          "ignorado",
+          "Davi e Daniel",
+          "João e Pedro",
+          "Ananias e Safira",
+          "Anás"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Numa igreja abençoada não pode haver problemas entre os irmãos",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A igreja de Jerusalém era formada por judeus e também por gregos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na escolha dos diáconos os apóstolos não indicaram nenhum nome.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que, diante de Deus, Estêvão foi considerado um autêntico missionário",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Face a existência do templo, em Jerusalém não havia sinagogas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Estêvão foi morto por ser diácono e estava fazendo a obra de um evangelista",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Certamente a grande perseguição à igreja aconteceu por permissão de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Saulo, também chamado de Paulo, surge na Bíblia pela primeira vez na morte de Estêvão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Foi Felipe, o apóstolo, quem primeiro pregou o evangelho em Samaria",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Em Samaria, Filipe falou de Jesus, mas nada falou do Espírito Santo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Segundo os apóstolos, cite as três condições para alguém ser separado para o diaconato.",
+          "answer": "TER BOA REPUTAÇÃO, SER CHEIO DO ESPÍRITO SANTO E DE SABEDORIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar os nomes dos primeiros diáconos da igreja de Jerusalém .",
+          "answer": "ESTÊVÃO, FILIPE, PRÓCORO, NICANOR, TIMÃO, PÁRMENAS E NICOLAU."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Jesus ordenou que o evangelho fosse pregado primeiro —",
+          "options": [
+            "em toda Jerusalém",
+            "em toda Judeia",
+            "em toda Samaria",
+            "todas estão erradas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Ao deixar Samaria, Filipe foi para —",
+          "options": [
+            "Jerusalém",
+            "Gaza",
+            "uma estrada deserta",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Doutrinadores",
+          "O evangelho na África",
+          "Este é “ a grande virtude de Deus”",
+          "Homens cheios do Espírito Santo",
+          "Ministério da Palavra",
+          ""
+        ],
+        "columnB": [
+          "Diáconos",
+          "Apóstolos",
+          "Filipe",
+          "Pedro e João",
+          "Eunuco"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que, depois de sua conversão, Saulo foi transformado em um Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Não está escrito em lugar nenhum que Paulo tenha sido membro do Sinédrio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sabemos, pela Bíblia, que perseguir um crente fiel significa perseguir o próprio Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Após sua conversão Paulo não retornou mais para Tarso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Após a conversão, os cristãos judeus abandonaram todos os costumes e as tradições judaicas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Embora sendo romanos e não cristão podemos afirmar que um anjo falou com Cornélio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Antioquia, da Síria, era uma das cidades mais depravadas do mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Barnabé foi buscar Paulo em Jerusalém para auxiliá-lo em Antioquia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Por ordem de Herodes, o Grande, Pedro foi guardado na prisão por dezesseis soldados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Saindo da prisão e de Jerusalém não podemos afirmar para onde foi Pedro.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar porque podemos afirmar que os convidados de Cornélio não eram judeus.",
+          "answer": "PORQUE OS JUDEUS NÃO ENTRAVAM EM CASA DE GENTIOS"
+        },
+        {
+          "id": "sa2",
+          "question": "citar quem foi o fundador, ou fundadores, da Igreja em Antioquia.",
+          "answer": "ALGUNS VARÕES DE CHIPRE E DE CIRENE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Foi professor de Paulo, em Jerusalém —",
+          "options": [
+            "Hilel",
+            "Nicodemos",
+            "Gamaliel",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A conversão de Paulo aconteceu —",
+          "options": [
+            "em Jerusalém",
+            "na Síria",
+            "na Turquia",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Escreveu sobre a Dinastia dos Herodes",
+          "Descendente de Esaú",
+          "Herodes, o Tetrarca",
+          "Herodes Agripa II",
+          "Herodes, o Grande",
+          "Herodes Agripa I"
+        ],
+        "columnB": [
+          "mandou matar Tiago",
+          "queria libertar Paulo",
+          "Herodes, o Grande",
+          "mandou matar os meninos",
+          "Flavio Josefo",
+          "mandou matar João Batista"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A esposa sempre está incluída na chamada de um obreiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Tendo nascido em Chipre, Barnabé não era israelita.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Tendo sido pastor da igreja em Antioquia, Barnabé liderou a primeira viagem missionária.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Paulo nunca saiu fugido de uma cidade onde havia uma igreja fundada por ele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em Listra, Paulo e Barnabé foram recebidos como deuses.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em Listra, Paulo foi apedrejado pela multidão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sabemos que Paulo nunca mais voltou à cidade de Listra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Retornando de uma viagem missionária, Paulo sempre prestava contas às igrejas de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para Paulo a salvação não estava vinculada à Lei de Moisés.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que Tiago, irmão de Jesus, foi Pastor da igreja de Jerusalém.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No envio de um missionário, cite as atribuições do Espírito Santo e da igreja local",
+          "answer": "O ESPÍRITO SANTO ESCOLHE E A IGREJA SEPARA E ENVIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Face ao conflito havido entre os judaizantes e Paulo, cite a providência do ministério da igreja de Jerusalém .",
+          "answer": "A CONVOCAÇÃO DE UM CONCÍLIO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Cidade natal de Timóteo —",
+          "options": [
+            "Derbe",
+            "Listra",
+            "Icônio",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "No retorno de Jerusalém, acompanharam Paulo e Barnabé —",
+          "options": [
+            "Tiago e João",
+            "Tiago e Pedro",
+            "Judas e Silas",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pastor auxiliar na igreja de Antioquia",
+          "Converteu-se na Ilha de Chipre",
+          "Ficou temporariamente cego",
+          "Não há registro de perseguição",
+          "Nome de um coxo curado em Listra",
+          "Não presidiu o Concílio de Jerusalém"
+        ],
+        "columnB": [
+          "Derbe",
+          "Pedro",
+          "Sergio Paulo",
+          "ignorado",
+          "Elimas",
+          "Paulo"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Quanto a forma de fazer a obra de Deus pode haver divergência entre os obreiros.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que o pai de Timóteo não concordou que ele acompanhasse Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Filipos foi a primeira cidade da Europa a receber o evangelho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Como de costume, Paulo também ensinou primeiro na sinagoga em Filipos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Face ao que aconteceu em Filipos, Paulo não procurou a sinagoga em Tessalônica",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pela vontade de Paulo ele permaneceria em Tessalônica por mais tempo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sabemos que Satanás impediu Paulo de retornar para Tessalônica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Sendo bem recebido em Bereia, Paulo permaneceu lá por alguns meses.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Em Corinto havia um grande templo dedicado à deusa Afrodite.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Em sua segunda viagem Paulo permaneceu em Corinto dezoito meses",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar os nomes dos pais e de uma avó de Timóteo",
+          "answer": "PAI, NOME IGNORADO; MÃE — EUNICE; AVÓ LOIDE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o significado da expressão “Mulher de Corinto” .",
+          "answer": "MULHER DE “VIDA FÁCIL”, OU DE MORAL SUSPEITA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Integrou-se a equipe de Paulo em Trôade —",
+          "options": [
+            "Timóteo",
+            "Silas",
+            "Lucas",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Hospedou Paulo em Filipos —",
+          "options": [
+            "um carcereiro",
+            "Lidia",
+            "Jasom",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Hospedaram Paulo em Corinto",
+          "Acompanhou Barnabé em sua segunda viagem",
+          "Deixados por Paulo em Bereia",
+          "Terra natal de Barnabé",
+          "Cidade onde Paulo teve uma visão",
+          "Integrou-se à equipe de Paulo em Trôade"
+        ],
+        "columnB": [
+          "Silas e Timóteo",
+          "Trôade",
+          "Áquila e Priscila",
+          "Lucas",
+          "Marcos",
+          "Chipre"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Como sempre fazia, no término desta viagem, Paulo retornou a Antioquia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na terceira viagem, embora de passagem, Paulo esteve em Corinto.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Éfeso sitiava-se em território que hoje pertence a Grécia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A história afirma que o Apóstolo João viveu seus últimos dias em Éfeso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo que não foi Paulo o primeiro a falar de Jesus em Éfeso.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "O teatro de Éfeso foi um dos maiores teatros da antiguidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Em sua terceira viagem Paulo permaneceu na Grécia cerca de três meses.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "No retorno de sua terceira viagem, em Éfeso, Paulo reuniu-se com todos os obreiros.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Tal como Ágabo, também as filhas de Filipe eram profetas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Em Jerusalém, na casa de Tiago, Paulo participou de uma reunião com todos os obreiros",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em Éfeso, citar quanto tempo Paulo ensinou na sinagoga.",
+          "answer": "TRÊS MESES"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite porque a terceira viagem de Paulo ficou inacabada.",
+          "answer": "PORQUE CHEGANDO EM JERUSALEM ELE FOI PRESO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Paulo esteve em Éfeso pela primeira vem em sua —",
+          "options": [
+            "primeira viagem",
+            "segunda viagem",
+            "terceira viagem",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "A igreja em Éfeso foi fundada com —",
+          "options": [
+            "oração",
+            "lágrimas",
+            "ensino da Palavra",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Paulo permaneceu três anos",
+          "Paulo permaneceu três meses",
+          "Paulo permaneceu sete dias",
+          "Paulo permaneceu dois anos",
+          "Paulo foi preso",
+          "Paulo reuniu-se com os anciãos de Éfeso"
+        ],
+        "columnB": [
+          "Jerusalém",
+          "Trôade",
+          "Éfeso",
+          "Mileto",
+          "Cesareia",
+          "Grécia"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Oficialmente não podemos falar sobre uma quarta viagem missionária de Paulo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Preso, em Roma, Paulo ficou impedido de exercer seu ministério.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Retornando de sua terceira viagem, Paulo foi preso em Cesareia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Estando na direção de Deus nada pode dar errado para um obreiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Chegando na Ilha de Chipre, Paulo foi picado por uma cobra venenosa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em Roma, Paulo obteve o beneficio de uma prisão domiciliar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Na prisão, em Roma, Paulo sentiu-se impedido para fazer a obra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Após dois anos de prisão, Paulo foi julgado e absolvido pelo Imperador Nero.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Em Atos vemos que, saindo da prisão, Paulo esteve na Espanha.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na sua segunda prisão, em Roma, Paulo foi julgado, condenado à morte e executado.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quanto tempo Paulo permaneceu na Ilha de Malta.",
+          "answer": "TRÊS MESES"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quais objetos que Paulo pediu para Timóteo levar.",
+          "answer": "A CAPA E OS LIVROS, PRINCIPALMENTE OS PERGAMINHOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Na segunda prisão, em Roma, Paulo permaneceu preso —",
+          "options": [
+            "dois anos",
+            "quatro anos",
+            "até ser decapitado",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Podemos afirmar que, hoje, Paulo está —",
+          "options": [
+            "no céu",
+            "no paraíso",
+            "no hades",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Escrita na primeira prisão",
+          "Escrita na segunda prisão",
+          "Foi deixado por Paulo em Creta",
+          "Foi deixado por Paulo em Éfeso",
+          "Abandonou Paulo na prisão",
+          "Permaneceu com Paulo até o fim"
+        ],
+        "columnB": [
+          "Lucas",
+          "Tito",
+          "Filemon",
+          "Demas",
+          "II Timóteo",
+          "Timóteo"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

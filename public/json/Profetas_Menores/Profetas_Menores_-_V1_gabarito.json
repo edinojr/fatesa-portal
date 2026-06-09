@@ -1,0 +1,134 @@
+{
+  "id": "PMEN_1",
+  "title": "Profetas Menores - V1",
+  "tfQuestions": [
+    {
+      "id": "pmen1-tf-1",
+      "question": "Foram poucos os períodos da história que Deus deixou de falar com os homens.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen1-tf-2",
+      "question": "Formalismo religioso, mesmo com sacrifícios, não move o coração de Deus",
+      "answer": "V"
+    },
+    {
+      "id": "pmen1-tf-3",
+      "question": "Em Gomêr podemos ver uma tipologia da nação de Israel.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen1-tf-4",
+      "question": "Joel falou sobre uma mensagem do derramamento do Espírito Santo havida no seu tempo.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen1-tf-5",
+      "question": "Amós foi enviado para pregar a um povo que pensava estar bem com Deus",
+      "answer": "V"
+    },
+    {
+      "id": "pmen1-tf-6",
+      "question": "Obadias relata a tumultuada relação entre os judeus e os moabitas.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen1-tf-7",
+      "question": "É certo que todos os pecados perdoados jamais serão lembrados por Deus",
+      "answer": "V"
+    },
+    {
+      "id": "pmen1-tf-8",
+      "question": "Sofonias profetizou sobre a Grande Tribulação e não sobre o milênio.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen1-tf-9",
+      "question": "Zacarias nasceu no exílio e foi contemporâneo de Ageu e Malaquias.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen1-tf-10",
+      "question": "O remanescente fiel referido por Malaquias aponta para a existência da igreja.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pmen1-mc-1",
+      "question": "Falou sobre o terremoto profetizado por Amós -",
+      "options": [
+        "Jesus",
+        "Zacarias",
+        "Isaías",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "pmen1-mc-2",
+      "question": "Lideraram a construção do templo -",
+      "options": [
+        "Esdras e Neemias",
+        "Ageu e Zacarias",
+        "Zorobabel e Josué",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pmen1-mc-3",
+      "question": "Tipologicamente, o papel desempenhado por Oséias e por Gômer -",
+      "options": [
+        "Oséias é um tipo de Deus Pai",
+        "Gômer é um tipo de Israel",
+        "Oséias e Gômer não é desempenha nenhum papel",
+        "Alternativa A e B está correta"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pmen1-mc-4",
+      "question": "Em relação à ira, como Deus costuma agir?",
+      "options": [
+        "Deus é tardio em irar-se, mas ira",
+        "Deus não é tardio em irar-se",
+        "Deus nunca ira-se",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pmen1-mp-1",
+      "left": "“Ferreiro” para Babilônia",
+      "right": "Ciro"
+    },
+    {
+      "id": "pmen1-mp-2",
+      "left": "“Ferreiro” para Pérsia",
+      "right": "Alexandre"
+    },
+    {
+      "id": "pmen1-mp-3",
+      "left": "“Ferreiro” para Grécia",
+      "right": "Império Romano"
+    },
+    {
+      "id": "pmen1-mp-4",
+      "left": "“Ferreiro” para Roma",
+      "right": "Gália"
+    },
+    {
+      "id": "pmen1-mp-5",
+      "left": "Fala de encorajamento",
+      "right": "Primeira visão"
+    },
+    {
+      "id": "pmen1-mp-6",
+      "left": "Fala de livramento",
+      "right": "Segunda visão"
+    }
+  ]
+}

@@ -1,0 +1,1196 @@
+{
+  "id": "cristologia",
+  "title": "Cristologia",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No Antigo Testamento nada encontramos sobre Cristologia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Novo Testamento destaca, com clareza, as duas naturezas de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Hoje, no chamado \"mundo cristão\", todos sabem quem é Jesus e quem é o Cristo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Como homem, Jesus precisava de informações sobre o que povo pensava sobre Ele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar que a heresia é um pecado tão grave como é a feitiçaria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "O gnosticismo foi a primeira heresia que Satanás introduziu no cristianismo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo Marcião, o Deus do Antigo Testamento não era o mesmo do Novo Testamento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora tenha feito somente o bem, Jesus foi chamado de enganador e mau.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Era pensamento uniforme entre os judeus de que Jesus era um grande profeta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Através da revelação das Escrituras podemos entender quem é Jesus Cristo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite onde estava Jesus quando interrogou seus discípulos sobre o que diziam dele.",
+          "answer": "EM CESAREIA DE FILIPE"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que as \"testemunhas de Jeová\" dizem que Jesus era antes de nascer de Maria.",
+          "answer": "DIZEM QUE JESUS ERA A PALAVRA VIVA DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Para Robert Tilton, Jesus era -",
+          "options": [
+            "o Filho de Deus",
+            "um grande profeta",
+            "extremamente rico",
+            "apenas um homem"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Pelas Escrituras podemos entender que Jesus é -",
+          "options": [
+            "Profeta",
+            "Sumo Sacerdote",
+            "Rei dos Reis",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Salvação com ajuda da Lei",
+          "Jesus era um entre milhões de \"aeons\"",
+          "Jesus era casado e polígamo",
+          "Jesus era o filho do deus do Novo Testamento",
+          "Jesus era Miguel, o arcanjo",
+          "Jesus era um dos profetas"
+        ],
+        "columnB": [
+          "\"Testemunhas de Jeová\"",
+          "mormonismo",
+          "judaísmo",
+          "judeus",
+          "marcionismo",
+          "gnosticismo"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A principal diferença entre anjos e homens está no fato de que os anjos são eternos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sendo Jesus a segunda pessoa da Trindade podemos afirmar que o Pai existiu antes dele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Para os judeus, Jesus estava blasfemando ao falar de sua existência antes de Abraão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Ao dizer que Jesus veio antes dele, embora tendo nascido depois, João Batista falava da eternidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Entender o mistério da Trindade pela razão humana é difícil, mas não impossível.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "No Antigo Testamento não encontramos nenhum vestígio sobre a Triunidade de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A Trindade teve sua integridade violada quando ocorreu a encarnação do Verbo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Aqui na terra, como Jesus Cristo, ele era cem por cento homem e cem por cento Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sabemos, pelos evangelhos, que aqui na terra Jesus não podia aceitar adoração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "No Antigo Testamento, a expressão \"Senhor Jeová\", muitas vezes referia- se a Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a diferença entre ser eterno e ser imortal.",
+          "answer": "ETERNO – SEM PRINCÍPIO E SEM FIM; IMORTAL COM PRINCÍPIO E SEM FIM"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação ao tempo do verbo fazer, cite como podemos ver a Trindade",
+          "answer": "PELO FATO DE QUE O VERBO FAZER ESTÁ NO PLURAL – \"FAÇAMOS\""
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "\"Perfeito eras nos teus caminhos\" fala de -",
+          "options": [
+            "Jesus",
+            "Satanás",
+            "Adão",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Em Atos 10:38 podemos ver -",
+          "options": [
+            "o Pai",
+            "o Filho",
+            "Espírito Santo",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Trindade",
+          "Exército do céu",
+          "Criado em perfeição",
+          "Jesus como um \"aeon\"",
+          "Jesus como primeiro Filho de Deus",
+          "Jesus como um homem excepcional"
+        ],
+        "columnB": [
+          "gnosticismo",
+          "eternidade",
+          "unitarismo",
+          "Lúcifer",
+          "imortalidade",
+          "Testemunha de Jeová"
+        ],
+        "answers": [
+          4,
+          1,
+          6,
+          3,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Quanto a função exercida nunca houve supremacia de uma pessoa da Trindade sobre outra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Em Isaque, o filho obediente até a morte, podemos ver um tipo de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Humanamente podemos afirmar que Isaque não tinha como desobedecer seu pai.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não podemos afirmar, com segurança, que o anjo do Senhor era Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sabemos, pela Bíblia, que a presença de Deus santifica o lugar onde ele está.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Agar uma gentia e estando fugindo de Sara, o anjo que a encontrou não foi Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar que a Trindade quando em ação age como sendo uma unidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Foi por uma questão de espaço que a Bíblia não registrou os nomes de todos os filhos de Adão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Através de diferentes tipos podemos encontrar Jesus em quase todos os livros do Antigo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "A expressão \"não deixarás a minha alma no inferno\" está falando sobre Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o que demonstra uma pessoa quando quer saber quem foi a mulher de Caim.",
+          "answer": "DEMONSTRA IGNORÂNCIA QUANTO AO PROPÓSITO DA BÍBLIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite porque houve um substituto para Isaque no Monte Moriá e não houve para Jesus no Calvário.",
+          "answer": "NO CALVÁRIO NÃO HOUVE SUBSTITUTO PORQUE JESUS ERA O SUBSTITUTO PARA MORRER EM LUGAR DO HOMEM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Foi ao encontro de Agar, no deserto.",
+          "options": [
+            "Abraão",
+            "o anjo Gabriel",
+            "o \"Anjo do Senhor\"",
+            "um anjo"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Diante de Josué, o Anjo do Senhor",
+          "options": [
+            "aceitou adoração",
+            "foi chamado de Senhor",
+            "santificou o lugar",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Profetizou sobre a ressurreição de Jesus",
+          "Profetizou que Jesus nasceria em Belém",
+          "Profetizou que Jesus seria rei",
+          "Profetizou que Jesus nasceria de uma virgem",
+          "Profetizou de Jesus como sacerdote",
+          "Profetizou de Jesus como profeta"
+        ],
+        "columnB": [
+          "Moisés",
+          "Isaías",
+          "Miquéias",
+          "Samuel",
+          "Jeremias",
+          "Davi"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Quase tudo que estava escrito sobre Jesus no Antigo Testamento teria que se cumprir, e cumpriu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A expressão \"plenitude dos tempos\" está relacionada ao nascimento de Jesus",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A história nos mostra que, em alguns momentos, Deus precisou mudar seus planos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O primeiro homem a cultivar o poder pessoal foi Cão, filho de Noé.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Com a chegada de Nabucodonosor ao topo do mundo tudo indicava que o plano de Deus acabara.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Entre o sonho de Nabucodonosor e as visões de Daniel há um tempo de cerca de 60 anos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar que o Império Gentílico começou a entrar em decadência com a queda da Babilônia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Sendo, como era, um gentio, Alexandre não podia ser um instrumento nas mãos de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os historiadores, sem que soubessem, foram usados por Deus para registrar os fatos preditos pelos profetas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na expressão usada pelo Apóstolo João, o nascimento de Jesus marcou o início de sua existência.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite qual foi o primeiro império mundial levantado por Deus.",
+          "answer": "O IMPÉRIO DO EGITO"
+        },
+        {
+          "id": "sa2",
+          "question": "Segundo a Bíblia, cite quando aconteceu o nascimento de Jesus.",
+          "answer": "NA PLENITUDE DOS TEMPOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Último dos sete impérios mundiais mencionado pela Bíblia -",
+          "options": [
+            "o milênio",
+            "o de Roma",
+            "o do Anticristo",
+            "o novo céu e a nova terra"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Foi usado por Deus para fortalecer a igreja -",
+          "options": [
+            "o Império Romano",
+            "o Império do Anticristo",
+            "o Império Egípcio",
+            "todas estão corretas"
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Animal terrível e espantoso",
+          "Leão com asas de águia",
+          "Leopardo com quatro cabeças",
+          "Segundo Império Mundial",
+          "Pragana das eiras no estio",
+          "Urso com três costelas na boca"
+        ],
+        "columnB": [
+          "fim do Império gentílico",
+          "Império Medo Persa",
+          "Império Romano",
+          "Império Babilônico",
+          "Império da Assíria",
+          "Império Grego"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar que Adão, antes de pecar, era um homem justo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Como Deus, Jesus venceu Satanás no céu; como homem venceu aqui na terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Nem todos os homens podem entender o mistério da encarnação de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para ser o redentor do homem, sendo Deus, Jesus teria que se tornar homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar ser difícil encontrar motivos para falar mal de Maria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Coube ao anjo Gabriel a missão de encontrar na terra uma mulher para ser a mãe de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O menino Jesus podia fazer uso de quase cem por cento de sua capacidade mental.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No sentido literal não há diferença entre o sentido das expressões Cristo e Messias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os judeus consideravam impronunciável o nome de Deus, Yahweh.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ao declarar ser a \"videira verdadeira\", Jesus estava afirmando ser o Messias.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome do livro das tradições judaicas.",
+          "answer": "TALMUD"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação a Cristo, cite a diferença de pensamento entre os judeus e os demônios.",
+          "answer": "O DEMÔNIOS CRIAM NA DIVINDADE DE JESUS; OS JUDEUS, NÃO."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O nome da cidade de Nazaré só é encontrado -",
+          "options": [
+            "na história de Josefo",
+            "nos livros apócrifos",
+            "no Antigo Testamento",
+            "todas estão erradas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Em relação a uma casa, Jesus declarou ser-",
+          "options": [
+            "um caminho",
+            "a porta",
+            "o jardim",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Oitavo dia",
+          "Quadragésimo dia",
+          "Aos cinco anos",
+          "Dez a quinze anos",
+          "Doze anos",
+          "Quase trinta anos"
+        ],
+        "columnB": [
+          "Jesus no templo em Jerusalém",
+          "Jesus inicia o aprendizado escolar",
+          "circuncisão de Jesus",
+          "Jesus inicia seu ministério",
+          "estudo das tradições judaicas",
+          "apresentação de Jesus no templo"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos, sem dúvidas, afirmar que quando Jesus nasceu o rei Herodes já havia morrido.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para a redenção o importante não foi o nascimento, mas a morte e ressurreição de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Aqui na terra Satanás teria que ser vencido por um homem igual ao que ele venceu no Éden.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em Nazaré apenas seus pais e irmãos sabiam que Jesus era o Cristo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O nome pelo qual Jesus foi chamado nunca antes tinha sido dado a alguém.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Segundo a Bíblia, até o seu batismo, Jesus não realizou nenhum milagre.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Na manjedoura os magos ajoelharam e adoraram Maria e o menino Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Segundo declarou o apóstolo João, Jesus trouxe as palavras da vida eterna.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que, através da igreja, Jesus continua profetizando em nossos dias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Biblicamente, é difícil diferenciar as funções dos profetas e as dos sacerdotes.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite, segundo a Bíblia, a data do nascimento de Jesus.",
+          "answer": "PELA BÍBLIA NADA SABEMOS SOBRE A DATA DO NASCIMENTO DE JESUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite porque o sacerdócio de Jesus teve uma característica ímpar.",
+          "answer": "PORQUE ELE PRÓPRIO FOI O SACRIFÍCIO OFERECIDO."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Como homem Jesus sentiu -",
+          "options": [
+            "indignação",
+            "angústias e tristezas",
+            "fome e sede",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Como profeta, Jesus falou -",
+          "options": [
+            "em seu próprio nome",
+            "em nome da humanidade",
+            "em nome do Pai",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Jesus",
+          "Cristo",
+          "Jesus Cristo",
+          "Ministério já exercido por Jesus",
+          "Ministério atual de Jesus",
+          "Ministério futuro de Jesus"
+        ],
+        "columnB": [
+          "Profeta",
+          "Rei",
+          "Filho de Deus",
+          "sacerdote",
+          "filho do homem",
+          "Deus que se fez homem"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os filósofos gregos, Sócrates, Platão e Aristóteles viveram entre os séculos IV e V depois de Cristo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos ver na visita de alguns gregos uma possibilidade de Jesus chegar à glória sem a cruz.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Jesus falou da necessidade de dar sua vida em resgate de toda humanidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Davi, ao usar a expressão \"Deus meu, por que me desamparaste\" falava da ressurreição de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Da expressão até meu amigo íntimo, que comia do meu pão, podemos ver uma referência a Judas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Um quinto dos evangelhos fala sobre os três últimos dias de Jesus aqui na terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A \"serpente levantada no deserto\" não pode ter qualquer relação com a morte de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Apóstolo João apresentou Jesus com o \"Cordeiro de Deus que tira o pecado do mundo\"",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "No momento da morte de Jesus o \"véu do templo\" rasgou-se debaixo para cima.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Vendo que Jesus já estava morto os soldados não quebraram suas pernas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite quem afirmou que sua alma estava perturbada.",
+          "answer": "JESUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o sentido da expressão morte vicária.",
+          "answer": "SIGNIFICA MORTE SUBSTITUTIVA, OU, SEJA ALGUÉM MORRER NO LUGAR DE OUTREM."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A morte de Jesus declarada por -",
+          "options": [
+            "um anjo",
+            "Maria Madalena",
+            "um gentio",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A morte de Jesus foi -",
+          "options": [
+            "expiatória",
+            "pré - decretada",
+            "voluntária",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Queria libertar Jesus",
+          "Queria a morte de Jesus",
+          "Sangue",
+          "Água",
+          "Rocha de Horebe",
+          "Lança"
+        ],
+        "columnB": [
+          "símbolo de purificação",
+          "soldado romano",
+          "símbolo do Espírito Santo",
+          "sumo sacerdote",
+          "Pilatos",
+          "símbolo de Jesus"
+        ],
+        "answers": [
+          3,
+          6,
+          4,
+          2,
+          1,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "José de Arimateia e Nicodemos pediram a Pilatos o corpo de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Biblicamente, o fato de Jesus ter sido sepultado por um homem rico não tem nenhuma importância.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sabemos pela Bíblia, que o corpo de Jesus teria que ser envolto num lençol limpo e colocado num sepulcro novo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos ver no sacrifício do holocausto uma prefiguração do sacrifício de Jesus, na cruz.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar, com certeza, que Jesus, no \"hades\", pregou a salvação para todos que ali estavam.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Hoje, podemos afirmar que os mortos ímpios descem e que os salvos sobem para o céu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Não tendo conseguido evitar a morte vicária de Jesus, Satanás nada fez para evitar sua ressurreição.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Jesus, num corpo ressuscitado, comeu, com seus discípulos, peixe e mel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A morte e ressurreição de Jesus aconteceram tal como estava prefigurada no Antigo Testamento",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Dez dias após o retorno de Jesus ao céu, o Espírito Santo veio para estar com seus discípulos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o que representou o corpo de Jesus colocado numa sepultura.",
+          "answer": "UMA PROVA DE SUA COMPLETA HUMANIZAÇÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite de quem falava Davi quando disse – \"não deixará a minha alma no inferno\".",
+          "answer": "FALAVA DE JESUS."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Faz a diferença entre o cristianismo e todas as religiões -",
+          "options": [
+            "a ressurreição de Jesus",
+            "a morte de Jesus",
+            "o nascimento de Jesus",
+            "todas estão corretas"
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Satanás procurou evitar -",
+          "options": [
+            "o nascimento de Jesus",
+            "a morte de Jesus",
+            "a ressurreição de Jesus",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Fé num redentor que viria",
+          "Fé num redentor que veio",
+          "Corpo de Jesus",
+          "\"Hades\"",
+          "Espírito de Jesus",
+          "\"Sheol\""
+        ],
+        "columnB": [
+          "expressão hebraica",
+          "sepultura",
+          "salvação no Antigo Testamento",
+          "\"Hades\" ou \"Sheol\"",
+          "salvação no Novo Testamento",
+          "expressão grega"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No Lugar Santíssimo o sumo sacerdote não podia ter pressa quando realizava seu trabalho.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na natureza humana de Jesus não havia inclinação para o pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na Lei de Moisés os sacerdote eram intercessores e também mediadores entre Deus e o homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O trabalho dos sacerdotes deveria terminar com a morte de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Hoje, além de Maria, existe apenas um mediador entre Deus e o homem, Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Cristo, na condição de Deus, não podia exercer a função de sacerdote.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A missão do Filho de Deus, como homem, começou na terra e continuou no céu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que Jesus, como homem, teve medo da morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sabemos, pela Bíblia, que a terra não será transformada num paraíso",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O governo do Anticristo deverá acontecer durante a septuagésima semana de Daniel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a diferença entre sacerdócio e sacerdote.",
+          "answer": "SACERÓCIO FALA INVESTIDURA NO CARGO E SACERDOTE FALA DO HOMEM QUE OCUPA O CARGO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar porque Jesus, como Deus, não podia ser sacerdote.",
+          "answer": "PORQUE TODO SACERDOTE ERA \"TOMADO DENTRE OS HOMENS\"."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Compadecer-se significa, literalmente -",
+          "options": [
+            "amar",
+            "ter o mesmo sentimento",
+            "ser paciencioso",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Sentiu falta de um mediador -",
+          "options": [
+            "Jesus, na cruz",
+            "Jó",
+            "Moisés, no deserto",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Arrebatamento da igreja",
+          "Dia da Revelação do Senhor",
+          "Judeus reconhecerão Jesus como Messias",
+          "A esperança da igreja",
+          "Primeira vinda de Jesus",
+          "Segunda vinda de Jesus"
+        ],
+        "columnB": [
+          "como Rei dos reis",
+          "Dia da revelação em glória",
+          "como homem, em fraqueza",
+          "Jesus virá à terra",
+          "vinda de Jesus",
+          "Jesus não virá à terra"
+        ],
+        "answers": [
+          6,
+          3,
+          5,
+          2,
+          4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "\"Eis que vem dias, diz o Senhor, em que levantarei a Davi um “Renovo justo”, diz o Profeta Isaías.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A expressão um \"Renovo justo\", profeticamente, é uma referência a Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "É certo que enquanto Satanás estiver em ação, não haverá paz sobre a terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A afirmação de que Satanás tem um trono e grande poderio não é bíblica.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Todas as correntes doutrinarias ensinam que Satanás, um dia, será preso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Para os que creem que Jesus já veio à terra para morrer, também é certo que ele virá para reinar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo, como é, um Rei eterno, Jesus sempre reinou e continua reinando sobre toda terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A expressão \"os outros mortos\" refere-se aos ímpios de todos os tempos, sem exceção.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Segundo a Bíblia, Jesus atua, hoje, como nosso advogado, mas para os ímpios ele será juiz.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O pior de todos os ímpios, que nunca dobrou seus joelhos, terá que dobrá-lo na presença de Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas vezes a palavra \"milênio\" é mencionada na Bíblia.",
+          "answer": "NENHUMA VEZ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que fará a diferença entre o Trono da Grande Tribulação e o Trono Branco.",
+          "answer": "A AUSÊNCIA DO ARCO-IRIS NO TRONO BRANCO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Diante do Trono Branco estarão -",
+          "options": [
+            "somente os gentios",
+            "os mortos no Antigo Testamento",
+            "mortos ímpios de todos os tempos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Local do Trono de Satanás, Hoje -",
+          "options": [
+            "na terra",
+            "no espaço",
+            "ele não tem trono",
+            "no inferno."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Deus deste século",
+          "Um Renovo Justo",
+          "Lançará Satanás no abismo",
+          "Falou de Jesus como Rei dos reis",
+          "Destino final de Satanás",
+          "A prisão de Satanás"
+        ],
+        "columnB": [
+          "abismo",
+          "um anjo",
+          "Satanás",
+          "lago de fogo e enxofre",
+          "Paulo",
+          "Jesus"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}

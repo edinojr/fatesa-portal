@@ -14,7 +14,7 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
         supabase.from('respostas_aulas').select(`
             *,
             users:aluno_id(id, nome, email, tipo, nucleos:nucleo_id(id, nome)),
-            aulas:aula_id(id, titulo, tipo, is_bloco_final, versao, min_grade, livros:livro_id(id, titulo, cursos:curso_id(id, nivel)))
+            aulas:aula_id(id, titulo, tipo, versao, min_grade, livros:livro_id(id, titulo, cursos:curso_id(id, nivel)))
           `)
       ]);
 

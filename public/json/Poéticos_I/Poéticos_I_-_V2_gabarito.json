@@ -1,0 +1,134 @@
+{
+  "id": "POET_2",
+  "title": "Poéticos 1 - V2",
+  "tfQuestions": [
+    {
+      "id": "poet2-tf-1",
+      "question": "No Novo Testamento não há qualquer referência a respeito da existência de Jó.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-2",
+      "question": "Determinar a rejeição das dificuldades e exigir as bênçãos de Deus não tem fundamento bíblico.",
+      "answer": "V"
+    },
+    {
+      "id": "poet2-tf-3",
+      "question": "Mesmo Jesus, num primeiro momento, desejou evitar o sofrimento.",
+      "answer": "V"
+    },
+    {
+      "id": "poet2-tf-4",
+      "question": "Jó, no mais profundo sofrimento, demonstrou firme convicção de não estar em pecado.",
+      "answer": "V"
+    },
+    {
+      "id": "poet2-tf-5",
+      "question": "Satanás roubou e destruiu toda riqueza de Jó e também matou seus filhos e esposa.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-6",
+      "question": "Lendo apenas um Salmo por dia podemos fazer a leitura do Livro de Salmos em cinco meses.",
+      "answer": "V"
+    },
+    {
+      "id": "poet2-tf-7",
+      "question": "No Livro de Salmos a expressão “sejam pouco os seus dias” referia-se a Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-8",
+      "question": "O Salmo 29 deixa claro a interferência de Satanás nas grandes tempestades.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-9",
+      "question": "Um espírito quebrantado é a oferta mais preciosa que podemos oferecer a Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "poet2-tf-10",
+      "question": "O termo “mictão”, ao que tudo indica, fala de Salmos de lamentação e arrependimento.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "poet2-mc-1",
+      "question": "Um filho de Deus está livre da -",
+      "options": [
+        "Tentação",
+        "Correção",
+        "Provação",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "poet2-mc-2",
+      "question": "É um Salmo messiânico -",
+      "options": [
+        "Salmo 122",
+        "Salmo 2",
+        "Salmo 91",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "poet2-mc-3",
+      "question": "Jó chamou seus amigos de -",
+      "options": [
+        "Amigos leais",
+        "Homens abençoados",
+        "Inventores de mentiras",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "poet2-mc-4",
+      "question": "Um salmista neto do Profeta Samuel -",
+      "options": [
+        "N Heman",
+        "Etã",
+        "Asafe",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "poet2-mp-1",
+      "left": "Abandonaram Jó",
+      "right": "Parentes e empregados"
+    },
+    {
+      "id": "poet2-mp-2",
+      "left": "Choraram pelo sofrimento de Jó",
+      "right": "Seus amigos"
+    },
+    {
+      "id": "poet2-mp-3",
+      "left": "Desejou a morte de Jó",
+      "right": "Sua esposa"
+    },
+    {
+      "id": "poet2-mp-4",
+      "left": "Um desejo de Jó",
+      "right": "Ter morrido ao nascer"
+    },
+    {
+      "id": "poet2-mp-5",
+      "left": "Pensou que Jó blasfemaria",
+      "right": "Satanás"
+    },
+    {
+      "id": "poet2-mp-6",
+      "left": "Manifestou sua confiança em Jó",
+      "right": "Deus"
+    }
+  ]
+}

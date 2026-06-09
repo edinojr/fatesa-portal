@@ -1,0 +1,134 @@
+{
+  "id": "POET_1",
+  "title": "Poéticos 1 - V1",
+  "tfQuestions": [
+    {
+      "id": "poet1-tf-1",
+      "question": "Segundo o “Talmud”, Moisés escreveu o Livro de Jó quando estava em Midiã.",
+      "answer": "V"
+    },
+    {
+      "id": "poet1-tf-2",
+      "question": "Nesta Dispensação da Graça, Satanás está autorizado a tocar, mas não matar os filhos de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "poet1-tf-3",
+      "question": "Jó externou sua gratidão a Deus agradecendo-o pelo dia do seu nascimento.",
+      "answer": "F"
+    },
+    {
+      "id": "poet1-tf-4",
+      "question": "Para os quatro amigos de Jó seu sofrimento era consequência direta de seus pecados.",
+      "answer": "V"
+    },
+    {
+      "id": "poet1-tf-5",
+      "question": "Sobre Jó, Satanás sabia tudo, seu passado, presente e futuro.",
+      "answer": "F"
+    },
+    {
+      "id": "poet1-tf-6",
+      "question": "Quanto ao número e numeração dos Salmos nada difere entre a nossa e a chamada Bíblia Católica.",
+      "answer": "F"
+    },
+    {
+      "id": "poet1-tf-7",
+      "question": "Embora traído por Absalão, Davi chorou muito ao saber de sua morte.",
+      "answer": "V"
+    },
+    {
+      "id": "poet1-tf-8",
+      "question": "Embora sendo amor, a Bíblia fala sobre a ira e o furor de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "poet1-tf-9",
+      "question": "Davi orou pedindo para que Deus criasse nele um coração puro.",
+      "answer": "V"
+    },
+    {
+      "id": "poet1-tf-10",
+      "question": "A expressão “aleluia” é a tradução da expressão hebraica que significa “louve ao Senhor”.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "poet1-mc-1",
+      "question": "Jó chamou seus amigos de -",
+      "options": [
+        "Amigos leais",
+        "Homens abençoados",
+        "Inventores de mentiras",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "poet1-mc-2",
+      "question": "É o autor do Salmo 119 -",
+      "options": [
+        "Autor desconhecido",
+        "Davi",
+        "Esdras",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "poet1-mc-3",
+      "question": "Para seus amigos, Jó era um homem –",
+      "options": [
+        "Justo",
+        "Inocente",
+        "Um grande pecador",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "poet1-mc-4",
+      "question": "Os dois principais personagens do Livro de Salmos -",
+      "options": [
+        "Davi e Salomão",
+        "Davi e Jesus",
+        "Davi e Moisés",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "poet1-mp-1",
+      "left": "Falam do passado",
+      "right": "Salmos históricos"
+    },
+    {
+      "id": "poet1-mp-2",
+      "left": "Falam do futuro",
+      "right": "Salmos messiânicos"
+    },
+    {
+      "id": "poet1-mp-3",
+      "left": "Falam do poder de Deus",
+      "right": "Salmos da natureza"
+    },
+    {
+      "id": "poet1-mp-4",
+      "left": "Falam de socorro",
+      "right": "Salmos de súplicas"
+    },
+    {
+      "id": "poet1-mp-5",
+      "left": "Falam da importância do templo",
+      "right": "Salmos de peregrinação"
+    },
+    {
+      "id": "poet1-mp-6",
+      "left": "Falam de adoração",
+      "right": "Salmos de gratidão"
+    }
+  ]
+}

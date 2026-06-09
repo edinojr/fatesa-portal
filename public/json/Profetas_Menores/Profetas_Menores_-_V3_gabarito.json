@@ -1,0 +1,134 @@
+{
+  "id": "PMEN_3",
+  "title": "Profetas Menores - V3",
+  "tfQuestions": [
+    {
+      "id": "pmen3-tf-1",
+      "question": "É certo que Deus não exige sacrifícios dos que ele chama para seu ministério.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen3-tf-2",
+      "question": "No tempo de Oséias os sacerdotes eram acusados de homicidas e assaltantes.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen3-tf-3",
+      "question": "O Reino do Norte, rejeitado por Deus, os israelitas não mais farão parte do seu povo.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen3-tf-4",
+      "question": "Jesus, em Mateus, capítulo 24, falou sobre o grande e terrível Dia do Senhor.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen3-tf-5",
+      "question": "As profecias sobre a queda do Reino de Israel se cumpriram no ano 722 aC",
+      "answer": "V"
+    },
+    {
+      "id": "pmen3-tf-6",
+      "question": "Na terra, hoje, existem poucos descendentes de Esaú.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen3-tf-7",
+      "question": "Entre Jonas e Naum há um espaço de cerca de 150 anos.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen3-tf-8",
+      "question": "Na construção do templo a liderança foi exercita por Ageu e Zacarias.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen3-tf-9",
+      "question": "Zacarias profetizou que o julgamento das nações será no Vale de Josafá.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen3-tf-10",
+      "question": "É certo que Malaquias não conviveu com Neemias e nem com Esdras.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pmen3-mc-1",
+      "question": "O Vale de Acor fala de -",
+      "options": [
+        "Bênção",
+        "Paz",
+        "Tribulação",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pmen3-mc-2",
+      "question": "Os edomitas eram descendentes de -",
+      "options": [
+        "Esaú, filho de Isaque",
+        "Ló com sua filha mais velha",
+        "Ló com sua filha mais nova",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "pmen3-mc-3",
+      "question": "Será necessário para que Israel volte a ter “sacrifício’ e “éfode”.",
+      "options": [
+        "Fazer eleições de novos sacerdotes",
+        "Os sacerdotes são desnecessário",
+        "A construção do templo",
+        "Todas alternativas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pmen3-mc-4",
+      "question": "Segundo menor livro do Antigo Testamento -",
+      "options": [
+        "O livro de Ageu",
+        "O livro de Malaquias",
+        "O livro de Zacarias",
+        "O livro de Isaías"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pmen3-mp-1",
+      "left": "Implantou a idolatria em Israel",
+      "right": "Jeroboão I"
+    },
+    {
+      "id": "pmen3-mp-2",
+      "left": "Profetizou no Reino do Norte",
+      "right": "Amós"
+    },
+    {
+      "id": "pmen3-mp-3",
+      "left": "Houve grande prosperidade em Israel",
+      "right": "Jeroboão II"
+    },
+    {
+      "id": "pmen3-mp-4",
+      "left": "“Chicote” de Deus contra Israel",
+      "right": "Assíria"
+    },
+    {
+      "id": "pmen3-mp-5",
+      "left": "Reinou um mês e foi assassinado",
+      "right": "Salum"
+    },
+    {
+      "id": "pmen3-mp-6",
+      "left": "Rei do Norte levado para o cativeiro",
+      "right": "Oséias"
+    }
+  ]
+}

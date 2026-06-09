@@ -1,0 +1,134 @@
+{
+  "id": "EPPII_2",
+  "title": "Epístolas Paulinas II - V2",
+  "tfQuestions": [
+    {
+      "id": "eppii2-tf-1",
+      "question": "Nada pode dar errado quando um obreiro fiel está fazendo, com amor, a obra de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii2-tf-2",
+      "question": "A perfeição de um corpo está relacionada com a desigualdade de seus membros.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii2-tf-3",
+      "question": "Em Filipos, como de costume, Paulo pregou o evangelho primeiro aos judeus na sinagoga.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii2-tf-4",
+      "question": "Um crente, sem dizer palavras, pode abrir ou fechar as portas para o evangelho.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii2-tf-5",
+      "question": "No sentido espiritual a Bíblia afirma que o homem, vivendo no pecado, está morto.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii2-tf-6",
+      "question": "Podemos afirmar que o Anticristo será um homem criado e ungido por Satanás.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii2-tf-7",
+      "question": "Ao chamar Timóteo de \"meu filho\", Paulo declara ser seu pai espiritual.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii2-tf-8",
+      "question": "A igreja não foi perseguida pelo Império Romano antes do ano 64 dC.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii2-tf-9",
+      "question": "Paulo orientou Tito a tratar os obreiros da igreja de Creta com prudência e amor.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii2-tf-10",
+      "question": "Sabemos, pela Bíblia, que ninguém pode ser obrigado a perdoar.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "eppii2-mc-1",
+      "question": "As ruínas do Templo de Diana podem ser encontradas -",
+      "options": [
+        "Na Turquia",
+        "Na Síria",
+        "Na Grécia",
+        "Em nenhum lugar"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "eppii2-mc-2",
+      "question": "Orientação de Paulo em relação aos hereges -",
+      "options": [
+        "Tratá-los com amor",
+        "Afastar-se deles",
+        "Ensinar-lhes a Palavra",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "eppii2-mc-3",
+      "question": "Um atributo requerido para ser diácono –",
+      "options": [
+        "Boa reputação",
+        "Ser cheio do Espírito santo",
+        "Cheio de sabedoria",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "eppii2-mc-4",
+      "question": "Ao escrever II Tessalonicenses Paulo estava em",
+      "options": [
+        "Éfeso",
+        "Corinto",
+        "Colossos",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "eppii2-mp-1",
+      "left": "\"Besta\" que subiu do \"mar\"",
+      "right": "Anticristo"
+    },
+    {
+      "id": "eppii2-mp-2",
+      "left": "Sete \"cabeças\"",
+      "right": "Inteligência, liderança"
+    },
+    {
+      "id": "eppii2-mp-3",
+      "left": "Dez \"chifres\"",
+      "right": "Poder destruidor"
+    },
+    {
+      "id": "eppii2-mp-4",
+      "left": "Dez diademas",
+      "right": "Capacidade de governar"
+    },
+    {
+      "id": "eppii2-mp-5",
+      "left": "Anticristo",
+      "right": "Homem do pecado, filho da perdição"
+    },
+    {
+      "id": "eppii2-mp-6",
+      "left": "\"Besta\" que subiu da terra",
+      "right": "Falso Profeta"
+    }
+  ]
+}

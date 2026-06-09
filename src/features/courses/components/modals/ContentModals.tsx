@@ -317,6 +317,7 @@ interface AddContentModalProps {
   showAddContent: boolean
   setShowAddContent: (val: boolean) => void
   selectedLesson: any
+  selectedBook: any
   addingLessonType: string
   actionLoading: string | null
   setActionLoading: (val: string | null) => void
@@ -332,6 +333,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
   showAddContent,
   setShowAddContent,
   selectedLesson,
+  selectedBook,
   addingLessonType,
   actionLoading,
   setActionLoading,
@@ -342,7 +344,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
   addingBloco,
   normalizeFileName
 }) => {
-  if (!showAddContent || !selectedLesson) return null;
+  if (!showAddContent || (!selectedLesson && addingLessonType !== 'prova')) return null;
   
   return (
     <div className="modal-overlay" onClick={() => setShowAddContent(false)}>
@@ -403,68 +405,37 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
               arquivo_url = publicUrl;
             }
 
-            const standardTemplate = [
-              ...Array(10).fill(null).map((_, i) => ({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true })),
-              ...Array(2).fill(null).map((_, i) => ({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' })),
-              ...Array(2).fill(null).map((_, i) => ({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 })),
+            const examTemplate = [
+              ...Array(10).fill(null).map((_, i) => ({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true, points: 0.5 })),
+              ...Array(4).fill(null).map((_, i) => ({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0, points: 0.5 })),
               { 
                 id: `mat-${Date.now()}`, 
                 type: 'matching', 
                 text: 'Relacione as colunas abaixo:', 
-                matchingPairs: Array(6).fill(null).map(() => ({left: '', right: ''}))
+                matchingPairs: Array(6).fill(null).map(() => ({left: '', right: ''})),
+                points: 0.5
               }
             ];
 
             if (addingLessonType === 'prova') {
-              const examRows = [
-                {
-                  livro_id: selectedLesson.livro_id,
-                  parent_aula_id: selectedLesson.id,
-                  titulo: `${titulo}`,
-                  tipo: 'prova',
-                  video_url: null,
-                  arquivo_url: null,
-                  min_grade: min_grade || 7,
-                  ordem: ordem,
-                  bloco_id: addingBloco,
-                  versao: 1,
-                  is_bloco_final: true,
-                  questionario: standardTemplate
-                },
-                {
-                  livro_id: selectedLesson.livro_id,
-                  parent_aula_id: selectedLesson.id,
-                  titulo: `${titulo} - Recuperação`,
-                  tipo: 'prova',
-                  video_url: null,
-                  arquivo_url: null,
-                  min_grade: min_grade || 7,
-                  ordem: ordem + 1,
-                  bloco_id: addingBloco,
-                  versao: 2,
-                  is_bloco_final: true,
-                  questionario: standardTemplate
-                },
-                {
-                  livro_id: selectedLesson.livro_id,
-                  parent_aula_id: selectedLesson.id,
-                  titulo: `${titulo} - Recuperação 2`,
-                  tipo: 'prova',
-                  video_url: null,
-                  arquivo_url: null,
-                  min_grade: min_grade || 7,
-                  ordem: ordem + 2,
-                  bloco_id: addingBloco,
-                  versao: 3,
-                  is_bloco_final: true,
-                  questionario: standardTemplate
-                }
-              ];
-
-              const { error } = await supabase.from('aulas').insert(examRows);
+              // Prova é inserida simplesmente como exercício — sem bloco
+              // V2 e V3 são criadas automaticamente pelo sistema quando o aluno reprova
+              const { error } = await supabase.from('aulas').insert({
+                livro_id: selectedLesson?.livro_id || selectedBook?.id,
+                parent_aula_id: selectedLesson?.id || null,
+                titulo,
+                tipo: 'prova',
+                video_url: null,
+                arquivo_url: null,
+                min_grade: min_grade || 7,
+                ordem: ordem,
+                versao: 1,
+                is_bloco_final: false,
+                questionario: examTemplate
+              });
               if (error) throw error;
             } else {
-              const initialQuiz = (addingLessonType === 'atividade') ? standardTemplate : [];
+              const initialQuiz = (addingLessonType === 'atividade') ? examTemplate : [];
 
               const { error } = await supabase.from('aulas').insert({ 
                 livro_id: selectedLesson.livro_id,
@@ -485,7 +456,7 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
             
             showToast('Sucesso!');
             setShowAddContent(false);
-            fetchLessonItems(selectedLesson.id);
+            if (selectedLesson?.id) fetchLessonItems(selectedLesson.id);
           } catch (err: any) {
             showToast(err.message, 'error');
           } finally {
@@ -568,10 +539,12 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
             <input name="ordem" type="number" className="form-control" defaultValue={lessonItems.length + 1} required />
           </div>
 
-          <div className="form-group">
-            <label>Bloco ID (Opcional)</label>
-            <input name="bloco_id" type="number" className="form-control" defaultValue={addingBloco || ''} placeholder="Ex: 1" />
-          </div>
+          {addingLessonType !== 'prova' && (
+            <div className="form-group">
+              <label>Bloco ID (Opcional)</label>
+              <input name="bloco_id" type="number" className="form-control" defaultValue={addingBloco || ''} placeholder="Ex: 1" />
+            </div>
+          )}
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setShowAddContent(false)}>Cancelar</button>

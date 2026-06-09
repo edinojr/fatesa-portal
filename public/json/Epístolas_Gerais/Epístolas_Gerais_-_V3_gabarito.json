@@ -1,0 +1,134 @@
+{
+  "id": "EPGE_3",
+  "title": "Epístolas Gerais - V3",
+  "tfQuestions": [
+    {
+      "id": "epge3-tf-1",
+      "question": "Tiago, irmão do Senhor, presidiu o primeiro Concilio da igreja, em Jerusalém.",
+      "answer": "V"
+    },
+    {
+      "id": "epge3-tf-2",
+      "question": "Segundo Tiago, o conhecimento bíblico pode ser adquirido através da oração.",
+      "answer": "F"
+    },
+    {
+      "id": "epge3-tf-3",
+      "question": "Em alguns momentos especiais Jesus preferia a companhia de João, a de Pedro e a de Tiago, seu irmão.",
+      "answer": "F"
+    },
+    {
+      "id": "epge3-tf-4",
+      "question": "Para Tiago a amizade dos crentes com o mundo era considerado adultério espiritual.",
+      "answer": "V"
+    },
+    {
+      "id": "epge3-tf-5",
+      "question": "Em sua primeira epístola Pedro destaca a necessidade da santificação .",
+      "answer": "V"
+    },
+    {
+      "id": "epge3-tf-6",
+      "question": "Pedro afirma que os crentes não podem ter divergências na forma de pensar.",
+      "answer": "F"
+    },
+    {
+      "id": "epge3-tf-7",
+      "question": "Advertir os cristãos contra os falsos mestres foi um dos objetivos da primeira epístola de Pedro.",
+      "answer": "F"
+    },
+    {
+      "id": "epge3-tf-8",
+      "question": "Ao falar de “filhinhos”, “jovens” e “pais”, João está se referindo aos três estágios de nossa vida cronológica.",
+      "answer": "F"
+    },
+    {
+      "id": "epge3-tf-9",
+      "question": "A “senhora eleita” mencionada por João em sua segunda epístola era Maria, mãe de Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "epge3-tf-10",
+      "question": "Embora tendo apenas cinco capítulos, a Epístola de Tiago contém 54 mandamentos.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "epge3-mc-1",
+      "question": "Pode ser causa de sofrimento -",
+      "options": [
+        "Emprestar o cartão de crédito",
+        "Ser fiador de alguém",
+        "Uso indevido da língua",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "epge3-mc-2",
+      "question": "Amor e verdade são palavras chaves na -",
+      "options": [
+        "Segunda epístola de Pedro",
+        "Epístola de Judas",
+        "Segunda epístola de João",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "epge3-mc-3",
+      "question": "Judas fez referência -",
+      "options": [
+        "Ao juízo dos anjos caídos",
+        "A destruição de Sodoma",
+        "Ao Arcanjo Miguel",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "epge3-mc-4",
+      "question": "É um tipo de sabedoria -",
+      "options": [
+        "Humana",
+        "Diabólica",
+        "Divina",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "epge3-mp-1",
+      "left": "Necessidade das obras",
+      "right": "Vida cristã"
+    },
+    {
+      "id": "epge3-mp-2",
+      "left": "Inutilidade das obras",
+      "right": "Justificação"
+    },
+    {
+      "id": "epge3-mp-3",
+      "left": "O Senhor prova",
+      "right": "O justo"
+    },
+    {
+      "id": "epge3-mp-4",
+      "left": "A garganta do ímpio",
+      "right": "Sepulcro aberto"
+    },
+    {
+      "id": "epge3-mp-5",
+      "left": "A boca do tolo",
+      "right": "Uma destruição"
+    },
+    {
+      "id": "epge3-mp-6",
+      "left": "Palavra dita a seu tempo",
+      "right": "Maçãs de ouro em salva de prata"
+    }
+  ]
+}

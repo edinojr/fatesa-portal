@@ -28,7 +28,7 @@ const AppConstruction = () => {
                     alignItems: 'center', 
                     justifyContent: 'center', 
                     margin: '0 auto 2rem',
-                    boxShadow: '0 10px 20px rgba(156, 39, 176, 0.3)'
+                    boxShadow: '0 10px 20px rgba(0, 86, 179, 0.3)'
                 }}>
                     <Smartphone size={40} color="#fff" />
                 </div>

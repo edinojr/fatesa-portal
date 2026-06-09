@@ -1,0 +1,134 @@
+{
+  "id": "HIGR_2",
+  "title": "História da Igreja - V2",
+  "tfQuestions": [
+    {
+      "id": "higr2-tf-1",
+      "question": "É certo que o fundador da igreja é Jesus e não o Cristo.",
+      "answer": "F"
+    },
+    {
+      "id": "higr2-tf-2",
+      "question": "Coube a Pedro o privilégio de abrir as portas da salvação para os judeus e gentios.",
+      "answer": "V"
+    },
+    {
+      "id": "higr2-tf-3",
+      "question": "O ensino na igreja era transmitido por revelações, visões e profecias.",
+      "answer": "F"
+    },
+    {
+      "id": "higr2-tf-4",
+      "question": "A morte de Ananias comprova que a igreja ainda era influenciada pela Lei de Moisés.",
+      "answer": "F"
+    },
+    {
+      "id": "higr2-tf-5",
+      "question": "Sem uma visão dada por Deus, Pedro não receberia os enviados de Cornélio em sua casa.",
+      "answer": "V"
+    },
+    {
+      "id": "higr2-tf-6",
+      "question": "Não tendo nascido em Israel, Barnabé estava familiarizado com a cultura dos gentios.",
+      "answer": "V"
+    },
+    {
+      "id": "higr2-tf-7",
+      "question": "Entre os anos 64 e 305 foram dez os imperadores que perseguiram a igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "higr2-tf-8",
+      "question": "Para Paulo, nas heresias não existia nada de positivo ou benéfico.",
+      "answer": "F"
+    },
+    {
+      "id": "higr2-tf-9",
+      "question": "O Estado cooperar e patrocinar as atividades da igreja não foi um projeto de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "higr2-tf-10",
+      "question": "Apesar dos protestos de Lutero e de outros lideres, a Igreja Católica prosseguiu com suas heresias.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "higr2-mc-1",
+      "question": "O fundador da igreja foi",
+      "options": [
+        "Pedro",
+        "Jesus",
+        "Jesus Cristo",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "higr2-mc-2",
+      "question": "O Imperador Domiciano era",
+      "options": [
+        "Um grande perseguidor da igreja",
+        "Filho do Imperador Vespasiano",
+        "Irmão do General Tito",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "higr2-mc-3",
+      "question": "Terminada a Idade Média, cresceu o",
+      "options": [
+        "Materialismo",
+        "Naturalismo",
+        "Iluminismo",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "higr2-mc-4",
+      "question": "No Império Romano -",
+      "options": [
+        "Não havia liberdade religiosa",
+        "Havia liberdade religiosa plena",
+        "Havia liberdade religiosa restrita",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "higr2-mp-1",
+      "left": "Orou em favor de Paulo",
+      "right": "Ananias"
+    },
+    {
+      "id": "higr2-mp-2",
+      "left": "Consentiu na morte de Estêvão",
+      "right": "Saulo"
+    },
+    {
+      "id": "higr2-mp-3",
+      "left": "Pregou o evangelho a Cornélio",
+      "right": "Pedro"
+    },
+    {
+      "id": "higr2-mp-4",
+      "left": "Primeiro gentio salvo",
+      "right": "Cornélio"
+    },
+    {
+      "id": "higr2-mp-5",
+      "left": "Primeiros pregadores fora de Jerusalém",
+      "right": "Os que fugiram de Jerusalém"
+    },
+    {
+      "id": "higr2-mp-6",
+      "left": "Permaneceram em Jerusalém",
+      "right": "Os apóstolos"
+    }
+  ]
+}

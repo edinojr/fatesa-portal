@@ -127,10 +127,10 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
       const fileName = `${cleanName}_${Date.now()}.${fileExt}`;
       const filePath = `${table}/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage.from('course-content').upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage.from('course-content').getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
       const { error: updateError } = await supabase.from(table).update({ [column]: publicUrl }).eq('id', id);
       if (updateError) throw updateError;
 
@@ -152,10 +152,10 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
         const fileName = `${cleanName}_${Date.now()}.${fileExt}`;
         const filePath = `aulas/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage.from('course-content').upload(filePath, file);
+        const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage.from('course-content').getPublicUrl(filePath);
+        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
         
         return supabase.from('aulas').insert({
           titulo: file.name.replace(`.${fileExt}`, ''),

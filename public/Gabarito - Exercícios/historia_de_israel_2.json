@@ -1,0 +1,1196 @@
+{
+  "id": "hist-israel-2",
+  "title": "História de Israel 2",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O sistema de governo de Israel foi, num primeiro momento, a teocracia e num segundo, a monarquia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Pela Bíblia, no passado os velhos ou anciãos eram respeitados e considerados.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Roboão reconheceu seu erro mas nada fez para tentar impedir a divisão do reino.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Mesmo com a divisão do Reino a \"lâmpada\" da \"casa de Deus\" não se apagou.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Quase todos os reis do Reino do Sul \"fizeram o que era mal aos olhos do Senhor\".",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Mesmo com a conquista do Reino do Norte, sua capital, Samaria, não foi destruída.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Jeroboão foi um \"vaso\" usado por Deus para promover a divisão entre as doze tribos de Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Caso Roboão tivesse atendido o pedido do povo a divisão entre as dozes tribos nunca teria ocorrida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Desconhecer as Escrituras foi a causa principal dos erros cometidos por Jeroboão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Após aconselhar-se com os jovens, Jeroboão mandou construir dois \"bezerros de ouro\".",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Entre Roboão e Jeroboão citar qual deles tinha uma chamada de Deus para realizar uma importante missão.",
+          "answer": "AMBOS TINHAM UMA CHAMADA DE DEUS PARA UMA MISSÃO IMPORTANTE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem afirmou que \"rasgaria\" o reino da mão de Salomão",
+          "answer": "O PRÓPRIO DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Construiu a cidade de Samaria –",
+          "options": [
+            "Acabe",
+            "Jeroboão",
+            "Onrí",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Profeta que falou com Jerobão sobre a divisão do Reino -",
+          "options": [
+            "Elizeu",
+            "Aías",
+            "um falso profeta",
+            "um profeta velho."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Território ocupado por dez tribos",
+          "Primeira capital do Reino do Norte",
+          "Uma capital famosa pela sua beleza",
+          "Capital do Reino do Sul",
+          "Construiu em Samaria um palácio de marfim",
+          "Levou o povo a desviar-se da Palavra de Deus"
+        ],
+        "columnB": [
+          "Jerusalém",
+          "Jeroboão",
+          "Siquém",
+          "Acabe",
+          "Samaria",
+          "Tirza"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Ao tentar substituir o Deus de Israel pelo deus dos amorreus Jeroboão encontrou resistência no meio do povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Mesmo escolhido e chamado por Deus, Jeroboão tornou-se uma maldição para o Reino do Norte.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O culto pagão dos cananeus escandalizou os israelitas por permitir a prática sexual em sua adoração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "No Reino do Norte Jeroboão proibiu o ensino da Palavra de Deus ao povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Não apenas Jeroboão, também sua família foi prejudicada por sua desobediência.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Como Rei do Norte Jeroboão estava isento da obediência à Palavra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Não só os fundadores, mas os seguidores das falsas religiões sofrem por sua desobediência à Palavra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Por sua apostasia Deus não pôde dar sequência ao Seu plano na vida de Jeroboão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No auge de sua cegueira espiritual Jeroboão esqueceu-se da onisciência de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A história de homens como Jeroboão nada acrescenta em nossa vida espiritual.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o \"slogan\" que caracterizou a conduta de todos os Reis de Israel.",
+          "answer": "FIZERAM \"O QUE ERA MAU AOS OLHOS DO SENHOR\""
+        },
+        {
+          "id": "sa2",
+          "question": "Em total desobediência a Deus, citar quantos anos durou o reinado de Jeroboão.",
+          "answer": "22 ANOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Jeroboão mudou -",
+          "options": [
+            "o lugar de adoração",
+            "o sacerdócio",
+            "o calendário religioso",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Mensageiro enviado por Jeroboão ao Profeta Aías –",
+          "options": [
+            "um sacerdote",
+            "seu filho",
+            "sua esposa",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Rei que destruiu o \"altar de Betel\"",
+          "Rei punido por querer queimar incenso no altar",
+          "Rei que exercia as funções sacerdotais",
+          "Rei de Judá que derrotou o exército de Jeroboão",
+          "Um profeta cego",
+          "Rei que destruiu a \"casa\" de Jeroboão"
+        ],
+        "columnB": [
+          "Aías",
+          "Baasa",
+          "Abias",
+          "Uzias",
+          "Josias",
+          "Jeroboão"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          2,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que o homem não pode mudar o plano de Deus para sua vida",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Rei Acabe, em maldades, somente não conseguiu superar seu pai.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Quando Deus esconde um seu filho, nem Satanás pode encontrá-lo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O Reino do Norte já nasceu sob a maldição da idolatria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Uma das formas de adoração a Baal era a prática sexual em seu templo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Nenhuma prática de adoração antibíblica sobreviveu até nossos dias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "É difícil entender porque Deus proibiu plantar árvores próximo de seu altar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Em obediência à Lei de Moisés, Nabote recusou negociar sua vinha com Acabe.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A promessa de Deus, hoje, aos seus filhos, é dar-lhes o céu e não a terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Entregar o comando do exército a Josafá foi o último ato maligno de Acabe",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a rei usado por Deus para destruir a \"casa\" de Jeroboão.",
+          "answer": "BAASA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar na guerra contra qual rei, Acabe foi morto.",
+          "answer": "CONTRA O REI DA SÍRIA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Foi contemporâneo de Elias -",
+          "options": [
+            "Acabe",
+            "Obadias",
+            "Aazael",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Não era uma deusa -",
+          "options": [
+            "Astorete",
+            "Istar",
+            "Asera",
+            "Afrodite."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Profetizou sobre a morte de Acabe",
+          "Fundador da cidade de Samaria",
+          "Profetizou a destruição da \"casa\" de Jeroboão",
+          "Rei suicida",
+          "Rei alcoólatra",
+          "Profetizou contra a \"casa\" do Rei Baasa"
+        ],
+        "columnB": [
+          "Aías",
+          "Jeú",
+          "Onrí",
+          "Elá",
+          "Micaías",
+          "Zinri"
+        ],
+        "answers": [
+          3,
+          6,
+          2,
+          5,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Elias foi impedido por Deus de cumprir sua ordem de ungir Jeú como rei.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar ter sido Jeú quem, pessoalmente, matou a rainha Jezabel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Jeú deu ordens aos homens de Samaria para coroar um dos filhos de Acabe como rei.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Também os filhos de Israel que estavam no templo de Baal foram mortos por ordem de Jeú.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Jeoacaz, filho de Jeú, fez o que era mau aos olhos do Senhor e fez pecar a Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Jeroboão II foi o único dos dezenove reis do norte que não fez o que era mau aos olhos do Senhor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Reino do Norte, num curto período de trinta anos, foi governado por seis reis.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora sendo profeta, Oséias foi também rei do Reino de Israel",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Foi da mistura do povo que ficou em Samaria com os que foram trazidos da Assíria que os samaritanos tiveram suas origens,",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ainda no tempo de Jesus havia samaritanos em Israel, hoje não existe mais.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome do rei em cujo reinado o Reino de Israel teve um período de grande prosperidade.",
+          "answer": "NO REINADO DE JEROBOÃO II"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite os livros e capítulos do Novo Testamento que falam, especificamente, dos samaritanos.",
+          "answer": "JOÃO, CAPÍTULO 4 E LUCAS, CAPÍTULOS 9 E 10"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Rei morto por Jeú -",
+          "options": [
+            "Acabe",
+            "Jorão",
+            "Amazias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "A religião dos Samaritanos baseia-se no –",
+          "options": [
+            "Antigo Testamento",
+            "Talmud",
+            "Pentateuco",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Destruiu Samaria e acabou com o Reino do Norte",
+          "Ordenou a morte da Rainha Atalia",
+          "Conduziu os samaritanos para o cativeiro",
+          "Morreu em consequência de uma queda",
+          "Último rei de Israel",
+          "Reinou seis meses e foi assassinado"
+        ],
+        "columnB": [
+          "Acasias",
+          "Zacarias",
+          "Oseias",
+          "Sargão II",
+          "Salmasar",
+          "Joiada"
+        ],
+        "answers": [
+          4,
+          6,
+          5,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo a Bíblia, Elias foi o único homem que não provou a morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos pensar que Deus teve dificuldades para encontrar um substituto para Elias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O aparecimento de Elias no Monte da Transfiguração foi símbólico e não real.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Acabe e Jezabel formaram um casal que soube tirar o que havia de pior um do outro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Viver na dependência de Deus, ou pela fé, pode ser uma bênção, mas não é fácil.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Quando Deus manda e o homem obedece, fazer o impossível fica por conta de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Rio Querite era um rio semelhante ao Rio Jordão; nada havia de diferente.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Elias escolheu o Monte Carmelo pois ali seria mais fácil vencer os profetas de Baal",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Como aconteceu no tempo de Jó, Satanás poderia fazer uso do fogo mais uma vez.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Certamente, que foi Deus quem impediu a presença de Jezabel no Monte Carmelo.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar, com certeza, quantos e quais os parentes, em primeiro grau, tinha o Profeta Elias.",
+          "answer": "APENAS DOIS—SEU PAI E SUA MÃE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que Tiago falou ser o Profeta Elias",
+          "answer": "UM HOMEM \"SUJEITO ÀS MESMAS PAIXÕES QUE NÓS\""
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Elias morreu -",
+          "options": [
+            "em Israel",
+            "com 30 anos",
+            "em Gileade",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A maior batalha espiritual de todos os tempos aconteceu –",
+          "options": [
+            "no Monte Carmelo",
+            "no Monte Sinai",
+            "num deserto",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Ordenou a morte de Elias",
+          "Mordomo do Rei Acabe",
+          "Segundo esconderijo de Elias",
+          "Pai da Rainha Jezabel",
+          "Terra natal de Elias",
+          "Um tipo de Deus Pai"
+        ],
+        "columnB": [
+          "Etbaal",
+          "Elias",
+          "Obadias",
+          "Jezabel",
+          "Serepta",
+          "Tisbe"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A expressão, \"Elias, o campeão de Deus\" encontra-se em I Reis, Capítulo 17.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Elias não questionou Deus sobre a quase impossível missão que lhe foi confiada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Foi, no deserto, sob a sombra de uma acássia, que Elias deitou e dormiu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Um homem estando bem com Deus, sabendo que ao morrer irá para o paraíso, sempre deseja a morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Um obreiro que deixar uma igreja onde está fazendo a obra de Deus, estará fora da direção do Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao abrir seu coração com Deus, Elias lembrou-se de todas as bênçãos recebidas dele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Elias, o \"campeão de Deus\", foi encontrado por Ele escondido numa caverna.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Ao envolver seu rosto com sua capa, podemos pensar que Elias estava envergonhado face sua situação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que no \"Monte do Senhor\" será sempre mais fácil receber as bênçãos do que na igreja\".",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "No sentido literal sabemos que Elias foi levado ao céu num redemoinho",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o tempo de duração que Elias permaneceu fora após sua fuga de Israel.",
+          "answer": "A BIBLIA NÃO RELATA"
+        },
+        {
+          "id": "sa2",
+          "question": "No Monte Horebe, citar qual foi a pergunta que Deus fez a Elias.",
+          "answer": "\"QUE FAZES AQUI ELIAS\""
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "\"Cartão de visitas\" do Profeta Elias -",
+          "options": [
+            "Elias, o tisbita",
+            "Elias, o campeão de Deus",
+            "Elias, O Profeta de Deus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "No deserto, após comer e beber, Elias -",
+          "options": [
+            "retornou a Samaria",
+            "seguiu em direção ao Monte Horebe",
+            "tornou a deitar e dormiu",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um rei da Síria ungido por Elias",
+          "Um rei que Elias foi impedido de ungir",
+          "Um profeta ungido por Deus",
+          "Foi deixado em Berseba",
+          "Foi ao encontro de Elias no deserto",
+          "Teve seu corpo comido pelos cães"
+        ],
+        "columnB": [
+          "Elizeu",
+          "a rainha Jezabel",
+          "o servo de Elias",
+          "Hazael",
+          "Jeú",
+          "\"O Anjo do Senhor\""
+        ],
+        "answers": [
+          3,
+          6,
+          4,
+          1,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Roboão começou a reinar com 40 anos e 17 anos reinou em Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Rei Asa foi intolerante com a idolatria e também baniu do Reino de Judá os \"rapazes escandalosos\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Deus deu a Josafá grande vitória contra um poderoso exército usando o louvor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Do Rei Josafá nada consta que possa denegrir sua imagem como homem de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A única mulher que reinou no Reino do Sul era filha do rei do Reino do Norte.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A Rainha Atalia foi deposta e morta por ordem do sacerdote Joiada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Está escrito que o Rei Joás fez \"o que era reto aos olhos do Senhor\" toda sua vida",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Sabemos que o Profeta Zacarias, neto de Ido, foi morto por ordem do Rei Joás.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O Rei Uzias foi um grande administrador, e também um grande criador de gado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Do Rei Jotão, filho do Rei Uzias, está escrito que dirigiu seus caminhos na presença do Senhor, seu Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar em quais livros da Bíblia podemos encontrar a história dos Reinos de Judá e de Israel.",
+          "answer": "JUDÁ– EM II REIS E II CRÔNICAS, ISRAEL– EM II REIS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o nome da mulher usada por Deus para esconder o único sobrevivente da descendência de Davi",
+          "answer": "JEOSEBA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Profetizou a morte do Rei Acabe –",
+          "options": [
+            "um profeta de Baal",
+            "um profeta de Judá",
+            "o Profeta Micaías",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Um rei filho de Jerusa -",
+          "options": [
+            "Acasias",
+            "Jotão",
+            "Jeorão",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Rei de Judá neto da Rainha Jezabel",
+          "Rei que decretou a pena de morte para quem não buscasse a Deus",
+          "Rei que ordenou que a Palavra de Deus fosse ensinada",
+          "Rei morto por Jeú",
+          "Rei de Judá filho de uma amonita",
+          "Rei de Judá que morreu leproso"
+        ],
+        "columnB": [
+          "Uzias",
+          "Abias",
+          "Asa",
+          "Acasias",
+          "Josafá",
+          "Jorão"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          4,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No reinado do Rei Acaz o Reino de Judá não podia dizer que \"O Senhor é minha força\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Quando o homem perde a visão de Deus as coisas do mundo tornam-se mais atraentes aos seus olhos .",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Por não conhecer a Palavra de Deus o Rei Acaz mandou construir no templo um altar novo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Mesmo em suas funções sacerdotais os sacerdotes estavam subordinados ao rei.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Pela expressão \"no terceiro ano de Oséias\" sabemos que o Rei Ezequias conviveu com o Profeta Oséias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O Rei Ezequias procurou incentivar o povo a desviar-se do pecado e aproximar-se de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Face as ameaças do Rei da Assíria, o Rei Ezequias e o Profeta Isaías oraram e clamaram ao céu",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A Bíblia não registrou nenhum erro grave cometido pelo Rei Ezequias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na história de Israel é possível não existir um rei mais mau do que Manassés.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Do Rei Amon se diz que nada escreveu de bom e positivo em sua curta história.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome do construtor de um novo altar no templo de Jerusalém.",
+          "answer": "O SACERDOTE URIAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que se diz sobre o pai de Abia, mãe do Rei Ezequias.",
+          "answer": "QUE ERA UM HOMEM \"SÁBIO NAS VISÕES DE DEUS\""
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Destruiu a \"serpente de metal\" feita por Moisés-",
+          "options": [
+            "o próprio Deus",
+            "o Rei Ezequias",
+            "o Rei Amon",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Segundo a tradição, mandou serrar o Profeta Isaías –",
+          "options": [
+            "o Rei Acaz",
+            "o Rei Amon",
+            "o Rei Manassés",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um rei morto pelos seus servos",
+          "Sacrificou seus próprios filhos ao deus maloque",
+          "Um rei que começou muito mal e terminou bem",
+          "Construtor do túnel e do tanque de Siloé",
+          "Avô do Rei Ezequias",
+          "Amon"
+        ],
+        "columnB": [
+          "pai de Josias",
+          "Zacarias",
+          "Amon",
+          "Manassés",
+          "Ezequias",
+          "Acáz"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Seguindo os exemplos de seu pai, Josias fez o que era reto aos olhos do Senhor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na reforma do templo foi encontrado um exemplar do Antigo Testamento judaico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na vida e no reinado de Josias nenhum erro seu foi registrado nas Escrituras.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A morte prematura de Josias foi um ato de misericórdia de Deus para com ele.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Expressão de Jeremias \"não choreis o morto\" referia-se à morte do Rei Josias",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Cumprindo profecia de Jeremias, o Rei Joaquim e sua mãe foram levados cativos para Babilônia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O final do Reino de Judá foi marcado por uma total calamidade espiritual e material.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Cumprindo profecia de Jeremias, o Rei Zedequias foi levado cego para Babilônia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O Reino de Israel foi levado cativo para Babilônia e não mais voltou.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo profecia de Josefo, o território de Judá não foi povoado durante o cativeiro",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome do profeta que \"ministrou a Palavra\" no velório do Rei Josias.",
+          "answer": "JEREMIAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Após o retorno do cativeiro, citar como os israelitas passaram a ser denominados.",
+          "answer": "TODOS OS ISRAELITAS PASSARAM A SER DOMINADOS DE JUDEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Do Reino de Judá fizeram \" o que era reto aos olhos do Senhor\" -",
+          "options": [
+            "todos, com exceção de Atalia",
+            "Ezequias e Josias",
+            "oito reis",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Profetizou que o cativeiro de Judá duraria 70 anos–",
+          "options": [
+            "Isaías",
+            "Jeremias",
+            "Ezequiel",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Rei de Judá que morreu no Egito",
+          "Morreu durante o cerco de Jerusalém",
+          "Rei morto pelo exército egípcio",
+          "Rei levado cego para o Egito",
+          "Permaneceu preso por 37 anos no cativeiro",
+          "Governador nomeado por Nabucodonosor"
+        ],
+        "columnB": [
+          "Joaquim",
+          "Gedalias",
+          "Zedequias",
+          "Josias",
+          "Joacaz",
+          "Jeoaquim"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo profecia de Jeremias, o cativeiro de Judá duraria 70 anos, de 606 a 536 aC.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Em I e II Crônicas não há registro do cativeiro do Reino de Israel na Babilônia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O objetivo principal da ida de Esdras para Jerusalém foi a construção do templo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A reconstrução das muralhas de Jerusalém foi a razão principal da ida de Neemias para Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na simbologia bíblica podemos ver em Vasti a nação de Israel e em Ester, a igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pela historia não podemos afirmar o ano em que Ageu começou a profetizar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Malaquias foi, com certeza, o último profeta levantado por Deus antes do nascimento de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela Bíblia podemos ver, hoje, a nação de Israel como uma figueira com muitas folhas, mas sem frutos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Todos os mestres e doutores em teologia negam o arrebatamento de Enoque e Elias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "No monte da transfiguração foi Jesus que subiu ao mundo espiritual pois Moisés e Elias não podiam descer ao mundo material.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar porque podemos afirmar que Esdras foi e não voltou para Jerusalém.",
+          "answer": "PORQUE PARA TER VOLTADO ELE TERIA QUE ESTAR COM PELO MENOS 129 ANOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o nome original de Ester e de seu pai.",
+          "answer": "SEU NOME ERA HADASSA E O DE SEU PAI, ABIAIL"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Não foram escritos depois do cativeiro -",
+          "options": [
+            "I e II Crônicas",
+            "I e II Reis",
+            "Esdras, Neemias e Ester",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "O esposo de Ester era –",
+          "options": [
+            "Filho de Dario",
+            "neto de Ciro",
+            "filho de Atossa",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Descendente de Arão",
+          "Não foi levado para o cativeiro",
+          "Nasceu no cativeiro",
+          "Foi assassinado",
+          "Vinhateiro na Parábola da Figueira",
+          "Mentor do \"Movimento Sionista\""
+        ],
+        "columnB": [
+          "Ester",
+          "Jesus",
+          "Esdras",
+          "Teodor Herzl",
+          "Mardoqueu",
+          "esposo de Ester"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

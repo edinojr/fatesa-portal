@@ -1,0 +1,1196 @@
+{
+  "id": "dout-salvacao",
+  "title": "Doutrina da Salvação",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Antes da queda não havia como o homem entender o sentido da salvação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Depois de ser salvo é fácil para o homem retornar à casa do Pai.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "No sentido espiritual a palavra salvação, no Antigo Testamento, não tinha o mesmo sentido de hoje.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Mesmo “morto em ofensas e pecados” o homem é amado por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O plano de salvação só foi preparado por Deus após a queda do homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Satanás, mesmo não sendo onisciente, tinha certeza que o homem pecaria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Não foram ao anjos os servos enviados para chamar os convidados para as bodas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na Parábolas das Bodas os primeiros convidados foram os judeus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Face a recusa dos convidados o rei não cancelou, mas adiou a data para as bodas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Moisés foi o único homem que Deus teve dificuldades para substituir.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a origem e o sentido da expressão soteriologia.",
+          "answer": "ORIGEM GREGA - “SOTERIA”, SALVAÇÃO; “LOGIA” - ESUTUDO SOTERIOLOGIA É O ESTUDO DA DOUTRINA DA SALVAÇÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o sentido da expressão “misericórdia”",
+          "answer": "TER O CORAÇÃO VOLTADO À MISERIA DE OUTREM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Fala da salvação com mais profundidade —",
+          "options": [
+            "Mateus",
+            "Marcos",
+            "Lucas",
+            "João."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Nos escritos originais a palavra “Soter” com referência a Jesus é encontrada —",
+          "options": [
+            "uma vez",
+            "vinte e quatro vezes",
+            "nenhuma vez",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Sentido grego da palavra “soter”",
+          "Jesus apresentado pela Bíblia",
+          "Fábula artificialmente composta",
+          "Em relação a Deus a salvação",
+          "As misericórdias do Senhor",
+          "O morto em ofensas e pecado"
+        ],
+        "columnB": [
+          "cheiro de morte",
+          "não têm fim",
+          "um ato de amor",
+          "não apoia nossa salvação",
+          "salvador",
+          "libertador"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sabemos ser uma bênção pertencer ao segundo grupo de convidados.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Os ramos quebrados, segundo Paulo, falam dos gentios excluídos da salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O homem sem veste nupcial estava entre os que tinham vestes nupciais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar haver diferença entre Reino dos Céus e Reino de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo que o homem sem veste nupcial não sabia ser necessário aquela veste.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao rei não passou despercebido a existência de um convidado sem vestes nupciais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A Parábola das Bodas fala, com certeza, das Bodas do Cordeiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No aspecto exterior não havia diferença entre as dez virgens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A Parábola do Filho Pródigo esta relacionada com a Dispensação da Graça.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A glorificação representa o capítulo final da salvação pela graça.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quando começou e quando terminará o Dia da Graça.",
+          "answer": "COMEÇOU NA CRUZ DO CALVÁRIO TERMINARÁ COM O ARREBATAMENTO DA IGREJA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que é possível encontrar na igreja local e visível.",
+          "answer": "CRENTES SALVOS E NÃO SALVOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os gentios em relação ao convite das bodas",
+          "options": [
+            "não foram convidados",
+            "estavam no 2º grupo de convidados",
+            "foram os primeiros convidados",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Na igreja visível -",
+          "options": [
+            "todos são salvos",
+            "não existe judeus",
+            "existem salvos e não salvos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "A bodas vistas por João",
+          "O “filho” na Festa das Bodas”",
+          "O Rei que preparou a “Ceia”",
+          "Rejeitaram o convite para as bodas",
+          "Tem aparência de salvo",
+          "Não tem aparência de salvo"
+        ],
+        "columnB": [
+          "peixes ruins",
+          "joio",
+          "os judeus",
+          "Deus Pai",
+          "Jesus",
+          "união de Cristo com a igreja"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A justiça de Deus exige reparação às ofensas contra sua santidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na cruz do calvário Jesus pagou o preço da redenção exigida por Satanás.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O sangue de animais justificava, parcialmente, os pecados do homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Após o diluvio a geração de Noé não foi melhor do que a de Adão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O homem foi criado para viver, eternamente, na companhia e comunhão com Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A Lei dada por Deus tinha como objetivo a libertação do homem da escravidão do pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Na redenção temos a ideia de perdão mediante o arrependimento do homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que a Bíblia não foi escrita para contar a história do homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Caso Jesus morresse sem derramar seu sangue ele não podia ser nosso redentor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na Bíblia, expiação e redenção têm o mesmo significado.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem ou o que exigiu a morte de um justo para que o homem fosse liberto.",
+          "answer": "A JUSTIÇA DE DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite sem o que não haveria e redenção",
+          "answer": "SEM A MORTE EXPIATÓRIA DE JESUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O plano de Redenção foi revelado por Deus —",
+          "options": [
+            "em Belém de Judá",
+            "no Jardim do Éden",
+            "na cruz do calvário",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "A Bíblia foi escrita para contar a",
+          "options": [
+            "a queda de Satanás",
+            "história da humanidade",
+            "história da redenção do homem",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Jesus, Filho do Homem",
+          "Jesus Filho de Deus",
+          "Jesus, como Sumo Sacerdote",
+          "Redenção",
+          "Expiação",
+          "Não podia ser anulada"
+        ],
+        "columnB": [
+          "justiça de Deus",
+          "um meio de purificação",
+          "pagamento de resgate",
+          "Levítico",
+          "criador do homem",
+          "redentor"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A única chamada divina é a chamada ministerial.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A controvérsia entre determinismo e livre arbítrio começou ecom Agostinho e Pelágio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Segundo afirmou Paulo, Deus não faz acepção de pessoas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Paulo nunca falou sobre eleição e predestinação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo que Calvino não foi o pai do determinismo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pela Bíblia sabemos que Deus não fez um inferno para os homens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A salvação preparada por Deus abrange o corpo, a alma e o espirito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A teoria do livre arbítrio defende uma salvação incondicional.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para Deus o importante é como vivemos e não como pensamos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo Moody o homem não participa do processo da salvação.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Quanto a filiação, cite a diferença entre um homem salvo de um ímpio.",
+          "answer": "O SALVO É FILHO DE DEUS; O ÍMPIO É FILHO DO DIABO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite um cooperador de Paulo que abandonou a fé, voltando à vida mundana",
+          "answer": "DEMAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Autor da expressão— “pela graça sois salvos, mediante a fé” —",
+          "options": [
+            "Jacob Armínio",
+            "Calvino",
+            "Paulo",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Faz parte da Doutrina Calvinista -",
+          "options": [
+            "eleição incondicional",
+            "graça irresistível",
+            "segurança eterna do crente",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Eleição incondicional",
+          "Graça resistível",
+          "Pai do determinismo",
+          "Determinismo e livre arbítrio",
+          "Pela graça sois salvo",
+          "Opositor de Lutero"
+        ],
+        "columnB": [
+          "Erasmo de Roterdã",
+          "Paulo",
+          "Calvino e Armínio",
+          "Agostinho",
+          "Armínio",
+          "Calvino"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A fé salvifica existe no coração do homem desde seu nascimento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Segundo afirmou Paulo, o homem é salvo pela fé, por meio da graça.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O homem natural, embora vivo, espiritualmente, está morto.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A fé é como botão que aciona o processo que leva à salvação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O arrependimento é, quase sempre, necessário para a salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A comunicação com o mundo físico é feita através da alma e do corpo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sem um verdadeiro arrependimento é difícil haver salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A verdadeira conversão exige mudança em toda vã maneira de viver.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O homem natural, ao reconhecer sua culpa, toma posse da salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Um homem convertido não pode mais fazer uso do seu livre arbítrio.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite porque o homem natural não se sente incomodado pela presença do pecado.",
+          "answer": "PORQUE, ESPIRITUALMENTE, ELE ESTÁ MORTO."
+        },
+        {
+          "id": "sa2",
+          "question": "No sentido literal, cite a origem e significado do termo conversão.",
+          "answer": "ORIGEM LATINA—COM” MAIS “VERTEVE”; TEM O SENTIDO DE UMA MUDANÇA RADICAL DE DIREÇÃO."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Significado literal da palavra “metanoia” —",
+          "options": [
+            "arrependimento",
+            "mudança de direção",
+            "mudança de mente",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Conversão requer mudança na maneira de -",
+          "options": [
+            "andar",
+            "pensar",
+            "viver",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Mudança de pensamento sobre o pecado",
+          "Mudança de direção",
+          "Meio de alcançar a salvação",
+          "Começa e termina em Deus",
+          "Autor e consumador da fé",
+          "providência de Deus para a salvação"
+        ],
+        "columnB": [
+          "graça",
+          "fé salvifica",
+          "arrependimento",
+          "Jesus",
+          "conversão",
+          "salvação"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Apenas uma vez na história a matéria produziu uma vida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A evolução pode existir em tudo que o homem faz ou inventa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "De todas as espécies criadas por Deus nenhuma delas foi extinta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pela Bíblia sabemos que o homem é livre até para negar a existência de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Segundo a Bíblia a criação do homem foi planejada e executada pela Trindade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em Gênesis temos a declaração de que o homem foi criado pouco menor que os anjos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Dominar era a vocação do homem conforme determinação de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A vide descrita por Jeremias diz respeito a Israel, sem qualquer simbologia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O nascer da água e do Espírito nada tem a ver com o batismo nas águas e com o Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O regenerar significa uma reforma total realizada no homem.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite porque podemos afirmar que Deus dotou o homem de grande inteligência.",
+          "answer": "O FATO DE ADÃO TER DADO NOMES PARA TODOS OS ANIMAIS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite a causa que levou o homem ao segundo capítulo de sua história.",
+          "answer": "O PECADO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A regeneração é também chamada de —",
+          "options": [
+            "a nova vida",
+            "uma nova criação",
+            "novo nascimento",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Degenerar significa -",
+          "options": [
+            "perder a qualidade original",
+            "corromper-se",
+            "mudar para pior",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Novo nascimento",
+          "Nascer da água e do Espírito",
+          "Opera de fora para dentro",
+          "Opera de dentro para fora",
+          "Geração",
+          "Homem criado por Deus"
+        ],
+        "columnB": [
+          "perfeição",
+          "criação",
+          "graça",
+          "Lei de Moisés",
+          "novo nascimento",
+          "crente salvo"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Regeneração e novo nascimento são duas coisas diferentes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No ato da regeneração ocorre um milagre de transformação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O nascer da água fala da necessidade do batismo para se tornar filho de Davi.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Somente os serventes podiam explicar o fenômeno ocorrido dentro das talhas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Estando em Cristo o homem está vivo para Deus e morto para o mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Somente a religião cristã pode promover a reconciliação entre o homem e Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pela salvação qualquer sacrifício pessoal seria afrontoso a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Biblicamente, desprezar os bens materiais não é uma exigência para se obter a salvação",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sendo, como é, amor, Deus não mandará nenhum de seus filhos para o inferno.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A expressão “agora somo filhos de Deus” não significa que antes não éramos.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o sentido da expressão “nascer da água”.",
+          "answer": "FALA DA NECESSIDADE DA PALAVRA DE DEUS NO ATO DO NOVO NASCIMENTO."
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como pode ser feito o exame de DNA espiritual.",
+          "answer": "DE NENHUMA FORMA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O homem regenerado não está —",
+          "options": [
+            "livre de pecar",
+            "vivo para Deus",
+            "morto para o mundo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Ser evangélico significa quase sempre -",
+          "options": [
+            "ter sido regenerado",
+            "uma mudança de religião",
+            "uma prova de ser filho de Deus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Não é evidência de regeneração",
+          "É evidência de regeneração",
+          "É um direito do filho de Deus",
+          "Dever do filho de Deus",
+          "Nascer da água",
+          "Nascer do Espírito"
+        ],
+        "columnB": [
+          "aplicação da Palavra",
+          "Palavra de Deus",
+          "amar, ser santo, honrar a Deus",
+          "participação da natureza divina",
+          "uma mudança de objetivo",
+          "batismo nas águas"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Justificação é como uma declaração legal de que o homem está isento de culpa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sendo onipotente, segundo a Bíblia, não existe nada que Deus não possa fazer.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo santo, por natureza, nada pode ofender ou agredir a santidade de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "No sentido bíblico, a justiça dá a cada um o que é de direito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Não pode haver justificação sem o pagamento da dívida.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "O homem justificado é recebido por Deus como um pecador perdoado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O fato de Jesus ser colocado entre os dois ladrões foi pura coincidência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela graça sois salvos, portanto, do homem nada é exigido.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que um homem salvo precisa praticar boas obras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "É pela regeneração que o homem se torna filho de Deus e com direito a toda suas bênçãos.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a diferença entre justificação e perdão",
+          "answer": "NA JUSTIFICAÇÃO HÁ PAGAMENTO; NO PERDAÕ NÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a condição bíblica para que haja adoração",
+          "answer": "NOVO NASCIMENTO, OU REGENERAÇÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É um meio para obter a salvação —",
+          "options": [
+            "a graça",
+            "a fé",
+            "justiça",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "-A adoção bíblica destina-se ao -",
+          "options": [
+            "judeu",
+            "que não é filho de Deus",
+            "que é filho de Deus",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Graça",
+          "Adoção",
+          "Fé",
+          "Regeneração",
+          "Comprova a salvação",
+          "Parte do homem na salvação"
+        ],
+        "columnB": [
+          "fé",
+          "prática de boas obras",
+          "mudança de natureza",
+          "meio de obter a salvação",
+          "mudança de posição",
+          "meio de tomar posse da salvação"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Ser santo não é uma opção, é uma exigência de Deus em relação a igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Deus não tem compromisso com os ímpios; seu compromisso é com os santos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Deus não pode pecar, aborrece o pecado e também o pecador.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Nesta dispensação quem habita no homem salvo é apenas o Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Face ao livre arbítrio Deus não pode exigir que o homem seja santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "“Deus quer somente o coração”; essa expressão não tem fundamento bíblico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A redenção era pelo sangue, mas era exigido também o corpo no altar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "O caminho do céu e do inferno seguem em direção paralela.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Todos os homens pertencem a Deus por direito de criação e de preservação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Nem mesmo os filhos de Deus serão perfeitos em santificação enquanto viverem nesta terra",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que Deus nunca pede e nunca exige do homem.",
+          "answer": "O QUE O HOMEM NÃO TEM PARA DAR E O QUE NÃO PODE FAZER"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação ao corpo, cite duas coisas que devem ser evitadas.",
+          "answer": "O DESPRESO E A IDOLATRIA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Ser santo significa —",
+          "options": [
+            "viver isolado de todos",
+            "ser mais crentes que os outros",
+            "separado para uso do Senhor",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A santidade deve ser -",
+          "options": [
+            "instantânea",
+            "permanente",
+            "progressiva",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Condição essencial para ver Deus",
+          "Recebe no ato da regeneração",
+          "Palavra, oração, sangue de Jesus",
+          "Símbolo da santificação",
+          "Separado para uso do Senhor",
+          "Exigência da presença do corpo"
+        ],
+        "columnB": [
+          "altar do sacrifício",
+          "ser santo",
+          "pia de cobre",
+          "meios de conservar a santidade",
+          "santificação instantânea",
+          "santificação"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A fé é o ponto inicial do processo que envolve a salvação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Neste corpo mortal não há condições da glória de Deus se manifestar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A glória de Deus é manifestada sobre a igreja, mas não no crente de forma individual",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que existe uma semelhança entre a santificação e a glorificação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Pela adoção o homem torna-se participante da natureza de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Somente no dia do arrebatamento é que os salvos receberão corpos gloriosos como o Senhor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Através da morte física o corpo do homem salvo é decomposto e não glorificado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Paulo afirmou que através das aflições nossos corpos são glorificados.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A glória futura está condicionada à necessidade da santificação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Pala Bíblia sabemos que o corpo glorioso que recebemos é espiritual e material.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite quem faz a comunicação da glória de Deus à igreja e aos crentes salvos",
+          "answer": "O ESPÍRITO SANTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite a condição essencial para o crente salvo receber seu corpo glorificado",
+          "answer": "A RESSURREIÇÃO DENTRE OS MORTOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Produz o crescimento em glória —",
+          "options": [
+            "crescimento físico",
+            "o jejum",
+            "a santificação",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "O céu e um lugar de -",
+          "options": [
+            "glória permanente",
+            "comunhão com Deus",
+            "santificação",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Começo do processo de salvação",
+          "Término do processo de salvação",
+          "O “porque” da salvação",
+          "O salvador enviado por Deus",
+          "A doutrina do pecado",
+          "Consequência do pecado"
+        ],
+        "columnB": [
+          "morte",
+          "hamartiologia",
+          "Jesus",
+          "pecado",
+          "glorificação",
+          "fé"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "ATOS_1",
+  "title": "Atos dos Apóstolos - V1",
+  "tfQuestions": [
+    {
+      "id": "atos1-tf-1",
+      "question": "Sendo grego, o objetivo de Lucas era evangelizar os gentios.",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-2",
+      "question": "Podemos afirmar que no dia de Pentecostes veio do céu um vento veemente.",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-3",
+      "question": "Numa igreja pentecostal pode haver manifestações carnais e até demoníacas.",
+      "answer": "V"
+    },
+    {
+      "id": "atos1-tf-4",
+      "question": "É certo que se Pedro e João tivessem uma moeda o coxo não seria curado.",
+      "answer": "V"
+    },
+    {
+      "id": "atos1-tf-5",
+      "question": "Hoje, em hipótese nenhuma alguém deve vender sua casa e dar o dinheiro à igreja",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-6",
+      "question": "Após a conversão os judeus cristãos abandonaram todos os costumes e tradições judaicas.",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-7",
+      "question": "Transformar a igreja numa seita judaica foi a primeira porta do inferno levantada contra ela.",
+      "answer": "V"
+    },
+    {
+      "id": "atos1-tf-8",
+      "question": "Sabemos que Satanás impediu Paulo de retornar para Tessalônica.",
+      "answer": "V"
+    },
+    {
+      "id": "atos1-tf-9",
+      "question": "Tal como Ágabo, também as filhas de Filipe eram profetas.",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-10",
+      "question": "Na prisão, em Roma, Paulo sentiu-se impedido para fazer a obra de Deus.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "atos1-mc-1",
+      "question": "Profetizaram ou anunciaram a vinda do Espírito Santo",
+      "options": [
+        "Joel",
+        "Isaías",
+        "João Batista",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "atos1-mc-2",
+      "question": "Condenado à morte, Paulo foi -",
+      "options": [
+        "Crucificado",
+        "Decapitado",
+        "Enforcado",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "atos1-mc-3",
+      "question": "No momento da descida do Espírito Santo estavam reunidos -",
+      "options": [
+        "Quase 120 discípulos",
+        "Quase 180 discípulos",
+        "Quase 98 discípulos",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "atos1-mc-4",
+      "question": "Na igreja de Jerusalém havia —",
+      "options": [
+        "Temor de Deus",
+        "Ensino da Palavra",
+        "Comunhão",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "atos1-mp-1",
+      "left": "Grande movimento pentecostal",
+      "right": "Samaria"
+    },
+    {
+      "id": "atos1-mp-2",
+      "left": "Igreja Pentecostal problemática",
+      "right": "Corinto"
+    },
+    {
+      "id": "atos1-mp-3",
+      "left": "Amor à Palavra de Deus",
+      "right": "Cheio do Espírito Santo"
+    },
+    {
+      "id": "atos1-mp-4",
+      "left": "Autêntica Igreja Pentecostal",
+      "right": "Jerusalém"
+    },
+    {
+      "id": "atos1-mp-5",
+      "left": "Varões religiosos e zombadores",
+      "right": "Judeus"
+    },
+    {
+      "id": "atos1-mp-6",
+      "left": "Aproxima e afasta o homem de Deus",
+      "right": "Temor e tremor"
+    }
+  ]
+}

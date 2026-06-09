@@ -53,27 +53,46 @@ export const useProfessorManagement = () => {
         const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').order('nome');
         if (sData) studentHook.setAllStudents(sData);
 
-        const { data: subData } = await supabase
+        // Refactored: Fetch submissions in stages to avoid 400 errors
+        const { data: subDataRaw } = await supabase
           .from('respostas_aulas')
-          .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, questionario, livros:livro_id(id, titulo)), users:aluno_id(id, nome, email, nucleo_id, nucleos:nucleo_id(id, nome))')
+          .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
           .order('created_at', { ascending: false });
-        const subDataMapped = (subData || []).map((r: any) => ({
-          ...r,
-          submission_id: r.id,
-          student_id: r.aluno_id,
-          lesson_id: r.aula_id,
-          lesson_title: r.aulas?.titulo,
-          lesson_type: r.aulas?.tipo,
-          is_bloco_final: r.aulas?.is_bloco_final,
-          student_name: r.users?.nome,
-          student_email: r.users?.email,
-          nucleus_id: r.users?.nucleos?.id,
-          nucleus_name: r.users?.nucleos?.nome || 'Sem Polo',
-          book_id: r.aulas?.livros?.id,
-          book_title: r.aulas?.livros?.titulo || 'Módulo Geral',
-          submitted_at: r.created_at,
-        })).filter(s => s.lesson_type === 'prova' || s.is_bloco_final === true);
-        if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
+
+        if (subDataRaw) {
+          const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
+          const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
+
+          const [aulasRes, usersRes] = await Promise.all([
+            aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
+            alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
+          ]);
+
+          const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {});
+          const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {});
+
+          const subDataMapped = subDataRaw.map((r: any) => {
+            const aula = aulasMap[r.aula_id];
+            const user = usersMap[r.aluno_id];
+            return {
+              ...r,
+              submission_id: r.id,
+              student_id: r.aluno_id,
+              lesson_id: r.aula_id,
+              lesson_title: aula?.titulo,
+              lesson_type: aula?.tipo,
+              student_name: user?.nome,
+              student_email: user?.email,
+              nucleus_id: user?.nucleos?.id,
+              nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+              book_id: aula?.livro_id?.id,
+              book_title: aula?.livro_id?.titulo || 'Módulo Geral',
+              submitted_at: r.created_at,
+            };
+          }).filter(s => s.lesson_type === 'prova');
+          
+          if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
+        }
         
         acad.fetchAcademicReport(true);
       } else {
@@ -88,45 +107,61 @@ export const useProfessorManagement = () => {
             const studentIds = sData.map(s => s.id);
             if (studentIds.length > 0) {
               acad.fetchAcademicHistory(studentIds);
-              const { data: subData } = await supabase
+              const { data: subDataRaw } = await supabase
                 .from('respostas_aulas')
-                .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas, aulas:aula_id(id, titulo, tipo, is_bloco_final, questionario, livros:livro_id(id, titulo)), users:aluno_id(id, nome, email, nucleo_id, nucleos:nucleo_id(id, nome))')
+                .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
                 .in('aluno_id', studentIds)
                 .order('created_at', { ascending: false });
-              const subDataMapped = (subData || []).map((r: any) => ({
-                ...r,
-                submission_id: r.id,
-                student_id: r.aluno_id,
-                lesson_id: r.aula_id,
-                lesson_title: r.aulas?.titulo,
-                lesson_type: r.aulas?.tipo,
-                is_bloco_final: r.aulas?.is_bloco_final,
-                student_name: r.users?.nome,
-                student_email: r.users?.email,
-                nucleus_id: r.users?.nucleos?.id,
-                nucleus_name: r.users?.nucleos?.nome || 'Sem Polo',
-                book_id: r.aulas?.livros?.id,
-                book_title: r.aulas?.livros?.titulo || 'Módulo Geral',
-                submitted_at: r.created_at,
-              })).filter(s => s.lesson_type === 'prova' || s.is_bloco_final === true);
-              if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
+
+              if (subDataRaw) {
+                const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
+                const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
+
+                const [aulasRes, usersRes] = await Promise.all([
+                  aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
+                  alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
+                ]);
+
+                const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {});
+                const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {});
+
+                const subDataMapped = subDataRaw.map((r: any) => {
+                  const aula = aulasMap[r.aula_id];
+                  const user = usersMap[r.aluno_id];
+                  return {
+                    ...r,
+                    submission_id: r.id,
+                    student_id: r.aluno_id,
+                    lesson_id: r.aula_id,
+                    lesson_title: aula?.titulo,
+                    lesson_type: aula?.tipo,
+                    student_name: user?.nome,
+                    student_email: user?.email,
+                    nucleus_id: user?.nucleos?.id,
+                    nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+                    book_id: aula?.livro_id?.id,
+                    book_title: aula?.livro_id?.titulo || 'Módulo Geral',
+                    submitted_at: r.created_at,
+                  };
+                }).filter(s => s.lesson_type === 'prova');
+                
+                if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
+              }
             }
           }
         } else {
-          // No linked nucleos
           studentHook.setAllStudents([]);
           gradingHook.setSubmissions([]);
         }
       }
-
+      
       // Attendance (specific to current professor)
       await att.fetchAttendance(profile.id);
-      
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.id]);
+
 
   // 4. Auth and Role Setup
   useEffect(() => {

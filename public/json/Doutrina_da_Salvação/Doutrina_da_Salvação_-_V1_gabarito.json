@@ -1,0 +1,134 @@
+{
+  "id": "DSAL_1",
+  "title": "Doutrina da Salvação - V1",
+  "tfQuestions": [
+    {
+      "id": "dsal1-tf-1",
+      "question": "Pela Parábola das Bodas sabemos que os judeus não foram convidados para a festa.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal1-tf-2",
+      "question": "O plano de salvação só foi preparado por Deus após a queda do homem.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal1-tf-3",
+      "question": "Podemos afirmar que redenção e expiação são duas coisas diferentes.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal1-tf-4",
+      "question": "Pela Bíblia sabemos que Deus não fez um inferno para o homem.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal1-tf-5",
+      "question": "Segundo a Bíblia o homem não é salvo pela fé.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal1-tf-6",
+      "question": "O regenerar significa uma reforma total realizada no homem.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal1-tf-7",
+      "question": "É certo que os filhos de um casal salvo nascem sendo filhos de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal1-tf-8",
+      "question": "Podemos afirmar que o homem salvo precisa praticar boas obras.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal1-tf-9",
+      "question": "A Bíblia afirma ser bom que os filhos de Deus sejam santos.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal1-tf-10",
+      "question": "Através da morte física o corpo de um homem salvo é decomposto e não glorificado.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "dsal1-mc-1",
+      "question": "Significado literal da palavra “metanóia”-",
+      "options": [
+        "Arrependimento",
+        "Mudança de direção",
+        "Mudança de mente",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "dsal1-mc-2",
+      "question": "Não comprova o novo nascimento -",
+      "options": [
+        "Batismo no corpo de Cristo",
+        "Batismo nas águas",
+        "Batismo com Espírito Santo",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "dsal1-mc-3",
+      "question": "Fala da salvação com mais profundidade —",
+      "options": [
+        "Mateus",
+        "Marcos",
+        "Lucas",
+        "João"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "dsal1-mc-4",
+      "question": "Nos escritos originais a palavra “Soter” com referência a Jesus é encontrada —",
+      "options": [
+        "Uma vez",
+        "Vinte e quatro vezes",
+        "Nenhuma vez",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "dsal1-mp-1",
+      "left": "Condição essencial para ver Deus",
+      "right": "Santificação"
+    },
+    {
+      "id": "dsal1-mp-2",
+      "left": "Recebe no ato da regeneração",
+      "right": "Santificação instantânea"
+    },
+    {
+      "id": "dsal1-mp-3",
+      "left": "Palavra, oração, sangue de Jesus",
+      "right": "Meios de conservar a santidade"
+    },
+    {
+      "id": "dsal1-mp-4",
+      "left": "Símbolo da santificação",
+      "right": "Pia de cobre"
+    },
+    {
+      "id": "dsal1-mp-5",
+      "left": "Separado para uso do Senhor",
+      "right": "Ser santo"
+    },
+    {
+      "id": "dsal1-mp-6",
+      "left": "Exigência da presença do corpo",
+      "right": "Altar do sacrifício"
+    }
+  ]
+}

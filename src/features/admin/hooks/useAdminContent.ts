@@ -29,7 +29,7 @@ export const useAdminContent = (showToast: (msg: string, type?: 'success' | 'err
 
   const fetchLessons = useCallback(async (bookId: string) => {
     if (!bookId) return;
-    const { data } = await supabase.from('aulas').select('*, children:aulas(count)').eq('livro_id', bookId).eq('tipo', 'licao').order('ordem');
+    const { data } = await supabase.from('aulas').select('*, children:aulas(count)').eq('livro_id', bookId).order('ordem');
     if (data) setLessons(data);
   }, []);
 

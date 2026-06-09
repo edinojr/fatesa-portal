@@ -1,0 +1,134 @@
+{
+  "id": "POET_3",
+  "title": "Poéticos 1 - V3",
+  "tfQuestions": [
+    {
+      "id": "poet3-tf-1",
+      "question": "Não sendo sacerdote, Jó não poderia oferecer sacrifício pelos seus filhos.",
+      "answer": "F"
+    },
+    {
+      "id": "poet3-tf-2",
+      "question": "Entre os evangélicos há uma corrente que ensina que hoje Deus não prova seus filhos.",
+      "answer": "V"
+    },
+    {
+      "id": "poet3-tf-3",
+      "question": "Naquele dia se os filhos de Jó não estivessem numa festa eles não teriam morrido.",
+      "answer": "F"
+    },
+    {
+      "id": "poet3-tf-4",
+      "question": "Para três dos quatro amigos a doença de Jó era consequência de seus pecados.",
+      "answer": "F"
+    },
+    {
+      "id": "poet3-tf-5",
+      "question": "Jó foi “torturado” por Satanás no espírito, na alma e no corpo.",
+      "answer": "V"
+    },
+    {
+      "id": "poet3-tf-6",
+      "question": "A expressão, o “Salmista”, sempre faz referência a Davi.",
+      "answer": "F"
+    },
+    {
+      "id": "poet3-tf-7",
+      "question": "Foi pelo fato de ser rei em Israel que Davi se tornou conhecido por todas as nações.",
+      "answer": "F"
+    },
+    {
+      "id": "poet3-tf-8",
+      "question": "A Teoria Evolucionista está entre as “vãs imaginações” dos homens.",
+      "answer": "V"
+    },
+    {
+      "id": "poet3-tf-9",
+      "question": "Com base nos “Salmos Imprecatórios”, hoje não devemos orar pelos nossos inimigos.",
+      "answer": "F"
+    },
+    {
+      "id": "poet3-tf-10",
+      "question": "Não podemos afirmar, com segurança, o sentido da expressão “selá”.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "poet3-mc-1",
+      "question": "Não é um instrumento usado por Deus -",
+      "options": [
+        "Provação",
+        "Tentação",
+        "Correção",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "poet3-mc-2",
+      "question": "Do Salmo 46 podemos entender -",
+      "options": [
+        "O que Deus faz",
+        "Onde está Deus",
+        "O que Deus é",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "poet3-mc-3",
+      "question": "Personagem central do Livro de Jó -",
+      "options": [
+        "Jó",
+        "Deus",
+        "Satanás",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "poet3-mc-4",
+      "question": "Tipo de Salmo cantado pelos peregrinos -",
+      "options": [
+        "Salmo de peregrinação",
+        "Salmo dos degraus",
+        "Salmo de romagem",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "poet3-mp-1",
+      "left": "Salmo Messiânico",
+      "right": "Salmo 22"
+    },
+    {
+      "id": "poet3-mp-2",
+      "left": "Salmo de Peregrinação",
+      "right": "Salmo 122"
+    },
+    {
+      "id": "poet3-mp-3",
+      "left": "Salmo Histórico",
+      "right": "Salmo 78"
+    },
+    {
+      "id": "poet3-mp-4",
+      "left": "Salmo da natureza",
+      "right": "Salmo 8"
+    },
+    {
+      "id": "poet3-mp-5",
+      "left": "Salmo de Súplica",
+      "right": "Salmo 31"
+    },
+    {
+      "id": "poet3-mp-6",
+      "left": "Salmo Imprecatório",
+      "right": "Salmo 109"
+    }
+  ]
+}

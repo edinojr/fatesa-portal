@@ -1,0 +1,134 @@
+{
+  "id": "ESCA_2",
+  "title": "Escatologia Bíblica - V2",
+  "tfQuestions": [
+    {
+      "id": "esca2-tf-1",
+      "question": "Os “últimos dias” preditos pelo profeta Joel começaram ser contados a partir do Dia de Pentecostes.",
+      "answer": "V"
+    },
+    {
+      "id": "esca2-tf-2",
+      "question": "Como ao homem está ordenado morrer uma vez, não é bíblico falar em segunda morte.",
+      "answer": "F"
+    },
+    {
+      "id": "esca2-tf-3",
+      "question": "No Antigo Testamento todos os mortos, de forma consciente, desciam ao “Hades” ou “Sheol”",
+      "answer": "V"
+    },
+    {
+      "id": "esca2-tf-4",
+      "question": "Todos os que foram ressuscitados antes da ressurreição de Jesus tornaram a morrer.",
+      "answer": "V"
+    },
+    {
+      "id": "esca2-tf-5",
+      "question": "Embora membro de uma igreja, sem o novo nascimento, não há pecado de apostasia.",
+      "answer": "V"
+    },
+    {
+      "id": "esca2-tf-6",
+      "question": "Após o arrebatamento todos os salvos serão julgados diante do Tribunal de Cristo.",
+      "answer": "F"
+    },
+    {
+      "id": "esca2-tf-7",
+      "question": "Israel fará uma aliança como o Anticristo e o receberá como sendo o Messias.",
+      "answer": "V"
+    },
+    {
+      "id": "esca2-tf-8",
+      "question": "A expressão “príncipe que há de vir’, citada por Daniel, refere-se a Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "esca2-tf-9",
+      "question": "No milênio Jesus cumprirá seus três ministérios – profeta, sacerdote e rei.",
+      "answer": "F"
+    },
+    {
+      "id": "esca2-tf-10",
+      "question": "Podemos afirmar, com segurança, que Deus jamais lançará um filho seu no inferno.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "esca2-mc-1",
+      "question": "Morte, literalmente, significa -",
+      "options": [
+        "Dormir no Senhor",
+        "Separação",
+        "Descansar",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "esca2-mc-2",
+      "question": "No Dia da Revelação, em glória, Jesus virá -",
+      "options": [
+        "Num cavalo branco",
+        "Com milhares dos seus santos",
+        "Executar juízo",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esca2-mc-3",
+      "question": "Templo profanado referido por Jesus.",
+      "options": [
+        "O existente no seu tempo",
+        "O de Salomão",
+        "O da grande tribulação",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "esca2-mc-4",
+      "question": "No milênio, Satanás estará -",
+      "options": [
+        "No “lago de fogo”",
+        "No “hades”",
+        "No “abismo”",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "esca2-mp-1",
+      "left": "Aquecimento da terra",
+      "right": "Sinais na área da natureza"
+    },
+    {
+      "id": "esca2-mp-2",
+      "left": "Violência quase incontrolável",
+      "right": "Sinais na área social"
+    },
+    {
+      "id": "esca2-mp-3",
+      "left": "Falsos cristos e falsos profetas",
+      "right": "Sinais na área religiosa"
+    },
+    {
+      "id": "esca2-mp-4",
+      "left": "Desenvolvimento espantoso",
+      "right": "Sinais na área da ciência"
+    },
+    {
+      "id": "esca2-mp-5",
+      "left": "Figueira carregada de folhas",
+      "right": "Israel no tempo de Jesus"
+    },
+    {
+      "id": "esca2-mp-6",
+      "left": "Figueira ainda sem frutos",
+      "right": "Israel hoje"
+    }
+  ]
+}

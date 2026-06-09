@@ -1,0 +1,134 @@
+{
+  "id": "PM_2",
+  "title": "Profetas Maiores - V2",
+  "tfQuestions": [
+    {
+      "id": "pm2-tf-1",
+      "question": "A Bíblia fala de uma profecia de Enoque antes do dilúvio que ainda não se cumpriu",
+      "answer": "V"
+    },
+    {
+      "id": "pm2-tf-2",
+      "question": "No Antigo Testamento, entre os judeus, não encontramos profetiza e nem sacerdotisa.",
+      "answer": "F"
+    },
+    {
+      "id": "pm2-tf-3",
+      "question": "No sentido literal a expressão “um menino nos nasceu” falava do nascimento de Ezequias.",
+      "answer": "V"
+    },
+    {
+      "id": "pm2-tf-4",
+      "question": "Para os judeus o capítulo 53 de Isaías fala da Nação de Israel.",
+      "answer": "V"
+    },
+    {
+      "id": "pm2-tf-5",
+      "question": "Jeremias tornou-se um profeta muito popular e conquistou muitos amigos.",
+      "answer": "F"
+    },
+    {
+      "id": "pm2-tf-6",
+      "question": "É certo que o Livro de Lamentações foi escrito numa caverna onde Jeremias estava refugiado",
+      "answer": "F"
+    },
+    {
+      "id": "pm2-tf-7",
+      "question": "Deus avisou Ezequiel das dificuldades e da rejeição de sua mensagem.",
+      "answer": "V"
+    },
+    {
+      "id": "pm2-tf-8",
+      "question": "A visão do vale dos ossos secos visto por Ezequiel ainda está em andamento.",
+      "answer": "V"
+    },
+    {
+      "id": "pm2-tf-9",
+      "question": "É certo que na vida de Daniel não houve nenhuma falha ou pecado.",
+      "answer": "F"
+    },
+    {
+      "id": "pm2-tf-10",
+      "question": "No segundo sonho o rei sabia ter sonhado e lembrava sobre o que sonhara.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pm2-mc-1",
+      "question": "Destruiu o Reino de Israel -",
+      "options": [
+        "Babilônia",
+        "Assíria",
+        "Egito",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "pm2-mc-2",
+      "question": "Não estava na fornalha de fogo ardente -",
+      "options": [
+        "Daniel",
+        "Sadraque",
+        "Abede-Nego",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "pm2-mc-3",
+      "question": "Último profeta da Dispensação da Lei",
+      "options": [
+        "João Batista",
+        "Lucas",
+        "Ágabo",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "pm2-mc-4",
+      "question": "Segundo profetizou Isaías, Jesus viria—",
+      "options": [
+        "Como conquistador",
+        "Com poder e grande glória",
+        "Como raiz de uma terra seca",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pm2-mp-1",
+      "left": "Um grande vale",
+      "right": "Toda terra"
+    },
+    {
+      "id": "pm2-mp-2",
+      "left": "Ossos muito secos",
+      "right": "Judeus espalhados pela terra"
+    },
+    {
+      "id": "pm2-mp-3",
+      "left": "Casa deserta",
+      "right": "Israel depois do ano 70"
+    },
+    {
+      "id": "pm2-mp-4",
+      "left": "Ossos se juntando",
+      "right": "Retorno dos judeus"
+    },
+    {
+      "id": "pm2-mp-5",
+      "left": "Uma figueira sem frutos",
+      "right": "Israel hoje"
+    },
+    {
+      "id": "pm2-mp-6",
+      "left": "Uma figueira com muitos frutos",
+      "right": "Israel no milênio"
+    }
+  ]
+}

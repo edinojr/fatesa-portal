@@ -1,0 +1,134 @@
+{
+  "id": "EVAN_3",
+  "title": "Os Evangelhos - V3",
+  "tfQuestions": [
+    {
+      "id": "evan3-tf-1",
+      "question": "Pela Bíblia sabemos que os magos eram três e que se chamavam Gaspar, Melchior e Baltazar.",
+      "answer": "F"
+    },
+    {
+      "id": "evan3-tf-2",
+      "question": "Amar o próximo e aborrecer o inimigo não estava na Lei de Moisés.",
+      "answer": "V"
+    },
+    {
+      "id": "evan3-tf-3",
+      "question": "O Profeta Isaías profetizou que a glória do segundo templo seria maior que a do primeiro.",
+      "answer": "F"
+    },
+    {
+      "id": "evan3-tf-4",
+      "question": "Na Parábola dos Dois Filhos, o segundo obedeceu a ordem dada pelo pai.",
+      "answer": "F"
+    },
+    {
+      "id": "evan3-tf-5",
+      "question": "Sendo a lepra uma doença contagiosa, Jesus nunca colocou sua mão num leproso.",
+      "answer": "F"
+    },
+    {
+      "id": "evan3-tf-6",
+      "question": "Não foi o endemoninhado quem falou com Jesus, mas, sim, os demônios.",
+      "answer": "V"
+    },
+    {
+      "id": "evan3-tf-7",
+      "question": "A circuncisão era feita no oitavo dia e a apresentação no quadragésimo.",
+      "answer": "V"
+    },
+    {
+      "id": "evan3-tf-8",
+      "question": "Jesus não afirmou que uma vara que dá pouco fruto deve ser cortada.",
+      "answer": "V"
+    },
+    {
+      "id": "evan3-tf-9",
+      "question": "Jesus aceitou o convite de seus irmãos para ir com eles a Jerusalém.",
+      "answer": "F"
+    },
+    {
+      "id": "evan3-tf-10",
+      "question": "Na oração feita por seus discípulos nós também estávamos incluídos.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "evan3-mc-1",
+      "question": "Após sua ressurreição, Jesus permaneceu na terra -",
+      "options": [
+        "Dez dias",
+        "Quarenta dias",
+        "Cinquenta dias",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "evan3-mc-2",
+      "question": "O Sinédrio era formado -",
+      "options": [
+        "Somente por sacerdotes",
+        "Por 71 membros",
+        "Só por escribas e fariseus",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "evan3-mc-3",
+      "question": "Em sua oração sacerdotal, Jesus orou —",
+      "options": [
+        "Por si mesmo",
+        "Só pelos apóstolos",
+        "Por nós, hoje",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "evan3-mc-4",
+      "question": "Dos apóstolos de Jesus, qual deles o Senhor não lavou seus pés —",
+      "options": [
+        "Judas Scariotes",
+        "Pedro",
+        "Tomé",
+        "Lavou de todos"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "evan3-mp-1",
+      "left": "Filho do Homem",
+      "right": "Jesus no Evangelho de Lucas"
+    },
+    {
+      "id": "evan3-mp-2",
+      "left": "Rejeitado pelo povo",
+      "right": "Jesus em Nazaré"
+    },
+    {
+      "id": "evan3-mp-3",
+      "left": "“Semente de Mulher”",
+      "right": "Filho do Homem"
+    },
+    {
+      "id": "evan3-mp-4",
+      "left": "Seu poder sobre a morte",
+      "right": "Naim"
+    },
+    {
+      "id": "evan3-mp-5",
+      "left": "Messias",
+      "right": "Cristo"
+    },
+    {
+      "id": "evan3-mp-6",
+      "left": "Seu poder de perdoar pecados",
+      "right": "Jesus em Cafarnaum"
+    }
+  ]
+}

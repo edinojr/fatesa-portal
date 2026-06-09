@@ -1,0 +1,1196 @@
+{
+  "id": "heresiologia",
+  "title": "Heresiologia",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os seguidores das heresias são religiosos sinceros que pensam estar servindo a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A palavra ortodoxia é encontrada poucas vezes na Bíblia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Segundo afirmou Paulo existe um lado positivo nas heresias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que Paulo foi seguidor de uma seita judaica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Numa seita sempre há seguidores sinceros que valorizam a oração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Aceitando o debate podemos, com certeza, ganhar para Jesus os seguidores de uma seita.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O hinduísmo não é apenas uma religião, mas é também uma tradição cultural.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Será falsa toda religião que não tem como fundamento as Sagradas Escrituras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "É certo que a igreja foi fundada no Calvário e inaugurada no Pentecoste.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que o maior templo da igreja até o ano 300 era o de Jerusalém.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que é necessário para a existência de uma seita",
+          "answer": "A EXISTÊNCIA DE PESSOAS QUE SEGUEM UMA HERESIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que costuma alimentar a quase totalidade das seitas",
+          "answer": "O ESPÍRITO DE CONTENDA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Ameaçava a igreja primitiva a seita dos -",
+          "options": [
+            "gnósticos",
+            "judaizantes",
+            "testemunhas de Jeová",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "O termo “católico”, no original, significa -",
+          "options": [
+            "apostólico",
+            "romano",
+            "universal",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Ortodoxia",
+          "Heresia",
+          "Denominação evangélica",
+          "Igreja",
+          "Não é um desvio do cristianismo",
+          "Neo-ortodoxia"
+        ],
+        "columnB": [
+          "necessidade de base bíblica",
+          "amor acima da verdade",
+          "chamado para fora",
+          "não é um termo bíblico",
+          "religião",
+          "igual a feitiçaria"
+        ],
+        "answers": [
+          3,
+          6,
+          4,
+          1,
+          5,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A falta de conhecimento bíblico é uma das características de um católico sincero.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A doutrina ensinada na Igreja Católica não é diferente da doutrina bíblica que ensinamos",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela doutrina ensinada na Igreja Católica Pedro foi o primeiro Papa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pela Bíblia podemos afirmar que não há nenhum indício de que Pedro esteve em Roma",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Embora crentes não podemos afirmar, com segurança, que somos salvos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "São poucas as provas bíblicas que temos sobre a existência do purgatório.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A Igreja Católica Romana não ensina mais sobre a existência do limbo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que o limbo estava onde hoje está o paraíso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Biblicamente podemos afirmar que a Igreja Católica não é uma igreja apostólica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que a Igreja Católica Romana sempre teve uma vocação histórica para o absolutismo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o sentido da expressão “Vigário de Cristo”.",
+          "answer": "SIGNIFICA “SUBSTITUTO DE CRISTO”"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantos e quais os livros acrescentados pela Igreja Católica no seu Antigo Testamento.",
+          "answer": "SETE - TOBIAS, JUDITE, SABEDORIA DE SALOMÃO, ECLESIÁSTICO, BARUQUE, 1º E 2º MACABEUS."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Segundo a Igreja Católica o sucessor de Pedro, como Papa, foi —",
+          "options": [
+            "João",
+            "Lino",
+            "Tiago",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Consolidou a doutrina da existência do purgatório —",
+          "options": [
+            "Agostinho",
+            "Paulo",
+            "Gregório",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Sustentou o direito de dar ordens aos Bispos",
+          "Consolidou a doutrina do purgatório",
+          "Aperfeiçoou a doutrina do limbo",
+          "Decretou a extinção do limbo",
+          "Instrumento de tortura criado pela Igreja Católica",
+          "Incluiu no “Canon” católico os livros apócrifos"
+        ],
+        "columnB": [
+          "Concílio de Trento",
+          "Tomás de Aquino",
+          "Leão I",
+          "“Santa Inquisição”",
+          "Gregório, o Grande",
+          "Papa Bento XVI"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo a doutrina católica o sacramento pode transmitir a graça sem fé.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Segundo a igreja católica o sacramento só tem validade quando praticado pelos bispos",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela doutrina católica através da extrema unção aplicada por um sacerdote o homem pode ser salvo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A igreja católica ensina que Jesus não é o único meio pelo qual o homem pode ser salvo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Segundo o Concílio de Trento a culpa e a pena do pecador podem ser perdoadas através da penitência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pela Bíblia somente o sangue de Jesus é que pode purificar o pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Tal como hoje o confessionário podia ser encontrado em algumas igrejas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela Bíblia a “Sagrada Tradição” é uma das fontes de revelação da vontade de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na Santa Ceia realizada na igreja primitiva todos participavam do pão e do vinho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Foi São Tomás de Aquino o criador da chamada doutrina da transubstanciação.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite como podemos afirmar que Pedro era casado.",
+          "answer": "A BÍBLIA RELATA QUE JESUS CUROU SUA SOGRA"
+        },
+        {
+          "id": "sa2",
+          "question": "No sentido literal cite o significado da palavra transubstanciação.",
+          "answer": "SIGNIFICA MUDANÇA DE UMA SUBSTÂNCIA EM OUTRA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É uma unção com azeite segundo a Igreja Católica —",
+          "options": [
+            "o batismo",
+            "a extrema unção",
+            "o casamento",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Tem uma origem incerta -",
+          "options": [
+            "a hóstia",
+            "o celibato",
+            "a missa",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Uma forma de salvação, sem Jesus",
+          "Simboliza o batismo com Espírito Santo",
+          "Eucaristia",
+          "Sacramento conferido pelo bispo",
+          "Considerado igual as Escrituras",
+          "Proibição de casamento"
+        ],
+        "columnB": [
+          "santas ordens",
+          "batismo católico",
+          "celibato",
+          "tradição",
+          "Santa Ceia",
+          "crisma"
+        ],
+        "answers": [
+          4,
+          1,
+          6,
+          5,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo afirmou Pedro o destino final dos idólatras será o “lago de fogo”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar ser a idolatria a mais detestável de todas as heresias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na língua portuguesa não é difícil separar o sentido das expressões adoração e veneração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Na prática podemos afirmar que os católicos veneram, mas não adoram os ídolos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo que para todos os católicos não é difícil separar o sentido das expressões dulia e latria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A expressão “vindo a plenitude dos tempos” refere-se ao nascimento de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A escolha de Maria foi a mais difícil de todas as escolhas feitas por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Biblicamente, podemos afirmar, com certeza, que Maria está hoje no paraíso.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A “mariolatria” foi uma ideia que a Igreja Católica Romana copiou do paganismo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A assunção de Maria ao céu foi decretada pelo Papa Pio XII.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem afirmou ser a idolatria contaminadora —",
+          "answer": "EZEQUIEL"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem introduziu na igreja o culto aos santos",
+          "answer": "PAPA BONIFÀCIO IV"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Declarou que os ídolos são deuses estranhos -",
+          "options": [
+            "Paulo",
+            "Davi",
+            "Jacó",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Concílio que declarou Maria como mãe de Deus—",
+          "options": [
+            "de Niceia",
+            "de Éfeso",
+            "de Trento",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Maria declarada “mãe de Deus”",
+          "Instituído o culto a Maria",
+          "Maria declarada Imaculada Conceição",
+          "Declarou a Assunção de Maria",
+          "Proclamada a virgindade de Maria",
+          "Instituiu a reza da “Ave Maria”"
+        ],
+        "columnB": [
+          "Concílio de Latrão",
+          "Papa Pio IX",
+          "Concílio de Éfeso",
+          "Papa João XXII",
+          "Papa Pio XII",
+          "Concílio de Niceia"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O espiritismo, em relação ao cristianismo, é, com certeza, uma heresia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar ter sido o Brasil o berço onde nasceu o espiritismo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O Brasil é hoje, lamentavelmente, o líder mundial do espiritismo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A música, no Brasil, não sofreu nenhuma influência ligada ao espiritismo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo não existir diferença entre o espiritismo Kardecista e a Umbanda.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao longo do tempo o ensino da reencarnação tem sido amado, detestado e temido.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pela doutrina espírita a reencarnação só acontece entre os humanos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Reencarnação e invocação aos mortos são as duas principais colunas da doutrina espírita.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sendo proibida pela Bíblia então é certo que a reencarnação existe.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Que Saul seria derrotado e seus filhos mortos qualquer um poderia ter afirmado.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar os dois princípios básicos da doutrina espírita.",
+          "answer": "REENCARNAÇÃO E COMUNICAÇÃO COM OS MORTOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem foi o fundador da Legião da Boa Vontade — LBV",
+          "answer": "ALZIRO ZARUR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Fundador do primeiro centro espírita do Brasil -",
+          "options": [
+            "Allan Kardec",
+            "Chico Xavier",
+            "Luís Olímpio",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Ensinava sobre a reencarnação em Israel —",
+          "options": [
+            "os saduceus",
+            "os essênios",
+            "os escribas",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Adoram Satanás de maneira disfarçada",
+          "Considerada como quarta revelação",
+          "Primitiva religião africana na forma mais pura",
+          "Sincretismo religioso derivado do candomblé",
+          "Espiritismo cientifico",
+          "Elevação do espírito até a iluminação"
+        ],
+        "columnB": [
+          "a macumba",
+          "candomblé",
+          "Quimbanda",
+          "Teosofismo",
+          "Umbanda",
+          "alto espiritismo"
+        ],
+        "answers": [
+          4,
+          1,
+          3,
+          6,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Para o mormonismo a única fonte de revelação é a Bíblia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Os mórmons possuem no Brasil mais de 650 templos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Por causa de suas visões Joseph Smith foi desprezado pelos religiosos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para traduzir a escritura das placas de ouro Joseph Smith precisou estudar a língua egípcia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Uma das doutrinas fundamentais do mormonismo é a dos sacerdócios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Hoje, na igreja de Cristo, o único Sumo Sacerdote é Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Foi através de revelações que Joseph Smith entendeu ser possível a poligamia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Joseph Smith foi preso, julgado, condenado a morte e executado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os mórmons ensinam que Jesus era casado e polígamo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para o mormonismo Deus foi o que o homem é agora.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem Joseph Smith declarou ter visto em sua segunda visão.",
+          "answer": "O ANJO MORÔNI"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que os Mórmons dizem sobre sua igreja.",
+          "answer": "DIZEM QUE É A “IGREJA RESTAURADA”, PORTANTO, A ÚNICA VERDADEIRA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Ainda adolescente, cite o que Joseph Smith afirmou ter visto -",
+          "options": [
+            "o anjo Gabriel",
+            "dois anjos",
+            "o Pai e o Filho",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Sucessor de Joseph Smith —",
+          "options": [
+            "Coldry",
+            "Brigham Young",
+            "William Kemyonm",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Levou uma mensagem divina a Smith",
+          "Conferiu a Smith e Coldery o Sacerdócio Arônico",
+          "Conferiu a Smith o Sacerdócio de Melquisedeque",
+          "Estado Americano onde os Mórmons se fixaram",
+          "Local onde existe um Templo Mórmon",
+          "Primeiro Templo Mórmon"
+        ],
+        "columnB": [
+          "Pedro, Tiago e João",
+          "São Paulo",
+          "Anjo Morôni",
+          "Salty Lake City",
+          "Utá",
+          "João Batista"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar ser “As Testemunhas de Jeová” uma seita anticristã.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Segundo as Testemunhas de Jeová somente elas e os adventistas é que serão salvos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os pais de Charles Russel pertenciam à Igreja Presbiteriana.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A publicação principal das “Testemunhas de Jeová” é a “A Sentinela”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Após a morte de Charles Russel a chamada Sociedade passou a ter presidente vitalício.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em 1874, pela previsão de Charles Russel, Jesus viria em 1914.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Russel tendo falhado, Rutherford, seu sucessor, não quis fazer mais novas previsões",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "“As Testemunhas de Jeová” substituíram, em sua Bíblia, a palavra cruz por estaca.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para “as Testemunhas de Jeová” Jesus é a primeira criatura de Deus, portanto, não é Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para “As Testemunhas de Jeová” o céu é limitado e somente 144 mil humanos estarão lá.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas e quais os nomes das esposas de Russell.",
+          "answer": "APENAS UMA — MARIA FRANCES ACKLEY"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual é a Bíblia oficial das “Testemunhas de Jeová”.",
+          "answer": "A TRADUÇÃO CHAMADA “NOVO MUNDO”"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Possui alguma identidade com “As Testemunhas de Jeová” -",
+          "options": [
+            "o mormonismo",
+            "o espiritismo",
+            "o adventismo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Igreja onde Russel foi consagrado a pastor",
+          "options": [
+            "Presbiteriana",
+            "Adventista",
+            "Congregacional",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Sucessor de Russel",
+          "Primeiro Presidente vitalício da Sociedade",
+          "Inventor da Trindade, segundo “As testemunhas de Jeová”",
+          "Segundo “As Testemunhas de Jeová”, não existe",
+          "No céu, segundo “As Testemunhas de Jeová”",
+          "Viverão, eternamente, na terra"
+        ],
+        "columnB": [
+          "a “grande multidão”",
+          "Tertuliano",
+          "inferno",
+          "os ungidos",
+          "Rutherford",
+          "Nathan Knorr"
+        ],
+        "answers": [
+          6,
+          3,
+          4,
+          5,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A Teologia da Prosperidade trata-se de um sincretismo religioso sem fundamento bíblico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A Teologia da prosperidade é mais uma inovação criada por alguns teólogos da atualidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Para os amigos de Jó existe uma relação de barganha entre Deus e o homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para Elifaz, embora Jó fosse inocente e sincero, devia ter cometido algum pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Entre a teologia dos amigos de Jó e a de Paulo há alguns pontos de identidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Para Bildade o ímpio nunca teria estabilidade e iria de mal a pior.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Jó não podia explicar seu sofrimento, mas sabia que era a mão de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Curar a abençoar sem salvação não é um desejo de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para um crente rico é muito difícil ser sincero e temente a Deus",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "A bênção e a maldição não está nos bens, mas, na forma de fazer uso deles.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar como a Teologia da Prosperidade é também conhecida.",
+          "answer": "CONFISSÃO POSITIVA"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite, no Antigo Testamento, três personagens bíblicos que eram fiéis e muito ricos",
+          "answer": "ABRAÃO, JÓ E SALOMÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A Teologia da Prosperidade prega -",
+          "options": [
+            "uma mensagem materialista",
+            "o bem estar do corpo",
+            "a aquisição de riquezas",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A Igreja de Laulicéia, segundo os “Amigos de Jó”, era -",
+          "options": [
+            "uma igreja abençoada",
+            "uma igreja morta",
+            "uma igreja não evangélica",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Cria que o pecado era a causa da doença de Jó",
+          "Afirmou que Deus matou os filhos de Jó",
+          "Não cria num Deus mercantilista",
+          "Um homem rico em gado, prata e ouro",
+          "Não admitiu estar em pecado",
+          "Declarou não ter prata e nem ouro"
+        ],
+        "columnB": [
+          "Pedro",
+          "Abraão",
+          "Elifaz",
+          "Jó",
+          "Paulo",
+          "Bildade"
+        ],
+        "answers": [
+          6,
+          4,
+          1,
+          5,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A Nova Era é um movimento cultural sem conteúdo religioso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A divinização do homem é o objetivo final da Nova Era.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O homem pode salvar-se a si mesmo, não necessitando de um salvador, afirma a Nova Era.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O culto religioso da Nova Era é liturgicamente organizado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A reencarnação e todos os meios de adivinhação não fazem parte da doutrina da Nova Era.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A Nova Era é também chamada de Terceiro Milênio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A doutrina da Nova Era está fundamentada na astronomia e na astrologia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que o movimento chamado de Nova Era iniciou-se na década de 60",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O deus da Nova Era é a energia mística que envolve e penetra tudo e a todos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A Nova Era não nega a existência de um homem chamado Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em relação ao homem, cite qual é o objetivo da Nova Era.",
+          "answer": "FAZER COM QUE O HOMEM OCUPE O LUGAR DE CRISTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto ao objetivo, cite o que a Nova Era diz sobre as religiões.",
+          "answer": "DIZ QUE TODAS TÊM UM OBJETIVO COMUM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A Nova Era está infiltrada na —",
+          "options": [
+            "religião",
+            "política",
+            "literatura",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Fundador da Nova Era -",
+          "options": [
+            "Helena Blavatski",
+            "Maitreia",
+            "não houve fundador",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Era caracterizada pela força bruta",
+          "Surgimento do povo hebreu",
+          "Implantação do cristianismo",
+          "Divinização do homem",
+          "Deus da Nova Era",
+          "Jesus da Nova Era"
+        ],
+        "columnB": [
+          "Era de Aquário",
+          "um grande mestre",
+          "Era de Carneiro",
+          "energia mística",
+          "Era de Peixes",
+          "Era de Touro"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "De forma inconsciente muitos filhos de Deus estão divulgando a Nova Era.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Através da simbologia mística é possível avocar os seres espirituais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Podemos afirmar que um símbolo não tem nenhum valor espiritual.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para a Nova Era a fita entrelaçada nada tem a ver com a doutrina espírita.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para Nova Era a cruz virada para baixo simboliza uma zombaria da cruz de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "O projeto da Nova Era visa formar na terra uma única e grande família.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Projeto da Nova era de formar uma “Nova Ordem Mundial” não contraria à Bíblia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O projeto da Nova Era é o de acabar com todas as religiões.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Consciente ou não todos os meios de comunicação estão colaborando com a Nova Era.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sabemos, pela Bíblia, que no plano de Deus existe uma nova era preparada para a humanidade.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o significado do símbolo do unicórnio.",
+          "answer": "LIBERDADE E PROMISCUIDADE SEXUAL"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite porque a Nova Era faz uso de muitos símbolos.",
+          "answer": "É UMA MANEIRA DE IDENTIFICAR SEU PROJETO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Uma palavra muito popular no movimento Nova Era -",
+          "options": [
+            "holística",
+            "cosmos",
+            "energia",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A Nova Era deseja convergir para si—",
+          "options": [
+            "o cristianismo",
+            "o judaísmo",
+            "as religiões orientais",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "A grande mente universal",
+          "Maitreya",
+          "Schambalá",
+          "Holístico",
+          "Terra",
+          "Colônia global"
+        ],
+        "columnB": [
+          "o mundo",
+          "deusa mãe",
+          "homem integrado ao cosmos",
+          "reino onde Lúcifer habita",
+          "cognome dado a Lúcifer",
+          "Cristo na Nova Era"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    }
+  ]
+}

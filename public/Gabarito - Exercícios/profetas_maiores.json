@@ -1,0 +1,1196 @@
+{
+  "id": "profetas-maiores",
+  "title": "Profetas Maiores",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Devido a importância de suas mensagens os profetas foram divididos em maiores e menores",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Somente Deus é quem pode avaliar o trabalho realizado por seus servos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os profetas não aceitavam que os chamassem de homens de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo a Bíblia a função dos profetas era a de falar sobre acontecimentos futuros.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os profetas, na sua maioria, dedicavam-se a cumprir o ministério para o qual foram chamados.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar ter sido Abraão um profeta da Palavra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A Bíblia fala de uma profecia de Enoque antes do dilúvio que ainda não se cumpriu.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Quanto ao exercício ministerial é fácil diferenciar o trabalho do sacerdote e o do profeta.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A expressão “filhos dos profetas” deixa claro que todos os profetas eram casados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na Bíblia os livros dos profetas não estão colocados na ordem cronológica.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos foram os profetas da Palavra.",
+          "answer": "SOMENTE DEUS SABE QUANTOS FORAM"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem declarou que Abraão era profeta",
+          "answer": "O PRÓPRIO DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Foi um profeta da Palavra –",
+          "options": [
+            "Elias",
+            "Obadias",
+            "Naum",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Foi uma sacerdotisa -",
+          "options": [
+            "Hulda",
+            "Débora",
+            "Miriã",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Profetizou no reino de Acabe",
+          "Profeta contemporâneo de Salomão",
+          "Profeta contemporâneo de Davi",
+          "Um profeta menor",
+          "Profetiza e juíza",
+          "Profetisa citada no Novo Testamento"
+        ],
+        "columnB": [
+          "Obadias",
+          "Micaías",
+          "Débora",
+          "Aías",
+          "Ana",
+          "Natã"
+        ],
+        "answers": [
+          4,
+          1,
+          5,
+          2,
+          6,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Isaías era filho do profeta Amós que profetizou nos dias do Rei Uzias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No dia que morreu o Rei Uzias, Deus chamou Isaías para o ministério profético.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O Rei Uzias é um exemplo de um homem que começou bem, mas terminou mal.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Isaías profetizou no Reino de Judá e também no Reino de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Embora sendo o Rei de Judá, Ezequias pediu a ajuda do Profeta Isaías.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Isaías é chamado de evangelista do Antigo Testamento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo alguns teólogos o Livro de Isaías não foi escrito por um só autor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na segunda parte de seu livro, Isaías relata a queda do Reino do Norte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Com muita coragem Isaías denunciou os pecados de Judá e de Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na expressão “tirarei a sua sede”, Deus fala da retirada de sua proteção a Israel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar os nomes dos reis de Judá com os quais Isaías conviveu durante seu ministério.",
+          "answer": "UZIAS, JOTÃO, ACAZ, EZEQUIAS E MANASSÉS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar os nomes de dois profetas que profetizaram em Israel quando Isaías profetizava em Judá.",
+          "answer": "OSÉIAS E AMÓS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Profetizou em Judá no tempo de Isaías—",
+          "options": [
+            "Oséias",
+            "Miquéias",
+            "Amós",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Sumo sacerdote que contestou o Rei Azarias",
+          "options": [
+            "Zacarias",
+            "Amasias",
+            "Azarias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pai do Profeta Isaías",
+          "Esposa do Profeta Isaías",
+          "Primo ou sobrinho do Rei Uzias",
+          "Sábio nas visões de Deus",
+          "Uzias",
+          "Filho do Rei Uzias"
+        ],
+        "columnB": [
+          "Azarias",
+          "Jotão",
+          "Zacarias",
+          "uma profetiza",
+          "Amós",
+          "Isaías"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          2,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Aconselhado por Profeta Isaías, o Rei Acaz não fez aliança com o Rei da Assiria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No sentido literal, a expressão “um menino nos nasceu”, falava do nascimento de Ezequias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sabemos pela Bíblia, que Deus nem sempre dá ciência ao homem do que ele pretende fazer.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "É impossível, hoje, localizar onde estava situada a cidade de Babilônia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em Isaías 14:12 a expressão “Estrela da manhã” refere-se a Satanás.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que o Reino do Norte, em 722 aC., foi totalmente destruído.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Tanto os filisteus como também os moabitas são descendentes de Ló.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Tiro, embora fosse apenas uma cidade, era considerada como sendo um estado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na Bíblia, a palavra “dia” nem sempre fala de um período de 24 horas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Deus atendeu a oração do Rei Ezequias e prolongou sua vida por quinze anos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Entre os capítulos 13 a 23, cite quantos foram os juízes proclamados.",
+          "answer": "DEZ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem executou a ordem de Deus no sentido de destruir Tiro.",
+          "answer": "ALEXANDRE, IMPERADOR DA GRÉCIA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Na Bíblia, a expressão “peso” pode significar —",
+          "options": [
+            "carga",
+            "oráculo",
+            "mensagem pesada",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Na expressão “Ai de Ariel”, Isaías falava sobre -",
+          "options": [
+            "a cidade de Ariel",
+            "O Reino de Judá",
+            "Jerusalém",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Fez aliança com o Rei da Assíria",
+          "Significado do termo “Babel”",
+          "Instrumento de juízo sobre Judá",
+          "Filho do Profeta Isaías",
+          "Isaías não profetizou no seu reinado",
+          "Filho de Ramalia"
+        ],
+        "columnB": [
+          "Peca",
+          "Assíria",
+          "Acáz",
+          "Jotão",
+          "confusão",
+          "Sear Jusube"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No sentido literal, ao falar do nascimento de um menino, Isaías refere-se a Ezequias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Rei Ezequias realizou em Judá uma reforma religiosa, social e econômica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Para abrigar refugiados de Israel, Ezequias construiu um novo bairro em Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A expressão “Pus o meu Espírito sobre ele” refere-se ao profeta Isaías.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O mundo estava subjugado pela Assíria quando Isaías escreveu seu livro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sabemos que Babilônia era tida como sendo difícil de ser conquistada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Senhor declarou que Israel foi vendido pelas suas próprias maldades.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que o Messias viria como sendo um grande e vitorioso conquistador.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jerusalém somente terá sua glória restituída no dia do arrebatamento da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Edom, simbolicamente, representa todas as nações inimigas de Israel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em relação aos seus deuses, cite a diferença entre todas as nações e israel.",
+          "answer": "TODAS AS NAÇÕES CARREGAVAM SEUS DEUSES; ISRAEL ERA CARREGADO POR SEU DEUS."
+        },
+        {
+          "id": "sa2",
+          "question": "Cite qual a passagem bíblica lida por Jesus na sinagoga de Nazaré.",
+          "answer": "ISAÍAS 61:1-2"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Na expression “um menino nos nasceu”, Isaías pensava estar falando—",
+          "options": [
+            "de Jesus",
+            "do filho do Rei Acaz",
+            "de Ciro",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Segundo profetizou Isaías, Jesus viria—",
+          "options": [
+            "como conquistador",
+            "com poder e grande glória",
+            "como raiz de uma terra seca",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um Rei de Israel",
+          "Avô de um Rei de Judá",
+          "Um rei conquistador",
+          "Uma região de Israel",
+          "Rei da Assíria",
+          "Objeto da esperança de Isaías"
+        ],
+        "columnB": [
+          "Ezequias",
+          "Tiglate Pileser III",
+          "Oséias, filho de Elá",
+          "Senaqueribe",
+          "Zacarias",
+          "Zebulom"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sendo filho de um sacerdote, Jeremias foi profeta e também sacerdote",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Jeremias tornou-se um profeta muito popular e conquistou muitos amigos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Com vinte anos Jeremias iniciou seu ministério no reinado do Rei Josias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "De Jeremias sabemos que ele nasceu e cresceu em Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Do Rei Josias de diz que ele fez o que era mau aos olhos do Senhor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A Bíblia afirma que Judá voltou-se para Deus, mas não com coração sincero.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Numa batalha contra o Egito, o Rei Josias foi morto por uma flecha.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora sendo um profeta, a mensagem de Jeremias foi rejeitada pelo povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A expressão “estou encerrado”, ou “recluso” nos diz que Jeremias estava preso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Através da mensagem da “botija quebrada”, Judá é chamado ao arrependimento.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas pessoas com o nome de Jeremias são citadas no Antigo Testamento.",
+          "answer": "NOVE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas maldades Deus afirmou que seu povo lhe fez",
+          "answer": "DUAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O Rei Josias começou a reinar com -",
+          "options": [
+            "20 anos",
+            "8 anos",
+            "30 anos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Rei cujo corpo não foi sepultado -",
+          "options": [
+            "Joacaz",
+            "Zedequias",
+            "Jeoaquim",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pai do Profeta Jeremias",
+          "Recebeu uma ordem de Jeremias",
+          "Cidade natal de Jeremias",
+          "Amigo de Jeremias",
+          "Profeta contemporâneo de Jeremias",
+          "Deixou de pagar tributos a Nabucodonosor"
+        ],
+        "columnB": [
+          "Gedalias",
+          "Hilquias",
+          "Obadias",
+          "Anatote",
+          "Jeoaquim",
+          "Baruque"
+        ],
+        "answers": [
+          4,
+          1,
+          5,
+          3,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O Profeta Jeremias profetizou que um rei e sua mãe seriam levados para o cativeiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Rei Joaquim foi levado cativo para a Babilônia e morreu numa prisão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O Senhor ordenou que Jeremias profetizasse primeiro contra a casa real.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Jeremias profetizou que Israel ficaria muitos dias sem rei e sem príncipe.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "As profecias de Jeremias não agradavam ao rei e nem ao povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Jeremias tinha convicção de que o desejo de Deus era o de perdoar o povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Jeremias entrou em Jerusalém levando no pescoço um jugo de ferro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Profeta Jeremias fez um comovente pedido ao Rei Zedequias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O Livro de Lamentações foi escrito por Jeremias quando estava no cativeiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Arrependido, Jeremias chorou por ter profetizado a destruição de Jerusalém.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em Israel cite quem poderia receber a unção.",
+          "answer": "REI, SACERDOTE E PROFETA"
+        },
+        {
+          "id": "sa2",
+          "question": "Segundo a tradição judaica, cite como e onde Jeremias morreu",
+          "answer": "FOI APEDREJADO NO EGITO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A mensagem de Jeremias falava de -",
+          "options": [
+            "arrependimento",
+            "perdão",
+            "mudança de vida",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "No Egito, Jeremias habitou -",
+          "options": [
+            "no Cairo",
+            "em Mênfis",
+            "em Táfnis",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Rei levado cego para Babilônia",
+          "Um falso profeta",
+          "Também chamado Jeconias",
+          "Outro nome do Rei Zedequias",
+          "Afirmou que o cativeiro duraria 70 anos",
+          "Assassinou o governador Gedalias"
+        ],
+        "columnB": [
+          "Hananias",
+          "Metanias",
+          "Ismael",
+          "Zedequias",
+          "Rei Joaquim",
+          "Jeremias"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não podemos afirmar, com segurança, que Ezequiel era casado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Deus advertiu Ezequiel das dificuldades e da rejeição de sua mensagem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "É certo que todas as profecias de Ezequiel em relação a Israel já se cumpriram.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Apesar de seus esforços, Ezequiel não conseguiu evitar a destruição de Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para um povo que havia perdido tudo no cativeiro foi muito bom ouvir falar do amor de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Hoje, a expressão “comer o livro” deve ser entendida como simbólica e não literal",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O cativeiro foi o remédio ministrado por Deus para curar o seu povo da idolatria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Mesmo o povo estando no cativeiro, a glória de Deus permaneceu em Jerusalém",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Estando Jeremias em Jerusalém e Ezequiel em Babilônia, houve contradição em suas profecias",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Deus anunciou a Ezequiel a morte de sua esposa e o proibiu de chorar por ela",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Durante a infância de Ezequiel, cite qual dos Profetas Maiores profetizava em Jerusalém",
+          "answer": "JEREMIAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar onde estava Ezequiel e qual sua idade quando foi chamado para o ministério profético",
+          "answer": "ESTAVA EM BABILÔNIA E SUA IDADE ERA TRINTA ANOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Ezequiel foi levado para o cativeiro com a -",
+          "options": [
+            "primeira turma",
+            "segunda turma",
+            "terceira turma",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Ezequiel foi orientado por Deus a pregar -",
+          "options": [
+            "com amor",
+            "com dureza",
+            "através de símbolos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pai de Ezequiel",
+          "Residência de Ezequiel na Babilônia",
+          "Ordem dada por Deus a Ezequiel",
+          "Segunda grande águia",
+          "Sentenciado a morrer em Babilônia",
+          "Deixou o templo e a cidade de Jerusalém"
+        ],
+        "columnB": [
+          "comer um livro",
+          "Rei Zedequias",
+          "Buzi, o sacerdote",
+          "Faraó Neco",
+          "a glória de Deus",
+          "Tel Abide"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          4,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Israel e as nações vizinhas sempre tiveram um bom relacionamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No relacionamento do Rei e do Príncipe de Tiro é possível ver uma sombra de Satanás e o Anticristo",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "As mensagens agradáveis dos falsos profetas sempre foram as preferidas do povo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O desejo de Deus é que o homem se volte para ele e não matá-lo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Deus ordenou a Ezequiel não profetizar contra os pastores de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A chamada “guerra dos seis dias” foi travada entre Israel e o Egito.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Deus, sendo espírito, não poderia e não pode habitar no meio do seu povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O templo visto por Ezequiel não será o chamado templo da grande tribulação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No milênio, estando Jesus presente na terra, não haverá necessidade de um templo",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ezequiel declarou que, em suas visões, não viu templo na Jerusalém celestial.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que Deus disse que Ele será para Israel",
+          "answer": "O SEU PASTOR"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o nome pelo qual a “cidade santa” será chamada",
+          "answer": "“O SENHOR ESTÁ ALI”"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O dono da vinha, em relação à figueira, ordenou -",
+          "options": [
+            "cortar",
+            "arrancar",
+            "adubar",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Ezequiel viu saindo da entrada do templo -",
+          "options": [
+            "raios e trovões",
+            "um rio caudaloso",
+            "como um fio de água",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um grande vale",
+          "Ossos muito secos",
+          "Casa deserta",
+          "Ossos se juntando",
+          "Uma figueira sem frutos",
+          "Uma figueira com muitos frutos"
+        ],
+        "columnB": [
+          "Israel no milênio",
+          "Israel depois do ano 70",
+          "toda terra",
+          "Israel hoje",
+          "Judeus espalhados pela terra",
+          "retorno dos judeus"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que na vida de Daniel não houve nenhuma falha ou pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Como príncipe, Daniel foi em tudo fiel somente ao seu Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O Livro de Daniel é chamado de “Apocalipse do Antigo Testamento”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Por ser descendente de família real Daniel foi escolhido para servir no palácio real.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em sonho Deus revelou a Daniel seu plano de ação até o final dos tempos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "É certo que o renascimento do Império Romano ainda está por acontecer.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar, através da história, que o Império Gentílico está em decadência.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Não podemos afirmar, com segurança, a simbologia da “pedra” cortada sem o auxílio de mãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Daniel, tal como os outros três jovens hebreus, também era descendente de nobres.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Temos como certo que o quarto homem na fornalha de fogo ardente era Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite quem declarou haver em Daniel “o espírito dos deuses santos”.",
+          "answer": "UMA RAINHA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantos e quais foram os impérios mundiais anteriores ao de Babilônia.",
+          "answer": "DOIS - EGITO E ASSÍRIA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "profeta contemporâneo de Daniel e profetizava em Jerusalém -",
+          "options": [
+            "Ezequiel",
+            "Jeremias",
+            "Isaías",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Não estava na fornalha de fogo ardente -",
+          "options": [
+            "Sadraque",
+            "Daniel",
+            "Abede– Nego",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeiro imperialista",
+          "Declarou que “eu sei em quem tenho crido",
+          "Foi fiel ao seu Deus",
+          "Merodaque",
+          "Rei de Judá quando nasceu Daniel",
+          "Guerreiro famoso que morreu em Babilônia"
+        ],
+        "columnB": [
+          "Josias",
+          "Alexandre",
+          "Ninrode",
+          "Paulo",
+          "Marduque",
+          "Hananias"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os adivinhos declararam que não podiam, por nenhum meio, revelar o sonho do rei.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Ao receber, de Deus a revelação do sonho de Nabucodonosor, Daniel apressou-se em revela-la ao rei.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A história não registrou nenhum Imperador da Babilônia com o nome de Belsazar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Ao jovem Daniel, Deus deu a Belsazar a interpretação de sua visão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O prestígio de Daniel diante do rei provocou a inveja dos demais príncipes do reino.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Embora sendo um estadista, Daniel conservou o costume de orar três vezes ao dia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "É certo que os fatos históricos não estão em ordem cronológica no Livro de Daniel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "As 70 semanas de Daniel devem ser consideradas no sentido literal e não simbólico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na primeira ressurreição não haverá a ressurreição dos mortos ímpios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "As profecias escritas por Daniel seriam para aqueles que viveriam no tempo do fim.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Escrevendo a todos os povos, cite como Nabucodonosor se referiu a Deus",
+          "answer": "REFERIU-SE COMO SENDO DEUS, O ALTÍSSIMO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite que espécie de sentimento os “príncipes” e os “presidentes” tiveram em relação a revelação de Daniel",
+          "answer": "INVEJA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Belsazar era no Reino -",
+          "options": [
+            "Imperador",
+            "neto de Nabucodonosor",
+            "filho de Ciro",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Daniel era um homem -",
+          "options": [
+            "leal",
+            "íntegro",
+            "fiel",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Rei de todos os povos, nações e línguas",
+          "Teve dificuldades para revelar o sonho do rei",
+          "Rei de Babilônia, filho de Nabucodonosor",
+          "Falou sobre o filho e o neto de Nabucodonosor",
+          "Bebeu vinho nos vasos sagrados",
+          "Afirmou ser Daniel “mui amado” por Deus"
+        ],
+        "columnB": [
+          "Jeremias",
+          "Anjo Gabriel",
+          "Daniel",
+          "Belsazar",
+          "Nabonido",
+          "Nabucodonosor"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    }
+  ]
+}

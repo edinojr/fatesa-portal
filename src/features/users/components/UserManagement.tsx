@@ -467,7 +467,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: '1rem',
                     marginBottom: '1.5rem', padding: '1rem 1.5rem',
-                    background: 'rgba(156, 39, 176, 0.1)',
+                    background: 'rgba(0, 86, 179, 0.1)',
                     borderRadius: '12px', borderLeft: '4px solid var(--primary)'
                   }}>
                     <GraduationCap size={22} color="var(--primary)" />

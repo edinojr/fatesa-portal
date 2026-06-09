@@ -1,0 +1,1196 @@
+{
+  "id": "hist-igreja",
+  "title": "História da Igreja",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sendo a história uma ciência, é certo não haver nela interesse ao estudante da Bíblia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A história vai sendo escrita em obediência ao compasso marcado por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Conhecer a história é bom, mas nada acrescenta no fortalecimento da fé.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O primeiro sermão de Jesus fortaleceu a esperança dos judeus sobre a vinda do Messias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Jesus deixou claro que a base sobre a qual Seu reino estaria apoiado era a fé.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Nem sempre os profetas conseguiam entender suas próprias profecias.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Para saber o que os homens pensavam dele, Jesus interrogou seus discípulos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "\"Ekklesia\" por ser uma palavra grega, os discípulos tiveram dificuldade de entender o que seria a igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "No sentido literal, podemos afirmar não ser Cristo o nosso redentor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A igreja é, ao mesmo tempo, um organismo e uma organização.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome do historiador conhecido como sendo o \"Pai da História\".",
+          "answer": "HERÓDOTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quando e onde o projeto para a formação da igreja foi concebido.",
+          "answer": "NA ETERNIDADE, NA MENTE DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Pedra sobre a qual a igreja foi edificada -",
+          "options": [
+            "Jesus",
+            "Pedro",
+            "Espírito Santo",
+            "todas estão corretas"
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "A igreja espiritual recebeu sua natureza de -",
+          "options": [
+            "Cristo",
+            "Jesus",
+            "de Jesus Cristo",
+            "todas estão corretas"
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Oculta em mistério no Antigo Testamento",
+          "Mistério da igreja não revelado",
+          "Ocupou o lugar de Sara",
+          "Ocupou o lugar de Vasti",
+          "Fundamento da igreja",
+          "Arma usada na formação da igreja"
+        ],
+        "columnB": [
+          "Ester",
+          "Jesus",
+          "amor",
+          "Rebeca",
+          "igreja",
+          "Antigo Testamento"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Deus concedeu a Paulo o privilégio da elaboração do projeto da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Dentre os comentaristas não existe um consenso sobre a fundação da igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Biblicamente, não podemos, com certeza, identificar o fundamento sobre o qual a igreja foi edificada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sabemos, pela história, que a igreja foi constituída por dois povos, judeus e gentios",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Não existe relação entre o tabernáculo levantado no deserto e a igreja",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Quando da descida do Espírito Santo estavam reunidos no cenáculo cento e vinte discípulos",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Coube a Pedro o privilégio de abrir as portas da salvação para os judeus e para os gentios",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela história sabemos que, ao deixar a prisão, Pedro viajou para Roma.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O primeiro Concílio da Igreja, presidido por Tiago, foi realizado em Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Do ponto de vista humano, os dois principais líderes, segundo Atos dos Apóstolos, foram Pedro e Paulo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem afirmou ter assentado em Sião uma pedra.",
+          "answer": "O PRÓPRIO DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite a diferença entre a \"pedra angular\" e a \"pedra de esquina\" e a quem elas se referiam.",
+          "answer": "TRATA-SE DE UMA SÓ PEDRA REFERINDO-SE A JESUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A igreja foi inaugurada -",
+          "options": [
+            "no nascimento de Jesus",
+            "na cruz do calvário",
+            "no dia da ressurreição de Jesus",
+            "no dia de Pentecostes"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Pela Bíblia sabemos que Pedro -",
+          "options": [
+            "tem as chaves do céu",
+            "é a pedra fundamental da igreja",
+            "foi o primeiro Papa",
+            "todas estão erradas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "\"Petra\"",
+          "\"Petros\"",
+          "Chamado de Sumo Pastor",
+          "Pedro se auto-intitulou",
+          "Destaque na primeira parte de Atos",
+          "Destaque na segunda parte de Atos"
+        ],
+        "columnB": [
+          "Jesus",
+          "Pedro",
+          "uma grande pedra",
+          "Paulo",
+          "uma pequena pedra",
+          "presbítero"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Lucas, com Atos dos Apóstolos, escreveu o primeiro capítulo da história da Igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Numa igreja solidária é possível a formação de grupos dissidentes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na igreja de Jerusalém houve um grande movimento em virtude da descida do Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pedro, teve dificuldades para explicar o que estava acontecendo em Jerusalém.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os cristãos continuaram, por algum tempo, reunindo-se no templo de Salomão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em Jerusalém, era de joelho em terra que os cristãos aprendiam a Palavra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pode haver comunhão entre pessoas diferentes tanto na área social, econômica e também cultural.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Tendo condições de congregar, para aqueles que dizem ser crentes em casa, alguma coisa deve estar errada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Fazer milagres como Jesus fazia, para os discípulos é quase impossível.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Um homem paralítico havia 38 anos foi curado pela oração de Pedro e João.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Não tendo apoio das autoridades judaicas, cite o que fazia a igreja para resolver seus problemas.",
+          "answer": "ORAÇÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar as duas \"colunas\" sobre as quais apoiava-se igreja de Jerusalém.",
+          "answer": "PALAVRA DE DEUS E ORAÇÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A igreja de Jerusalém -",
+          "options": [
+            "falava de Jesus",
+            "era cheia do Espírito Santo",
+            "glorificava a Deus",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A igreja de Jerusalém era formada -",
+          "options": [
+            "por judeus e gentios",
+            "somente por judeus",
+            "por judeus e por gregos",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Aproxima o homem de Deus",
+          "Igreja evangélica",
+          "Afasta o homem de Deus",
+          "Igreja evangelística",
+          "A igreja de Jerusalém",
+          "\"Para que sejam um\""
+        ],
+        "columnB": [
+          "uma igreja que cresce",
+          "comunhão",
+          "biblicamente estruturada",
+          "evangélica e evangelística",
+          "medo",
+          "temor"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Na igreja primitiva todos os que criam passavam a habitar num mesmo lugar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Existe grande semelhança na maneira de viver entre os cristãos de Jerusalém e os comunistas hoje.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Hoje, em algumas denominações a pobreza não é vista com bons olhos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Quando Paulo esteve em Jerusalém os apóstolos o advertiram a, sempre que possível, evitar os pobres.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Vender as propriedades e entregar o dinheiro aos apóstolos era uma decisão pessoal e não uma doutrina.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ananias não era obrigado a dar, mas seria considerado um crente de pouca fé.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A morte de Ananias comprova que a igreja ainda era influenciada pela Lei de Moisés.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Em Jerusalém, além do templo, existiam centenas de sinagogas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Entre os que apedrejaram Estevão estava um jovem chamado Saulo de Tarso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sabemos, pela Bíblia, que Estêvão estará no paraíso até o dia do arrebatamento da igreja.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem realizou o sepultamento de Estêvão.",
+          "answer": "UNS VARÕES PIEDOSOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que Jesus afirmou ser o homem que ajunta riquezas e não é rico para com Deus.",
+          "answer": "LOUCO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Pedro afirmou que Ananias -",
+          "options": [
+            "deveria ter dado tudo",
+            "poderia não ter dado nada",
+            "fez bem em dar uma parte",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Em sua mensagem Estêvão demonstrou -",
+          "options": [
+            "desejo de se tornar mártir",
+            "imprudência",
+            "conhecimento das Escrituras",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Não estão no céu",
+          "Costumavam orar no templo",
+          "Mudou a história da igreja",
+          "Censurado por Pedro",
+          "Chamado de louco por Jesus",
+          "Seita do judaísmo"
+        ],
+        "columnB": [
+          "Zelotes",
+          "um homem rico",
+          "morte de Estêvão",
+          "Estêvão e Paulo",
+          "Ananias",
+          "os primeiros cristãos"
+        ],
+        "answers": [
+          6,
+          5,
+          3,
+          1,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A ordem de Jesus era evangelizar Jerusalém, depois Judeia, Samaria, até os confins do mundo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Uma igreja que ainda não evangelizou, sua cidade, não pode pensar em obra missionária.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Não ter estabelecido em Jerusalém uma base missionária foi uma falha dos apóstolos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sendo, como é, amor, Deus sempre fala à igreja com voz mansa e suave.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Por não saíram de Jerusalém, houve dificuldades para os apóstolos pregarem o evangelho.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Filipe, um dos doze apóstolos, foi quem primeiro pregou o evangelho em Samaria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "No primeiro momento os cristãos conservavam as tradições e costumes do judaísmo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Somente na casa de Cornélio houve batismo com Espírito Santo antes da salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Pela Bíblia nada sabemos sobre a aparência física de Paulo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Pela Bíblia podemos afirmar que Paulo teve uma chamada especifica para ser apóstolo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Além de Atos dos Apóstolos e de suas treze epístolas, cite onde mais podemos encontrar o nome de Paulo.",
+          "answer": "EM II PEDRO 3:15"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite onde e porque o nome de Saulo foi mudado para Paulo.",
+          "answer": "NÃO HOUVE ESSA MUDANÇA. ELE TINHA OS DOIS NOMES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Simultaneidade significa -",
+          "options": [
+            "uma coisa após outra",
+            "ao mesmo tempo",
+            "simplicidade",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Pedro viu descendo do céu -",
+          "options": [
+            "um anjo",
+            "um grande lençol",
+            "algo parecido com um lençol",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Orou em favor de Paulo",
+          "Consentiu na morte de Estêvão",
+          "Pregou o evangelho a Cornélio",
+          "Primeiro gentio salvo",
+          "Primeiros pregadores fora de Jerusalém",
+          "Permaneceram em Jerusalém"
+        ],
+        "columnB": [
+          "os apóstolos",
+          "os que fugiram de Jerusalém",
+          "Saulo",
+          "Ananias",
+          "Cornélio",
+          "Pedro"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em Antioquia os judeus de língua grega foram os primeiros a se tornarem cristãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Contrariando ordens recebidas dos apóstolos, os novos convertidos pregaram o evangelho aos gentios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Não tendo nascido em Israel, Barnabé estava familiarizado com a cultura dos gentios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Tendo sido um zeloso fariseu, Paulo teve dificuldades para conviver com os gentios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em Antioquia da Pisidia, os discípulos foram pela primeira vez chamados de cristãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sendo apenas presciente e não onisciente, Satanás errou sobre sua maneira de perseguir a igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Até o ano 64 dC. A igreja foi perseguida pelos judeus e não pelos romanos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Império Romano, sem restrições, dava liberdade religiosa a todos os povos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Num primeiro momento o cristianismo não foi reconhecido por Roma como uma religião.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Em sua segunda prisão em Roma, Paulo foi julgado, condenado e executado.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual seita Paulo foi acusado de defender.",
+          "answer": "SEITA DOS NAZARENOS"
+        },
+        {
+          "id": "sa2",
+          "question": "No mundo atual, cite como um crente pode evitar perseguições.",
+          "answer": "NÃO ANDANDO \"PIAMENTE\""
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Barnabé conheceu Paulo em -",
+          "options": [
+            "Jerusalém",
+            "Tarso",
+            "Antioquia",
+            "Chipre"
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "No Império Romano -",
+          "options": [
+            "não havia liberdade religiosa",
+            "havia liberdade religiosa plena",
+            "havia liberdade religiosa restrita",
+            "Todas estão erradas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeiro Imperador Romano",
+          "Imperador Romano citado em Lucas 3:1",
+          "Imperador Romano citado em Atos 11:28",
+          "Imperador Romano que condenou Paulo",
+          "Não foi Imperador",
+          "Tetrarca da Itureia"
+        ],
+        "columnB": [
+          "Festo",
+          "Claudio César",
+          "Júlio César",
+          "Filipe",
+          "Tibério César",
+          "Nero Claudius César"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pela Bíblia, dia pode não significar apenas um período de 24 horas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Tito destacou-se na história apenas sendo um grande general do exército romano.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Julgado pelo Imperador Domiciano, João foi condenado à prisão e viveu seus últimos dias na Ilha de Patmos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Simão, irmão de Jesus, foi crucificado durante o reinado de Trajano.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Por ordem do Imperador Sétimo Severo, Orígenes foi condenado à morte e executado em Alexandria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Após dez grandes perseguições, o número de cristãos no Império Romano era de mais de seis milhões.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "De 64 a 305 os cristãos foram perseguidos somente no governo de dez imperadores.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Os nomes de todos os mártires foram escritos nos livros da história da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A expressão \"pais da igreja\" refere-se aos obreiros que sucederam o período chamado apostólico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na conversão de Agostinho, sua mãe Mônica, foi um dos instrumentos usados por Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar, no governo de qual imperador, a igreja começou a ser perseguida pelos romanos.",
+          "answer": "IMPERADOR NERO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a consequência positiva das dez grandes perseguições.",
+          "answer": "O CRESCIMENTO DO EVANGELHO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O Imperador Domiciano era -",
+          "options": [
+            "um grande perseguidor da igreja",
+            "filho do Imperador Vespasiano",
+            "irmão do General Tito",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Uma mulher torturada até a morte durante os dez grandes perseguições -",
+          "options": [
+            "Mônica",
+            "Blandina",
+            "Joana D'Arc",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Filipe",
+          "Tiago",
+          "Judas",
+          "Matias",
+          "Paulo",
+          "André"
+        ],
+        "columnB": [
+          "apedrejado e decapitado",
+          "morto por uma lança",
+          "morto à pauladas",
+          "decapitado",
+          "enforcado",
+          "morto à flechada"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No sentido literal, a expressão ortodoxia não tem nenhuma relação com a Bíblia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A doutrina cristã, num primeiro momento, era ensinada oralmente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Podemos afirmar que heresia é doutrina de homem, sem fundamentos bíblicos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para Paulo, nas heresias não existia nada de positivo ou benéfico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O Concílio de Jerusalém não identificou sinal de heresias no ensino dos judaizantes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os gnósticos ensinavam que Deus é um Espírito essencialmente santo e perfeito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A doutrina gnóstica ensinava ser possível o contato direto entre o homem e Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela salvação e pelos pecados o castigo do corpo tem pouca utilidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sabemos, pela Bíblia, que o Apóstolo Pedro foi patriarca de Alexandria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "A Igreja Católica não reconhece o Concilio de Jerusalém como primeiro concilio ecumênico.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar por ordem de quem e quando foi convocado o Concílio de Niceia.",
+          "answer": "CONVOCADO POR ORDEM DO IMPERADOR CONSTANTINO EM 325 AC."
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o significado da palavra grega \"gnosis\".",
+          "answer": "CONHECIMENTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "No Concílio de Niceia votaram a favor de Ário.",
+          "options": [
+            "a maioria dos bispos presentes",
+            "apenas um terço dos bispos",
+            "apenas dois bispos",
+            "nenhum dos bispos"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "É uma obra da carne",
+          "options": [
+            "glutonaria",
+            "feitiçaria",
+            "heresia",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Gnosticismo",
+          "Arianismo",
+          "Marcionismo",
+          "Montanismo",
+          "Judaizantes",
+          "Sabelianismo"
+        ],
+        "columnB": [
+          "guarda do sábado e circuncisão",
+          "antipatia pelo judaísmo",
+          "modalista",
+          "Cristo foi criado por Deus",
+          "rígida disciplina moral",
+          "salvação através do conhecimento"
+        ],
+        "answers": [
+          5,
+          3,
+          6,
+          2,
+          4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo a história os pais de Constantino eram cristãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A igreja cristã desde o início de sua história tinha por costume reunir-se no domingo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Não há registro na história de que os cristãos perseguiram os pagãos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Na Parábola do Joio e do Trigo a semente é a mesma da Parábola do Semeador",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A semeadura fora de Jerusalém não foi feita, num primeiro momento, pelos apóstolos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A expressão o evangelho \"está em todo mundo\" refere-se ao Império Romano.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Ao que parece, num primeiro momento, Satanás não tinha um plano preparado contra a igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Por não ter o controle do Império Romano, Satanás não poderia usá-lo na perseguição da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A expressão \"dormindo os homens\" não se refere aos obreiros que cuidavam da igreja",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Constantino, como Imperador, sempre evitou interferir nos negócios da igreja",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que era perigoso antes e depois de Constantino.",
+          "answer": "ANTES: SER CRISTÃO - DEPOIS: SER PAGÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o resultado final da tentativa de Satanás da destruição da igreja pelo Império Romano.",
+          "answer": "O IMPÉRIO ROMANO NÃO DESTRUIU A IGREJA, MAS A IGREJA CONQUISTOU O IMPÉRIO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Entre 313 e 400 dC., a igreja cresceu -",
+          "options": [
+            "em número",
+            "em poder",
+            "em santidade",
+            "todas estão corretas"
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Com o Imperador Constantino a igreja tornou-se",
+          "options": [
+            "corrupta",
+            "rica",
+            "respeitada",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Batizou o Imperador Constantino",
+          "Obrigou por Decreto a conversão dos pagãos",
+          "O grande cristão de alma pagã",
+          "Um exemplo dos que não \"dormiram\"",
+          "Derrotado por Constantino",
+          "Perseguidor dos cristãos do Oriente"
+        ],
+        "columnB": [
+          "Justino",
+          "Constantino",
+          "Licínio",
+          "Eusébio",
+          "Imperador Teodósio",
+          "Maxêncio"
+        ],
+        "answers": [
+          4,
+          3,
+          6,
+          1,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É possível determinar, com precisão, o fim de uma \"Idade\" e começo de outra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A Idade Média ficou conhecida na história como \"A Noite dos Mil Anos\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A Igreja Católica Romana sempre respeitou as conclusões da ciência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Durante a Idade Média muitas heresias foram introduzidas na Igreja de Roma",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O cristianismo sempre foi considerado como sendo a religião oficial do Império Romano.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Na História da Igreja foram poucas as vezes que Deus não teve fiéis na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Martinho Lutero obteve o grau de Bacharel em Artes pela Universidade de Erfurt.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que indulgência é perdão, clemência é também indulto.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Intimado a comparecer em Roma, Lutero não obedeceu a ordem do papa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Apesar dos protestos de Lutero e de outros lideres, a Igreja Católica prosseguiu com suas heresias.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que era proibido na chamada \"A Noite dos Mil Anos\".",
+          "answer": "ERA PROIBIDO PENSAR, RACIOCINAR, BUSCAR A VERDADE."
+        },
+        {
+          "id": "sa2",
+          "question": "Em nome da liberdade cite o que aconteceu com o término da Idade Média.",
+          "answer": "MUITOS DESATINOS FORAM COMETIDOS, HOUVE EXAGEROS."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um hino composto por Lutero -",
+          "options": [
+            "Grandioso és tu",
+            "Torre Forte",
+            "O Amor de Deus",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Terminada a Idade Média, cresceu o",
+          "options": [
+            "materialismo",
+            "naturalismo",
+            "iluminismo",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Fundador da \"Ordem Sociedade de Jesus\"",
+          "Precursor da Reforma Protestante",
+          "Profetizou sobre Lutero",
+          "Levou Lutero para o Castelo de Wastburg",
+          "Extinguiu a ordem \"Sociedade de Jesus\"",
+          "Abandonou um a Faculdade de Direito"
+        ],
+        "columnB": [
+          "Martinho Lutero",
+          "Clemente XIV",
+          "Inácio de Loyola",
+          "John Huss",
+          "Frederico, o Sábio",
+          "John Wicliffe"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}

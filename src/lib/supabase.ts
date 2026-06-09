@@ -37,11 +37,16 @@ if (!isConfigured) {
   )
 }
 
-// Usamos um fallback que não quebra o createClient mas sinaliza o erro
-// Configuração do Cliente Supabase com Blindagem Anti-Loop
+// If not configured, fail early to avoid sending requests to a placeholder Supabase project
+if (!isConfigured) {
+  console.error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env and restart the dev server.')
+  throw new Error('Supabase not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY')
+}
+
+// Configuração do Cliente Supabase
 export const supabase = createClient(
-  isConfigured ? supabaseUrl : 'https://jhqnitdmdlbagnfwwrwx.supabase.co',
-  isConfigured ? supabaseAnonKey : 'placeholder-key',
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       persistSession: true,

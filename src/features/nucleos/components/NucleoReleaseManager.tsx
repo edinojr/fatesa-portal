@@ -102,7 +102,7 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                         {/* Aulas do Livro (Atividades e Vídeos) */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem', marginLeft: '0.5rem' }}>
                           {(livro.aulas || []).map((aula: any) => {
-                            const type = (aula.tipo === 'atividade' || aula.tipo === 'prova') ? 'atividade' : 'video';
+                            const type = (aula.tipo === 'atividade' || aula.tipo === 'exercicio' || aula.tipo === 'avaliacao' || aula.tipo === 'prova') ? 'atividade' : 'video';
                             const key = `${type}:${aula.id}`;
                             const isAulaReleased = releasedItems[key];
                             

@@ -1,0 +1,134 @@
+{
+  "id": "PM_1",
+  "title": "Profetas Maiores - V1",
+  "tfQuestions": [
+    {
+      "id": "pm1-tf-1",
+      "question": "É certo que Enoque, e não Abraão, foi o primeiro profeta mencionado na Bíblia",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-2",
+      "question": "Embora sendo rei de Judá, Ezequias pediu ajuda do Profeta Isaías.",
+      "answer": "V"
+    },
+    {
+      "id": "pm1-tf-3",
+      "question": "Sob a proteção de Deus o exército de Ezequias destruiu o exército da Assíria.",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-4",
+      "question": "Para abrigar refugiados de Israel, Ezequias construiu um novo bairro em Jerusalém.",
+      "answer": "V"
+    },
+    {
+      "id": "pm1-tf-5",
+      "question": "Deus disse a Jeremias que não ouviria sua oração se ele orasse pelo povo.",
+      "answer": "V"
+    },
+    {
+      "id": "pm1-tf-6",
+      "question": "Jeremias entrou em Jerusalém levando no pescoço um jugo de ferro.",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-7",
+      "question": "O cativeiro foi o remédio que Deus usou para curar Israel da idolatria.",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-8",
+      "question": "O templo visto por Ezequiel não será o templo da grande tribulação.",
+      "answer": "V"
+    },
+    {
+      "id": "pm1-tf-9",
+      "question": "O jovem Daniel foi reconhecido pela rainha como tendo “o espírito dos deuses santos”.",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-10",
+      "question": "A história não registrou nenhum imperador da Babilônia chamado Belsazar.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pm1-mc-1",
+      "question": "Segundo profetizou Isaías, Jesus viria -",
+      "options": [
+        "Como conquistador",
+        "Com poder e grande glória",
+        "Como raiz de uma terra seca",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pm1-mc-2",
+      "question": "A nação de Israel é representada como uma figueira -",
+      "options": [
+        "Seca",
+        "Carregada de folhas",
+        "Brotando",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pm1-mc-3",
+      "question": "Passagem bíblica lida por Jesus na Sinagoga de Nazaré",
+      "options": [
+        "Isaías 61:1-2",
+        "Isaías 61:22",
+        "Isaías 61:12",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "pm1-mc-4",
+      "question": "Segundo profetizou Isaías, Jesus viria—",
+      "options": [
+        "Como conquistador",
+        "Com poder e grande glória",
+        "Como raiz de uma terra seca",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pm1-mp-1",
+      "left": "Profetizou no reinado de Acabe",
+      "right": "Micaías"
+    },
+    {
+      "id": "pm1-mp-2",
+      "left": "Profeta contemporâneo de Salomão",
+      "right": "Aías"
+    },
+    {
+      "id": "pm1-mp-3",
+      "left": "Profeta contemporâneo de Davi",
+      "right": "Natã"
+    },
+    {
+      "id": "pm1-mp-4",
+      "left": "Um profeta menor",
+      "right": "Obadias"
+    },
+    {
+      "id": "pm1-mp-5",
+      "left": "Profetiza e juíza",
+      "right": "Débora"
+    },
+    {
+      "id": "pm1-mp-6",
+      "left": "Profetisa citada no Novo Testamento",
+      "right": "Ana"
+    }
+  ]
+}

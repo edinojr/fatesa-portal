@@ -1,0 +1,134 @@
+{
+  "id": "POETII_1",
+  "title": "Poéticos 2 - V1",
+  "tfQuestions": [
+    {
+      "id": "poetii1-tf-1",
+      "question": "O templo foi construído no lugar em que Deus pediu que Abraão sacrificasse Isaque.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii1-tf-2",
+      "question": "Sabemos pela Bíblia que Salomão teve trezentas esposas e setecentas concubinas.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii1-tf-3",
+      "question": "Em Provérbios os destaques principais são a sabedoria e a santificação.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii1-tf-4",
+      "question": "O direito à obediência dos filhos foi reconhecido e inserido na Lei de Moisés.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii1-tf-5",
+      "question": "Podemos ver na sabedoria descrita em Provérbios, capítulos 8 e 9, a personificação de Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii1-tf-6",
+      "question": "Na “escadaria” do crescimento cristão a virtude ocupa o segundo lugar logo depois da fé.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii1-tf-7",
+      "question": "Na simbologia do “cordão de três dobras” podemos identificar uma família bem estruturada.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii1-tf-8",
+      "question": "Segundo afirmou Salomão a vida é como “um vapor que aparece por um pouco e depois se desvanece”.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii1-tf-9",
+      "question": "O Livro de Cantares fortalece a união conjugal que deve ter por base o amor.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii1-tf-10",
+      "question": "Na tipologia bíblica, em Cantares, podemos ver Jesus na figura de Salomão e a igreja na da Sunamita.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "poetii1-mc-1",
+      "question": "Em Provérbios o louco é o -",
+      "options": [
+        "Débil mental",
+        "Endemoninhado",
+        "Pecador",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "poetii1-mc-2",
+      "question": "Cantares é uma história de amor que contempla -",
+      "options": [
+        "O namoro",
+        "O casamento",
+        "A vida conjugal",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "poetii1-mc-3",
+      "question": "Um filho de Deus precisa ser em relação ao ímpio -",
+      "options": [
+        "Mais inteligente",
+        "Mais sábio",
+        "Mais culto",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "poetii1-mc-4",
+      "question": "A boca do tolo é -",
+      "options": [
+        "Um sepulcro aberto",
+        "Uma destruição",
+        "Uma fonte de bênção",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "poetii1-mp-1",
+      "left": "Sacerdote que ungiu Salomão",
+      "right": "Zadoque"
+    },
+    {
+      "id": "poetii1-mp-2",
+      "left": "Aliado de Salomão",
+      "right": "Hirão"
+    },
+    {
+      "id": "poetii1-mp-3",
+      "left": "Esposo de Bate-Seba",
+      "right": "Urias"
+    },
+    {
+      "id": "poetii1-mp-4",
+      "left": "Aliado de Adonias",
+      "right": "Joabe"
+    },
+    {
+      "id": "poetii1-mp-5",
+      "left": "Impedido de construir o templo",
+      "right": "Davi"
+    },
+    {
+      "id": "poetii1-mp-6",
+      "left": "Profeta presente na unção de Salomão",
+      "right": "Natã"
+    }
+  ]
+}

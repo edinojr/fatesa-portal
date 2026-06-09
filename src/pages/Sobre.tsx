@@ -75,7 +75,7 @@ const Sobre = () => {
             </section>
 
             {/* The Theology of Transformation Section */}
-            <section style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 100% 50%, rgba(156, 39, 176, 0.05), transparent 40%)' }}>
+            <section style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 100% 50%, rgba(0, 86, 179, 0.05), transparent 40%)' }}>
                 <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>A Teologia da Transformação</h2>
                     <p style={{ fontSize: '1.2rem', opacity: 0.9, lineHeight: '1.8', marginBottom: '3rem' }}>

@@ -1,0 +1,134 @@
+{
+  "id": "PENT_2",
+  "title": "Pentateuco - V2",
+  "tfQuestions": [
+    {
+      "id": "pent2-tf-1",
+      "question": "Tal como a natureza carnal também a morte sobreviveu ao dilúvio.",
+      "answer": "V"
+    },
+    {
+      "id": "pent2-tf-2",
+      "question": "Embora sendo esposa, Sara era também irmã de Abraão por parte de pai.",
+      "answer": "V"
+    },
+    {
+      "id": "pent2-tf-3",
+      "question": "O silêncio de Deus em relação a Abraão durou cerca de 14 anos.",
+      "answer": "V"
+    },
+    {
+      "id": "pent2-tf-4",
+      "question": "Sendo estéril, Rebeca orou, instantemente, para que Deus lhe desse um filho.",
+      "answer": "F"
+    },
+    {
+      "id": "pent2-tf-5",
+      "question": "O único erro de José foi o de ter casado com uma egípcia.",
+      "answer": "F"
+    },
+    {
+      "id": "pent2-tf-6",
+      "question": "A Lei exigia e proibia, mas não dava condições para o homem fazer ou deixar de fazer.",
+      "answer": "V"
+    },
+    {
+      "id": "pent2-tf-7",
+      "question": "As tábuas que Moisés quebrou foram as que ele havia preparado.",
+      "answer": "F"
+    },
+    {
+      "id": "pent2-tf-8",
+      "question": "Na educação judaica, Levítico era o primeiro livro ensinado para as crianças.",
+      "answer": "V"
+    },
+    {
+      "id": "pent2-tf-9",
+      "question": "Sendo levita, não havia impedimento para que Coré fosse sacerdote.",
+      "answer": "F"
+    },
+    {
+      "id": "pent2-tf-10",
+      "question": "Moisés recomenda a nova geração ser grata, obediente a Deus na nova terra.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pent2-mc-1",
+      "question": "Jesus é descendente de -",
+      "options": [
+        "Sem",
+        "Cão",
+        "Jafé",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "pent2-mc-2",
+      "question": "A palavra “kipur” significa -",
+      "options": [
+        "Perdão",
+        "Cobertura",
+        "Confissão",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "pent2-mc-3",
+      "question": "Deus fez no sétimo dia.",
+      "options": [
+        "Descansou",
+        "Santificou",
+        "Abençoou",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pent2-mc-4",
+      "question": "Continha dentro da Arca.",
+      "options": [
+        "Um vaso de ouro com maná",
+        "Tabuas da lei",
+        "Vara de Arão",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pent2-mp-1",
+      "left": "Simbolismo da porta do Tabernáculo",
+      "right": "Jesus"
+    },
+    {
+      "id": "pent2-mp-2",
+      "left": "Simbolismo da bacia de cobre",
+      "right": "Santificação"
+    },
+    {
+      "id": "pent2-mp-3",
+      "left": "Quem podia entrar no Lugar Santíssimo",
+      "right": "Sumo sacerdote"
+    },
+    {
+      "id": "pent2-mp-4",
+      "left": "Tinham acesso ao lugar Santo",
+      "right": "Sacerdotes"
+    },
+    {
+      "id": "pent2-mp-5",
+      "left": "Castiçal de ouro",
+      "right": "Igreja"
+    },
+    {
+      "id": "pent2-mp-6",
+      "left": "Simbolismo do altar de ouro",
+      "right": "Oração"
+    }
+  ]
+}

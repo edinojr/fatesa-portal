@@ -1,0 +1,2 @@
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS ano_graduacao TEXT;
+ALTER TABLE public.aulas ADD COLUMN IF NOT EXISTS is_bloco_final BOOLEAN DEFAULT FALSE;

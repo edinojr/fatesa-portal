@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Mail, Loader2, CheckCircle2 } from 'lucide-react'
+import { Mail, Loader2, CheckCircle2, ArrowLeft } from 'lucide-react'
 import Logo from '../components/common/Logo'
 
 const ForgotPassword = () => {
@@ -45,7 +45,10 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ position: 'relative' }}>
+      <Link to="/login" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, background: 'var(--primary)', padding: '0.6rem 1.2rem', borderRadius: '50px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', zIndex: 9999 }}>
+        <ArrowLeft size={18} /> Voltar
+      </Link>
       <div className="auth-card">
         <div className="auth-header" style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>

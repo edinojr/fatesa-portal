@@ -1,0 +1,1196 @@
+{
+  "id": "teo-pratica",
+  "title": "Teologia Prática",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Teologia Prática é o colocar no campo da ação nosso conhecimento teológico",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sempre que possível devemos dar prioridade às coisas referentes ao Reino de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Estando o mundo no maligno, Deus não pode ser o Senhor de toda a terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em relação aos direitos de Deus não há diferença entre os filhos de Deus e os ímpios",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Pela Bíblia, podemos afirmar que a única coisa que o homem tem de si mesmo é sua vida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Nosso trabalho em função do Reino de Deus não pode ficar condicionado ao \"se houver tempo\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Deixar Deus com as \"sobras\" seria considerá-lo pobre e estrangeiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A adoração não pode ser compensada pela prestação de serviços ao Reino de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os irmãos de Jesus aprenderam com ele a administrar bem o tempo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "O homem, como mordomo, não será julgado pela quantidade, mas pela qualidade de suas obras.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em relação aos que não são seus filhos, cite quais são os direitos de Deus.",
+          "answer": "CRIADOR E PRESERVADOR OU SUSTENTADOR"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação ao uso da terra, cite o que o homem é.",
+          "answer": "PERMISSIONÁRIO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "No céu Deus tem a –",
+          "options": [
+            "honra",
+            "primazia",
+            "glória",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Dar prioridade ao Reino de Deus é –",
+          "options": [
+            "uma opção do homem",
+            "uma exigência de Deus",
+            "uma exigência da Lei",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Sempre agiu no tempo certo",
+          "Deu prioridade a Jesus",
+          "Preocupou-se com seu tempo",
+          "Deu prioridade ao trabalho",
+          "O Senhor é o que tira e dá a vida",
+          "Porque nada trouxemos para este mundo"
+        ],
+        "columnB": [
+          "Paulo",
+          "Marta",
+          "Maria",
+          "Ana",
+          "Moisés",
+          "Jesus"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Mesmo consciente da brevidade de sua vida, o homem precisa encontrar tempo para Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Deus, Sua obra e família deve ser a ordem de prioridade para um homem de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Biblicamente, serão lançados no inferno todas as gentes que se esquecem de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Ninguém será um bom crente sendo mau pai; ninguém será um bom crente sendo um mau filho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar que Deus cuida dos filhos daqueles que se dedicarem, exclusivamente, à Sua obra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A oração e a Palavra de Deus são dois componentes essenciais em nossa vida devocional.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Quem conhece tudo que a Bíblia fala sobre a oração, não precisa orar muito.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora não tendo necessidades, Jesus orou muito para deixar-nos seu exemplo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Deus declarou que amava somente os que o buscavam de madrugada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ter esquecido de Deus foi o grande erro das gerações de Noé e de Ló.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite porque Deus não pode dar mais tempo ao homem.",
+          "answer": "PORQUE JÁ LHE DEU TODO O TEMPO QUE TINHA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o sentido bíblico do termo \"devocional\".",
+          "answer": "DEDICAÇÃO ÀS COISAS DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Nos Evangelhos encontramos Jesus orando -",
+          "options": [
+            "em lugares desertos",
+            "nos montes",
+            "durante o dia",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "As gerações de Noé e Ló foram condenadas porque -",
+          "options": [
+            "comiam e bebiam",
+            "compravam e vendiam",
+            "esqueceram de Deus",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "O tempo para a igreja",
+          "O tempo para família",
+          "O tempo para Deus",
+          "O tempo para outras prioridades",
+          "Homens que esquecem de Deus",
+          "Lugar de Deus em nossas vida"
+        ],
+        "columnB": [
+          "quarta em diante",
+          "terceira prioridade",
+          "segunda prioridade",
+          "sempre o primeiro",
+          "primeira prioridade",
+          "loucos"
+        ],
+        "answers": [
+          4,
+          1,
+          2,
+          6,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "\"O Senhor é o que tira a vida e a dá\", foi o que afirmou Samuel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Biblicamente, não importa o que fazemos com o corpo, pois Deus quer é o nosso coração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O juramento sempre foi uma forma de garantir o cumprimento de um compromisso.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pela Lei de Moisés não havia obrigatoriedade ao cumprimento da palavra dada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Segundo ensinou Jesus, nem sempre o homem tem condições de cumprir sua palavra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ninguém é obrigado a prometer, mas prometendo é preciso cumprir o prometido.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Paulo instruiu Timóteo a ser um exemplo no conhecimento da Palavra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Quando necessário, o homem de Deus deve dizer sim, bem como, não.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O sal fala do que o crente é e a luz fala do que ele faz.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "No sentido espiritual podemos afirmar que estamos rodeados de \"cananeus\" e \"ferezeus\".",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite, segundo Paulo, dois ingredientes que devem existir na palavra do cristão.",
+          "answer": "AGRADÁVEL E TEMPERADA COM SAL"
+        },
+        {
+          "id": "sa2",
+          "question": "Segundo ensinou Pedro, cite como deve ser nosso viver entre os homens.",
+          "answer": "HONESTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O falar do crente deve ser -",
+          "options": [
+            "sempre sim",
+            "talvez",
+            "sempre não",
+            "sim, sim; não, não"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "O crente precisa ser -",
+          "options": [
+            "tardio para ouvir",
+            "pronto para falar",
+            "pronto para ouvir",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Suas palavras nunca caíram por terra",
+          "Eu velo sobre a minha palavra",
+          "Exigia o cumprimento da palavra",
+          "Garantia o cumprimento da palavra",
+          "Uma palavra branda",
+          "Assim falai, e assim procedei"
+        ],
+        "columnB": [
+          "Tiago",
+          "Lei de Moisés",
+          "Samuel",
+          "desvia o furor",
+          "juramento",
+          "Deus"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo a ciência, na história, poucas vezes nasceram duas pessoas iguais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Homens criados por Deus, diferentes, não podem viver em sociedade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Embora sendo difícil, é possível viver a vida cristã no lar, com a família.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo a ciência, a má convivência dos pais não influencia os filhos durante a gestação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "As \"muitas águas\", na Bíblia, simbolizam lutas, dificuldades.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "No lar de Adão, formado como foi, por Deus, não podia haver problemas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Num lar Deus pode usar a provação para melhorar o relacionamento do casal.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Num relacionamento familiar nem sempre o pecado é a causa da existência de problemas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O filho que não sabe honrar e respeitar seus pais, têm tudo para ser um mau esposo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Num casamento o amor aos filhos pode substituir amor que a mulher tem para com seu esposo.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite as duas palavras chaves que podem determinar um bom relacionamento.",
+          "answer": "AMOR E HUMILDADE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quando o único agente purificador tem que ser o sangue.",
+          "answer": "QUANDO O PROBLEMA TIVER COMO CAUSA O PECADO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Não houve problemas no lar de -",
+          "options": [
+            "Adão",
+            "Abraão",
+            "Davi",
+            "todas estão erradas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A Bíblia diz que o amor -",
+          "options": [
+            "é cruel como a sepultura",
+            "traz muitas dificuldades",
+            "é forte como a morte",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Provação",
+          "Correção",
+          "Mulheres idosas",
+          "Jovens esposas",
+          "Marido e mulher",
+          "Marido"
+        ],
+        "columnB": [
+          "amor mútuo",
+          "obrigação de amar",
+          "amar seus maridos",
+          "mestras no bem",
+          "castigo",
+          "bênção"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que a sociedade tem entendido o verdadeiro sentido de humildade",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A humildade nem sempre está relacionada ao conceito de pobreza.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Uma pessoa tímida é, por natureza, também humilde.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Quem exerce um cargo que exige o uso da autoridade, não pode ser humilde.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "No sentido espiritual, por falta de humildade, o homem pode perder uma bênção.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "O marido como \"cabeça\" foi uma exigência da Lei de Moisés, não mais sendo válida, hoje.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo a Bíblia, o marido tem obrigação de amar, proteger, sustentar e honrar sua esposa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Desde que o homem seja um bom esposo, a mulher tem o dever de sujeitar- se a ele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Os compromissos de um casal cristão devem ser primeiro com Deus e em segundo lugar com sua família.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para nossa Constituição Federal, na sociedade conjugal, homem e mulher estão em igualdade de condição.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas e quais são as modalidades de sujeição.",
+          "answer": "DUAS – OBRIGATÓRIA E VOLUNTÁRIA"
+        },
+        {
+          "id": "sa2",
+          "question": "No judaísmo, cite o que alguns rabinos diziam sobre ensinar a Lei de Moisés às mulheres.",
+          "answer": "QUE MAIS VALIA A PENA QUEIMAR A LEI DO QUE ENSINÁ-LA A UMA MULHER"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Não é sinônimo de humildade -",
+          "options": [
+            "pobreza",
+            "acomodação",
+            "ignorância",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Segundo a Bíblia, o homem deve -",
+          "options": [
+            "exigir sujeição pela força",
+            "impedir a mulher de trabalhar",
+            "ser o governo da família",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Perdeu a bênção por falta de humildade",
+          "Quase perdeu a bênção por falta de humildade",
+          "Tornou-se animal por falta de humildade",
+          "Recebeu a bênção por causa da humildade",
+          "Amor e humildade",
+          "Sujeição obrigatória"
+        ],
+        "columnB": [
+          "sujeição voluntária",
+          "exigência legal",
+          "mulher cananeia",
+          "Nabucodonozor",
+          "Uzias",
+          "Naamã"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os pais precisam amar seus filhos desde o nascimento dos mesmos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Filhos que não se sentem amados têm dificuldades para amar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Não havendo filhos, a família estará incompleta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Educar, ensinar ou instruir os filhos é uma obrigação somente dos pais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Uma família com muitos filhos não significa ser uma família abençoada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os pais devem negar alimentação aos filhos maiores que não estiverem trabalhando ou estudando.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Os filhos, uma vez casados, não têm mais nenhum compromisso com seus pais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Deixar os filhos ir, quando casam, é um princípio bíblico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Segundo a Bíblia, um filho desobediente aos seus pais, pode morrer antes do tempo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A expressão \"deixará o homem pai e mãe\", não se aplica à mulher.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar os dois pilares necessários para um bom relacionamento.",
+          "answer": "RESPEITAR DIREITOS E CUMPRIR OBRIGAÇÕES"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar as duas promessas bíblicas para os filhos que honram seus pais.",
+          "answer": "1- PARA QUE TE VÁ BEM; 2- E VIVAM MUITO TEMPO SOBRE A TERRA."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Nada sabemos dos filhos -",
+          "options": [
+            "de Elias",
+            "dos apóstolos",
+            "da maioria dos profetas",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Filho gerado em santidade -",
+          "options": [
+            "fora do matrimônio",
+            "fruto do desejo carnal",
+            "em amor, no matrimônio",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Disciplinar os filhos",
+          "Disciplina corretiva",
+          "Disciplina educativa",
+          "Autoritarismo, serenidade",
+          "Disciplina",
+          "Tolerância"
+        ],
+        "columnB": [
+          "não é sinônimo de castigo",
+          "respeito às opiniões alheias",
+          "verdade sem amor",
+          "ensinar a fazer certo",
+          "obrigação dos pais",
+          "corrigir o erro"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em nosso local de trabalho é possível não sermos reconhecidos como crentes",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O crente fiel deve, sempre que possível, trabalhar sem vínculo empregatício.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Nada impede de um crente fiel ter empregados também crentes fiéis.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sabemos, pela Bíblia, ser possível ser rico, ter muitos empregados e ser fiel a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Pela Bíblia, um crente fiel deve sempre ser \"cabeça\", estar sempre por cima, porque ele é filho de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Um patrão, sendo um crente fiel, terá dificuldade em ter como empregado, um incrédulo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A Bíblia fala de homens ricos, patrões de muitos empregados, e que foram fiéis a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "O ideal para um crente fiel é ser um profissional autônomo, nunca empregado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Crente, precisando de um profissional autônomo, deve dar preferência ao irmão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo Paulo, como regra geral, não deve haver conflitos entre irmãos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite como um empresário crente deve tratar seu pastor, sendo este seu empregado.",
+          "answer": "DA FORMA COMO TRATA TODOS OS OUTROS EMPREGADOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Havendo conflito entre irmãos, cite o que Paulo afirmou que não deveriam fazer.",
+          "answer": "LEVAR O CONFLITO A UM JUIZ INFIEL, OU NÃO CRENTE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um crente fiel pode ser –",
+          "options": [
+            "empregado de um ímpio",
+            "empregado de outro crente",
+            "patrão de outro crente",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Um bom exemplo de patrão –",
+          "options": [
+            "José",
+            "Eliezer",
+            "Jó",
+            "Onésimo"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Sentido bíblico de \"senhor\"",
+          "Sentido bíblico de \"servo\"",
+          "Um bom patrão muito rico",
+          "Um servo fiel",
+          "Crente profissional autônomo",
+          "Não é bíblico"
+        ],
+        "columnB": [
+          "ser mau profissional",
+          "José",
+          "Ser cabeça e não cauda",
+          "Empregado",
+          "patrão",
+          "Abraão"
+        ],
+        "answers": [
+          5,
+          4,
+          6,
+          2,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Como filhos, segundo escreveu Paulo, somos \"participantes da natureza divina\".",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Se alguém diz: eu amo a Deus e aborrece seu irmão, é um mentiroso.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela ordem, o homem deve amar a Deus, ao seu próximo e a si mesmo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Na prática, amar a si mesmo tem o mesmo sentido de ser amante de si mesmo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na prática, segundo a Bíblia, amar determinadas pessoas, nem sempre é possível.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "No sentido espiritual há uma semelhança entre a função do sangue e a do amor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "É através da fé que somos identificados como discípulos de Cristo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Os judeus tinham como sendo uma norma bíblica amar os judeus e aborrecer os gentios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sabemos que Deus não pede o que não temos para dar e não exige o que não podemos fazer.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Um crente, em nenhuma hipótese, não pode ter e nem ser inimigo de seu semelhante.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que disse o Apóstolo Pedro daquele que diz que ama a Deus e aborrece seu irmão.",
+          "answer": "FOI JOÃO E NÃO PEDRO QUE DISSE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual foi o novo mandamento dado por Jesus.",
+          "answer": "O DE AMAR UNS AOS OUTROS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Pedro teve dificuldades para amar -",
+          "options": [
+            "os fariseus",
+            "Judas",
+            "Cornélio",
+            "sua sogra"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Meu próximo pode ser -",
+          "options": [
+            "meu inimigo",
+            "meu amigo",
+            "meu irmão",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Israel foi odiado",
+          "Jesus foi odiado",
+          "Mardoqueu foi odiado",
+          "Jasé foi odiado",
+          "João Batista foi odiado",
+          "Jacó foi odiado"
+        ],
+        "columnB": [
+          "por Esaú",
+          "por Herodias",
+          "pelos mestres religiosos",
+          "por todas as nações",
+          "por seus irmãos",
+          "por Hamã"
+        ],
+        "answers": [
+          6,
+          5,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pela Lei de Moisés os judeus tinham o direito de vingar as ofensas sofridas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que um homem natural jamais poderá viver segundo os ensinos de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O homem, ao pecar, não perdeu a capacidade plena de poder amar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O fato de ser \"evangélico\" capacita o homem a viver em santificação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Mesmo após o novo nascimento, amar os inimigos é difícil, porém, é possível.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A palavra religião traz em si o sentido de tornar a ligar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Tiago deixou claro que nenhuma religião pode ser pura e imaculada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O homem, quando sob o controle do Espírito Santo, tem capacidade para dominar sua língua.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Visitar os órfãos e as viúvas tem o sentido de levar-lhes uma palavra de amor e de consolo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Hoje, nesta dispensação, é o ofertante que precisa ser, moralmente, perfeito.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Sendo o amor um sentimento abstrato, cite como pode ser manifesto.",
+          "answer": "ATRAVÉS DE NOSSAS OBRAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Explique o sentido da expressão \"tropeçar em palavras\".",
+          "answer": "SIGNIFICA ERRAR ATRAVÉS DO MAU USO DA LÍNGUA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Uma pessoa faminta precisa, primeiro -",
+          "options": [
+            "ouvir a Palavra",
+            "receber uma oração",
+            "receber alimento material",
+            "receber uma exortação"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Como crentes, devemos amar somente -",
+          "options": [
+            "os que nos amam",
+            "todos, indistintamente",
+            "nossos irmãos em Cristo",
+            "nossos familiares"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Socorrer os desamparados",
+          "Agir como pai",
+          "Cuidar dos órfãos e das viúvas",
+          "Amar somente seus \"irmãos\"",
+          "Amar os inimigos",
+          "Religião pura e imaculada"
+        ],
+        "columnB": [
+          "os judeus",
+          "exigência da Lei de Moisés",
+          "guardar-se da corrupção do mundo",
+          "os cristãos",
+          "cuidar dos órfãos",
+          "cuidar das viúvas"
+        ],
+        "answers": [
+          4,
+          3,
+          6,
+          5,
+          2,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Tiago falou ser necessidade atender as necessidades espirituais e materiais do homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "As igrejas pentecostais estão isentas de atender as necessidades materiais dos seus membros.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Após o novo nascimento a natureza material do homem fica neutralizada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Tanto no deserto como também em Canaã, Deus não deixou faltar o maná ao povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O ideal é conseguirmos fazer a separação entre a vida cristã e a vida espiritual.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O \"evangelho\" que só fala das coisas materiais não leva o homem para o céu.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar que a Palavra de Deus é o instrumento usado pelos falsos profetas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Jesus reconheceu que os escribas e os fariseus conheciam e ensinavam bem as Escrituras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sendo que o novo homem continua sendo um ser social, a igreja deve prover entretenimento a ele",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ao constatar que seu ensino não estava agradando o povo, Jesus não mudou sua forma de ensinar.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual deve ser nossa missão em relação ao homem.",
+          "answer": "SOCORRER O HOMEM NO SEU TODO, CORPO E ESPÍRITO"
+        },
+        {
+          "id": "sa2",
+          "question": "No deserto, para tentar Jesus, cite de que Satanás fez uso.",
+          "answer": "DA PALAVRA DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Jesus afirmou que os escribas e fariseus -",
+          "options": [
+            "conheciam as Escrituras",
+            "deviam conhecer as Escrituras",
+            "eram maus ensinadores",
+            "todas estão erradas"
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Jesus sempre pregava ou ensinava -",
+          "options": [
+            "o que o povo queria ouvir",
+            "o que o povo precisava ouvir",
+            "só o que o povo não gostava de ouvir",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Socorrer os necessitados",
+          "Palavra de Deus",
+          "Ordem de Jesus aos discípulos",
+          "Pão",
+          "Uma falha das igrejas pentecostais",
+          "O Evangelho completo"
+        ],
+        "columnB": [
+          "alimento espiritual",
+          "aponta para duas direções",
+          "não atender as necessidades do corpo",
+          "uma função da igreja",
+          "símbolo do alimento material",
+          "\"dai-lhes vós de comer\""
+        ],
+        "answers": [
+          2,
+          6,
+          5,
+          1,
+          4,
+          3
+        ]
+      }
+    }
+  ]
+}

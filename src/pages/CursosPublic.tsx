@@ -21,7 +21,7 @@ const CursosPublic = () => {
                 </div>
             </section>
 
-            <section id="cursos" className="courses-section" style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 90% 10%, rgba(156, 39, 176, 0.05), transparent 40%)' }}>
+            <section id="cursos" className="courses-section" style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 90% 10%, rgba(0, 86, 179, 0.05), transparent 40%)' }}>
                 <div className="section-header" style={{ textAlign: 'center', marginBottom: '5rem' }}>
                     <span className="badge" style={{ marginBottom: '1rem' }}>Excelência Acadêmica</span>
                     <h2 style={{ fontSize: '3.5rem', fontWeight: 900, letterSpacing: '-0.04em' }}>Programas de Formação</h2>

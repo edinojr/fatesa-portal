@@ -1,0 +1,134 @@
+{
+  "id": "APOC_2",
+  "title": "Apocalipse - V2",
+  "tfQuestions": [
+    {
+      "id": "apoc2-tf-1",
+      "question": "É certo que a Grande Tribulação ocorrerá entre os capítulos 4 e 19 de Apocalipse.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc2-tf-2",
+      "question": "Na mão direita de Jesus, João declarou ter visto os sete pastores das sete igrejas.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc2-tf-3",
+      "question": "A Igreja de Filadélfia recebeu de Jesus uma declaração de amor.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc2-tf-4",
+      "question": "Sardes era uma igreja pobre no sentido material e morta no sentido espiritual.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc2-tf-5",
+      "question": "Jesus é um Cordeiro para os santos, mas agirá como leão para os ímpios.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc2-tf-6",
+      "question": "Como povo de Deus, a igreja não ocupou o lugar dos judeus.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc2-tf-7",
+      "question": "Entre os diversos comentaristas não há dúvida que o Anticristo será um homem.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc2-tf-8",
+      "question": "Babilônia será reconstruída e também será o maior centro financeiro da terra.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc2-tf-9",
+      "question": "Sendo santo e amor não é bíblico falar sobre a ira de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc2-tf-10",
+      "question": "O Apóstolo João declarou ter visto a formosa Jerusalém celestial.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "apoc2-mc-1",
+      "question": "Imperador que libertou João da Ilha de Pátmos -",
+      "options": [
+        "Trajano",
+        "Domiciano",
+        "Nerva",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "apoc2-mc-2",
+      "question": "Na Grande Tribulação os homens estarão debaixo da -",
+      "options": [
+        "Ira de Deus",
+        "Ira de Satanás",
+        "Ira do Cordeiro",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "apoc2-mc-3",
+      "question": "A “mulher vestida de sol” fala provavelmente, sobre —",
+      "options": [
+        "Maria",
+        "Israel",
+        "Igreja",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "apoc2-mc-4",
+      "question": "Cavalo, na Bíblia, é símbolo de —",
+      "options": [
+        "Violência",
+        "Paz",
+        "Força",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "apoc2-mp-1",
+      "left": "Olhos como chama de fogo",
+      "right": "Onisciência de Deus"
+    },
+    {
+      "id": "apoc2-mp-2",
+      "left": "Pés semelhantes a latão reluzente",
+      "right": "Juízo a ser executado"
+    },
+    {
+      "id": "apoc2-mp-3",
+      "left": "Voz como de muitas águas",
+      "right": "Barulho do mar"
+    },
+    {
+      "id": "apoc2-mp-4",
+      "left": "Espada aguda de dois fios",
+      "right": "Palavra de Deus"
+    },
+    {
+      "id": "apoc2-mp-5",
+      "left": "Desmaiou na presença de Deus",
+      "right": "Um profeta"
+    },
+    {
+      "id": "apoc2-mp-6",
+      "left": "Caiu aos pés de Jesus como morto",
+      "right": "Um apóstolo"
+    }
+  ]
+}

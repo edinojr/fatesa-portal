@@ -1,0 +1,134 @@
+{
+  "id": "TEOP_3",
+  "title": "Teologia Prática - V3",
+  "tfQuestions": [
+    {
+      "id": "teop3-tf-1",
+      "question": "Os escribas e fariseus foram censurados por falta de conhecimento da Palavra.",
+      "answer": "F"
+    },
+    {
+      "id": "teop3-tf-2",
+      "question": "Ter esquecido de Deus foi o grande erro das gerações de Noé e de Ló.",
+      "answer": "V"
+    },
+    {
+      "id": "teop3-tf-3",
+      "question": "A Lei de Moisés exigia o cumprimento da palavra dita por um homem.",
+      "answer": "V"
+    },
+    {
+      "id": "teop3-tf-4",
+      "question": "No lar de Adão, formado como foi, por Deus, não podia haver problemas.",
+      "answer": "F"
+    },
+    {
+      "id": "teop3-tf-5",
+      "question": "Sem humildade é difícil haver sujeição voluntária.",
+      "answer": "V"
+    },
+    {
+      "id": "teop3-tf-6",
+      "question": "Educar, ensinar ou instruir os filhos é uma obrigação somente dos pais.",
+      "answer": "F"
+    },
+    {
+      "id": "teop3-tf-7",
+      "question": "A humildade de um patrão crente não pode anular sua autoridade.",
+      "answer": "V"
+    },
+    {
+      "id": "teop3-tf-8",
+      "question": "Sabemos que Deus não pede o que não temos para dar e não exige o que não podemos fazer.",
+      "answer": "V"
+    },
+    {
+      "id": "teop3-tf-9",
+      "question": "Biblicamente, a vida cristã só começa após o batismo nas águas.",
+      "answer": "F"
+    },
+    {
+      "id": "teop3-tf-10",
+      "question": "Sendo que o novo homem continua sendo um ser social, a igreja deve prover entretenimento para ele.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "teop3-mc-1",
+      "question": "A expressão “muitas águas” fala de -",
+      "options": [
+        "Bênçãos",
+        "Dificuldades",
+        "Provações",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "teop3-mc-2",
+      "question": "Meu próximo pode ser -",
+      "options": [
+        "Meu inimigo",
+        "Meu amigo",
+        "Meu irmão",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "teop3-mc-3",
+      "question": "Filho gerado em santidade -",
+      "options": [
+        "Fora do matrimônio",
+        "Fruto do desejo carnal",
+        "Em amor, no matrimônio",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "teop3-mc-4",
+      "question": "Uma pessoa faminta precisa, primeiro -",
+      "options": [
+        "Ouvir a Palavra",
+        "Receber uma oração",
+        "Receber alimento material",
+        "Receber uma exortação"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "teop3-mp-1",
+      "left": "Sempre agiu no tempo certo",
+      "right": "Jesus"
+    },
+    {
+      "id": "teop3-mp-2",
+      "left": "Deu prioridade a Jesus",
+      "right": "Maria"
+    },
+    {
+      "id": "teop3-mp-3",
+      "left": "Preocupou-se com seu tempo",
+      "right": "Moisés"
+    },
+    {
+      "id": "teop3-mp-4",
+      "left": "Deu prioridade ao trabalho",
+      "right": "Marta"
+    },
+    {
+      "id": "teop3-mp-5",
+      "left": "O Senhor é o que tira e dá a vida",
+      "right": "Ana"
+    },
+    {
+      "id": "teop3-mp-6",
+      "left": "Porque nada trouxemos para este mundo",
+      "right": "Paulo"
+    }
+  ]
+}

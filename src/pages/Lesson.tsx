@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen, List, Menu } from 'lucide-react'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
+import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
+import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
 import { QuizQuestion } from '../types/admin'
+import { processHtmlForNav, NavItem } from '../features/courses/utils/htmlNav'
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>()
@@ -29,6 +32,8 @@ const Lesson = () => {
   const [activeReference, setActiveReference] = useState<{ id: string; text: string; source: string } | null>(null)
   const [htmlContent, setHtmlContent] = useState<string | null>(null)
   const [htmlLoading, setHtmlLoading] = useState(false)
+  const [toc, setToc] = useState<NavItem[]>([])
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [examModalConfirmed, setExamModalConfirmed] = useState(false)
   const [isModuleApproved] = useState(false)
   const [isModuleFinished, setIsModuleFinished] = useState(false)
@@ -44,6 +49,7 @@ const Lesson = () => {
   const [isExamStarted, setIsExamStarted] = useState(false)
   const [deadlineInfo] = useState<{ deadline: Date, stage: number, expired: boolean } | null>(null)
   const [relatedExercise, setRelatedExercise] = useState<any>(null)
+  const [prevLessonId, setPrevLessonId] = useState<string | null>(null)
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -80,18 +86,20 @@ const Lesson = () => {
       if (lessonData.arquivo_url) {
         const isHtml = /\.html?$/i.test(lessonData.arquivo_url);
         const isPdf = /\.pdf$/i.test(lessonData.arquivo_url);
-        if (isHtml && !isPdf) {
-          setHtmlLoading(true);
-          try {
-            const resp = await fetch(lessonData.arquivo_url);
-            const text = await resp.text();
-            setHtmlContent(text);
-          } catch (err) {
-            console.error('Failed to fetch HTML content:', err);
-          } finally {
-            setHtmlLoading(false);
-          }
-        }
+       if (isHtml && !isPdf) {
+         setHtmlLoading(true);
+         try {
+           const resp = await fetch(lessonData.arquivo_url);
+           const text = await resp.text();
+           const { processedHtml, toc: extractedToc } = processHtmlForNav(text);
+           setHtmlContent(processedHtml);
+           setToc(extractedToc);
+         } catch (err) {
+           console.error('Failed to fetch HTML content:', err);
+         } finally {
+           setHtmlLoading(false);
+         }
+       }
       }
 
       const { data: { user } } = await supabase.auth.getUser()
@@ -102,12 +110,14 @@ const Lesson = () => {
 
         // 1. Audit: Content Release Policy
         let modulePassed = false;
-        const { data: moduleExams } = await supabase.from('aulas').select('id').eq('livro_id', lessonData.livro_id).or('tipo.eq.prova,is_bloco_final.eq.true');
+        const { data: moduleExams } = await supabase.from('aulas').select('id').eq('livro_id', lessonData.livro_id).or('tipo.eq.prova');
         
         if (lessonData.livro_id) {
-          const { data: rawModuleSubs } = await supabase.from('respostas_aulas')
-            .select('nota, status, aulas:aula_id(livro_id, is_bloco_final)')
-            .eq('aluno_id', user.id);
+            const { data: rawModuleSubs } = await supabase.from('respostas_aulas')
+               .select('nota, status, aulas(livro_id)')
+
+              .eq('aluno_id', user.id);
+
           
           const moduleSubs = (rawModuleSubs || []).find((s: any) => 
             s.aulas?.livro_id === lessonData.livro_id && 
@@ -118,39 +128,38 @@ const Lesson = () => {
           if (moduleSubs) modulePassed = true;
         }
 
-        if (isStaff || modulePassed) {
-          setIsReleased(true);
-        } else {
-          const isRestrictedType = lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video' || lessonData.tipo === 'prova' || !!lessonData.is_bloco_final;
-          const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' : 'atividade';
+         if (isStaff || modulePassed) {
+           setIsReleased(true);
+         } else {
+            // ALL content now requires explicit release for the student's nucleus
+             const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' : 
+                              (lessonData.tipo === 'prova' || !!lessonData.is_bloco_final) ? 'atividade' : 
+                              (lessonData.tipo === 'atividade' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'atividade' : 'licao';
 
-          if (isRestrictedType) {
-            const { data: releaseData } = await supabase.from('liberacoes_nucleo')
-              .select('id')
-              .eq('nucleo_id', profile?.nucleo_id)
-              .eq('item_id', id)
-              .eq('item_type', itemType)
-              .eq('liberado', true)
-              .maybeSingle();
-            
-            if (releaseData) {
-              setIsReleased(true);
-            } else if (lessonData.tipo === 'prova' || lessonData.is_bloco_final) {
-              const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
-                .select('id')
-                .eq('nucleo_id', profile?.nucleo_id)
-                .eq('item_type', 'atividade')
-                .in('item_id', (moduleExams || []).map(ex => ex.id))
-                .eq('liberado', true)
-                .maybeSingle();
-              setIsReleased(!!siblingRel);
-            } else {
-              setIsReleased(false);
-            }
-          } else {
-            setIsReleased(true);
-          }
-        }
+
+           const { data: releaseData } = await supabase.from('liberacoes_nucleo')
+             .select('id')
+             .eq('nucleo_id', profile?.nucleo_id)
+             .eq('item_id', id)
+             .eq('item_type', itemType)
+             .eq('liberado', true)
+             .maybeSingle();
+           
+           if (releaseData) {
+             setIsReleased(true);
+           } else if (lessonData.tipo === 'prova' || lessonData.is_bloco_final) {
+             const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
+               .select('id')
+               .eq('nucleo_id', profile?.nucleo_id)
+               .eq('item_type', 'atividade')
+               .in('item_id', (moduleExams || []).map(ex => ex.id))
+               .eq('liberado', true)
+               .maybeSingle();
+             setIsReleased(!!siblingRel);
+           } else {
+             setIsReleased(false);
+           }
+         }
 
         // 2. Main Logic: Submission Fetch & Timer
         const { data: subData } = await supabase.from('respostas_aulas').select('*').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
@@ -185,10 +194,12 @@ const Lesson = () => {
         const versao = lessonData.versao || 1;
         if (!isStaff && (versao === 2 || versao === 3)) {
           // Precisamos buscar as submissões deste livro (módulo) de forma segura
-          const { data: previousSubs } = await supabase
-            .from('respostas_aulas')
-            .select('nota, status, aula_id, created_at, aulas:aula_id(versao, tipo, is_bloco_final, livro_id, min_grade, titulo)')
-            .eq('aluno_id', user.id);
+           const { data: previousSubs } = await supabase
+             .from('respostas_aulas')
+             .select('nota, status, aula_id, created_at, aulas(versao, tipo, livro_id, min_grade, titulo)')
+             .eq('aluno_id', user.id);
+
+
           
           // Filtramos pelo livro_id no JS para evitar erros de sintaxe complexa no join filter do PostgREST
           const moduleSubs = (previousSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
@@ -216,14 +227,15 @@ const Lesson = () => {
             }
           }
 
-          const { data: individualRelease } = await supabase
+          const { data: individualRelease, error: indivErr } = await supabase
             .from('liberacoes_excecao_atividade')
             .select('id')
             .eq('user_id', user.id)
             .eq('aula_id', id)
             .maybeSingle();
-            
-          const hasIndividualRelease = !!individualRelease;
+
+          const tableMissing = indivErr && (indivErr.code === '42P01' || /does not exist/i.test(indivErr.message));
+          const hasIndividualRelease = !tableMissing && !!individualRelease;
 
           if (!hasIndividualRelease && passedAny) {
             setAlreadyApproved(true);
@@ -264,7 +276,7 @@ const Lesson = () => {
         // 3. Check if module is finished
         if (lessonData.livro_id) {
           const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id').eq('livro_id', lessonData.livro_id);
-          const { data: rawSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id, aulas:aula_id(livro_id)').eq('aluno_id', user.id);
+           const { data: rawSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id').eq('aluno_id', user.id);
           const bookSubs = (rawSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
           const finished = bookSubs.some(s => {
@@ -342,6 +354,19 @@ const Lesson = () => {
           }
         }
         
+        // Previous lesson for navigation (ignore activities/exams)
+        const { data: prev } = await supabase
+          .from('aulas')
+          .select('id')
+          .eq('livro_id', lesson.livro_id)
+          .lt('ordem', lesson.ordem || 0)
+          .neq('tipo', 'atividade')
+          .neq('tipo', 'prova')
+          .order('ordem', { ascending: false })
+          .limit(1);
+        
+        setPrevLessonId(prev && prev.length > 0 ? prev[0].id : null);
+
         // Next lesson for navigation (ignore activities/exams)
         const { data: nxt } = await supabase
           .from('aulas')
@@ -356,6 +381,7 @@ const Lesson = () => {
         setNextLessonId(nxt && nxt.length > 0 ? nxt[0].id : null);
       } else {
         setRelatedExercise(null);
+        setPrevLessonId(null);
         setNextLessonId(null);
       }
     }
@@ -365,6 +391,13 @@ const Lesson = () => {
   const handleStartExam = async () => {
     if (!lesson || !userProfile) return;
     
+    // Staffs don't start the "exam mode" (no timer, no lock)
+    if (userProfile?.isStaff) {
+      setExamModalConfirmed(true);
+      setSubmitted(false);
+      return;
+    }
+
     const now = new Date().toISOString();
     const { error } = await supabase.from('respostas_aulas').upsert({ 
       id: existingSubmission?.id,
@@ -387,6 +420,13 @@ const Lesson = () => {
 
   const handleStartRegularProva = async () => {
     if (!lesson || !userProfile) return;
+
+    if (userProfile?.isStaff) {
+      setExamModalConfirmed(true);
+      setSubmitted(false);
+      return;
+    }
+
     const now = new Date().toISOString();
     const payload: any = { 
       aluno_id: userProfile.id, 
@@ -410,57 +450,115 @@ const Lesson = () => {
     setSubmitted(false);
   }
 
-  const handleSubmit = async () => {
+
+  const handleSaveProgress = async () => {
+    if (!lesson || !userProfile) return;
+    setSubmitting(true);
+    try {
+      const targetId = (lesson as any).linkedActivity?.id || id;
+      const currentSub = existingSubmission;
+      
+      const payload: any = {
+        aluno_id: userProfile.id, 
+        aula_id: targetId, 
+        respostas: answers, 
+        status: 'pendente',
+        updated_at: new Date().toISOString()
+      };
+      if (currentSub?.id) payload.id = currentSub.id;
+
+      const { error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
+      if (error) throw error;
+
+      alert('Respostas salvas com sucesso! Você pode continuar depois.');
+    } catch (err: any) { 
+      console.error(err);
+      alert('Erro ao salvar respostas: ' + (err.message || 'Tente novamente.'));
+    }
+    finally { setSubmitting(false); }
+  };
+
+  const handleSubmit = async (isSavingGabarito: boolean = false) => {
     if (!lesson || !userProfile) return
+    // Se for staff e não é chamada explícita de gabarito, redireciona para salvar gabarito
+    if (userProfile?.isStaff && !isSavingGabarito) {
+      return handleSubmit(true);
+    }
     setSubmitting(true)
     try {
       let score = 0; 
       
       const targetId = (lesson as any).linkedActivity?.id || id;
+
       const targetLesson = (lesson as any).linkedActivity || lesson;
       const currentSub = (lesson as any).linkedActivity ? (lesson as any).linkedSubmission : existingSubmission;
       
-      // Regra Fatesa: Provas e avaliações finais de bloco são SEMPRE corrigidas manualmente pelo professor.
-      // Provas normais (tipo === 'prova') e Blocos Finais agora são ambos direcionados para a fila de correção.
-      const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
 
-      if (!isFinal) {
-        questions.forEach((q, idx) => {
+      // Se for admin, salvar as respostas como gabarito oficial na aula
+      if (isSavingGabarito && userProfile?.isStaff) {
+        const gabarito = questions.map((q, idx) => {
           const qKey = q.id || idx;
-          const studentAns = answers[qKey];
-          
-          if (q.type === 'matching' && q.matchingPairs?.length) {
-            const uA = studentAns || {};
-            const correctPairs = q.matchingPairs.reduce((acc, _, mIdx) => {
-              return acc + (String(uA[mIdx]) === String(mIdx) ? 1 : 0);
-            }, 0);
-            // Cada par vale 0,5 ponto, até o limite de 3,0 pontos por questão de matching
-            score += Math.min(3.0, correctPairs * 0.5);
-          } else {
-            if (q.type === 'multiple_choice' || !q.type) {
-              if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score += 0.5;
-            }
-            else if (q.type === 'true_false' && studentAns === q.isTrue) score += 0.5;
-            else if (q.type === 'discursive') {
-              // Discursivas em exercícios (raro) somam 0,5 se houver conteúdo, 
-              // mas geralmente são usadas apenas em Provas que são corrigidas manualmente.
-              if (studentAns && studentAns.trim().length > 10) score += 0.5;
-            }
+          const adminAns = answers[qKey];
+          const gabaritoQ = { ...q };
+
+          if (q.type === 'multiple_choice' || !q.type) {
+            gabaritoQ.correct = typeof adminAns === 'number' ? adminAns : (q.correct || 0);
+          } else if (q.type === 'true_false') {
+            gabaritoQ.isTrue = typeof adminAns === 'boolean' ? adminAns : (q.isTrue ?? true);
+          } else if (q.type === 'matching') {
+            gabaritoQ.matchingPairs = q.matchingPairs?.map((pair, mIdx) => {
+              const selectedIdx = adminAns?.[mIdx];
+              if (selectedIdx !== undefined && selectedIdx !== '') {
+                const selectedRight = q.matchingPairs?.[parseInt(selectedIdx)];
+                return { left: pair.left, right: selectedRight?.right || pair.right };
+              }
+              return pair;
+            });
+          } else if (q.type === 'discursive') {
+            gabaritoQ.expectedAnswer = adminAns || q.expectedAnswer || '';
           }
+          return gabaritoQ;
         });
+
+        const { error } = await supabase.from('aulas').update({ questionario: gabarito }).eq('id', targetId);
+        if (error) throw error;
+        alert('Gabarito Oficial salvo com sucesso!');
+        setSubmitting(false);
+        return;
       }
 
-      const finalS = isFinal ? 0 : Math.min(10, score);
-      
-      // Provas (regulares ou finais) exigem correção manual. Exercícios são auto-corrigidos.
-      const status = (isFinal || lesson.tipo === 'prova') ? 'pendente' : 'corrigida';
-      const pass = false; // Nota para aprovação visual de prova será checada após a correção do prof. Exercícios não precisam de nota de aprovação.
+       // Regra Fatesa: Avaliações agora possuem correção automática baseada no gabarito oficial.
+       // Padrão: 10 Verdadeiro/Falso (5 pts), 4 Múltipla Escolha (2 pts), 1 Relacione Colunas 6 pares (3 pts).
+       const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
+       
+       // Calculamos a pontuação para todas as avaliações (agora automática)
+       questions.forEach((q, idx) => {
+         const qKey = q.id || idx;
+         const studentAns = answers[qKey];
+         
+         if (q.type === 'matching' && q.matchingPairs?.length) {
+           const uA = studentAns || {};
+           const correctPairs = q.matchingPairs.reduce((acc: number, _: any, mIdx: number) => {
+             return acc + (String(uA[mIdx]) === String(mIdx) ? 1 : 0);
+           }, 0);
+           score += Math.min(3.0, correctPairs * 0.5);
+         } else {
+           if (q.type === 'multiple_choice' || !q.type) {
+             if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score += 0.5;
+           }
+           else if (q.type === 'true_false' && studentAns === q.isTrue) score += 0.5;
+         }
+       });
+
+       const finalScore = isFinal ? score : null; 
+       const status = 'corrigida'; // Correção agora é automática para todos
+
 
       const payload: any = {
         aluno_id: userProfile.id, 
         aula_id: targetId, 
         respostas: answers, 
-        nota: finalS, 
+        nota: finalScore, // null para exercícios pedagógicos
         status: status,
         tentativas: (currentSub?.tentativas || 0) + 1, 
         updated_at: new Date().toISOString()
@@ -470,37 +568,21 @@ const Lesson = () => {
       const { error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
       if (error) throw error;
 
-      // Pop-ups based on lesson type
-      if (isFinal) {
-        alert('Prova enviada com sucesso! O professor corrigirá todas as questões manualmente com base no gabarito oficial.');
-        navigate('/dashboard');
-        return;
-      } else {
-        alert('Exercício finalizado! Progresso registrado.');
-      }
+       if (isFinal) {
+         alert('Avaliação enviada e corrigida automaticamente com sucesso!');
+         navigate('/dashboard');
+         return;
+       }
 
-      setResult({ score: finalS, passed: pass, pendingReview: status === 'pendente' });
+
+      // Exercício pedagógico: marcado como concluído independente das respostas
+      setResult({ score: null, passed: false, pendingReview: false });
       setSubmitted(true); setIsExamStarted(false); setTimeLeft(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // Official Progress tracking: 
-      // Activities (exercícios/vídeos) fill the progress bar.
-      // Exams (provas) unlock the next module but NOT the progress bar.
-      if (!isFinal) {
-        // Regular activity or content
-        await supabase.from('progresso').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true }, { onConflict: 'aluno_id,aula_id' });
-        setComplete(true);
-      } else {
-        // This is a Prova (isFinal is true).
-        // It DOES NOT record progress (concluida: true) in progresso, 
-        // because evaluations don't fill the progress bar as per user request.
-        if (targetLesson.is_bloco_final && pass) {
-          // Special scroll for module completion
-          setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-          }, 500);
-        }
-      }
+      // Registra progresso (exercícios sempre concluem, pois são pedagógicos)
+      await supabase.from('progresso').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true }, { onConflict: 'aluno_id,aula_id' });
+      setComplete(true);
     } catch (err: any) { 
       console.error(err);
       alert('Erro ao enviar avaliação: ' + (err.message || 'Tente novamente.'));
@@ -537,11 +619,11 @@ const Lesson = () => {
 
   useEffect(() => {
     let int: any;
-    if (isExamStarted && timeLeft && timeLeft > 0) {
+    if (!userProfile?.isStaff && isExamStarted && timeLeft && timeLeft > 0) {
       int = setInterval(() => setTimeLeft(p => { if (p && p <= 1) { clearInterval(int); handleSubmit(); return 0; } return p?p-1:0; }), 1000);
     }
     return () => clearInterval(int);
-  }, [isExamStarted, timeLeft]);
+  }, [isExamStarted, timeLeft, userProfile]);
 
   // Lock window: prevent close/tab switch/cache while exam is active
   useEffect(() => {
@@ -775,6 +857,8 @@ const Lesson = () => {
     lesson.arquivo_url ||
     lesson.pdf_url ||
     lesson.tipo === 'atividade' ||
+    lesson.tipo === 'exercicio' ||
+    lesson.tipo === 'avaliacao' ||
     lesson.tipo === 'prova' ||
     questions.length > 0;
 
@@ -796,85 +880,237 @@ const Lesson = () => {
     )
   }
 
-  return (
-    <div className="lesson-container">
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button onClick={() => navigate('/dashboard')} className="btn btn-outline" style={{width:'auto'}}>Dashboard</button>
-        </div>
-      </div>
+    return (
+      <div className="lesson-container reading-page">
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', justifyContent: 'space-between', alignItems: 'center' }}>
+         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <button 
+              onClick={() => {
+                if (userProfile?.isStaff) {
+                  navigate(userProfile.profile_tipo === 'admin' ? '/admin' : '/professor');
+                } else {
+                  navigate('/dashboard');
+                }
+              }} 
+              className="btn btn-outline" 
+              style={{width:'auto'}}
+            >
+              {userProfile?.isStaff ? (userProfile.profile_tipo === 'admin' ? 'Painel Administrativo' : 'Painel do Professor') : 'Dashboard'}
+            </button>
+           {hasHtmlFile && toc.length > 0 && (
+             <button 
+               onClick={() => setIsMenuOpen(!isMenuOpen)} 
+               className="btn btn-outline" 
+               style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+             >
+               <Menu size={18} /> Tópicos
+             </button>
+           )}
+         </div>
+       </div>
 
-      <div className="lesson-header-section" style={{ marginBottom: '3rem' }}>
-        <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-muted)', padding: '0 1.25rem' }}>{book?.titulo}</div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{lesson.titulo}</h1>
-      </div>
+       <div className="lesson-header-section" style={{ marginBottom: '3rem' }}>
+         <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-muted)', padding: '0 1.25rem' }}>{book?.titulo}</div>
+         <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{lesson.titulo}</h1>
+       </div>
+       
+       {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
+         <div className="video-section" style={{ marginBottom: '4rem' }}>
+           <div className="video-wrapper" style={{ aspectRatio: '16/9', background: '#000', borderRadius: '24px', overflow: 'hidden' }}>
+             {lesson.video_url ? renderVideoPlayer(lesson.video_url) : <div style={{height:'100%', display:'flex', alignItems:'center', justifyContent:'center'}}>Vídeo Indisponível</div>}
+           </div>
+           {!complete && <button className="btn btn-primary" onClick={handleMarkAsComplete} style={{marginTop:'2rem', width:'auto', margin:'2rem auto', display:'block'}}>Marcar como Concluída</button>}
+         </div>
+       )}
+       
+       {/* Lesson Content: HTML file or content blocks */}
+       {htmlLoading && (
+         <div style={{ textAlign: 'center', padding: '4rem' }}>
+           <Loader2 className="spinner" size={32} />
+           <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>Carregando conteúdo...</p>
+         </div>
+       )}
+       
+       {hasHtmlFile && !htmlLoading && (
+         <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', position: 'relative' }}>
+           {isMenuOpen && (
+             <div 
+               style={{ 
+                 position: 'fixed', 
+                 inset: 0, 
+                 zIndex: 1000, 
+                 display: 'flex', 
+                 justifyContent: 'flex-start' 
+               }}
+             >
+               <div 
+                 onClick={() => setIsMenuOpen(false)} 
+                 style={{ 
+                   position: 'absolute', 
+                   inset: 0, 
+                   background: 'rgba(0,0,0,0.5)', 
+                   backdropFilter: 'blur(4px)' 
+                 }} 
+               />
+               <aside style={{ 
+                 position: 'relative', 
+                 width: '300px', 
+                 background: 'var(--bg-dark)', 
+                 padding: '2rem', 
+                 borderRadius: '0 24px 24px 0', 
+                 borderRight: '1px solid var(--glass-border)',
+                 height: '100vh',
+                 overflowY: 'auto',
+                 boxShadow: '10px 0 30px rgba(0,0,0,0.5)',
+                 zIndex: 1001,
+                 transition: 'transform 0.3s ease'
+               }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                   <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
+                     <List size={20} color="var(--primary)" /> Tópicos
+                   </h4>
+                   <button onClick={() => setIsMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                     <X size={24} />
+                   </button>
+                 </div>
+                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    {toc.filter(item => item.isMainSection).map((item, idx) => {
+                      const labelParts = item.label.split(/\.\s+/);
+                      const formattedLabel = labelParts.length > 1 
+                        ? `Texto ${labelParts[0]} - ${labelParts.slice(1).join('. ')}` 
+                        : `Texto ${idx + 1} - ${item.label}`;
+                      
+                      return (
+                        <a 
+                          key={item.id} 
+                          href="#" 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsMenuOpen(false);
+                            setTimeout(() => {
+                              const element = document.getElementById(item.id);
+                              if (element) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                              }
+                            }, 100);
+                          }}
+                          style={{ 
+                            color: 'var(--text-muted)', 
+                            textDecoration: 'none', 
+                            fontSize: '0.95rem', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '0.6rem',
+                            padding: '0.6rem 1rem',
+                            borderRadius: '8px',
+                            transition: 'all 0.2s',
+                            lineHeight: 1.4,
+                            background: 'rgba(255,255,255,0.03)',
+                            cursor: 'pointer'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = 'var(--primary)';
+                            e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = 'var(--text-muted)';
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                          }}
+                        >
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />
+                          {formattedLabel}
+                        </a>
+                      );
+                    })}
+                 </div>
+               </aside>
+             </div>
+           )}
+           <div className="lesson-content" style={{ 
+             flex: 1, 
+             marginBottom: '4rem', 
+             lineHeight: 1.8, 
+             maxWidth: '1200px', // Expand area
+             width: '100%',
+             padding: '0 2rem',
+             textAlign: 'justify', // Justify text
+             overflow: 'auto',
+             transition: 'all 0.3s ease'
+           }}
+             onClick={(e) => {
+               const btn = (e.target as HTMLElement).closest('.ref-btn');
+               if (btn) {
+                 const refId = btn.getAttribute('data-ref');
+                 const ref = lessonReferences.find(r => r.id === refId);
+                 if (ref) setActiveReference(ref);
+               }
+             }}
+             dangerouslySetInnerHTML={{ __html: renderHtmlWithReferences(htmlContent!) }}
+           />
+         </div>
+       )}
 
-      {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
-        <div className="video-section" style={{ marginBottom: '4rem' }}>
-          <div className="video-wrapper" style={{ aspectRatio: '16/9', background: '#000', borderRadius: '24px', overflow: 'hidden' }}>
-            {lesson.video_url ? renderVideoPlayer(lesson.video_url) : <div style={{height:'100%', display:'flex', alignItems:'center', justifyContent:'center'}}>Vídeo Indisponível</div>}
+       {hasContentBlocks && !hasHtmlFile && (
+         <div className="lesson-content" style={{ marginBottom: '4rem' }}>
+           {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
+         </div>
+       )}
+
+       <div style={{ 
+         display: 'flex', 
+         justifyContent: 'space-between', 
+         alignItems: 'center', 
+         marginBottom: '4rem', 
+         padding: '1rem 0',
+         borderTop: '1px solid var(--glass-border)',
+         borderBottom: '1px solid var(--glass-border)',
+         gap: '1rem'
+       }}>
+         <button 
+           onClick={() => prevLessonId ? navigate(`/lesson/${prevLessonId}`) : null} 
+           className="btn btn-outline" 
+           style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+           disabled={!prevLessonId}
+         >
+           <ChevronLeft size={20} /> Lição Anterior
+         </button>
+
+         <button 
+           onClick={() => nextLessonId ? navigate(`/lesson/${nextLessonId}`) : null} 
+           className="btn btn-primary" 
+           style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+           disabled={!nextLessonId}
+         >
+           Próxima Lição <ChevronRight size={20} />
+         </button>
+       </div>
+
+        {/* Exercício de Fixação - Componente separado */}
+        {lesson.tipo === 'exercicio' && questions.length > 0 && (
+          <div style={{ marginTop: '2rem' }}>
+            <ExercicioFixacao
+              lessonId={id!}
+              questions={questions}
+              lessonTitle={lesson.titulo}
+            />
           </div>
-          {!complete && <button className="btn btn-primary" onClick={handleMarkAsComplete} style={{marginTop:'2rem', width:'auto', margin:'2rem auto', display:'block'}}>Marcar como Concluída</button>}
-        </div>
-      )}
+        )}
 
-      {lesson.tipo === 'material' && (
-        <div style={{ background: 'var(--glass)', padding: '4rem 2rem', borderRadius: '24px', textAlign: 'center', marginBottom: '4rem', border: '1px solid var(--glass-border)' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-            <FileText size={40} color="var(--primary)" />
+        {/* Avaliação - Componente separado com efeito avaliativo */}
+        {lesson.tipo === 'avaliacao' && questions.length > 0 && (
+          <div style={{ marginTop: '2rem' }}>
+            <AvaliacaoFixacao
+              lessonId={id!}
+              questions={questions}
+              lessonTitle={lesson.titulo}
+              minGrade={lesson.min_grade || 7.0}
+            />
           </div>
-          <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Material de Estudo</h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Este módulo contém textos e materiais de leitura essenciais para sua formação.</p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button className="btn btn-primary" onClick={() => navigate(`/book/${lesson.id}?type=aula`)} style={{width:'auto'}}>Ver Conteúdo</button>
-            {!complete && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto'}}>Concluir Leitura</button>}
-          </div>
-        </div>
-      )}
+        )}
 
-      {lesson.tipo === 'licao' && (lesson.arquivo_url || lesson.pdf_url) && (
-        <div style={{ background: 'var(--glass)', padding: '4rem 2rem', borderRadius: '24px', textAlign: 'center', marginBottom: '4rem', border: '1px solid var(--glass-border)' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '20px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-            <FileText size={40} color="var(--primary)" />
-          </div>
-          <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{lesson.titulo}</h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Conteúdo da lição disponível para leitura. Clique abaixo para abrir o material.</p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button className="btn btn-primary" onClick={() => navigate(`/book/${lesson.id}?type=aula`)} style={{width:'auto'}}>Abrir Lição</button>
-            {!complete && <button className="btn btn-outline" onClick={handleMarkAsComplete} style={{width:'auto'}}>Concluir Leitura</button>}
-          </div>
-        </div>
-      )}
+        {/* Avaliação / Questionário - Componente original */}
+        {(lesson.tipo === 'atividade' || lesson.tipo === 'prova' || (questions.length > 0 && lesson.tipo !== 'exercicio' && lesson.tipo !== 'avaliacao')) && (
 
-      {/* Lesson Content: HTML file or content blocks */}
-      {htmlLoading && (
-        <div style={{ textAlign: 'center', padding: '4rem' }}>
-          <Loader2 className="spinner" size={32} />
-          <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>Carregando conteúdo...</p>
-        </div>
-      )}
-
-      {hasHtmlFile && !htmlLoading && (
-        <div className="lesson-content" style={{ marginBottom: '4rem', lineHeight: 1.8, maxWidth: '100%', overflow: 'auto' }}
-          onClick={(e) => {
-            const btn = (e.target as HTMLElement).closest('.ref-btn');
-            if (btn) {
-              const refId = btn.getAttribute('data-ref');
-              const ref = lessonReferences.find(r => r.id === refId);
-              if (ref) setActiveReference(ref);
-            }
-          }}
-          dangerouslySetInnerHTML={{ __html: renderHtmlWithReferences(htmlContent!) }}
-        />
-      )}
-
-      {hasContentBlocks && !hasHtmlFile && (
-        <div className="lesson-content" style={{ marginBottom: '4rem' }}>
-          {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
-        </div>
-      )}
-
-      {(lesson.tipo === 'atividade' || lesson.tipo === 'prova' || questions.length > 0) && (
         <div className="quiz-section" style={{ background: 'var(--glass)', padding: '3rem', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'2rem'}}>
             <h2>{lesson.is_bloco_final ? 'Avaliação Final' : lesson.tipo === 'prova' ? 'Avaliação' : 'Questionário'}</h2>
@@ -903,16 +1139,20 @@ const Lesson = () => {
             </div>
           )}
 
-          {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode ? (
+           {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode && !userProfile?.isStaff ? (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
               <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
               <h3>Prova do Bloco {lesson.bloco_id}</h3>
               <p>Duração: 40 minutos | Tentativa: {deadlineInfo?.stage || 1}</p>
               <p>Prazo: {deadlineInfo?.deadline.toLocaleDateString()}</p>
               {deadlineInfo?.expired && userProfile?.profile_tipo === 'aluno' && !userProfile?.isStaff ? <p style={{color:'var(--error)'}}>Prazo Expirado</p> : (
-                <button className="btn btn-primary" onClick={() => setShowExamModal(true)} style={{width:'auto', marginTop:'1rem'}}>
-                  {userProfile?.isStaff ? 'Pré-visualizar Prova' : 'Começar Agora'}
-                </button>
+                               <button 
+                                 className="btn btn-primary" 
+                                 onClick={() => setShowExamModal(true)} 
+                                 style={{width:'auto', marginTop:'1rem'}}
+                               >
+                                 {userProfile?.isStaff ? 'Visualizar Avaliação' : 'Começar Agora'}
+                               </button>
               )}
             </div>
           ) : (lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && existingSubmission?.status !== 'liberado') ? null : (
@@ -924,11 +1164,10 @@ const Lesson = () => {
                                   q.type === 'true_false' ? studentAns === q.isTrue :
                                   q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
                 
-                // O gabarito agora é mostrado no modo de revisão, se for ATIVIDADE já enviada, ou PROVA corrigida com nota superior à média (ou módulo ganho de forma definitiva)
-                const isApprovedScore = existingSubmission?.nota !== null && existingSubmission?.nota !== undefined ? existingSubmission.nota >= (lesson?.min_grade || 7.0) : false;
-                const showGabarito = reviewMode || 
-                                     (lesson?.tipo === 'atividade' && (submitted || !!existingSubmission)) ||
-                                     ((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && existingSubmission?.status === 'corrigida' && (isApprovedScore || isModuleApproved));
+                 // Gabarito: staff sempre vê | aluno vê apenas se submeter e atingir a nota mínima (Efeito Avaliativo)
+                 const showGabarito = reviewMode ||
+                                      userProfile?.isStaff ||
+                                       (submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0));
 
                 return (
                   <div 
@@ -953,10 +1192,11 @@ const Lesson = () => {
                         border: showGabarito && submitted && q.correct === oIdx ? '1px solid var(--success)' : (showGabarito && submitted && answers[qKey] === oIdx && !isCorrect ? '1px solid var(--error)' : '1px solid var(--glass-border)'), 
                         cursor: 'pointer', marginBottom:'0.5rem' 
                       }}>
-                        <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={submitted && !reviewMode} /> 
+                         <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={!userProfile?.isStaff && submitted && !reviewMode} /> 
                         <span style={{flex:1}}>{opt}</span>
-                        {showGabarito && submitted && q.correct === oIdx && <div style={{color:'var(--success)', fontSize:'0.75rem', fontWeight:800, display:'flex', alignItems:'center', gap:'0.4rem'}}><CheckCircle size={14}/> GABARITO</div>}
-                        {showGabarito && submitted && answers[qKey] === oIdx && !isCorrect && <XCircle size={16} color="var(--error)"/>}
+                                 {showGabarito && (userProfile?.isStaff || submitted) && q.type === 'matching' ? null : (q.correct === oIdx && <div style={{color:'var(--success)', fontSize:'0.75rem', fontWeight:800, display:'flex', alignItems:'center', gap:'0.4rem'}}><CheckCircle size={14}/> GABARITO</div>)}
+                                 {showGabarito && (userProfile?.isStaff || submitted) && answers[qKey] === oIdx && !isCorrect && <XCircle size={16} color="var(--error)"/>}
+
                       </label>
                     ))}
 
@@ -966,16 +1206,17 @@ const Lesson = () => {
                           <button 
                             key={v.toString()} 
                             className={`btn ${answers[qKey] === v ? 'btn-primary' : 'btn-outline'}`} 
-                            onClick={() => setAnswers(p => ({...p, [qKey]: v}))} 
-                            style={{
-                              width:'auto',
-                              border: showGabarito && submitted && q.isTrue === v ? '2px solid var(--success)' : (showGabarito && submitted && answers[qKey] === v && !isCorrect ? '2px solid var(--error)' : '')
-                            }}
-                            disabled={submitted}
-                          >
+                             onClick={() => setAnswers(p => ({...p, [qKey]: v}))} 
+                             style={{
+                               width:'auto',
+                                border: showGabarito && (userProfile?.isStaff || submitted) && q.isTrue === v ? '2px solid var(--success)' : (showGabarito && (userProfile?.isStaff || submitted) && answers[qKey] === v && !isCorrect ? '2px solid var(--error)' : '')
+                             }}
+                             disabled={!userProfile?.isStaff && submitted}
+                           >
                             {v ? 'Verdadeiro' : 'Falso'}
-                            {showGabarito && submitted && q.isTrue === v && <CheckCircle size={14} style={{marginLeft:'0.5rem'}}/>}
-                            {showGabarito && submitted && answers[qKey] === v && !isCorrect && <XCircle size={14} style={{marginLeft:'0.5rem'}}/>}
+                                 {showGabarito && (userProfile?.isStaff || submitted) && q.type === 'matching' ? null : (q.isTrue === v && <CheckCircle size={14} style={{marginLeft:'0.5rem'}}/>)}
+                                 {showGabarito && (userProfile?.isStaff || submitted) && answers[qKey] === v && !isCorrect && <XCircle size={14} style={{marginLeft:'0.5rem'}}/>}
+
                           </button>
                         ))}
                       </div>
@@ -988,56 +1229,59 @@ const Lesson = () => {
                       const isRowCorrect = currentAnswerIdx === (originalLeftIdx !== -1 ? originalLeftIdx : pIdx);
                       
                       return (
-                        <div key={pIdx} style={{display:'flex', alignItems:'center', gap:'1rem', marginBottom:'0.5rem'}}>
-                          <div style={{flex:1, padding:'0.75rem', background:'rgba(255,255,255,0.05)', borderRadius:'8px'}}>{pair.left}</div>
-                          <select 
-                            className="form-control" 
-                            style={{
-                              flex:1,
-                              border: showGabarito && submitted ? (isRowCorrect ? '1px solid var(--success)' : '1px solid var(--error)') : ''
-                            }} 
-                            value={currentAnswerIdx !== undefined ? q.matchingPairs?.[currentAnswerIdx]?.right || '' : ''} 
-                            onChange={e => {
-                              const selectedRightIdx = q.matchingPairs?.findIndex(mp => mp.right === e.target.value);
-                              const leftIdx = originalLeftIdx !== -1 ? originalLeftIdx! : pIdx;
-                              setAnswers(p => ({
-                                ...p, 
-                                [qKey]: {
-                                  ...(typeof p[qKey] === 'object' ? p[qKey] : {}), 
-                                  [leftIdx]: selectedRightIdx !== -1 ? String(selectedRightIdx) : ''
-                                }
-                              }));
-                            }} 
-                            disabled={submitted}
-                          >
-                            <option value="">Selecione...</option>
-                            {(shuffledOptions[qKey] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
-                              <option key={roIdx} value={rightOpt}>{rightOpt}</option>
-                            ))}
-                          </select>
-                          {showGabarito && submitted && (isRowCorrect ? <CheckCircle size={18} color="var(--success)"/> : <XCircle size={18} color="var(--error)"/>)}
+                        <div key={pIdx} className="matching-grid-responsive">
+                          <div className="matching-item-left">{pair.left}</div>
+                          <div className="matching-select-wrapper">
+                            <select 
+                              className="matching-select" 
+                              style={{
+                                border: showGabarito && (userProfile?.isStaff || submitted) ? (isRowCorrect ? '1px solid var(--success)' : '1px solid var(--error)') : ''
+                              }} 
+                              value={currentAnswerIdx !== undefined ? q.matchingPairs?.[currentAnswerIdx]?.right || '' : ''} 
+                              onChange={e => {
+                                const selectedRightIdx = q.matchingPairs?.findIndex(mp => mp.right === e.target.value);
+                                const leftIdx = originalLeftIdx !== -1 ? originalLeftIdx! : pIdx;
+                                setAnswers(p => ({
+                                  ...p, 
+                                  [qKey]: {
+                                    ...(typeof p[qKey] === 'object' ? p[qKey] : {}), 
+                                    [leftIdx]: selectedRightIdx !== -1 ? String(selectedRightIdx) : ''
+                                  }
+                                }));
+                              }} 
+                              disabled={!userProfile?.isStaff && submitted}
+                            >
+                              <option value="">Selecione...</option>
+                              {(shuffledOptions[qKey] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
+                               <option key={roIdx} value={rightOpt}>{rightOpt}</option>
+                              ))}
+                            </select>
+                          </div>
+                           {showGabarito && (userProfile?.isStaff || submitted) && (isRowCorrect ? <CheckCircle size={18} color="var(--success)"/> : <XCircle size={18} color="var(--error)"/>)}
                         </div>
                       );
                     })}
 
-                    {q.type === 'discursive' && (
-                      <div style={{display:'flex', flexDirection:'column', gap:'0.5rem'}}>
-                        <textarea className="form-control" rows={4} value={answers[qKey] || ''} onChange={e => setAnswers(p => ({...p, [qKey]: e.target.value}))} placeholder="Sua resposta..." disabled={submitted}></textarea>
-                        {showGabarito && submitted && q.expectedAnswer && (
-                          <div style={{marginTop:'1rem', padding:'1rem', background:'rgba(var(--primary-rgb), 0.1)', borderRadius:'12px', fontSize:'0.9rem'}}>
-                            <strong style={{color:'var(--primary)', display:'block', marginBottom:'0.5rem'}}>Gabarito sugerido:</strong>
-                            {q.expectedAnswer}
-                          </div>
-                        )}
-                      </div>
-                    )}
 
-                    {showGabarito && submitted && q.explanation && (
-                      <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.9rem' }}>
-                        <strong style={{ color: 'var(--primary)', display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Explicação / Gabarito Comentado:</strong>
-                        <div style={{ color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>{q.explanation}</div>
-                      </div>
-                    )}
+                     {q.type === 'discursive' && (
+                       <div style={{display:'flex', flexDirection:'column', gap:'0.5rem'}}>
+                         <textarea className="form-control" rows={4} value={answers[qKey] || ''} onChange={e => setAnswers(p => ({...p, [qKey]: e.target.value}))} placeholder="Sua resposta..." disabled={!userProfile?.isStaff && submitted}></textarea>
+                         { (userProfile?.isStaff || (submitted && answers[qKey])) && q.expectedAnswer && (
+                           <div style={{marginTop:'1rem', padding:'1rem', background:'rgba(var(--primary-rgb), 0.1)', borderRadius:'12px', fontSize:'0.9rem'}}>
+                             <strong style={{color:'var(--primary)', display:'block', marginBottom:'0.5rem'}}>Gabarito sugerido:</strong>
+                             {q.expectedAnswer}
+                           </div>
+                         )}
+                       </div>
+                     )}
+
+
+                                {showGabarito && (userProfile?.isStaff || submitted) && q.explanation && (
+                                  <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.9rem' }}>
+                                    <strong style={{ color: 'var(--primary)', display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Explicação / Gabarito Comentado:</strong>
+                                    <div style={{ color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>{q.explanation}</div>
+                                  </div>
+                                )}
                   </div>
                 );
               })}
@@ -1048,7 +1292,112 @@ const Lesson = () => {
                   <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Este módulo já foi finalizado. Você pode revisar o conteúdo e o gabarito, mas não pode enviar novas respostas.</p>
                 </div>
               )}
-              {!submitted && !isModuleFinished && <button className="btn btn-primary" onClick={handleSubmit} disabled={submitting}>{submitting ? <Loader2 className="spinner"/> : 'Finalizar e Enviar'}</button>}
+              
+              {/* Painel Staff: Gabarito Oficial */}
+              {userProfile?.isStaff && (lesson?.tipo === 'prova' || lesson?.tipo === 'atividade' || lesson?.tipo === 'exercicio' || lesson?.tipo === 'avaliacao' || lesson?.tipo === 'questionario') && questions.length > 0 && (
+                <div style={{ 
+                  background: 'rgba(34, 197, 94, 0.06)', border: '1px solid rgba(34, 197, 94, 0.25)', 
+                  borderRadius: '20px', padding: '2rem', marginTop: '1.5rem', marginBottom: '2rem' 
+                }}>
+                  <h4 style={{ color: '#22c55e', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', fontWeight: 700 }}>
+                    ✓ Gabarito Oficial {userProfile?.isStaff ? '(Salvar Gabarito)' : '(Visualização)'}
+                  </h4>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '0.5rem', marginBottom: userProfile?.isStaff ? '1.75rem' : '0' }}>
+                    {questions.map((q, idx) => {
+                      let display = '';
+                      if (q.type === 'true_false') display = q.isTrue ? 'V' : 'F';
+                      else if (q.type === 'multiple_choice' || !q.type) {
+                        const letters = ['A', 'B', 'C', 'D', 'E'];
+                        display = typeof q.correct === 'number' ? letters[q.correct] : '?';
+                      } else if (q.type === 'matching') display = '↔';
+                      else display = '—';
+                      return (
+                        <div key={idx} style={{ background: 'rgba(255,255,255,0.05)', padding: '0.5rem 0.25rem', borderRadius: '8px', textAlign: 'center' }}>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', display: 'block' }}>Q{idx + 1}</span>
+                          <span style={{ fontWeight: 800, color: '#22c55e', fontSize: '1.1rem' }}>{display}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {userProfile?.isStaff && (
+                    <div style={{ paddingTop: '1.5rem', borderTop: '1px solid rgba(34, 197, 94, 0.15)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0, textAlign: 'center' }}>
+                        Selecione as respostas corretas nas questões acima e clique para salvar como gabarito oficial.
+                      </p>
+                      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                        <button
+                          onClick={() => handleSubmit(true)}
+                          disabled={submitting}
+                          style={{
+                            background: submitting ? 'rgba(34, 197, 94, 0.4)' : 'linear-gradient(135deg, #16a34a, #22c55e)',
+                            color: '#fff', border: 'none', padding: '0.95rem 2.75rem', fontSize: '1rem', fontWeight: 800, borderRadius: '50px',
+                            display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: submitting ? 'not-allowed' : 'pointer'
+                          }}
+                        >
+                          {submitting ? <Loader2 className="spinner" size={18} /> : 'Salvar Gabarito Oficial'}
+                        </button>
+                        <button
+                          onClick={() => setShowQuizEditor(true)}
+                          style={{
+                            background: 'rgba(255,255,255,0.05)',
+                            color: '#fff', border: '1px solid rgba(255,255,255,0.2)', padding: '0.95rem 2.75rem', fontSize: '1rem', fontWeight: 800, borderRadius: '50px',
+                            display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer'
+                          }}
+                        >
+                          <FileText size={18} /> Editar Questionário
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+               {!submitted && !isModuleFinished && !userProfile?.isStaff && (
+                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
+                  <button 
+                    className="btn btn-outline" 
+                    onClick={() => handleSaveProgress()}
+                    disabled={submitting}
+                    style={{ 
+                      padding: '1rem 2.5rem', 
+                      fontSize: '1.05rem', 
+                      fontWeight: 700,
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '0.6rem',
+                      minWidth: '220px',
+                      justifyContent: 'center',
+                      borderRadius: '50px',
+                      borderColor: 'var(--primary)',
+                      color: 'var(--primary)'
+                    }}
+                  >
+                    {submitting ? <Loader2 className="spinner" size={18} /> : '💾 Salvar Respostas'}
+                  </button>
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => handleSubmit(false)}
+                    disabled={submitting}
+                    style={{ 
+                      padding: '1rem 2.5rem', 
+                      fontSize: '1.05rem', 
+                      fontWeight: 700,
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '0.6rem',
+                      minWidth: '220px',
+                      justifyContent: 'center',
+                      borderRadius: '50px',
+                      boxShadow: '0 4px 20px rgba(var(--primary-rgb), 0.35)'
+                    }}
+                  >
+                    {submitting ? <Loader2 className="spinner" size={18} /> : '✓ Enviar Respostas'}
+                  </button>
+                </div>
+              )}
+
               {submitted && result && (
                 <div style={{textAlign:'center', marginTop:'2rem', padding:'2rem', background:'var(--glass)', borderRadius:'16px', border: '1px solid var(--glass-border)'}}>
                   {((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && (existingSubmission?.status !== 'corrigida' && result.pendingReview)) ? (
@@ -1078,8 +1427,14 @@ const Lesson = () => {
                                   </svg>
                                 </>
                               )}
-                              <h3>Nota Final: {result.score?.toFixed(1)} / 10</h3>
-                              <p>{result.passed ? 'Parabéns! Você atingiu a nota mínima de aprovação.' : 'Nota insuficiente. Por favor, realize a recuperação para prosseguir.'}</p>
+                               <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                                 {result.passed ? 'Parabéns! Você foi aprovado.' : 'Nota Insuficiente'}
+                               </h3>
+                               <p>{result.passed ? 'Você atingiu a nota mínima e o gabarito oficial foi liberado.' : 
+                                 (lesson.versao === 1 ? 'Você não atingiu a nota mínima. Por favor, realize a V2 (Recuperação) para prosseguir.' : 
+                                  lesson.versao === 2 ? 'Você não atingiu a nota mínima. Por favor, realize a V3 (Recuperação 2) para prosseguir.' : 
+                                  'Você não atingiu a nota mínima na V3. De acordo com a regra, você deverá refazer o módulo completo.')}
+                               </p>
                             </>
                           ) : (
                             <>
@@ -1110,10 +1465,119 @@ const Lesson = () => {
                       </button>
                     )}
                     {!result.canRetry && nextLessonId && (
-                      <button className="btn btn-primary" onClick={() => navigate(`/lesson/${nextLessonId}`)} style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}>
-                        Próxima Aula <ChevronRight size={18}/>
-                      </button>
+                      <div style={{display:'flex', gap:'1rem', justifyContent:'center', marginTop:'2rem'}}>
+                        <button 
+                          className="btn btn-outline" 
+                          onClick={() => navigate(-1)} 
+                          style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}
+                        >
+                          <ChevronLeft size={18}/> Aula Anterior
+                        </button>
+                        <button 
+                          className="btn btn-primary" 
+                          onClick={() => navigate(`/lesson/${nextLessonId}`)} 
+                          style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}
+                        >
+                          Próxima Aula <ChevronRight size={18}/>
+                        </button>
+                      </div>
                     )}
+
+                  </div>
+                </div>
+              )}
+
+              {/* Gabarito Oficial e Desempenho Detalhado */}
+              {submitted && result && questions.length > 0 && (
+                <div style={{marginTop:'2.5rem', padding:'2rem', background:'var(--glass)', borderRadius:'20px', border:'1px solid var(--glass-border)'}}>
+                  <div style={{display:'flex', alignItems:'center', gap:'0.75rem', marginBottom:'1.5rem'}}>
+                    <BookOpen size={24} color="var(--primary)"/>
+                    <h3 style={{margin:0, fontSize:'1.3rem', fontWeight:800}}>Gabarito Oficial e Seu Desempenho</h3>
+                  </div>
+
+                     {(() => {
+                       const stats = questions.reduce((acc, q, idx) => {
+                         const qKey = q.id || idx;
+                         const studentAns = answers[qKey];
+                         const isCorrect = q.type === 'multiple_choice' || !q.type ? String(studentAns) === String(q.correct) :
+                                           q.type === 'true_false' ? studentAns === q.isTrue :
+                                           q.type === 'matching' ? (q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) ?? false) : true;
+                         acc.total += 1;
+                         if (isCorrect) acc.correct += 1; else acc.incorrect += 1;
+                         return acc;
+                       }, { total: 0, correct: 0, incorrect: 0 });
+
+
+                    return (
+                      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:'1rem', marginBottom:'2rem'}}>
+                        <div style={{padding:'1.25rem', background:'rgba(255,255,255,0.03)', borderRadius:'14px', border:'1px solid var(--glass-border)', textAlign:'center'}}>
+                          <div style={{fontSize:'0.75rem', color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'0.5rem'}}>Total</div>
+                          <div style={{fontSize:'2rem', fontWeight:900, color:'var(--text)'}}>{stats.total}</div>
+                        </div>
+                        <div style={{padding:'1.25rem', background:'rgba(16, 185, 129, 0.08)', borderRadius:'14px', border:'1px solid rgba(16, 185, 129, 0.25)', textAlign:'center'}}>
+                          <div style={{fontSize:'0.75rem', color:'var(--success)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'0.5rem', fontWeight:700}}>Acertos</div>
+                          <div style={{fontSize:'2rem', fontWeight:900, color:'var(--success)'}}>{stats.correct}</div>
+                        </div>
+                        <div style={{padding:'1.25rem', background:'rgba(239, 68, 68, 0.08)', borderRadius:'14px', border:'1px solid rgba(239, 68, 68, 0.25)', textAlign:'center'}}>
+                          <div style={{fontSize:'0.75rem', color:'var(--error)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'0.5rem', fontWeight:700}}>Erros</div>
+                          <div style={{fontSize:'2rem', fontWeight:900, color:'var(--error)'}}>{stats.incorrect}</div>
+                        </div>
+                        {lesson?.tipo === 'prova' && result.score !== null && (
+                          <div style={{padding:'1.25rem', background:'rgba(var(--primary-rgb), 0.08)', borderRadius:'14px', border:'1px solid rgba(var(--primary-rgb), 0.25)', textAlign:'center'}}>
+                            <div style={{fontSize:'0.75rem', color:'var(--primary)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'0.5rem', fontWeight:700}}>Nota</div>
+                            <div style={{fontSize:'2rem', fontWeight:900, color:'var(--primary)'}}>{result.score?.toFixed(1)}<span style={{fontSize:'1rem', color:'var(--text-muted)'}}> / 10</span></div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
+                    {questions.map((q, idx) => {
+                      const qKey = q.id || idx;
+                      const studentAns = answers[qKey];
+                      const isCorrect = q.type === 'multiple_choice' || !q.type ? String(studentAns) === String(q.correct) :
+                                         q.type === 'true_false' ? studentAns === q.isTrue :
+                                         q.type === 'matching' ? (q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) ?? false) : true;
+
+
+                      const renderCorrectAnswer = () => {
+                        if (q.type === 'multiple_choice' || !q.type) return q.options?.[q.correct as number] || '—';
+                        if (q.type === 'true_false') return q.isTrue ? 'Verdadeiro' : 'Falso';
+                        if (q.type === 'matching') return (q.matchingPairs || []).map((p: any) => `${p.left} → ${p.right}`).join('; ');
+                        return q.expectedAnswer || '—';
+                      };
+
+                      const renderStudentAnswer = () => {
+                        if (studentAns === undefined || studentAns === '' || studentAns === null) return <em style={{color:'var(--text-muted)'}}>Em branco</em>;
+                        if (q.type === 'multiple_choice' || !q.type) return q.options?.[studentAns as number] || '—';
+                        if (q.type === 'true_false') return studentAns ? 'Verdadeiro' : 'Falso';
+                        if (q.type === 'matching') return (q.matchingPairs || []).map((p: any, i: number) => `${p.left} → ${q.matchingPairs?.[studentAns[i]]?.right || '?'}`).join('; ');
+                        return String(studentAns);
+                      };
+
+                      return (
+                        <div key={qKey} style={{padding:'1.25rem', background:'rgba(255,255,255,0.02)', borderRadius:'14px', border:`1px solid ${isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`}}>
+                          <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', marginBottom:'0.75rem'}}>
+                            <p style={{fontWeight:600, fontSize:'0.95rem', margin:0, flex:1}}>{idx + 1}. {q.text}</p>
+                            <div style={{color: isCorrect ? 'var(--success)' : 'var(--error)', display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.75rem', fontWeight:800, whiteSpace:'nowrap', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding:'0.35rem 0.7rem', borderRadius:'8px'}}>
+                              {isCorrect ? <CheckCircle size={14}/> : <XCircle size={14}/>}
+                              {isCorrect ? 'ACERTOU' : 'ERROU'}
+                            </div>
+                          </div>
+                          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.75rem', fontSize:'0.85rem'}}>
+                            <div style={{padding:'0.75rem', background:'rgba(var(--primary-rgb), 0.06)', borderRadius:'10px', border:'1px solid rgba(var(--primary-rgb), 0.2)'}}>
+                              <div style={{fontSize:'0.7rem', color:'var(--primary)', textTransform:'uppercase', letterSpacing:'0.5px', fontWeight:700, marginBottom:'0.4rem'}}>Sua resposta</div>
+                              <div style={{color: isCorrect ? 'var(--success)' : 'var(--error)', fontWeight:600}}>{renderStudentAnswer()}</div>
+                            </div>
+                            <div style={{padding:'0.75rem', background:'rgba(16, 185, 129, 0.06)', borderRadius:'10px', border:'1px solid rgba(16, 185, 129, 0.2)'}}>
+                              <div style={{fontSize:'0.7rem', color:'var(--success)', textTransform:'uppercase', letterSpacing:'0.5px', fontWeight:700, marginBottom:'0.4rem'}}>Gabarito Oficial</div>
+                              <div style={{color:'var(--success)', fontWeight:600}}>{renderCorrectAnswer()}</div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -1196,7 +1660,8 @@ const Lesson = () => {
         </div>
       )}
 
-      <div className="lesson-footer-responsive">
+      {/* Footer replaced with the result navigation buttons above */}
+      <div className="lesson-footer-responsive" style={{ display: 'none' }}>
         <button onClick={() => navigate(-1)} className="btn btn-outline" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Voltar">
           <ChevronLeft size={24} style={{marginRight:'0.5rem'}}/> Aula Anterior
         </button>

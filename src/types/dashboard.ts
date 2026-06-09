@@ -1,7 +1,7 @@
 export interface Lesson {
   id: string
   titulo: string
-  tipo: 'gravada' | 'ao_vivo' | 'atividade' | 'prova' | 'licao' | 'video' | 'aula'
+  tipo: 'gravada' | 'ao_vivo' | 'atividade' | 'exercicio' | 'prova' | 'avaliacao' | 'licao' | 'video' | 'aula' | 'material'
   concluida?: boolean
   arquivo_url?: string
   pdf_url?: string

@@ -1,0 +1,134 @@
+{
+  "id": "ESP_1",
+  "title": "Espírito Santo - V1",
+  "tfQuestions": [
+    {
+      "id": "esp1-tf-1",
+      "question": "Espírito Santo é o único nome da terceira pessoa da Trindade",
+      "answer": "F"
+    },
+    {
+      "id": "esp1-tf-2",
+      "question": "É o Espírito Santo quem opera no homem o milagre do novo nascimento.",
+      "answer": "V"
+    },
+    {
+      "id": "esp1-tf-3",
+      "question": "Ser cheio do Espírito Santo desde o ventre de sua mãe foi um privilégio somente de Jesus",
+      "answer": "F"
+    },
+    {
+      "id": "esp1-tf-4",
+      "question": "Tal como a pomba, o Espírito Santo não habita onde houver impurezas.",
+      "answer": "V"
+    },
+    {
+      "id": "esp1-tf-5",
+      "question": "O batismo com o Espírito Santo é a maior benção ao alcance do homem natural.",
+      "answer": "F"
+    },
+    {
+      "id": "esp1-tf-6",
+      "question": "Paulo deixou claro que são nove as manifestações do fruto do Espírito.",
+      "answer": "F"
+    },
+    {
+      "id": "esp1-tf-7",
+      "question": "É certo que durante a grande tribulação Deus não poderá fazer uso da sua benignidade.",
+      "answer": "F"
+    },
+    {
+      "id": "esp1-tf-8",
+      "question": "O homem pode ou não usar os dons naturais no serviço do Reino de Deus",
+      "answer": "V"
+    },
+    {
+      "id": "esp1-tf-9",
+      "question": "Liberdade do Espírito não pode ser confundida com desorganização.",
+      "answer": "V"
+    },
+    {
+      "id": "esp1-tf-10",
+      "question": "Após o arrebatamento o Espírito Santo não estará mais na terra.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "esp1-mc-1",
+      "question": "Antes do Dia de Pentecostes, os discípulos -",
+      "options": [
+        "Não tinham o Espírito Santo",
+        "Nada sabiam sobre o Espírito Santo",
+        "Já tinham o Espírito Santo",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "esp1-mc-2",
+      "question": "O fruto do Espírito fala do que -",
+      "options": [
+        "O crente faz",
+        "O que o crente é",
+        "O que o crente pensa",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "esp1-mc-3",
+      "question": "Ministro é —",
+      "options": [
+        "Um cargo superior",
+        "Uma posição de destaque",
+        "Aquele que serve",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "esp1-mc-4",
+      "question": "Realizou milagres pelo poder do Espírito Santo —",
+      "options": [
+        "Jesus",
+        "Josué",
+        "Moisés",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "esp1-mp-1",
+      "left": "Pela virtude do Espírito Santo, Eliseu",
+      "right": "Curou um leproso"
+    },
+    {
+      "id": "esp1-mp-2",
+      "left": "Pela virtude do Espírito Santo, Jesus",
+      "right": "Andou sobre as águas"
+    },
+    {
+      "id": "esp1-mp-3",
+      "left": "Pela virtude do Espírito Santo, Sansão",
+      "right": "Feriu mil homens"
+    },
+    {
+      "id": "esp1-mp-4",
+      "left": "Pela virtude do Espírito Santo, Josué",
+      "right": "Parou o tempo"
+    },
+    {
+      "id": "esp1-mp-5",
+      "left": "Pela virtude do Espírito Santo, Davi",
+      "right": "Matou um gigante"
+    },
+    {
+      "id": "esp1-mp-6",
+      "left": "Pela virtude do Espírito Santo, Moisés",
+      "right": "Abriu um mar"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "EPGE_2",
+  "title": "Epístolas Gerais - V2",
+  "tfQuestions": [
+    {
+      "id": "epge2-tf-1",
+      "question": "Tiago, irmão do Senhor, não está entre os doze apóstolos escolhidos por Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "epge2-tf-2",
+      "question": "Deus, sendo amor, é certo que nenhuma fonte de sofrimento pode ser gerada por ele.",
+      "answer": "F"
+    },
+    {
+      "id": "epge2-tf-3",
+      "question": "Para Tiago o crente só pode comprovar sua fé através das obras.",
+      "answer": "V"
+    },
+    {
+      "id": "epge2-tf-4",
+      "question": "Tiago afirmou ser “... melhor a sabedoria do que a força”.",
+      "answer": "F"
+    },
+    {
+      "id": "epge2-tf-5",
+      "question": "Tudo o que sabemos sobre Pedro é o que está na Bíblia e no “Talmud”, o livro das tradições judaicas.",
+      "answer": "F"
+    },
+    {
+      "id": "epge2-tf-6",
+      "question": "Um crente, embora salvo, não consegue alegrar-se no sofrimento.",
+      "answer": "F"
+    },
+    {
+      "id": "epge2-tf-7",
+      "question": "O arrebatamento da igreja não foi o único evento escatológico mencionado por Pedro.",
+      "answer": "V"
+    },
+    {
+      "id": "epge2-tf-8",
+      "question": "Ter comunhão com Deus requer que se tenha comunhão com os irmãos.",
+      "answer": "V"
+    },
+    {
+      "id": "epge2-tf-9",
+      "question": "A segunda Epístola de João pode ser o único livro da Bíblia escrito para uma mulher.",
+      "answer": "V"
+    },
+    {
+      "id": "epge2-tf-10",
+      "question": "Com Judas aprendemos que Deus nunca intervém no sentido de mudar nosso propósito.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "epge2-mc-1",
+      "question": "Tiago, em sua epístola, fala sobre -",
+      "options": [
+        "Salvação pelas obras",
+        "A inutilidade das obras",
+        "As obras como prova de fé",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "epge2-mc-2",
+      "question": "No judaísmo a mulher devia -",
+      "options": [
+        "Ser honrada",
+        "Tida em alta estima",
+        "Tratada como inferior",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "epge2-mc-3",
+      "question": "As fontes geradoras de sofrimento.",
+      "options": [
+        "O próprio homem",
+        "Deus",
+        "Satanás",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "epge2-mc-4",
+      "question": "É uma fonte de profecia -",
+      "options": [
+        "O Espírito Santo",
+        "A carne",
+        "Os demônios",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "epge2-mp-1",
+      "left": "Um obreiro rebelde",
+      "right": "Diótrefes"
+    },
+    {
+      "id": "epge2-mp-2",
+      "left": "Um obreiro de bom testemunho",
+      "right": "Demétrio"
+    },
+    {
+      "id": "epge2-mp-3",
+      "left": "Um obreiro humilde",
+      "right": "João"
+    },
+    {
+      "id": "epge2-mp-4",
+      "left": "Um obreiro hospitaleiro",
+      "right": "Gaio"
+    },
+    {
+      "id": "epge2-mp-5",
+      "left": "Ancião, bispo e presbítero",
+      "right": "Pastor"
+    },
+    {
+      "id": "epge2-mp-6",
+      "left": "Um livro com um só capítulo",
+      "right": "Obadias"
+    }
+  ]
+}

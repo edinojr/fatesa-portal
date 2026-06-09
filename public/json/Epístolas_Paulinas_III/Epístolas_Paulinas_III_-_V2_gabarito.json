@@ -1,0 +1,134 @@
+{
+  "id": "EP3_2",
+  "title": "Epístolas Paulinas III - V2",
+  "tfQuestions": [
+    {
+      "id": "ep32-tf-1",
+      "question": "Embora sendo uma igreja problemática não faltava em Corinto nenhum dom espiritual.",
+      "answer": "V"
+    },
+    {
+      "id": "ep32-tf-2",
+      "question": "A expressão \"toda alma esteja sujeita às autoridades\" não se aplica ao pastor da igreja",
+      "answer": "F"
+    },
+    {
+      "id": "ep32-tf-3",
+      "question": "Paulo era um homem de paz, mas nunca abriu mão de sua autoridade ministerial.",
+      "answer": "V"
+    },
+    {
+      "id": "ep32-tf-4",
+      "question": "Biblicamente, na igreja, entre irmãos não pode haver qualquer tipo de conflito.",
+      "answer": "F"
+    },
+    {
+      "id": "ep32-tf-5",
+      "question": "Paulo afirmou que o obreiro deve trabalhar com suas mãos e não receber salário da igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "ep32-tf-6",
+      "question": "Os dons espirituais constituem um direito que os filhos de Deus devem tomar posse.",
+      "answer": "F"
+    },
+    {
+      "id": "ep32-tf-7",
+      "question": "Na doutrina pentecostal os dons espirituais continuam em evidência nos dias atuais.",
+      "answer": "V"
+    },
+    {
+      "id": "ep32-tf-8",
+      "question": "A tribulação pode ser um pré-requisito para o crente receber a bênção da consolação.",
+      "answer": "V"
+    },
+    {
+      "id": "ep32-tf-9",
+      "question": "Não tendo sido criado pela Lei de Moisés o dízimo não podia ser revogado por ela.",
+      "answer": "V"
+    },
+    {
+      "id": "ep32-tf-10",
+      "question": "Uma Bíblia na qual II Coríntios tenha 14 capítulos deve ser considerada falsa.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ep32-mc-1",
+      "question": "A Ceia do Senhor representa -",
+      "options": [
+        "A morte de Jesus",
+        "Sua segunda vinda",
+        "Nossa redenção",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "ep32-mc-2",
+      "question": "Paulo julgou poder gloriar-se -",
+      "options": [
+        "No seu trabalho ministerial",
+        "Na sua sabedoria",
+        "Nas suas fraquezas",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ep32-mc-3",
+      "question": "Afirmou ser a mulher um vaso mais fraco –",
+      "options": [
+        "Jesus",
+        "Pedro",
+        "Paulo",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "ep32-mc-4",
+      "question": "A Ceia do Senhor representa -",
+      "options": [
+        "A morte de Jesus",
+        "Sua segunda vinda",
+        "Nossa redenção",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ep32-mp-1",
+      "left": "Difamadores de Paulo",
+      "right": "Judaizantes"
+    },
+    {
+      "id": "ep32-mp-2",
+      "left": "A \"letra que mata\"",
+      "right": "Lei de Moisés"
+    },
+    {
+      "id": "ep32-mp-3",
+      "left": "Vaso de barro",
+      "right": "Corpo físico"
+    },
+    {
+      "id": "ep32-mp-4",
+      "left": "Corpo espiritual",
+      "right": "Casa espiritual"
+    },
+    {
+      "id": "ep32-mp-5",
+      "left": "Diferença entre o evangelho e outras religiões",
+      "right": "A esperança"
+    },
+    {
+      "id": "ep32-mp-6",
+      "left": "Um desejo de Paulo",
+      "right": "Habitar com o Senhor"
+    }
+  ]
+}

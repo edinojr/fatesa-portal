@@ -1,0 +1,134 @@
+{
+  "id": "EP3_3",
+  "title": "Epístolas Paulinas III - V3",
+  "tfQuestions": [
+    {
+      "id": "ep33-tf-1",
+      "question": "Mesmo presumindo-se vazias o obreiro deve apurar o que lhe foi relatado.",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-2",
+      "question": "Paulo classificou os que promovem divisão na igreja como \"carnais\" e \"meninos\".",
+      "answer": "V"
+    },
+    {
+      "id": "ep33-tf-3",
+      "question": "Um obreiro, tendo convicção de sua chamada ministerial, deve sempre declarar esta sua convicção.",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-4",
+      "question": "Sabemos, pela ciência, ser muito difícil nascer duas pessoas exatamente iguais.",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-5",
+      "question": "Os bons costumes não podem ser exigidos como sendo doutrina bíblica.",
+      "answer": "V"
+    },
+    {
+      "id": "ep33-tf-6",
+      "question": "Formada, na sua maioria, por escravos, Paulo chamou os crentes de Corinto de ignorantes.",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-7",
+      "question": "Num culto público, segundo Paulo, a prioridade é a pregação da Palavra de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "ep33-tf-8",
+      "question": "Em relação a Tito, a preocupação de Paulo era com sua saúde.",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-9",
+      "question": "No sentido material Paulo não ensinava a doutrina do triunfalismo nas igrejas.",
+      "answer": "V"
+    },
+    {
+      "id": "ep33-tf-10",
+      "question": "Paulo afirmou poder gloriar-se em suas fraquezas.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "ep33-mc-1",
+      "question": "Promotor de divisões na igreja é o crente-",
+      "options": [
+        "Rebelde",
+        "Carnal",
+        "\"Menino\"",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "ep33-mc-2",
+      "question": "Jesus, como homem, realizou milagres -",
+      "options": [
+        "Porque era Deus",
+        "Não realizou milagres",
+        "Pela virtude do Espírito Santo",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ep33-mc-3",
+      "question": "A Bíblia nos fala de –",
+      "options": [
+        "Dons do Pai",
+        "Dons do Filho",
+        "Dons do Espírito Santo",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "ep33-mc-4",
+      "question": "Sabemos que Paulo escreveu aos coríntios –",
+      "options": [
+        "Uma carta",
+        "Duas cartas",
+        "Três cartas",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "ep33-mp-1",
+      "left": "É um dom natural",
+      "right": "Eloquência"
+    },
+    {
+      "id": "ep33-mp-2",
+      "left": "É um dom de poder",
+      "right": "Operação de maravilhas"
+    },
+    {
+      "id": "ep33-mp-3",
+      "left": "É um dom de revelação",
+      "right": "Palavra de ciência"
+    },
+    {
+      "id": "ep33-mp-4",
+      "left": "É um dom de inspiração",
+      "right": "Profecia"
+    },
+    {
+      "id": "ep33-mp-5",
+      "left": "Um caminho mais excelente",
+      "right": "Amor"
+    },
+    {
+      "id": "ep33-mp-6",
+      "left": "Identifica um bom crente",
+      "right": "Fruto do Espírito"
+    }
+  ]
+}

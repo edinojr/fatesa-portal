@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BookOpen, Edit, Trash2, ChevronRight, Plus, ClipboardList, Award, PlayCircle, Eye, FileText, Upload, Loader2, ChevronUp, ChevronDown, Layers, GripVertical, Clock } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabase'
-import { extractAnswerKey } from '../../../lib/answerKeyParser'
+import { extractAnswerKey, AnswerKey } from '../../../lib/answerKeyParser'
 import GabaritoUpload from './GabaritoUpload'
 
 interface ContentManagementProps {
@@ -493,7 +493,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
       // Template de provas: 10 V/F + 4 MC + 6 pares
       const examTemplate = [
         ...Array(10).fill(null).map((_, i) => {
-          const ak = answerKey.find(a => a.questionIndex === i && a.questionType === 'true_false')
+          const ak = answerKey.find((a: AnswerKey) => a.questionIndex === i && a.questionType === 'true_false')
           return {
             id: `tf-${Date.now()}-${i}`,
             type: 'true_false' as const,
@@ -503,7 +503,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
           }
         }),
         ...Array(4).fill(null).map((_, i) => {
-          const ak = answerKey.find(a => a.questionIndex === (10 + i) && a.questionType === 'multiple_choice')
+          const ak = answerKey.find((a: AnswerKey) => a.questionIndex === (10 + i) && a.questionType === 'multiple_choice')
           return {
             id: `mc-${Date.now()}-${i}`,
             type: 'multiple_choice' as const,

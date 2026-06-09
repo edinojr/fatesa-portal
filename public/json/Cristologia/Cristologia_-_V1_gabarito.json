@@ -1,0 +1,134 @@
+{
+  "id": "CRIS_1",
+  "title": "Cristologia - V1",
+  "tfQuestions": [
+    {
+      "id": "cris1-tf-1",
+      "question": "Na cruz do calvário Cristo pagou o preço da nossa redenção.",
+      "answer": "F"
+    },
+    {
+      "id": "cris1-tf-2",
+      "question": "Aqui na terra, como Jesus Cristo, ele era cem por cento homem e cem por cento Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "cris1-tf-3",
+      "question": "Para evitar o politeísmo, Deus não permitiu nenhum vestígio da trindade no Antigo Testamento.",
+      "answer": "F"
+    },
+    {
+      "id": "cris1-tf-4",
+      "question": "Quase tudo que estava escrito sobre Jesus no Antigo Testamento teria que se cumprir e cumpriu.",
+      "answer": "F"
+    },
+    {
+      "id": "cris1-tf-5",
+      "question": "Para vir à terra, como homem, Cristo despiu-se de sua glória e divindade.",
+      "answer": "F"
+    },
+    {
+      "id": "cris1-tf-6",
+      "question": "Aqui na terra Satanás teria que ser vencido por um homem igual ao que ele venceu no Éden.",
+      "answer": "V"
+    },
+    {
+      "id": "cris1-tf-7",
+      "question": "Morte vicária tem o sentido de morte substitutiva, ou seja, alguém morrer em lugar de outro.",
+      "answer": "V"
+    },
+    {
+      "id": "cris1-tf-8",
+      "question": "Jesus, num corpo ressuscitado, comeu com seus discípulos peixe e mel.",
+      "answer": "V"
+    },
+    {
+      "id": "cris1-tf-9",
+      "question": "Hoje, nesta dispensação da graça, podemos ver na pessoa de cada pastor, um sumo sacerdote",
+      "answer": "F"
+    },
+    {
+      "id": "cris1-tf-10",
+      "question": "A expressão “os outros mortos” refere-se aos ímpios de todos os tempos, sem exceção.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "cris1-mc-1",
+      "question": "Em relação ao homem, na terra, o último ato de Jesus foi ou será -",
+      "options": [
+        "Sua morte na cruz",
+        "Sua ressurreição",
+        "Julgamento do Trono Branco",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "cris1-mc-2",
+      "question": "“Perfeito eras nos teus caminhos” fala de -",
+      "options": [
+        "Jesus",
+        "Satanás",
+        "Adão",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "cris1-mc-3",
+      "question": "Pelas Escrituras podemos entender que Jesus é -",
+      "options": [
+        "Profeta",
+        "Sumo Sacerdote",
+        "Rei dos Reis",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "cris1-mc-4",
+      "question": "Como homem Jesus sentiu -",
+      "options": [
+        "Indignação",
+        "Angústias e tristezas",
+        "Fome e sede",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "cris1-mp-1",
+      "left": "Queria libertar Jesus",
+      "right": "Pilatos"
+    },
+    {
+      "id": "cris1-mp-2",
+      "left": "Queria a morte de Jesus",
+      "right": "Sumo sacerdote"
+    },
+    {
+      "id": "cris1-mp-3",
+      "left": "Sangue",
+      "right": "Símbolo de purificação"
+    },
+    {
+      "id": "cris1-mp-4",
+      "left": "Água",
+      "right": "Símbolo do Espírito Santo"
+    },
+    {
+      "id": "cris1-mp-5",
+      "left": "Rocha de Horebe",
+      "right": "Símbolo de Jesus"
+    },
+    {
+      "id": "cris1-mp-6",
+      "left": "Lança",
+      "right": "Soldado romano"
+    }
+  ]
+}

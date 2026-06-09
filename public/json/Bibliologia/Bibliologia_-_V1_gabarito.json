@@ -1,0 +1,134 @@
+{
+  "id": "BIBL_1",
+  "title": "Bibliologia - V1",
+  "tfQuestions": [
+    {
+      "id": "bibl1-tf-1",
+      "question": "A presença material da Bíblia numa casa não traz nenhuma proteção.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl1-tf-2",
+      "question": "No livro de Ester as expressões Deus e Senhor não são encontradas.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl1-tf-3",
+      "question": "Em quase todos os livros da Bíblia Jesus é o personagem central.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl1-tf-4",
+      "question": "Dos 27 livros do Novo Testamento, num sentido literal, Paulo é o autor de treze.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl1-tf-5",
+      "question": "O aramaico, língua falada por Jesus, não é mais falado em nenhum lugar da terra.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl1-tf-6",
+      "question": "O único exemplar existente da “Septuaginta”, no original, encontra-se no Vaticano.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl1-tf-7",
+      "question": "O Novo Testamento da chamada de “nossa” Bíblia é igual ao da chamada Bíblia católica.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl1-tf-8",
+      "question": "Para contar a história de cem anos da vida de Abraão a Bíblia fez uso de 14 capítulos.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl1-tf-9",
+      "question": "Nos cerca de quatrocentos anos do período interbíblico Deus não levantou nenhum profeta.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl1-tf-10",
+      "question": "Sendo apócrifos, os livros dos Macabeus não têm qualquer valor bíblico ou histórico.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "bibl1-mc-1",
+      "question": "É um profeta da escrita:",
+      "options": [
+        "Elias",
+        "Sofonias",
+        "Natã",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "bibl1-mc-2",
+      "question": "Concílio que reconheceu o Cânon do Novo Testamento:",
+      "options": [
+        "III Concílio de Cartago",
+        "Concílio de Jâmnia",
+        "Concílio de Trento",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "bibl1-mc-3",
+      "question": "Podemos ver Jesus no Livro de Daniel como:",
+      "options": [
+        "Terceiro homem na fornalha",
+        "Quarto homem na fornalha",
+        "Segundo homem na fornalha",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "bibl1-mc-4",
+      "question": "Profetas do pós cativeiro:",
+      "options": [
+        "Ageu",
+        "Zacarias",
+        "Malaquias",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "bibl1-mp-1",
+      "left": "Língua popular no tempo de Jesus",
+      "right": "Aramaico"
+    },
+    {
+      "id": "bibl1-mp-2",
+      "left": "Falava em hebraico e aramaico",
+      "right": "Paulo"
+    },
+    {
+      "id": "bibl1-mp-3",
+      "left": "Local onde os judeus aprenderam o aramaico",
+      "right": "Babilônia"
+    },
+    {
+      "id": "bibl1-mp-4",
+      "left": "Copiavam e interpretavam as leis",
+      "right": "Escribas"
+    },
+    {
+      "id": "bibl1-mp-5",
+      "left": "Copista que escreveu a Epístola aos Romanos",
+      "right": "Tércio"
+    },
+    {
+      "id": "bibl1-mp-6",
+      "left": "Contribuiu para a divulgação do Evangelho",
+      "right": "Koiné"
+    }
+  ]
+}

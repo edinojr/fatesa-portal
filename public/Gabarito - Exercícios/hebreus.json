@@ -1,0 +1,1196 @@
+{
+  "id": "hebreus",
+  "title": "Hebreus",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Quando a Epístola aos Hebreus foi escrita a igreja estava vivendo em paz",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "O termo hebreu passou a designar os descendentes de Abraão.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Exortação não é repreensão, mas, sim, estímulo ou encorajamento.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "A Epístola aos Hebreus destaca a superioridade de Cristo sobre a velha aliança",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "No princípio Deus somente falava com o homem através dos profetas.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Hoje é somente através de Jesus e dos profetas que Deus fala com o homem.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "A revelação pelos profetas foi divina, progressiva e parcial.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "O Espírito Santo é o ponto máximo da revelação da glória de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Os que viram e tocaram em Jesus estavam vendo e tocando no próprio Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Os crentes hebreus estavam determinados a não voltar ao judaísmo.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar porque podemos afirmar que a Epístola aos Hebreus foi escrita antes do ano 70",
+          "answer": "PORQUE ERA NORMAL O TRABALHO DOS SACERDOTES NO TEMPLO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar qual é o tema central da Epístola aos Hebreus.",
+          "answer": "DAR AOS CRENTES HEBREUS UM CONHECIMENTO PLENO DA PESSOA DE JESUS CRISTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "O autor da Epístola aos Hebreus —",
+          "options": [
+            "Paulo;",
+            "Apolo;",
+            "Timóteo;",
+            "autor desconhecido."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "A Epístola aos Hebreus foi endereçada —",
+          "options": [
+            "a todos os cristãos;",
+            "a todos os judeus;",
+            "aos cristão hebreus;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Revelação por Jesus",
+          "Revelação pelos profetas",
+          "Deus fala hoje",
+          "Deus falou antigamente",
+          "Qualquer nova revelação",
+          "Exortação"
+        ],
+        "columnB": [
+          "estimulo, encorajamento",
+          "pelo Filho",
+          "divina, conclusiva e definitiva",
+          "\"seja anátema\"",
+          "divina, conclusiva e parcial",
+          "pelos profetas"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Os judeus não davam muita importância ao trabalho dos anjos.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Para os judeus cristãos, Jesus era superior aos anjos.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "A expressão \"exércitos dos céus\" não inclui os querubins.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Mesmo quando não estão a serviço de Deus os anjos se comunicam com os homens.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "A santidade distingue os anjos caídos dos que permanecem fiéis a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Biblicamente, podemos afirmar que os anjos não aceitam adoração.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Os anjos são chamados, na Bíblia, de espíritos mediadores entre Deus e os homens",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Temos provas bíblicas da atuação dos anjos no Novo Testamento.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Jesus, como \"filho de Davi\" era inferior ao arcanjo Miguel e aos querubins.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Podemos afirmar que os anjos são servos de Deus e conservos dos homens.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar em que circunstância os anjos aceitam adoração.",
+          "answer": "EM NENHUMA CIRCUNSTÂNCIA"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar um segredo que os anjos ainda não conhecem.",
+          "answer": "O DIA DO ARREBATAMENTO DA IGREJA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Pela Bíblia sabemos que os anjos são —",
+          "options": [
+            "magníficos em poder;",
+            "igual ao homem em poder;",
+            "eternos;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "q-3-2",
+          "question": "Os anjos estarão em atividades —",
+          "options": [
+            "no arrebatamento da igreja;",
+            "na grande tribulação;",
+            "no julgamento das nações;",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Os anjos são servos",
+          "Os anjos são poderosos",
+          "Os anjos são criaturas",
+          "Os anjos são seres gloriosos",
+          "Os anjos são mensageiros",
+          "Os anjos estão em todas as partes"
+        ],
+        "columnB": [
+          "Jesus é a mensagem",
+          "Jesus é onipresente",
+          "Jesus é o Senhor",
+          "Jesus é Onipotente",
+          "Jesus é o esplendor da glória de Deus",
+          "Jesus é o Criador"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "A Epístola aos Hebreus foi escrita para uma igreja local formada por judeus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Os cristãos hebreus conheciam muito pouco do Antigo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Os judeus afirmavam que a Lei era firmemente cumprida.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "O escritor aos hebreus disse que a salvação foi anunciada por João Batista.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "O escritor aos hebreus afirmou não haver outro salvador além de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "O escritor aos hebreus falou do perigo de negligencias uma tão grande Salvação.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "A salvação trazida por Jesus foi confirmada somente pelas por suas palavras.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Os hebreus identificaram Jesus como sendo o Cordeiro que foi morto desde a fundação do mundo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "O conceito judaico atribuía aos anjos a participação no governo do mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "O escritor aos hebreus afirma que Jesus foi, em tudo, semelhante aos irmãos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar quem morreu por levar \"fogo estranho\" diante do Senhor",
+          "answer": "OS FILHOS DE ARÃO—NABADE E ABIÚ"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar uma passagem do Livro de Jó mencionado pelo escritor aos Hebreus",
+          "answer": "Jó, em Jó 7:17"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Confirmado pelos que a ouviram fala dos —",
+          "options": [
+            "anjos;",
+            "apóstolos;",
+            "judeus;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "q-3-2",
+          "question": "Deus confirmou a pregação com —",
+          "options": [
+            "sinais;",
+            "milagres;",
+            "varias maravilhas;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Palavras faladas por Cristo",
+          "Palavras faladas pelos anjos",
+          "Coisas que temos ouvido",
+          "Testificando Deus com eles",
+          "Varão aprovado por Deus",
+          "Seus filhos foram mortos por Deus"
+        ],
+        "columnB": [
+          "permaneceram firmes",
+          "sinais, milagres, maravilhas",
+          "Arão",
+          "uma tão grande salvação",
+          "atentar com mais diligência",
+          "Jesus Nazareno"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Além da Bíblia, nenhum outro livro fala da vida de Moisés.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "O nome, Moisés, não tem sua origem na língua hebraica.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Clamando o povo, logo Deus, levantou Moisés como libertador.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Para os Judeus, Moisés e Jesus são os dois maiores homens da história.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Num primeiro momento, Moisés foi rejeitado pelos israelitas.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "A Epístola aos Hebreus tem uma importância muito grande para os judeus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "O escritor aos hebreus destaca a importância de Moisés como servo de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "\"Não deixando a nossa congregação\" não significa que o crente não possa visitar outra igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "A expressão \"irmãos santos\" pode ter feito muito bem para os crentes hebreus",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Foi através da Palavra de Deus que o escritor aos hebreus procurou levantar o ânimo dos crentes.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar quantos e quais os nomes dos filhos de Moisés",
+          "answer": "DOIS — GERSON E ELIEZER"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar o que o judeus queriam que os crentes hebreus fizessem.",
+          "answer": "A VOLTA DOS MESMOS AO JUDAÍSMO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Filho de Levi —",
+          "options": [
+            "Gerson;",
+            "Coate;",
+            "Merari;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Não teve vínculo familiar com Moisés —",
+          "options": [
+            "Miriã;",
+            "Débora;",
+            "Zípora;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Moisés era a sombra",
+          "Moisés fazia parte da casa",
+          "Moisés foi fiel como servo",
+          "Moisés, valoroso como vaso",
+          "Filho da filha de Faraó",
+          "Crentes hebreus"
+        ],
+        "columnB": [
+          "Cristo é superior como oleiro",
+          "Cristo é o corpo",
+          "judeus",
+          "Cristo é o dono e construtor",
+          "Cristo é o Filho",
+          "Moisés"
+        ],
+        "answers": [
+          4,
+          1,
+          6,
+          2,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "A desobediência gerou a incredulidade e impediu Israel de entrar na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "O descanso terreno prometido a Israel não se realizou e nem se realizará.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Israel ouviu e não obedeceu; firmou um concerto com Deus, e não cumpriu.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Os crentes hebreus não eram perseguidos pelos romanos e, sim, pelos judeus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Jeremias afirmou que velava sobre a sua palavra para a cumprir.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Jesus como Sumo Sacerdote pode, hoje, compadecer-se das nossas fraquezas.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Na dispensação da Lei os homens somente podiam chegar a Deus através dos sacerdotes",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Nesta Dispensação da Graça todo filho de Deus é um sacerdote.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Sendo da Tribo de Judá, para os judeus Jesus jamais poderia ser sacerdote.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "O sacerdócio de Arão foi passageiro, o de Jesus, como Deus, será eterno",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar quando e porque os sacerdotes tiveram que deixar de oferecer sacrifícios .",
+          "answer": "NO ANO 70, DEVIDO A DESTRUIÇÃO DO TEMPLO PELOS ROMANOS"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Quanto ao exercício das funções, citar a diferença entre sacerdotes e profetas .",
+          "answer": "SACERDOTE – INTERMEDIÁRIO ENTRE O HOMEM E DEUS | PROFETA — INTERMEDIARIOS ENTRE DEUS E O HOMEM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "O descanso pleno do cristão será —",
+          "options": [
+            "na terra, com Jesus;",
+            "no milênio;",
+            "no céu;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "Compadecer, literalmente, significa —",
+          "options": [
+            "amar;",
+            "socorrer;",
+            "ter o mesmo sentimento;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Arão oferecia sacrifícios de animais",
+          "Arão – sacerdócio temporário",
+          "Arão - ministrava para Israel",
+          "Arão, como homem, falhou",
+          "Foi profeta e sacerdote",
+          "Um sacerdote gentio"
+        ],
+        "columnB": [
+          "Jesus, Sacerdote eterno",
+          "Jesus para toda humanidade",
+          "Jesus, como homem, foi perfeito",
+          "Jesus ofereceu a si mesmo",
+          "Jó",
+          "Ezequiel"
+        ],
+        "answers": [
+          2,
+          3,
+          4,
+          1,
+          6,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Provar subentende uma experiência vivencial e não apenas teórica.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Podemos afirmar que alguns crentes hebreus cometeram o pecado de apostasia",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Somente o homem que não nasceu de novo é que pode cometer apostasia.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Conhecer a Palavra de Deus impede o homem de cometer o pecado da apostasia",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Estava faltando para os hebreus um ensino completo da Palavra de Deus",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Sendo da Tribo de Levi e da família de Arão não havia impedimento para ser sacerdote.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "As expressões filhinhos, mancebos e pais não se referem a idade cronológica.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Pela Lei de Moisés, Jesus não podia ser sacerdote.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "A expressão \"sem pai, sem mãe\" deixa claro que Melquisedeque não era um homem",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Jesus foi o único Sumo Sacerdote que não ofereceu sacrifício por si mesmo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar a principal causa da apostasia.",
+          "answer": "A FALTA DE CONHECIMENTO DA PALAVRA DE DEUS"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar quem foi o primeiro sacerdote citado na Bíblia.",
+          "answer": "MELQUISEDEQUE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Apostasia significa —",
+          "options": [
+            "abandonar a igreja;",
+            "abandonar a fé;",
+            "abandonar os pais;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "q-3-2",
+          "question": "Perigo que ameaçava os crentes hebreus —",
+          "options": [
+            "voltar à idolatria;",
+            "voltar ao mundo;",
+            "voltar ao judaísmo;",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Primeiro sumo sacerdote judeu",
+          "Segundo sacerdote judeu",
+          "Um sacerdote não judeu",
+          "Um sacerdote perfeito",
+          "Não podia ser sacerdote",
+          "Não foi sumo sacerdote"
+        ],
+        "columnB": [
+          "Jesus",
+          "Moisés",
+          "Eleazar",
+          "anão",
+          "Arão",
+          "Melquisedeque"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "A expressão \"um sacerdote tal\" significa que não houve e não haverá outro igual.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "No Antigo Testamento os textos eram sempre gravados em pedra.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "A morte podia ser a punição para quem não cumprisse os termos de uma aliança",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Sendo soberano, Deus não podia ficar preso aos termos de uma aliança.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "O homem quebrou, algumas vezes, os termos de uma aliança celebrada com Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "No deserto o culto divino era celebrado no tabernáculo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Moisés recebeu de Deus a ordem para construir, no deserto, um tabernáculo.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Jesus foi o único Sumo Sacerdote que não ofereceu sangue de animais.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Na morte de Jesus, o véu rasgado significava estar aberto o acesso do homem a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "No sentido espiritual não existe ainda um remédio eficaz contra o pecado.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Nas alianças entre Deus e o homem, cite quem determinava as condições",
+          "answer": "SOMENTE DEUS"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar o sentido da expressão \"uma só oblação\" .",
+          "answer": "SIGNIFICA UM SÓ SACRIFÍCIO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Queixou-se de não haver entre ele e Deus um árbitro —",
+          "options": [
+            "Jesus;",
+            "Moisés;",
+            "Jó;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "Israel falhou como —",
+          "options": [
+            "povo peculiar;",
+            "reino sacerdotal;",
+            "povo santo;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Sacerdotes",
+          "Sumo Sacerdote",
+          "Renovação",
+          "Castiçal",
+          "Tabernáculo",
+          "Altar de ouro"
+        ],
+        "columnB": [
+          "tenda móvel",
+          "oração",
+          "lugar santo",
+          "lugar santíssimo",
+          "igreja",
+          "pães asmos"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Sacrifício humano sempre foi abominável aos olhos de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "O único sacrifício humano aceito por Deus foi o de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Jesus pagou o preço exigido por Satanás pela redenção do homem.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Pela Lei de Moisés em todo tipo de sacrifício o animal tinha que ser morto.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Todo crente batizado nas águas pode cometer o pecado de apostasia.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Pela Lei de Moisés, para o pecado voluntário, não havia sacrifício.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Para o judeu cristão voltar ao judaísmo não havia nenhuma exigência.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Pensar que pecou contra o Espírito Santo é um sinal de que não pecou.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "\"Sujeitai-vos a Deus, resisti ao diabo\" foi uma recomendação do autor do Livro aos Hebreus.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "O pecado imperdoável é diferente do desviar-se, ou afastar-se da igreja.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar duas condições para a consumação do pecado voluntário",
+          "answer": "A CONSCIÊNCIA PECAMINOSA DO ATO E O DESEJO VOLUNTÁRIO DE PRATICÁ-LO"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar o sentido da expressão pecar \"à mão levantada\" .",
+          "answer": "SIGNIFICA PECAR DELIBERADAMENTE OU VOLUNTARIAMENTE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Apostasia é —",
+          "options": [
+            "mudar de igreja;",
+            "voltar para o \"mundo\";",
+            "batizar nas águas duas vezes;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "q-3-2",
+          "question": "Rejeitando o sacrifício de Jesus —",
+          "options": [
+            "necessita fazer sacrifício próprio;",
+            "terá que ir para o purgatório;",
+            "não resta outro sacrifício;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Cair nas mãos do Deus vivo",
+          "Sacrifício, hoje, aceito por Deus",
+          "Uma só oblação",
+          "Contrário a Palavra de Deus",
+          "Sacrifício de Jesus",
+          "Pecado imperdoável"
+        ],
+        "columnB": [
+          "preço da redenção",
+          "apostasia",
+          "horrenda coisa",
+          "sacrifício único",
+          "corpo no altar",
+          "sacrifício de tolo"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          3,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "A fé é como um título de propriedade dos bens que não podemos ver.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Tiago afirma que a fé, sem obras, é morta.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Foi por inspiração diabólica que os homens começaram a dar forma aos seus Deuses, sendo esta a origem da idolatria",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Os homens de fé e fiéis nunca foram chamados por Deus para vencer e morrer.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "Aos crentes hebreus faltava o conhecimento do Antigo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Os crentes hebreus estavam sendo tentados a voltarem para o judaísmo.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Na Dispensação da Graça homens fiéis não são mais chamados para morrer.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Como atletas espirituais devemos nos preocupar com a reação da torcida",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Biblicamente, embaraço não é pecado, mas pode levar o homem a pecar.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "No sentido espiritual somos atletas velocistas e não maratonistas.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Com base na expressão ver, cite a diferença entre um crente fiel e um incrédulo",
+          "answer": "O CRENTE FIEL CRÊ PARA VER E O INCRÉDULO PRECISA VER PARA CRER"
+        },
+        {
+          "id": "q-2-2",
+          "question": "No sentido espiritual, cite o sentido da expressão \"joelhos desconjuntados\".",
+          "answer": "FALTA DE ORAÇÃO, DIFICULDADES PARA PROSSEGUIR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Primeiro homem de fé mencionado na Bíblia —",
+          "options": [
+            "Adão;",
+            "Enoque;",
+            "Abel;",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "Podem criar embaraços —",
+          "options": [
+            "coisas boas;",
+            "coisas úteis;",
+            "coisas necessárias;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Em si mesmo, não é pecado",
+          "Alvo do atleta espiritual",
+          "Prisão",
+          "Torturado até a morte",
+          "Apedrejado",
+          "Resistiu a tentação"
+        ],
+        "columnB": [
+          "José",
+          "Eleazar",
+          "Jesus",
+          "Nabote",
+          "Pedro",
+          "embaraço"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 010",
+      "trueFalse": [
+        {
+          "id": "q-1-1",
+          "statement": "Na vida cristã não deve haver diferença entre o que falamos é o que vivemos.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-2",
+          "statement": "Ser evidente fala de algo duvidoso, ou seja, que pode ser e também pode não ser",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-3",
+          "statement": "Os escribas e fariseus ensinavam bem, mas, não viviam o que ensinavam",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-4",
+          "statement": "Podemos afirmar que caridade significa a prática do amor.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-5",
+          "statement": "O escritor aos Hebreus destacou a necessidade da existência do amor fraternal.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-6",
+          "statement": "Amor que, podendo, não estende a mão para ajudar um necessitado não é amor",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-7",
+          "statement": "Um pastor, mesmo quando exige algo que não está na Bíblia, deve ser obedecido",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-8",
+          "statement": "Sendo irmão, mesmo que não o conheçamos, devemos hospedá-lo em nossa casa.",
+          "answer": "F"
+        },
+        {
+          "id": "q-1-9",
+          "statement": "Os presos mencionados pelo escritor aos Hebreus eram cristãos perseguidos pelo Império Romano.",
+          "answer": "V"
+        },
+        {
+          "id": "q-1-10",
+          "statement": "Venerar o matrimônio significa um profundo respeito ao mesmo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q-2-1",
+          "question": "Citar o sentido bíblico da expressão caridade.",
+          "answer": "PRÁTICA DO AMOR"
+        },
+        {
+          "id": "q-2-2",
+          "question": "Citar o número de presos existentes no Brasil em razão de sua fé.",
+          "answer": "NENHUM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "q-3-1",
+          "question": "Presos e maltratados referidos em Hebreus eram —",
+          "options": [
+            "presos políticos;",
+            "presos judeus;",
+            "presos cristãos;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "q-3-2",
+          "question": "Fomos chamados para —",
+          "options": [
+            "seguir Jesus;",
+            "ser discípulos;",
+            "ser cristão;",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "ex-4",
+        "columnA": [
+          "Obediência",
+          "Veneração",
+          "Solidariedade",
+          "Família",
+          "Estranhos",
+          "Matrimônio"
+        ],
+        "columnB": [
+          "com os que sofrem",
+          "não receber em casa",
+          "autoridade constituída",
+          "venerado",
+          "respeito",
+          "projeto de Deus"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

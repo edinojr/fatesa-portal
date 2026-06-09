@@ -1,0 +1,1196 @@
+{
+  "id": "dout-deus",
+  "title": "Doutrina de Deus",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo a Bíblia existe apenas um Deus, Criador e sustentador de tudo e de todos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Nas religiões chamadas cristãs não é possível encontrar qualquer forma de politeísmo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Imagina-se que a adoração ao próprio homem seja a mais antiga das religiões.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pela Lei de Moisés, em Israel, a pena de morte era aplicada a quem adorasse o sol e a lua.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Através das \"Dez Pragas\" Deus puniu os deuses adorados pelos egípcios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "No Antigo Testamento o politeísmo somente não prosperou em Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pela Bíblia sabemos que em Israel nunca houve sacrifico de crianças a qualquer deus pagão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No culto a Moloque era exigido o sacrifício de crianças.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Em Israel, nos cultos pagãos à fertilidade, eram adorados Baal e Astarote.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A construção do \"bezerro de ouro\" foi inspirada no \"deus boi\" dos egípcios",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar três religiões nas quais não há a predominância do politeísmo.",
+          "answer": "JUDAÍSMO, ISLANÍSMO E CRISTIANISMO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a primeira criatura de Deus que desejou ser adorado.",
+          "answer": "UM QUERUBIM UNGIDO, HOJE CONHECIDO COMO SATANÁS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Politeísmo é -",
+          "options": [
+            "ser ateu",
+            "crer num só Deus",
+            "crer em muitos deuses",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Destruiu a serpente de metal -",
+          "options": [
+            "Moisés",
+            "Ezequias",
+            "Josué",
+            "Davi."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Deus principal dos cananeus",
+          "Deus principal dos filisteus",
+          "Deus principal dos amonitas",
+          "Deusa protetora da agricultura",
+          "Um deus egípcio",
+          "Serpente de metal"
+        ],
+        "columnB": [
+          "Moloque",
+          "Neustã",
+          "Baal",
+          "Apis",
+          "Dagom",
+          "Ceres"
+        ],
+        "answers": [
+          3,
+          6,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No Monte Sinai, ao ver a glória de Deus, Israel declarou que \"só o Senhor é Deus\".",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Por monoteísmo entendemos que existe um só Deus e que esse Deus é o criador de todas as coisas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Não se pode afirmar que o homem primitivo tenha sido monoteísta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "No Salmo 90, o salmista Davi afirma que Deus é Deus de eternidade a eternidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Conhecendo a cultura grega podemos afirmar que sabedoria humana não leva o homem a Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Segundo afirmou Paulo, Deus fez ao homem reto, mas ele buscou muitas invenções.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pela Bíblia podemos afirmar que foram poucas as vezes que Deus deixou de falar com o homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Não existem formas milagrosas pelas quais o homem possa adquirir todo conhecimento de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Somente no milênio e que toda a terra se encherá do conhecimento de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que sem a fé o homem nunca adquirirá o conhecimento de Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o sentido bíblico da expressão \"conhecer\" no relacionamento conjugal.",
+          "answer": "FALA DE RELACIONAMENTO SEXUAL"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que podemos dizer ser a avareza relacionada a idolatria.",
+          "answer": "UM ÍDOLO MALDITO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Segundo Darvim, o homem primitivo era -",
+          "options": [
+            "monoteísta",
+            "ateísta",
+            "politeísta",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Fonte geradora do conhecimento de Deus -",
+          "options": [
+            "oração",
+            "fé",
+            "conhecimento bíblico",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Monoteísmo",
+          "Ateísmo",
+          "Politeísta",
+          "Deísta",
+          "Animismo",
+          "Fetichismo"
+        ],
+        "columnB": [
+          "nenhum Deus",
+          "um Deus criador, mas distante do homem",
+          "adoração a certos objetos",
+          "um só Deus",
+          "muitos deuses",
+          "um espirito, ou deuses, em cada objeto"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O conhecimento da ética e da filosofia é valioso para o entendimento da teologia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O conhecimento da sã doutrina é fundamental para convencer os contradizentes.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "É a vontade de Deus que todos os homens conheçam os mistérios de Seu Reino.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "De várias formas as Escrituras procuram provar ao homem a existência de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para a Bíblia não crer na existência de Deus é loucura, é ser néscio e tolo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que não é possível ser um filosofo não sendo ateu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Karl Marx, embora filho de judeu, reconhecia como único Deus a consciência do homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para o materialismo a vida do homem está limitada entre sua fecundação e a morte.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "É certo não haver diferença ente agnosticismo e gnosticismo",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Viver como se Deus não existisse é uma das formas de negar sua existência.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o filósofo que se tornou famoso por haver declarado a morte de Deus.",
+          "answer": "FRIEDRIK NIETZCHE"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quem declarou haver em todo homem um espírito de religiosidade..",
+          "answer": "PLUTARCO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Gênesis não fala da origem.",
+          "options": [
+            "de todos os animais",
+            "dos céus",
+            "de Deus",
+            "do homem."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Para o materialismo o homem é -",
+          "options": [
+            "a obra prima de Deus",
+            "único ser espiritual",
+            "apenas um animal",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Panteísmo",
+          "Cristianismo",
+          "Agnosticismo",
+          "Materialismo",
+          "Ateísmo",
+          "Um modo errado de viver"
+        ],
+        "columnB": [
+          "Deus é espírito",
+          "a eternidade da matéria",
+          "uma forma de negar a existência de Deus",
+          "tudo é Deus",
+          "Deus pode ou não existir",
+          "nega a existência de Deus"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Nenhum argumento racional da exigência de Deus convencerá o homem que não quiser crer n’Ele.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que a própria natureza do homem atesta a existência de um Deus criador.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo, como é, um ser racional, o homem pode crer na existência de Deus usando a própria razão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O estudo da história nada acrescenta ao homem que deseja conhecer Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A fé não exige provas materiais sobre a existência de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Para a Bíblia, Deus não apenas existe mas é o Criador de todas as coisas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Embora sendo o Senhor dos céus, Deus não é o Senhor da terra pois ela está no domínio de Satanás.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Eu fiz a terra e criei nela o homem, são palavras ditas por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Pela Bíblia sabemos que foram poucas as vezes que Deus dividiu com os anjos sua glória.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "\" E de um só fez toda geração dos homens\" foi o que afirmou Moisés.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos são os argumentos citados pela Bíblia para provar a existência de Deus.",
+          "answer": "NENHUM"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar, segundo a Bíblia, a única maneira de crer na existência de Deus.",
+          "answer": "PELA FÉ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Deus criou primeiro -",
+          "options": [
+            "o homem",
+            "a terra",
+            "os anjos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A vida só pode ser gerada -",
+          "options": [
+            "através da matéria",
+            "pela ação do tempo",
+            "por outra vida",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Deus na visão do judaísmo",
+          "Deus na visão do islamismo",
+          "Deus na visão do budismo",
+          "Deus na visão dos materialistas",
+          "Deus na visão do cristianismo",
+          "Deus na visão da Bíblia"
+        ],
+        "columnB": [
+          "o Grande Eu sou",
+          "Deus revelado pelo antigo Testamento",
+          "Criador e Senhor",
+          "ultra transcendental",
+          "não existe",
+          "uma forma impessoal"
+        ],
+        "answers": [
+          6,
+          1,
+          5,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar que nunca houve um pensamento uniforme a respeito de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para os deístas foi Deus quem estabeleceu as leis naturais do mecanismo do universo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela Bíblia sabemos que, sempre que necessário, Deus interfere no sentido de mudar a história.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Deus, embora sendo imanente, não se confunde com a obra que ele criou.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Mesmo sendo amor, Deus pode deixar de amar o homem que escolhe viver no pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Não possuindo matéria, a personalidade de Deus deve ser entendida no sentido simbólico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Para o humanismo Deus é um ser supremo e transcendental.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para os judeus Jesus cometeu pecado de blasfêmia ao dizer que \"antes que Abraão existisse, Eu sou\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Através de alguns nomes Deus procurou revelar-se aos homens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para o judaísmo o nome de Deus, \"YAHWEH\", continua sendo impronunciável.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite quantas e quais os tipos de pessoas existentes, segundo a Bíblia.",
+          "answer": "TRÊS - HUMANAS, ANGÉLICAS E DIVINAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o sentido da expressão – \"Jeová Shalom\".",
+          "answer": "O SENHOR E A NOSSA PAZ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A Bíblia diz que Deus -",
+          "options": [
+            "entristece",
+            "ira-se",
+            "é amor",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Não é um nome pelo qual Deus se revelou –",
+          "options": [
+            "Jeová",
+            "Adonai",
+            "Elohim",
+            "Yahweh."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Imanência",
+          "Transcendência",
+          "Humanismo",
+          "Panteísmo",
+          "Personalidade",
+          "Humanidade"
+        ],
+        "columnB": [
+          "nega a personalidade de Deus",
+          "Objeto do amor de Deus",
+          "Deus perto",
+          "inteligência, sentimento, vontade",
+          "Deus distante",
+          "tudo é Deus"
+        ],
+        "answers": [
+          3,
+          6,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sendo, como é, um ser espiritual, nada sabemos sobre a substância de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sendo incorpóreo e invisível Deus não pode ser assemelhado a nada feito de matéria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Segundo a Bíblia nenhum homem pode compreender as coisas do Espírito de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sendo, como é, \"espírito\", não é bíblico falar de Deus como tendo membros como os do homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Paulo afirma que não podemos ter imagem perfeita sobre a pessoa de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Por certo que a melhor forma de conhecermos Deus é através da oração.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo a Bíblia, nem mesmo Deus pode limitar o exercício de Sua onipotência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que os atributos naturais de Deus não são comunicáveis ao homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No sentido físico, o Reino de Deus, na terra, não tem uma base territorial.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sabemos, pela Bíblia, que Deus tem um plano e continua trabalhando na execução do mesmo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o único lugar onde Deus não pode estar.",
+          "answer": "SENDO ONIPRESENTE NÃO HÁ LUGAR ONDE DEUS NÃO POSSA ESTAR"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite porque podemos afirmar que Deus tem uma forma",
+          "answer": "PORQUE A BÍBLIAA DIZ QUE JESUS É A IMAGEM DEUS."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É onipresente –",
+          "options": [
+            "Jesus",
+            "Satanás",
+            "o arcanjo Miguel",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Lugar onde Deus não pode estar -",
+          "options": [
+            "no inferno",
+            "No \"hades\"",
+            "na terra",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Antropoformismo",
+          "Atributos naturais",
+          "Atributos morais",
+          "Eternidade",
+          "Imortalidade",
+          "Presciência"
+        ],
+        "columnB": [
+          "exclusivos de Deus",
+          "sem princípio e sem fim",
+          "parte da onisciência",
+          "comunicáveis ao homem",
+          "Deus visto como homem",
+          "com princípio e sem fim"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          3,
+          1,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo declarou Samuel \"Não há santo como é o Senhor\".",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Ser ou não santo é uma decisão daqueles que são filhos de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo como é, santo, Deus aborrece e não pode tolerar o pecado e nem o pecador.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Deus é amor, portanto, tudo que ele faz é feito com amor e por amor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Compaixão tem o sentido de ter o coração voltado para miséria de outrem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A raça humana não sobreviveria se ao nosso Deus não pertencesse a misericórdia .",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Senhor Jesus afirmou que somente Deus é bom em si mesmo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Sendo que sua natureza é má, segue-se que Satanás não pode praticar o bem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Ainda que nossas dádivas não sejam reconhecidas, temos que continuar fazendo o bem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sendo bom, por natureza, tudo que Deus fez tem como objetivo o bem.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No sentido literal, cite o significado da palavra santidade.",
+          "answer": "PERFEIÇÃO MORAL"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual foi o maior ato de bondade praticado por Jesus.",
+          "answer": "DAR SUA VIDA EM BENEFÍCIO DO HOMEM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É um atributo moral de Deus -",
+          "options": [
+            "a eternidade",
+            "a soberania",
+            "a santidade",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Foi por um ato de amor que Deus -",
+          "options": [
+            "expulsou Adão do paraíso",
+            "destruiu a geração de Noé",
+            "destituiu Sodoma",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Deus é divino",
+          "Deus é espírito",
+          "Deus é, moralmente, perfeito",
+          "Distintivo dos filhos de Deus",
+          "Mesmo sentimento",
+          "Uma coisa que Deus não pode"
+        ],
+        "columnB": [
+          "amor",
+          "homem é humano",
+          "fazer o mal",
+          "o homem é matéria",
+          "o homem é pecaminoso",
+          "compaixão"
+        ],
+        "answers": [
+          4,
+          1,
+          6,
+          2,
+          5,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Caso a Bíblia não dissesse que Deus é benigno, os homens teriam dificuldade de entender a sua benignidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para um homem benigno fazer o bem será sempre motivo de alegria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Um homem grosseiro, mal educado, agressivo, não é um homem benigno.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Um homem benigno é capaz de abrir mão de direitos para por fim a uma contenda.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sendo benigno por natureza, Deus nunca retira sua benignidade de alguém.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Foram poucas as vezes, na história, que Deus teve que agir sem temperança.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Um homem de fé não necessita se preocupar em ser temperante ou equilibrado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Deus sempre cuidará da família de um homem que se entrega, inteiramente, a fazer Sua obra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "É possível haver fidelidade sem fé, mas não poderá haver fé sem fidelidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo a Bíblia, se nós formos infiéis, Deus permanecerá sendo fiel.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite qual o Salmo é chamado de \"Salmo da benignidade\".",
+          "answer": "SALMO 136"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite a que Salomão comparou o homem impetuoso.",
+          "answer": "A UMA CIDADE QUE NÃO TEM MUROS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Segundo Salomão, melhor é o homem -",
+          "options": [
+            "valente",
+            "rico",
+            "longânimo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Deus retirou Sua benignidade de –",
+          "options": [
+            "Samuel",
+            "Ló",
+            "Saul",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Origem da fidelidade do crente salvo",
+          "Origem da fidelidade dos \"sem terra\"",
+          "Firmeza de propósito",
+          "Equilíbrio",
+          "Prática do bem",
+          "Bom caráter"
+        ],
+        "columnB": [
+          "bondade",
+          "benignidade",
+          "doutrinação ideológica",
+          "divina",
+          "temperança",
+          "fidelidade"
+        ],
+        "answers": [
+          5,
+          6,
+          2,
+          1,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo a Bíblia as trevas e o mal foram criados por Satanás.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Embora sendo espírito Deus pode ser visto através de suas obras.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Criar e fazer significa trazer à existência o que nunca antes existiu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em nenhum lugar podemos encontrar qualquer vestígio da trindade no Antigo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sabemos, pela Bíblia, que dois terços dos anjos foram criados santos e perfeitos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A queda de Satanás foi a possível causa da terra ter-se tornado caótica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "É certo que a vida animal surgiu nas águas, saindo os animais depois para a terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No sexto dia da criação Deus criou na terra somente o homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Embora criado à imagem e semelhança de Deus, o homem foi criado menor que os anjos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A redenção do reino animal, vegetal e mineral só ocorrerá no milênio.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No processo evolutivo cite quando uma espécie se transforma noutra melhor.",
+          "answer": "ESSA TRANSFORMAÇÃO JAMAIS ACONTECERÁ"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quando o corpo de um homem salvo alcança ou alcançará a redenção.",
+          "answer": "NA RESSURREIÇÃO DOS SALVOS NO DIA DO ARREBATAMENTO DA IGREJA."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os céus manifestam -",
+          "options": [
+            "o juízo de Deus",
+            "a misericórdia de Deus",
+            "a glória de Deus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A obra do sétimo dia –",
+          "options": [
+            "a criação do homem",
+            "a criação dos anjos",
+            "a criação dos animais",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Capacidade para criar",
+          "Capacidade para fazer",
+          "Instrumento da criação",
+          "Tempo da criação",
+          "Última obra da criação",
+          "A coisa criada"
+        ],
+        "columnB": [
+          "palavra",
+          "homem",
+          "Deus",
+          "os céus e a terra",
+          "Satanás",
+          "no princípio"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Por ser um personagem da história e não bíblica, o pensamento de Anastacio não tem valor doutrinário.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na casa de Cornélio, Pedro destacou, com clareza, cada uma das pessoas da Trindade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No rogo de Jesus ao Pai ficou bem claro ser o Espírito Santo o outro Consolador",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A Doutrina da Trindade só pode ser aceita por aqueles que conhecem a Palavra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O primeiro homem que conseguiu explicar a existência da Trindade foi Tertuliano.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Tanto no Antigo como no Novo Testamento está bem claro a existência da Trindade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Quando Pedro afirmou que Deus ungiu Jesus de Nazaré o instrumento da unção foi o Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Da bênção apostólica podemos deduzir a existência da Trindade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O mistério da Trindade só pode ser entendido e explicado pela razão e pela fé.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "A aseidade é um atributo absoluto e transferível aos filhos de Deus.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar porque no Antigo Testamento a doutrina da Trindade foi colocada de maneira velada.",
+          "answer": "PARA NÃO INDUZIR O POVO DE ISRAEL AO POLITEÍSMO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o significado da expressão aseidade.",
+          "answer": "AUTO- SUFICIÊNCIA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O Antigo Testamento condena a doutrina",
+          "options": [
+            "da Trindade",
+            "o monoteísmo",
+            "o politeísmo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A Trindade pode ser encontrada -",
+          "options": [
+            "em Apocalipse",
+            "nos evangelhos",
+            "em Atos dos Apóstolos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Trindade age como sendo uma unidade",
+          "Única forma de crer na Trindade",
+          "Matéria",
+          "Universo",
+          "Tempo",
+          "Espaço"
+        ],
+        "columnB": [
+          "solido, líquido, gasoso",
+          "altura, largura, profundidade",
+          "passado, presente, futuro",
+          "tempo, espaço, matéria",
+          "deuses pagãos rivalidades",
+          "pela fé"
+        ],
+        "answers": [
+          4,
+          6,
+          5,
+          3,
+          1,
+          2
+        ]
+      }
+    }
+  ]
+}

@@ -406,7 +406,7 @@ const Professor = () => {
 
             {activeTab === 'documents' && <DocumentAnalysis />}
 
-            {activeTab === 'forum' && <ForumPanel />}
+            {activeTab === 'forum' && <ForumPanel userProfile={profile} />}
           </div>
         </div>
       </main>

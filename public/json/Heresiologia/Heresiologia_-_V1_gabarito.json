@@ -1,0 +1,134 @@
+{
+  "id": "HER_1",
+  "title": "Heresiologia - V1",
+  "tfQuestions": [
+    {
+      "id": "her1-tf-1",
+      "question": "Podemos afirmar que o maior templo da igreja até o ano 300 era o de Jerusalém.",
+      "answer": "F"
+    },
+    {
+      "id": "her1-tf-2",
+      "question": "É certo que Maria sempre ocupou lugar de destaque na igreja primitiva",
+      "answer": "F"
+    },
+    {
+      "id": "her1-tf-3",
+      "question": "A Igreja Católica ensina que Jesus não é o único meio pelo qual o homem pode ser salvo.",
+      "answer": "V"
+    },
+    {
+      "id": "her1-tf-4",
+      "question": "Usar a expressão \"bendita entre as mulheres\" significa idolatrar Maria.",
+      "answer": "F"
+    },
+    {
+      "id": "her1-tf-5",
+      "question": "Reencarnação e invocação aos mortos são as duas principais colunas da doutrina espírita",
+      "answer": "V"
+    },
+    {
+      "id": "her1-tf-6",
+      "question": "Em sua primeira visão Joseph Smith afirmou ter visto o Pai e o Filho",
+      "answer": "V"
+    },
+    {
+      "id": "her1-tf-7",
+      "question": "Para as \"Testemunhas de Jeová\", Jesus é a primeira criatura de Deus, não é Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "her1-tf-8",
+      "question": "Para a teologia da prosperidade ser pobre significa estar bem com Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "her1-tf-9",
+      "question": "O deus da Nova Era é a energia mística que envolve e penetra tudo e a todos.",
+      "answer": "V"
+    },
+    {
+      "id": "her1-tf-10",
+      "question": "A Nova Era não se identifica como sendo um culto religioso e organizado.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "her1-mc-1",
+      "question": "Ensinava sobre a reencarnação em Israel -",
+      "options": [
+        "Os saduceus",
+        "Os essênios",
+        "Os escribas",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "her1-mc-2",
+      "question": "A palavra Trindade é encontrada na Bíblia -",
+      "options": [
+        "1 vez",
+        "Muitas vezes",
+        "Nenhuma vez",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "her1-mc-3",
+      "question": "Citar o que costuma alimentar quase todas as seitas.",
+      "options": [
+        "Espírito de contenda",
+        "Espírito de amor",
+        "Espírito de fofoca",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "her1-mc-4",
+      "question": "A unção no Antigo Testamento era somente para —",
+      "options": [
+        "Os sacerdotes",
+        "Os reis",
+        "Os profetas",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "her1-mp-1",
+      "left": "Uma forma de salvação sem Jesus",
+      "right": "Batismo católico"
+    },
+    {
+      "id": "her1-mp-2",
+      "left": "Simboliza o batismo com Espírito Santo",
+      "right": "Crisma"
+    },
+    {
+      "id": "her1-mp-3",
+      "left": "Eucaristia",
+      "right": "Santa Ceia"
+    },
+    {
+      "id": "her1-mp-4",
+      "left": "Sacramento conferido pelo bispo",
+      "right": "Santas ordens"
+    },
+    {
+      "id": "her1-mp-5",
+      "left": "Considerado igual as Escrituras",
+      "right": "Tradição"
+    },
+    {
+      "id": "her1-mp-6",
+      "left": "Proibição de casamento",
+      "right": "Celibato"
+    }
+  ]
+}

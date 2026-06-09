@@ -1,0 +1,134 @@
+{
+  "id": "PMEN_2",
+  "title": "Profetas Menores - V2",
+  "tfQuestions": [
+    {
+      "id": "pmen2-tf-1",
+      "question": "Israel ficou sem governo próprio de 586 aC até 1948 dC.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen2-tf-2",
+      "question": "O Profeta Amós proibiu Amazias de profetizar no Reino do Norte.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen2-tf-3",
+      "question": "O arrependimento que Deus exige é a confissão do pecado e o pedido de perdão.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen2-tf-4",
+      "question": "A mensagem de arrependimento pregada por Joel foi aceita pelo povo.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen2-tf-5",
+      "question": "Amós foi enviado para pregar para um povo que sabia estar mal com Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "pmen2-tf-6",
+      "question": "Sendo, como era, um homem, Jonas com medo de ser morto, não foi para Nínive",
+      "answer": "F"
+    },
+    {
+      "id": "pmen2-tf-7",
+      "question": "Face ao arrependimento de Nínive, Deus revogou a sentença que pesava sobre ela",
+      "answer": "F"
+    },
+    {
+      "id": "pmen2-tf-8",
+      "question": "Na construção do Templo os profetas atuaram como auxiliares de Zorobabel.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen2-tf-9",
+      "question": "O Vale de Josafá, mencionado na Bíblia, até hoje nunca existiu.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen2-tf-10",
+      "question": "Malaquias, um profeta do pós cativeiro, foi contemporâneo de Ageu e Zacarias.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pmen2-mc-1",
+      "question": "Joel profetizou sobre -",
+      "options": [
+        "Israel no milênio",
+        "O julgamento das nações",
+        "Jerusalém restaurada",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pmen2-mc-2",
+      "question": "O Profeta Zacarias nasceu -",
+      "options": [
+        "Em Jerusalém",
+        "Na Judeia",
+        "No cativeiro",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pmen2-mc-3",
+      "question": "Na tipologia bíblica, quem estava representado por Oséias e Gômer? -",
+      "options": [
+        "Oséias – Deus Pai; Gômer- Israel",
+        "Gômer – Deus Pai; Oséias-Israel",
+        "Apenas Oséia tipifica Israel",
+        "Todas alternativas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "pmen2-mc-4",
+      "question": "Ao deixar Oséias, após seu casamento, Gômer. -",
+      "options": [
+        "Deixou a prostituição definitivamente",
+        "Ela irou -se com Oseias",
+        "Voltou a prostituição",
+        "Todas alternativa estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pmen2-mp-1",
+      "left": "Pai do Profeta Oséias",
+      "right": "Beeri"
+    },
+    {
+      "id": "pmen2-mp-2",
+      "left": "Rei de Judá contemporâneo de Oseias",
+      "right": "Jotão"
+    },
+    {
+      "id": "pmen2-mp-3",
+      "left": "Rei de Israel contemporâneo de Oséias",
+      "right": "Jeroboão"
+    },
+    {
+      "id": "pmen2-mp-4",
+      "left": "“Vale de Acor”",
+      "right": "Grande Tribulação"
+    },
+    {
+      "id": "pmen2-mp-5",
+      "left": "“Deus espalha”",
+      "right": "Jisrrel"
+    },
+    {
+      "id": "pmen2-mp-6",
+      "left": "“Não meu povo”",
+      "right": "Lo-Ami"
+    }
+  ]
+}

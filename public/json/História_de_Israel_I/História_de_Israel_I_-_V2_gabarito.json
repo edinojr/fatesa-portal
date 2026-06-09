@@ -1,0 +1,134 @@
+{
+  "id": "HISI_2",
+  "title": "História de Israel 1 - V2",
+  "tfQuestions": [
+    {
+      "id": "hisi2-tf-1",
+      "question": "A exigência do “santo sereis porque eu, o Senhor vosso Deus, sou o santo” não existia antes da Lei de Moisés.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi2-tf-2",
+      "question": "Embora estando em terra firme, Noé e sua família permaneceram na arca por mais 57 dias.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi2-tf-3",
+      "question": "Ao chamar Abraão, Deus mencionou também a chamada de Sara, sua esposa.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi2-tf-4",
+      "question": "Israel não conseguiu viver no Egito sem misturar-se com os egípcios.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi2-tf-5",
+      "question": "No sentido literal a primeira batalha da qual Josué participou foi contra os amalequitas.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi2-tf-6",
+      "question": "Sendo amor, Deus desejava perdoar e não destruir as nações que estavam na terra.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi2-tf-7",
+      "question": "Cada um fazia o que parecia reto aos seus olhos é como termina o Livro de Juízes.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi2-tf-8",
+      "question": "Samuel teve o privilégio de ungir os dois primeiros reis do Reino Unido de Israel.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi2-tf-9",
+      "question": "Todo reinado de Saul, que durou quarenta anos, é descrito no Livro I Samuel.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi2-tf-10",
+      "question": "Os Livros de Esdras, Neemias e Ester, contam a história de Israel após o retorno do cativeiro.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "hisi2-mc-1",
+      "question": "O nome de Isaque foi dado por",
+      "options": [
+        "Sara",
+        "Deus",
+        "Abraão",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "hisi2-mc-2",
+      "question": "Um juiz não constituído por Deus -",
+      "options": [
+        "Abimeleque",
+        "Jefté",
+        "Eli",
+        "Sansão"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "hisi2-mc-3",
+      "question": "Samuel foi -",
+      "options": [
+        "Profeta",
+        "Juiz",
+        "Sacerdote",
+        "Todas estão corretas.."
+      ],
+      "answer": 3
+    },
+    {
+      "id": "hisi2-mc-4",
+      "question": "Uma cidade de refúgio -",
+      "options": [
+        "Jerusalém",
+        "Siquém",
+        "Belém",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "hisi2-mp-1",
+      "left": "Pai de Enoque",
+      "right": "Jarede"
+    },
+    {
+      "id": "hisi2-mp-2",
+      "left": "Filho de Enoque",
+      "right": "Matusalém"
+    },
+    {
+      "id": "hisi2-mp-3",
+      "left": "Filho de Noé",
+      "right": "Sem"
+    },
+    {
+      "id": "hisi2-mp-4",
+      "left": "Contemporâneo de Adão",
+      "right": "Enoque"
+    },
+    {
+      "id": "hisi2-mp-5",
+      "left": "Bígamo e assassino",
+      "right": "Lameque"
+    },
+    {
+      "id": "hisi2-mp-6",
+      "left": "Pós-dilúvio",
+      "right": "Abraão"
+    }
+  ]
+}

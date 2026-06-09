@@ -1,0 +1,134 @@
+{
+  "id": "TEOP_2",
+  "title": "Teologia Prática - V2",
+  "tfQuestions": [
+    {
+      "id": "teop2-tf-1",
+      "question": "Estando o mundo no maligno, Deus não pode ser o Senhor de toda a terra.",
+      "answer": "F"
+    },
+    {
+      "id": "teop2-tf-2",
+      "question": "Em relação às coisas materiais não há registro de falhas na geração de Noé.",
+      "answer": "V"
+    },
+    {
+      "id": "teop2-tf-3",
+      "question": "“O Senhor é o que tira a vida e a dá”, foi o que afirmou Samuel.",
+      "answer": "F"
+    },
+    {
+      "id": "teop2-tf-4",
+      "question": "É muito difícil, mas e possível encontrar duas pessoas exatamente iguais.",
+      "answer": "F"
+    },
+    {
+      "id": "teop2-tf-5",
+      "question": "No sentido espiritual, por falta de humildade, o homem pode perder uma bênção",
+      "answer": "V"
+    },
+    {
+      "id": "teop2-tf-6",
+      "question": "Ensinar os filhos, hoje, pode evitar ter que pedir orações por eles, amanhã.",
+      "answer": "V"
+    },
+    {
+      "id": "teop2-tf-7",
+      "question": "Um patrão, sendo um crente fiel, terá dificuldades em ter um empregado incrédulo.",
+      "answer": "F"
+    },
+    {
+      "id": "teop2-tf-8",
+      "question": "Para o judeu, um gentio não podia ser chamado de seu próximo.",
+      "answer": "V"
+    },
+    {
+      "id": "teop2-tf-9",
+      "question": "Visitar os órfãos e as viúvas tem o sentido de levar-lhes uma palavra de amor e consolo.",
+      "answer": "F"
+    },
+    {
+      "id": "teop2-tf-10",
+      "question": "A falta do conhecimento da Palavra de Deus é uma das características dos falsos profetas.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "teop2-mc-1",
+      "question": "O crente precisa ser",
+      "options": [
+        "Tardio para ouvir",
+        "Pronto para falar",
+        "Pronto para ouvir",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "teop2-mc-2",
+      "question": "A Bíblia diz que ele cuidava dos órfãos e das viúvas -",
+      "options": [
+        "Ló",
+        "Jó",
+        "Abraão",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "teop2-mc-3",
+      "question": "A Bíblia diz que o amor -",
+      "options": [
+        "É cruel como a sepultura",
+        "Traz muitas dificuldades",
+        "É forte como a morte",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "teop2-mc-4",
+      "question": "Quanto ao uso da terra, o homem é -",
+      "options": [
+        "Permissionário",
+        "Locatário",
+        "Proprietário",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "teop2-mp-1",
+      "left": "Suas palavras nunca caíram por terra",
+      "right": "Samuel"
+    },
+    {
+      "id": "teop2-mp-2",
+      "left": "Eu velo sobre a minha palavra",
+      "right": "Deus"
+    },
+    {
+      "id": "teop2-mp-3",
+      "left": "Exigia o cumprimento da palavra",
+      "right": "Lei de Moisés"
+    },
+    {
+      "id": "teop2-mp-4",
+      "left": "Garantia o cumprimento da palavra",
+      "right": "Juramento"
+    },
+    {
+      "id": "teop2-mp-5",
+      "left": "Uma palavra branda",
+      "right": "Desvia o furor"
+    },
+    {
+      "id": "teop2-mp-6",
+      "left": "Assim falai e assim procedei",
+      "right": "Tiago"
+    }
+  ]
+}

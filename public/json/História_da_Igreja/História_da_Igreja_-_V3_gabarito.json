@@ -1,0 +1,134 @@
+{
+  "id": "HIGR_3",
+  "title": "História da Igreja - V3",
+  "tfQuestions": [
+    {
+      "id": "higr3-tf-1",
+      "question": "A igreja de Jerusalém era formada por judeus e gentios, entre eles os gregos.",
+      "answer": "F"
+    },
+    {
+      "id": "higr3-tf-2",
+      "question": "Quando da descida do Espírito Santo estavam reunidos no Cenáculo cento e vinte discípulos",
+      "answer": "F"
+    },
+    {
+      "id": "higr3-tf-3",
+      "question": "Na igreja de Jerusalém a Ceia do Senhor era realizada todos os sábados.",
+      "answer": "F"
+    },
+    {
+      "id": "higr3-tf-4",
+      "question": "Em Jerusalém, além do templo, existiam centenas de sinagogas.",
+      "answer": "V"
+    },
+    {
+      "id": "higr3-tf-5",
+      "question": "Na igreja de Jerusalém o “vender tudo” era uma opção pessoal e não uma obrigação.",
+      "answer": "V"
+    },
+    {
+      "id": "higr3-tf-6",
+      "question": "Contrariando ordens dadas pelos apóstolos, os novos convertidos pregaram o evangelho aos gentios.",
+      "answer": "F"
+    },
+    {
+      "id": "higr3-tf-7",
+      "question": "Segundo a tradição, Lucas foi enforcado numa oliveira, na Grécia.",
+      "answer": "V"
+    },
+    {
+      "id": "higr3-tf-8",
+      "question": "Pela salvação e pelos pecados o castigo do corpo tem pouca utilidade.",
+      "answer": "F"
+    },
+    {
+      "id": "higr3-tf-9",
+      "question": "Em dois séculos e meio de história a igreja foi perseguida somente por dez imperadores.",
+      "answer": "F"
+    },
+    {
+      "id": "higr3-tf-10",
+      "question": "Martinho Lutero obteve o grau de Bacharel em Artes pela Universidade de Erfurt.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "higr3-mc-1",
+      "question": "Escrava cristã torturada da manhã até a noite-",
+      "options": [
+        "Agar",
+        "Helena",
+        "Blandina",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "higr3-mc-2",
+      "question": "A igreja espiritual recebeu sua natureza de -",
+      "options": [
+        "Cristo",
+        "Jesus",
+        "Jesus Cristo",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "higr3-mc-3",
+      "question": "No Concílio de Niceia votaram a favor de Ário.",
+      "options": [
+        "A maioria dos bispos presentes",
+        "Apenas um terço dos bispos",
+        "Apenas dois bispos",
+        "Nenhum dos bispos"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "higr3-mc-4",
+      "question": "Entre 313 e 400 dC., a igreja cresceu -",
+      "options": [
+        "Em número",
+        "Em poder",
+        "Em santidade",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "higr3-mp-1",
+      "left": "Batizou o Imperador Constantino",
+      "right": "Eusébio"
+    },
+    {
+      "id": "higr3-mp-2",
+      "left": "Obrigou por Decreto a conversão dos pagãos",
+      "right": "Imperador Teodósio"
+    },
+    {
+      "id": "higr3-mp-3",
+      "left": "O grande cristão de alma pagã",
+      "right": "Constantino"
+    },
+    {
+      "id": "higr3-mp-4",
+      "left": "Um exemplo dos que não “dormiram”",
+      "right": "Justino"
+    },
+    {
+      "id": "higr3-mp-5",
+      "left": "Derrotado por Constantino",
+      "right": "Maxêncio"
+    },
+    {
+      "id": "higr3-mp-6",
+      "left": "Perseguidor dos cristãos do Oriente",
+      "right": "Licínio"
+    }
+  ]
+}

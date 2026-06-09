@@ -1,0 +1,134 @@
+{
+  "id": "HEB_3",
+  "title": "Hebreus - V3",
+  "tfQuestions": [
+    {
+      "id": "heb3-tf-1",
+      "question": "Temos provas bíblicas da atuação dos anjos no Novo Testamento.",
+      "answer": "V"
+    },
+    {
+      "id": "heb3-tf-2",
+      "question": "Nem todas as palavras faladas pelos anjos permaneceram firmes.",
+      "answer": "F"
+    },
+    {
+      "id": "heb3-tf-3",
+      "question": "Para os judeus, Moisés e Jesus são os dois maiores homens da história.",
+      "answer": "F"
+    },
+    {
+      "id": "heb3-tf-4",
+      "question": "Para os judeus o repouso completo prometido por Deus acontecerá no milênio.",
+      "answer": "V"
+    },
+    {
+      "id": "heb3-tf-5",
+      "question": "Somente o homem que não nasceu de novo é que pode cometer apostasia.",
+      "answer": "F"
+    },
+    {
+      "id": "heb3-tf-6",
+      "question": "Um pastor, mesmo quando exige algo que não está na Bíblia, deve ser Obedecido",
+      "answer": "F"
+    },
+    {
+      "id": "heb3-tf-7",
+      "question": "Jesus foi o único Sumo Sacerdote que não ofereceu sacrifício por si mesmo.",
+      "answer": "V"
+    },
+    {
+      "id": "heb3-tf-8",
+      "question": "O escritor aos hebreus disse que a salvação foi anunciada por João Batista.",
+      "answer": "F"
+    },
+    {
+      "id": "heb3-tf-9",
+      "question": "O escritor aos hebreus destaca a importância de Moisés como servo de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "heb3-tf-10",
+      "question": "Jesus como Sumo Sacerdote pode, hoje, compadecer-se das nossas fraquezas.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "heb3-mc-1",
+      "question": "Perigo que ameaçava os crentes hebreus era —",
+      "options": [
+        "Voltar à idolatria",
+        "Voltar ao mundo",
+        "Voltar ao judaísmo",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "heb3-mc-2",
+      "question": "Os presos maltratados referidos em Hebreus eram -",
+      "options": [
+        "Os cristãos",
+        "Os ladrões",
+        "Todos, indistintamente",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "heb3-mc-3",
+      "question": "A Epístola aos Hebreus foi endereçada —",
+      "options": [
+        "A todos os cristãos",
+        "A todos os hebreus",
+        "Aos cristão judeus",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "heb3-mc-4",
+      "question": "Os anjos estarão em atividades —",
+      "options": [
+        "No arrebatamento da igreja",
+        "Na grande tribulação",
+        "No julgamento das nações",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "heb3-mp-1",
+      "left": "Palavras faladas por Cristo",
+      "right": "Uma tão grande salvação"
+    },
+    {
+      "id": "heb3-mp-2",
+      "left": "Palavras faladas pelos anjos",
+      "right": "Permaneceram firmes"
+    },
+    {
+      "id": "heb3-mp-3",
+      "left": "Coisas que temos ouvido",
+      "right": "Atentar com mais diligência"
+    },
+    {
+      "id": "heb3-mp-4",
+      "left": "Testificando Deus com eles",
+      "right": "Sinais, milagres, maravilhas"
+    },
+    {
+      "id": "heb3-mp-5",
+      "left": "Varão aprovado por Deus",
+      "right": "Jesus Nazareno"
+    },
+    {
+      "id": "heb3-mp-6",
+      "left": "Seus filhos foram mortos por Deus",
+      "right": "Arão"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "HISII_1",
+  "title": "História de Israel 2 - V1",
+  "tfQuestions": [
+    {
+      "id": "hisii1-tf-1",
+      "question": "Caso Roboão tivesse atendido o pedido do povo a divisão entre as doze tribos nunca teria ocorrido.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii1-tf-2",
+      "question": "Quando seu filho Nadabe adoeceu Jeroboão lembrou-se do Profeta Aías.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii1-tf-3",
+      "question": "Em obediência à Lei de Moisés, Nabote recusou negociar sua vinha com Acabe.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii1-tf-4",
+      "question": "Atalia, filha de Acabe e de Jezabel, foi a única rainha do Reino de Israel.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii1-tf-5",
+      "question": "Quando Deus manda e o homem obedece, fazer o impossível fica por conta de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii1-tf-6",
+      "question": "O Rei Acabe, segundo a Bíblia, humilhou-se diante de Deus, o Rei de Israel.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii1-tf-7",
+      "question": "Do Rei Josafá nada consta que possa denegrir sua imagem como homem de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii1-tf-8",
+      "question": "O Rei Manassés desprezou os bons exemplos de seu pai, preferindo repetir as maldades de seu avô.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii1-tf-9",
+      "question": "Cumprindo a profecia de Jeremias, o Rei Joaquim e sua mãe foram levados cativos para Babilônia.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii1-tf-10",
+      "question": "Antes do arrebatamento da igreja, Israel não poderá dar frutos para Deus.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "hisii1-mc-1",
+      "question": "Profetizou a morte do Rei Acabe –",
+      "options": [
+        "Um profeta de Baal",
+        "Um profeta de Judá",
+        "O Profeta Micaías",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisii1-mc-2",
+      "question": "A maior batalha espiritual de todos os tempos aconteceu –",
+      "options": [
+        "No Monte Carmelo",
+        "No Monte Sinai",
+        "Num deserto",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisii1-mc-3",
+      "question": "Do Reino de Judá fizeram “o que era reto aos olhos do Senhor” -",
+      "options": [
+        "Todos, com exceção de Atalia",
+        "Ezequias e Josias",
+        "Oito reis",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisii1-mc-4",
+      "question": "Profetizou que o cativeiro de Judá duraria 70 anos–",
+      "options": [
+        "Isaías",
+        "Jeremias",
+        "Ezequiel",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "hisii1-mp-1",
+      "left": "Rei que destruiu o “altar de Betel”",
+      "right": "Josias"
+    },
+    {
+      "id": "hisii1-mp-2",
+      "left": "Rei punido por querer queimar incenso no altar",
+      "right": "Uzias"
+    },
+    {
+      "id": "hisii1-mp-3",
+      "left": "Rei que exercia as funções sacerdotais",
+      "right": "Jeroboão"
+    },
+    {
+      "id": "hisii1-mp-4",
+      "left": "Rei de Judá que derrotou o exército de Jeroboão",
+      "right": "Abias"
+    },
+    {
+      "id": "hisii1-mp-5",
+      "left": "Um profeta cego",
+      "right": "Aías"
+    },
+    {
+      "id": "hisii1-mp-6",
+      "left": "Rei que destruiu a “casa” de Jeroboão",
+      "right": "Baasa"
+    }
+  ]
+}

@@ -22,9 +22,24 @@ const BlockedAccess: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
+  const goToPanel = () => {
+    const role = profile?.tipo;
+    const roles = (profile?.caminhos_acesso as string[]) || [];
+    const isAdmin = role === 'admin' || roles.includes('admin') || roles.includes('suporte');
+    const isProfessor = role === 'professor' || roles.includes('professor');
+    if (isAdmin) navigate('/admin');
+    else if (isProfessor) navigate('/professor');
+    else {
+      const stored = localStorage.getItem('fatesa_active_role');
+      if (stored === 'admin') navigate('/admin');
+      else if (stored === 'professor') navigate('/professor');
+      else navigate('/dashboard');
+    }
+  };
+
   useEffect(() => {
     if (!loading && profile && !profile.status_bloqueio) {
-      navigate('/dashboard');
+      goToPanel();
     }
   }, [profile, loading, navigate]);
 
@@ -149,7 +164,7 @@ const BlockedAccess: React.FC = () => {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <button 
-                      onClick={() => navigate('/dashboard')}
+                      onClick={() => goToPanel()}
                       className="btn btn-primary"
                       style={{ width: '100%', justifyContent: 'space-between', padding: '1.25rem' }}
                     >

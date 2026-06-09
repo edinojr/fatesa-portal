@@ -1,0 +1,134 @@
+{
+  "id": "PENT_3",
+  "title": "Pentateuco - V3",
+  "tfQuestions": [
+    {
+      "id": "pent3-tf-1",
+      "question": "Antes do dilúvio a carne não era consumida como alimento do homem.",
+      "answer": "V"
+    },
+    {
+      "id": "pent3-tf-2",
+      "question": "Ao chamar Abraão, Deus fez menção do nome de Sara",
+      "answer": "F"
+    },
+    {
+      "id": "pent3-tf-3",
+      "question": "Tendo no ventre um filho de Abraão, Deus não podia abandonar Agar.",
+      "answer": "V"
+    },
+    {
+      "id": "pent3-tf-4",
+      "question": "Labão só entregou Raquel a Jacó após este trabalhar quatorze anos.",
+      "answer": "F"
+    },
+    {
+      "id": "pent3-tf-5",
+      "question": "Próximo da morte, Jacó fez José jurar que seu corpo não seria sepultado no Egito",
+      "answer": "V"
+    },
+    {
+      "id": "pent3-tf-6",
+      "question": "A família de Jacó foi levado para o Egito 22 anos depois da ida de José.",
+      "answer": "V"
+    },
+    {
+      "id": "pent3-tf-7",
+      "question": "As cinzas do holocausto, símbolo do corpo de Jesus, tinham que ser guardadas num lugar seguro.",
+      "answer": "F"
+    },
+    {
+      "id": "pent3-tf-8",
+      "question": "Nas ofertas pacíficas a carne era comida pelos ofertantes e pelos sacerdotes.",
+      "answer": "V"
+    },
+    {
+      "id": "pent3-tf-9",
+      "question": "Sabemos, pela Bíblia, que Miriã, irmã de Moisés, era uma sacerdotisa.",
+      "answer": "F"
+    },
+    {
+      "id": "pent3-tf-10",
+      "question": "Num mesmo espaço de terreno a Lei de Moisés proibia semear espécies diferentes de sementes.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "pent3-mc-1",
+      "question": "Moisés falou sobre a necessidade de celebrar a festa -",
+      "options": [
+        "Da Páscoa",
+        "Do Pentecoste",
+        "Do Tabernáculo",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pent3-mc-2",
+      "question": "Chamado por Deus, Moisés alegou —",
+      "options": [
+        "Falta de sabedoria",
+        "Falta de eloquência",
+        "Sua incapacidade",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "pent3-mc-3",
+      "question": "Prata no Tabernáculo fala de —",
+      "options": [
+        "Amor",
+        "Justiça",
+        "Redenção",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "pent3-mc-4",
+      "question": "Num segundo momento as tábuas de pedra foram preparadas —",
+      "options": [
+        "Por Deus",
+        "Por Moisés",
+        "Por Moisés e Arão",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "pent3-mp-1",
+      "left": "Evitou que José fosse morto",
+      "right": "Rubens"
+    },
+    {
+      "id": "pent3-mp-2",
+      "left": "Comprou José dos ismaelitas",
+      "right": "Potifar"
+    },
+    {
+      "id": "pent3-mp-3",
+      "left": "Filho de José",
+      "right": "Manassés"
+    },
+    {
+      "id": "pent3-mp-4",
+      "left": "Filho mais novo de Jacó",
+      "right": "Benjamim"
+    },
+    {
+      "id": "pent3-mp-5",
+      "left": "Nome dado por Faraó a José",
+      "right": "Zafenate Panéia"
+    },
+    {
+      "id": "pent3-mp-6",
+      "left": "Sogro de José",
+      "right": "Potifera"
+    }
+  ]
+}

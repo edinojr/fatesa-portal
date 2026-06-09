@@ -1,0 +1,134 @@
+{
+  "id": "ESCA_1",
+  "title": "Escatologia Bíblica - V1",
+  "tfQuestions": [
+    {
+      "id": "esca1-tf-1",
+      "question": "Sendo para o “tempo do fim” os “últimos dias” preditos por Joel ainda estão por vir",
+      "answer": "F"
+    },
+    {
+      "id": "esca1-tf-2",
+      "question": "Embora a morte seja chamada de “inimigo”, a Bíblia diz ser, para Deus, preciosa a morte dos santos.",
+      "answer": "V"
+    },
+    {
+      "id": "esca1-tf-3",
+      "question": "Podemos afirmar que a doutrina do sono da alma tem fundamento bíblico.",
+      "answer": "F"
+    },
+    {
+      "id": "esca1-tf-4",
+      "question": "Podemos afirmar que na primeira ressurreição somente os mortos salvos ouvirão a sua voz.",
+      "answer": "V"
+    },
+    {
+      "id": "esca1-tf-5",
+      "question": "O Senhor Jesus deixou claro que os salvos devem olhar somente para a figueira.",
+      "answer": "F"
+    },
+    {
+      "id": "esca1-tf-6",
+      "question": "Podemos afirmar que a grande esperança da igreja é o de reinar com Cristo no milênio",
+      "answer": "F"
+    },
+    {
+      "id": "esca1-tf-7",
+      "question": "Como povo de Deus é certo que os judeus não farão nenhuma aliança com o Anticristo.",
+      "answer": "F"
+    },
+    {
+      "id": "esca1-tf-8",
+      "question": "Israel só reconhecerá Jesus como seu Messias no Dia da Revelação em Glória.",
+      "answer": "V"
+    },
+    {
+      "id": "esca1-tf-9",
+      "question": "A maldição imposta por Deus à terra só será revogada no milênio.",
+      "answer": "V"
+    },
+    {
+      "id": "esca1-tf-10",
+      "question": "Os corpos que forem cremados, segundo a Bíblia, não ressuscitarão.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "esca1-mc-1",
+      "question": "Em seu ministério, Jesus ressuscitou -",
+      "options": [
+        "Uma criança",
+        "Um jovem",
+        "Um adulto",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esca1-mc-2",
+      "question": "Satanás dará ao Anticristo -",
+      "options": [
+        "Seu trono",
+        "Seu poder",
+        "Seu grande poderio",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esca1-mc-3",
+      "question": "Devemos ver Israel como -",
+      "options": [
+        "Uma nação igual as outras",
+        "Uma nação amante de guerra",
+        "O relógio escatológico de Deus",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "esca1-mc-4",
+      "question": "O Tribunal de Cristo será um -",
+      "options": [
+        "Lugar de juízo condenatório",
+        "Lugar de castigo",
+        "Lugar de premiação",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "esca1-mp-1",
+      "left": "Primeira ressurreição",
+      "right": "Todos os salvos"
+    },
+    {
+      "id": "esca1-mp-2",
+      "left": "Segunda ressurreição",
+      "right": "Todos os ímpios"
+    },
+    {
+      "id": "esca1-mp-3",
+      "left": "Lugar dos ímpios até a ressurreição",
+      "right": "“Hades” ou “sheol”"
+    },
+    {
+      "id": "esca1-mp-4",
+      "left": "Lugar dos salvos até a ressurreição",
+      "right": "Paraíso"
+    },
+    {
+      "id": "esca1-mp-5",
+      "left": "Lugar eterno dos ímpios",
+      "right": "Lago de fogo"
+    },
+    {
+      "id": "esca1-mp-6",
+      "left": "Salvos, no paraíso; ímpios no inferno",
+      "right": "Consolados; atormentados"
+    }
+  ]
+}

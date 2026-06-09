@@ -1,0 +1,1196 @@
+{
+  "id": "poeticos-2",
+  "title": "Poéticos II",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Conhecer a vida de Salomão pode nos ajudar a compreender os livros que ele escreveu.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A Bíblia quase nada fala acerca dos pais de Salomão e também fala pouco dele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela Bíblia podemos afirmar que Salomão era um filho adulterino.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Salomão não foi um nome escolhido pelos seus pais, mas, sim, por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A rebelião de Adonias foi a causa da coroação de Salomão mesmo antes da morte de Davi.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Por estar o Rei Davi ainda vivo, Deus não confirmou a coroação de Salamão como rei.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Deus deu a Salomão todas as instruções sobre a construção do templo",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O templo foi construído no mesmo lugar onde Deus pediu a Abraão o sacrifício de seu filho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Não foi permitido que os gentios trabalhassem na construção do templo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "O propósito de Salomão desde o início foi o de “Edificar casa ao nome do Senhor, o Deus de Israel”.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Enquanto reinava em Judá, cite quantos foram os filhos de Davi.",
+          "answer": "SEIS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite porque Deus exigiu que o templo fosse edificado com material da melhor qualidade.",
+          "answer": "PORQUE O TEMPLO SERIA UM SÍMBOLO DA IGREJA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Antecipou a coroação de Salomão –",
+          "options": [
+            "a morte de Davi",
+            "a rebelião de Absalão",
+            "a rebelião de Adonias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "O templo foi construído em –",
+          "options": [
+            "sete anos",
+            "quatro anos",
+            "12 anos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Sacerdote que ungiu Salomão",
+          "Aliado de Salomão",
+          "Esposo de Bate-Seba",
+          "Aliado de Adonias",
+          "Impedido de construir o templo",
+          "Profeta presente na unção de Salomão"
+        ],
+        "columnB": [
+          "Davi",
+          "Natã",
+          "Hirão",
+          "Urias",
+          "Joabe",
+          "Zadoque"
+        ],
+        "answers": [
+          5,
+          6,
+          2,
+          3,
+          4,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Tudo que disseram e dizem sobre a Rainha de Sabá pode ser imaginação dos homens.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Depois de tudo que viu e ouviu em Jerusalém, a Rainha de Sabá louvou e exaltou o Deus de Salomão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Salomão não se preocupou em fortalecer seu exército e nem fortificar as cidades de seu reino",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Era propósito de Deus, através do reinado de Salomão, conceder ricas bênçãos a todos os povos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Aliança com as nações pagãs, em desobediência à Palavra de Deus, levou Salomão ao orgulho e apostasia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Tal como seu pai, Salomão podia dizer que “uns confiam em carros, outros em cavalos”, mas Israel confia no seu Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "De Salomão podemos dizer que ele “amou o Deus de seus pais” e também amou muitas mulheres.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na época de Salomão não havia diferença entre as esposas e as concubinas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Deus deu a Salomão grande prestígio com as demais nações e esta foi a causa de seu fracasso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que os adversários de Salomão foram levantados pelo próprio Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o que afirmou Jesus sobre o propósito da visita da Rainha de Sabá a Salomão.",
+          "answer": "ELA FOI PARA OUVIR A SABEDORIA DE SALOMÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que fez Salomão para fortalecer sua aliança com o Egito.",
+          "answer": "TOMOU A FILHA DE FARAÓ COMO ESPOSA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Falou sobre a Rainha de Sabá -",
+          "options": [
+            "Antigo Testamento",
+            "Alcorão",
+            "“Talmud”",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "As concubinas eram dadas aos reis como -",
+          "options": [
+            "esposas",
+            "garantia de alianças",
+            "presentes",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Hadade",
+          "Jeroboão",
+          "Rei Menelik I",
+          "Faraó",
+          "Jesus",
+          "Davi"
+        ],
+        "columnB": [
+          "sogro de Salomão",
+          "falou sobre a Rainha de Sabá",
+          "adversário de Salomão",
+          "filho de Salomão",
+          "um rei guerreiro",
+          "servo de Salomão"
+        ],
+        "answers": [
+          4,
+          5,
+          1,
+          3,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar não ser Salomão o único autor do Livro de Provérbios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Foi, com certeza, o Rei Ezequias quem organizou os provérbios de Salomão na ordem em que se encontra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Provérbios foi escrito para ensinamento e instrução para os jovens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A maior loucura que alguém pode cometer é a de deixar Deus fora de sua vida.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em Provérbios os destaques principais são a sabedoria e a santificação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O homem, de acordo com sua maneira de viver, pode aumentar ou diminuir seus dias de vida.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Salomão afirma que a redenção de uma alma é caríssima.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Livro de Provérbios aplica os princípios de justiça, de pureza e piedade à vida diária.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A expressão confiar tem o sentido de entregar-se aos cuidados de outrem sem reservas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "No hebraico, coração é usado sempre como sendo a sede de onde emana o amor.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o sentido fundamental de uma vida reta.",
+          "answer": "UMA VIDA DE ACORDO COM OS PRINCÍPIOS MORAIS DE DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que pode levar o homem a ter uma vida longa, feliz e tranquila.",
+          "answer": "O TEMOR DO SENHOR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um filho de Deus precisa ser em relação ao ímpio -",
+          "options": [
+            "mais inteligente",
+            "mais sábio",
+            "mais culto",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Um Salmo de autoria de Salomão -",
+          "options": [
+            "Salmo 23",
+            "Salmo 91",
+            "Salmo 127",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Alto caminho dos retos",
+          "Temor do Senhor",
+          "Fonte de paz e felicidade",
+          "Desvia-se do mal",
+          "Um homem ímpio",
+          "Aborrece o conhecimento"
+        ],
+        "columnB": [
+          "louco",
+          "escarnecedor",
+          "homem sábio",
+          "temor do Senhor",
+          "desviar-se do mal",
+          "princípio da sabedoria"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Face à vida desregrada de Salomão ele não tinha autoridade moral para ensinar os jovens.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Pelo tratamento dispensado à sua mãe podemos afirmar que Salomão era um bom filho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Numa família estruturada, segundo a Bíblia, não pode haver conflito de autoridade entre o casal.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pela Lei de Moisés somente a desobediência ao Pai era punida com a pena de morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Ao conferir aos pais o direito de mandar, segundo a Bíblia, ao filho compete o dever da obediência.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pela Lei de Moisés os filhos que desprezassem seus pais eram tidos como malditos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Em Provérbios o conceito de sabedoria está vinculado à cultura intelectual e à inteligência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Salomão adverte sobre e qualquer tipo de sociedade com os ímpios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que a mulher descrita por Salomão no capítulo 7 de Provérbios era uma prostituta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "No sentido figurado adultério significa infidelidade ou traição a Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual é o tema central de Provérbios, capítulo 01 a 09.",
+          "answer": "AS CONSEQUÊNCIAS DA ESCOLHA ENTRE A SABEDORIA E A INSENSATEZ; DA JUSTIÇA E A PERVERSIDADE"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto ao estado civil do praticante, cite a diferença entre o pecado de adultério e da prostituição.",
+          "answer": "ADULTÉRIO REFERE-SE AO CASADO; PROSTITUIÇÃO, AO SOLTEIRO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O Senhor reserva a verdadeira sabedoria para os -",
+          "options": [
+            "inteligentes",
+            "homens",
+            "retos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Salomão, em Provérbios, adverte contra -",
+          "options": [
+            "as más companhias",
+            "a ociosidade",
+            "a sociedade com os ímpios",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Despreza a sabedoria",
+          "Precisa de instrução",
+          "Cresce em sabedoria",
+          "Rejeita a repreensão",
+          "É como a luz da aurora",
+          "É como a escuridão"
+        ],
+        "columnB": [
+          "escarnecedor",
+          "caminho dos ímpios",
+          "néscio",
+          "vereda do justo",
+          "insensato",
+          "sábio"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos ver na sabedoria descrita em Provérbios a personificação de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Em Provérbios a sabedoria é apresentada como mais valiosa que a prata e o ouro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No banquete da sabedoria não foi servido o melhor vinho, sem mistura.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para seu banquete a loucura convidou os simples e os faltos de entendimento",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A Bíblia recomenda aos pais que, se possível, ensinar seus filhos para que sejam bem sucedidos na vida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Segundo Salomão, não devemos admirar o preguiçoso e nem o ignorante.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo Provérbios, ao escolher uma mulher para casamento, é conveniente conhecer seu grau de sabedoria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para Salomão, a herança dos pais é um fator determinante para um bom casamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que, sem o temor do Senhor, o homem não adquire a verdadeira sabedoria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Casar com uma linda mulher, porém, insensata, pode ser um erro irreparável.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar três companheiros da sabedoria.",
+          "answer": "PRUDÊNCIA, CONHECIMENTO E DISCRIÇÃO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que foi colocado na mesa do banquete da mulher louca.",
+          "answer": "ÁGUAS ROUBADAS E PÃO COMIDO ÀS OCULTAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Em Provérbios, louco é o -",
+          "options": [
+            "débil mental",
+            "endemoninhado",
+            "pecador",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A boca do tolo é -",
+          "options": [
+            "um sepulcro aberto",
+            "uma destruição",
+            "uma fonte de bênção",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Mulher sábia",
+          "Mulher tola",
+          "Mulher prudente",
+          "Mulher estranha",
+          "Mulher insensata",
+          "Mulher prostituta"
+        ],
+        "columnB": [
+          "agradável, carinhosa, sedutora",
+          "edifica sua casa",
+          "uma cova profunda",
+          "uma dádiva de Deus",
+          "derruba sua casa",
+          "joia de ouro em focinho de porco"
+        ],
+        "answers": [
+          4,
+          1,
+          6,
+          3,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em Provérbios, na condição de rei, Salomão procura instruir todos os homens de seu reino.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Pela Bíblia a função da mulher no casamento não é apenas a de gerar filhos",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Conhece-se uma mulher virtuosa pela sua dedicação ao trabalho ao lado do seu esposo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Ser uma mulher virtuosa não está ao alcance de todas as mulheres.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Aparentar ser o que, realmente, não é, não é próprio de uma pessoa humilde.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Salomão censura aqueles que sempre falam alto por ter grande potencial de voz.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo ser enganoso o coração, nem sempre a verdade do homem está de acordo com a verdade de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora seja bíblico, castigar um filho sempre será algo desagradável aos pais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Embora sendo um homem sábio, Salomão não procurou por em ordem seus provérbios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Não se pode afirmar, com segurança, sobre a identidade do autor de Provérbios, capitulo 31.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o sentido bíblico da palavra “virtude”.",
+          "answer": "DISPOSIÇÃO PARA PRATICAR O BEM"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar em que consiste a essência da disciplina.",
+          "answer": "ENSINAR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É um dos objetivos do casamento -",
+          "options": [
+            "perpetuação da espécie",
+            "complemento afetivo",
+            "regular a atividade sexual",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Com certeza, não compôs provérbios -",
+          "options": [
+            "Salomão",
+            "Ezequias",
+            "Agur",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Mulher que teme ao Senhor",
+          "Mulher prudente",
+          "Mulher virtuosa",
+          "Uma linda mulher",
+          "Alegra o pai",
+          "Amargura para a mãe"
+        ],
+        "columnB": [
+          "valor excede o de rubis",
+          "compra-se com dinheiro",
+          "filho insensato",
+          "vem do Senhor",
+          "será elogiada",
+          "filho sábio"
+        ],
+        "answers": [
+          3,
+          4,
+          6,
+          2,
+          1,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar que Salomão não é o autor do Livro de Eclesiástico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Por ter se afastado de Deus, é certo que Salomão morreu sem salvação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Separado de Deus, para Salomão a vida era uma repetição infinita e sem significado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo declarações de Salomão, podemos afirmar que o sol não está fixo, como diz a ciência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Salomão deixou claro que, dificilmente, o homem encontrará a felicidade nos prazeres carnais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Das experiências vividas por Salomão podemos afirmar que nada poderá ocupar o lugar de Deus no coração de homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pelas declarações feitas por Salomão podemos duvidar da canonicidade do Livro de Eclesiastes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na simbologia do “cordão de três dobras” podemos identificar uma família bem estruturada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A expressão “guarda o teu pé” fala de respeito e temor quando se está na Casa do Senhor, ou na igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Não somos obrigados a fazer votos, mas, se fizermos, somos obrigados a cumpri-los.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Tendo falhado na busca da felicidade, cite o que fez Salomão.",
+          "answer": "ENTREGOU-SE AOS PRAZERES CARNAIS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a simbologia existente em cada elemento do “cordão de três dobras”.",
+          "answer": "DEUS, ESPOSO E ESPOSA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Não e um Livro apócrifo -",
+          "options": [
+            "Eclesiastes",
+            "Eclesiástico",
+            "Livro da Sabedoria",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Para Salomão, o trabalhador braçal-",
+          "options": [
+            "dorme bem",
+            "tem sono agitado",
+            "sofre de insônia",
+            "dorme pouco."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Bem mais alto da vida",
+          "Escrito no início do reinado de Salomão",
+          "Vida baseada nas coisas do céu",
+          "Vaidade",
+          "Escrito no final da vida de Salomão",
+          "Vida baseada nas coisas da terra"
+        ],
+        "columnB": [
+          "coisas passageiras",
+          "infeliz",
+          "Cantares",
+          "Eclesiastes",
+          "feliz",
+          "reverência e obediência e Deus"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar que, num ato impensado, é possível perder um bom nome.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Ser repreendido por um justo é melhor do que ser elogiado por um ímpio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na vida real, segundo a Bíblia, nem sempre a palavra de um rei deve ser obedecida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Quanto à obediência às autoridades não há conflito entre o pensamento de Salomão e o de Paulo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Segundo a Bíblia, tanto no plano da vida física como da espiritual, a morte nivela os homens.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Mesmo no plano material a sabedoria deve prevalecer sobre o poder das armas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Em Eclesiastes a loucura não tem o sentido de distúrbios mentais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A expressão “governante chamado de filho” nada tem a ver com a monarquia na qual o filho substitui o pai.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Repartir o que tem não deve ser aplicada àqueles que só têm o necessário a sua sobrevivência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Não podemos afirmar, com segurança, que Salomão está no paraíso juntamente com os santos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o que é melhor: ir à uma festa de aniversário ou a um velório, segundo Salomão.",
+          "answer": "IR A UM VELÓRIO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas vezes Salomão fez uso da expressão “debaixo do sol”.",
+          "answer": "27 VEZES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Salomão declarou ser melhor -",
+          "options": [
+            "o dia do nascimento",
+            "a repreensão do justo",
+            "a casa de festa",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Recomendação de Salomão aos jovens -",
+          "options": [
+            "uma vida de reclusão",
+            "uma vida de piedade",
+            "um prazer inteligente",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Vapor que aparece e depois desaparece",
+          "Guardas da casa",
+          "Os homens fortes",
+          "Florescer a amendoeira",
+          "Copo de ouro quebrado",
+          "Gafanhoto como um peso"
+        ],
+        "columnB": [
+          "pernas e pés",
+          "idade avançada",
+          "braços e mão",
+          "morte",
+          "duração da vida",
+          "cabelos brancos"
+        ],
+        "answers": [
+          3,
+          6,
+          2,
+          5,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo não haver consenso sobre o autoria e interpretação do Livro de Cantares.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Nem mesmo a tradição judaica reconhece ser Salomão o autor do Livro de Cantares.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Ao que parece, Cantares foi escrito por Salomão logo após a construção do templo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "É certo que o conteúdo da Escritura hebraico é diferente do nosso Antigo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar ser uma ficção a história de amor descrita no Livro de Cantares.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Lido com olhos ungidos Cantares exala uma suave fragrância do Espírito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Nas Escrituras o vinho geralmente refere-se ao gozo e à alegria.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na Sunamita o que chamou a atenção de Salomão foi sua beleza interior.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O Livro de Cantares fortalece a união conjugal que deve ter por base o amor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para a Bíblia, quem afirmou ser a “Rosa de Sarom” e o “Lirio dos Vales” foi a esposa.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas vezes Jesus falou sobre Salomão nos Evangelhos.",
+          "answer": "DUAS VEZES"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar em qual das festas judaicas era lido o Livro de Cantares.",
+          "answer": "FESTA DA PÁSCOA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Quando escreveu Cantares, Salomão tinha -",
+          "options": [
+            "uma única esposa",
+            "nenhuma esposa",
+            "sessenta esposas",
+            "setecentas esposas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Salomão compôs -",
+          "options": [
+            "três mil cânticos",
+            "apenas o de Cantares",
+            "mil e cinco cânticos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Fala de um homem velho e triste",
+          "Fala de um jovem feliz e sonhador",
+          "Fala de um homem adulto e sábio",
+          "Provérbios",
+          "Eclesiastes",
+          "Cantares"
+        ],
+        "columnB": [
+          "dá instruções, sabedoria",
+          "Deus é temido e julga o homem",
+          "Deus é o alvo dos crentes",
+          "Eclesiastes",
+          "Cantares",
+          "Provérbios"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O namoro entre os dois jovens crentes deveria começar na pureza do romantismo, segundo a Bíblia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Salomão conquistou o coração da Sunamita como homem e não como rei.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na expressão “jardim fechado” e “fonte selada” podemos ver a simbologia da pureza e virgindade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Os valores éticos e morais no Reino de Deus são diferentes dos existentes no mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para a Sunamita se todos os homens fossem iguais, seu esposo seria o único diferente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "No sentido espiritual o retorno ao Libano fala da segunda fase da segunda vinda de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão “põe-me como selo” sobre o teu braço faz referência ao uso de tatuagem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Numa união matrimonial realizada segundo a Bíblia pode não haver problema entre o casal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O “Cântico dos Cânticos” embora sendo uma alegoria, retrata uma história real.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na união matrimonial entre Salomão e a Sunamita não há qualquer simbologia entre Cristo e a igreja.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite como o Rei Salomão conquistou a Sunamita.",
+          "answer": "CONQUISTOU-A COMO PASTOR DE OVELHAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como a Sunamita pensava em seu noivo.",
+          "answer": "PENSAVA NA FIGURA DE UM GAMO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Para Salomão a Sunamita era como -",
+          "options": [
+            "jardim fechado",
+            "manancial fechado",
+            "fonte selada",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Sunamita descreve seu amado -",
+          "options": [
+            "segundo poema",
+            "quinto poema",
+            "sétimo poema",
+            "oitavo poema."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Forte como a morte",
+          "“Muitas águas”",
+          "Direito de posse",
+          "Salomão e a Sunamita",
+          "Sunamita, uma moça morena",
+          "Exclusividade do amor"
+        ],
+        "columnB": [
+          "figura da igreja",
+          "selo",
+          "amor",
+          "destaque em Cantares",
+          "lutas e dificuldades",
+          "Cristo e a igreja"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

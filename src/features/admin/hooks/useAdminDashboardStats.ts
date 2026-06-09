@@ -15,15 +15,30 @@ export const useAdminDashboardStats = () => {
   const fetchStats = useCallback(async () => {
     setLoading(true);
     try {
-      const [usersCount, coursesCount, docsCount, paysCount, proofsPending] = await Promise.all([
+      // 1. Buscar IDs de provas/blocos finais
+      const { data: examAulas } = await supabase
+        .from('aulas')
+        .select('id')
+        .or('tipo.eq.prova,is_bloco_final.eq.true');
+
+      const examIds = (examAulas || []).map(a => a.id);
+
+      // 2. Contar submissões pendentes dessas provas
+      let pendingProofsCountVal = 0;
+      if (examIds.length > 0) {
+        const { count } = await supabase
+          .from('respostas_aulas')
+          .select('id', { count: 'exact', head: true })
+          .is('nota', null)
+          .in('aula_id', examIds);
+        pendingProofsCountVal = count || 0;
+      }
+
+      const [usersCount, coursesCount, docsCount, paysCount] = await Promise.all([
         supabase.from('users').select('id', { count: 'exact', head: true }),
         supabase.from('cursos').select('id', { count: 'exact', head: true }),
         supabase.from('documentos').select('id', { count: 'exact', head: true }).not('url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
         supabase.from('pagamentos').select('id', { count: 'exact', head: true }).not('comprovante_url', 'is', null).filter('status', 'not.in', '(aprovado,rejeitado)'),
-        supabase.from('respostas_aulas')
-          .select('id, aulas!inner(is_bloco_final)', { count: 'exact', head: true })
-          .is('nota', null)
-          .eq('aulas.is_bloco_final', true)
       ]);
 
       setUserCount(usersCount.count || 0);
@@ -31,7 +46,7 @@ export const useAdminDashboardStats = () => {
       
       const financeCount = (docsCount.count || 0) + (paysCount.count || 0);
       setPendingCount(financeCount);
-      setPendingProofsCount(proofsPending.count || 0);
+      setPendingProofsCount(pendingProofsCountVal);
       setPendingDocsCount(docsCount.count || 0);
       setPendingPaysCount(paysCount.count || 0);
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { LogIn, Loader2, Eye, EyeOff } from 'lucide-react'
+import { LogIn, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import Logo from '../components/common/Logo'
 import { useSEO } from '../hooks/useSEO'
 
@@ -155,8 +155,11 @@ const Login = () => {
 
 
   return (
-    <div className="auth-container">
-      <div className="auth-card" style={{ position: 'relative', overflow: 'hidden' }}>
+    <div className="auth-container" style={{ position: 'relative' }}>
+      <Link to="/" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600, background: 'var(--primary)', padding: '0.6rem 1.2rem', borderRadius: '50px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', zIndex: 9999 }}>
+        <ArrowLeft size={18} /> Voltar
+      </Link>
+      <div className="auth-card">
         <div className="auth-header" style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
             <Logo size={220} />

@@ -1,0 +1,134 @@
+{
+  "id": "TO_3",
+  "title": "Teologia Obreiro - V3",
+  "tfQuestions": [
+    {
+      "id": "to3-tf-1",
+      "question": "Um crente mesmo não sendo um pregador pode ser um ganhador de almas.",
+      "answer": "V"
+    },
+    {
+      "id": "to3-tf-2",
+      "question": "A expressão “pedras vivas” diz respeito a todos os crentes membros da igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "to3-tf-3",
+      "question": "Jesus, em seu ministério, também necessitou de recursos financeiros.",
+      "answer": "V"
+    },
+    {
+      "id": "to3-tf-4",
+      "question": "A conduta ou testemunho de um crente é como o cartão de visita de sua igreja.",
+      "answer": "V"
+    },
+    {
+      "id": "to3-tf-5",
+      "question": "É certo que Jesus não chama desocupados e nem preguiçosos para o ministério.",
+      "answer": "V"
+    },
+    {
+      "id": "to3-tf-6",
+      "question": "Por não ter sido plantada em terreno fértil a vinha do Antigo Testamento não deu frutos.",
+      "answer": "F"
+    },
+    {
+      "id": "to3-tf-7",
+      "question": "Não há na Bíblia nenhum apóstolo chamado pelo Espírito Santo.",
+      "answer": "F"
+    },
+    {
+      "id": "to3-tf-8",
+      "question": "Podemos afirmar que nem sempre um obreiro verá o resultado de seu trabalho.",
+      "answer": "V"
+    },
+    {
+      "id": "to3-tf-9",
+      "question": "O dom de ensinar, como serviço, é o mesmo dom ministerial de mestre.",
+      "answer": "F"
+    },
+    {
+      "id": "to3-tf-10",
+      "question": "Nada impede um obreiro cheio do Espírito Santo ser também um homem letrado",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "to3-mc-1",
+      "question": "Cada crente deve ser um -",
+      "options": [
+        "Apóstolo",
+        "Mestre",
+        "Ganhador de almas",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "to3-mc-2",
+      "question": "O que todo diácono precisa ter ou ser -",
+      "options": [
+        "Boa reputação",
+        "Cheio do Espírito Santo",
+        "Cheio de sabedoria",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "to3-mc-3",
+      "question": "Ao dono de uma construção compete decidir sobre -",
+      "options": [
+        "Sua finalidade",
+        "Lugar onde construir",
+        "Natureza do material",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "to3-mc-4",
+      "question": "A igreja assemelha-se a um –",
+      "options": [
+        "Galpão",
+        "Edifício",
+        "Uma casa térrea",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "to3-mp-1",
+      "left": "Deus encontrou no deserto",
+      "right": "Moisés"
+    },
+    {
+      "id": "to3-mp-2",
+      "left": "Deus encontrou arando a terra",
+      "right": "Eliseu"
+    },
+    {
+      "id": "to3-mp-3",
+      "left": "Deus encontrou pastoreando ovelhas",
+      "right": "Davi"
+    },
+    {
+      "id": "to3-mp-4",
+      "left": "Deus encontrou em Listra",
+      "right": "Timóteo"
+    },
+    {
+      "id": "to3-mp-5",
+      "left": "Chamado por Deus",
+      "right": "Arão"
+    },
+    {
+      "id": "to3-mp-6",
+      "left": "Enviado pela Igreja de Jerusalém",
+      "right": "Barnabé"
+    }
+  ]
+}

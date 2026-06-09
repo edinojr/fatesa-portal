@@ -1,0 +1,134 @@
+{
+  "id": "BIBL_2",
+  "title": "Bibliologia - V2",
+  "tfQuestions": [
+    {
+      "id": "bibl2-tf-1",
+      "question": "Nos textos das Escrituras a palavra bíblia é encontrada poucas vezes.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl2-tf-2",
+      "question": "De alguma forma, Jesus pode ser encontrado em quase todos os livros da Bíblia.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl2-tf-3",
+      "question": "O livro de Atos dos Apóstolos relata a história da igreja entre os anos 29 e 63 dC.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl2-tf-4",
+      "question": "Com a morte de Jesus o Antigo Testamento perdeu sua validade.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl2-tf-5",
+      "question": "Assim como o hebraico, também o aramaico continua sendo falado em Israel.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl2-tf-6",
+      "question": "A tradução de João Ferreira de Almeida foi a primeira Bíblia impressa em português.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl2-tf-7",
+      "question": "Livro apócrifo é aquele no qual não é reconhecida a inspiração divina.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl2-tf-8",
+      "question": "Não podemos afirmar quanto tempo durou o cativeiro de Judá em Babilônia.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl2-tf-9",
+      "question": "Alexandre, embora de forma indireta, contribuiu na realização da “Septuaginta”.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl2-tf-10",
+      "question": "Foram os Macabeus que deram origem ao chamado “Movimento Sionista”.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "bibl2-mc-1",
+      "question": "O preço da redenção foi exigido:",
+      "options": [
+        "Por Satanás",
+        "Pelo amor de Deus",
+        "Pela justiça de Deus",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "bibl2-mc-2",
+      "question": "No período interbíblico Israel esteve sob o domínio dos:",
+      "options": [
+        "Persas",
+        "Romanos",
+        "Gregos",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "bibl2-mc-3",
+      "question": "Mandou construiu a “serpente de metal”:",
+      "options": [
+        "Deus",
+        "Rei Ezequias",
+        "Rei Ageu",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "bibl2-mc-4",
+      "question": "Mandou destruir a “serpente de metal”:",
+      "options": [
+        "Deus",
+        "Rei Ezequias",
+        "Profeta Samuel",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "bibl2-mp-1",
+      "left": "Dividiu a Bíblia em capítulos",
+      "right": "Hugo de Saint Cher"
+    },
+    {
+      "id": "bibl2-mp-2",
+      "left": "Dividiu o Antigo Testamento em versículos",
+      "right": "Mardoqueu Nathan"
+    },
+    {
+      "id": "bibl2-mp-3",
+      "left": "Dividiu o Novo Testamento em versículos",
+      "right": "Robert Stevens"
+    },
+    {
+      "id": "bibl2-mp-4",
+      "left": "Não fizeram divisão em seus livros",
+      "right": "Todos os escritores"
+    },
+    {
+      "id": "bibl2-mp-5",
+      "left": "Usaram pela primeira vez o termo Antigo Testamento",
+      "right": "Tertuliano e Orígenes"
+    },
+    {
+      "id": "bibl2-mp-6",
+      "left": "Ensinou com base no Antigo Testamento",
+      "right": "Paulo"
+    }
+  ]
+}

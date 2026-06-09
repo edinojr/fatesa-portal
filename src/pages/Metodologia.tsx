@@ -20,7 +20,7 @@ const Metodologia = () => {
                 </div>
             </section>
 
-            <section id="metodologia" style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 10% 50%, rgba(156, 39, 176, 0.03), transparent 40%)' }}>
+            <section id="metodologia" style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 10% 50%, rgba(0, 86, 179, 0.03), transparent 40%)' }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                     <div className="section-header" style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <span className="badge">EAD e Presencial</span>

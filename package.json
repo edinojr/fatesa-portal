@@ -12,8 +12,12 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",
+    "@types/jsdom": "^28.0.3",
     "@vercel/analytics": "^2.0.1",
+    "cheerio": "^1.2.0",
+    "dotenv": "^17.4.2",
     "html2canvas": "^1.4.1",
+    "jsdom": "^29.1.1",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.363.0",
     "pdfjs-dist": "5.4.296",

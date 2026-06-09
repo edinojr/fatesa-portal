@@ -1,0 +1,134 @@
+{
+  "id": "TEOP_1",
+  "title": "Teologia Prática - V1",
+  "tfQuestions": [
+    {
+      "id": "teop1-tf-1",
+      "question": "A única coisa que o homem pode dizer ser sua é a vida",
+      "answer": "F"
+    },
+    {
+      "id": "teop1-tf-2",
+      "question": "Embora não tendo necessidades, Jesus orou muito para deixar-nos seu exemplo.",
+      "answer": "F"
+    },
+    {
+      "id": "teop1-tf-3",
+      "question": "Hoje, no sentido simbólico, ao lado de nossa casa podem morar “cananeus” e “fereseus”.",
+      "answer": "V"
+    },
+    {
+      "id": "teop1-tf-4",
+      "question": "Num lar Deus pode usar a provação para melhorar o relacionamento do casal.",
+      "answer": "V"
+    },
+    {
+      "id": "teop1-tf-5",
+      "question": "Em relação ao governo da família não há conflito entre nossa legislação e a Bíblia.",
+      "answer": "F"
+    },
+    {
+      "id": "teop1-tf-6",
+      "question": "Segundo a Bíblia, um filho desobediente aos pais pode morrer antes do tempo.",
+      "answer": "V"
+    },
+    {
+      "id": "teop1-tf-7",
+      "question": "Um empresário crente deve evitar a contratação de crentes da sua igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "teop1-tf-8",
+      "question": "Os judeus tinham como sendo uma norma bíblica amar os judeus e aborrecer os gentios.",
+      "answer": "V"
+    },
+    {
+      "id": "teop1-tf-9",
+      "question": "O princípio da vingança pessoal nunca foi admitido em Israel.",
+      "answer": "F"
+    },
+    {
+      "id": "teop1-tf-10",
+      "question": "Ao constatar que seu ensino não estava agradando o povo, Jesus não mudou sua forma de ensinar.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "teop1-mc-1",
+      "question": "“Muitas águas” falam de",
+      "options": [
+        "Bênçãos",
+        "Dificuldades",
+        "Provação",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "teop1-mc-2",
+      "question": "Não houve problemas no lar de -",
+      "options": [
+        "Adão",
+        "Abraão",
+        "Davi",
+        "Todas estão erradas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "teop1-mc-3",
+      "question": "Dar prioridade ao Reino de Deus é –",
+      "options": [
+        "Uma opção do homem",
+        "Uma exigência de Deus",
+        "Uma exigência da Lei",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "teop1-mc-4",
+      "question": "As prioridades no uso do nosso tempo -",
+      "options": [
+        "Deus",
+        "Família",
+        "Obra de Deus",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "teop1-mp-1",
+      "left": "Socorrer os desamparados",
+      "right": "Cuidar das viúvas"
+    },
+    {
+      "id": "teop1-mp-2",
+      "left": "Agir como pai",
+      "right": "Cuidar dos órfãos"
+    },
+    {
+      "id": "teop1-mp-3",
+      "left": "Cuidar dos órfãos e das viúvas",
+      "right": "Exigência da Lei de Moisés"
+    },
+    {
+      "id": "teop1-mp-4",
+      "left": "Amar somente seus “irmãos”",
+      "right": "Os judeus"
+    },
+    {
+      "id": "teop1-mp-5",
+      "left": "Amar os inimigos",
+      "right": "Os cristãos"
+    },
+    {
+      "id": "teop1-mp-6",
+      "left": "Religião pura e imaculada",
+      "right": "Guardar-se da corrupção do mundo"
+    }
+  ]
+}

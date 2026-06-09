@@ -1,0 +1,1196 @@
+{
+  "id": "teologia-obreiro",
+  "title": "Teologia Obreiro",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A igreja, como instituição, é a maior de todas as obras na terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "O que não se dedica totalmente à obra de Deus não pode ser considerado um obreiro",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Aquele que, voluntariamente, quer fazer a obra de Deus deve apresentar-se ao seu pastor",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Obreiro que se dedica, totalmente, à obra de Deus o Senhor cuida de sua família.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Todo obreiro, ainda que voluntário, deve manejar bem a Palavra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Através de um bom testemunho o crente pode abrir as portas para a pregação do evangelho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "É certo que apenas orando o crente não pode ser um ganhador de almas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Nem sempre os pregadores de púlpito são os maiores ganhadores de almas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Era da vontade de Deus que todos os crentes permanecessem na igreja em Jerusalém",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ter uma credencial de obreiro não significa ser um ganhador de almas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em relação à terra e ao mundo cite o que Jesus afirmou que devemos ser.",
+          "answer": "SAL DA TERRA E LUZ DO MUNDO"
+        },
+        {
+          "id": "sa2",
+          "question": "Dos fundadores da primeira igreja gentílica cite quantos tinham uma credencial de obreiro",
+          "answer": "NENHUM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um obreiro pode envergonhar-se –",
+          "options": [
+            "de sua fé",
+            "do tempo que dedica a Deus",
+            "de seu próprio testemunho",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Um obreiro mal preparado -",
+          "options": [
+            "o Espírito Santo suprirá sua deficiência",
+            "mesmo assim sua obra será aprovada",
+            "sua obra será reprovada",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Chamado, apresentou-se",
+          "Chamado, não se apresentou",
+          "Maneja bem a Palavra da Verdade",
+          "Está ao alcance de todos",
+          "Obreiro sem credencial",
+          "Obreiro com credencial"
+        ],
+        "columnB": [
+          "obreiro especial",
+          "ganhar almas",
+          "Jonas",
+          "voluntário",
+          "obreiro aprovado",
+          "Paulo"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que, biblicamente, a igreja é um edifício.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na construção de um edifício a pessoa mais importante é o seu proprietário.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Foram poucas as vezes em que Deus abriu mão de seu direito como dono da terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Foi após o nascimento de Jesus que Deus elaborou seu plano de edificar sua igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A expressão “pedras vivas” diz respeito a todos os crentes membros da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A natureza e objetivo de uma construção será pré estabelecida por seu proprietário.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Numa grande construção tem que existir uma hierarquia entre os trabalhadores.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Embora sem nenhuma instrução escolar o que ganha almas é chamado de sábio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Numa igreja local somente o pastor deve ser considerado um sacerdote.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na igreja todos, sem exceções, podem participar do trabalho de ganhar almas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Na construção de um edifício cite qual é a pessoa mais importante",
+          "answer": "SEU PROPRIETÁRIO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a expressão usada por Jeremias sobre aquele que faz a obra de Deus “fraudulentamente”",
+          "answer": "QUE É “MALDITO”"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Ao dono de uma construção compete decidir sobre -",
+          "options": [
+            "sua finalidade",
+            "lugar onde construir",
+            "natureza do material",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A igreja assemelha-se a um –",
+          "options": [
+            "galpão",
+            "edifício",
+            "uma casa térrea",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "O mais importante numa construção",
+          "É muito importante numa construção",
+          "Não foi chamado para escrever",
+          "Ganhador de almas através da escrita",
+          "Não fez uso da palavra escrita",
+          "Um pregador eloquente"
+        ],
+        "columnB": [
+          "John Bunyan",
+          "Apolo",
+          "engenheiro",
+          "Jesus",
+          "o dono",
+          "João Batista"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A Bíblia diz que Jesus percorria toda Galileia pregando e ensinando nas sinagogas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Jesus não gostava de ser chamado de Mestre ou Rabi.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "É através do ensino e não da pregação da Palavra que uma igreja deve ser estruturada",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Ensinar não é uma forma de ganhar almas para o Reino de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O Tabernáculo era um símbolo da igreja porque era nele que, simbolicamente, Deus habitava..",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Mesmo, simbolicamente, não é correto falar em obreiros artistas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O erro dos escribas e fariseus era não viver de acordo com o que ensinavam.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Ao contrário do que muitos pensam, a Bíblia ensina a ser persistente na oração.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jesus, em seu ministério, não necessitou de recursos financeiros.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que dizimistas e ofertantes são ganhadores de almas para o Reino de Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em relação ao “ide”, cite quem pode cumprir a ordem de Jesus.",
+          "answer": "TODOS OS SEUS SERVOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação às necessidades materiais, citar porque o obreiro não pode fazer uso da “vara”.",
+          "answer": "PORQUE DEUS DISSE QUE OS RECURSOS DEVERIAM SER PEDIDO AO POVO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Para o obreiro ensinador, em relação à Palavra, deve –",
+          "options": [
+            "conhecer",
+            "viver",
+            "crer",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Os chamados de “obreiros artistas” são os -",
+          "options": [
+            "evangelistas",
+            "ensinadores",
+            "intercessores",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Bezalel e seus cooperadores",
+          "Joana e Suzana",
+          "Círculo de oração",
+          "Vão à floresta em busca de madeira",
+          "Na linha de frente ou na retaguarda",
+          "Jesus pregava e ensinava"
+        ],
+        "columnB": [
+          "recompensa igual",
+          "contribuição espiritual",
+          "evangelistas",
+          "contribuição financeira",
+          "em todos os lugares",
+          "construtores de objetos úteis à obra"
+        ],
+        "answers": [
+          5,
+          3,
+          4,
+          2,
+          6,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não é possível ganhar almas apenas vivendo a vida cristã.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O que impressionou a Sunamita não foi o que ela ouviu, mas o que viu em Eliseu.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A conduta ou testemunho de um crente é como o cartão de visita de sua igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pela maneira em que viviam os cristãos, eles passavam despercebidos em Antioquia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo que nossa vida particular nada tem a ver com nossa religião.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A expressão “os que estão de fora” pode se referir aos que estão dentro de nossa casa",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "No evangelismo pessoal é fundamental falar do que Jesus fez em nossa vida.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Um novo convertido não pode querer ser um evangelista.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Ser adorado é um sonho que Satanás nunca realizou e não realizará.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Música de exaltação à carne não pode ser reconhecida como hino de adoração a Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que fala mais alto, o que falamos ou o que fazemos.",
+          "answer": "O QUE FAZEMOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite qual o louvor que a Bíblia nos recomenda a cantar na adoração a Deus.",
+          "answer": "RECOMENDA CANTAR “AO SENHOR UM CÂNTICO NOVO”"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O mundo nos julga pelo que nós -",
+          "options": [
+            "falamos",
+            "fazemos",
+            "pensamos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Jesus sempre ensinava o que o povo –",
+          "options": [
+            "queria ouvir",
+            "gostava de ouvir",
+            "precisava ouvir",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Não quiseram louvar a Deus",
+          "Abre as postas das prisões",
+          "É possível louvar a Deus",
+          "O que devemos cantar quando louvamos",
+          "Não é aceito por Deus",
+          "Satanás tem procurado"
+        ],
+        "columnB": [
+          "ritmos mundanos",
+          "na prisão",
+          "judeus no cativeiro",
+          "adulterar o verdadeiro louvor",
+          "hinos de louvores",
+          "adoração através do louvor"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar que a igreja é na terra uma extensão do Reino de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Foi dentre os seus discípulos que Jesus chamou seus doze apóstolos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Ser salvo não significa ter uma chamada para fazer a obra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A expressão “exceto os apóstolos” significa que os apóstolos também saíram de Jerusalém.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É certo que nem todos os discípulos terão uma chamada especial para o ministério.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que a chamada de Paulo para o ministério foi feita por Barnabé.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "É certo afirmar que Deus não dá igreja para pastor, mas dá pastor para a igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na Lei de Moisés para ser sacerdote dependia do querer do homem e da vontade de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Nem todos os descendentes de Arão e da tribo de Levi podiam ser sacerdotes.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Os que sentem que têm uma chamada para o ministério devem avisar seu pastor.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos e quais dos doze apóstolos estavam entre os setenta enviados por Jesus.",
+          "answer": "NENHUM"
+        },
+        {
+          "id": "sa2",
+          "question": "Entre a unção e o trono cite cerca de quantos anos esperou Davi.",
+          "answer": "CERCA DE QUINZE ANOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Primeiro pastor da igreja de Antioquia –",
+          "options": [
+            "Paulo",
+            "Pedro",
+            "Barnabé",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Nos levitas os defeitos eram -",
+          "options": [
+            "reais",
+            "simbólicos",
+            "ocultos",
+            "todas estão erradas"
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Deus encontrou no deserto",
+          "Deus encontrou arando a terra",
+          "Deus encontrou pastoreando ovelhas",
+          "Deus encontrou em Listra",
+          "Chamados por Deus",
+          "Enviado pela Igreja de Jerusalém"
+        ],
+        "columnB": [
+          "Timóteo",
+          "Barnabé",
+          "Eliseu",
+          "Arão",
+          "Moisés",
+          "Davi"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que o principal produto agrícola de Israel sempre foi a videira.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Por não ter sido plantada em terreno fértil a vinha do Antigo Testamento não deu frutos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A vinha descrita no Novo Testamento nada tem a ver com a Nação de Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A vinha do Novo Testamento foi plantada pelo Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "É Jesus o homem “que saiu de madrugada” para contratar trabalhadores.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Entre os comentaristas não há um consenso sobre quem são os trabalhadores da vinha",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Respondendo a pergunta feita por seus discípulos Jesus contou a Parábola da Vinha",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O salário a ser pago foi ajustado somente com os primeiros trabalhadores chamados.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No final do dia foram os trabalhadores que procuraram o dono da vinha.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Em Israel o pagamento aos trabalhadores era no último dia da semana.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a simbologia das vinhas do Antigo e do Novo Testamento.",
+          "answer": "ANTIGO– ISRAEL; NOVO- IGREJA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar baseado em que o dono da Vinha pagou os trabalhadores.",
+          "answer": "O PAGAMENTO TEVE COMO BASE QUALIDADE DAS OBRAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O dono na Parábola da Vinha",
+          "options": [
+            "Deus Pai",
+            "Deus Filho",
+            "Deus Espírito Santo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Os últimos trabalhadores chamados receberam –",
+          "options": [
+            "metade do salário",
+            "a mesma quantia",
+            "foram os últimos a receber",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Vinha do Antigo Testamento",
+          "Vinha do Novo Testamento",
+          "Início do dia judaico",
+          "Hora terceira",
+          "Hora undécima",
+          "Final do dia"
+        ],
+        "columnB": [
+          "17 horas",
+          "6 horas da manhã",
+          "Israel",
+          "18 horas",
+          "9 horas da manhã",
+          "igreja"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "a expressão “E ele mesmo deu uns para apóstolos” refere-se a Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar, com certeza, não mais existiu o ministério de apóstolo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O dom espiritual de profecia nada tem a ver com o dom ministerial de profeta",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Quem tem o dom ministerial de profeta nunca será um grande pregador.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Biblicamente, o evangelista deve ser visto como auxiliar do pastor local.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Segundo afirmou Paulo há uma obra que é típica de um evangelista.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Todo pastor, segundo a Bíblia, tem que ser apto para ensinar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "As igrejas eram ensinadas a contribuir, financeiramente, com os evangelistas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jesus, em seu ministério, não gostava quando alguém o chamava de Mestre.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Ministrar significa servir, portanto, ser ministro é ser servente e não senhor.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos são os apóstolos do Pai, os do Filho e os do Espírito Santo.",
+          "answer": "DO PAI, UM; DO FILHO, 12; DO ESPÍRITO SANTO, INCONTÁVEIS"
+        },
+        {
+          "id": "sa2",
+          "question": "Dos cinco dons ministeriais, cite qual Paulo afirmou que Timóteo deveria fazer.",
+          "answer": "A OBRA DE UM EVANGELISTA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Foi um dos doze apóstolos de Jesus -",
+          "options": [
+            "Paulo",
+            "Lebeu",
+            "Tiago, irmão do Senhor",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Um apóstolo enviado pelo Espírito Santo –",
+          "options": [
+            "Estevão",
+            "Marcos",
+            "Barnabé",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um evangelista",
+          "Um mestre ou doutor",
+          "Um pastor",
+          "Um apóstolo de Jesus",
+          "Um apóstolo do Pai",
+          "Um apóstolo do Espírito Santo"
+        ],
+        "columnB": [
+          "Jesus",
+          "Bartolomeu",
+          "Zenas",
+          "Gunnar Vingren",
+          "Filipe",
+          "Tito"
+        ],
+        "answers": [
+          5,
+          4,
+          2,
+          6,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não é apenas como sendo o Bom Pastor que encontramos Jesus nos evangelhos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para a Igreja Católica Romana é Pedro, e não Jesus, o Sumo Pontífice.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Para quem tem cem ovelhas não é bom deixar as 99 no campo para ir em busca de uma",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Mesmo que a exigência não seja bíblica devemos sempre obedecer nosso pastor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Deus nunca admitiu a negligência dos sacerdotes no exercício de suas funções.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Vocação, no sentido literal, significa que o homem deve ser separado para o ministério",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Podemos afirmar que para ser sacerdote a única exigência era ser da tribo de Levi",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Foram poucas as vezes que Paulo duvidou de sua chamada ministerial.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "É certo que nem todo aquele que se diz ministro tem legitimidade bíblica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que nem sempre um obreiro verá o resultado do seu trabalho.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar duas condições básicas que um pastor deve possuir.",
+          "answer": "CONHECER BEM E SER APTO PARA ENSINAR A PALAVRA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o sentido original e bíblico da expressão ministro.",
+          "answer": "SER SERVO OU SERVIDOR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É uma característica do bom pastor -",
+          "options": [
+            "conhecer suas ovelhas",
+            "guiar as ovelhas",
+            "buscá-las quando desviadas",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Chama para o ministério –",
+          "options": [
+            "o conselho de pastores",
+            "Jesus",
+            "o pastor presidente",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Porta do curral das ovelhas",
+          "Não entra pela porta",
+          "Dá a vida pelas ovelhas",
+          "O que entra pela porta",
+          "Obediência ao pastor",
+          "Obreiro sem legitimidade"
+        ],
+        "columnB": [
+          "exigência bíblica",
+          "biônico",
+          "pastor",
+          "ladrão e salteador",
+          "legitimidade bíblica",
+          "bom pastor"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os dons de serviços são pouquíssimo ensinados em nossas igrejas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Na obra de Deus há espaço e lugar para que cada crente seja um obreiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os dons espirituais são de ação temporária, mas os assistenciais são permanentes.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Os dons assistenciais devem ser exercidos pelas mulheres e não pelos homens.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os dons ministeriais, espirituais e assistenciais são diferentes entre si.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Alguns dos membros de uma igreja podem exercer as funções dos dons assistenciais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Não há diferença entre o dom ministerial e o de ensinar como serviço cristão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O dom de ministrar está relacionado apenas ao trabalho exercido pelos diáconos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Via de regra, todo crente gostaria de receber um dos nove dons espirituais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Quem tem um dom de serviços não pode estabelecer horário de atendimento.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a origem e significado dos dons espirituais propriamente ditos.",
+          "answer": "“CHARISMATA”, NO ORIGINAL GREGO, CUJO SIGNIFICADO É “GRAÇAS”"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como podemos resumir o ministério terreno de Jesus.",
+          "answer": "EM DUAS TAREFAS — FAZER E ENSINAR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os dons assistenciais conferem -",
+          "options": [
+            "“status”",
+            "retorno financeiro",
+            "oportunidade de ser útil",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Os dons assistenciais manifestam através -",
+          "options": [
+            "das obras",
+            "das palavras",
+            "da oração",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Dons assistenciais",
+          "Dons de ministrar",
+          "Dons de presidir",
+          "Dons de misericórdia",
+          "Dons ministeriais",
+          "Dons espirituais"
+        ],
+        "columnB": [
+          "Espírito Santo",
+          "Jesus",
+          "pouco procurado",
+          "governo da igreja",
+          "bondade em ação",
+          "prestação de serviços"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No passado os anciãos eram considerados e tratados com muito respeito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Biblicamente, no aspecto ministerial, não há diferença entre presbítero, ancião e bispo",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sabemos, pela Bíblia, que o próprio Deus deu um destaque especial aos anciãos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Moisés, considerando as dificuldades do deserto, preferiu ter os mais jovens ao seu lado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Foi, por determinação de Deus, que Moisés escolheu setenta anciãos para auxiliá-lo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Relacionado ao dom ministerial são inúmeras as vezes que encontramos a palavra pastor",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Nada impede um obreiro cheio do Espírito Santo ser também um homem letrado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Numa igreja local cada departamento deve ter autonomia e governo próprio.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Um pastor não pode retirar do cargo um obreiro que tem apoio total da maioria.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para o diácono “ser cheio de sabedoria” não significa ser um homem douto.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Quanto ao exercício da função cite a diferença entre presbítero, bispo e ancião.",
+          "answer": "NÃO HÁ DIFERENÇA"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto as funções do diácono cite o que mudou em relação a igreja de Jerusalém.",
+          "answer": "NADA MUDOU"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O que todo diácono necessita ter ou ser -",
+          "options": [
+            "boa reputação",
+            "cheio do Espírito Santo",
+            "cheio de sabedoria",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Os diversos departamentos na igreja devem –",
+          "options": [
+            "escolher seus dirigentes",
+            "ter autonomia administrativa",
+            "estar subordinado ao pastor",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Cooperador numa igreja local",
+          "Prestigiados na monarquia",
+          "Presbítero, ancião e bispo",
+          "Boa reputação",
+          "Ancião importante no Egito",
+          "Afirmou ser presbítero"
+        ],
+        "columnB": [
+          "pastor",
+          "Pedro",
+          "auxiliares do pastor",
+          "Jacó",
+          "os anciãos",
+          "diácono"
+        ],
+        "answers": [
+          3,
+          6,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

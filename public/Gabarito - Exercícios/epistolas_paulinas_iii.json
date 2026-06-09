@@ -1,0 +1,1196 @@
+{
+  "id": "ep-paulinas-3",
+  "title": "Epístolas Paulinas III",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Corinto, uma cidade grega, tornou-se famosa pela sabedoria dos mestres existentes ali.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Afrodite, a deusa dos gregos, era a mesma Vênus, a deusa dos romanos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Foi em sua terceira viagem missionária que Paulo fundou a igreja de Corinto.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Embora sendo uma cidade muito rica, a maioria dos crentes de Corinto era pobre.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Estando em Éfeso, Paulo recebeu más notícias da igreja de Corinto.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Mesmo, presumindo-se vazias, o obreiro deve apurar o que lhe for relatado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Paulo afirmou que os crentes de Corinto eram santificados em Cristo e chamados santos",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Dificilmente Satanás consegue tocar nos santificados em Cristo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Mesmo sendo uma igreja problemática não faltava em Corinto nenhum dom espiritual",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Paulo é um exemplo de que todo obreiro, sempre que possível, deve ser educado.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem buscava em Corinto material para fabricar a cor púrpura.",
+          "answer": "OS FINÍCIOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que Paulo declarou ser “pela graça de Deus”.",
+          "answer": "DECLAROU QUE “SOU O QUE SOU”"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Era maioria em Corinto –",
+          "options": [
+            "os romanos",
+            "os comerciantes",
+            "os escravos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Paulo afirmou que os crentes de Corinto eram -",
+          "options": [
+            "santificados em Cristo",
+            "rebeldes",
+            "mundanos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Levou a Paulo os problemas da igreja",
+          "Um dos da chamada família de Cloé",
+          "Enviado por Paulo a Corinto",
+          "Reconstruiu a cidade de Corinto",
+          "Judeu residente em Corinto",
+          "Principal da sinagoga de Corinto"
+        ],
+        "columnB": [
+          "Fortunato",
+          "Júlio César",
+          "Crispo",
+          "Epafras",
+          "Timóteo",
+          "Áquila"
+        ],
+        "answers": [
+          2,
+          4,
+          6,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Paulo considerou ser bom que não houvesse divisão na igreja de Corinto.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Crente carnal, embora salvo, não se entrega totalmente ao controle do Espírito Santo",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Ser “menino”, no sentido bíblico, significa falta de maturidade espiritual.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Constituída por homens falíveis é natural que haja divisões na igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Um obreiro sério, conhecedor da Palavra, não forma grupos em favor de seu nome",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em Corinto, aqueles que afirmavam ser de Cristo, foram elogiados por Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão “toda alma esteja sujeita às autoridades” não se aplica ao pastor da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela Bíblia sabemos que todo movimento pentecostal começou bem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Seguindo o modelo bíblico uma igreja ideal deve ser doutrinada e avivada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O uso incorreto dos dons espirituais pode transformar um movimento numa heresia.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite porque podemos afirmar que Paulo considerou muito grave a divisão na igreja de Corinto.",
+          "answer": "POR TER TRATADO DELA USANDO QUATRO CAPÍTULOS EM I CORÍNTIOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Biblicamente, cite o que caracterizava uma igreja pentecostal.",
+          "answer": "LIBERDADE PLENA DO ESPÍRITO E O ENSINO DA PALAVRA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Promotor de divisões na igreja é o crente -",
+          "options": [
+            "rebelde",
+            "“menino”",
+            "carnal",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Apolo era –",
+          "options": [
+            "pregador itinerante",
+            "natural de Alexandria",
+            "um pregador eloquente",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "O grupo de Jesus",
+          "O grupo de Pedro",
+          "O groupo de Paulo",
+          "O grupo de Apolo",
+          "Movimento Pentecostal",
+          "Igreja grande e rica"
+        ],
+        "columnB": [
+          "fundadores",
+          "Laudiceia",
+          "exclusivistas",
+          "Samaria",
+          "tradicionais",
+          "intelectuais"
+        ],
+        "answers": [
+          3,
+          6,
+          1,
+          5,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Os coríntios exaltavam a sabedoria humana bem como a espiritual.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Paulo, embora sendo um homem culto, não demonstrou sua sabedoria aos coríntios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Um homem de Deus, educado, deve sempre pregar o que as pessoas querem ouvir.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O obreiro, sendo um homem culto, no púlpito deve fazer uso da sabedoria de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O obreiro, tendo convicção de ser ministro, deve sempre declarar esta sua convicção.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O despenseiro era o responsável pela guarda e distribuição dos alimentos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Os apóstolos não assumiram a responsabilidade de administrar as necessidades materiais da igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Um obreiro deve defender seu ministério sempre que houver contra ele qualquer acusação",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Paulo era um homem de paz, mas nunca abriu mão de sua autoridade ministerial.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A igreja de Corinto sobreviveu através do ensino ministrado por Paulo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No sentido figurado, cite qual era o “prato” predileto dos coríntios.",
+          "answer": "A SABEDORIA HUMANA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual foi o objetivo principal de Paulo nos quatro primeiros capítulos de I Coríntios.",
+          "answer": "DESFAZER A DIVISÃO NA IGREJA DE CORINTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Paulo queria ser reconhecido como –",
+          "options": [
+            "doutor da Lei",
+            "um bom ensinador",
+            "despenseiro dos mistérios de Deus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Para Paulo os ministros são-",
+          "options": [
+            "homens doutos",
+            "apenas servos",
+            "intocáveis",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um obreiro eloquente",
+          "Paulo nada falou contra",
+          "Colocou o ministério de Moisés em dúvida",
+          "Obreiro considerado fraco quando presente",
+          "Desafiou o povo a acusá-lo",
+          "Declarou diante de Deus sua integridade moral"
+        ],
+        "columnB": [
+          "Moisés",
+          "Coré",
+          "Apolo",
+          "Samuel",
+          "Paulo",
+          "Pedro"
+        ],
+        "answers": [
+          6,
+          3,
+          1,
+          5,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em relação aos pecados sexuais a terminologia pode agravar o grau de pecaminosidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar que uma pessoa solteira não comete o pecado de adultério.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na legislação romana e não na Lei de Moisés o incesto era punido com morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo afirmou Paulo, em Corinto um filho mantinha relação sexual com sua mãe.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sabemos, segundo a ciência, ser muito difícil encontrar duas pessoas exatamente iguais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pela Bíblia, como regra geral, não deveria haver conflitos entre irmãos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Uma decisão ministerial, em nossa legislação, não tem força de lei.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Não tendo esposa e filhos Paulo não tinha autoridade para ensinar os casais na igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O amor movido pelo “ágape” não desperta atração sexual.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Não é bíblico o pensamento de casar para melhor servir a Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Face as demandas e conflitos entre irmãos, citar qual deveria ser a regra geral segundo Paulo.",
+          "answer": "NÃO EXISTIR DEMANDAS E CONFLITOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação ao ensino cite qual pré-requisito deve possuir um obreiro.",
+          "answer": "SER APTO OU CAPACITADO PARA ENSINAR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Biblicamente não é pecado a prática sexual -",
+          "options": [
+            "entre noivos",
+            "entre pessoas do mesmo sexo",
+            "após o casamento",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Afirmou ser a mulher um vaso mais fraco –",
+          "options": [
+            "Jesus",
+            "Pedro",
+            "Paulo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Podem servir melhor o Senhor",
+          "Segunda prioridade do homem casado",
+          "Instituiu o casamento",
+          "Deu mandamento aos casais",
+          "Sexo para perpetuação da espécie",
+          "Sexo recreativo"
+        ],
+        "columnB": [
+          "animais",
+          "humanos",
+          "solteiros",
+          "família",
+          "Paulo",
+          "Deus"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Tendo a consciência tranquila não devemos preocupar com o que pensam de nós.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Egoísmo e altruísmo não podem coexistir pois são sentimentos antagônicos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Paulo afirmou que o obreiro deve trabalhar com suas mãos e não receber salário da igreja",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Preso em Roma, Paulo agradeceu a igreja de Corinto pela ajuda financeira a ele.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar que a igreja de Corinto foi formada debaixo da graça e do poder.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Positivamente, Paulo viu um paralelo entre a igreja de Corinto e a nação de Israel",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A prática dos bons costumes deve ser exigida como doutrina bíblica.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No Brasil o véu nunca foi usado para diferenciar as mulheres honestas das prostitutas",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Biblicamente não há qualquer semelhança entre a páscoa judaica e a santa ceia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para os membros da igreja a santa ceia não é uma opção, é obrigação.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite porque na Grécia era impossível não comer algo consagrado aos ídolos.",
+          "answer": "PORQUE TUDO ERA CONSAGRADO A UM DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a diferença entre o pão asmo e o pão comum",
+          "answer": "A AUSÊNCIA DO FERMENTO NO PÃO ASMO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Paulo tinha como ofício ou profissão –",
+          "options": [
+            "doutor da lei",
+            "pregar o evangelho",
+            "fazer tendas",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A Ceia do Senhor representa -",
+          "options": [
+            "a morte de Jesus",
+            "sua segunda vinda",
+            "nossa redenção",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Egoísmo",
+          "Altruísmo",
+          "Doutrina",
+          "Costume",
+          "Santa ceia",
+          "Páscoa"
+        ],
+        "columnB": [
+          "temporário",
+          "amor próprio",
+          "exigência cristã",
+          "imutável",
+          "festa judaica",
+          "amor ao próximo"
+        ],
+        "answers": [
+          4,
+          1,
+          5,
+          3,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Numa igreja problemática como a de Corinto não poderia haver manifestação dos dons espirituais",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "O Espírito Santo restabeleceu a ordem na igreja de Corinto através dos dons espirituais",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "O pastor não pode permitir que a igreja seja doutrinado através de profecias",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para o uso correto dos dons espirituais é necessário o ensino da Palavra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "É pela posse dos dons espirituais que podemos identificar um bom crente.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O fruto do Espírito não é gerado pronto para ser usado como o dom espiritual",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Os dons naturais são casuais e não conferidos por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo afirmar que os dons espirituais de cura nada têm a ver com a ciência médica",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para os pentecostais a expressão quando vier o que é perfeito fala da vinda de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Deus não pode realizar nenhuma ação que não seja por amor.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos são os dons espirituais ou dons do Espírito",
+          "answer": "QUANTOS NINGUÉM SABE; SABEMOS QUE PAULO MENCIONOU NOVE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas e quais são as fontes geradoras de profecia.",
+          "answer": "SÃO TRÊS— DIVINAS; DIABÓLICAS; HUMANAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os dons espirituais são dados para",
+          "options": [
+            "somente aos obreiros",
+            "confirmar a salvação",
+            "somente aos novos convertidos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "A Bíblia nos fala de –",
+          "options": [
+            "dons do Pai",
+            "dons do Filho",
+            "dons do Espírito Santo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "È um dom natural",
+          "É um dom de poder",
+          "É um dom de revelação",
+          "É um dom de inspiração",
+          "Um caminho mais excelente",
+          "Identifica um bom crente"
+        ],
+        "columnB": [
+          "fruto do Espírito",
+          "amor",
+          "eloquência",
+          "palavra de ciência",
+          "operação de maravilhas",
+          "profecia"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O dom espiritual de línguas estranhas edifica somente quem o possui.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Paulo afirmou que em suas orações dificilmente falava em línguas estranhas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Paulo ensinou que sem o dom de interpretação o dom de línguas estranhas não deveria ser usado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Segundo Paulo a mesma pessoa podia receber os dons de línguas e de interpretação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Num culto público, segundo Paulo, a prioridade é a pregação da Palavra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os dons espirituais não são presentes, mas são instrumentos de trabalho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Dons espirituais só são dados aos crentes após adquirirem maturidade espiritual",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na doutrina pentecostal os dons espirituais continuam em evidência nos dias atuais",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na igreja de Jerusalém, formada só por judeus, não havia crentes pobres.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que a coleta levantada na Macedônia era para os pobres de Jerusalém.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quando o falar em línguas estranhas pode ser comparado ao dom de profecia.",
+          "answer": "QUANDO HOUVER INTÉRPRETE"
+        },
+        {
+          "id": "sa2",
+          "question": "Num culto público quantos poderiam falar em línguas estranhas não havendo intérprete.",
+          "answer": "NENHUM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Num culto público pode substituir a Palavra -",
+          "options": [
+            "as línguas estranhas",
+            "as mensagens proféticas",
+            "nada pode substituir",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Jesus, como homem, realizou milagres –",
+          "options": [
+            "porque era Deus",
+            "não realizou milagres",
+            "pela virtude do Espírito Santo",
+            "todas estão cerradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Os apóstolos",
+          "Não havia necessitado algum",
+          "Uma oferta pequena louvada por Jesus",
+          "Os apóstolos recomendaram a Paulo",
+          "Dia de ações de graça na igreja primitiva",
+          "Vem Senhor Jesus"
+        ],
+        "columnB": [
+          "domingo",
+          "viúva pobre",
+          "preocupavam com as viúvas",
+          "maranata",
+          "igreja de Jerusalém",
+          "lembrar dos pobres"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Paulo estava em Trôade quando escreveu sua segunda epístola aos coríntios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "De Éfeso, Paulo enviou Tito a Corinto para corrigir abusos existentes ali.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Retornando de Corinto, Timóteo trouxe boas notícias da igreja para Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Foi, provavelmente, de Filipos que Paulo escreveu a segunda epístola aos coríntios",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Aquele “outro irmão” enviado com Tito a Corinto era, sem dúvida, Timóteo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Para Paulo, a bênção da consolação tem como pré–requisito a tribulação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Embora filhos de Deus é certo que nem sempre conseguimos realizar nossos sonhos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Um irmão arrependido e perdoado deve ser recebido com amor pelos outros irmãos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Paulo declarou ser contra dar carta de apresentação para os irmãos quando viajam.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo a Bíblia, a tristeza segundo Deus, opera arrependimento para a salvação.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite a causa da aflição de espírito referida por Paulo.",
+          "answer": "A FALTA DE NOTÍCIAS DA IGREJA DE CORINTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quem foi o portador das notícias que causaram regozijo a Paulo.",
+          "answer": "TITO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Aquele irmão abençoado enviado com Tito era -",
+          "options": [
+            "Timóteo",
+            "nome ignorado",
+            "Barnabé",
+            "todas estão erradas.."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Sabemos que Paulo escreveu aos coríntios –",
+          "options": [
+            "uma carta",
+            "duas cartas",
+            "três cartas",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Difamadores de Paulo",
+          "A “letra que mata”",
+          "Vaso de barro",
+          "Corpo espiritual",
+          "Diferença entre o evangelho e outras religiões",
+          "Um desejo de Paulo"
+        ],
+        "columnB": [
+          "corpo físico",
+          "a esperança",
+          "judaizantes",
+          "habitar com o Senhor",
+          "casa espiritual",
+          "Lei de Moisés"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sendo muito pobres os crentes da Macedônia ajudaram os pobres de Jerusalém com suas orações.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Falar em “profunda pobreza” entre crentes salvos alguma coisa deve estar errada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "No sentido material Paulo não ensinava a doutrina do triunfalismo nas igrejas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para os defensores do “triunfalismo” Deus não se agrada de ter um filho pobre e doente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Entre os cooperadores de Paulo não havia nenhum portador de doenças crônicas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O “espinho na carne” era consequência da vida pecaminosa de Paulo antes de sua conversão",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Não tendo sido criado pela Lei de Moisés o dízimo não podia ser revogado por ela.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Gratidão a Deus e amor às almas são duas boas razões para darmos o dízimo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A igreja visível, enquanto estiver aqui na terra, necessita de recursos financeiros.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo ensinou Paulo, Deus ama ao que dá com alegria.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual dos companheiros de Paulo foi deixado doente em Mileto.",
+          "answer": "TRÓFIMO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas vezes Paulo orou acerca de um “espinho que tinha na carne”.",
+          "answer": "TRÊS VEZES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Paulo usou a expressão “profunda pobreza” em relação",
+          "options": [
+            "aos pobres da Macedônia",
+            "aos crentes pobres da Macedônia",
+            "aos pobres de Jerusalém",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "O dizimo teve origem -",
+          "options": [
+            "com Abraão",
+            "com a Lei de Moisés",
+            "com a formação do povo de Israel",
+            "todas estão erradas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Deus ama",
+          "Ao Senhor empresta",
+          "Nessa graça",
+          "Recursos materiais",
+          "Para construção do Tabernáculo",
+          "Lei de Moisés"
+        ],
+        "columnB": [
+          "não criou o dízimo",
+          "ao que dá com alegria",
+          "recursos vindo do povo",
+          "ministério da contribuição",
+          "o que se compadece do pobre",
+          "não caem do céu"
+        ],
+        "answers": [
+          6,
+          1,
+          5,
+          3,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Nesta epístola Paulo deixou transparecer sua sensibilidade humana como um homem normal",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Em sua 1ª Epístola aos Coríntios Paulo colocou em jogo sua autoridade apostólica",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A preocupação de Paulo com Tito referia-se ao seu estado de saúde.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Paulo, em momento algum, demonstrou preocupação de perder a igreja de Corinto.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Quando os crentes carnais começaram a comparar pessoas Paulo foi ficando para trás",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em Corinto, dentre outros obreiros, Paulo foi considerado o melhor pregador.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Paulo fez uso de toda sua autoridade apostólica para combater os falsos apóstolos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Segundo afirmou Paulo, Satanás nunca se transfigura em anjo de luz.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Paulo afirmou que também podia gloriar-se segundo a carne.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Paulo desafiou os coríntios a fazer uma análise sobre se permaneciam na fé",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Ao chegar em Trôade, cite a causa da preocupação de Paulo.",
+          "answer": "NÃO ENCONTRAR TITO CONFORME O COMBINADO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que os coríntios diziam sobre as cartas de Paulo",
+          "answer": "QUE ERAM GRAVES E FORTES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Em Corinto, de Paulo, diziam ser -",
+          "options": [
+            "rude na palavra",
+            "um falso apóstolo",
+            "o apóstolo do amor",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Paulo julgou poder gloriar-se –",
+          "options": [
+            "no seu trabalho ministerial",
+            "na sua sabedoria",
+            "nas suas fraquezas",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Credencial de Paulo",
+          "Espinho na carne",
+          "Terceiro céu",
+          "Denominação dos falsos obreiros",
+          "Conheço um homem",
+          "Motivos de glórias para Paulo"
+        ],
+        "columnB": [
+          "obreiros fraudulentos",
+          "o próprio Paulo",
+          "suas fraquezas",
+          "sinais, prodígios, milagres",
+          "mensageiro de Satanás",
+          "paraíso"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          3
+        ]
+      }
+    }
+  ]
+}

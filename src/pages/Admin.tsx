@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
   Users, 
   BookOpen, 
@@ -21,7 +21,8 @@ import {
   TrendingUp,
   History,
   LayoutGrid,
-  ExternalLink
+  ExternalLink,
+  ArrowLeft
 } from 'lucide-react'
 
 // Features Components
@@ -36,7 +37,7 @@ import AcademicHistory from '../features/admin/components/AcademicHistory'
 import DocsArchive from '../features/admin/components/DocsArchive'
 
 // Icons and UI
-// import { Folder } from 'lucide-react'
+import { Folder } from 'lucide-react'
 
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
@@ -63,6 +64,16 @@ import { useAdminManagement } from '../hooks/useAdminManagement'
 import { supabase } from '../lib/supabase'
 
 const Admin = () => {
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    localStorage.setItem('fatesa_active_role', 'admin')
+  }, [])
+
+  const goToPanel = () => {
+    navigate('/dashboard');
+  };
+
   const {
     profile,
     activeTab,
@@ -119,6 +130,8 @@ const Admin = () => {
     setEditingQuiz,
     quizQuestions,
     setQuizQuestions,
+    pendingExamMeta,
+    setPendingExamMeta,
     addingLessonType,
     setAddingLessonType,
     addingBloco,
@@ -203,76 +216,98 @@ const Admin = () => {
   return (
     <div className="admin-layout">
       <main className="admin-main">
-        {/* New Standardized Administrative Header */}
-        <header className="dashboard-header-modern">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <Logo size={140} />
-            
-            <div style={{ display: 'flex', gap: '0.75rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.5rem' }}>
-              {!isAtRoot && (
-                <button 
-                  className="nav-btn-premium" 
-                  onClick={handleGlobalBack}
-                  title="Voltar um passo"
-                >
-                  <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
-                </button>
-              )}
-              {activeTab !== 'home' && (
-                <button className="nav-btn-premium" onClick={() => setActiveTab('home')}>
-                  <LayoutGrid size={18} /> <span className="mobile-hide">Menu Principal</span>
-                </button>
-              )}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          padding: '0.75rem 2.5rem', 
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          marginBottom: '1rem' 
+        }}>
+          <div style={{ position: 'relative' }}>
+            <div 
+              onClick={() => setShowRoleSwitcher(!showRoleSwitcher)} 
+              style={{ 
+                color: 'var(--primary)', 
+                fontSize: '0.9rem', 
+                fontWeight: 800, 
+                cursor: 'pointer', 
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              PAINEL ADMINISTRATIVO {showRoleSwitcher && '▾'}
             </div>
-          </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            {availableRoles.length > 1 && (
-              <div style={{ position: 'relative' }}>
-                <button 
-                  className="nav-btn-premium" 
-                  onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
-                >
-                  <Users size={18} /> <span className="mobile-hide">Alternar Visão</span>
-                </button>
-                {showRoleSwitcher && (
-                  <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '14px', padding: '0.5rem', zIndex: 1100, display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: '200px', marginTop: '0.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-                    {availableRoles.filter((r: string) => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map((r: string) => (
-                      <Link 
-                        key={r} 
-                        to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'}
-                        className="nav-btn-premium" 
-                        style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent' }}
-                        onClick={() => setShowRoleSwitcher(false)}
-                      >
-                        {r === 'aluno' ? 'Painel do Aluno' : r === 'professor' ? 'Painel do Professor' : 'Administração'}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+            {availableRoles.length > 1 && showRoleSwitcher && (
+              <div style={{ 
+                position: 'absolute', 
+                top: '100%', 
+                left: 0, 
+                background: 'var(--bg-card)', 
+                border: '1px solid var(--glass-border)', 
+                borderRadius: '14px', 
+                padding: '0.5rem', 
+                zIndex: 1100, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '0.25rem', 
+                minWidth: '200px', 
+                marginTop: '0.5rem', 
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)' 
+              }}>
+                <div style={{ padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '0.25rem' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Painel Atual:</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>Administração</span>
+                </div>
+                {availableRoles.filter((r: string) => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map((r: string) => (
+                  <Link 
+                    key={r} 
+                    to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'}
+                    className="nav-btn-premium" 
+                    style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent', textDecoration: 'none', color: 'inherit', padding: '0.5rem' }}
+                    onClick={() => { localStorage.setItem('fatesa_active_role', r); setShowRoleSwitcher(false); }}
+                  >
+                    {r === 'aluno' ? '👁 Área do Aluno' : r === 'professor' ? '🎓 Painel do Professor' : '🔧 Administração'}
+                  </Link>
+                ))}
               </div>
             )}
-
-            <Link 
-              to="/dashboard" 
-              className="nav-btn-premium"
-            >
-              <ExternalLink size={18} /> <span className="mobile-hide">Área do Aluno</span>
-            </Link>
-            
-            <button 
-              className="nav-btn-premium danger" 
-              onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
-              title="Sair"
-            >
-              <LogOut size={18} /> <span className="mobile-hide">Sair</span>
-            </button>
           </div>
-        </header>
 
-        <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-              <h1 style={{ 
+          <button 
+            onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
+            style={{ 
+              background: '#007bff', 
+              color: '#fff', 
+              border: 'none', 
+              padding: '5px 15px', 
+              borderRadius: '6px', 
+              fontSize: '0.85rem', 
+              fontWeight: 600, 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
+          >
+            <LogOut size={16} /> Sair
+          </button>
+        </div>
+
+  
+              {/* Role Switcher for Admins - Hidden as it is now in the header */}
+
+  
+             <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button onClick={goToPanel} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }}>
+              <ArrowLeft size={18} />
+            </button>
+              <h1 style={{
                 fontSize: '2.2rem', 
                 fontWeight: 900, 
                 letterSpacing: '-0.04em',
@@ -341,67 +376,12 @@ const Admin = () => {
             </div>
           </header>
 
-           {activeTab === 'home' && (
+            {activeTab === 'home' && (
             <div className="admin-dashboard-grid transition-fade-in" style={{ gap: '2rem' }}>
               {/* CENTRAL DE ATIVIDADES (SINALIZAÇÃO) */}
               {dashboardView === 'main' && (
-                <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
-                  <div className="activity-signal-card" onClick={() => updateParams({ tab: 'users', filter: 'pendentes', view: 'main' })} style={{ background: 'rgba(var(--primary-rgb), 0.05)', border: '1px solid rgba(var(--primary-rgb), 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ background: 'var(--primary)', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Users size={24} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Novos Alunos</div>
-                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingStudentsCount}</div>
-                      </div>
-                    </div>
-                    {pendingStudentsCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: 'var(--primary)' }}></div>}
-                  </div>
-
-                  <div className="activity-signal-card" onClick={() => setActiveTab('nucleos')} style={{ background: 'rgba(156, 39, 176, 0.05)', border: '1px solid rgba(156, 39, 176, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ background: '#9c27b0', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <GraduationCap size={24} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Provas p/ Corrigir</div>
-                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingProofsCount}</div>
-                      </div>
-                    </div>
-                    {pendingProofsCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#9c27b0' }}></div>}
-                  </div>
-
-                  <div className="activity-signal-card" onClick={() => updateParams({ tab: 'finance', view: 'pays' })} style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ background: '#10b981', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ShieldCheck size={24} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Validação de Pagamentos</div>
-                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingPaysCount}</div>
-                      </div>
-                    </div>
-                    {pendingPaysCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#10b981' }}></div>}
-                  </div>
-
-                  <div className="activity-signal-card" onClick={() => updateParams({ tab: 'finance', view: 'docs' })} style={{ background: 'rgba(56, 189, 248, 0.05)', border: '1px solid rgba(56, 189, 248, 0.2)', padding: '1.5rem', borderRadius: '18px', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ background: '#38bdf8', color: '#fff', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <FileCheck size={24} />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)' }}>Validação de Documentos</div>
-                        <div style={{ fontSize: '1.75rem', fontWeight: 900 }}>{pendingDocsCount}</div>
-                      </div>
-                    </div>
-                    {pendingDocsCount > 0 && <div style={{ position: 'absolute', top: 0, right: 0, width: '4px', height: '100%', background: '#38bdf8' }}></div>}
-                  </div>
-                </div>
-              )}
-
-              {dashboardView === 'main' && (
                 <>
+
                   <div className="admin-action-card" onClick={() => setActiveTab('content')}>
                     <div className="icon-wrapper"><BookOpen size={32} /></div>
                     <h3>Conteúdo</h3>
@@ -504,6 +484,12 @@ const Admin = () => {
                     <div className="icon-wrapper" style={{ background: 'var(--error)' }}><History size={32} /></div>
                     <h3 style={{ color: 'var(--error)' }}>Manutenção de Provas</h3>
                     <p>Resetar e devolver provas auto-corrigidas para os professores.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('docs_archive')}>
+                    <div className="icon-wrapper"><Folder size={32} /></div>
+                    <h3>Arquivo de Documentação</h3>
+                    <p>Central de arquivos organizada por polo e status.</p>
                   </div>
                 </>
               )}
@@ -640,6 +626,8 @@ const Admin = () => {
             setLessonMaterials={setLessonMaterials}
             setEditingQuiz={setEditingQuiz}
             setQuizQuestions={setQuizQuestions}
+            pendingExamMeta={pendingExamMeta}
+            setPendingExamMeta={setPendingExamMeta}
             uploading={uploading}
           />
         )}
@@ -753,6 +741,7 @@ const Admin = () => {
           showAddContent={showAddContent}
           setShowAddContent={setShowAddContent}
           selectedLesson={selectedLesson}
+          selectedBook={selectedBook}
           addingLessonType={addingLessonType}
           actionLoading={actionLoading}
           setActionLoading={setActionLoading}
@@ -805,6 +794,8 @@ const Admin = () => {
           setEditingQuiz={setEditingQuiz}
           quizQuestions={quizQuestions}
           setQuizQuestions={setQuizQuestions}
+          pendingExamMeta={pendingExamMeta}
+          setPendingExamMeta={setPendingExamMeta}
           actionLoading={actionLoading}
           setActionLoading={setActionLoading}
           supabase={supabase}

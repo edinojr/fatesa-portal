@@ -1,0 +1,1196 @@
+{
+  "id": "angelologia",
+  "title": "Angelologia",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pelo uso da razão o homem não tem condições para entender como foram criados os céus e a terra.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sabemos, pela Bíblia, que Deus criou os anjos, os homens e o pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os anjos são chamados de “filhos de Deus” e também de “estrelas da alva”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A expressão “anjo” nunca foi e não pode ser usada em relação ao homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em relação ao homem os anjos somente não foram maiores do que o homem chamado Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Quando a Bíblia fala em “exércitos do céu” ela está falando dos anjos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão “magníficos em poder” refere-se à beleza espiritual dos anjos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A palavra “anjo”, na Bíblia, nunca foi usada em relação a Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "A Bíblia diz que os anjos são e não apenas foram “espíritos ministradores” em relação a Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Segundo a Bíblia, será um anjo o agente de Deus para prender Satanás.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o número total dos anjos, segundo a Bíblia.",
+          "answer": "ESSE NÚMERO NÃO FOI REVELADO; A BÍBLIA FALA EM \"MIHÕES DE MILHÕES\"."
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o nome de um anjo conhecido no Novo Testamento.",
+          "answer": "GABRIEL"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os anjos não possuem -",
+          "options": [
+            "inteligência",
+            "corpo espiritual",
+            "vida eterna",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Os anjos foram criados –",
+          "options": [
+            "pela palavra de Deus",
+            "pelas mãos de Deus",
+            "de matéria pré-existente",
+            "pelo sopro de Deus."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Não criam na existência de anjos",
+          "Criam na existência de anjos",
+          "Recebeu um anjo em sua casa",
+          "Recebeu dois anjos em sua casa",
+          "Viu anjos em seu sonho",
+          "Ajudado no deserto por um anjo"
+        ],
+        "columnB": [
+          "Ló",
+          "Elias",
+          "fariseus",
+          "Jacó",
+          "saduceus",
+          "Cornélio"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Através da Bíblia podemos determinar o tempo da rebelião dos anjos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A queda de Satanás foi a provável causa da terra ter se tornado caótica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela Bíblia sabemos que Satanás antes de sua queda era um arcanjo de luz.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Deus ao criar a terra, não a criou vazia, mas para que fosse habitada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os Profetas Isaías e Ezequiel nunca souberam que haviam escrito sobre a queda de Satanás.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Não podemos afirmar, com segurança, que um terço dos anjos foi Enganado por Satanás.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "No “reino das trevas” não existe nenhuma forma de organização.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O inferno não foi feito para o homem e, sim, para Satanás e seus anjos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Todos os anjos, mesmo os que seguiram Satanás, foram criados em santidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Crente, sendo o templo do Espírito Santo, não pode ficar endemoninhado.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar apenas os livros e capítulos que falam da queda de Satanás.",
+          "answer": "ISAÍAS CAPITULO 14 E EZEQUIEL CAPÍTULO 28"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite a provável causa da terra criada por Deus, no princípio, ter se tornada “sem forma e vazia”.",
+          "answer": "A QUEDA DE SATANÁS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Deus no princípio, criou –",
+          "options": [
+            "os anjos santos",
+            "os anjos",
+            "os anjos bons e maus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Segundo a Bíblia os anjos são –",
+          "options": [
+            "seres espirituais",
+            "santos",
+            "poderosos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Criado para Satanás e seus anjos",
+          "Uma figura de Satanás",
+          "Incorporação de demônios",
+          "Influência externa de demônios",
+          "Seres espirituais impuros",
+          "Seres espirituais santos"
+        ],
+        "columnB": [
+          "anjos",
+          "sujeição",
+          "grande dragão vermelho",
+          "demônios",
+          "possessão",
+          "inferno ou lago de fogo"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Há entre os anjos uma perfeita hierarquia que, foi definida por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Entre os arcanjos, Miguel se destaca como sendo o mais graduado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A expressão “príncipe do reino da Pérsia” refere-se a Ciro contemporâneo de Daniel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Diferente do que acontece na terra, no céu não se questiona a vontade de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Quanto às funções exercidas não há diferença entre os serafins e os querubins",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Pela Bíblia podemos afirmar não haver qualquer fundamento que justifique a adoração aos anjos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão “exercito dos céus”, segundo a Bíblia, refere-se aos anjos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Tanto no hebraico como no grego a palavra anjo significa mensageiro ou enviado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que Jesus, enquanto homem, era menor que os anjos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Diferentemente da igreja, os anjos não podem adorar a Cristo como Redentor.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem eram os “filhos de Deus” que rejubilaram quando os fundamentos da terra foram colocados.",
+          "answer": "OS ANJOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar, segundo a Bíblia, uma das razões pelas quais devemos adorar o Arcanjo Miguel.",
+          "answer": "NA BÍBLIA NÃO EXISTE UMA ÚNICA RAZÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os serafins são mencionados na Bíblia –",
+          "options": [
+            "inúmeras vezes",
+            "apenas três",
+            "uma única vez",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "O Senhor está entronizado entre os -",
+          "options": [
+            "anjos",
+            "arcanjos",
+            "querubins",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "O Anjo do Senhor",
+          "Todos os anjos, sem exceção",
+          "Adora e cultua a Deus na terra",
+          "Adoram e cultuam a Deus no céu",
+          "Investidos de uma autoridade especial",
+          "Ministério de louvor"
+        ],
+        "columnB": [
+          "anjos",
+          "serafins",
+          "não aceitam adoração",
+          "Jesus",
+          "igreja",
+          "potestades"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Ao pecar o homem conservou a semelhança, mas perdeu a imagem de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Nem todos podem crer que o homem foi criado por Deus, conforme diz a Bíblia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela Bíblia podemos afirmar que numa mesma espécie não pode existir muitas raças",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Por ser imperfeito, tudo que o homem faz pode ser aperfeiçoado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A Teoria Evolucionista procura ligar o homem aos animais irracionais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Quase todos os cientistas são materialistas, por isto a Bíblia condena a ciência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Somente pela fé podemos aceitar que os mundos foram criados pela palavra de Deus",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela Bíblia sabemos que os anjos não são e não podem ser chamados de “filhos de Deus”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Na obra da criação de Deus o homem aparece como o último ser por ele criado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Dentre tudo o que foi criado por Deus somente o homem não veio à existência pelo poder da palavra de Deus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar os nomes dos dois pioneiros da Teoria da Evolução Biológica.",
+          "answer": "CHARLES DARWIM E JEAM BAPTISTA LAMARCH"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que a ciência diz ser o “Pithecanthopus erectus”.",
+          "answer": "DIZ SER O ELO PERDIDO QUE LIGA O HOMEM AO MAIS EVOLUIDO DOS MACACOS."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Crer que Deus criou o homem é uma questão de -",
+          "options": [
+            "bom senso",
+            "inteligência",
+            "fé",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A palavra “bará” aparece na Bíblia –",
+          "options": [
+            "inúmeras vezes",
+            "apenas uma vez",
+            "três vezes",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Liga o homem aos irracionais",
+          "Liga o homem a Deus",
+          "Nega a existência de um Criador",
+          "Identifica Deus como a obra da criação",
+          "Não existe um Deus único",
+          "Deus como Criador do homem"
+        ],
+        "columnB": [
+          "ateísmo",
+          "politeísmo",
+          "doutrina bíblica",
+          "criacionismo",
+          "evolucionismo",
+          "panteísmo"
+        ],
+        "answers": [
+          3,
+          5,
+          6,
+          2,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A imagem e semelhança de Deus no homem não devem ser vistas no sentido material",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Biblicamente podemos afirmar que Adão foi criado em verdadeira justiça e santidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A imagem de Deus no homem, deformada pelo pecado, jamais será restaurada.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O livre arbítrio faz a diferença entre o homem e todos os animais criados por Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Ao criar o homem Deus deu-lhe a capacidade de entender todos os seus mistérios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Nem mesmo os profetas do Antigo Testamento puderam entender a diferença entre alma e espírito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O rei Nabucodonosor, sendo gentio, nunca reconheceu a soberania do Deus de Israel",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No período caótico, escuro e vazio, a terra estava abandonada por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Da expressão “do Senhor é a terra” podemos entender que o homem nada tem de seu",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A ação destrutiva da terra pelo homem somente terá fim no milênio.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o sentido da expressão: criado à imagem de Deus.",
+          "answer": "CRIADO EM VERDADEIRA JUSTIÇA E SANTIDADE"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto à propriedade da terra, cite o que disse Deus.",
+          "answer": "TODA A TERRA É MINHA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Criado à imagem de Deus, o homem é um ser -",
+          "options": [
+            "moral",
+            "racional",
+            "religioso",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Um bem que o homem pode dizer que é seu –",
+          "options": [
+            "seu corpo",
+            "a vida",
+            "seu espírito",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Não tem vida",
+          "Separa o homem de Deus",
+          "Separa o corpo da alma e do espírito",
+          "Separa a alma do espírito",
+          "Dicotomia",
+          "Tricotomia"
+        ],
+        "columnB": [
+          "corpo, alma ou espírito",
+          "corpo, alma e espírito",
+          "corpo",
+          "pecado",
+          "palavra de Deus",
+          "morte física"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pela Bíblia sabemos que o corpo sempre esteve ligado ao sacrifício.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Tanto a idolatria como o desprezo do corpo são erros bíblicos que devem ser evitados",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O pensamento errado dos gregos a respeito do corpo não influenciou os cristãos judeus",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Paulo ensinou ser preciso castigar o corpo para melhor servir a Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Tanto o cristão como o homem natural podem, administrar sua alma.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Biblicamente, é possível entender a diferença entre a alma e sangue.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Para um homem de Deus é possível sintonizar sua mente com a mente de Cristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para um crente fiel é fácil arrancar ou neutralizar uma raiz de amargura.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Administrar o sentimento pode ser a faculdade da alma mais difícil de ser administrada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Quando a alma é inundada pela graça, o crente pode dizer que sua alma “tem sede de Deus”.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Quanto ao processo de criação, cite a diferença entre a alma do homem e a dos animais.",
+          "answer": "A DO HOMEM FOI CRIADA FORA DO CORPO E A DO ANIMAL, NO CORPO."
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que a Bíblia diz ser a imaginação dos ímpios.",
+          "answer": "COISAS VÃS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um componente da alma -",
+          "options": [
+            "consciência",
+            "a fé",
+            "a razão",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Um crente fiel, deve –",
+          "options": [
+            "crucificar o seu corpo",
+            "cuidar bem do seu corpo",
+            "tratar seu corpo com desprezo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Corpo do pecado",
+          "Exigido no altar",
+          "Corpo, alma e espírito",
+          "Corpo e alma",
+          "Intelecto, sentimento e vontade",
+          "Imaginação, memória e razão"
+        ],
+        "columnB": [
+          "intelecto",
+          "animal irracional",
+          "corpo e sangue",
+          "alma",
+          "homem",
+          "natureza carnal"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O homem natural, embora fisicamente vivo, está espiritualmente morto.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Transformar um homem natural num homem espiritual é muito difícil.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Os animais irracionais possuem espírito, mas não possuem alma.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Crer em algo superior a ele é uma exigência da natureza religiosa do homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para o homem é difícil ou até mesmo impossível a separação entre a alma e o espírito",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Embora separados do corpo, a alma e o espírito estarão eternamente juntos no céu ou no inferno.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A afirmação de que a mulher foi feita de uma “costela do homem” deve ser vista de forma simbólica.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Adão não se sentiu atraído, fisicamente, por nenhuma fêmea do reino animal.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Ao criar o homem à sua imagem o desejo de Deus era o de desfrutar de comunhão com o mesmo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Entendemos ser antibíblica a ideia de que os ímpios serão destruídos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que faz com que o homem tenha consciência religiosa.",
+          "answer": "A FÉ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que Paulo afirmou que deveria ser conservado irrepreensível para a vinda do Senhor.",
+          "answer": "O CORPO, A ALMA E O ESPÍRITO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Passar de homem natural para espiritual –",
+          "options": [
+            "só com muita oração",
+            "só com a morte física",
+            "só pelo novo nascimento",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Não é uma faculdade do espírito –",
+          "options": [
+            "a inteligência",
+            "a fé",
+            "consciência",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Corpo, alma e espírito",
+          "Corpo e alma",
+          "Homem natural",
+          "Homem espiritual",
+          "Iniquidades",
+          "O nascer do Espírito"
+        ],
+        "columnB": [
+          "homem novo",
+          "regeneração",
+          "animal irracional",
+          "faz divisão entre homem e Deus",
+          "homem velho",
+          "homem"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Biblicamente, pecado e iniquidade não têm o mesmo sentido.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Deus, embora amando o pecador, abomina e não pode suportar o pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Após criar o homem, Deus não viu nele nada que precisasse ser modificado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O pecado afetou a vida física, mas não afetou a alma e o espírito do homem.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A expressão “e o Senhor Deus plantou um jardim” deve ser entendida em sentido literal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O homem recebeu de Deus uma natureza moral, espiritual e racional, dotada do livre arbítrio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Não dar lugar e resistir ao diabo evita cometer o erro cometido por Eva.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Em seu diálogo com Eva, Satanás nada falou que pudesse ser verdade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Indiretamente, Adão procurou transferir sua culpa para o próprio Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Por não haver possibilidade de perdão, Deus não interrogou a “Serpente”.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o capítulo que pode ser considerado o mais trágico da Bíblia.",
+          "answer": "GÊNESIS, CAPÍTULO TRÊS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite os cinco passos que levaram Eva à queda.",
+          "answer": "OLHOU – DESEJOU- TOMOU – COMEU - MORREU"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O pecado –",
+          "options": [
+            "existia antes do homem",
+            "foi criado pelo homem",
+            "foi criado com o homem",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Na presença de Deus, assumiu a culpa pelo pecado -",
+          "options": [
+            "o homem",
+            "a mulher",
+            "a ‘serpente”",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "A cabeça do pecador",
+          "Os pés do pecador",
+          "O coração do pecador",
+          "A boca do pecador",
+          "A garganta do pecador",
+          "Os olhos do pecador"
+        ],
+        "columnB": [
+          "cheios de adultério",
+          "sepulcro aberto",
+          "esta enferma",
+          "enganoso e perverso",
+          "correm para o mal",
+          "maldição e amargura"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O homem foi expulso do paraíso para não mais comer da árvore da ciência do bem e do mal.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Ao pecar, a imagem de Deus gravada no homem começou a ser desfigurada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Dentre as proibições estabelecidas por Deus estava a de não poder comer da árvore da vida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Pela consumação do pecado o corpo do homem perdeu a imortalidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "É difícil encontrar na terra um lugar onde o homem possa ficar livre do pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Os crentes que vivem em santidade estão livres da consequência do pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A Bíblia afirma que Deus é amor e misericórdia, portanto, não é bíblico falar em ira de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A idolatria é condenada no Antigo Testamento, e também no Novo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Podemos afirmar que o pecado não é apenas uma doença, mas que é a pior de todas as doenças.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Tirar o pecado, resgatando o homem da escravidão, foi o objetivo do sacrifício de Jesus.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a natureza do ato pelo qual Deus expulsou o homem do paraíso.",
+          "answer": "FOI UM ATO DE AMOR E DE MISERICÓRDIA."
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto a filiação cite o que o pecado mudou em relação ao homem.",
+          "answer": "MUDOU DE FILHO DE DEUS PARA FILHO DO DIABO ."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Como filho de Deus, o homem não está livre –",
+          "options": [
+            "da culpa do pecado",
+            "da consequência do pecado",
+            "do poder do pecado",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "A idolatria é semelhante -",
+          "options": [
+            "feitiçaria",
+            "lascívia",
+            "homicídio",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Instituição de Deus em relação ao pecado",
+          "Sacrifício humano",
+          "Sacrifício aceito por Deus",
+          "Eficácia do sangue de animais",
+          "Eficaz contra o pecado",
+          "Penitência"
+        ],
+        "columnB": [
+          "sangue de Jesus",
+          "feito por Jesus",
+          "sacrifício de animais",
+          "prática antibíblica",
+          "cobrir o pecado",
+          "condenado por Deus"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que não existe um entendimento uniforme quanto ao pecado original.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar que, segundo a Bíblia, não existe pecado que Deus não possa perdoar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela Lei de Moisés a blasfêmia contra o Deus era punida com a própria morte.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Jesus fez distinção entre o pecado de blasfêmia contra o Espírito Santo e os tipos de pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sem o Espírito Santo não há quem possa convencer o homem do pecado, da justiça e do juízo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Quando alguém pensa que pecou contra o Espírito Santo, é certo que não pecou.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Biblicamente, além do sangue de Jesus, existem outras formas de cobrir o pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Quando o homem deixa de fazer algo exigido pela Bíblia, ele peca por omissão.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "João, falando aos “filhinhos” deixa claro que as crianças também podem pecar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "O homem não pode fugir dos seus pecados porque eles estão dentro dele.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o que Jesus falou das criancinhas em relação ao Reino de Deus.",
+          "answer": "FALOU QUE DELAS É O REINO DE DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite, além do pecado, o que mais tem caráter universal.",
+          "answer": "O AMOR E A GRAÇA DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A doutrina do pecado original foi defendida por -",
+          "options": [
+            "Paulo",
+            "Jesus",
+            "Santo Agostinho",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Pecado contra o Espírito Santo -",
+          "options": [
+            "só a trindade pode perdoar",
+            "o perdão é difícil",
+            "o perdão e impossível",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pecado",
+          "Um assunto polêmico",
+          "Blasfêmia contra o Espírito Santo",
+          "Fariseus",
+          "Não fazer o que devia fazer",
+          "Fazer o que não devia fazer"
+        ],
+        "columnB": [
+          "pecado imperdoável",
+          "pecado de omissão",
+          "opróbrio dos povos",
+          "pecado de comissão",
+          "pecado original",
+          "pecadores conscientes"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          2,
+          4
+        ]
+      }
+    }
+  ]
+}

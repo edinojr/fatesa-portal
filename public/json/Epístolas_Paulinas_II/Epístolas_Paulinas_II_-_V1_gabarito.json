@@ -1,0 +1,134 @@
+{
+  "id": "EPPII_1",
+  "title": "Epístolas Paulinas II - V1",
+  "tfQuestions": [
+    {
+      "id": "eppii1-tf-1",
+      "question": "A igreja, como corpo de Cristo, é o tema da Epístola aos Efésios.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii1-tf-2",
+      "question": "Para um homem casado e responsável a prioridade maior deve ser seus filhos.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii1-tf-3",
+      "question": "Um pai tendo vários filhos não é bíblico ter predileção por um deles.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii1-tf-4",
+      "question": "Para Paulo, anunciar o evangelho, era uma obrigação que lhe foi imposta.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii1-tf-5",
+      "question": "Paulo afirmou que Satanás o impediu de retornar a Tessalônica.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii1-tf-6",
+      "question": "Israel receberá o Anticristo como sendo o Messias e fará com ele uma aliança.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii1-tf-7",
+      "question": "Por ter um bom testemunho a igreja de Listra pediu para Paulo levar Timóteo com ele",
+      "answer": "F"
+    },
+    {
+      "id": "eppii1-tf-8",
+      "question": "É certo que Timóteo esteve ao lado de Paulo até o dia de sua execução.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii1-tf-9",
+      "question": "Não podemos afirmar, com certeza, quem fundou a igreja na Ilha de Creta.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii1-tf-10",
+      "question": "Jesus não pregou contra a escravidão material e humana no Império Romano",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "eppii1-mc-1",
+      "question": "Ameaçava a igreja de Colossos -",
+      "options": [
+        "O mundanismo",
+        "As contendas entre irmãos",
+        "As heresias",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "eppii1-mc-2",
+      "question": "Na Epístola a Tito a mensagem central era -",
+      "options": [
+        "Proteger a fé",
+        "Praticar a fé",
+        "Pregar a fé",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "eppii1-mc-3",
+      "question": "Primeira cidade da Europa a receber o evangelho-",
+      "options": [
+        "Roma",
+        "Neápolis",
+        "Filipos",
+        "Tessalônica"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "eppii1-mc-4",
+      "question": "Localização de Tessalônica –",
+      "options": [
+        "Europa",
+        "Ásia",
+        "Ásia Menor",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "eppii1-mp-1",
+      "left": "Não criam na ressurreição",
+      "right": "Os gregos"
+    },
+    {
+      "id": "eppii1-mp-2",
+      "left": "Criam na ressurreição",
+      "right": "Os judeus"
+    },
+    {
+      "id": "eppii1-mp-3",
+      "left": "Primeira fase da vinda de Jesus",
+      "right": "Arrebatamento"
+    },
+    {
+      "id": "eppii1-mp-4",
+      "left": "Ressurreição nacional",
+      "right": "Israel"
+    },
+    {
+      "id": "eppii1-mp-5",
+      "left": "Ressurreição dos ímpios",
+      "right": "Segunda ressurreição"
+    },
+    {
+      "id": "eppii1-mp-6",
+      "left": "Ressurreição espiritual",
+      "right": "Novo nascimento"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "id": "HEB_1",
+  "title": "Hebreus - V1",
+  "tfQuestions": [
+    {
+      "id": "heb1-tf-1",
+      "question": "Ao escrever a Epístola aos Hebreus, Paulo visava fortalecer a fé dos crentes judeus",
+      "answer": "F"
+    },
+    {
+      "id": "heb1-tf-2",
+      "question": "Podemos afirmar que os anjos são servos de Deus e conservos dos homens.",
+      "answer": "V"
+    },
+    {
+      "id": "heb1-tf-3",
+      "question": "Segundo o escritor aos Hebreus, Cristo foi feito um pouco menor que os anjos.",
+      "answer": "F"
+    },
+    {
+      "id": "heb1-tf-4",
+      "question": "Para os judeus, Moisés e Jesus são os dois maiores homens da história.",
+      "answer": "F"
+    },
+    {
+      "id": "heb1-tf-5",
+      "question": "O descanso espiritual para o cristão só será alcançado, plenamente, no paraíso.",
+      "answer": "F"
+    },
+    {
+      "id": "heb1-tf-6",
+      "question": "As expressões “filhinhos”, “mancebos” e “pais” não se referem à idade cronológica.",
+      "answer": "V"
+    },
+    {
+      "id": "heb1-tf-7",
+      "question": "Podemos afirmar que a Lei nos serviu de alho Para nos conduzir a Cristo.",
+      "answer": "F"
+    },
+    {
+      "id": "heb1-tf-8",
+      "question": "Os presos mencionados pelo escritor aos Hebreus eram cristãos perseguidos pelo Império Romano.",
+      "answer": "V"
+    },
+    {
+      "id": "heb1-tf-9",
+      "question": "A Epístola aos Hebreus destaca a superioridade de Cristo sobre a velha aliança",
+      "answer": "V"
+    },
+    {
+      "id": "heb1-tf-10",
+      "question": "Foi através da Palavra de Deus que o escritor aos hebreus procurou levantar o ânimo dos crentes.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "heb1-mc-1",
+      "question": "A Epístola aos Hebreus foi endereçada —",
+      "options": [
+        "A todos os cristãos",
+        "A todos os judeus",
+        "Aos cristão hebreus",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "heb1-mc-2",
+      "question": "O sentido da expressão “uma só oblação”.",
+      "options": [
+        "“Um só sacrifício”",
+        "“Três sacrifícios”",
+        "“Vários “sacrifícios”",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "heb1-mc-3",
+      "question": "A apostasia significa —",
+      "options": [
+        "Abandonar a igreja",
+        "Abandonar a fé",
+        "Abandonar os pais",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "heb1-mc-4",
+      "question": "O autor da Epístola aos Hebreus —",
+      "options": [
+        "Paulo",
+        "Apolo",
+        "Timóteo",
+        "Autor desconhecido"
+      ],
+      "answer": 3
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "heb1-mp-1",
+      "left": "Arão oferecia sacrifícios de animais",
+      "right": "Jesus ofereceu a si mesmo"
+    },
+    {
+      "id": "heb1-mp-2",
+      "left": "Arão – sacerdócio temporário",
+      "right": "Jesus, Sacerdote eterno"
+    },
+    {
+      "id": "heb1-mp-3",
+      "left": "Arão - ministrava para Israel",
+      "right": "Jesus para toda humanidade"
+    },
+    {
+      "id": "heb1-mp-4",
+      "left": "Arão, como homem, falhou",
+      "right": "Jesus, como homem, foi perfeito"
+    },
+    {
+      "id": "heb1-mp-5",
+      "left": "Foi profeta e sacerdote",
+      "right": "Ezequiel"
+    },
+    {
+      "id": "heb1-mp-6",
+      "left": "Um sacerdote gentio",
+      "right": "Jó"
+    }
+  ]
+}

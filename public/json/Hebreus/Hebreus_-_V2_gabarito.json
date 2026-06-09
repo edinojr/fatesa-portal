@@ -1,0 +1,134 @@
+{
+  "id": "HEB_2",
+  "title": "Hebreus - V2",
+  "tfQuestions": [
+    {
+      "id": "heb2-tf-1",
+      "question": "O Espírito Santo é o ponto máximo da revelação da glória de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "heb2-tf-2",
+      "question": "Os cristãos hebreus conheciam muito pouco do Antigo Testamento.",
+      "answer": "F"
+    },
+    {
+      "id": "heb2-tf-3",
+      "question": "Nesta Dispensação da Graça todo filho de Deus é um sacerdote.",
+      "answer": "V"
+    },
+    {
+      "id": "heb2-tf-4",
+      "question": "Na morte de Jesus o véu rasgado significava estar aberto o acesso do homem a Deus",
+      "answer": "V"
+    },
+    {
+      "id": "heb2-tf-5",
+      "question": "Sacrifícios humanos só foram aceitos por Deus antes da Lei de Moisés.",
+      "answer": "F"
+    },
+    {
+      "id": "heb2-tf-6",
+      "question": "A fé é como um título de propriedade dos bens que não podemos ver.",
+      "answer": "V"
+    },
+    {
+      "id": "heb2-tf-7",
+      "question": "O pleno conhecimento da verdade só é alcançado depois de muitos anos de fé.",
+      "answer": "F"
+    },
+    {
+      "id": "heb2-tf-8",
+      "question": "Os hebreus identificaram Jesus como sendo o Cordeiro que foi morto desde a fundação do mundo.",
+      "answer": "F"
+    },
+    {
+      "id": "heb2-tf-9",
+      "question": "Os presos mencionados pelo escritor aos Hebreus eram cristãos perseguidos pelo Império Romano.",
+      "answer": "V"
+    },
+    {
+      "id": "heb2-tf-10",
+      "question": "O pecado imperdoável é diferente do desviar-se, ou afastar-se da igreja.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "heb2-mc-1",
+      "question": "Os anjos estarão em atividade -",
+      "options": [
+        "No arrebatamento da igreja",
+        "Na grande tribulação",
+        "No julgamento da nações",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "heb2-mc-2",
+      "question": "Perigo que ameaçava os cristãos hebreus era -",
+      "options": [
+        "Voltar à idolatria",
+        "Voltar ao mundo",
+        "Voltar ao judaísmo",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "heb2-mc-3",
+      "question": "Israel falhou como —",
+      "options": [
+        "Povo peculiar",
+        "Reino sacerdotal",
+        "Povo santo",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "heb2-mc-4",
+      "question": "Rejeitando o sacrifício de Jesus —",
+      "options": [
+        "Necessita fazer sacrifício próprio",
+        "Terá que ir para o purgatório",
+        "Não resta outro sacrifício",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "heb2-mp-1",
+      "left": "Cair nas mãos do Deus vivo",
+      "right": "Horrenda coisa"
+    },
+    {
+      "id": "heb2-mp-2",
+      "left": "Sacrifício, hoje, aceito por Deus",
+      "right": "Corpo no altar"
+    },
+    {
+      "id": "heb2-mp-3",
+      "left": "Uma só oblação",
+      "right": "Sacrifício único"
+    },
+    {
+      "id": "heb2-mp-4",
+      "left": "Contrário a Palavra de Deus",
+      "right": "Sacrifício de tolo"
+    },
+    {
+      "id": "heb2-mp-5",
+      "left": "Sacrifício de Jesus",
+      "right": "Preço da redenção"
+    },
+    {
+      "id": "heb2-mp-6",
+      "left": "Pecado imperdoável",
+      "right": "Apostasia"
+    }
+  ]
+}

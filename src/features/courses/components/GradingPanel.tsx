@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users, BookOpen, ClipboardList, ShieldCheck } from 'lucide-react'
+import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users, BookOpen, ClipboardList, ShieldCheck, ExternalLink } from 'lucide-react'
 import { Submission } from '../../../types/professor'
 
 interface GradingPanelProps {
@@ -531,9 +531,32 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               {courses.map(c => (
                 <div key={c.id}>
                   <h3 style={{ fontSize: '1.2rem', color: 'var(--primary)', marginBottom: '1rem' }}>{c.nome}</h3>
-                  {c.livros?.map((l: any) => (
+                  {c.livros?.map((l: any) => {
+                    const getGabaritoUrl = (titulo: string) => {
+                      const normalized = titulo
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .toLowerCase()
+                        .trim()
+                        .replace(/\s+/g, '_')
+                        .replace(/[^\w-]/g, '');
+                      return `/gabaritos/${normalized}.html`;
+                    };
+                    
+                    return (
                     <div key={l.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', marginBottom: '1rem' }}>
-                      <h4 style={{ fontSize: '1rem' }}>{l.titulo}</h4>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h4 style={{ fontSize: '1rem', margin: 0 }}>{l.titulo}</h4>
+                        <a 
+                          href={getGabaritoUrl(l.titulo)}
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="btn btn-outline"
+                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', width: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                        >
+                          <ExternalLink size={14} /> Abrir Gabarito (HTML)
+                        </a>
+                      </div>
                       {(l.aulas || []).filter((a: any) => a.questionario?.length > 0).map((av: any) => (
                         <details key={av.id} style={{ marginTop: '0.5rem' }}>
                           <summary style={{ cursor: 'pointer' }}>{av.titulo}</summary>
@@ -548,7 +571,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                         </details>
                       ))}
                     </div>
-                  ))}
+                  )})}
                 </div>
               ))}
             </div>

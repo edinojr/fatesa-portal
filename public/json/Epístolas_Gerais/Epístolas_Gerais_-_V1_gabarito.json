@@ -1,0 +1,134 @@
+{
+  "id": "EPGE_1",
+  "title": "Epístolas Gerais - V1",
+  "tfQuestions": [
+    {
+      "id": "epge1-tf-1",
+      "question": "Não é correto afirmar que as Epístolas Gerais são católicas.",
+      "answer": "F"
+    },
+    {
+      "id": "epge1-tf-2",
+      "question": "Em relação aos filhos de Deus, Satanás nunca pode fazer uso da correção.",
+      "answer": "V"
+    },
+    {
+      "id": "epge1-tf-3",
+      "question": "Em alguns momentos Jesus fez uso da acepção no trato com seus discípulos.",
+      "answer": "F"
+    },
+    {
+      "id": "epge1-tf-4",
+      "question": "Thiago, tal como toda a bíblia, não condenou ninguém por ser rico.",
+      "answer": "V"
+    },
+    {
+      "id": "epge1-tf-5",
+      "question": "Pedro deixou claro em suas epístolas que o primeiro dever do homem é o de obedecer a Deus .",
+      "answer": "V"
+    },
+    {
+      "id": "epge1-tf-6",
+      "question": "Sendo apóstolo, ao identificar-se como presbítero, foi mais um erro de Pedro.",
+      "answer": "F"
+    },
+    {
+      "id": "epge1-tf-7",
+      "question": "Pedro deixou claro que esta terra será totalmente renovada e purificada.",
+      "answer": "F"
+    },
+    {
+      "id": "epge1-tf-8",
+      "question": "Sendo Deus criador de todos os homens, é certo que todos são seus filhos .",
+      "answer": "F"
+    },
+    {
+      "id": "epge1-tf-9",
+      "question": "Segundo João, para os obreiros enganadores, a hospitalidade deveria ser negada.",
+      "answer": "V"
+    },
+    {
+      "id": "epge1-tf-10",
+      "question": "Judas demonstrou profundo conhecimento das Escrituras e das tradições judaicas.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "epge1-mc-1",
+      "question": "Tiago, em sua epistola, fala sobre -",
+      "options": [
+        "A inutilidade da fé",
+        "A salvação pelas obras",
+        "As obras como prova da fé",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "epge1-mc-2",
+      "question": "Melhor é ouvir -",
+      "options": [
+        "A crítica de um tolo",
+        "O elogio de um sábio",
+        "A repreensão de um sábio",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "epge1-mc-3",
+      "question": "No judaísmo a mulher devia -",
+      "options": [
+        "Ser honrada",
+        "Tida em alta estima",
+        "Tratada como inferior",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "epge1-mc-4",
+      "question": "Um obreiro precisa ter -",
+      "options": [
+        "Boa cultura secular",
+        "Boa situação financeira",
+        "Conhecimento bíblico",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "epge1-mp-1",
+      "left": "Tentado em tudo",
+      "right": "Jesus"
+    },
+    {
+      "id": "epge1-mp-2",
+      "left": "Tentado, cedeu e pecou",
+      "right": "Davi"
+    },
+    {
+      "id": "epge1-mp-3",
+      "left": "Tentado, resistiu e venceu",
+      "right": "José"
+    },
+    {
+      "id": "epge1-mp-4",
+      "left": "Fonte geradora de sofrimento",
+      "right": "Satanás"
+    },
+    {
+      "id": "epge1-mp-5",
+      "left": "Instrumento de Satanás",
+      "right": "Tentação"
+    },
+    {
+      "id": "epge1-mp-6",
+      "left": "Instrumento de Deus",
+      "right": "Correção"
+    }
+  ]
+}

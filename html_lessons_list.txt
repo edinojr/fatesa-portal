@@ -1,0 +1,557 @@
+4cdaad28-631b-441b-a365-3b9e62b66f3b|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705371256_03_licao_03.html
+84b74737-c44e-4172-9d5f-a6eacefee6e4|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705371847_05_licao_05.html
+39c76546-7ee0-4f08-8977-fc62c7972ac1|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710194610_06_licao_06.html
+17c47271-688d-499a-adda-cca299def78d|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710195673_10_licao_10.html
+c5b110ad-804f-49f3-822f-49bbc92b6cb2|Lição 01 - Considerações Gerais|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780683470378_licao_01_-_consideracoes_gerais.html
+296a9d29-12c3-45ba-b73b-73c39e45c6c2|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780683471132_panorama.html
+d691d407-a14b-4baf-8000-baaf372c3f9a|Lição 02 - A Bíblia - O Livro da História da Redenção|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684258309_licao_02_-_a_biblia_-_o_livro_da_historia_da_redencao.html
+c8590427-3e63-4a26-a36a-526937ed80e4|Lição 03 - Jesus nos Profetas Menores e no Novo Testamento|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684258738_licao_03_-_jesus_nos_profetas_menores_e_no_novo_testamento.html
+05bf1f5b-e794-4df6-bc0e-ae43ea97c3d3|Lição 04 - A Bíblia e sua Estrutura|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684259214_licao_04_-_a_biblia_e_sua_estrutura.html
+f9bd7465-10c1-4029-a57b-a18985720c00|Lição 05 - As Línguas Originais da Bíblia|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684259566_licao_05_-_as_linguas_originais_da_biblia.html
+4167caae-9546-4b74-b0ab-cd82bff9e5b6|Lição 06 - As Tentativas de Destruir a Bíblia|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684259906_licao_06_-_as_tentativas_de_destruir_a_biblia.html
+d2b75857-1e5c-4974-ae04-1c3d821ff43e|Lição 07 - A Teoria da Inspiração|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684261549_licao_07_-_a_teoria_da_inspiracao.html
+f499d6e8-173d-4da7-8802-8c2e85b1ca9d|Lição 08 - Os Fatos e a História do Éden Até o Profeta Malaquias|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684261957_licao_08_-_os_fatos_e_a_historia_do_eden_ate_o_profeta_malaquias.html
+894b6795-18d7-4bb2-93b6-1ec86158b0c8|Lição 09 - Período Interbíblico - Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684262310_licao_09_-_periodo_interbiblico_-_primeira_parte.html
+bcdf91c4-91fb-47af-b5b4-7f669ec1fb13|Lição 10 - Período Interbíblico - Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780684262711_licao_10_-_periodo_interbiblico_-_segunda_parte.html
+57736027-9915-473f-bc10-349486be431b|Lição 01 - Epístola de Paulo aos Efésios Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705588143_licao_01_-_epistola_de_paulo_aos_efesios_primeira_parte.html
+c7730c84-c272-4ba9-8691-f3ac72ad92cc|Lição 02 - Epístola de Paulo aos Efésios Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705588476_licao_02_-_epistola_de_paulo_aos_efesios_primeira_parte.html
+b46a3537-b649-4621-85f5-2dadf6d2fc70|Lição 03 - A Epístola aos Filipenses|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705588794_licao_03_-_a_epistola_aos_filipenses.html
+4213caa2-2ca0-4dce-a937-5fbe3a3889fd|Lição 05 - Primeira Epístola aos Tessalonicenses|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705589478_licao_05_-_primeira_epistola_aos_tessalonicenses.html
+8852965d-80e2-404f-b1a9-97de8eeb8650|Lição 06 - Segunda Epístola aos Tessalonicenses|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705589795_licao_06_-_segunda_epistola_aos_tessalonicenses.html
+3230c37e-dd32-4b60-8142-cc3179fb51ea|Lição 08 - A Segunda Epístola a Timóteo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705590917_licao_08_-_a_segunda_epistola_a_timoteo.html
+65b5ec33-c050-43e4-8425-c961598f5944|Lição 09 - Epístola de Paulo a Tito|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705591237_licao_09_-_epistola_de_paulo_a_tito.html
+25d63928-9dce-4189-98ff-c19fab51a3af|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705591905_panorama.html
+771fd42a-6e98-43a5-a30c-27e7c2b12ee8|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709635510_04_licao_04.html
+1dce052b-f03f-4a7f-8303-97fd329267f5|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709635935_05_licao_05.html
+58164e78-a3d3-46f5-82b0-1d1dee78a8af|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709636243_06_licao_06.html
+83abe89d-b747-4824-9a06-ebf6bd548dec|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709637155_10_licao_10.html
+b9c9c6f9-3e3e-4ab5-8358-157c1e165ae3|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710033704_03_licao_03.html
+4294fedb-f39e-4461-a65b-ca65a4be4006|Lição 04 - A Epístola aos Colossenses|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705589119_licao_04_-_a_epistola_aos_colossenses.html
+a6ed4dae-afa3-4228-bdc4-1fe1e2eafa71|Lição 07 - A Primeira Epístola a Timóteo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705590486_licao_07_-_a_primeira_epistola_a_timoteo.html
+ca18684d-9960-48a6-b44b-702b81b73fa5|Lição 10 - Epístola de Paulo a Filemon|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705591550_licao_10_-_epistola_de_paulo_a_filemon.html
+17f840de-1317-450b-b73f-f5b0e7fbed99|Lição 01 - I Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705687511_licao_01_-_i_corintios.html
+e097c611-bc75-4d22-9b0a-2f70d429774a|Lição 02 - I Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705687833_licao_02_-_i_corintios.html
+f60f688a-b8bd-46d8-b60d-a5257e27f623|Lição 03 - I Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705688152_licao_03_-_i_corintios.html
+d55320af-0141-4b31-9cc4-aabcc5fb1a1a|Lição 04 - I Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705688441_licao_04_-_i_corintios.html
+45f8a511-901d-4d36-b6e9-f97bb71bcad7|Lição 05 - I Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705688771_licao_05_-_i_corintios.html
+141a9c07-83ba-4a31-bc34-a7afc9804284|Lição 06 - I Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705689178_licao_06_-_i_corintios.html
+1a4945e1-9103-41f3-8f25-1bc1d14ac9ee|Lição 07 - I Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705689736_licao_07_-_i_corintios.html
+e2de2713-142d-4d44-a873-0a4685862bfb|Lição 08 - II Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705690074_licao_08_-_ii_corintios.html
+06f8b569-e4ae-4dba-97e0-dbfd6fab4963|Lição 09 - II Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705690345_licao_09_-_ii_corintios.html
+351789f9-0ae9-445c-b957-78ee3d7d6e04|Lição 10 - II Coríntios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705690965_licao_10_-_ii_corintios.html
+c300c03e-cbd8-4a30-b871-e36643a297c2|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780705691204_panorama.html
+584a64d8-4747-4e63-bb63-1e64a2fc6c73|Lição 01 - Ganhar Almas - Um Trabalho ao Alcance de Todos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706310391_licao_01_-_ganhar_almas_-_um_trabalho_ao_alcance_de_todos.html
+61c950a5-f20f-444e-91bb-480e1a834edc|Lição 02 - A Igreja, Um Edifício|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706310974_licao_02_-_a_igreja__um_edificio.html
+943f6502-e57c-4612-ae81-446abcc648c1|Lição 03 - O Obreiro Ganhador de Almas Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706311353_licao_03_-_o_obreiro_ganhador_de_almas_primeira_parte.html
+1f422fb4-aa17-4c0a-8cef-ef7264f8c033|Lição 04 - O Obreiro Ganhador de Almas Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706311946_licao_04_-_o_obreiro_ganhador_de_almas_segunda_parte.html
+c68e2334-8794-4f63-8425-893921a85e39|Lição 05 - A Chamada dos Obreiros|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706312339_licao_05_-_a_chamada_dos_obreiros.html
+7ee3e8ce-164b-42ff-a20c-1cdef601550c|Lição 06 - O Obreiro e a Vinha do Senhor|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706312688_licao_06_-_o_obreiro_e_a_vinha_do_senhor.html
+7d5cd5db-77aa-4f95-85ed-89d6400641dd|Lição 07 - Os Dons Ministeriais|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706313121_licao_07_-_os_dons_ministeriais.html
+2d207ed3-a414-4f54-93dc-7d39a71e3627|Lição 08 - O Ministério do Pastor|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706313466_licao_08_-_o_ministerio_do_pastor.html
+c6824887-1d29-4e70-a527-a70ce8ed2327|Lição 09 - O Serviço Cristão|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706313879_licao_09_-_o_servico_cristao.html
+884f0771-ce38-43e8-8711-9d64475a35d1|Lição 10 - Diversos Outros Tipos de Obreiros|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706314369_licao_10_-_diversos_outros_tipos_de_obreiros.html
+6104ffe1-ba6b-411c-80af-89f13224066e|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710129465_03_licao_03.html
+0b832de1-4810-46d3-be67-205be2c46fa3|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710130656_07_licao_07.html
+cd832363-5298-40fb-b36d-f2d13ba29f0b|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709561361_07_licao_07.html
+9651e9d5-2411-4d1b-a715-cde9b758815a|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710169806_01_licao_01.html
+a6a6c5af-e884-45ed-ba58-1c9d51dc779d|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705372437_07_licao_07.html
+f8663a0f-1489-4dce-8021-b821446cd6a4|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708921694_07_licao_07.html
+abb55e8b-836e-4350-b148-41255cf97751|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706314713_panorama.html
+047aaa3f-8f0d-4f3a-9a21-686de5545394|Lição 01 - Generalidades|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706348081_licao_01_-_generalidades.html
+13ece176-3307-4204-a2bf-d2922b2bc64c|Lição 02 - O Livro do Profeta Isaías (Primeira Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706348436_licao_02_-_o_livro_do_profeta_isaias__primeira_parte_.html
+63885767-2001-4020-a18f-c6e2042c4a21|Lição 03 - O Livro do Profeta Isaías (Segunda Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706348772_licao_03_-_o_livro_do_profeta_isaias__segunda_parte_.html
+c62820f9-eece-44ea-ba14-739128ab5fa3|Lição 04 - O Livro do Profeta Isaías (Parte Final)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706349169_licao_04_-_o_livro_do_profeta_isaias__parte_final_.html
+a589af0e-082c-4333-829b-84447f0c1e57|Lição 05 - O Livro do Profeta Jeremias|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706349486_licao_05_-_o_livro_do_profeta_jeremias.html
+f694e4ea-fe17-4542-a263-cde382eb35c1|Lição 06 - O Livro de Lamentações|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706349955_licao_06_-_o_livro_de_lamentacoes.html
+251ee498-4ad5-4778-b666-f5eead7e97d5|Lição 07 - O Livro do Profeta Ezequiel (Primeira Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706350300_licao_07_-_o_livro_do_profeta_ezequiel__primeira_parte_.html
+e4ed43bd-2f57-420b-9e3b-fdeff17cbb50|Lição 08 - O Livro do Profeta Ezequiel (Segunda Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706350672_licao_08_-_o_livro_do_profeta_ezequiel__segunda_parte_.html
+ea04d7ce-b115-4482-b6c8-ae1ddbdfb736|Lição 09 - O Livro do Profeta Daniel (Primeira Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706351045_licao_09_-_o_livro_do_profeta_daniel__primeira_parte_.html
+445bbc45-4718-47c8-bbee-9d6873eb95fa|Lição 10 - O Livro do Profeta Daniel (Segunda Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706351455_licao_10_-_o_livro_do_profeta_daniel__segunda_parte_.html
+b6fdc0af-c712-4715-9dea-2e87e33fcb32|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706351722_panorama.html
+e673c5ed-f8a3-449c-bb01-31f64c9c2381|Lição 01 - Livro do Profeta Oséias (Primeira Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706383210_licao_01_-_livro_do_profeta_oseias__primeira_parte_.html
+6ccc6791-5769-46b1-8ee4-09d0f8df5b5a|Lição 02 - Livro do Profeta Oséias (Segunda Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706385571_licao_02_-_livro_do_profeta_oseias__segunda_parte_.html
+c4202431-28af-4db2-8227-8c3a40365045|Lição 03 - Livro do Profeta Oséias (Parte Final)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706386002_licao_03_-_livro_do_profeta_oseias__parte_final_.html
+ad2e0931-979d-45b6-afe9-7f7acc131b98|Lição 04 - Livro do Profeta Joel|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706386341_licao_04_-_livro_do_profeta_joel.html
+387ac2ff-d812-4555-925f-cd4788a21491|Lição 05 - Livro do Profeta Amós|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706386833_licao_05_-_livro_do_profeta_amos.html
+052010b1-18af-4f02-9c33-dc0735e80d4c|Lição 06 - Livro dos Profetas Obadias e Jonas|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706387235_licao_06_-_livro_dos_profetas_obadias_e_jonas.html
+32599ec4-3f1c-428f-ba9b-a134bae3ce19|Lição 07 - Livro dos Profetas Miquéias e Naum|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706387616_licao_07_-_livro_dos_profetas_miqueias_e_naum.html
+50e982fe-29ba-4579-a611-14cb7dc5c392|Lição 08 - Livros dos Profetas Habacuque, Sofonias e Ageu|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706387942_licao_08_-_livros_dos_profetas_habacuque__sofonias_e_ageu.html
+91da83e3-96a3-44e7-b70b-bbeb27a27dea|Lição 09 - Livro do Profeta Zacarias|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706388299_licao_09_-_livro_do_profeta_zacarias.html
+13e045a7-f80b-4282-b58d-719ae18a0be0|Lição 10 - Livro do Profeta Malaquias|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706388655_licao_10_-_livro_do_profeta_malaquias.html
+055f4846-4722-4382-b322-641f41330aff|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706388977_panorama.html
+1d2ed32c-a69b-40bd-a4ca-5f7ac249a6d4|Lição 01 - Deus Sempre Quis Relacionar-se Com o Homem|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706457273_licao_01_-_deus_sempre_quis_relacionar-se_com_o_homem.html
+a8a69cb1-43d8-440a-ba73-6739fde33a4d|Lição 02 - Israel No Presente e No Futuro|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706457666_licao_02_-_israel_no_presente_e_no_futuro.html
+6d775e38-3da3-486b-926a-c8e838e8ce44|Lição 03 - Israel Até O Milênio|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706458080_licao_03_-_israel_ate_o_milenio.html
+02caee1f-2fa0-4beb-9a2c-660fd09dc86f|Lição 04 - A Igreja - Um Mistério Guardado No Coracão De Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706458466_licao_04_-_a_igreja_-_um_misterio_guardado_no_coracao_de_deus.html
+a865c92b-6f01-476f-b384-db10b5bf59b4|Lição 05 - O Fundador e a Fundação da Igreja|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706458834_licao_05_-_o_fundador_e_a_fundacao_da_igreja.html
+bfa4a2f4-5a4f-423e-9b66-1ec1d3657a9b|Lição 06 - A Igreja Universal e as Igrejas Locais|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706459193_licao_06_-_a_igreja_universal_e_as_igrejas_locais.html
+3eb40721-2d52-4471-8edc-909eaed4dc44|Lição 07 - Porque Tantas Denominações|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706459525_licao_07_-_porque_tantas_denominacoes.html
+d9da05bd-0ae0-4252-b8d9-976e154f2d73|Lição 08 - O Batismo Nas Águas|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706459886_licao_08_-_o_batismo_nas_aguas.html
+94758534-c574-4dad-b03d-faf337228406|Lição 09 - A Ceia do Senhor|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706460306_licao_09_-_a_ceia_do_senhor.html
+e72e9807-4217-4db4-9d1c-6b3d74c1e1a2|Lição 10 - Sustento Material da Igreja|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706460668_licao_10_-_sustento_material_da_igreja.html
+8fef8d60-d1de-4e17-b369-eb455203fcd9|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706461095_panorama.html
+051b1d2c-1beb-4aeb-8571-6bdce0e1ca50|Lição 01 - Salvação - A Maior de Todas as Bênçãos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706486671_licao_01_-_salvacao_-_a_maior_de_todas_as_bencaos.html
+529c8663-421b-43a1-9340-1a4bffbbb3f7|Lição 02 - A Chamada dos Gentios|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706487061_licao_02_-_a_chamada_dos_gentios.html
+27172b3b-addc-47af-8939-98bf3c809e1d|Lição 03 - Redenção e Expiação|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706487469_licao_03_-_redencao_e_expiacao.html
+3b22544c-d4c7-4c46-bd4d-1c5fdadad13c|Lição 04 - Um Ato Unilateral ou Bilateral_|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706487797_licao_04_-_um_ato_unilateral_ou_bilateral_.html
+120375d3-51ed-44cb-9bc0-c877b94ca7b7|Lição 05 - Oito Elos de Uma Mesma Corrente - Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706488084_licao_05_-_oito_elos_de_uma_mesma_corrente_-_primeira_parte.html
+e7e3fc59-967a-4c1b-b1d8-1fca0be5481e|Lição 06 - Regeneração - Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706488391_licao_06_-_regeneracao_-_segunda_parte.html
+2189099d-5915-4d8e-87e6-bbe3a8f84acd|Lição 07 - Regeneração - Continuação|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706488721_licao_07_-_regeneracao_-_continuacao.html
+8bdb0ebe-b006-480b-adf1-6545b4f75211|Lição 08 - Justificação e Adoção|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706489348_licao_08_-_justificacao_e_adocao.html
+49515a08-54ba-42ab-895c-fce62dc22804|Lição 09 - Santificação|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706489635_licao_09_-_santificacao.html
+e635e522-6e0a-46d8-b518-4dff6554497e|Lição 10 - Doutrina da Salvação - O Estágio Final|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706490032_licao_10_-_doutrina_da_salvacao_-_o_estagio_final.html
+8aadb7ae-b733-4950-be32-b869bdf4fa8a|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706490308_panorama.html
+6bc05267-08e9-4242-bacb-17d3debc0a8f|Lição 01 - Uma Visão Panorâmica do Livro do Apocalipse|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706510530_licao_01_-_uma_visao_panoramica_do_livro_do_apocalipse.html
+9f36d650-53a4-43ee-be36-78877451c67e|Lição 04 - As Sete Cartas do Apocalipse - Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706511565_licao_04_-_as_sete_cartas_do_apocalipse_-_segunda_parte.html
+c782cd47-9149-4612-a097-e8b8ce9ebe49|Lição 07 - As Coisas... Que Depois Destas Hão de Acontecer - Terceira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706512739_licao_07_-_as_coisas..._que_depois_destas_hao_de_acontecer_-_terceira_parte.html
+445b4bee-0d25-48ac-b22d-93a77cb84a62|Lição 10 - Os Acontecimentos Finais|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706513749_licao_10_-_os_acontecimentos_finais.html
+4070b608-1549-4767-93a9-7b155ac0c887|Lição 03 - Abraão - Segunda e Última Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706535676_licao_03_-_abraao_-_segunda_e_ultima_parte.html
+cdd54243-fc19-492c-9d19-693d579cf880|Lição 06 - Êxodo – Do Egito ao Sinai|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706536652_licao_06_-_exodo___do_egito_ao_sinai.html
+ef1a0b89-080b-40a2-b221-3e39d1b63fa9|Lição 09 - O Livro de Números|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706537721_licao_09_-_o_livro_de_numeros.html
+f8f0508d-d614-4fc9-a9ec-f2fd8ed9633c|Lição 02 - O Evangelho de Mateus Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706561322_licao_02_-_o_evangelho_de_mateus_segunda_parte.html
+361f32d3-89d3-4e62-95c7-3958d1452440|Lição 05 - O Evangelho de Marcos Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706562512_licao_05_-_o_evangelho_de_marcos_primeira_parte.html
+c6a17c72-e7c0-43b4-bab0-39368b0cd819|Lição 08 - O Evangelho de Lucas Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706563835_licao_08_-_o_evangelho_de_lucas_segunda_parte.html
+4a6a7bba-db32-4400-a289-bbeff5778461|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706565134_panorama.html
+69aa6d88-5ca9-4a3b-856e-9ca6230d81a2|Lição 01 - Antes do Dia de Pentecostes|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706587803_licao_01_-_antes_do_dia_de_pentecostes.html
+7ef57479-1b52-47b7-a47c-15f7b8aa6b88|Lição 04 - Homens de Fé Fazendo a Obra do Senhor|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706588866_licao_04_-_homens_de_fe_fazendo_a_obra_do_senhor.html
+5c5bc938-0daa-4081-82d3-3ad94910e976|Lição 07 - Primeira Viagem Missionária e o Concílio de Jerusalém|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706590193_licao_07_-_primeira_viagem_missionaria_e_o_concilio_de_jerusalem.html
+10eeffe6-a6d3-4c75-a63a-bc629a7bf745|Lição 10 - O Epílogo Que Não Foi Escrito|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706591563_licao_10_-_o_epilogo_que_nao_foi_escrito.html
+3cdd2c0e-0f5f-4708-9f97-47fcc4bc528c|Lição 03- Uma Solene Advertência|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706618502_licao_03-_uma_solene_advertencia.html
+001aca32-586f-4527-b97c-3b7396a41e7c|Lição 06- O Perigo da Apostasia|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706619455_licao_06-_o_perigo_da_apostasia.html
+bb3fe411-0acf-420f-9bfd-eeb80d80d6c5|Lição 02 - As Coisas Que Tens Visto e As Que São|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706510850_licao_02_-_as_coisas_que_tens_visto_e_as_que_sao.html
+aa76b98a-05ee-4490-8624-3ce0af454895|Lição 05 - As Coisas... Que Depois Destas Hão de Acontecer - Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706512041_licao_05_-_as_coisas..._que_depois_destas_hao_de_acontecer_-_primeira_parte.html
+868bb6ae-cc76-4a77-889b-b0ce3d59d582|Lição 08 - As Coisas... Que Depois Destas Hão de Acontecer - Quarta Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706513146_licao_08_-_as_coisas..._que_depois_destas_hao_de_acontecer_-_quarta_parte.html
+ada2f447-47d5-4ef6-b97a-ccd64658ddc4|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706514045_panorama.html
+9e88b6dd-3516-4614-84b3-08d26245b181|Lição 01 - Da Criação ao Dilúvio|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706534918_licao_01_-_da_criacao_ao_diluvio.html
+9e7a4332-a1e3-4169-a5ce-9ba0cbd0c977|Lição 04 - Isaque e Jacó|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706536003_licao_04_-_isaque_e_jaco.html
+df8f4a4b-2c46-4694-b743-b7d5b04397ff|Lição 07 - O Tabernáculo e o Bezerro de Ouro|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706536965_licao_07_-_o_tabernaculo_e_o_bezerro_de_ouro.html
+614cda14-0b23-4323-85c6-b392a89996a8|Lição 10 - O Livro de Deuteronômio|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706538035_licao_10_-_o_livro_de_deuteronomio.html
+c937d590-5ff5-4fc3-941e-4ca5a7b8eecd|Lição 03 - O Evangelho de Mateus Terceira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706561699_licao_03_-_o_evangelho_de_mateus_terceira_parte.html
+23784900-3d36-4776-a6f3-f76a0ce9f643|Lição 06 - O Evangelho de Marcos Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706562989_licao_06_-_o_evangelho_de_marcos_segunda_parte.html
+d1aa15fe-9d18-470f-9da5-b2bdcf6a2790|Lição 09 - O Evangelho de João Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706564351_licao_09_-_o_evangelho_de_joao_primeira_parte.html
+4f9944de-98b0-481a-b71b-e509bcb9d145|Lição 02 - A Vinda do Espírito Santo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706588204_licao_02_-_a_vinda_do_espirito_santo.html
+15e9f92a-6b31-46ad-ae2e-09cb3b7b090e|Lição 05 - Jerusalém, Judeia e Samaria|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706589298_licao_05_-_jerusalem__judeia_e_samaria.html
+e22050fb-1057-4719-8826-cfebeef081e4|Lição 08 - A Segunda Viagem Missionária|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706590549_licao_08_-_a_segunda_viagem_missionaria.html
+1754fc54-5569-4806-aff2-57b6cb7c4b76|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706591862_panorama.html
+94c75624-2cdc-43d7-9574-130f86310cd6|Lição 01- Cristo, Última e Definitiva Revelação de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706617662_licao_01-_cristo__ultima_e_definitiva_revelacao_de_deus.html
+725b1270-5a53-4bcc-889a-27c133468e2b|Lição 04- Cristo Superior a Moisés|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706618834_licao_04-_cristo_superior_a_moises.html
+25a575ec-57fd-447c-b234-de0c4bc9b22b|Lição 07- Cristo o Mediador de uma Nova Aliança|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706619797_licao_07-_cristo_o_mediador_de_uma_nova_alianca.html
+b8fad235-b9b9-46f9-8575-a4d2e0e89a74|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709120051_05_licao_05.html
+bbf6583e-bec2-4b05-a522-9753517f1697|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709121104_09_licao_09.html
+9e36cd4b-505b-4f01-a466-c8903706f073|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709144840_02_licao_02.html
+5d0e64bb-afee-413c-8c42-a7bcce5d9aa9|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709146100_06_licao_06.html
+5d456c86-6fa9-41e9-be85-bf0c6e01dac1|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709173587_05_licao_05.html
+a78cb7c8-6f05-4e44-aac3-030030c52a4e|Lição 03 - As Sete Cartas do Apocalipse - Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706511145_licao_03_-_as_sete_cartas_do_apocalipse_-_primeira_parte.html
+e79e9a76-570e-48bd-ab41-3c21b0cef1b9|Lição 06 - As Coisas... Que Depois Destas Hão de Acontecer - Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706512372_licao_06_-_as_coisas..._que_depois_destas_hao_de_acontecer_-_segunda_parte.html
+85869293-f1a3-4b43-9d90-dbd8b45ef3e9|Lição 09 - A Manifestação de Jesus em Glória e o Milênio|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706513456_licao_09_-_a_manifestacao_de_jesus_em_gloria_e_o_milenio.html
+69fa9b4a-6f67-4699-ab26-138afdd1a49f|Lição 02 - Abraão - Primeira Parte- De Ur à Destruição de Sodoma|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706535286_licao_02_-_abraao_-_primeira_parte-_de_ur_a_destruicao_de_sodoma.html
+c2134ebf-d89a-4e70-81b9-abc2416ee85f|Lição 05 - História de José|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706536334_licao_05_-_historia_de_jose.html
+969ffbf1-3352-409b-b16a-cd2e86e7d2c2|Lição 08 - O Livro de Levítico|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706537415_licao_08_-_o_livro_de_levitico.html
+fdc57083-8cfb-47dd-8837-d502602a0d66|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706538314_panorama.html
+00c5e7bb-5b91-46d3-bed8-9238c57d2dcd|Lição 01 - O Evangelho de Mateus Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706560839_licao_01_-_o_evangelho_de_mateus_primeira_parte.html
+e5bcde12-bbeb-4f6d-882f-3514e7c0bc32|Lição 04 - O Evangelho de Mateus Última Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706562074_licao_04_-_o_evangelho_de_mateus_ultima_parte.html
+1f2b960a-625d-4daa-a0f3-ae81c446de8a|Lição 07 - O Evangelho de Lucas Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706563406_licao_07_-_o_evangelho_de_lucas_primeira_parte.html
+8d5b8e70-85b6-4508-8990-3767365c1ea6|Lição 10 - O Evangelho de João Última Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706564781_licao_10_-_o_evangelho_de_joao_ultima_parte.html
+2d6e741d-b7ca-4e5d-a46a-903ad022e4ab|Lição 03 - Que quer isto dizer_|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706588552_licao_03_-_que_quer_isto_dizer_.html
+3a560a91-d728-4888-884b-4e1f7bf55779|Lição 06 - A Conversão de Saulo de Tarso|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706589631_licao_06_-_a_conversao_de_saulo_de_tarso.html
+7ea74b67-62d5-47d7-8559-1c94240b7a04|Lição 09 - A Terceira Viagem Missionária|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706591238_licao_09_-_a_terceira_viagem_missionaria.html
+6e60f92e-8777-4005-8429-1f5480e8f2d4|Lição 02- Cristo, Superior aos Anjos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706618083_licao_02-_cristo__superior_aos_anjos.html
+3c9411ed-1159-4f65-ac92-6c11c253db2b|Lição 05- Repouso Para o Povo de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706619158_licao_05-_repouso_para_o_povo_de_deus.html
+12fd61fa-22d1-4d0f-b6c1-db57fc96c599|Lição 08- Apostasia e Pecado Imperdoável|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706620055_licao_08-_apostasia_e_pecado_imperdoavel.html
+5627a965-5e61-4440-a2d0-54d32bb369b8|Lição 09- O Capítulo da Fé - Hebreus 11|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706620350_licao_09-_o_capitulo_da_fe_-_hebreus_11.html
+98932923-f51f-46fc-a89b-a56efd0541d0|Lição 10- Evidências da Vida Cristã|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706620599_licao_10-_evidencias_da_vida_crista.html
+b488c2f8-835b-4627-a1eb-fb1e9e9282c1|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706621011_panorama.html
+25c6e4eb-39e0-4052-8c9f-7c2be73210c4|Lição 01 - O Espírito Santo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706670342_licao_01_-_o_espirito_santo.html
+d94915da-98e8-427e-9dd6-00b4173dc571|Lição 02 - O Ministério do Espírito Santo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706670725_licao_02_-_o_ministerio_do_espirito_santo.html
+c6856dcd-dbbf-47e8-8c6e-4b696551b10a|Lição 03 - Jesus de Nazaré e a Unção do Espírito Santo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706671047_licao_03_-_jesus_de_nazare_e_a_uncao_do_espirito_santo.html
+adb1a044-225e-4b99-891b-0b31d947135b|Lição 06 - O Fruto do Espírito e os Dons Espirituais|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706671966_licao_06_-_o_fruto_do_espirito_e_os_dons_espirituais.html
+906ee432-0cc9-47a6-bd7c-fde4e2524008|Lição 09 - Os Dons Espirituais - I Coríntios - Capítulo 12|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706673089_licao_09_-_os_dons_espirituais_-_i_corintios_-_capitulo_12.html
+01c21a21-b5fa-4caf-90c4-7d9b8ba74991|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709174928_09_licao_09.html
+a43ea5ea-9bcc-4096-917a-e68709b8afc7|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709197340_02_licao_02.html
+258dc043-9f08-4278-b606-df09c6fa6dde|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709200754_10_licao_10.html
+ea0f2cfc-e51b-4c2d-9027-89c10d17152d|Lição 04 - Símbolos do Espírito Santo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706671344_licao_04_-_simbolos_do_espirito_santo.html
+6ffc559e-3402-4833-be9e-a22697138a33|Lição 07 - As Nove Características do Fruto do Espírito|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706672234_licao_07_-_as_nove_caracteristicas_do_fruto_do_espirito.html
+90504bee-7a0e-4d6f-b342-42e5a6684f60|Lição 10 - O Espírito Santo nos Eventos Escatológicos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706673471_licao_10_-_o_espirito_santo_nos_eventos_escatologicos.html
+0cdf3f13-3844-4e58-8da0-b9d4534901fa|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709222810_03_licao_03.html
+cd41c5cc-a857-4929-a352-f692d9c1c1ba|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709173934_06_licao_06.html
+144b9b4b-5c05-449f-a7e7-09102859b31a|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709175254_10_licao_10.html
+d7cf953b-875d-4b19-9df9-deb27c8b99cc|Lição 05 - O Espírito Santo na Vida da Igreja|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706671649_licao_05_-_o_espirito_santo_na_vida_da_igreja.html
+fef8b9a5-838b-4007-b7ad-7200b0c74429|Lição 08 - Uma Diversidade de Dons|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706672592_licao_08_-_uma_diversidade_de_dons.html
+16126ed0-c03b-45f0-a952-7c6e7f370fe7|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706673754_panorama.html
+d7878beb-f2cc-4a73-b689-0c48515455ae|Lição 01 - Porque Todos Pecaram|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706705730_licao_01_-_porque_todos_pecaram.html
+f14ec157-30c8-4ddd-8537-86903adcad05|Lição 02 - Justificação pela Fé|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706706342_licao_02_-_justificacao_pela_fe.html
+29d43a6f-9802-4729-9c50-f27971b73cb6|Lição 03 - Como Viver a Vida Cristã|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706706860_licao_03_-_como_viver_a_vida_crista.html
+f45eb117-1829-4967-aac2-15eb908c345f|Lição 04 - Israel no Passado, no Presente e no Futuro|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706707161_licao_04_-_israel_no_passado__no_presente_e_no_futuro.html
+74c03f56-2f37-47e2-a48c-fe907f5ee569|Lição 05 - Uma Vida Consagrada a Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706707499_licao_05_-_uma_vida_consagrada_a_deus.html
+377ca69c-0163-472e-904d-c2e49b39dba1|Lição 06 - Tolerância Para com os Fracos na Fé|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706707878_licao_06_-_tolerancia_para_com_os_fracos_na_fe.html
+882303ea-ccaa-4a45-8bb5-23eb6aa2cacc|Lição 07 - A Escritura da Liberdade Cristã|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706708219_licao_07_-_a_escritura_da_liberdade_crista.html
+38930a53-c802-4573-a30b-e23070dc84fe|Lição 08 - O Evangelho de Paulo e o Outro Evangelho|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706708519_licao_08_-_o_evangelho_de_paulo_e_o_outro_evangelho.html
+ab2d224a-5351-4b57-b869-4415d5bb4032|Lição 09 - A Liberdade Cristã|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706708829_licao_09_-_a_liberdade_crista.html
+818d8b5f-a7dc-455f-a516-e520cddd05c1|Lição 10 - A Lei da Semeadura|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706709122_licao_10_-_a_lei_da_semeadura.html
+7001d002-885b-4f62-9426-b783d528dc78|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706709438_panorama.html
+89c1c654-0756-4c44-aed9-9aaa2768e9ac|Lição 01 - Colocando Deus em Primeiro Lugar|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706732169_licao_01_-_colocando_deus_em_primeiro_lugar.html
+2149c68e-543d-4e12-97dc-330f1e5cc139|Lição 02 - Teologia Prática e o Tempo Dedicado a Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706732631_licao_02_-_teologia_pratica_e_o_tempo_dedicado_a_deus.html
+2f344873-d992-42f9-a2a9-f7b0f12dafce|Lição 03 - A Teologia Prática e a Credibilidade do Cristão|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706732966_licao_03_-_a_teologia_pratica_e_a_credibilidade_do_cristao.html
+c1ce15f2-291e-424b-974a-0ad3fee45aaa|Lição 04 - A Teologia Prática e a Conduta Ética e Moral|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706733411_licao_04_-_a_teologia_pratica_e_a_conduta_etica_e_moral.html
+04b61d83-d5e9-4df3-a48b-0875bae777fa|Lição 05 - A Teologia Prática - Humildade, Sujeição, Responsabilidade|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706733663_licao_05_-_a_teologia_pratica_-_humildade__sujeicao__responsabilidade.html
+2281bac9-d547-4e74-8b58-d98f6695ae59|Lição 06 - A Teologia Prática e o Relacionamento Entre Pais e Filhos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706733975_licao_06_-_a_teologia_pratica_e_o_relacionamento_entre_pais_e_filhos.html
+58e6f15b-84ca-4732-9875-f4a0e462f107|Lição 07 - A Teologia Prática e o Crente no Trabalho|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706734399_licao_07_-_a_teologia_pratica_e_o_crente_no_trabalho.html
+26c1b373-3c5d-44f7-8877-c0175560ad0e|Lição 08 - A Teologia Prática e o Amor ao Próximo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706734716_licao_08_-_a_teologia_pratica_e_o_amor_ao_proximo.html
+1810e2ef-b29d-45d2-8228-5921b79e5fab|Lição 09 - A Teologia Prática e a Conduta Cívica|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706735280_licao_09_-_a_teologia_pratica_e_a_conduta_civica.html
+780517ea-e917-49c1-9ae2-6346d08b8b40|Lição 02 - A Igreja - Fundação e Fundamento|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706755507_licao_02_-_a_igreja_-_fundacao_e_fundamento.html
+62f950a5-deb7-4c77-8a0f-933e38764f9b|Lição 05 - A Igreja Saindo de Jerusalém|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706756614_licao_05_-_a_igreja_saindo_de_jerusalem.html
+0c7a03be-6166-4886-8cf8-631c6da46936|Lição 08 - As Heresias|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706757555_licao_08_-_as_heresias.html
+86ca0076-95fb-44b1-b9de-576c456c6f7f|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706758437_panorama.html
+b6dca4ce-1c97-40bf-8654-d1bb0be85232|Lição 01 - Quem Dizem os Homens Ser o Filho do Homem|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706783033_licao_01_-_quem_dizem_os_homens_ser_o_filho_do_homem.html
+09d6b8cf-1ede-4f22-a5fb-f32ca403e6ac|Lição 04 - Na Plenitude dos Tempos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706783991_licao_04_-_na_plenitude_dos_tempos.html
+e8b01506-b7ba-4571-af01-682a8cf82a31|Lição 07 - Ele Veio Para Morrer|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706785154_licao_07_-_ele_veio_para_morrer.html
+6c618276-189a-4537-b1ec-7eead94d602c|Lição 10 - Cristo - Rei e Juiz de Toda Terra|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706786168_licao_10_-_cristo_-_rei_e_juiz_de_toda_terra.html
+ce526679-de66-45cf-805f-1ea5ad2dcc6c|Lição 03 - O Estado Intermediário|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706814380_licao_03_-_o_estado_intermediario.html
+fbc9925a-6df7-4208-bd41-1053ef671ce8|Lição 06 - A Igreja no Céu|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706815511_licao_06_-_a_igreja_no_ceu.html
+fcf3733c-99a7-4221-8e13-ae73a5acbb40|Lição 09 - O Milênio - O Reino do Messias|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706816578_licao_09_-_o_milenio_-_o_reino_do_messias.html
+dc538d26-3d7a-4aeb-a2f8-062f396bae58|Lição 02 - Monoteísmo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706835253_licao_02_-_monoteismo.html
+9b832490-900e-49a3-8da2-92a0ca1a03e2|Lição 05 - Transcendência, Imanência, Personalidade e Nomes de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706836185_licao_05_-_transcendencia__imanencia__personalidade_e_nomes_de_deus.html
+6ba9d4c7-57a2-4fdd-82af-003ef883cdf6|Lição 08 - Benignidade, Temperança e Fidelidade|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706837162_licao_08_-_benignidade__temperanca_e_fidelidade.html
+847b6ec8-46be-4d8d-855c-d00151e486c5|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706838084_panorama.html
+7d30b06d-88f6-4e89-91f9-95fcb3ecc369|Lição 10 - A Teologia Prática e a Comunhão Cristã|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706735680_licao_10_-_a_teologia_pratica_e_a_comunhao_crista.html
+e707592e-c451-4c66-9bdb-b793f0236f23|Lição 03 - História da Igreja em Jerusalém (Primeira Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706755898_licao_03_-_historia_da_igreja_em_jerusalem__primeira_parte_.html
+8d0b0fae-16c0-498a-889a-53465fd5ed33|Lição 06 - De Antioquia Para os Confins da Terra|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706756916_licao_06_-_de_antioquia_para_os_confins_da_terra.html
+6688229b-7d9b-4920-b74a-cfd875867835|Lição 09 - Constantino e o Período Pós-Niceno|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706757863_licao_09_-_constantino_e_o_periodo_pos-niceno.html
+20b4bc54-035e-4669-a5e3-2cfa5cbba1ac|Lição 02 - Cristo - A Segunda Pessoa da Trindade|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706783360_licao_02_-_cristo_-_a_segunda_pessoa_da_trindade.html
+47ce4a2a-ada0-4180-aa51-d3098b8a8dd7|Lição 05 - E o Verbo se Fez Carne|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706784255_licao_05_-_e_o_verbo_se_fez_carne.html
+43b7648a-a9ff-4e19-84b5-1d78cde65450|Lição 08 - Sepultura, Ressurreição e Ascensão do Senhor|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706785458_licao_08_-_sepultura__ressurreicao_e_ascensao_do_senhor.html
+127357f3-b50a-46f7-94e0-ff1a39bd10f5|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706786521_panorama.html
+1feba0c1-1c99-4857-934f-f26b973ca947|Lição 01 - A Escatologia no Plano de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706813757_licao_01_-_a_escatologia_no_plano_de_deus.html
+fe33daa1-ec30-46fc-840b-27620c3ac543|Lição 04 - A Primeira Ressurreição - Ressurreição dos Justos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706814725_licao_04_-_a_primeira_ressurreicao_-_ressurreicao_dos_justos.html
+91907d67-ac8e-4a38-9aea-90425c0ef307|Lição 07 - O Surgimento do Anticristo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706815878_licao_07_-_o_surgimento_do_anticristo.html
+cc17726a-912a-4ff3-9b5e-e619cfe2aa96|Lição 10 - O Julgamento Final e O Estado Eterno|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706817017_licao_10_-_o_julgamento_final_e_o_estado_eterno.html
+55a4fbef-15aa-4213-a262-e442b52b260b|Lição 03 - A Doutrina de Deus - Considerações Gerais|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706835620_licao_03_-_a_doutrina_de_deus_-_consideracoes_gerais.html
+34d21dcf-fa6b-4c23-bbc4-abe3b2e1115f|Lição 06 - Substâncias e Atributos Naturais de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706836486_licao_06_-_substancias_e_atributos_naturais_de_deus.html
+b8b3d328-21e3-450f-8f70-285acff74593|Lição 09 - As Obras de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706837413_licao_09_-_as_obras_de_deus.html
+29512685-a47b-426f-b64f-6261ef62f187|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709197636_03_licao_03.html
+a8c7b803-f7a5-44cc-8a0c-8c49b0ec216f|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706736093_panorama.html
+43d991d7-ae46-43ef-b070-b69646763bd1|Lição 01 - A Igreja Concebida na Eternidade|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706755126_licao_01_-_a_igreja_concebida_na_eternidade.html
+30ea1626-1582-4b0c-8081-8c88a75c3032|Lição 04 - História da Igreja em Jerusalém (Segunda Parte)|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706756268_licao_04_-_historia_da_igreja_em_jerusalem__segunda_parte_.html
+7877e2ed-09e2-4728-8902-419abaa2a391|Lição 07 - A Igreja Perseguida Pelo Império Romano|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706757251_licao_07_-_a_igreja_perseguida_pelo_imperio_romano.html
+1eff1d53-8632-4965-ab8a-669fa9cb0d01|Lição 10 - A História da Igreja na Idade Média|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706758145_licao_10_-_a_historia_da_igreja_na_idade_media.html
+c7d41f31-1abc-4d38-9fb3-b4c7dfb12de6|Lição 03 - Cristo no Antigo Testamento|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706783658_licao_03_-_cristo_no_antigo_testamento.html
+933aadc3-59eb-4677-9942-56da18281b74|Lição 06 - Jesus, O Filho do Homem|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706784627_licao_06_-_jesus__o_filho_do_homem.html
+701eb538-5178-44a5-a070-588479005344|Lição 09 - O Sacerdócio de Cristo e sua Segunda Vinda|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706785838_licao_09_-_o_sacerdocio_de_cristo_e_sua_segunda_vinda.html
+26492a4f-ddc6-4024-87d0-aa99149526bc|Lição 02 - A Escatologia Bíblica e a Doutrina da Morte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706814122_licao_02_-_a_escatologia_biblica_e_a_doutrina_da_morte.html
+afb3e374-0e46-4e70-a3af-2cf5688f26a2|Lição 05 - Sinais da Vinda de Jesus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706815041_licao_05_-_sinais_da_vinda_de_jesus.html
+9eb7ace3-c1ac-4a31-888d-9e2c083973e1|Lição 08 - A Grande Tribulação|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706816251_licao_08_-_a_grande_tribulacao.html
+472dd3a4-6553-4a9b-b84d-67b820f1d5b8|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706817467_panorama.html
+76461876-68eb-47a5-8e61-4595d7cc36c7|Lição 01 - Deus e _Deuses_|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706834951_licao_01_-_deus_e__deuses_.html
+4c136c06-4181-4308-8b84-9c4810539ca7|Lição 04 - A Existência de Deus Afirmada|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706835888_licao_04_-_a_existencia_de_deus_afirmada.html
+308d7928-9d2f-473a-ad8c-312b58e0b97e|Lição 07 - Os Atributos Morais de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706836791_licao_07_-_os_atributos_morais_de_deus.html
+9bdb6959-2f1c-4bd9-917f-f993f184845d|Lição 10 - Um Deus Trino e Autoexistente|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780706837785_licao_10_-_um_deus_trino_e_autoexistente.html
+089470e3-56c9-4414-9c28-304c6f5e1d10|Lição 01 - Os Anjos - Quem São e O Que Fazem|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707565155_licao_01_-_os_anjos_-_quem_sao_e_o_que_fazem.html
+cd1eb58d-f8b4-44a3-8e9a-9c3ac6078cba|Lição 02 - Duas Classes de Anjos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707565502_licao_02_-_duas_classes_de_anjos.html
+63c8c5c2-eba1-493c-bb86-1efed88267f1|Lição 03 - Os Anjos Eleitos ou Santos Anjos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707565815_licao_03_-_os_anjos_eleitos_ou_santos_anjos.html
+e780eb7c-5798-4c11-9a47-abaf6ea5aae1|Lição 04 - Antropologia Bíblica|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707566159_licao_04_-_antropologia_biblica.html
+d3b478c9-9f92-4bc8-9e17-f1c4b716c9f6|Lição 05 - O Homem Criado à Imagem e Semelhança de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707566555_licao_05_-_o_homem_criado_a_imagem_e_semelhanca_de_deus.html
+7c0c1115-2d7f-421e-b753-2fa863ac3d4b|Lição 06 - A Mordomia do Corpo e da Alma|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707566865_licao_06_-_a_mordomia_do_corpo_e_da_alma.html
+05804844-331c-42ca-ae26-e0971637a9ad|Lição 07 - A Mordomia do Espírito Humano|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707567172_licao_07_-_a_mordomia_do_espirito_humano.html
+c71a646c-34e4-4668-846f-a615df281f38|Lição 10 - A Universalidade do Pecado|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707568287_licao_10_-_a_universalidade_do_pecado.html
+7194d338-47b3-41d7-819d-d51c2f8f0678|Lição 03 - Abraão, Isaque e Jacó|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707592505_licao_03_-_abraao__isaque_e_jaco.html
+7fe7b81c-26db-4d78-b322-292066b8fea9|Lição 06 - O Livro de Josué Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707593518_licao_06_-_o_livro_de_josue_segunda_parte.html
+37776c58-ba10-4115-8709-a7d7d271739a|Lição 09 - A História de Saúl e Davi|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707594714_licao_09_-_a_historia_de_saul_e_davi.html
+4b164d15-88c9-465b-95ed-69e19bedc5df|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709223110_04_licao_04.html
+ae766409-929e-4bcf-a464-db6acee26c66|Lição 08 - O Homem no Paraíso|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707567604_licao_08_-_o_homem_no_paraiso.html
+ed490dc8-436d-4fe5-8268-fe7f97414d7f|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707568572_panorama.html
+431ad1d5-eeb7-423e-a6d2-3909199fca55|Lição 01 - De Adão ao Dilúvio|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707591716_licao_01_-_de_adao_ao_diluvio.html
+b6165359-069d-491c-943f-a945a5f2cac1|Lição 04 - Israel no Egito e no Deserto|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707592847_licao_04_-_israel_no_egito_e_no_deserto.html
+f118bbc1-a4a9-4ef9-bbe2-a97bcae56ce1|Lição 07 - O Livro de Juízes|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707593889_licao_07_-_o_livro_de_juizes.html
+f0ec337c-b083-423f-8a25-cfe50ec86484|Lição 10 - Os Últimos Livros Históricos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707595105_licao_10_-_os_ultimos_livros_historicos.html
+ddaef9a2-20c5-4d13-b38b-59a7ef653d85|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709224550_08_licao_08.html
+923eb64e-3b79-4a35-ada2-c6103005addb|Lição 09 - O Homem Fora do Paraíso|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707567989_licao_09_-_o_homem_fora_do_paraiso.html
+ca406dab-9d14-4784-be0e-d97a173c3900|Lição 02 - O Período Pós-Diluviano do Dilúvio a Abraão|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707592150_licao_02_-_o_periodo_pos-diluviano_do_diluvio_a_abraao.html
+3547d184-e8a6-45c4-ace4-2498e21bfb3e|Lição 05 - O Livro de Josué Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707593182_licao_05_-_o_livro_de_josue_primeira_parte.html
+c7e346f9-8930-49eb-97d8-a9dcb95925b7|Lição 08 - As Histórias de Rute e de Samuel|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707594269_licao_08_-_as_historias_de_rute_e_de_samuel.html
+35da4e4b-0149-41ed-bd6b-5b6daadcc874|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707595426_panorama.html
+a99b2368-8065-4e08-85de-e7ff4a137105|Lição 01 - Roboão - O Sucessor de Salomão|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707644576_licao_01_-_roboao_-_o_sucessor_de_salomao.html
+22a680dd-37a4-4403-844a-f0f0bbf5885c|Lição 02 - Jeroboão - O Fundador de Uma Nova Religião|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707645267_licao_02_-_jeroboao_-_o_fundador_de_uma_nova_religiao.html
+dba813cd-5144-40fb-8d8d-d95781bb9b6b|Lição 03 - O Reino do Norte Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707645649_licao_03_-_o_reino_do_norte_primeira_parte.html
+4ce01580-7585-4b32-aca3-e64e147e0137|Lição 04 - O Reino do Norte Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707646124_licao_04_-_o_reino_do_norte_segunda_parte.html
+ad4ddafc-3cdf-4594-9a76-a213b1036acd|Lição 05 - O Profeta Elias Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707646430_licao_05_-_o_profeta_elias_primeira_parte.html
+7371c481-41cf-4621-a66f-630aabe94219|Lição 06 - O Profeta Elias Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707646767_licao_06_-_o_profeta_elias_segunda_parte.html
+278b6514-2a94-44a5-a8d1-d3e5cc6c0a91|Lição 07 - O Reino de Judá ou Reino do Sul e Seus Reis - Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707647059_licao_07_-_o_reino_de_juda_ou_reino_do_sul_e_seus_reis_-_primeira_parte.html
+574857aa-66ce-4446-a497-cf66ba185866|Lição 08 - O Reino de Judá ou Reino do Sul e Seus Reis - Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707647450_licao_08_-_o_reino_de_juda_ou_reino_do_sul_e_seus_reis_-_segunda_parte.html
+fca3d925-21cc-49a2-bff8-b623ea027aa7|Lição 09 - Do Rei Josias Até o Cativeiro|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707647913_licao_09_-_do_rei_josias_ate_o_cativeiro.html
+f3875397-8e27-4e32-b609-c48c40755e5d|Lição 10 - Do Pós-Cativeiro Aos Nossos Dias|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707648267_licao_10_-_do_pos-cativeiro_aos_nossos_dias.html
+3327260a-d861-46cd-97f4-e91399de2678|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707648692_panorama.html
+e0241193-42bf-4fe6-a9e8-fbe5fc4a8c17|Lição 01 - O Livro de Jó - Uma História Real|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707673661_licao_01_-_o_livro_de_jo_-_uma_historia_real.html
+adff4f1b-4bba-41bf-b671-90f404430891|Lição 02 - O Primeiro Desafio de Satanás|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707674057_licao_02_-_o_primeiro_desafio_de_satanas.html
+ea33ed06-4926-464a-8d1a-018eb98833fe|Lição 03 - O Segundo Desafio de Satanás|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707674391_licao_03_-_o_segundo_desafio_de_satanas.html
+ea59df2f-d4b0-4ef0-a74e-fab41df423b2|Lição 04 - O Pensamento Teológico dos Amigos de Jó|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707674715_licao_04_-_o_pensamento_teologico_dos_amigos_de_jo.html
+c3b7e3ff-cebd-4a5f-ab32-4696b03751e9|Lição 05 - Jó - Provado por Satanás e Aprovado por Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707675093_licao_05_-_jo_-_provado_por_satanas_e_aprovado_por_deus.html
+a1539bc0-9f88-4058-9394-5b896133b545|Lição 06 - Considerações Gerais Sobre o Livro de Salmos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707675579_licao_06_-_consideracoes_gerais_sobre_o_livro_de_salmos.html
+81d3f84f-3aee-4bfb-8123-a08a818888cd|Lição 07 - Davi e Jesus - Os Dois Personagens Principais do Livro dos Salmos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707676042_licao_07_-_davi_e_jesus_-_os_dois_personagens_principais_do_livro_dos_salmos.html
+75013842-b38d-4c12-a743-d2abe079593b|Lição 10 - Os Salmos da Lei, Os Didáticos E Os do Louvor|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707677211_licao_10_-_os_salmos_da_lei__os_didaticos_e_os_do_louvor.html
+0e752ec9-0d41-417a-9cd2-a7d3ba4017df|Lição 03 - O Livro de Provérbios Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707700888_licao_03_-_o_livro_de_proverbios_primeira_parte.html
+9ee20df2-dfe8-4117-9c84-cac9646173c2|Lição 06 - Provérbios Sobre Assuntos Diversos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707702120_licao_06_-_proverbios_sobre_assuntos_diversos.html
+c592c8c5-bcca-4348-844f-e385236e5933|Lição 09 - Cantares de Salomão Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707703499_licao_09_-_cantares_de_salomao_primeira_parte.html
+940d3b54-8767-44cc-b315-e58c4515009d|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709200495_09_licao_09.html
+854bbf7b-46cc-4461-a746-677dd74dd4db|Lição 08 - Classificação dos Salmos Primeiro Grupo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707676450_licao_08_-_classificacao_dos_salmos_primeiro_grupo.html
+1a0b7932-49d2-49b5-b7c7-fae2a375f0a7|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707677732_panorama.html
+09cb30ed-f1b5-4069-96c8-565e6dd26971|Lição 01 - Considerações Sobre Salomão Autor dos Livros - Provérbios, Eclesiastes e Cantares|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707700088_licao_01_-_consideracoes_sobre_salomao_autor_dos_livros_-_proverbios__eclesiastes_e_cantares.html
+9aa67ec4-a3e5-4410-a8a8-6459b95cbc20|Lição 04 - Instruções aos Jovens Conselhos Paternos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707701193_licao_04_-_instrucoes_aos_jovens_conselhos_paternos.html
+82c07cbf-d569-4c0b-87cc-7f6751f22ba9|Lição 07 - O Livro de Eclesiastes Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707702417_licao_07_-_o_livro_de_eclesiastes_primeira_parte.html
+e4a02b3e-bba3-4286-af74-848b066beac5|Lição 10 - Cantares de Salomão Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707704077_licao_10_-_cantares_de_salomao_segunda_parte.html
+5b8f7cb2-6899-4f90-84a1-15ef7f479015|Lição 09 - Salmos Imprecatórios, De Penitência E De Gratidão|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707676837_licao_09_-_salmos_imprecatorios__de_penitencia_e_de_gratidao.html
+2453b488-3e62-4a61-aa92-708a025c89b2|Lição 02 - A Vida de Salomão – Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707700427_licao_02_-_a_vida_de_salomao___segunda_parte.html
+6be26098-3f0e-4daa-971e-a1776ca8bf1a|Lição 05 - A Sabedoria, A Loucura e os Diversos Contrastes|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707701597_licao_05_-_a_sabedoria__a_loucura_e_os_diversos_contrastes.html
+afa2153f-244a-4cb0-a190-6cfa8df8195e|Lição 08 - O Livro de Eclesiastes Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707702730_licao_08_-_o_livro_de_eclesiastes_segunda_parte.html
+2a389178-702b-4b57-9eb1-b5959e4d0825|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780707704490_panorama.html
+3d8ce808-a871-4762-bece-ae81e5f34a4c|Lição 01 - Considerações Preliminares|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708037993_licao_01_-_consideracoes_preliminares.html
+6e947180-9478-4e85-8f59-fdcfe5203b9a|Lição 02 - O Catolicismo Romano|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708038322_licao_02_-_o_catolicismo_romano.html
+49f5c38e-5f52-4626-b3f4-37bdeee506df|Lição 03 - Os Sete Sacramentos da Igreja Católica Romana|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708038627_licao_03_-_os_sete_sacramentos_da_igreja_catolica_romana.html
+28242fff-789a-4ca3-87a2-e0166703000f|Lição 04 - Idolatria|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708038879_licao_04_-_idolatria.html
+5424b3c4-b830-49c1-940d-185acdee5829|Licao 05 - Espiritismo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708039177_licao_05_-_espiritismo.html
+47e3230a-7b1c-438e-a5fc-db5d707b17c3|Lição 06 - O Mormonismo|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708039486_licao_06_-_o_mormonismo.html
+5579abbb-e06c-4f25-bde7-1a06a4eb554f|Lição 07 - As Testemunhas de Jeová|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708039814_licao_07_-_as_testemunhas_de_jeova.html
+5bb0e073-630f-4dc9-9630-67adbc70cad5|Lição 08 - A Heresia da Teologia da Prosperidade|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708040097_licao_08_-_a_heresia_da_teologia_da_prosperidade.html
+29cbc961-fe01-402f-b82c-f30049bdf528|Lição 09 - Nova Era - Primeira Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708040527_licao_09_-_nova_era_-_primeira_parte.html
+52d8c21f-ee97-4074-b148-5073431e5bfb|Lição 10 - Nova Era - Segunda Parte|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708040816_licao_10_-_nova_era_-_segunda_parte.html
+5c8d6056-c2de-4b11-85a0-9bbd198ba6a5|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780708041065_panorama.html
+3bde0d89-e782-42a8-ace8-96ffbc84b179|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708886366_06_licao_06.html
+88fdc939-a794-4bd8-90cd-9e0cb296f046|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709222499_02_licao_02.html
+5e6ca959-25be-47b3-95cf-0ca2fce9511b|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708887469_09_licao_09.html
+8b64af22-7b37-4f20-975e-e46bd37bc126|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708887738_10_licao_10.html
+f7801ee7-2b26-4a4f-913a-06d938f6caf5|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708919521_02_licao_02.html
+36800466-b73b-4304-bbe3-aa07178ab01a|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709118816_01_licao_01.html
+726f7d06-ec94-4891-8536-0964e0fcd576|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708922014_08_licao_08.html
+985daff1-0e67-42e4-b9fa-7435e6c7f27e|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709147295_10_licao_10.html
+bd6f1b6c-5514-4200-95cd-77fbd7226c0d|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709198650_05_licao_05.html
+e658af77-09c3-4638-abf3-ea5a7a9c3236|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709225329_10_licao_10.html
+b3090b03-1857-4a98-9223-c3f12f256a43|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709277885_08_licao_08.html
+c4eeb9bf-5d23-48fb-b5e6-f2eaf71b3047|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709171999_01_licao_01.html
+affe7aac-1396-491d-ae30-96c67800de54|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709198973_06_licao_06.html
+96c4d7c4-6f3e-4a4e-92a5-3b4b4db2a029|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709251250_01_licao_01.html
+401e5918-a215-47ea-ae90-73885d91a3dc|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709277353_06_licao_06.html
+d9418fe8-aaa2-484a-ba7b-9af8085f1946|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709223617_06_licao_06.html
+24b7cd30-c120-4bb0-9ae7-befc0b11d204|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709172472_02_licao_02.html
+5633450b-3b6d-4343-8901-0073fb4ad507|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709199265_07_licao_07.html
+f2c5ecd6-defd-4821-b051-b1575c9ddf3b|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709252537_05_licao_05.html
+0b26869d-5737-4fc4-a740-4caa20a8f06b|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709277612_07_licao_07.html
+4c36e999-2771-46b5-9535-3da3ccf607d5|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709251892_03_licao_03.html
+1bb74750-201a-42da-a872-ed1ed660921f|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709328476_05_licao_05.html
+de9b6d22-475d-4553-93b4-d9ffde003755|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709329904_10_licao_10.html
+7ca28096-a029-474f-8a54-8e68d9f245d9|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709366191_05_licao_05.html
+386f78fd-9170-40b3-ba98-ce40573fe86f|10_licao_010|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709367620_10_licao_010.html
+661eacab-8ace-472c-a710-9d5d3108d959|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709253287_07_licao_07.html
+17557e0f-3c40-4a81-974b-9070bb410048|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709415595_08_licao_08.html
+51eceac3-6e99-4c1d-84ef-bd33a5299195|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709485977_04_licao_04.html
+aa61676b-6522-4818-b8d6-afa3933c1c05|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709512593_09_licao_09.html
+f1ce9582-2db6-4ae8-b3be-7de77fa97263|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709586402_05_licao_05.html
+ca9f7cb1-77c7-4965-be14-71c6a975d356|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709224138_07_licao_07.html
+b114b3ac-4cfa-495f-949a-da5343349818|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709415972_09_licao_09.html
+5d8a65a2-23d5-4b32-b5a4-4301c08e39c3|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709437440_02_licao_02.html
+8a27c9a4-3137-476e-89ba-a760cdcb6cc8|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709438310_05_licao_05.html
+56730d95-45cb-472d-b207-243231de87d0|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709439352_08_licao_08.html
+36069bbd-f4c7-46b3-af6b-93f466607e22|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709252197_04_licao_04.html
+74d2b23a-224c-4926-9244-224a87a3afd9|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709485413_02_licao_02.html
+aa6d4460-7131-4b28-807a-017b09555bc1|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709510223_01_licao_01.html
+79fe5812-b501-4d37-b4a8-422972787f50|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709512305_08_licao_08.html
+405f4533-e368-4804-905e-eb40cf5a6d88|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709584976_01_licao_01.html
+39474863-1b36-4703-8b3c-d9dd77d32d6d|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709586083_04_licao_04.html
+980e922f-6237-4a51-bf60-4ee58f6fe759|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709587054_07_licao_07.html
+3dc2be47-8e65-488b-ad74-7112c05748c2|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709634936_02_licao_02.html
+71c73097-29dd-4d21-8e8b-2661a11ff16f|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709587717_09_licao_09.html
+a559027c-7da5-403f-b296-7b574efb4076|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710033289_02_licao_02.html
+be5b4ad0-da55-4d23-b6be-06a48091f090|Lição 01 - Conceitos e Generalidades|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709801612_licao_01_-_conceitos_e_generalidades.html
+b2c3c832-3546-45c2-84d0-1e79efdbbbd7|Lição 02 - Gozo no Sofrimento|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709801984_licao_02_-_gozo_no_sofrimento.html
+5c3e9eda-f6c5-4149-9287-f86cbe5413ca|Lição 03 - A Prática da Palavra de Deus|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709802295_licao_03_-_a_pratica_da_palavra_de_deus.html
+6bdcca98-9f9b-49cb-937b-36db56e7b439|Lição 04 - Sabedoria - Paixões e Paciência|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709802673_licao_04_-_sabedoria_-_paixoes_e_paciencia.html
+80d38c69-9267-449c-abdb-5405cef21a1c|Lição 05 - Epístolas de Pedro|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709803037_licao_05_-_epistolas_de_pedro.html
+51aa3c9c-ed1b-423f-8358-cc3eacd3752b|Lição 06 - Modalidades de Relacionamentos Cristãos|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709803363_licao_06_-_modalidades_de_relacionamentos_cristaos.html
+c5cdc792-ff1c-4344-9feb-e43962dc65c7|Lição 07 - Segunda Epístola de Pedro|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709803677_licao_07_-_segunda_epistola_de_pedro.html
+edce15f2-d6b1-48b9-a4c1-a123f40461e0|Lição 08 - Primeira Epístola de João|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709803990_licao_08_-_primeira_epistola_de_joao.html
+9490d621-8556-408b-becc-b33124b0a05e|Lição 09 - Segunda e Terceira Epístolas de João|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709804335_licao_09_-_segunda_e_terceira_epistolas_de_joao.html
+10f428bf-9567-4444-8842-027610ca74c3|Lição 10 - A Epístola de Judas|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709804693_licao_10_-_a_epistola_de_judas.html
+d50f5ab6-8e08-42fa-85f2-c85a2d62c684|Panorama|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/licoes/1780709805160_panorama.html
+c081616c-6610-4f73-b09d-0c1c834e0390|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710035070_07_licao_07.html
+1911180b-3af8-4aad-bf37-42354877419e|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710036620_10_licao_10.html
+ed560234-7db5-46d7-be9d-1cebe3cfef31|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709636459_07_licao_07.html
+942094b0-5cda-4dfb-9d39-f1032ab6e988|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710034070_04_licao_04.html
+80d2e823-ed7e-4cf8-b31c-801ab01c804d|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710034380_05_licao_05.html
+ffa004a6-1035-4433-aaef-4e17e6d00fca|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710035887_08_licao_08.html
+31328283-5cba-4104-9bfd-8bb7434df1fe|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710129761_04_licao_04.html
+749b05de-06c2-4656-93c2-52ec1c434790|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710131215_09_licao_09.html
+803feb73-b43d-4c97-87e0-00a72dba6bc0|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710102879_05_licao_05.html
+63f8bf4d-a783-4a54-8a21-9d4610f2628e|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709636707_08_licao_08.html
+c6ac72c6-0e55-438c-b686-9a9e87f908a9|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710032739_01_licao_01.html
+ce269e0c-8be3-4d91-81f8-81a387382f24|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710170623_04_licao_04.html
+20218705-8885-43df-b8fd-adcb28892df8|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710172499_10_licao_10.html
+72bcaa2e-6b1b-4ec0-99b3-7d29f779c54b|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710171745_08_licao_08.html
+a9b829e8-f778-48a4-9f51-e0c570d6e0f2|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709085085_01_licao_01.html
+02b8d65f-ebc2-4708-8684-c687f1c7425e|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709636952_09_licao_09.html
+514eab67-0e9d-4446-bcbe-ad06e2e32a42|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710194025_04_licao_04.html
+789e7938-548d-439d-b3e4-b122d23d4fd5|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709086578_06_licao_06.html
+11523f10-ecae-4adf-96cd-928d9f33db52|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710172199_09_licao_09.html
+e098d539-a439-4a80-9a73-b5fd1ebbede6|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709087846_10_licao_10.html
+b4b3f3ad-67a2-4756-af00-bc149d01f703|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710034768_06_licao_06.html
+dc104dc9-651d-46cc-ad71-f9fe267515fe|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709253707_08_licao_08.html
+facfd97a-6b1f-4060-a28f-30135127251d|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709275669_01_licao_01.html
+54847a9b-f6e8-4d98-b872-eccdbc7e416f|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709085692_03_licao_03.html
+7383815b-f609-4bd1-babe-b452f6dca5f7|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709085997_04_licao_04.html
+8da822d3-b79e-439c-b921-a03f5d33a23f|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709087294_08_licao_08.html
+cd7c7513-9db2-4c7c-b0ab-a1bedcd34ccb|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708885185_02_licao_02.html
+7ef4abd3-f448-405d-abb9-6929d88e1998|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708919857_03_licao_03.html
+5062b124-4929-4fd4-b843-679121057f2f|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705373115_09_licao_09.html
+4736fe71-41e5-4c60-a556-43062f31d125|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709277063_05_licao_05.html
+0c3de3cb-633b-4872-a077-422533278381|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705370425_01_licao_01.html
+40dd786d-3a6d-4df2-b9d6-a0f67ab04336|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708885461_03_licao_03.html
+cdbd8d4f-e606-4c16-ab15-1250407dec18|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705370966_02_licao_02.html
+2386959d-7cdf-4866-b1b1-dbdeeae4197b|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705372109_06_licao_06.html
+232cba3d-f64c-4860-8076-5e2827afa760|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705373434_10_licao_10.html
+3fee9e55-875a-4271-93ed-19e566df5062|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709301964_08_licao_08.html
+283f8b18-6c36-4e8a-98d6-0ab06e3a0684|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709326890_01_licao_01.html
+f9c2a901-1829-46df-9a0f-d27e3447a88f|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709329640_09_licao_09.html
+fe04d0b4-d90d-41ff-bc49-be6c0477e23d|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709365017_02_licao_02.html
+feb044f3-a023-40c3-9803-019495a32bd3|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709366531_06_licao_06.html
+01610fac-eb90-42d1-96c5-e589ee39e63b|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709327256_02_licao_02.html
+db05f152-6382-4a1c-a200-271b88a6ad15|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709328824_06_licao_06.html
+95fc17fb-4ec1-4bd3-b7e2-f7b25e95162e|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709365456_03_licao_03.html
+5fbb69f0-98b4-4445-b68e-7c4662b709df|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709366808_07_licao_07.html
+44f10a63-2fbc-47ef-858e-1537cf884375|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708885771_04_licao_04.html
+7ef6ef76-9327-468e-b243-41b9f8a6ea76|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708887186_08_licao_08.html
+1f632e47-e32b-45c3-b7de-37f7075813a7|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710036250_09_licao_09.html
+a6a10f55-7833-409f-90c3-f684a49550ef|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708884835_01_licao_01.html
+1d147ced-0ccb-4ae7-8126-2ed1bf3c689d|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708886070_05_licao_05.html
+826fa1bf-3e1a-4aa5-98d7-eebe7424cabb|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705371544_04_licao_04.html
+7152f9dc-31f1-446e-9325-5137d4dc982a|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780705372779_08_licao_08.html
+cad16961-2b86-4979-9fce-a2a829764892|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709414467_04_licao_04.html
+fd536205-4464-4905-882c-99fee4dd7934|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708886652_07_licao_07.html
+89442814-c619-4332-adb9-5d97f157310f|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708920163_04_licao_04.html
+904f52c4-3b77-489c-9697-f27547849655|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709086299_05_licao_05.html
+9cfa890c-e576-4025-a7f4-6a7b5aba0176|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709087566_09_licao_09.html
+9974442c-3407-457a-916d-7a0d7dda1897|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708919138_01_licao_01.html
+2f375e22-7aad-4b85-abc8-3e9da6b37841|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708920470_05_licao_05.html
+aac6b96d-116b-4936-87c0-3f19207aad4f|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708922286_09_licao_09.html
+c4e69c87-33c9-4b9a-8ced-09188dd8b694|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709085413_02_licao_02.html
+7cefad23-cbb0-4f71-9967-c5a5f24547af|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708921136_06_licao_06.html
+c808e04c-2072-4a44-9e12-cfad743dc0c5|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780708922600_10_licao_10.html
+ec3c7611-bcea-4b89-961c-d89d7996647a|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709086923_07_licao_07.html
+3b1ea54c-5449-4d41-b144-d1d1adf7d4a3|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709119703_04_licao_04.html
+66a8bb64-ad18-45a0-8d99-eb1ac0acb673|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709119069_02_licao_02.html
+e2a2721f-7207-4cb2-906e-0fd90f3e7bf9|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709120311_06_licao_06.html
+b008510f-4a9f-4418-82bc-7dbd7b7ef397|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709121353_10_licao_10.html
+f4ff4e6e-df94-4281-bc2f-09d93c865887|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709145125_03_licao_03.html
+40784079-76bf-4f58-a377-e5f3bf8755c3|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709119318_03_licao_03.html
+2d207fe8-48be-40f3-8475-899c01b9edb3|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709120576_07_licao_07.html
+06db860a-627b-46e6-bfdf-669fcfd69eb0|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709145435_04_licao_04.html
+b68c19a8-d685-4ca5-89ff-15e9f5e88783|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709146678_08_licao_08.html
+ddf934f3-3779-40f4-930a-c6c46dc2307f|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709120839_08_licao_08.html
+d7117675-ad65-4134-988f-d3b6d474d9f3|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709144520_01_licao_01.html
+72392dae-a65e-45c7-9fd6-3d98f531429c|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709145811_05_licao_05.html
+4828aa14-923a-4f8c-b624-23c6f601ef63|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709147019_09_licao_09.html
+610faa81-b5bb-42f5-9b9a-37fd2196bf66|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709146431_07_licao_07.html
+51664b88-66b1-4dcd-8c49-bfee3b002ebd|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709173279_04_licao_04.html
+e2b1d1f3-e931-417c-8eae-3d4badd5bde9|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709174616_08_licao_08.html
+0ce1bf7f-d794-4c3c-b20e-17f7128ae852|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709197035_01_licao_01.html
+4c07b5fa-e548-4c81-b798-96a5614abc8f|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709327642_03_licao_03.html
+18cf713c-007c-4d05-b774-90b7819373ec|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709172977_03_licao_03.html
+e4cd2d7a-812b-42b0-9f48-6379ff348786|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709174315_07_licao_07.html
+3795c158-4c13-4160-8102-a87e264f180e|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709198168_04_licao_04.html
+f2c0143c-69ab-40b4-b157-9d0623bafbae|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709200177_08_licao_08.html
+f0e1b262-9f5a-4f17-81d8-8ef5d48887fb|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709222201_01_licao_01.html
+580cc5bd-18ee-47bd-ae98-ac465e44fc57|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709223389_05_licao_05.html
+b725b8e2-9703-466d-98a3-dc2a8761baaf|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709224912_09_licao_09.html
+fb8ce5c5-a189-4a56-93fb-72a0c8a1f4ef|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709251572_02_licao_02.html
+b8d124fb-a053-4b03-b465-4943f03d50a4|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709252910_06_licao_06.html
+27601421-8c42-4346-804d-7b94405336b1|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709254294_10_licao_10.html
+b9cfe9a4-db1e-419a-87a0-decedfcb4549|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709276364_03_licao_03.html
+48fa8a82-0e71-4f40-b2fa-22ab2c3d6556|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709300566_04_licao_04.html
+d63ad1c9-b336-4758-8f61-177254801493|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709254025_09_licao_09.html
+3d44b621-2f15-49f6-8abb-ff0dadf6b92e|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709276059_02_licao_02.html
+cf9c3aeb-b8c9-4939-8f33-7059e73713a1|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709278454_10_licao_10.html
+9cf7bb27-9b4b-42b6-9d54-8d450919ba37|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709300255_03_licao_03.html
+6d063a17-f1b4-48ee-a804-d31930231627|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709276776_04_licao_04.html
+73b273ee-e137-4583-ac05-255508e7477d|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709299700_01_licao_01.html
+7cc58130-78b7-499b-9243-146ccdb2733d|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709301134_05_licao_05.html
+34a03733-582f-4bb4-9b6c-58b398fded07|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709302273_09_licao_09.html
+e69e9f29-4eda-42d5-9534-f22c81f61485|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709278174_09_licao_09.html
+1e690953-308d-4bc7-bdbc-6228a2fafe5a|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709299980_02_licao_02.html
+f16bfae1-ca6e-4c12-9953-7360ba4dce11|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709301433_06_licao_06.html
+cd142163-e9c5-4a81-8291-439de48eedc7|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709302520_10_licao_10.html
+c0ee8027-efe6-43bc-b5bc-889db9fcf22a|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709301721_07_licao_07.html
+40f05d16-43a7-45e3-a64f-f77ca8c8d240|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709328021_04_licao_04.html
+1be9c209-674a-4dab-93c7-a30624bbf258|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709329406_08_licao_08.html
+116baf69-8d70-46de-a02d-946c5678d629|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709364724_01_licao_01.html
+14aa4112-a9c4-42bc-9b80-4f57431812d6|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709329105_07_licao_07.html
+00f3de9d-fa4b-46c5-a817-d9206e6c5f49|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709365721_04_licao_04.html
+c368c966-6e93-4dcd-80ad-05a6a56db64d|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709367106_08_licao_08.html
+39e1bf85-10c1-46f6-8bd2-44ce2b383cae|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709413566_01_licao_01.html
+8d9a349e-34e0-486b-81dd-450e72e357ce|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709367346_09_licao_09.html
+bd464bb4-fbb0-424e-8865-f1e4bde763d7|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709413935_02_licao_02.html
+aeb8701b-b21e-47d0-a9f1-39fd5a7cf4b7|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709415061_06_licao_06.html
+bcf826da-d582-4e3c-826a-2e6496db2e05|10_licao_010|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709416483_10_licao_010.html
+e2372baf-a49e-45be-80ea-1e8483c891bf|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709437754_03_licao_03.html
+985d7f01-b0b3-4eee-ae59-9efea09b460b|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709414183_03_licao_03.html
+af8e35d5-086c-4ff7-ac99-145887d4044e|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709415332_07_licao_07.html
+a7bb7e99-d3dd-415b-a4dc-230a1eb1655c|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709438038_04_licao_04.html
+acf4bbd4-0977-46c4-a639-c2467b3d86f3|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709484929_01_licao_01.html
+c026a06f-4b01-462c-b9f2-61d44f902a82|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710130940_08_licao_08.html
+cb59027e-98c3-4b00-bbea-e090ace24912|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709414781_05_licao_05.html
+de1668ce-9942-41ef-8368-fd3005640317|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709438574_06_licao_06.html
+33ca7fa8-8cac-4961-873a-b0150943183e|10_licao_010|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709439932_10_licao_010.html
+f948394a-a633-41d6-b080-993f77791847|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709485696_03_licao_03.html
+28e64491-00a6-4db7-be39-a20e137dbcfb|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709437075_01_licao_01.html
+a3d9f000-4ca8-46f9-bddb-e2fac4829728|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709439667_09_licao_09.html
+7d0e0b4f-7923-4cbb-bfe6-4dacae2290ce|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709486547_06_licao_06.html
+afd81fa3-ff62-4924-bd12-21648a0cb6d1|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709487842_10_licao_10.html
+4dedc00e-5d2a-4898-bc9d-303819071408|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709438873_07_licao_07.html
+7115fdb6-b362-4504-ad62-831abbe0432f|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709487206_08_licao_08.html
+8c409c1e-ea51-4424-b039-441d0770837c|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709511350_05_licao_05.html
+43744421-121f-443c-9ee5-3bdd0b13506d|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709559873_02_licao_02.html
+7d27bb89-f3c9-4f75-afaf-d68086867e4d|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709486274_05_licao_05.html
+a55a787a-d8fc-4b54-a80f-51b825ec6d1e|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709487625_09_licao_09.html
+a29ff078-ad81-48a5-b775-f1e4a4a39e7c|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709510528_02_licao_02.html
+d080130c-3b77-4b24-9bfe-3420a7b42e13|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709511706_06_licao_06.html
+61f6625b-471d-41d0-999b-685b895bcdd1|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709486884_07_licao_07.html
+3737e4e2-6c7c-4217-82a9-72a14ceb621e|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709511097_04_licao_04.html
+53da0d61-f889-44f6-9b24-e64a033d0236|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709559607_01_licao_01.html
+f0c47c8c-a3ed-45a9-a0cc-312071e602b2|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709560779_05_licao_05.html
+6373c2eb-4ace-4e69-bfc0-af094861b015|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709510782_03_licao_03.html
+11dcd089-9f95-4741-934e-ba277a4050cb|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709512022_07_licao_07.html
+f2a6fb9e-8064-4ada-a0f0-4c1194278ff3|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709560525_04_licao_04.html
+f5a261a7-d6bc-4a98-aa35-73706278c809|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709561765_08_licao_08.html
+43069502-9210-4d04-99a7-bb3ae62bfa49|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709512861_10_licao_10.html
+be65f8d5-f9fe-4d0f-909d-9861c603102d|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709560144_03_licao_03.html
+15530058-0a3c-4be5-a4db-80cf575802fb|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709587340_08_licao_08.html
+640707b1-9d07-46be-8277-1cd3d33732fc|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709634643_01_licao_01.html
+f035666f-6eaa-4335-871c-40036d8289c2|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709561024_06_licao_06.html
+d666af0f-da6c-4d25-abfc-e786d90cda68|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709562096_09_licao_09.html
+9826e280-5a34-47da-bbd2-18f8f6cf280e|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709585235_02_licao_02.html
+48860199-1940-4979-ad34-65c3dc2c68a9|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709562494_10_licao_10.html
+25453621-be32-4eaa-ae28-8bf895b291d2|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709585743_03_licao_03.html
+8a670b3e-7410-47cf-a0b3-e6c2b54c40b5|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709586782_06_licao_06.html
+7884761a-e4a2-4406-8129-aa69b455be74|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709587972_10_licao_10.html
+1452972c-869f-4b25-b812-7d4391ad5aff|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780709635240_03_licao_03.html
+da341808-32bd-4717-baae-52d1b83265cf|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710128324_01_licao_01.html
+a3c69134-21f9-4da7-b9c4-6ffb02bf2524|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710130081_05_licao_05.html
+bfd37016-d0fc-4efe-9671-4af40ae4510c|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710101847_02_licao_02.html
+89d3fbf4-1f42-4de1-9609-cad928aca1da|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710103213_06_licao_06.html
+bc2150bf-56c1-4344-b633-3ea5474ad6e3|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710128668_02_licao_02.html
+50adae89-4223-43e4-a6b0-dabcc692ef6f|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710130387_06_licao_06.html
+3e135ab4-8022-4919-b26b-1c4ce9282c29|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710131543_10_licao_10.html
+e0972413-c2fb-4021-8bb0-b7c602e6b03b|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710102188_03_licao_03.html
+ecaf2f8f-c205-4107-b38b-c802b937cca5|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710101506_01_licao_01.html
+3157d3d6-4b87-4d57-81b3-9244b3f3cf12|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710104726_09_licao_09.html
+d278dd28-b48d-4185-889d-fc7ae78905ab|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710170072_02_licao_02.html
+52f5683b-7f0c-41a7-84b5-ee68ba646496|06_licao_06|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710171124_06_licao_06.html
+54493c1b-1465-4b39-b143-79c970817a87|04_licao_04|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710102503_04_licao_04.html
+98c68856-f1c4-49a7-88a2-563f829fd91c|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710104087_08_licao_08.html
+d758a11b-236f-4682-93f5-ddf1b938058c|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710170859_05_licao_05.html
+420d3f0e-1983-479d-a277-53e2e6b55be6|02_licao_02|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710193274_02_licao_02.html
+4fd2543c-0111-468b-97fc-73f2a7fefdb2|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710103822_07_licao_07.html
+00752a77-33f0-4e4d-a70d-4d879481f25c|01_licao_01|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710192910_01_licao_01.html
+363b8645-e816-4103-9575-f6f85f2d45f0|05_licao_05|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710194370_05_licao_05.html
+2ca1d6a9-1126-4835-9225-bd5b0fdbebd8|09_licao_09|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710195404_09_licao_09.html
+a808093f-08f5-44a3-8676-51cc66f44d3f|10_licao_10|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710105062_10_licao_10.html
+bc3bda8a-5b27-4c02-ab72-1850affd4179|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710170305_03_licao_03.html
+f680e91e-6134-4ca7-bb7c-87e593d502e0|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710171425_07_licao_07.html
+2d011419-58ce-49f5-9197-c2260a160455|08_licao_08|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710195167_08_licao_08.html
+36711d9a-e934-4704-a45c-dd0c91516127|03_licao_03|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710193538_03_licao_03.html
+45aec8cc-9399-411b-830c-556ef0c2c15e|07_licao_07|https://jhqnitdmdlbagnfwwrwx.supabase.co/storage/v1/object/public/livros/exercicios/1780710194884_07_licao_07.html

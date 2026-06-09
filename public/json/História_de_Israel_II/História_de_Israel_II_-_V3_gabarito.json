@@ -1,0 +1,134 @@
+{
+  "id": "HISII_3",
+  "title": "História de Israel 2 - V3",
+  "tfQuestions": [
+    {
+      "id": "hisii3-tf-1",
+      "question": "Quase todos os Reis do Sul fizeram o que era mau aos olhos do Senhor.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii3-tf-2",
+      "question": "Tanto Roboão como também Jeroboão tinham chamada e promessas de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii3-tf-3",
+      "question": "A promessa de Deus, hoje, aos seus filhos, é dar-lhes o céu e não a terra.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii3-tf-4",
+      "question": "Cumprindo ordens de Deus recebidas no Monte Horebe, Elias ungiu Jeú como rei.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii3-tf-5",
+      "question": "Assim como aconteceu no tempo de Jó, Satanás poderia fazer uso do fogo no Monte Carmelo.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii3-tf-6",
+      "question": "A mais dura mensagem ao Rei Acabe foi entregue por Elias após o episódio do Monte Carmelo.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii3-tf-7",
+      "question": "Sabemos que Zacarias, neto de Ido, foi morto por ordem do Rei Joás.",
+      "answer": "F"
+    },
+    {
+      "id": "hisii3-tf-8",
+      "question": "O Rei Manassés desprezou os bons exemplos de seu pai preferindo repetir as maldades de seu avô.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii3-tf-9",
+      "question": "Cumprindo a profecia de Jeremias, o Rei Zedequias foi levado cego para Babilônia.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii3-tf-10",
+      "question": "Antes do arrebatamento da igreja, Israel não poderá dar frutos para Deus.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "hisii3-mc-1",
+      "question": "Mensageiro enviado pelo Rei Jeroboão ao Profeta Aías -",
+      "options": [
+        "Sua esposa",
+        "Seu filho",
+        "Seu mordomo",
+        "Todas estão erradas"
+      ],
+      "answer": 0
+    },
+    {
+      "id": "hisii3-mc-2",
+      "question": "Profetizou a morte do Rei Acabe -",
+      "options": [
+        "Eliseu",
+        "Elias",
+        "Micaías",
+        "Jeú"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisii3-mc-3",
+      "question": "No deserto, após comer e beber, Elias -",
+      "options": [
+        "Retornou a Samaria",
+        "Seguiu em direção ao Monte Horebe",
+        "Tornou a deitar e dormiu",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "hisii3-mc-4",
+      "question": "Rei morto por Jeú -",
+      "options": [
+        "Acabe",
+        "Jorão",
+        "Amazias",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "hisii3-mp-1",
+      "left": "Rei que destruiu o “altar de Betel”",
+      "right": "Josias"
+    },
+    {
+      "id": "hisii3-mp-2",
+      "left": "Rei punido por querer queimar incenso no altar",
+      "right": "Uzias"
+    },
+    {
+      "id": "hisii3-mp-3",
+      "left": "Rei que exercia as funções sacerdotais",
+      "right": "Jeroboão"
+    },
+    {
+      "id": "hisii3-mp-4",
+      "left": "Rei de Judá que derrotou o exército de Jeroboão",
+      "right": "Abias"
+    },
+    {
+      "id": "hisii3-mp-5",
+      "left": "Um profeta cego",
+      "right": "Aías"
+    },
+    {
+      "id": "hisii3-mp-6",
+      "left": "Rei que destruiu a “casa” de Jeroboão",
+      "right": "Baasa"
+    }
+  ]
+}

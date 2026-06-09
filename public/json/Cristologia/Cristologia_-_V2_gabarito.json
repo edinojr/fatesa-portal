@@ -1,0 +1,134 @@
+{
+  "id": "CRIS_2",
+  "title": "Cristologia - V2",
+  "tfQuestions": [
+    {
+      "id": "cris2-tf-1",
+      "question": "Podemos afirmar que a heresia é um pecado tão grave como é a feitiçaria.",
+      "answer": "V"
+    },
+    {
+      "id": "cris2-tf-2",
+      "question": "Jesus, como homem, aqui na terra, não aceitou adoração.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-3",
+      "question": "Através de diferentes tipos podemos encontrar Jesus em quase todos os livros do Antigo Testamento.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-4",
+      "question": "Sendo Deus onisciente, ele não necessitou elaborar o seu plano de redenção.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-5",
+      "question": "No sentido literal não há diferença entre o significado das expressões Cristo e Messias.",
+      "answer": "V"
+    },
+    {
+      "id": "cris2-tf-6",
+      "question": "É certo quem tendo nascido no ano 4aC., Jesus morreu com 29 anos.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-7",
+      "question": "Podemos ver na visita de alguns gregos uma possibilidade de Jesus chegar a glória sem a cruz.",
+      "answer": "V"
+    },
+    {
+      "id": "cris2-tf-8",
+      "question": "Caso Jesus falhasse, o Pai já tinha um segundo plano de redenção.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-9",
+      "question": "Cristo, na condição de Deus, não podia exercer a função de sacerdote.",
+      "answer": "V"
+    },
+    {
+      "id": "cris2-tf-10",
+      "question": "Aqui na terra, mesmo antes da sua ressurreição, como homem, Jesus aceitou adoração.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "cris2-mc-1",
+      "question": "Declarou a divindade de Jesus -",
+      "options": [
+        "O Pai",
+        "O anjo Gabriel",
+        "O próprio Jesus",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "cris2-mc-2",
+      "question": "Como homem, Jesus sentiu -",
+      "options": [
+        "Indignação",
+        "Angústias e tristezas",
+        "Fome e sede",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "cris2-mc-3",
+      "question": "A morte de Jesus foi -",
+      "options": [
+        "Expiatória",
+        "Pré - decretada",
+        "Voluntária",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "cris2-mc-4",
+      "question": "Faz a diferença entre o cristianismo e todas as religiões -",
+      "options": [
+        "A ressurreição de Jesus",
+        "A morte de Jesus",
+        "O nascimento de Jesus",
+        "Todas estão corretas"
+      ],
+      "answer": 0
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "cris2-mp-1",
+      "left": "Jesus",
+      "right": "Filho do homem"
+    },
+    {
+      "id": "cris2-mp-2",
+      "left": "Cristo",
+      "right": "Filho de Deus"
+    },
+    {
+      "id": "cris2-mp-3",
+      "left": "Jesus Cristo",
+      "right": "Deus que se fez homem"
+    },
+    {
+      "id": "cris2-mp-4",
+      "left": "Ministério já exercido por Jesus",
+      "right": "Profeta"
+    },
+    {
+      "id": "cris2-mp-5",
+      "left": "Ministério atual de Jesus",
+      "right": "Sacerdote"
+    },
+    {
+      "id": "cris2-mp-6",
+      "left": "Ministério futuro de Jesus",
+      "right": "Rei"
+    }
+  ]
+}

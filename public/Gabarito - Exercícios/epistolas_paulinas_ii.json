@@ -1,0 +1,1196 @@
+{
+  "id": "ep-paulinas-2",
+  "title": "Epístolas Paulinas II",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A Epístola aos Efésios foi escrita por Paulo durante sua segunda prisão em Roma.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "No culto a Diana, deusa da fertilidade, havia a prática da prostituição.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O primeiro contato de Paulo com Éfeso ocorreu em sua terceira viagem missionária.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Como os “lugares celestiais” não descem, então o crente precisa subir.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Nada pode dar errado quando um obreiro fiel está fazendo, com amor, a obra de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "É certo que, na Ilha de Malta, a víbora que picou Paulo era uma cascavel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Preso em Roma, Paulo escreveu pedindo oração aos fiéis pela sua libertação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Mesmo estando, fisicamente, vivo, o homem pode estar morto no sentido espiritual.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Por ser pela graça, Deus não requer do homem nenhum sacrifício pela sua salvação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Embora estivesse tão perto da bênção, Naamã poderia tê-la perdido.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite os nomes dos companheiros de Paulo deixados por ele em Éfeso.",
+          "answer": "ÁQUILA E PRISCILA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a simbologia usada por Paulo para ensinar sobre a unidade da igreja.",
+          "answer": "A IGREJA COMO CORPO DE CRISTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "As ruínas do Templo de Diana podem ser encontradas, hoje –",
+          "options": [
+            "na Turquia",
+            "na Síria",
+            "na Grécia",
+            "em nenhum lugar."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Tempo de permanência de Paulo em Éfeso -",
+          "options": [
+            "três anos",
+            "quase três anos",
+            "tempo indeterminado",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Paulo teria sido morto no ano 68 dC",
+          "Teria vivido em Éfeso os seus últimos dias",
+          "Permaneceu preso por doze anos",
+          "Livrou Paulo da morte",
+          "Decidiu preparar uma “ceia”",
+          "Uma das “epístolas da prisão”"
+        ],
+        "columnB": [
+          "centurião Júlio",
+          "John Bunyan",
+          "Jerônimo",
+          "Filemon",
+          "João",
+          "um certo homem"
+        ],
+        "answers": [
+          4,
+          3,
+          1,
+          6,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pela Bíblia todos os nascidos fora da comunidade de Israel eram chamados de gentios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Após formar a nação de Israel, Deus abandonou para sempre os gentios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "De nenhuma forma, no Antigo Testamento, podemos encontrar vestígios da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Os membros da igreja só podem ser identificados através da revelação do Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Embora formado por muitos membros, Paulo afirma que o corpo é um só.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A expressão “agora sou evangélico” não significa ser membro da igreja de Cristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Para a perfeição do corpo seus membros não podem ser desiguais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Consolar os que choram é bíblico, mas chorar com eles não..",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para a Bíblia, um casal sem filhos não constitui uma família.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para um homem casado e responsável a prioridade maior deve ser seus filhos.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar três maneiras segundo as quais os santos devem andar.",
+          "answer": "DEVEM ANDAR EM AMOR, NA LUZ E COM PRUDÊNCIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar um transplante impossível de ser realizado num corpo humano.",
+          "answer": "O DO CÉREBRO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Como “cabeça” é dever do homem -",
+          "options": [
+            "exigir o respeito da esposa",
+            "tratar os filhos com dureza",
+            "prover o sustento da família",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Prioridade bíblica de uma esposa –",
+          "options": [
+            "fazer a obra de Deus",
+            "estar ao lado de seu esposo",
+            "ajudar no sustento da família",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "“Marca registrada” da igreja",
+          "“Marca registrada” de Israel",
+          "A igreja como corpo de Cristo",
+          "Não pode viver sem Cristo",
+          "Nunca foi o povo de Deus",
+          "Povo de Deus até Abraão"
+        ],
+        "columnB": [
+          "gentios",
+          "os romanos",
+          "santificação",
+          "circuncisão",
+          "igreja",
+          "tema da Epístola aos Efésios"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A primeira igreja, na Europa, foi fundada em Filipos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Em Filipos, de costume, Paulo pregou o evangelho primeiro aos judeus, na sinagoga",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Um obreiro deve sempre procurar esquecer as recordações boas ou más do passado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "No ministério de Paulo a primeira expulsão de demônios aconteceu em Filipos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na Epístola aos Filipenses, Paulo não se identificou como apóstolo, mas, como servo",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sabendo que seria julgado por Nero, Paulo pediu oração à igreja de Filipos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "A igreja de Filipos ajudou Paulo, financeiramente, quando preso em Roma.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Um homem de Deus também está sujeito ao abatimento e ao desânimo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Um obreiro precisa aprender a alegrar como também chorar com os que choram.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Paulo não conseguiu esconder sua predileção pela igreja de Filipos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o pensamento dominante na Epístola aos Filipenses.",
+          "answer": "A ALEGRIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o objetivo principal da viagem de Epafrodito a Roma.",
+          "answer": "LEVAR UMA CONTRIBUIÇÃO FINANCEIRA A PAULO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Nacionalidade dos filipenses–",
+          "options": [
+            "sírios",
+            "turcos",
+            "israelitas",
+            "romanos."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Primeira cidade da Europa a receber o evangelho-",
+          "options": [
+            "Roma",
+            "Neápolis",
+            "Filipos",
+            "Tessalônica."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Em Filipos, hospedou Paulo em sua casa",
+          "Levou a epístola de Paulo aos filipenses",
+          "Fundador da cidade chamada Filipos",
+          "Juntou-se a Paulo em Listra",
+          "Companheiro de Paulo desde Antioquia",
+          "Intercedeu em favor de Paulo"
+        ],
+        "columnB": [
+          "Silas",
+          "Centurião Júlio",
+          "Timóteo",
+          "Lídia",
+          "Rei Filipe II",
+          "Epafrodito"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          1,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Foi em sua segunda viagem missionária que Paulo esteve em Colossos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Durante sua primeira prisão em Roma, Paulo escreveu a Epístola aos Colossenses.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Foi Epafras a primeira pessoa que se converteu em Colossos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Paulo, num primeiro momento, teve dificuldades para entender o que estava acontecendo em Colossos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na Epístola aos Colosseses Paulo fez uso de sua autoridade apostólica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Paulo fez questão de chamar os crentes de Colossos de santos e irmãos fiéis em Cristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O que hoje chamamos de Pentateuco os judeus chamavam de “Talmud”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Os judaizantes pretendiam transformar a igreja em mais uma seita do judaísmo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para Paulo salvação sem uma nova maneira de viver seria algo estranho.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para Paulo anunciar o Evangelho era uma obrigação que lhe foi imposta.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual é o tema da Epístola aos Colossenses.",
+          "answer": "A SUPREMACIA DE CRISTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como deve ser a palavra do cristão.",
+          "answer": "DEVE SER AGRADAVEL E TEMPERADA COM SAL"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Mensageiro que levou a Epístola a Colossos-",
+          "options": [
+            "Epafras",
+            "Tíquico",
+            "Timóteo",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Ameaçava a igreja de Colossos –",
+          "options": [
+            "o mundanismo",
+            "as contendas entre irmãos",
+            "as heresias",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Uma seita judaica",
+          "Desprezo do corpo",
+          "Salvação restrita",
+          "Não retornou a Colossos",
+          "Retornou a Colossos",
+          "Situada na Europa e na Ásia"
+        ],
+        "columnB": [
+          "gnosticismo",
+          "Onésimo",
+          "essênios",
+          "Turquia",
+          "Epafras",
+          "ascetas"
+        ],
+        "answers": [
+          3,
+          5,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A igreja de Tessalônica foi a segunda igreja fundada por Paulo na Europa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Preso e espancado, Paulo fugiu de Filipos e foi para Tessalônica",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Estando em Corinto, Paulo recebeu, através de Timóteo, boas notícias da igreja de Tressalônica.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A igreja de Tessalônica em pouco tempo tornou-se uma igreja missionária.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os cristãos de origem grega tiveram dificuldades para crer na ressurreição.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Paulo foi ofensivo ao chamar os crentes de Tessalônica de ignorantes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "No sentido espiritual a Bíblia afirma que o homem vivendo no pecado, está morto.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "É certo que o homem, por si mesmo, não pode alcançar a santificação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "As pessoas que foram ressuscitadas por Jesus não morreram mais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Os santos do Antigo Testamento não ressuscitarão na primeira ressurreição.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quanto tempo Paulo permaneceu em Tessalônica.",
+          "answer": "TEMPO INDETERMINADO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como deve ser corrigido erros doutrinários na igreja.",
+          "answer": "PELO ENSINO DA PALAVRA DE DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Localização de Tessalônica –",
+          "options": [
+            "Europa",
+            "Ásia",
+            "Ásia Menor",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Hospedou Paulo em Tessalônica -",
+          "options": [
+            "Crispo",
+            "Áquila e Priscila",
+            "Jasom",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Não criam na ressurreição",
+          "Criam na ressurreição",
+          "Primeira fase da vinda de Jesus",
+          "Ressurreição nacional",
+          "Ressurreição dos ímpios",
+          "Ressurreição espiritual"
+        ],
+        "columnB": [
+          "novo nascimento",
+          "segunda ressurreição",
+          "os gregos",
+          "os judeus",
+          "Israel",
+          "arrebatamento"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "As notícias trazidas por Timóteo levaram Paulo a escrever a segunda epístola aos tessalonicenses.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A segunda epístola aos tessalonicenses foi escrita seis meses após a primeira.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Crente que podendo e precisando trabalhar, não trabalha, Paulo chama de desordeiro.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O obreiro deve usar sua autoridade ministerial para corrigir erros doutrinários na igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na Bíblia, a expressão “dia’ nem sempre fala de um período de 24 horas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Estar preparado para a vinda de Jesus é melhor do que discutir o quando ele virá.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Falsos obreiros estavam ensinando em Tessalônica que o arrebatamento já tinha acontecido.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A igreja, mesmo sem o Espírito Santo, tem poder em si mesmo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Israel receberá o Anticristo como sendo o Messias e fará com ele uma aliança",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Paulo descreve o Anticristo como tendo uma personalidade maligna",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Ao tomar ciência de erros doutrinários na igreja, cite o que Paulo costumava fazer",
+          "answer": "PROCURAVA CORRIGIR OS ERROS COM O ENSINO DA PALAVRA DE DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Da expressão “somente há um que o resiste”, cite a quem Paulo se referia.",
+          "answer": "AO ESPÍRITO SANTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Ao escrever II Tessalonicenses Paulo estava em",
+          "options": [
+            "Éfeso",
+            "Corínto",
+            "Colossos",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Satanás dará ao Anticristo –",
+          "options": [
+            "seu trono",
+            "seu poder",
+            "seu grande poderio",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "“Besta” que subiu do “mar”",
+          "Sete “cabeças”",
+          "Sete “chifres”",
+          "Dez diademas",
+          "Anticristo",
+          "“Besta” que subiu da terra"
+        ],
+        "columnB": [
+          "homem do pecado, filho da perdição",
+          "capacidade de governar",
+          "inteligência, liderança",
+          "Anticristo",
+          "Falso Profeta",
+          "poder destruidor"
+        ],
+        "answers": [
+          5,
+          4,
+          2,
+          1,
+          6,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Do pai de Timóteo sabemos que era um gentio convertido ao cristianismo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que Timóteo conheceu Paulo e Silas na sua primeira viagem missionária.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A primeira igreja pastoreada por Timóteo foi a de Éfeso",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Como obreiro auxiliar Timóteo esteve ao lado de Paulo por mais de doze anos",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A Bíblia deixa claro que Timóteo era casado quando foi consagrado a pastor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao chamar Timóteo de “meu filho”, Paulo declara ser seu pai espiritual.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O pastor era, ao mesmo tempo, chamado de ancião, de presbítero e de bispo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Nas sinagogas os anciãos eram mais valorizados do que na igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "O ministério dos diáconos está centrado no cuidado das coisas materiais.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Paulo instruiu Timóteo a ser duro e firme com todos para manter sua autoridade.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o que contribuiu para abrir as portas para que Timóteo fosse um missionário.",
+          "answer": "O SEU BOM TESTEMUNHO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem seriam os ricos para os quais Timóteo devia dar mandamentos",
+          "answer": "PARA OS RICOS CRENTES OU CRISTÃOS, POR CERTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Local onde Paulo escreveu a primeira epístola a Timóteo",
+          "options": [
+            "Éfeso",
+            "Roma",
+            "Filipos",
+            "Local ignorado."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Um atributo requerido para ser diácono –",
+          "options": [
+            "boa reputação",
+            "ser cheio do Espírito santo",
+            "cheio de sabedoria",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Na terra dos caldeus",
+          "Numa prisão",
+          "Em Midiã",
+          "Numa praia",
+          "Em Listra",
+          "Lavrando a terra"
+        ],
+        "columnB": [
+          "Timóteo",
+          "Elizeu",
+          "Pedro e André",
+          "Moisés",
+          "Abraão",
+          "José"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Até o ano 64 dC. a igreja não foi perseguida pelo Império Romano.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Em sua segunda prisão, em Roma, Paulo não obteve o benefício da prisão domiciliar.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Segundo Paulo, os “últimos dias” seriam de tempos trabalhosos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Nossas obras só terão valor quando feitas de acordo com a Palavra de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Nesta última epístola Paulo está preocupado sobre quem irá cuidar da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Ao que parece, segundo muitos pregadores, os “últimos dias” estão muito longe.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Ao falar sobre os “últimos dias”, Paulo referia-se ao arrebatamento da igreja.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Estando preso em Roma, Paulo não pôde exercer seu ministério até sua morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Segundo Paulo, Timóteo prestaria contas àquele que “o alistou para a guerra”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que Timóteo esteve ao lado de Paulo até o dia de sua execução.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o tempo em que Paulo esteve preso na primeira e segunda prisão em Roma.",
+          "answer": "NA PRIMEIRA, DOIS ANOS; NA SEGUNDA, TEMPO INDETERMINADO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quem julgou Paulo na primeira e na segunda prisão em Roma.",
+          "answer": "O IMPERADOR NERO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Escrita na segunda prisão de Paulo -",
+          "options": [
+            "II Timóteo",
+            "II Timóteo e Tito",
+            "I e II Timóteo",
+            "II Timóteo e Filemon."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Ano em que Paulo foi executado –",
+          "options": [
+            "64 dC",
+            "67 dC",
+            "68 dC",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Esperança e constância",
+          "Prestação de contas",
+          "Fidelidade e dedicação",
+          "Disciplina e desprendimento",
+          "Tempos trabalhosos",
+          "Falsos obreiros"
+        ],
+        "columnB": [
+          "soldado",
+          "agricultor",
+          "quem alistou",
+          "últimos dias",
+          "avarentos",
+          "atleta"
+        ],
+        "answers": [
+          3,
+          1,
+          2,
+          5,
+          6,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A epístola a Tito foi escrita após a primeira e antes da segunda prisão de Paulo em Roma.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sobre Tito não podemos afirmar qual era sua nacionalidade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sabemos, pela Bíblia, que Tito foi o fundador da igreja na Ilha de Creta.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Tito foi escolhido pela igreja de Antioquia para participar do concílio em Jerusalém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A primeira igreja pastoreada por Tito foi a de Antioquia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A igreja em Creta foi muito prejudicada pela ação dos falsos obreiros.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Paulo orientou Tito a tratar os obreiros que estavam em Creta com prudência e muito amor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No exercício do ministério, Paulo não fez diferença entre bispo e presbítero.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Segundo Paulo, como servos, devemos ser “ornamento da doutrina de Deus”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Falar “o que convém à sã doutrina” foi o que Paulo ensinou.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas e quais as epístolas pastorais de Paulo.",
+          "answer": "TRÊS — I E II TIMÓTEO E TITO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas vezes o nome de Tito é encontrado em Atos dos Apóstolos",
+          "answer": "SEU NOME NÃO É ENCONTRADO EM ATO DOS APÓSTOLOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Orientação de Paulo em relação aos hereges",
+          "options": [
+            "afastar-se deles",
+            "tratá-los com amor",
+            "ensinar-lhes a Palavra",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Enviados ao Concílio de Jerusalém -",
+          "options": [
+            "Paulo e Barnabé",
+            "Paulo, Barnabé e Timóteo",
+            "Paulo, Barnabé e Tito",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Tido em grande estima por Paulo",
+          "Colheram depois de anos de plantio",
+          "Enviados por Paulo a Corinto",
+          "Fundaram a igreja de Creta",
+          "Preparou seu coração para ensinar",
+          "Fez a defesa de Tito, em Jerusalém"
+        ],
+        "columnB": [
+          "Paulo",
+          "crentes que estiveram em Jerusalém",
+          "Timóteo e Tito",
+          "Esdras",
+          "Tito e outro irmão",
+          "Tito"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Na epístola a Filemon, Paulo não se apresenta como sendo apóstolo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A Epístola a Filemon foi escrita de Roma na segunda prisão de Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo Cristão, assim que Onésimo chegou em Roma, foi procurar Paulo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Na Epistola a Filemon há um atestado do poder de Deus para transformar vidas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Como apóstolo, embora tendo autoridade para mandar, Paulo preferiu pedir.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Para Paulo, após a conversão, os erros reparáveis devem ser reparados.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Plinio, o moço, seguindo o exemplo de Paulo também intercedeu em favor de um escravo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O homem, como consequência do pecado, deixa de ser propriedade de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jesus não pregou contra a escravidão material e humana existente no Império Romano.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Para Paulo a libertação espiritual não anulou a escravidão material de Onésimo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar as epístolas escritas por Paulo em sua primeira prisão em Roma.",
+          "answer": "EFÉSIOS, FILIPENSES, COLOSSENSES E FILEMON"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar as expressões que hoje podem substituir as de “senhor” e “servo” no sentido material",
+          "answer": "PATRÃO E EMPREGADO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Onésimo converteu-se em -",
+          "options": [
+            "Colossos",
+            "Corinto",
+            "Roma",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Condenou a escravidão romana–",
+          "options": [
+            "Jesus",
+            "Paulo",
+            "Pedro",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Encarregado de entregar Onésimo a Filemon",
+          "Filho de um homem rico",
+          "Um crente, senhor de escravos",
+          "Um escravo crente",
+          "Um livro com um só capítulo",
+          "Administrador da Bitínia"
+        ],
+        "columnB": [
+          "Onésimo",
+          "Tíquito",
+          "Obadias",
+          "Filemon",
+          "Caius Plinius",
+          "Arquipo"
+        ],
+        "answers": [
+          4,
+          1,
+          5,
+          3,
+          6,
+          2
+        ]
+      }
+    }
+  ]
+}

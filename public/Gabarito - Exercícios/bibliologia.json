@@ -1,0 +1,1196 @@
+{
+  "id": "bibliologia",
+  "title": "Bibliologia",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Vista no sentido material a Bíblia é apenas um livro; sua presença física não traz qualquer proteção.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Mesmo o homem natural, com seus olhos carnais, poderá ver o sobrenatural revelado pela Bíblia",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Nos textos das Escrituras a palavra bíblia é encontrada poucas vezes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que a Bíblia foi o primeiro livro impresso no mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "A expressão “bíblia”, no singular, contém uma seleção composta por 66 livros.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sendo a Bíblia, hoje, impressa em papel não se pode mais falar sobre ser ela como fogo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Como manual do cristão a Bíblia mostra o caminho da salvação e da santificação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Sendo a Bíblia inspirada pelo Espírito Santo é com ele e não com homens que podemos conhece-lo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "É correto deixar a Bíblia aberta sobre a mesa para afugentar da casa os demônios.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos ver na idolatria a falta de fé para crer num Deus invisível.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quando e por quem foi inventado o papel.",
+          "answer": "NO SEGUNDO SÉCULO DC PELOS CHINESES"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que podemos afirmar ser a adivinhação.",
+          "answer": "UMA COISA DEMONIACA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Segundo material usado para escritos dos manuais bíblicos –",
+          "options": [
+            "pergaminho",
+            "papiro",
+            "papel",
+            "todas estão erradas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "No sentido figurado a Bíblia é chamada de -",
+          "options": [
+            "espelho",
+            "alimento",
+            "fogo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Bibliolatria",
+          "Bíblia",
+          "“Teuchos”",
+          "“Biblos”",
+          "“Biblion”",
+          "Bibliomancia"
+        ],
+        "columnB": [
+          "folha de papiro preparada para escrita",
+          "adivinhação pela Bíblia",
+          "vários rolos pequenos",
+          "um livro pequeno",
+          "adoração da Bíblia",
+          "rolo ou volume"
+        ],
+        "answers": [
+          5,
+          1,
+          3,
+          4,
+          6,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Podemos afirmar ser a Bíblia o Livro da História da Redenção.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A salvação do homem não se completa nesta vida e, sim após sua morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Sendo onipotente e soberano Deus poderia ter perdoado Adão e Eva pelo erro cometido.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A redenção do homem poderia ser possível caso ele reconhecesse o seu pecado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na Lei de Moisés podemos encontrar os fundamentos da doutrina da redenção.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Jesus, como Deus, não poderia ser o redentor do homem.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo uma das pessoas da trindade não é bíblico afirmar ser Jesus o personagem central da Bíblia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "São poucos os livros do Antigo Testamento nos quais Jesus não está, de alguma forma, tipificado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Escritos muito tempo depois da ocorrência dos fatos históricos os livros das Crônicas contém algumas falhas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "No Livro de Ester as expressões Deus e Senhor não são encontradas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos são os livros históricos.",
+          "answer": "DOZE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar os livros nos quais não se encontra as expressões Deus e Senhor.",
+          "answer": "CANTARES E ESTER"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O preço da redenção foi exigido-",
+          "options": [
+            "por Satanás",
+            "pelo amor de Deus",
+            "pela justiça de Deus",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Um profeta do cativeiro –",
+          "options": [
+            "Isaías",
+            "Ezequiel",
+            "Jeremias",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Jesus como Messias",
+          "Jesus como Renovo Justo",
+          "Jesus como Pastor Fiel",
+          "Jesus como Redentor",
+          "Jesus como Cordeiro Pascal",
+          "Jesus como Príncipe dos Exércitos do Senhor"
+        ],
+        "columnB": [
+          "Jusué",
+          "Jó",
+          "Jeremias",
+          "Êxodo",
+          "Ezequiel",
+          "Isaías"
+        ],
+        "answers": [
+          1,
+          4,
+          3,
+          5,
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "No Livro de Oséias Jesus não aparece visto que a figura central é a de Deus Pai.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A profecia de Joel sobre o derramamento do Espírito Santo só foi revelado no Dia de Pentecostes",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No tempo de Amós o Reino de Israel estava muito bem no sentido material e espiritual.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Através do Profeta Obadias Deus deixou claro seu propósito de abençoar os descendentes de Esaú.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sabendo sobre a crueldade dos ninivitas, Jonas decidiu não ir lá, pois seria morto.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "No último livro do Antigo Testamento Israel estava moral, material e espiritualmente em decadência.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "No evangelho de Marcos o ensino de Jesus foi colocado num segundo plano.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Livro de Atos relata a história da igreja entre os anos 29 e 63 dC.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A Segunda Epístola de Paulo a Timóteo foi a última epístola escrita por Paulo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O “Alfa” e o “Ômega” o próprio Jesus deixou claro ser ele o principio e o fim.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem profetizou que Jesus nasceria em Belém.",
+          "answer": "MIQUEIAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o que fez Paulo em relação a um escravo fugitivo convertido ao cristianismo.",
+          "answer": "MANDOU QUE ELE VOLTASSE AO SEU SENHOR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um livro do Antigo Testamento com um só capítulo –",
+          "options": [
+            "Naum",
+            "Obadias",
+            "Sofonias",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Jesus como sendo “a expressa imagem do Deus invisível” -",
+          "options": [
+            "Apocalipse",
+            "Ezequiel",
+            "Colossenses",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Jesus como servo",
+          "Jesus como Filho de Deus",
+          "Jesus como Rei",
+          "Jesus como Filho do Homem",
+          "Jesus como Missionário",
+          "Jesus como Fortaleza no Dia da Angústia"
+        ],
+        "columnB": [
+          "Amós",
+          "Naum",
+          "Evangelho de Lucas",
+          "Evangelho de Marcos",
+          "Evangelho de Mateus",
+          "Evangelho de João"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          1,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A expressão “testamento”, no sentido literal, expressa a ideia de “aliança” ou “concerto”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "O termo Antigo Testamento não possui vinculo com as chamadas “Escrituras Gregas”.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O que nós chamamos de Pentateuco, os judeus denominam de “Tanach”.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para a igreja, hoje, o antigo Testamento não tem nenhuma validade.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar que Jesus representa a ponte de ligação entre Malaquias e Mateus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Quando Jesus disse “examinais as Escrituras” ele destaca a validade do Antigo Testamento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Antigo Testamento num primeiro momento foi escrito em pergaminho e depois em papiro.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No Novo Testamento temos apenas um livro histórico que é Atos dos Apóstolos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Dos 27 livros do Novo Testamento, num sentido literal, Paulo é o autor de treze.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "As epístolas chamadas “Católicas” não constam na Bíblia chamada “Protestante”.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar em que língua ou línguas foi escrito o Antigo Testamento.",
+          "answer": "EM HEBRAICO, E ALGUMAS PASSAGENS EM ARAMAICO"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto ao conteúdo, citar a diferença básica entre a Escritura Hebraica e a “nossa” Bíblia.",
+          "answer": "A ESCRITURA HEBRAICA É FORMA APENAS PELO NOSSO ANTIGO TESTAMENTO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Falou sobre o Antigo Testamento-",
+          "options": [
+            "Jesus",
+            "Pedro",
+            "Estêvão",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "É um profeta da escrita –",
+          "options": [
+            "Elias",
+            "Sofonias",
+            "Natã",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Dividiu a Bíblia em capítulos",
+          "Dividiu o Antigo Testamento em versículos",
+          "Dividiu o Novo Testamento em versículos",
+          "Não fizeram divisão em seus livros",
+          "Usaram pela primeira vez o termo Antigo Testamento",
+          "Ensinou com base no Antigo Testamento"
+        ],
+        "columnB": [
+          "todos os escritores",
+          "Paulo",
+          "Mardoqueu Nathan",
+          "Tertuliano e Orígenes",
+          "Robert Stevens",
+          "Hugo de Saint Cher"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não existe na terra um só texto bíblico escrito pelo próprio autor.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Feita uma nova cópia de um texto era de costume queimar o original.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "O copista tinha que memorizar o texto original antes de fazer sua cópia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "O Rei Jeoaquim queimou o livro escrito pelo profeta Jeremias.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "O Rei da Síria, Antioco Epifaneo, mandou queimar todas as copias das Escrituras existentes na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Entre os judeus o trabalho de copista era feito pelos escribas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "É certo que todo o Antigo Testamento foi escrito em hebraico, a língua oficial de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No Novo Testamento, por providência divina, foi escrito em grego.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jesus, como Filho do Homem, podia falar em todas as línguas existentes na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Assim como o hebraico, também o aramaico continua sendo falado em Israel.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem mandou construir e quem destruiu a “serpente de metal”.",
+          "answer": "CONSTRUIR –DEUS; DESTRUIU REI EZEQUIAS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o local ou locais onde foram encontrados os “manuscritos do Mar Morto”.",
+          "answer": "NAS CAVERNAS PRÓXIMAS DA FORTALEZA DE QUNRAN"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Imperador que julgou ter destruído a Bíblia –",
+          "options": [
+            "Nero",
+            "Antíoco Epifâneo",
+            "Diocleciano",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Dialeto criado pelos gregos -",
+          "options": [
+            "aramaico",
+            "Koiné",
+            "grego",
+            "latim."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Língua popular no tempo de Jesus",
+          "Em Israel falava em hebraico e aramaico",
+          "Local onde os judeus aprenderam o aramaico",
+          "Copiavam e interpretavam as leis",
+          "Copista que escreveu a Epístola aos Romanos",
+          "Contribuiu para a divulgação do Evangelho"
+        ],
+        "columnB": [
+          "escribas",
+          "Koiné",
+          "Tércio",
+          "aramaico",
+          "Babilônia",
+          "Paulo"
+        ],
+        "answers": [
+          4,
+          6,
+          5,
+          1,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Todas as traduções existentes da Bíblia são traduções indiretas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar ser a Bíblia o livro mais lido, traduzido e destruído do mundo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A Bíblia traduzida nas línguas de todos os povos é um grande projeto de Deus em andamento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O Antigo Testamento foi escrito em hebraico e aramaico porque Deus queira comunicar-se só com Israel",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A “septuaginta” é uma tradução do hebraico para o grego feita em Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "O único exemplar existente da “Septuaginta”, no original, encontra-se na Biblioteca do Vaticano.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Antes da Tradução João Ferreira de Almeida não havia nenhum texto da Bíblia traduzida para o português.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Foi em 1748 que João Ferreira de Almeida terminou a tradução do Novo e Antigo Testamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Padre Figueiredo trabalhou durante 18 anos na tradução da Bíblia para o português",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Outra tradução em português aprovado pelo Vaticano é a do Padre Matos Soares.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite de quem partiu a ideia de ser feita a tradução conhecida como “Septuaginta”.",
+          "answer": "DO FARAÓ PTOLOMEU II, FILADELFO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite quando foi impressa a primeira Bíblia em português.",
+          "answer": "EM 1753"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Traduziu a “Vulgata Latina”",
+          "options": [
+            "Agostinho",
+            "Jerônimo",
+            "Lutero",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Tradutor ou tradutores da “Septuaginta” –",
+          "options": [
+            "Demétrio",
+            "Sumo Sacerdote Eleazar",
+            "72 rabinos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um livro da lei",
+          "Um livro histórico",
+          "Um livro poético",
+          "Um livro apócrifo",
+          "Traduzido por João Ferreira de Almeida como amor",
+          "Traduzido por João Ferreira de Almeida como caridade"
+        ],
+        "columnB": [
+          "Eclesiastes",
+          "Eclesiastico",
+          "Números",
+          "“ágape”",
+          "“Philis”",
+          "Rute"
+        ],
+        "answers": [
+          3,
+          4,
+          1,
+          6,
+          5,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Embora escrita por homem, o autor espiritual da Bíblia é o Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Mesmo para aqueles que não creem em Deus, a Bíblia é a Sua Palavra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Podemos afirmar que a Bíblia é o livro da história da redenção.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A Bíblia foi escrita por inspiração e também por revelações do Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para aqueles que creem, a Bíblia é a infalível e inerrante Palavra de Deus..",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Chamamos de Escrituras Canônicas aqueles que não foram inspiradas pelo Espírito Santo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Antes da Palavra escrita, Deus dificilmente falava com os homens.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A Bíblia foi escrita num período de cerca de mil e seiscentos anos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Livro apócrifo é aquele no qual não é reconhecido a inspiração divina.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O que os judeus chamam de escrituras nós chamamos de Antigo Testamento",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos capítulos tem o Livro de Daniel na chamada “nossa” Bíblia e na Católica.",
+          "answer": "NOSSA 12; CATPOLICA 14"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual é o personagem central da Bíblia",
+          "answer": "JESUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Inerrância significa–",
+          "options": [
+            "difícil de errar",
+            "errar sempre",
+            "infalível",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "A Escritura Hebraica é formada -",
+          "options": [
+            "pelo Antigo Testamento",
+            "só pelo Antigo Testamento",
+            "por parte do Antigo Testamento",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Antigo Testamento “cristão”",
+          "Antigo Testamento “católico”",
+          "Antigo Testamento “judeu”",
+          "Lido na Festa de Pentecoste",
+          "Lido na Festa de Purim",
+          "Lido na Festa dos Tabernáculo"
+        ],
+        "columnB": [
+          "Eclesiastes",
+          "Ester",
+          "39 livros",
+          "24 livros",
+          "Rute",
+          "46 livros"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Através dos estudos arqueológicos foi possível determinar o tempo entre a criação do homem e sua queda.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A Bíblia foi escrita para contar a obra do homem sobre a terra sua redenção.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A ordem de Deus dada a Nóe para crescer , multiplicar e encher a terra foi cumprida.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Antes do dilúvio e até a dispersão, a única língua falada na terra era o hebraico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para contar a histórica de cem anos da vida de Abraão a Bíblia usou 14 capítulos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "É difícil entender porque Isaque não fez uma tenda nova para morar com sua esposa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Da entrada de Israel na terra prometida até a morte de Josué abrange um período de trinta anos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Implantar a monarquia em Israel certamente que não era um projeto de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Saul foi um rei escolhido pelo povo sem a aprovação de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Entre o último livro do Antigo Testamento e o primeiro do Novo Testamento temos cerca de quatrocentos anos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantos foram os reis do Reino Unido de Israel, os do Reino do Sul e do Norte",
+          "answer": "REINO UNIDO—3; REINO DO NORTE—19; REINO DO SUL 19 REIS E UMA RAINHA"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite os nomes dos chamados profetas do pós-cativeiro.",
+          "answer": "AGEU, ZACARIAS E MALAQUIAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Primeiro imperialista da terra -",
+          "options": [
+            "Adão",
+            "Noé",
+            "Ninrode",
+            "Nabucodonosor."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Cidade tomada por Davi dos Jebuzeus –",
+          "options": [
+            "Belém",
+            "Jericó",
+            "Jerusalém",
+            "Betel."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um rei do Reino Unido de Israel",
+          "Primeiro Rei do Reino do Norte",
+          "Último Juiz de Israel",
+          "Último Rei do Norte",
+          "Último Rei do Sul",
+          "Liderou a terceira turma na volta do cativeiro"
+        ],
+        "columnB": [
+          "Samuel",
+          "Neemias",
+          "Jeroboão",
+          "Zedequias",
+          "Salomão",
+          "Oséias"
+        ],
+        "answers": [
+          3,
+          6,
+          2,
+          5,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O único profeta do chamado período intertestamentário foi João batista.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Para a história de Israel o chamado período intertestamentário é de grande importância.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "No chamado período intertestamentário o Império da Babilônia já não mais existia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "No período do domínio persa os sacerdotes eram os reis de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Pela história sabemos que Alexandre, o Grande, foi aluno de Sócrates e Aristóteles.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Sendo, como era, um gentio, Alexandre não poderia ser usado por Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "O Rei Filipe II, pai de Alexandre, segundo a história, morreu durante uma batalha.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Pela interpretação do Sonho de Nabucodonosor a tendência do Império Gentílico era o do enfraquecimento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Sabemos, pela história, que Alexandre, o grande conquistador, não morreu num campo de batalha.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Alexandre, embora de forma indireta, contribuiu na realização da “Septuaginta”",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o tempo de duração do chamado período interbíblico.",
+          "answer": "CERCA DE QUATROCENTOS ANOS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar por quanto tempo Alexandre foi Imperador",
+          "answer": "TREZE ANOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "No período interbiblico Israel esteve sob o domínio",
+          "options": [
+            "dos persas",
+            "dos romanos",
+            "dos gregos",
+            "todas estão corretas"
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Negou ajuda pedida por Alexandre -",
+          "options": [
+            "Caifás",
+            "Jádua",
+            "Neemias",
+            "Esdras."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Império Babilônico",
+          "Império Medo-Persa",
+          "Império da Grécia",
+          "Língua oficial dos judeus",
+          "Língua oficial do Império Romano",
+          "Língua criada pelos gregos"
+        ],
+        "columnB": [
+          "koiné",
+          "latim",
+          "hebraico",
+          "“ventre e coxa de cobre”",
+          "“cabeça de ouro”",
+          "“peito e braços de prata”"
+        ],
+        "answers": [
+          6,
+          5,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo o Profeta Daniel o Reino da Grécia não passaria para o filho de Alexandre.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sendo livros apócrifos os livros dos macabeus não tem qualquer valor bíblico ou histórico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na divisão do Império Grego, num primeiro momento Israel esteve sob o domínio do Egito.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A luta do macabeus contra os exércitos da Grécia durou quase vinte anos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Por ser o filho mais velho de Matatias, Judas assumiu o comando após sua morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Inferiorizados no campo de batalha os macabeus procuraram evitar o confronto direto contra seus inimigos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Judas retomou Jerusalém, purificou o templo e restaurou o sacrifício diário.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Os macabeus destruíram Samaria bem篂como o templo construído sobre o Monte Jeresim",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Durante todo período interbiblico os judeus conseguiram manter sua independência.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Foi no período interbiblico que as diversas seitas judaicas começaram ser formadas.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o nome do fundador do chamado “Movimento Sionista”",
+          "answer": "THEODOR HERZT"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o nome de um Apóstolo de Jesus que foi ligado à seita dos zelotes",
+          "answer": "SIMÃO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "As quatro cabeças do leopardo visto por Daniel representava -",
+          "options": [
+            "quatro reis",
+            "quatro impérios",
+            "quatro generais",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Foi rainha dos judeus no período interbiblico –",
+          "options": [
+            "Jazabel",
+            "Alexandra",
+            "Atalia",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Egito",
+          "Síria e Oriente",
+          "Macedônia e Grécia",
+          "Trácia e parte da Ásia Menor",
+          "Teve influencia na tradução “Septuaginta",
+          "Figura do Anticristo no Antigo Testamento"
+        ],
+        "columnB": [
+          "Alexandre",
+          "Lisímaco",
+          "Antíoco Epifâneo",
+          "Ptolomeu",
+          "Cassando",
+          "Seleuco"
+        ],
+        "answers": [
+          5,
+          4,
+          6,
+          1,
+          3,
+          2
+        ]
+      }
+    }
+  ]
+}

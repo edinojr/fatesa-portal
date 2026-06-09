@@ -1,0 +1,134 @@
+{
+  "id": "APOC_3",
+  "title": "Apocalipse - V3",
+  "tfQuestions": [
+    {
+      "id": "apoc3-tf-1",
+      "question": "A Ilha de Pátmos, hoje, está localizada em território sob o domínio da Grécia.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc3-tf-2",
+      "question": "Jesus sempre se identificou como “Filho de Deus” e não como “Filho do Homem”.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc3-tf-3",
+      "question": "Em Smirna havia uma igreja materialmente rica e espiritualmente pobre.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc3-tf-4",
+      "question": "No sentido material a igreja de Laodiceia era rica e poderosa.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc3-tf-5",
+      "question": "Por ordem de Jesus, João foi levado por um anjo de Pátmos ao céu.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc3-tf-6",
+      "question": "A expressão “estrela da manhã”, na Bíblia, refere-se tão somente a Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc3-tf-7",
+      "question": "João declarou ter visto um “dragão vermelho” que tinha “sete cabeças” e “sete chifres”.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc3-tf-8",
+      "question": "A expressão Babilônia mística não fala de uma cidade real e literal.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc3-tf-9",
+      "question": "A segunda vinda de Jesus acontecerá em duas etapas ou dois momentos.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc3-tf-10",
+      "question": "João declarou ter visto o Arcanjo Miguel com uma “cadeia” em sua mão”.",
+      "answer": "F"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "apoc3-mc-1",
+      "question": "Recebeu de Jesus uma declaração de amor -",
+      "options": [
+        "A igreja de Laodiceia",
+        "A igreja de Filadélfia",
+        "A igreja de Éfeso",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "apoc3-mc-2",
+      "question": "Morte no Milênio -",
+      "options": [
+        "Não haverá",
+        "Haverá de forma restrita",
+        "Haverá só para os velhos",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "apoc3-mc-3",
+      "question": "A “mulher vestida de sol” fala provavelmente, sobre —",
+      "options": [
+        "Maria",
+        "Israel",
+        "Igreja",
+        "Todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "apoc3-mc-4",
+      "question": "Babilônia mística —",
+      "options": [
+        "Fundada por Ninrode",
+        "Está situada no Iraque",
+        "Não é uma cidade real",
+        "Todas estão erradas"
+      ],
+      "answer": 2
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "apoc3-mp-1",
+      "left": "Igreja perseguida",
+      "right": "Esmirna"
+    },
+    {
+      "id": "apoc3-mp-2",
+      "left": "Igreja apostólica",
+      "right": "Éfeso"
+    },
+    {
+      "id": "apoc3-mp-3",
+      "left": "Igreja morna",
+      "right": "Laudiceia"
+    },
+    {
+      "id": "apoc3-mp-4",
+      "left": "Igreja mundana",
+      "right": "Pérgamo"
+    },
+    {
+      "id": "apoc3-mp-5",
+      "left": "Igreja profana",
+      "right": "Tiatira"
+    },
+    {
+      "id": "apoc3-mp-6",
+      "left": "Igreja morta",
+      "right": "Sardes"
+    }
+  ]
+}

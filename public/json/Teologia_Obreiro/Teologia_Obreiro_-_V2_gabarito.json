@@ -1,0 +1,134 @@
+{
+  "id": "TO_2",
+  "title": "Teologia Obreiro - V2",
+  "tfQuestions": [
+    {
+      "id": "to2-tf-1",
+      "question": "Nem sempre os pregadores de púlpito são os maiores ganhadores de almas.",
+      "answer": "V"
+    },
+    {
+      "id": "to2-tf-2",
+      "question": "Os trabalhadores da undécima hora são aqueles que serão chamados na grande tribulação.",
+      "answer": "F"
+    },
+    {
+      "id": "to2-tf-3",
+      "question": "Jesus, em seu ministério, não necessitou de recursos financeiros.",
+      "answer": "F"
+    },
+    {
+      "id": "to2-tf-4",
+      "question": "O louvor sincero é um dos meios mais poderosos de adoração.",
+      "answer": "V"
+    },
+    {
+      "id": "to2-tf-5",
+      "question": "Nem todos os descendentes de Arão e da Tribo de Levi podiam ser sacerdotes.",
+      "answer": "V"
+    },
+    {
+      "id": "to2-tf-6",
+      "question": "A undécima hora era a penúltima hora do calendário judaico.",
+      "answer": "V"
+    },
+    {
+      "id": "to2-tf-7",
+      "question": "Ministrar é servir, portanto, ser ministro é ser servente e não senhor.",
+      "answer": "V"
+    },
+    {
+      "id": "to2-tf-8",
+      "question": "Obedecer seu pastor em tudo que ele exigir é um dever de todo crente salvo.",
+      "answer": "F"
+    },
+    {
+      "id": "to2-tf-9",
+      "question": "Quem tem um dom de serviços não pode estabelecer horário de atendimento.",
+      "answer": "V"
+    },
+    {
+      "id": "to2-tf-10",
+      "question": "Os presbíteros foram subordinados aos bispos depois do ano 150 dC.",
+      "answer": "V"
+    }
+  ],
+  "mcQuestions": [
+    {
+      "id": "to2-mc-1",
+      "question": "O verdadeiro louvor -",
+      "options": [
+        "Move o coração de Deus",
+        "Agride Satanás",
+        "Conduz o pecador a Jesus",
+        "Todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "to2-mc-2",
+      "question": "Os diversos departamentos da igreja devem -",
+      "options": [
+        "Escolher os dirigentes",
+        "Ter autonomia administrativa",
+        "Estar subordinados ao pastor",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "to2-mc-3",
+      "question": "No ministério de Jesus os recursos financeiros vinham -",
+      "options": [
+        "Do céu, através dos anjos",
+        "Do trabalho dos apóstolos",
+        "Da parte de algumas mulheres",
+        "Todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "to2-mc-4",
+      "question": "Chama para o ministério -",
+      "options": [
+        "O conselho de pastores",
+        "Jesus",
+        "O pastor presidente",
+        "Todas estão corretas"
+      ],
+      "answer": 1
+    }
+  ],
+  "matchingPairs": [
+    {
+      "id": "to2-mp-1",
+      "left": "Dons assistenciais",
+      "right": "Pouco procurados"
+    },
+    {
+      "id": "to2-mp-2",
+      "left": "Dons de ministrar",
+      "right": "Prestação de serviços"
+    },
+    {
+      "id": "to2-mp-3",
+      "left": "Dons de presidir",
+      "right": "Governo da igreja"
+    },
+    {
+      "id": "to2-mp-4",
+      "left": "Dons de misericórdia",
+      "right": "Bondade em ação"
+    },
+    {
+      "id": "to2-mp-5",
+      "left": "Dons ministeriais",
+      "right": "Jesus"
+    },
+    {
+      "id": "to2-mp-6",
+      "left": "Dons espirituais",
+      "right": "Espírito Santo"
+    }
+  ]
+}

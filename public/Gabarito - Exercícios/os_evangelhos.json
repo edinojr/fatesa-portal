@@ -1,0 +1,1196 @@
+{
+  "id": "evangelhos",
+  "title": "Os Evangelhos",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "É certo que não existe um ponto em comum nos quatro evangelhos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Foram 4 os evangelhos para que tivéssemos uma biografia completa de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Mateus teve o privilégio de introduzir Jesus no Novo Testamento",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sendo publicano, Mateus não conhecia bem o Antigo Testamento",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Rute, uma gentia, na genealogia de Jesus, foi um erro de Mateus",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Biblicamente, podemos afirmar quantos eram os magos e os seus nomes",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo o Egito um símbolo do mundo, José errou levando Jesus para lá.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O “Sermão do Monte” escandalizou a maioria dos que desejavam ouvir Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A ordem na expressão “sal da terra” e “luz do mundo” não pode ser alterada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na Bíblia “as muitas águas” simbolizam bênçãos, prosperidade.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas e quais as exigências que Jesus precisava preencher para ser o Rei dos Judeus",
+          "answer": "DUAS — SER DESCENDENTE DE ABRAÃO E DE DAVI"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar porque podemos afirmar que os magos não encontraram Jesus numa estrebaria.",
+          "answer": "PORQUE MATEUS AFIRMA QUE ELES ENCONTRARAM JESUS NUMA CASA."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Os judeus desprezavam os publicanos porque —",
+          "options": [
+            "não eram judeus",
+            "eram cobradores de impostos",
+            "eram pobres",
+            "todas estão corretas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "O “Sermão das Bem Aventuranças” foi pregado —",
+          "options": [
+            "no Monte das Oliveiras",
+            "no Monte Moriá",
+            "num monte",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Evangelho de João",
+          "Evangelho de Lucas",
+          "Evangelho de Mateus",
+          "Evangelho de Marcos",
+          "A luz",
+          "O sal"
+        ],
+        "columnB": [
+          "precisa ser vista",
+          "escrita para os judeus",
+          "escrito para a igreja",
+          "deve passar despercebido",
+          "escrito para os romanos",
+          "escrito para os gregos"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Somente os gêmeos univitelinos é que são exatamente iguais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Jesus ensinou que dois irmãos a caminho do tribunal deve procurar fazer um acordo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Amar o próximo e aborrecer o inimigo não estava na Lei de Moisés.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Para um filho de Deu amar o inimigo com seu próprio amor é difícil.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "No Sermão do Monte Jesus ministrou uma aula sobre a hipocrisia religiosa.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Somente o crente que tem o dom de discernir é que pode fazer julgamento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "“Não julgueis”, portanto um obreiro não pode ser um juiz de direito.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Biblicamente, sem a cruz não é possível tomar posse no Reino de Deus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No Reino de Deus é o homem que tem que edificar sua casa espiritual.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Jesus, como Mestre, nunca mudou sua estratégia na área do ensino.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Sobre a prática da mentira, cite qual foi o ensino de Paulo.",
+          "answer": "NÃO MINTAIS UNS AOS OUTROS"
+        },
+        {
+          "id": "sa2",
+          "question": "Para ser o Redentor, cite o que o Filho de Deus teria que fazer",
+          "answer": "TORNAR-SE FILHO DO HOMEM"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "É possível vencer o mal, segundo ensinou Paulo, com —",
+          "options": [
+            "jejum e oração",
+            "o bem",
+            "humildade",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Dá o que o homem precisa, sem merecer —",
+          "options": [
+            "o amor",
+            "a justiça",
+            "a misericórdia",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "As Leis do Reino",
+          "Instruções aos discípulos",
+          "Parábolas sobre o reino",
+          "Censura aos líderes religiosos",
+          "Sermão escatológico",
+          "Formaram conselho contra o Rei"
+        ],
+        "columnB": [
+          "terceiro sermão",
+          "os fariseus",
+          "segundo sermão",
+          "primeiro sermão",
+          "quarto sermão",
+          "quinto sermão"
+        ],
+        "answers": [
+          3,
+          6,
+          2,
+          1,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em Israel foi Jesus quem introduziu o ensino através de parábolas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Toda parábola contém apenas uma verdade central.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na Parábola do Semeador Jesus destacou a importância da semente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "É possível que muitos semeadores não recebam suas recompensas nesta vida.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Um crente novo convertido não pode ser um semeador.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Antes de iniciar seu ministério Jesus não frequentava a sinagoga.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Onde não era desejado Jesus não insistia em permanecer.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "A aparição de Moisés e Elias, no monte, foi simbólico e não real.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Mateus, Marcos e Lucas pouco falaram do ministério de Jesus na Judeia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sendo manso e humilde de coração, Jesus usou de diplomacia na purificação do templo.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar qual a figura de linguagem que Jesus não fez uso em seu ensino.",
+          "answer": "A FÁBULA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar, segundo os Evangelhos, quantas vezes Jesus fez a purificação do templo",
+          "answer": "DUAS VEZES"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A missão primeira de um obreiro é —",
+          "options": [
+            "defender o cristianismo",
+            "condenar o pecado",
+            "semear a Palavra de Deus",
+            "todas estão corretas"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Jesus comparou o Reino dos Céus —",
+          "options": [
+            "ao joio e ao trigo",
+            "à rede de pesca",
+            "tesouro escondido",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Templo purificado por Jesus",
+          "Missão de Jesus",
+          "Missão do Espírito Santo",
+          "Missão do homem",
+          "Campo da semeadura",
+          "Ensino por parábolas"
+        ],
+        "columnB": [
+          "convencer o homem",
+          "Zorobabel",
+          "Antigo e Novo Testamento",
+          "Pregar a Palavra de Deus",
+          "salvar o pecador",
+          "terra"
+        ],
+        "answers": [
+          3,
+          1,
+          6,
+          4,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O templo continuava sendo o lugar onde Deus abençoava o seu povo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Com uso de azeite Jesus fez a purificação do templo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A glória de Deus enchia o templo, porém, a indignação enchia o coração dos sacerdotes.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Jesus recusou-se a responder as perguntas feitas pelas autoridades judaicas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Na Parábola dos Dois filhos, o segundo obedeceu a ordem dada pelo pai.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Em Israel, o filho até trinta anos, estava sob a autoridade do pai.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Alguns apóstolos pensaram que Jesus, em Jerusalém, seria proclamado Rei",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "No Sermão do Monte das Oliveira somente Pedro, Tiago e João estavam presentes.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "No aspecto exterior não havia nenhuma diferença entre as Dez Virgens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que, tardando o esposo, as Virgens Loucas adormeceram.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No “tempo” de Jesus, citar o que o Sinédrio não podia fazer com um prisioneiro.",
+          "answer": "NÃO PODIA APLICAR A PENA DE MORTE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar porque é difícil entender os sinais descritos em Mateus, capítulo 24.",
+          "answer": "PORQUE ELES NÃO ESTÃO COLOCADOS EM ORDEM CRONOLÓGICA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O Sinédrio era formado —",
+          "options": [
+            "somente por sacerdotes",
+            "por 71 membros",
+            "só por escribas e fariseus",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "A única diferença entre as Dez Virgens —",
+          "options": [
+            "estava nas suas vestes",
+            "cinco não tinham lâmpadas",
+            "algumas adormeceram",
+            "todas estão erradas"
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Parábola dos Filhos—1º filho",
+          "Parábola dos dois filhos - 2º filho",
+          "Parábola das Dez Virgens",
+          "Sermão do Monte das Oliveiras",
+          "As Virgens Prudentes",
+          "As Virgens Loucas"
+        ],
+        "columnB": [
+          "não nasceram de novo",
+          "eventos escatológicos",
+          "religiosos de Israel",
+          "igreja triunfante",
+          "igreja militante",
+          "publicanos, pecadores, meretrizes"
+        ],
+        "answers": [
+          6,
+          4,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Marcos não é citado como tendo sido discípulo de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Por não ter completado a primeira viagem, Marcos foi vetado por Paulo na segunda",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Para a salvação, João Batista pregava a necessidade do batismo nas águas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Marcos não deu destaque a Jesus como sendo um grande mestre.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Diziam que Jesus ensinava tão bem como os escribas e doutores da Lei.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Não há registro de milagres feitos por Jesus fora do território de Israel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sendo da tribo de Levi, família de Arão, um leproso podia ser sacerdote",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para Marcos, Jesus não era especialista em algum tipo de enfermidade.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Pela Bíblia o único jejum obrigatório e com tempo determinado era o do Dia da Expiação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O jejum quando feito como instrumento de troca torna-se sacrificio de tolo.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quantas vezes Marcos faz citação da Lei de Moisés",
+          "answer": "NENHUMA VEZ"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas e em qual capítulo Marcos falou sobre parábolas.",
+          "answer": "CAPÍTULO 4 E FORAM 4"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Mar onde Pedro e João eram pescadores —",
+          "options": [
+            "da Galileia",
+            "de Tiberíades",
+            "de Quenerite",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Marcos é mencionado em —",
+          "options": [
+            "Colossenses",
+            "Primeira Epístola de Pedro",
+            "Atos dos Apóstolos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Divindade de Jesus como Filho de Deus",
+          "Humanidade de Jesus como servo",
+          "Humanidade de Jesus como homem perfeito",
+          "Soberania de Jesus como Rei",
+          "Fixou residência após deixar Nazaré",
+          "Lugar onde Jesus libertou uma endemoninhada"
+        ],
+        "columnB": [
+          "Evangelho de Mateus",
+          "Fenícia",
+          "Evangelho de Marcos",
+          "Evangelho de João",
+          "Evangelho de Lucas",
+          "Cafarnaum"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Lutas, dificuldades, não significa que o crente está mal, espiritualmente.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Caso Jesus não estivesse dormindo aquela tempestade não teria acontecido.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Podemos afirmar que aquela tempestade foi provocada por Satanás.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não foi o endemoninhado quem falou com Jesus, mas, sim, os demônios.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "“É lícito ao homem repudiar sua mulher” , perguntaram os sacerdotes a Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Jesus não admitiu o divórcio em nenhuma hipótese.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Ao pensar em coisas terrenas, o pensamento dos apóstolos não estavam sintonizados com o de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "O Sinédrio, a suprema corte de Israel, não podia executar pena de morte.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A ressurreição de Jesus faz a diferença entre o cristianismo e todas as outras religiões .",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "O “ide por todo mundo” foi uma ordem de Jesus aos cristãos do primeiro século",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quem primeiro anunciou a ressurreição de Jesus",
+          "answer": "UM ANJO"
+        },
+        {
+          "id": "sa2",
+          "question": "Após sua ressurreição, citar a quem Jesus se manifestou primeiro",
+          "answer": "A MARIA MADALENA"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Um crente salvo não está sujeito a —",
+          "options": [
+            "opressão",
+            "possessão",
+            "tentação",
+            "todas estão corretas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Os milagres sobre a natureza descritos por Marcos foram —",
+          "options": [
+            "incontáveis",
+            "quinze",
+            "cinco",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Pilatos",
+          "Anjo",
+          "Barrabás",
+          "Sinédrio",
+          "Sumo Sacerdote",
+          "Povo"
+        ],
+        "columnB": [
+          "afirmou ter Jesus blasfemado",
+          "clamou pela crucificação de Jesus",
+          "queria libertar Jesus",
+          "afirmou não estar Jesus no sepulcro",
+          "julgou Jesus",
+          "liberto da prisão"
+        ],
+        "answers": [
+          5,
+          6,
+          1,
+          2,
+          4,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Não podemos afirmar, com certeza, ter sido Lucas o autor de um evangelho.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Paulo foi acompanhado por Lucas, que era médico, e cuidava de sua saúde.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Deus nunca deixou de ter na terra homens ou mulheres fiéis.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Zacarias, além de sacerdote, também escreveu um livro com 4 capítulos",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Dos quatro evangelhos, foi Lucas que mais detalhou a infância de Jesus.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "No evangelho de Lucas fica claro que Jesus nasceu numa família pobre.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Foi na Judeia que Jesus exerceu seu ministério num tempo bem maior.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na sinagoga de Nazaré Jesus abriu as Escrituras em Isaías 62:1-2.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Naim, uma cidade importante da Galileia, era sempre visitada por Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Lucas registrou o encontro de uma multidão que seguia a morte com outra que seguia a vida.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "No sentido fisiológico, cite a diferença entre a idade de Jesus em relação a João Batista",
+          "answer": "SEIS MESES"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quantas vezes encontramos o nome de Lucas em seu evangelho.",
+          "answer": "NENHUMA VEZ"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "O que Lucas não era —",
+          "options": [
+            "grego",
+            "judeu",
+            "médico",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Para levar alguém a Jesus é preciso —",
+          "options": [
+            "conhecer Jesus",
+            "amor pelas almas",
+            "persistência para vencer dificuldades",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Filho do Homem",
+          "Rejeitado pelo povo",
+          "“Semente de Mulher”",
+          "Seu poder sobre a morte",
+          "Messias",
+          "Seu poder de perdoar pecados"
+        ],
+        "columnB": [
+          "Jesus em Cafarnaum",
+          "Cristo",
+          "Jesus no Evangelho de Lucas",
+          "Filho do Homem",
+          "Naim",
+          "Jesus em Nazaré"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Em suas viagens para Jerusalém, Jesus nunca passava por Pereia.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Tiago e João demonstraram que ainda estavam vivendo no espírito da Lei.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "Biblicamente, não há qualquer restrição pelo fato de alguém ser rico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Contrariando o pensamento dos samaritanos, Jesus pernoitou na aldeia deles.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sabemos, pela Bíblia, que quando o homem não pode ir a Deus, Deus vem ao encontro dele.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar que Bartimeu nunca tinha ouvido falar de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pela Bíblia sabemos que Deus dificilmente faz acepção de pessoas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A Bíblia não menciona os nomes dos ladrões crucificados com Jesus",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "O fato de estar na igreja e perto de Jesus não garante a salvação de alguém.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Os discípulos a caminho de Emaus demonstraram não ter conhecido Jesus, pessoalmente.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Das parábolas de Lucas, cite quantas só foram citadas em seu evangelho.",
+          "answer": "DEZESSETE"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar como Jesus convenceu os dois discípulos a caminho de Emaus",
+          "answer": "USANDO AS ESCRITURAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Número de parábolas registradas por Lucas na Galileia —",
+          "options": [
+            "dezesseis",
+            "apenas uma",
+            "dezessete",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Em relação à morte de Jesus, os dois discípulos deixaram Jerusalém —",
+          "options": [
+            "oito dias depois",
+            "no dia de sua morte",
+            "no terceiro dia",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Nome da mulher curada na sinagoga",
+          "Pediram a pena de morte aos samaritanos",
+          "Cego curado perto de Jericó",
+          "Região leste do Rio Jordão",
+          "Nome bíblico do ladrão salvo",
+          "Nome dos discípulos enviados a Samaria"
+        ],
+        "columnB": [
+          "Gileade",
+          "não revelado",
+          "ignorados",
+          "ignorado",
+          "Tiago e João",
+          "Bartimeu"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Pedro e João eram conhecidos do Sumo Sacerdote e tiveram acesso à sua casa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Por ser o mais novo de todos, João era discriminado pelos demais.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Diferentemente dos três outros evangelistas, João destacou o ministério de Jesus na Judeia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O objetivo de João não era de falar da humanidade, mas da divindade de Jesus",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Em seu evangelho João procurou mostrar Jesus como um homem perfeito.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "João não deu destaque ao ensino de Jesus através de Parabolas.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Dos quatro evangelhos o de João foi o único que tratou da divindade de Jesus",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na igreja, os que não nasceram de novo, procuram ser alimentados com sinais",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "A Festa dos Tabernáculos não era tão importante como a Festa da Páscoa.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Quando Jesus começou a ensinar no Templo os sacerdotes ficaram maravilhados",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite o nome do Imperador que mandou João para Patmos e o do que o libertou",
+          "answer": "DOMICINIANO MANDOU E NERVA O LIBERTOU"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite por quem a Festa dos Tabernáculos foi instituída",
+          "answer": "O PROPRIO DEUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Dos 27 livros do Novo Testamento, João escreveu —",
+          "options": [
+            "três",
+            "cinco",
+            "apenas o Evangelho",
+            "todas estão erradas"
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "Ao cego de nascença Jesus ordenou —",
+          "options": [
+            "que seria curado no tanque de Betesda",
+            "ir lavar no tanque de Betesada",
+            "que ao lavar seria curado",
+            "todas estão erradas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Jesus no Getsêmani",
+          "Um homem importante em Jerusalém",
+          "Primeiro a chegar no túmulo",
+          "Um oficial do Rei",
+          "Primeiro a entrar no túmulo",
+          "Um homem desamparado"
+        ],
+        "columnB": [
+          "Pedro",
+          "Jerusalém",
+          "Cafarnaum",
+          "João",
+          "Pedro, Tiago e João",
+          "Nicodemos"
+        ],
+        "answers": [
+          5,
+          6,
+          4,
+          3,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Ser crente não significa estar livre de problemas no seio da família.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Biblicamente, não se pode falar em enfermidades para glória de Deus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Na unção com perfume, Maria e Marta ofereceram a Jesus o melhor que possuíam",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Paciência, entre outras coisas, é a capacidade de saber esperar com calma",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Entre os apóstolos de Jesus nunca houve disputa por posições.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Podemos afirmar não ser Jesus o Consolador revelado pela Bíblia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Nada tendo para deixar aos seus discípulos, então Jesus deixou-lhes seu amor.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Hoje, entre os evangélicos, não é possível encontrar discípulos de Judas.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Jesus não afirmou que uma vara que dá pouco fruto deve ser cortada.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Na oração feita por seus discípulos nós também estávamos incluídos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Sobre Lázaro, cite o que Marta e Maria mandaram dizer a Jesus.",
+          "answer": "“SENHOR, EIS QUE ESTÁ ENFERMO AQUELE QUE TU AMAS”"
+        },
+        {
+          "id": "sa2",
+          "question": "Dos doze apóstolos, cite qual deles Jesus não lavou os pés",
+          "answer": "LAVOU OS PÉS DE TODOS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Maria homenageou Jesus —",
+          "options": [
+            "em sua casa",
+            "em Jerusalém",
+            "na casa de Simão, o leproso",
+            "todas estão erradas"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Em sua oração sacerdotal, Jesus orou —",
+          "options": [
+            "por si mesmo",
+            "só pelos apóstolos",
+            "por nós, hoje",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Uma lição de humildade",
+          "Promessa condicionada a sua ida",
+          "Herança deixada por Jesus",
+          "Uma solene promessa de Jesus",
+          "Não é uma planta ornamental",
+          "Uma falsa videira"
+        ],
+        "columnB": [
+          "no mundo tereis aflições",
+          "a videira",
+          "“vitis orientalis”",
+          "o lavar os pés dos discípulos",
+          "a vinda do Espírito Santo",
+          "a bênção da paz"
+        ],
+        "answers": [
+          4,
+          5,
+          6,
+          1,
+          2,
+          3
+        ]
+      }
+    }
+  ]
+}

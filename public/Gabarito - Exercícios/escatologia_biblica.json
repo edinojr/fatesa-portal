@@ -1,0 +1,1196 @@
+{
+  "id": "esc-biblica",
+  "title": "Escatologia Bíblica",
+  "lessons": [
+    {
+      "id": "licao-01",
+      "title": "Lição 01",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Deus, sendo onisciente, não sentiu necessidade de estabelecer um plano para nortear suas ações.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "É certo que todos os eventos escatológicos ainda estão por acontecer.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "A expressão \"a vós é dado conhecer os mistérios do Reino dos Céus\" não se aplica a todos os homens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "A restauração completa da Nação de Israel ainda constitui um evento escatológico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Para Israel o aparecimento visível do Messias se cumpriu com o nascimento de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "No sentido escatológico tudo que estava previsto no Antigo Testamento já se cumpriu.",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Na igreja primitiva não houve preocupação com nenhum evento escatológico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Em nenhum momento da história Deus precisou alterar Seu plano.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Para execução de seu plano Deus precisa do homem, mas para Deus nenhum homem é insubstituível.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Embora sendo amor, Deus não revelou e não revelará seu plano aos ímpios.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar quando terão início as revelações referentes aos \"últimos dias\".",
+          "answer": "ELAS JÁ TIVERAM INÍCIO NO DIA DE PENTECOSTES."
+        },
+        {
+          "id": "sa2",
+          "question": "Citar o único momento na história quando o plano de Deus foi interrompido.",
+          "answer": "NA HISTÓRIA NUNCA HOUVE ESSE MOMENTO."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "A Bíblia condena a -",
+          "options": [
+            "astrologia",
+            "astronomia",
+            "escatologia",
+            "todas estão corretas."
+          ],
+          "answerIndex": 0
+        },
+        {
+          "id": "mc2",
+          "question": "Pela desobediência o homem pode -",
+          "options": [
+            "impedir o plano de Deus",
+            "prejudicar o plano de Deus",
+            "modificar o plano de Deus",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Revelado aos seus filhos",
+          "Insubstituível no plano de Deus",
+          "Por cooperarem com o plano de Deus",
+          "Por se oporem ao plano de Deus",
+          "Um evento escatológico",
+          "Nã o é um événto éscãtolo gico"
+        ],
+        "columnB": [
+          "\"Parousia\"",
+          "nações foram abençoadas.",
+          "o plano de Deus",
+          "astrologia",
+          "reis e impérios caíram",
+          "nénhumã criãturã"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-02",
+      "title": "Lição 02",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O estudo da doutrina da morte será sempre agradável e salutar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Tendo sido criado para morrer, o homem nada podia fazer para evitar a morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Estar morto, espiritualmente, significa estar, no sentido físico, vivendo sob o domínio do pecado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Quem nasce uma vez, morrerá duas; quem nasce duas vezes, morrerá uma.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os chamados \"outros mortos\" ressuscitarão para o juízo do grande \"Trono Branco\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Embora chamada de \"inimigo\", a Bíblia diz, ser para Deus, preciosa a morte dos santos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo a Bíblia, ao morrer, o espírito do homem é levado ao lugar onde Deus está.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "O espiritismo é a única religião que ensina sobre a reencarnação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Como ao homem está ordenado morrer uma vez, não é bíblico falar em segunda morte.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Pelos ensinos de Jesus, na eternidade, existem apenas dois lugares.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite quem afirmou ser preciosa ao Senhor \"a morte de seus santos\".",
+          "answer": "DAVI"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o que a Bíblia declarou sobre a morte de Abraão.",
+          "answer": "DECLAROU QUE ELE \"EXPIROU\"."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Morte eterna é chamada -",
+          "options": [
+            "dormir no Senhor",
+            "estar no \"hades\" ou \"sheol\"",
+            "segunda morte",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Tipos de morte -",
+          "options": [
+            "física",
+            "eterna",
+            "espiritual",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Morte",
+          "Morte espiritual",
+          "Salvos antes da ressurreição",
+          "Ímpios antes da ressurreição",
+          "Salvos depois da ressurreição",
+          "Ímpios depois da ressurreição"
+        ],
+        "columnB": [
+          "céu, casa de meu Pai",
+          "separação",
+          "\"hades\", \"sheol\", inferno",
+          "lago de fogo e enxofre",
+          "homem no pecado",
+          "paraíso, \"seio de"
+        ],
+        "answers": [
+          5,
+          1,
+          4,
+          6,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-03",
+      "title": "Lição 03",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O corpo humano, formado por matéria, não tem vida em sim mesmo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A parte espiritual do homem, o espírito e a alma, sendo eterna, não poderá ter fim.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Pela Bíblia, não podemos afirmar que o \"seol\" ou \"hades\", seja real ou apenas simbólico.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Não podemos afirmar que inferno e \"hades\" sejam o mesmo lugar.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A morte e ressurreição de Jesus nada mudou sobre a situação dos ímpios no \"sheol\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "A morte expiatória de Jesus consolidou a salvação dos mortos justos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Pela Bíblia sabemos, com clareza, o lugar onde o \"hades\" está localizado.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "A expressão \"os que dormem no Senhor\" refere-se apenas aos que morreram salvos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "No \"abismo\" está aprisionada uma classe de anjos desde a queda de Lúcifer.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar que todos os mortos salvos estão no paraíso e não no céu",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o lugar onde Satanás esteve ou está preso.",
+          "answer": "SATANÁS NUNCA ESTEVE E NEM ESTÁ PRESO"
+        },
+        {
+          "id": "sa2",
+          "question": "Quanto ao lugar, citar a diferença entre inferno, \"hades\" e \"sheol\".",
+          "answer": "NÃO HÁ DIFERENÇA; TRATA-SE DE UM MESMO LUGAR"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Mudou de lugar com a ressurreição de Jesus -",
+          "options": [
+            "o \"hades\"",
+            "o paraíso",
+            "não houve mudança",
+            "todas estão erradas."
+          ],
+          "answerIndex": 1
+        },
+        {
+          "id": "mc2",
+          "question": "A igreja durante o milênio estará, com certeza -",
+          "options": [
+            "no céu",
+            "no paraíso",
+            "com Cristo",
+            "um lugar indeterminado"
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Primeira ressurreição",
+          "Segunda ressurreição",
+          "Lugar dos ímpios até a ressurreição",
+          "Lugar dos salvos até a ressurreição",
+          "Lugar eterno dos ímpios",
+          "Salvos, no paraíso; ímpios no inferno"
+        ],
+        "columnB": [
+          "consolados; atormentados",
+          "todos os salvos",
+          "lago de fogo",
+          "\"hades\" ou \"sheol",
+          "paraíso",
+          "todos os ímpios"
+        ],
+        "answers": [
+          6,
+          1,
+          5,
+          3,
+          4,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-04",
+      "title": "Lição 04",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A expressão \"todos os que estão nos sepulcros\" não inclui os que foram cremados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sem distinção podemos afirmar que todos os mortos ressuscitarão num só momento.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A expressão \"os outros mortos\" em Apocalipse 20:5, fala daqueles cujos corpos não foram sepultados.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que na primeira ressurreição somente os mortos salvos \"ouvirão a sua voz\".",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Ninguém, no Antigo Testamento, manifestou a esperança da ressurreição.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Num primeiro momento, na igreja primitiva, muitos gentios tiveram dificuldades sobre a ressurreição.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Mesmo entre os judeus, os fariseus não criam na ressurreição.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Todos os que foram ressuscitados antes da ressurreição de Jesus tornaram a morrer.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Depois do arrebatamento da igreja não haverá mais ressurreição de salvos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "É certo que também os ímpios ressuscitarão, porém, cerca de mil anos depois dos salvos.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar porque os gregos pensavam que prostituição não era pecado.",
+          "answer": "PORQUE ELES NÃO CRIAM QUE O CORPO RESSUSCITARIA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a causa provável de Jesus ter ressuscitado uma criança, um jovem e um adulto.",
+          "answer": "UMA PROVA DE QUE AS PESSOAS DE TODAS AS IDADES IRÃO RESSUSCITAR."
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Falou sobre a ressurreição -",
+          "options": [
+            "Isaías",
+            "Paulo",
+            "Oséias",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Falou sobre a ressureição no Novo Testamento",
+          "options": [
+            "Maria, mãe de Jesus",
+            "João Batista",
+            "Pedro",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Ressuscitou Dorcas",
+          "Ressuscitou a filha de Jairo",
+          "Ressuscitou Êutico",
+          "Não criam na ressurreição",
+          "Ressuscitou o filho da viúva de Serepta",
+          "Ressuscitou o filho da Sunamita"
+        ],
+        "columnB": [
+          "gregos",
+          "Elizeu",
+          "Jesus",
+          "Elias",
+          "Pedro",
+          "Paulo"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "licao-05",
+      "title": "Lição 05",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Dos sinais referentes ao arrebatamento, alguns já aconteceram e outros estão acontecendo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "A expressão \"últimos dias\" fala do que acontecerá após o arrebatamento da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Quando o \"Espírito expressamente diz\" é o próprio Deus quem está falando.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Sem o novo nascimento não se pode falar em apostasia.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "O termo apostasia só pode ser aplicado no sentido religioso.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "No Antigo Testamento, em relação a Israel, apostasia tinha o sentido de adultério espiritual.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "A expressão \"é já a última hora\" não deve ser usada em relação à igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf8",
+          "statement": "Na expressão \"amontoarão para si doutores\" podemos ver o perigo de termos obreiros cultos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Embora Israel tenha falhado como povo de Deus, não foi, contudo, rejeitado para sempre.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A igreja, hoje, não tem nenhum motivo para olhar para o que está acontecendo com Israel.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Em relação a fé cristã, cite o que é apostasia.",
+          "answer": "ABANDONO DA FÉ DE FORMA CONSCIENTE E PREMEDITADA."
+        },
+        {
+          "id": "sa2",
+          "question": "Cite como devemos ver os transtornos inumeráveis que estão ocorrendo na natureza.",
+          "answer": "DEVEMOS VER COMO SINAIS DA VINDA DE JESUS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Sinais da vinda de Jesus -",
+          "options": [
+            "já aconteceram",
+            "estão acontecendo",
+            "irão acontecer",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "Devemos ver Israel como -",
+          "options": [
+            "uma nação igual as outras",
+            "uma nação amante de guerra",
+            "o relógio escatológico de Deus",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Aquecimento da terra",
+          "Violência quase incontrolável",
+          "Falsos cristos e falsos profetas",
+          "Desenvolvimento espantoso",
+          "Figueira carregada de folhas",
+          "Figueira ainda sem frutos"
+        ],
+        "columnB": [
+          "Israel hoje",
+          "sinais na área social",
+          "sinais na área da ciência",
+          "Israel no tempo de Jesus",
+          "sinais na área religiosa",
+          "sinais na área da natureza"
+        ],
+        "answers": [
+          6,
+          2,
+          4,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-06",
+      "title": "Lição 06",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Segundo Paulo, a coroa da vida está reservada aos que amam a vinda de Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Somente os salvos podem entender como será o arrebatamento da igreja.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Dos apóstolos quem mais falou sobre o arrebatamento foi Paulo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "O fato de crer que Jesus virá breve não significa estar preparado para o arrebatamento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos afirmar que a grande esperança da igreja é o de reinar com Cristo no milênio.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Após o arrebatamento todos os salvos serão julgados diante do Tribunal de Cristo",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Na parábola das Dez Virgens a expressão \"meia noite\" fala do fim do Dia da Graça",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "No arrebatamento subirão primeiro os mortos ressuscitados, depois os que estiverem vivos.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "No julgamento perante o Tribunal de Cristo haverá uma inversão quanto ao critério dos homens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A expressão \"bodas\" traz em si a ideia de uma união eterna.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar três convicções que precisamos ter sobre a vinda de Jesus.",
+          "answer": "CRER QUE ELE VIRÁ; CRER QUE ELE VIRÁ BREVE; ESTAR PREPARADO PARA SUA VINDA"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar quando, pela última vez, Jesus será chamado de \"Cordeiro\".",
+          "answer": "NA FESTA DAS BODAS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Falou ou falaram da segunda vinda -",
+          "options": [
+            "Jesus",
+            "os anjos",
+            "os apóstolos",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        },
+        {
+          "id": "mc2",
+          "question": "O Tribunal de Cristo será um -",
+          "options": [
+            "lugar de juízo condenatório",
+            "lugar de castigo",
+            "lugar de premiação",
+            "todas estão corretas."
+          ],
+          "answerIndex": 2
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Evento escatológico sobre a igreja",
+          "Madeira, feno e palha",
+          "Fogo – no Tribunal de Cristo",
+          "Critério de avaliação das obras",
+          "Prata – no Tribunal de Cristo",
+          "Ouro – no Tribunal de Cristo"
+        ],
+        "columnB": [
+          "redenção",
+          "juízo de Deus",
+          "Bodas do Cordeiro",
+          "obras da natureza humana",
+          "Glória de Deus",
+          "qualidade"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          2,
+          6,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-07",
+      "title": "Lição 07",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "O cumprimento da revelação dada a Nabucodonosor ainda não chegou ao fim.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Sendo que Nabucodonosor era um gentio, a revelação dada a Daniel é mais precisa e confiável.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "Podemos encontrar na história todos os acontecimentos previstos no Livro de Daniel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "Em que pese o esforço das nações europeias, não há qualquer possibilidade de união entre aquelas nações.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "A expressão \"somente há um que agora resiste\" diz respeito ao Espírito Santo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf6",
+          "statement": "Tudo que Satanás ofereceu a Jesus e ele rejeitou, será dado ao Anticristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Satanás formará uma trindade diabólica constituída por ele próprio, pelo Anticristo e pelo Falso Profeta.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Biblicamente, é difícil aceitar que o Anticristo será um homem nascido de mulher.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Paulo refere-se ao Anticristo como sendo \"o príncipe das potestades do ar\".",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Sabemos, pela Bíblia, que o próximo templo que será construído em Jerusalém terá curta duração.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Cite a quem se referia Daniel na expressão \"príncipe que há de vir\".",
+          "answer": "REFERIA-SE AO ANTICRISTO"
+        },
+        {
+          "id": "sa2",
+          "question": "Cite o sentido bíblico da expressão medir um lugar.",
+          "answer": "FALA DE JULGAMENTO SOBRE O LUGAR MEDIDO"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Templo profanado referido por Jesus.",
+          "options": [
+            "o existente no seu tempo",
+            "o de Salomão",
+            "o da grande tribulação",
+            "todas estão erradas;"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "Satanás dará ao Anticristo -",
+          "options": [
+            "seu trono",
+            "seu poder",
+            "seu grande poderio",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Um animal terrível e espantoso",
+          "Um grande monte que encheu a terra",
+          "Pedra cortada sem mãos",
+          "Ponta pequena vista por Daniel",
+          "Pragana das eiras no estio",
+          "O menor dos sete reinos"
+        ],
+        "columnB": [
+          "Anticristo",
+          "Reino do Anticristo",
+          "Milênio",
+          "fim do império gentílico",
+          "Jesus",
+          "Império Romano"
+        ],
+        "answers": [
+          4,
+          6,
+          2,
+          5,
+          3,
+          1
+        ]
+      }
+    },
+    {
+      "id": "licao-08",
+      "title": "Lição 08",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Sendo um evento ainda futuro, no Antigo Testamento nada se falou sobre a grande tribulação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "A grande tribulação será extensiva à toda terra e não somente a Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf3",
+          "statement": "É certo que as setenta semanas referidas por Daniel nada tem a ver com a grande tribulação.",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A expressão \"príncipe que há de vir\" referida por Daniel refere-se a Jesus.",
+          "answer": "F"
+        },
+        {
+          "id": "tf5",
+          "statement": "Podemos encontrar na história todos os acontecimentos referentes às setenta semanas de Daniel.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "A expressão \"sobre as asas das abominações virá o assolador\" refere-se ao Anticristo.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Os \"escolhidos\" mencionados por Jesus, referem-se aos filhos de Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Entre os evangélicos não há um consenso em relação ao arrebatamento da igreja e a grande tribulação.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Israel só reconhecerá Jesus como seu Messias no dia da Revelação em Glória.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A Batalha do Armagedon acontecerá logo após o arrebatamento da igreja.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar o tempo de duração da grande tribulação.",
+          "answer": "TRÊS ANOS E MEIO"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar qual será o destino final do Anticristo e do Falso profeta.",
+          "answer": "SERÃO LANÇADOS VIVOS NO ARDENTE LAGO DE FOGO E ENXOFRE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Falou com Daniel sobre as setenta semanas -",
+          "options": [
+            "o anjo do Senhor",
+            "o arcanjo Miguel",
+            "o anjo Gabriel",
+            "Deus em sonho."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "No Dia da Revelação, em glória, Jesus virá -",
+          "options": [
+            "num cavalo branco",
+            "com milhares de seus santos",
+            "executar juízo",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Tempo de angústia para Jacó",
+          "Grande Tribulação como nunca houve",
+          "O grande dia do Senhor está perto",
+          "Setenta semanas determinadas para teu povo",
+          "Perturbe-se todo morador da terra",
+          "Virá sobre a asa da abominação"
+        ],
+        "columnB": [
+          "Anticristo",
+          "Joel",
+          "Jeremias",
+          "Sofonias",
+          "Jesus",
+          "Daniel"
+        ],
+        "answers": [
+          6,
+          5,
+          1,
+          3,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "licao-09",
+      "title": "Lição 09",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "A expressão \"levantarei a Davi um Renovo Justo\" significa que Jesus nasceria da família de Davi.",
+          "answer": "V"
+        },
+        {
+          "id": "tf2",
+          "statement": "Podemos afirmar, com certeza, que Jesus reinará, pessoalmente, aqui na terra.",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A base do \"julgamento das nações\" será o modo pelo qual elas trataram Israel.",
+          "answer": "V"
+        },
+        {
+          "id": "tf4",
+          "statement": "Podemos afirmar que o ministério profético de Jesus já foi realizado.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Sabemos, pela Bíblia, que todos os gentios serão exterminados antes do milênio.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Jesus, sendo rei, reinará e prosperará e praticará o juízo e a justiça, afirmou Isaías",
+          "answer": "F"
+        },
+        {
+          "id": "tf7",
+          "statement": "Sabemos que o homem, embora salvo, no sentido material, continua sujeito ao sofrimento.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Para a igreja existe a promessa de uma redenção completa no milênio.",
+          "answer": "F"
+        },
+        {
+          "id": "tf9",
+          "statement": "Exaltar a nação de Israel diante de todos os povos é um dos propósitos do milênio.",
+          "answer": "V"
+        },
+        {
+          "id": "tf10",
+          "statement": "A expressão \"venha o teu Reino\" não pode ser aplicado no sentido material.",
+          "answer": "F"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar, segundo a Bíblia, quando e por quem será revogada a maldição da terra contida em Gênesis 3:17.",
+          "answer": "NO MILÊNIO, POR JESUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Em relação à terra, citar qual será o último evento escatológico que nela ocorrerá",
+          "answer": "A BATALHA DE GOGUE E MAGOGUE"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "No milênio, Satanás estará -",
+          "options": [
+            "no \"lago de fogo\"",
+            "no \"hades\"",
+            "no \"abismo\"",
+            "todas estão erradas."
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "No milênio haverá paz entre -",
+          "options": [
+            "as nações",
+            "os homens",
+            "os animais",
+            "todas estão corretas."
+          ],
+          "answerIndex": 3
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "Último inimigo aniquilado",
+          "No milênio haverá na terra",
+          "Redenção da terra e dos animais",
+          "Redenção material dos salvos",
+          "No milênio \" morrerá de cem anos\"",
+          "No milênio a criança brincará"
+        ],
+        "columnB": [
+          "jovem",
+          "morte",
+          "arrebatamento da igreja",
+          "sobre a toca da áspide",
+          "milênio",
+          "velhos e crianças"
+        ],
+        "answers": [
+          5,
+          1,
+          4,
+          6,
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "id": "licao-10",
+      "title": "Lição 10",
+      "trueFalse": [
+        {
+          "id": "tf1",
+          "statement": "Deus Pai tem determinado um dia no qual ele julgará, com justiça, o mundo.",
+          "answer": "F"
+        },
+        {
+          "id": "tf2",
+          "statement": "Os \"outros mortos\" são todos aqueles que morreram durante o Antigo Testamento",
+          "answer": "F"
+        },
+        {
+          "id": "tf3",
+          "statement": "A expressão \"um grande Trono Branco\" deve ser entendida no sentido real e literal",
+          "answer": "F"
+        },
+        {
+          "id": "tf4",
+          "statement": "A expressão \"grandes e pequenos\" deve ser entendida no sentido simbólico.",
+          "answer": "V"
+        },
+        {
+          "id": "tf5",
+          "statement": "Os corpos que forem cremados, segundo a Bíblia, não ressuscitarão.",
+          "answer": "F"
+        },
+        {
+          "id": "tf6",
+          "statement": "Na ressureição os corpos dos ímpios serão diferentes dos corpos dos salvos.",
+          "answer": "V"
+        },
+        {
+          "id": "tf7",
+          "statement": "Segundo a Bíblia, os ímpios ressuscitarão para vergonha e desprezo eterno.",
+          "answer": "V"
+        },
+        {
+          "id": "tf8",
+          "statement": "Podemos afirmar que Deus não fez um inferno para os homens.",
+          "answer": "V"
+        },
+        {
+          "id": "tf9",
+          "statement": "Não há possibilidade nenhuma da Jerusalém celestial ser uma cidade real e literal",
+          "answer": "F"
+        },
+        {
+          "id": "tf10",
+          "statement": "Podemos afirmar, com segurança, que Deus jamais lançará um filho seu no inferno.",
+          "answer": "V"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "sa1",
+          "question": "Citar a simbologia do arco celeste visto por João ao redor do trono",
+          "answer": "GARANTIA DA MISERICÓRDIA DE DEUS"
+        },
+        {
+          "id": "sa2",
+          "question": "Citar a expressão usada por um poeta a respeito de Jerusalém celestial.",
+          "answer": "METADE DA GLÓRIA CELESTE, JAMAIS SE CONTOU AOS MORTAIS"
+        }
+      ],
+      "multipleChoice": [
+        {
+          "id": "mc1",
+          "question": "Réus no julgamento final -",
+          "options": [
+            "os mortos na grande tribulação",
+            "todos os judeus",
+            "todos os mortos ímpios",
+            "só os gentios mortos;"
+          ],
+          "answerIndex": 2
+        },
+        {
+          "id": "mc2",
+          "question": "O juízo final será realizado -",
+          "options": [
+            "local ignorado",
+            "na terra",
+            "antes do final do milênio",
+            "no \"hades\" ou \"sheol\"."
+          ],
+          "answerIndex": 0
+        }
+      ],
+      "matching": {
+        "id": "m1",
+        "columnA": [
+          "O inferno não é eterno",
+          "Os ímpios serão destruídos",
+          "A justiça de Deus não é eterna",
+          "Todos serão salvos",
+          "Salvação e condenação eterna",
+          "Não haverá destruição"
+        ],
+        "columnB": [
+          "para os que creem na Bíblia",
+          "outras teorias",
+          "doutrina da restauração",
+          "para nenhum ser humano",
+          "universalismo",
+          "teoria da aniquilação"
+        ],
+        "answers": [
+          5,
+          3,
+          1,
+          6,
+          4,
+          2
+        ]
+      }
+    }
+  ]
+}
