@@ -4,7 +4,7 @@ import { supabase } from '../../../lib/supabase';
 
 interface GabaritoUploadProps {
   selectedBook: any;
-  fetchLessons: (bookId: string) => void | Promise<void>;
+  fetchLessons: any;
   showToast: (msg: string) => void;
 }
 

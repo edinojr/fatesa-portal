@@ -130,21 +130,8 @@ const Admin = () => {
     setEditingQuiz,
     quizQuestions,
     setQuizQuestions,
-    pendingExamMeta,
-    setPendingExamMeta,
-    addingLessonType,
-    setAddingLessonType,
-    addingBloco,
-    setAddingBloco,
-    editingLessonContent,
-    setEditingLessonContent,
-    lessonBlocks,
-    setLessonBlocks,
-    lessonMaterials,
-    setLessonMaterials,
-    pixKey,
-    setPixKey,
-    pixQrUrl,
+    pendingExamMeta: adminPendingExamMeta,
+    setPendingExamMeta: setAdminPendingExamMeta,
     uploading,
     nucleosAutoOpenAdd,
     setNucleosAutoOpenAdd,
@@ -597,38 +584,38 @@ const Admin = () => {
             setSelectedCourse={setSelectedCourse}
             selectedBook={selectedBook}
             setSelectedBook={setSelectedBook}
-            selectedLesson={selectedLesson}
-            setSelectedLesson={setSelectedLesson}
-            books={books}
-            lessons={lessons}
-            lessonItems={lessonItems}
-            userRole={userRole}
-            actionLoading={actionLoading}
-            fetchData={fetchData}
-            fetchBooks={fetchBooks}
-            fetchLessons={fetchLessons}
-            fetchLessonItems={fetchLessonItems}
-            handleDelete={(table: any, id: string) => setConfirmDelete({ type: 'content', id, table, title: 'Tem certeza que deseja excluir este item?' })}
-            handleRemoveFile={handleRemoveFileFinal}
-            handleFileUpload={handleFileUpload}
-            handleBatchUpload={handleBatchUpload}
-            handleReorder={handleReorder}
-            handleMoveTo={handleMoveTo}
-            setShowAddCourse={setShowAddCourse}
-            setShowAddBook={setShowAddBook}
-            setShowAddLesson={setShowAddLesson}
-            setShowAddContent={setShowAddContent}
-            setAddingLessonType={setAddingLessonType}
-            setAddingBloco={setAddingBloco}
-            setEditingItem={setEditingItem}
-            setEditingLessonContent={setEditingLessonContent}
-            setLessonBlocks={setLessonBlocks}
-            setLessonMaterials={setLessonMaterials}
-            setEditingQuiz={setEditingQuiz}
-            setQuizQuestions={setQuizQuestions}
-            pendingExamMeta={pendingExamMeta}
-            setPendingExamMeta={setPendingExamMeta}
-            uploading={uploading}
+             selectedLesson={selectedLesson}
+             setSelectedLesson={setSelectedLesson}
+             books={books}
+             lessons={lessons}
+             lessonItems={lessonItems}
+             userRole={userRole}
+             actionLoading={actionLoading}
+             fetchData={fetchData}
+             fetchBooks={fetchBooks}
+             fetchLessons={fetchLessons}
+             fetchLessonItems={fetchLessonItems}
+             handleDelete={(table: any, id: string) => setConfirmDelete({ type: 'content', id, table, title: 'Tem certeza que deseja excluir este item?' })}
+             handleRemoveFile={handleRemoveFileFinal}
+             handleFileUpload={handleFileUpload}
+             handleBatchUpload={handleBatchUpload}
+             handleReorder={handleReorder}
+             handleMoveTo={handleMoveTo}
+             setShowAddCourse={setShowAddCourse}
+             setShowAddBook={setShowAddBook}
+             setShowAddLesson={setShowAddLesson}
+             setShowAddContent={setShowAddContent}
+             setAddingLessonType={setAddingLessonType}
+             setAddingBloco={setAddingBloco}
+             setEditingItem={setEditingItem}
+             setEditingLessonContent={setEditingLessonContent}
+             setLessonBlocks={setLessonBlocks}
+             setLessonMaterials={setLessonMaterials}
+             setEditingQuiz={setEditingQuiz}
+             setQuizQuestions={setQuizQuestions}
+             pendingExamMeta={adminPendingExamMeta}
+             setPendingExamMeta={setAdminPendingExamMeta}
+             uploading={uploading}
           />
         )}
 

@@ -10,9 +10,11 @@ const Footer = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '3rem', paddingBottom: '4rem' }}>
           
           <div className="footer-brand">
-            <div style={{ marginBottom: '1.5rem' }}>
-              <Logo size={180} linkTo="/" />
-            </div>
+             <div style={{ marginBottom: '1.5rem' }}>
+               <Link to="/">
+                 <Logo size={180} />
+               </Link>
+             </div>
             <p style={{ opacity: 0.9, fontSize: '0.95rem', lineHeight: '1.8', maxWidth: '300px' }}>
               Formando líderes e servos para o Reino de Deus através do ensino teológico de excelência.
             </p>

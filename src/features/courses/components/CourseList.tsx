@@ -10,6 +10,7 @@ interface CourseListProps {
   atividades: any[]
   progressoAulas: any[]
   showOnlyFinished?: boolean
+  showOnlyOngoing?: boolean
 }
 
 const CourseList: React.FC<CourseListProps> = ({ 

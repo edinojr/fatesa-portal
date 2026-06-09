@@ -301,7 +301,7 @@ const Professor = () => {
               />
             )}
 
-            {activeTab === 'modules' && (
+             {(activeTab as string) === 'modules' && (
               <ProfessorContent 
                 courses={courses}
                 selectedCourse={selectedCourse}
@@ -406,7 +406,7 @@ const Professor = () => {
 
             {activeTab === 'documents' && <DocumentAnalysis />}
 
-            {activeTab === 'forum' && <ForumPanel userProfile={profile} />}
+             {activeTab === 'forum' && profile && <ForumPanel userProfile={profile} />}
           </div>
         </div>
       </main>
