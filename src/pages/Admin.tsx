@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { 
   Users, 
@@ -179,6 +179,14 @@ const Admin = () => {
     handleResetAutoCorrectedExams,
     updateParams
   } = useAdminManagement()
+
+  const [addingLessonType, setAddingLessonType] = useState<string | null>(null)
+  const [addingBloco, setAddingBloco] = useState<number | null>(null)
+  const [editingLessonContent, setEditingLessonContent] = useState<any>(null)
+  const [lessonBlocks, setLessonBlocks] = useState<any[]>([])
+  const [lessonMaterials, setLessonMaterials] = useState<any[]>([])
+  const [pixKey, setPixKey] = useState('')
+  const [pixQrUrl, setPixQrUrl] = useState('')
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
 
@@ -781,8 +789,8 @@ const Admin = () => {
           setEditingQuiz={setEditingQuiz}
           quizQuestions={quizQuestions}
           setQuizQuestions={setQuizQuestions}
-          pendingExamMeta={pendingExamMeta}
-          setPendingExamMeta={setPendingExamMeta}
+           pendingExamMeta={adminPendingExamMeta}
+           setPendingExamMeta={setAdminPendingExamMeta}
           actionLoading={actionLoading}
           setActionLoading={setActionLoading}
           supabase={supabase}
