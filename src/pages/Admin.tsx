@@ -180,7 +180,7 @@ const Admin = () => {
     updateParams
   } = useAdminManagement()
 
-  const [addingLessonType, setAddingLessonType] = useState<string | null>(null)
+  const [addingLessonType, setAddingLessonType] = useState('')
   const [addingBloco, setAddingBloco] = useState<number | null>(null)
   const [editingLessonContent, setEditingLessonContent] = useState<any>(null)
   const [lessonBlocks, setLessonBlocks] = useState<any[]>([])
