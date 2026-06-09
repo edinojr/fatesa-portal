@@ -131,8 +131,9 @@ const Lesson = () => {
          if (isStaff || modulePassed) {
            setIsReleased(true);
          } else {
-             // ALL content now requires explicit release for the student's nucleus
-              const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' : 'atividade';
+              // ALL content now requires explicit release for the student's nucleus
+               const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' :
+                                (lessonData.tipo === 'licao' || lessonData.tipo === 'material' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'licao' : 'atividade';
 
 
            const { data: releaseData } = await supabase.from('liberacoes_nucleo')
@@ -155,7 +156,15 @@ const Lesson = () => {
                .maybeSingle();
              setIsReleased(!!siblingRel);
            } else {
-             setIsReleased(false);
+             // Check if the parent module was released
+             const { data: moduleRelease } = await supabase.from('liberacoes_nucleo')
+               .select('id')
+               .eq('nucleo_id', profile?.nucleo_id)
+               .eq('item_id', lessonData.livro_id)
+               .eq('item_type', 'modulo')
+               .eq('liberado', true)
+               .maybeSingle();
+             setIsReleased(!!moduleRelease);
            }
          }
 
