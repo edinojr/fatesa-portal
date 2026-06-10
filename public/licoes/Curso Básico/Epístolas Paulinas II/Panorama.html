@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama - Epístolas Paulinas II</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .nav-links { margin-bottom: 20px; }
+        .nav-links a { margin-right: 15px; text-decoration: none; color: blue; }
+        
+.popup-window {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    max-width: 80%;
+}
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+    </style>
+</head>
+<body>
+    <div class="nav-links">
+        <a href="Panorama.html">Panorama</a>
+        
+    </div>
+    <h1>Panorama - Epístolas Paulinas II</h1><ul><li><a href="Lição 01 - Epístola de Paulo aos Efésios Primeira Parte.html">Lição 01 - Epístola de Paulo aos Efésios Primeira Parte</a></li><li><a href="Lição 02 - Epístola de Paulo aos Efésios Primeira Parte.html">Lição 02 - Epístola de Paulo aos Efésios Primeira Parte</a></li><li><a href="Lição 03 - A Epístola aos Filipenses.html">Lição 03 - A Epístola aos Filipenses</a></li><li><a href="Lição 04 - A Epístola aos Colossenses.html">Lição 04 - A Epístola aos Colossenses</a></li><li><a href="Lição 05 - Primeira Epístola aos Tessalonicenses.html">Lição 05 - Primeira Epístola aos Tessalonicenses</a></li><li><a href="Lição 06 - Segunda Epístola aos Tessalonicenses.html">Lição 06 - Segunda Epístola aos Tessalonicenses</a></li><li><a href="Lição 07 - A Primeira Epístola a Timóteo.html">Lição 07 - A Primeira Epístola a Timóteo</a></li><li><a href="Lição 08 - A Segunda Epístola a Timóteo.html">Lição 08 - A Segunda Epístola a Timóteo</a></li><li><a href="Lição 09 - Epístola de Paulo a Tito.html">Lição 09 - Epístola de Paulo a Tito</a></li><li><a href="Lição 10 - Epístola de Paulo a Filemon.html">Lição 10 - Epístola de Paulo a Filemon</a></li></ul><h1>EPÍSTOLAS PAULINAS II</h1>
+<h2>PANORAMA</h2>
+<p>Conforme você observou pela relação dos livros que compõem nosso Curso Básico de Teologia, as treze Epístolas Paulinas são estudadas em três volumes – Epístolas Paulinas I, II e III.</p>
+<p><strong>Epístolas Paulinas II</strong></p>
+<p>Neste volume estaremos estudando nove das treze epístolas, sendo elas: Efésios, Filipenses, Colossenses, I e II Tessalonicenses, I e II Timóteo, Tito e Filemon.</p>
+<p>É necessário não se esquecer de que este é um Curso Básico, portanto, de pouca profundidade. Trata-se de uma visão um tanto superficial de cada uma das epístolas.</p>
+    <div class="popup-overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup-window" id="popup">
+        <div id="popup-content"></div>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+    <script>
+        function showPopup(content) {
+            document.getElementById('popup-content').innerText = content;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

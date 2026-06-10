@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama - Profetas Maiores</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .nav-links { margin-bottom: 20px; }
+        .nav-links a { margin-right: 15px; text-decoration: none; color: blue; }
+        
+.popup-window {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    max-width: 80%;
+}
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+    </style>
+</head>
+<body>
+    <div class="nav-links">
+        <a href="Panorama.html">Panorama</a>
+        
+    </div>
+    <h1>Panorama - Profetas Maiores</h1><ul><li><a href="Lição 01 - Generalidades.html">Lição 01 - Generalidades</a></li><li><a href="Lição 02 - O Livro do Profeta Isaías (Primeira Parte).html">Lição 02 - O Livro do Profeta Isaías (Primeira Parte)</a></li><li><a href="Lição 03 - O Livro do Profeta Isaías (Segunda Parte).html">Lição 03 - O Livro do Profeta Isaías (Segunda Parte)</a></li><li><a href="Lição 04 - O Livro do Profeta Isaías (Parte Final).html">Lição 04 - O Livro do Profeta Isaías (Parte Final)</a></li><li><a href="Lição 05 - O Livro do Profeta Jeremias.html">Lição 05 - O Livro do Profeta Jeremias</a></li><li><a href="Lição 06 - O Livro de Lamentações.html">Lição 06 - O Livro de Lamentações</a></li><li><a href="Lição 07 - O Livro do Profeta Ezequiel (Primeira Parte).html">Lição 07 - O Livro do Profeta Ezequiel (Primeira Parte)</a></li><li><a href="Lição 08 - O Livro do Profeta Ezequiel (Segunda Parte).html">Lição 08 - O Livro do Profeta Ezequiel (Segunda Parte)</a></li><li><a href="Lição 09 - O Livro do Profeta Daniel (Primeira Parte).html">Lição 09 - O Livro do Profeta Daniel (Primeira Parte)</a></li><li><a href="Lição 10 - O Livro do Profeta Daniel (Segunda Parte).html">Lição 10 - O Livro do Profeta Daniel (Segunda Parte)</a></li></ul><h1>PROFETAS MAIORES</h1>
+<p>PANORAMA</p>
+<hr />
+<h3>PANORAMA</h3>
+<h4>OS PROFETAS MAIORES NO CONTEXTO DO ANTIGO TESTAMENTO</h4>
+<p>São cinco os livros dos Profetas Maiores que se encontram no Antigo Testamento, os quais estão estruturados da seguinte forma:</p>
+<p><strong>1- Pentateuco - 05</strong></p>
+<p>Gênesis, Êxodo, Levítico, Números e Deuteronômio.</p>
+<p><strong>2- Livros Históricos -12</strong></p>
+<p>Josué, Juízes, Rute, I Samuel, II Samuel, I Reis, II Reis, I Crônicas, II Crônicas, Esdras, Neemias e Ester.</p>
+<p><strong>3- Livros Poéticos - 05</strong></p>
+<p>Jó, Salmos, Provérbios, Eclesiastes e Cantares de Salomão.</p>
+<p><strong>4- Livros Proféticos - 17</strong></p>
+<p>Há uma divisão dos livros proféticos em Profetas Maiores e Profetas Menores. Esta divisão é feita com base no tamanho ou volume da obra e não na relevância ou importância dos seus autores.</p>
+<p>Também não é levado em conta a importância da mensagem, já que todos foram inspirados pelo Espírito Santo. Ocorre que os Profetas Maiores profetizaram mais ou deixaram mais escritos sobre as suas profecias.</p>
+<p><strong>Profetas Maiores - 04</strong></p>
+<p>São quatro os profetas maiores e cinco os livros, visto que Jeremias escreveu dois.</p>
+<p>São eles - Isaías, Jeremias, Lamentações de Jeremias, Ezequiel e Daniel</p>
+<p><strong>Profetas Menores</strong></p>
+<p>Oseias, Joel, Amós, Obadias, Jonas, Miqueias, Naum, Habacuque, Sofonias, Ageu, Zacarias e Malaquias.</p>
+    <div class="popup-overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup-window" id="popup">
+        <div id="popup-content"></div>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+    <script>
+        function showPopup(content) {
+            document.getElementById('popup-content').innerText = content;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -73,7 +73,5 @@ scripts/
 /lost_*.txt
 /Novo(a) Documento de Texto.txt
 
-# Conteudo de licoes nao versionado (rebuild sob demanda)
-/public/licoes/
-/public/capas/
-/public/gabaritos/
+# Conteudo de licoes versionado para deploy
+

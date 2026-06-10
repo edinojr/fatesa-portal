@@ -79,10 +79,41 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
     setRespostasAluno((prev) => ({ ...prev, [qKey]: valor }));
   };
 
-  const handleFinalizar = () => {
-    setExercicioFinalizado(true);
-    setShowGabarito(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleFinalizar = async () => {
+    if (!profile?.id) return alert('Usuário não autenticado.');
+    
+    setSaving(true);
+    try {
+      // 1. Salva as respostas (exercícios pedagógicos ficam como 'corrigida' mas sem nota)
+      const { error: saveError } = await supabase.from('respostas_aulas').upsert({
+        aluno_id: profile.id,
+        aula_id: lessonId,
+        respostas: respostasAluno,
+        status: 'corrigida',
+        nota: null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'aluno_id,aula_id' });
+
+      if (saveError) throw saveError;
+
+      // 2. Marca como concluído no progresso
+      const { error: progError } = await supabase.from('progresso').upsert({
+        aluno_id: profile.id,
+        aula_id: lessonId,
+        concluida: true
+      }, { onConflict: 'aluno_id,aula_id' });
+
+      if (progError) throw progError;
+
+      setExercicioFinalizado(true);
+      setShowGabarito(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      onSaved?.();
+    } catch (err: any) {
+      alert('Erro ao salvar progresso: ' + err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleRefazer = () => {
@@ -1024,26 +1055,26 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
           border: '1px solid var(--glass-border)'
         }}>
           {!exercicioFinalizado ? (
-            <button
-              onClick={handleFinalizar}
-              disabled={stats.answered === 0}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: '1rem 2rem',
-                borderRadius: '8px',
-                border: 'none',
-                background: stats.answered === 0 ? 'var(--text-muted)' : 'var(--primary)',
-                color: 'white',
-                fontSize: '1rem',
-                fontWeight: 600,
-                cursor: stats.answered === 0 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              <CheckCircle size={20} />
-              Verificar Respostas
-            </button>
+             <button
+               onClick={handleFinalizar}
+               disabled={stats.answered === 0 || saving}
+               style={{
+                 display: 'flex',
+                 alignItems: 'center',
+                 gap: '0.75rem',
+                 padding: '1rem 2rem',
+                 borderRadius: '8px',
+                 border: 'none',
+                 background: (stats.answered === 0 || saving) ? 'var(--text-muted)' : 'var(--primary)',
+                 color: 'white',
+                 fontSize: '1rem',
+                 fontWeight: 600,
+                 cursor: (stats.answered === 0 || saving) ? 'not-allowed' : 'pointer'
+               }}
+             >
+               {saving ? <Loader2 size={20} className="animate-spin" /> : <CheckCircle size={20} />}
+               {saving ? 'Salvando...' : 'Verificar Respostas'}
+             </button>
           ) : (
             <button
               onClick={handleRefazer}

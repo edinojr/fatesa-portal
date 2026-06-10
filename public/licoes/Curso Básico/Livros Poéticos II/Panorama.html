@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama - Livros Poéticos II</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .nav-links { margin-bottom: 20px; }
+        .nav-links a { margin-right: 15px; text-decoration: none; color: blue; }
+        
+.popup-window {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    max-width: 80%;
+}
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+    </style>
+</head>
+<body>
+    <div class="nav-links">
+        <a href="Panorama.html">Panorama</a>
+        
+    </div>
+    <h1>Panorama - Livros Poéticos II</h1><ul><li><a href="Lição 01 - Considerações Sobre Salomão Autor dos Livros - Provérbios, Eclesiastes e Cantares.html">Lição 01 - Considerações Sobre Salomão Autor dos Livros - Provérbios, Eclesiastes e Cantares</a></li><li><a href="Lição 02 - A Vida de Salomão – Segunda Parte.html">Lição 02 - A Vida de Salomão – Segunda Parte</a></li><li><a href="Lição 03 - O Livro de Provérbios Primeira Parte.html">Lição 03 - O Livro de Provérbios Primeira Parte</a></li><li><a href="Lição 04 - Instruções aos Jovens Conselhos Paternos.html">Lição 04 - Instruções aos Jovens Conselhos Paternos</a></li><li><a href="Lição 05 - A Sabedoria, A Loucura e os Diversos Contrastes.html">Lição 05 - A Sabedoria, A Loucura e os Diversos Contrastes</a></li><li><a href="Lição 06 - Provérbios Sobre Assuntos Diversos.html">Lição 06 - Provérbios Sobre Assuntos Diversos</a></li><li><a href="Lição 07 - O Livro de Eclesiastes Primeira Parte.html">Lição 07 - O Livro de Eclesiastes Primeira Parte</a></li><li><a href="Lição 08 - O Livro de Eclesiastes Segunda Parte.html">Lição 08 - O Livro de Eclesiastes Segunda Parte</a></li><li><a href="Lição 09 - Cantares de Salomão Primeira Parte.html">Lição 09 - Cantares de Salomão Primeira Parte</a></li><li><a href="Lição 10 - Cantares de Salomão Segunda Parte.html">Lição 10 - Cantares de Salomão Segunda Parte</a></li></ul><h1>LIVROS POÉTICOS II</h1>
+<h2>PANORAMA</h2>
+<p>Os tradutores da “Septuaginta” consideraram que dos 39 livros que compõem o Antigo Testamento, cinco pertencem ao gênero poético. São eles – Jó, Salmos, Provérbios, Eclesiastes e Cantares.</p>
+<p>Os dois primeiros – Jó e Salmos foram estudados, no volume “Livros Poéticos I”, sendo que os outros três – Provérbios, Eclesiastes e Cantares serão vistos neste volume, “Livros Poéticos II”.</p>
+<p>No Livro de Provérbios, dentre tantas e sábias instruções, o autor nos leva a compreender que Deus não se preocupa apenas em se revelar aos seus filhos, dando-lhes experiências sobrenaturais, mas que ele quis, também, que fossem registrados conselhos úteis no sentido de que eles pudessem alcançar o objetivo de uma vida feliz.</p>
+<p>Em todo este livro vamos encontrar instruções, as mais variadas, sobre a vida prática. Nele o jovem incauto é advertido sobre os perigos do envolvimento sexual com “mulheres estranhas”, ou sobre o relacionamento fora do casamento.</p>
+<p>O preguiçoso é repreendido, o tolo, instado a aprender, os filhos orientados a ouvirem seus pais, a soberba é condenada e a importância da humildade é destacada, dentre tantas outras lições que os filhos de Deus precisam aprender...e viver!</p>
+<p>No Livro de Eclesiastes o autor questiona a inutilidade do homem se preocupar tanto em acumular riquezas, considerando que, no fim, não ficará com nada, e outros que não trabalharam irão até brigar pela sua herança.</p>
+<p>Eclesiastes é um livro onde se destaca a expressão “porque”, dando-lhe uma característica de um livro de filosofia prática.</p>
+<p>Quanto ao Livro de Cantares, este sempre foi mal interpretado pelos rabinos que não tinham a visão espiritual para entenderem sua profunda simbologia. Consideravam ser o mesmo um livro de natureza carnal, pornográfico, sendo que, especialmente no período intertestamentário, sua leitura era proibida para os menores de trinta anos.</p>
+<p>Nós veremos, contudo, o engano daqueles rabinos e a beleza da simbologia representada no Livro de Cantares, também conhecido como sendo o Cântico dos Cânticos.</p>
+    <div class="popup-overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup-window" id="popup">
+        <div id="popup-content"></div>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+    <script>
+        function showPopup(content) {
+            document.getElementById('popup-content').innerText = content;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

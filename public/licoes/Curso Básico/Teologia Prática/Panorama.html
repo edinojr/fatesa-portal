@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama - Teologia Prática</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .nav-links { margin-bottom: 20px; }
+        .nav-links a { margin-right: 15px; text-decoration: none; color: blue; }
+        
+.popup-window {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    max-width: 80%;
+}
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+    </style>
+</head>
+<body>
+    <div class="nav-links">
+        <a href="Panorama.html">Panorama</a>
+        
+    </div>
+    <h1>Panorama - Teologia Prática</h1><ul><li><a href="Lição 01 - Colocando Deus em Primeiro Lugar.html">Lição 01 - Colocando Deus em Primeiro Lugar</a></li><li><a href="Lição 02 - Teologia Prática e o Tempo Dedicado a Deus.html">Lição 02 - Teologia Prática e o Tempo Dedicado a Deus</a></li><li><a href="Lição 03 - A Teologia Prática e a Credibilidade do Cristão.html">Lição 03 - A Teologia Prática e a Credibilidade do Cristão</a></li><li><a href="Lição 04 - A Teologia Prática e a Conduta Ética e Moral.html">Lição 04 - A Teologia Prática e a Conduta Ética e Moral</a></li><li><a href="Lição 05 - A Teologia Prática - Humildade, Sujeição, Responsabilidade.html">Lição 05 - A Teologia Prática - Humildade, Sujeição, Responsabilidade</a></li><li><a href="Lição 06 - A Teologia Prática e o Relacionamento Entre Pais e Filhos.html">Lição 06 - A Teologia Prática e o Relacionamento Entre Pais e Filhos</a></li><li><a href="Lição 07 - A Teologia Prática e o Crente no Trabalho.html">Lição 07 - A Teologia Prática e o Crente no Trabalho</a></li><li><a href="Lição 08 - A Teologia Prática e o Amor ao Próximo.html">Lição 08 - A Teologia Prática e o Amor ao Próximo</a></li><li><a href="Lição 09 - A Teologia Prática e a Conduta Cívica.html">Lição 09 - A Teologia Prática e a Conduta Cívica</a></li><li><a href="Lição 10 - A Teologia Prática e a Comunhão Cristã.html">Lição 10 - A Teologia Prática e a Comunhão Cristã</a></li></ul><h1>TEOLOGIA PRÁTICA - PANORAMA</h1>
+<p>Segundo Champlin, Teologia Prática "designa formalmente aquela parte da educação teológica que inclui disciplinas como a homilética, a adoração, os cuidados pastorais, a administração eclesiástica, o governo eclesiástico, as boas obras de todas as variedades, das quais a igreja cristã ocupa-se, e como um ministro pode mostrar-se eficaz na promoção dessas atividades. Informalmente, o termo refere-se ao lado prático da fé e da prática religiosa, em contraste com a dogmática" - (Champlin, RN - Enciclopédia de Bíblia – Teologia e Filosofia, vol. 5, pg 381).</p>
+<p>Aqui, em nível de curso básico, estaremos abordando, de maneira informal, o lado prático da teologia, particularmente conhecido como sendo a prática religiosa, ou seja, a Palavra de Deus colocada em prática na vida diária do crente e da igreja.</p>
+<p>Teologia Prática é o colocar no campo da ação tudo o que a teologia ensina. É uma teologia não apenas contemplativa e teórica, mas que vai ao campo de ação no sentido de demonstrar compaixão pelo próximo, a exemplo do bom samaritano que comprometeu sua agenda pessoal, parando para investir seu tempo e seu dinheiro na recuperação de um ser humano caído à beira de uma estrada.</p>
+<p>Assim é que, são muitos os aspectos onde podemos contemplar os frutos da aplicação da Teologia Prática, dos quais, neste livro, consideraremos alguns.</p>
+    <div class="popup-overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup-window" id="popup">
+        <div id="popup-content"></div>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+    <script>
+        function showPopup(content) {
+            document.getElementById('popup-content').innerText = content;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
