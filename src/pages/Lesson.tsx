@@ -1074,7 +1074,7 @@ const Lesson = () => {
                 flex: 1, 
                 marginBottom: '4rem', 
                 lineHeight: 1.8, 
-                 maxWidth: '1620px', // Expand area 35%
+                 maxWidth: '95%', // Expand to almost full width to prevent word cuts
                  width: '100%',
                  padding: '0 1rem',
                 textAlign: 'justify', // Justify text
@@ -1109,7 +1109,7 @@ const Lesson = () => {
            <div className="lesson-content" style={{ 
              marginBottom: '4rem',
              lineHeight: 1.8,
-             maxWidth: '1620px',
+             maxWidth: '95%', // Expand to almost full width
              width: '100%',
              padding: '0 1rem',
              textAlign: 'justify',

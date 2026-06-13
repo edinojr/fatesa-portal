@@ -1103,6 +1103,10 @@ body {
 .reading-page .pdf-page-container {
   background-color: #fff !important;
   color: #000 !important;
+  text-align: justify !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  hyphens: none !important;
 }
 
 .reading-page a, 
