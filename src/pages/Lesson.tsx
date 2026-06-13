@@ -91,6 +91,7 @@ const Lesson = () => {
             
         if (lessonError) throw lessonError;
         if (!lessonData) return;
+        const versao = lessonData.versao || 1;
         
         // Fetch book separately to avoid join issues with RLS
         const { data: bookData } = await supabase
@@ -221,7 +222,6 @@ const Lesson = () => {
         }
 
         // 2.5 BLOQUEIO DE RECUPERAÇÃO: Se for V2/V3 e já passou na V1/V2, ou não fez a anterior
-        const versao = lessonData.versao || 1;
         if (!isStaff && (versao === 2 || versao === 3)) {
           // Precisamos buscar as submissões deste livro (módulo) de forma segura
            const { data: previousSubs } = await supabase
