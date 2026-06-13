@@ -152,10 +152,14 @@ const Lesson = () => {
         }
 
         // 2. Main Logic: Submission Fetch & Timer
-        if (isStaff || modulePassed || (!isStaff && (versao === 2 || versao === 3))) {
+        if (isStaff || modulePassed) {
+          setIsReleased(true);
+        } else if (versao > 1) {
+          // For V2/V3, if they reached this point without being 'alreadyApproved'
+          // and they passed the 'didPrevious' check, it's automatically released.
           setIsReleased(true);
         } else {
-              // ALL content now requires explicit release for the student's nucleus
+            // ALL content now requires explicit release for the student's nucleus
                const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' :
                                 (lessonData.tipo === 'licao' || lessonData.tipo === 'material' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'licao' : 'atividade';
 
@@ -1138,14 +1142,16 @@ const Lesson = () => {
            <ChevronLeft size={20} /> Lição Anterior
          </button>
 
-         <button 
-           onClick={() => nextLessonId ? navigate(`/lesson/${nextLessonId}`) : null} 
-           className="btn btn-primary" 
-           style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-           disabled={!nextLessonId}
-         >
-           Próxima Lição <ChevronRight size={20} />
-         </button>
+            {lesson.ordem !== 10 && (
+              <button 
+                onClick={() => nextLessonId ? navigate(`/lesson/${nextLessonId}`) : null} 
+                className="btn btn-primary" 
+                style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                disabled={!nextLessonId}
+              >
+                Próxima Lição <ChevronRight size={20} />
+              </button>
+            )}
        </div>
 
         {/* Exercício de Fixação - Componente separado */}
