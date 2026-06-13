@@ -82,19 +82,27 @@ const Lesson = () => {
     setResult(null)
     setSubmitted(false)
     setExistingSubmission(null)
-    try {
-      const { data: lessonData, error: lessonError } = await supabase
-        .from('aulas')
-        .select('*, livros(*)')
-        .eq('id', id)
-        .maybeSingle();
+      try {
+        const { data: lessonData, error: lessonError } = await supabase
+          .from('aulas')
+          .select('*')
+          .eq('id', id)
+          .maybeSingle();
+            
+        if (lessonError) throw lessonError;
+        if (!lessonData) return;
         
-      if (lessonError) throw lessonError;
-      if (!lessonData) return;
-      
-      setLesson(lessonData)
-      setBook(lessonData?.livros)
-      setQuestions(Array.isArray(lessonData?.questionario) ? lessonData.questionario : [])
+        // Fetch book separately to avoid join issues with RLS
+        const { data: bookData } = await supabase
+          .from('livros')
+          .select('*')
+          .eq('id', lessonData.livro_id)
+          .maybeSingle();
+
+        setLesson(lessonData);
+        setBook(bookData);
+        setQuestions(Array.isArray(lessonData?.questionario) ? lessonData.questionario : []);
+
 
       // Fetch HTML content from arquivo_url if it's a supported type
       if (lessonData.arquivo_url) {
@@ -142,9 +150,10 @@ const Lesson = () => {
           if (moduleSubs) modulePassed = true;
         }
 
-         if (isStaff || modulePassed) {
-           setIsReleased(true);
-         } else {
+        // 2. Main Logic: Submission Fetch & Timer
+        if (isStaff || modulePassed || (!isStaff && (versao === 2 || versao === 3))) {
+          setIsReleased(true);
+        } else {
               // ALL content now requires explicit release for the student's nucleus
                const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' :
                                 (lessonData.tipo === 'licao' || lessonData.tipo === 'material' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'licao' : 'atividade';
