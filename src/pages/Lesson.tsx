@@ -1070,17 +1070,17 @@ const Lesson = () => {
                </aside>
              </div>
            )}
-           <div className="lesson-content" style={{ 
-             flex: 1, 
-             marginBottom: '4rem', 
-             lineHeight: 1.8, 
-             maxWidth: '1200px', // Expand area
-             width: '100%',
-             padding: '0 2rem',
-             textAlign: 'justify', // Justify text
-             overflow: 'auto',
-             transition: 'all 0.3s ease'
-           }}
+               <div className="lesson-content" style={{ 
+                flex: 1, 
+                marginBottom: '4rem', 
+                lineHeight: 1.8, 
+                 maxWidth: '1620px', // Expand area 35%
+                 width: '100%',
+                 padding: '0 1rem',
+                textAlign: 'justify', // Justify text
+                overflow: 'auto',
+                transition: 'all 0.3s ease'
+              }}
               onClick={(e) => {
                 const btn = (e.target as HTMLElement).closest('.ref-btn');
                 if (btn) {
@@ -1105,8 +1105,17 @@ const Lesson = () => {
           </div>
         )}
 
-        {hasContentBlocks && !hasHtmlFile && (
-          <div className="lesson-content" style={{ marginBottom: '4rem' }}
+         {hasContentBlocks && !hasHtmlFile && (
+           <div className="lesson-content" style={{ 
+             marginBottom: '4rem',
+             lineHeight: 1.8,
+             maxWidth: '1620px',
+             width: '100%',
+             padding: '0 1rem',
+             textAlign: 'justify',
+             overflow: 'auto',
+             transition: 'all 0.3s ease'
+           }}
             onClick={(e) => {
               const link = (e.target as HTMLElement).closest('a');
               if (link && link.href) {
