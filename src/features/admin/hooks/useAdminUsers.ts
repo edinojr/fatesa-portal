@@ -150,12 +150,29 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     try {
       const nucleoObj = allNucleos.find(n => n.id === nucleoId);
       const nucleoNome = nucleoObj ? nucleoObj.nome : 'Sem Núcleo';
+      
       const { error } = await supabase.from('users').update({ 
         nucleo_id: nucleoId || null,
         nucleo: nucleoId ? nucleoNome : null,
         status_nucleo: 'aprovado'
       }).eq('id', userId);
+      
       if (error) throw error;
+
+      // Ensure Professor gets the nucleo link in professor_nucleo table
+      const userToUpdate = users.find(u => u.id === userId);
+      if (userToUpdate && (userToUpdate.tipo === 'professor' || userToUpdate.tipo === 'admin')) {
+        if (nucleoId) {
+          await supabase.from('professor_nucleo').upsert(
+            { professor_id: userId, nucleo_id: nucleoId },
+            { onConflict: 'professor_id, nucleo_id' }
+          );
+        } else {
+          // If clearing the nucleo, we remove all their nucleo links
+          await supabase.from('professor_nucleo').delete().eq('professor_id', userId);
+        }
+      }
+
       setUsers(prev => prev.map(u => u.id === userId ? { 
         ...u, 
         nucleo_id: nucleoId || null, 
@@ -167,7 +184,7 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
     } catch(err: any) {
       showToast(err.message, 'error');
     }
-  }, [showToast, allNucleos]);
+  }, [showToast, allNucleos, users]);
 
   const handleUpdateUserName = useCallback(async (userId: string, newName: string) => {
     if (!newName.trim()) return;

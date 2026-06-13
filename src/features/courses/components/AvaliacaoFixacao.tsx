@@ -56,7 +56,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   const [questions, setQuestions] = useState<QuizQuestion[]>(initialQuestions);
   const [respostasAluno, setRespostasAluno] = useState<Record<string, any>>({});
   const [exercicioFinalizado, setExercicioFinalizado] = useState(false);
-  const [showGabarito, setShowGabarito] = useState(false);
+  const [showGabarito, setShowGabarito] = useState(mode === 'professor' || mode === 'admin');
   const [editingGabarito, setEditingGabarito] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);

@@ -17,6 +17,7 @@ export interface BaseCardProps {
   children?: React.ReactNode
   className?: string
   style?: React.CSSProperties
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
 }
 
 const BaseCard: React.FC<BaseCardProps> = ({
@@ -30,9 +31,20 @@ const BaseCard: React.FC<BaseCardProps> = ({
   children,
   className,
   style,
+  onClick,
 }) => {
   const isLocked = status === 'locked'
   const isCompleted = status === 'completed'
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isLocked) {
+      e.preventDefault()
+      return
+    }
+    if (onClick) {
+      onClick(e)
+    }
+  }
 
   return (
     <Link
@@ -54,7 +66,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
         position: 'relative',
         ...style,
       }}
-      onClick={(e) => isLocked && e.preventDefault()}
+      onClick={handleClick}
       onMouseEnter={(e) => {
         if (!isLocked) {
           e.currentTarget.style.transform = 'translateY(-2px)'

@@ -41,7 +41,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
       }}
     >
       <BaseCard
-        href={`/book/${book.id}`}
+        href={onOpenLessons ? '#' : `/book/${book.id}`}
         capaUrl={book.capa_url}
         titulo={book.titulo}
         subtitulo={`${totalLessons} ${totalLessons === 1 ? 'aula' : 'aulas'}${completionCount > 0 ? ` • ${completionCount} concluíram` : ''}`}
@@ -55,6 +55,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             : undefined
         }
         accentColor={gabComplete ? '#22c55e' : 'var(--primary)'}
+        onClick={onOpenLessons ? (e) => { e.preventDefault(); onOpenLessons(); } : undefined}
       >
         {gab.total > 0 && (
           <div style={{ marginTop: '0.3rem' }}>

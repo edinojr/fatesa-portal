@@ -16,18 +16,7 @@ const ModulosFinalizados = () => {
     const navigate = useNavigate();
 
     const goToPanel = () => {
-        const role = profile?.tipo;
-        const roles = (profile?.caminhos_acesso as string[]) || [];
-        const isAdmin = role === 'admin' || roles.includes('admin') || roles.includes('suporte');
-        const isProfessor = role === 'professor' || roles.includes('professor');
-        if (isAdmin) navigate('/admin');
-        else if (isProfessor) navigate('/professor');
-        else {
-            const stored = localStorage.getItem('fatesa_active_role');
-            if (stored === 'admin') navigate('/admin');
-            else if (stored === 'professor') navigate('/professor');
-            else navigate('/dashboard');
-        }
+        window.history.back()
     };
 
     const [showGraduationForm, setShowGraduationForm] = React.useState(false);

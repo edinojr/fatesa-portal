@@ -1,0 +1,157 @@
+.leitor-btn-flutuante {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  z-index: 998;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.leitor-btn-flutuante:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
+}
+
+.leitor-panel {
+  position: fixed;
+  bottom: 130px;
+  right: 24px;
+  z-index: 999;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 320px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+}
+.leitor-panel.active {
+  display: flex;
+}
+
+.leitor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.leitor-header h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #374151;
+  font-weight: 700;
+}
+.leitor-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+}
+.leitor-header button:hover {
+  color: #374151;
+}
+
+.leitor-status {
+  font-size: 13px;
+  color: #6b7280;
+  min-height: 18px;
+}
+
+.leitor-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.leitor-controls button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: background 0.15s;
+  background: #f3f4f6;
+  color: #374151;
+}
+.leitor-controls button:hover {
+  background: #e5e7eb;
+}
+.leitor-controls button.play-btn {
+  width: 52px;
+  height: 52px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 22px;
+}
+.leitor-controls button.play-btn:hover {
+  background: #6d28d9;
+}
+.leitor-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.leitor-speed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+.leitor-speed input[type="range"] {
+  flex: 1;
+  accent-color: #7c3aed;
+}
+.leitor-speed .speed-label {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 600;
+  color: #374151;
+}
+
+.leitor-voice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+.leitor-voice select {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+}
+
+
+/* Evaluation Pop-up styles */
+.exercicios-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.exercicios-modal, .exercicios-popup, .exercicios-content, [class*="exercicios"][class*="popup"], [class*="exercicios"][class*="modal"] {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}
+.exercicios-modal h3, .exercicios-popup h3, .exercicios-content h3 {
+    color: #1e40af !important;
+}
+

@@ -1058,19 +1058,27 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
               .filter((a: any) => a.tipo === 'avaliacao' || a.tipo === 'prova' || !!a.is_bloco_final)
               .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
 
-            const avaliacoesGrid = Array.from({ length: 11 }, (_, i) => {
-              const pos = i - 8
+            const totalGridRows = Math.max(
+              [panorama, ...licoes].length,
+              [null, ...exercicios].length,
+              [null, ...videos].length,
+              avaliacoes.length,
+              1
+            )
+            const avaliacoesStartRow = totalGridRows - avaliacoes.length
+            const avaliacoesGrid = Array.from({ length: totalGridRows }, (_, i) => {
+              const pos = i - avaliacoesStartRow
               return pos >= 0 && pos < avaliacoes.length ? avaliacoes[pos] : null
             })
 
             const gridData = {
-              lessons: [panorama, ...licoes].slice(0, 11),
-              exercises: [null, ...exercicios].slice(0, 11),
+              lessons: [panorama, ...licoes],
+              exercises: [null, ...exercicios],
               avaliacoes: avaliacoesGrid,
-              videos: [null, ...videos].slice(0, 11),
+              videos: [null, ...videos],
             }
 
-            const maxRows = Math.max(gridData.lessons.length, gridData.exercises.length, gridData.avaliacoes.length, gridData.videos.length, 11)
+            const maxRows = Math.max(gridData.lessons.length, gridData.exercises.length, gridData.avaliacoes.length, gridData.videos.length)
 
             const hasAnyContent = gridData.lessons.some(l => l !== null) || gridData.exercises.some(e => e !== null) || gridData.avaliacoes.some(a => a !== null) || gridData.videos.some(v => v !== null)
 
@@ -1167,7 +1175,11 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                     {renderGridItem(gridData.lessons[rowIndex], rowIndex === 0 ? 'Panorama' : `Lição ${String(rowIndex).padStart(2, '0')}`)}
                     {renderGridItem(gridData.exercises[rowIndex], rowIndex === 0 ? '' : `Exercício ${String(rowIndex).padStart(2, '0')}`)}
                     {renderGridItem(gridData.videos[rowIndex], rowIndex === 0 ? '' : `Vídeo ${String(rowIndex).padStart(2, '0')}`)}
-                    {renderGridItem(gridData.avaliacoes[rowIndex], rowIndex === 8 ? 'Avaliação' : rowIndex === 9 ? 'Recuperação' : rowIndex === 10 ? '2ª Recuperação' : '')}
+                    {(() => {
+                      const evalIdx = rowIndex - (maxRows - avaliacoes.length)
+                      const label = evalIdx === 0 ? 'Avaliação' : evalIdx === 1 ? 'Recuperação' : evalIdx === 2 ? '2ª Recuperação' : ''
+                      return renderGridItem(gridData.avaliacoes[rowIndex], label)
+                    })()}
                   </React.Fragment>
                 ))}
               </div>

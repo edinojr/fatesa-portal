@@ -57,7 +57,40 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
     const isStaff = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.tipo === 'professor' ||
                     (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r))
     
-    if (!isStaff && !!item.lockedByProfessor) return true
+    if (isStaff) return false
+
+    if ((item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final) && (item.versao || 1) > 1) {
+      const versao = item.versao || 1
+      const moduleSubs = (atividades || []).filter((s: any) => s.book_id === item.livro_id)
+      
+      const examSubs = moduleSubs.filter((s: any) => 
+        s.is_bloco_final || s.lesson_type === 'prova' || (s.aulas && /V[1-3]|RECUPERAÇ/i.test(s.aulas.titulo || ''))
+      )
+
+      let passedAny = false
+      if (examSubs.length > 0) {
+        const highestExam = examSubs.reduce((prev, current) => {
+          const prevV = prev.aulas?.versao || 1
+          const currV = current.aulas?.versao || 1
+          return currV >= prevV ? current : prev
+        })
+        const minGrade = highestExam.aulas?.min_grade || 7.0
+        if ((highestExam.aulas?.versao || 1) < versao && highestExam.status === 'corrigida' && (highestExam.nota || 0) >= minGrade) {
+          passedAny = true
+        }
+      }
+
+      if (passedAny) return true
+
+      const didPrevious = moduleSubs.some((s: any) => {
+        const aula = s.aulas
+        return (aula?.tipo === 'prova' || aula?.is_bloco_final) && (aula?.versao || 1) === versao - 1 && s.status === 'corrigida'
+      })
+
+      if (didPrevious) return false
+    }
+
+    if (!!item.lockedByProfessor) return true
     if (item.status_liberacao === false) return true
     if (item.data_liberacao && new Date(item.data_liberacao) > new Date()) return true
     return false
@@ -68,25 +101,32 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
     .filter((a: any) => a.tipo !== 'atividade' && a.tipo !== 'exercicio' && a.tipo !== 'avaliacao' && a.tipo !== 'prova' && !a.is_bloco_final)
     .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
 
-  // Avaliações ficam alinhadas no final (linhas 8, 9, 10)
-  const avaliacoesGrid = Array.from({ length: 11 }, (_, i) => {
-    const pos = i - 8; // posições 8, 9, 10 → índices 0, 1, 2 do array avaliacoes
-    return pos >= 0 && pos < avaliacoes.length ? avaliacoes[pos] : null;
+  // Avaliações ficam alinhadas no final
+  const totalGridRows = Math.max(
+    [panorama, ...licoes].length,
+    [null, ...exercicios].length,
+    [null, ...videos].length,
+    avaliacoes.length,
+    1
+  )
+  const avaliacoesStartRow = totalGridRows - avaliacoes.length
+  const avaliacoesGrid = Array.from({ length: totalGridRows }, (_, i) => {
+    const pos = i - avaliacoesStartRow
+    return pos >= 0 && pos < avaliacoes.length ? avaliacoes[pos] : null
   })
 
   const gridData = {
-    lessons: [panorama, ...licoes].slice(0, 11),
-    exercises: [null, ...exercicios].slice(0, 11),
+    lessons: [panorama, ...licoes],
+    exercises: [null, ...exercicios],
     avaliacoes: avaliacoesGrid,
-    videos: [null, ...videos].slice(0, 11),
+    videos: [null, ...videos],
   }
 
   const maxRows = Math.max(
     gridData.lessons.length,
     gridData.exercises.length,
     gridData.avaliacoes.length,
-    gridData.videos.length,
-    11
+    gridData.videos.length
   )
 
   const renderGridItem = (item: any, label: string) => {
@@ -177,10 +217,11 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
             gridData.videos[rowIndex], 
             rowIndex === 0 ? '' : `Vídeo ${String(rowIndex).padStart(2, '0')}`
           )}
-          {renderGridItem(
-            gridData.avaliacoes[rowIndex], 
-            rowIndex === 8 ? 'Avaliação' : rowIndex === 9 ? 'Recuperação' : rowIndex === 10 ? '2ª Recuperação' : ''
-          )}
+          {(() => {
+            const evalIdx = rowIndex - (maxRows - avaliacoes.length)
+            const label = evalIdx === 0 ? 'Avaliação' : evalIdx === 1 ? 'Recuperação' : evalIdx === 2 ? '2ª Recuperação' : ''
+            return renderGridItem(gridData.avaliacoes[rowIndex], label)
+          })()}
         </React.Fragment>
       ))}
     </div>

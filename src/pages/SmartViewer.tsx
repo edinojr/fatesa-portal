@@ -89,7 +89,7 @@ const SmartViewer = () => {
   const isHtmlContent = useMemo(() => {
     if (!data) return false;
     const url = data.arquivo_url || data.url || '';
-    return /\.html?$/i.test(url);
+    return /\.html?([#?].*)?$/i.test(url);
   }, [data]);
 
   const pdfUrl = useMemo(() => {
@@ -185,7 +185,7 @@ const SmartViewer = () => {
       
       setData(res);
       
-      if (res.arquivo_url && /\.html?$/i.test(res.arquivo_url)) {
+      if (res.arquivo_url && /\.html?([#?].*)?$/i.test(res.arquivo_url)) {
         setHtmlLoading(true);
         try {
           const resp = await fetch(res.arquivo_url);

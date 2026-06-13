@@ -5,35 +5,168 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lição 06: O Perigo da Apostasia</title>
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 2rem; color: #333; }
-    h1, h2, h3, h4, h5 { color: #1e40af; margin-top: 1.5em; margin-bottom: 0.5em; }
-    p { margin-bottom: 1em; }
-    blockquote { border-left: 4px solid #e5e7eb; padding-left: 1rem; color: #4b5563; margin-left: 0; }
-    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
-    th, td { border: 1px solid #e5e7eb; padding: 0.75rem; text-align: left; }
-    th { background-color: #f9fafb; }
-    img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1.5rem 0; }
-    pre { background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
-    code { font-family: monospace; background-color: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.875em; }
-    ul, ol { margin-bottom: 1rem; padding-left: 1.5rem; }
-    li { margin-bottom: 0.5rem; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      line-height: 1.7; 
+      max-width: 900px; 
+      margin: 0 auto; 
+      padding: 2rem; 
+      color: #334155; 
+      background-color: #f8fafc; 
+    }
+    .book-page {
+      background-color: white;
+      padding: 3rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      border: 1px solid #e2e8f0;
+    }
+    h1 { 
+      color: #1e3a8a; 
+      text-align: center; 
+      font-size: 2.5rem; 
+      border-bottom: 4px double #1e3a8a; 
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    h2 { 
+      color: #1e40af; 
+      font-size: 1.8rem; 
+      border-left: 6px solid #1e40af; 
+      padding-left: 1rem; 
+      margin-top: 2.5rem; 
+      margin-bottom: 1rem;
+      background-color: #eff6ff;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+    h3 { 
+      color: #1d4ed8; 
+      font-size: 1.4rem; 
+      margin-top: 2rem;
+      border-bottom: 1px solid #bfdbfe;
+    }
+    h4 { 
+      color: #334155; 
+      font-size: 1.1rem; 
+      text-transform: uppercase; 
+      letter-spacing: 0.05em; 
+      margin-top: 1.5rem;
+    }
+    p { margin-bottom: 1.2rem; text-align: justify; }
+    .bible-verse { 
+      background-color: #f1f5f9; 
+      border-left: 4px solid #3b82f6; 
+      padding: 1.5rem; 
+      margin: 1.5rem 0; 
+      font-style: italic; 
+      color: #1e293b;
+      border-radius: 0 8px 8px 0;
+    }
+    .highlight-box { 
+      background-color: #fefce8; 
+      border: 1px solid #fef08a; 
+      padding: 1.5rem; 
+      margin: 2rem 0; 
+      border-radius: 12px; 
+      color: #854d0e;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .highlight-box strong { color: #713f12; }
+    .learning-objectives {
+      background-color: #f0fdf4;
+      border: 1px solid #dcfce7;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+    }
+    .learning-objectives h3 { 
+      margin-top: 0; 
+      color: #166534; 
+      border-bottom: none;
+    }
+    .textbook-image { 
+      display: block; 
+      max-width: 80%; 
+      height: auto; 
+      margin: 2rem auto; 
+      border-radius: 12px; 
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+    .image-caption { 
+      text-align: center; 
+      font-size: 0.9rem; 
+      color: #64748b; 
+      margin-top: -1.5rem; 
+      margin-bottom: 2rem; 
+      font-style: italic; 
+    }
+    .growth-diagram {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 2rem 0;
+      padding: 2rem;
+      background-color: #f8fafc;
+      border-radius: 12px;
+      border: 1px dashed #cbd5e1;
+      text-align: center;
+    }
+    .growth-step {
+      flex: 1;
+      padding: 1rem;
+      background-color: white;
+      border: 2px solid #3b82f6;
+      border-radius: 8px;
+      margin: 0 10px;
+      font-weight: bold;
+      color: #1e40af;
+      position: relative;
+    }
+    .growth-arrow {
+      font-size: 1.5rem;
+      color: #3b82f6;
+    }
+    .summary-box {
+      background-color: #fdf2f8;
+      border: 1px solid #fbcfe8;
+      padding: 1.5rem;
+      margin-top: 3rem;
+      border-radius: 12px;
+    }
   </style>
   <link rel="stylesheet" href="../assets/bible-popup.css">
   <link rel="stylesheet" href="../assets/exercicios-widget.css">
   <link rel="stylesheet" href="../assets/leitor-audio.css">
 </head>
 <body>
-  <h1>LIÇÃO 06</h1>
-<h2>O PERIGO DA APOSTASIA</h2>
-<h3 id="texto-1">TEXTO I</h3>
-<h4>CONSIDERAÇÕES PRELIMINARES</h4>
-<p><strong>O perigo da apostasia – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;11&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Do qual muito temos que dizer, de dif�cil interpreta��o; porquanto vos fizestes negligentes para ouvir.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;12&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque, devendo j� ser mestres pelo tempo, ainda necessitais de que se vos torne a ensinar quais sejam os primeiros rudimentos das palavras de Deus; e vos haveis feito tais que necessitais de leite, e n�o de s�lido mantimento.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque qualquer que ainda se alimenta de leite n�o est� experimentado na palavra da justi�a, porque � menino.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;14&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Mas o mantimento s�lido � para os perfeitos, os quais, em raz�o do costume, t�m os sentidos exercitados para discernir tanto o bem como o mal.&lt;/div&gt;">Hb 5:11-14</span> e 6:1-20</strong></p>
-<p><strong>Provaram o dom celestial</strong></p>
-<ul>
-<li><em>&quot;Porque é impossível que os que já uma vez foram iluminados, e provaram o dom celestial, e se fizeram participantes do Espírito Santo, e provaram a boa palavra de Deus e as virtudes do século futuro&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;4&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque � imposs�vel que os que j� uma vez foram iluminados, e provaram o dom celestial, e se fizeram participantes do Esp�rito Santo,&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;5&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E provaram a boa palavra de Deus, e as virtudes do s�culo futuro,&lt;/div&gt;">Hb 6:4-5</span>).</em></li>
-</ul>
-<p>Quando uma pessoa vem para Jesus ela passa a experimentar as coisas do céu, antes mesmo de lá chegar.
-A boa Palavra de Deus coloca-a em íntima relação com o dom celestial, com o Espírito Santo e com as virtudes do tempo futuro.</p>
+  <div class="book-page">
+    <div class="learning-objectives">
+      <h3>Objetivos de Aprendizagem</h3>
+      <ul>
+        <li>Compreender o conceito bíblico de apostasia e seus perigos.</li>
+        <li>Identificar a relação entre a falta de conhecimento da Palavra de Deus e a imaturidade espiritual.</li>
+        <li>Distinguir os três estágios do crescimento espiritual: Filhinhos, Mancebos e Pais.</li>
+        <li>Analisar a superioridade do sacerdócio de Cristo segundo a ordem de Melquisedeque.</li>
+      </ul>
+    </div>
+    <h1>LIÇÃO 06</h1>
+    <h2>O PERIGO DA APOSTASIA</h2>
+    
+    <h3>Capítulo 1: O Perigo da Apostasia</h3>
+    <h4>CONSIDERAÇÕES PRELIMINARES</h4>
+    <p><strong>O perigo da apostasia – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;11&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Do qual muito temos que dizer, de difcil interpretao; porquanto vos fizestes negligentes para ouvir.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;12&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque, devendo j ser mestres pelo tempo, ainda necessitais de que se vos torne a ensinar quais sejam os primeiros rudimentos das palavras de Deus; e vos haveis feito tais que necessitais de leite, e no de slido mantimento.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque qualquer que ainda se alimenta de leite no est experimentado na palavra da justia, porque  menino.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;14&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Mas o mantimento slido  para os perfeitos, os quais, em razo do costume, tm os sentidos exercitados para discernir tanto o bem como o mal.&lt;/div&gt;">Hb 5:11-14</span> e 6:1-20</strong></p>
+    
+    <img src="https://images.unsplash.com/photo-1508615039623-a25602786756?q=80&w=800" class="textbook-image" alt="Caminhos que divergem simbolizando a escolha entre a fé e a apostasia">
+    <p class="image-caption">A apostasia representa o desvio consciente do caminho da verdade.</p>
+
+    <div class="highlight-box">
+      <p><strong>Provaram o dom celestial</strong></p>
+      <div class="bible-verse">
+        &quot;Porque é impossível que os que já uma vez foram iluminados, e provaram o dom celestial, e se fizeram participantes do Espírito Santo, e provaram a boa palavra de Deus e as virtudes do século futuro&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;4&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque  impossvel que os que j uma vez foram iluminados, e provaram o dom celestial, e se fizeram participantes do Esprito Santo,&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;verse-text&quot;&gt;E provaram a boa palavra de Deus, e as virtudes do sculo futuro,&lt;/div&gt;">Hb 6:4-5</span>).
+      </div>
+      <p>Quando uma pessoa vem para Jesus ela passa a experimentar as coisas do céu, antes mesmo de lá chegar. A boa Palavra de Deus coloca-a em íntima relação com o dom celestial, com o Espírito Santo e com as virtudes do tempo futuro.</p>
+    </div>
 <p>A palavra &quot;provar&quot; indica mais do que simplesmente ter uma informação acerca disso tudo, mas, subentende uma experiência vivencial, conforme diz o Salmista Davi –</p>
 <ul>
 <li><em>&quot;Provai e vede que o Senhor é bom; bem-aventurado o homem que nele confia&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;8&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Provai, e vede que o Senhor � bom; bem-aventurado o homem que nele confia.&lt;/div&gt;">Sl 34:8</span>).</em></li>
@@ -53,11 +186,15 @@ A boa Palavra de Deus coloca-a em íntima relação com o dom celestial, com o E
 <p>Para essas pessoas, caso se desviassem, seria impossível, (o original não admite que se empregue na tradução o vocábulo “difícil”), renová-las outra vez para o arrependimento, uma vez que deliberadamente rejeitaram a Cristo, destituindo a crucificação do sentido que antes lhe atribuíram.</p>
 <p>Dificilmente o verdadeiro crente fará uma coisa dessas, o que constitui um vitupério a Cristo, contudo, tal é possível, porque temos o livre-arbítrio.</p>
 <p>O autor da Epístola sente, bem de perto, o perigo peculiar que os hebreus enfrentavam.</p>
-<p>Ele emprega a ilustração da natureza contrastando dois tipos de solo, ambos bem regados, sendo que um produz <em>&quot;ervas proveitosas&quot;</em> e o outro apenas <em>&quot;espinhos e abrolhos&quot;</em> –</p>
-<ul>
-<li><em>&quot;Porque a terra que embebe a chuva que muitas vezes cai sobre ela e produz erva proveitosa para aqueles por quem é lavrada recebe a bênção de Deus; mas a que produz espinhos e abrolhos é reprovada e perto está da maldição; o seu fim é ser queimada&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;7&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque a terra que embebe a chuva, que muitas vezes cai sobre ela, e produz erva proveitosa para aqueles por quem � lavrada, recebe a b�n��o de Deus;&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;8&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Mas a que produz espinhos e abrolhos, � reprovada, e perto est� da maldi��o; o seu fim � ser queimada.&lt;/div&gt;">Hb 6:7-8</span>).</em></li>
-</ul>
-<p>O contraste realça a diferença entre duas classes de cristãos, ambas trabalhando sob condições ideais, mas chegando a resultados diferentes.</p>
+    <p>Ele emprega a ilustração da natureza contrastando dois tipos de solo, ambos bem regados, sendo que um produz <em>&quot;ervas proveitosas&quot;</em> e o outro apenas <em>&quot;espinhos e abrolhos&quot;</em> –</p>
+    <div class="bible-verse">
+      &quot;Porque a terra que embebe a chuva que muitas vezes cai sobre ela e produz erva proveitosa para aqueles por quem é lavrada recebe a bênção de Deus; mas a que produz espinhos e abrolhos é reprovada e perto está da maldição; o seu fim é ser queimada&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;7&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque a terra que embebe a chuva, que muitas vezes cai sobre ela, e produz erva proveitosa para aqueles por quem  lavrada, recebe a bnn o de Deus;&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;8&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Mas a que produz espinhos e abrolhos,  reprovada, e perto est da maldi o; o seu fim  ser queimada.&lt;/div&gt;">Hb 6:7-8</span>).
+    </div>
+
+    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800" class="textbook-image" alt="Comparação entre solo fértil com plantações e solo árido com espinhos">
+    <p class="image-caption">O contraste entre o coração receptivo e o coração que se torna árido.</p>
+
+    <p>O contraste realça a diferença entre duas classes de cristãos, ambas trabalhando sob condições ideais, mas chegando a resultados diferentes.</p>
 <p>Abraão aguentou firme, confiando na redenção e usufruto da bênção prometida. Nós, atualmente, temos o incentivo adicional de uma redenção já efetuada, em cumprimento a promessa e juramento divinos.</p>
 <p>Devemos, pois, nos refugiar na pessoa de Cristo, em quem temos proteção não apenas contra os pecados, mas contra as meras, superficiais e inúteis formalidades religiosas. A esperança do cristão é como âncora <em>&quot;segura e firme&quot;</em> que jamais perde a resistência ou estabilidade.</p>
 <p>É uma esperança pessoal, firmada no Senhor Jesus Cristo <em>&quot;feito eternamente Sumo Sacerdote, segundo a ordem de Melquisedeque&quot;</em>. Ele entrou no santuário celestial como precursor dos muitos &quot;filhos&quot; que está conduzindo à glória.</p>
@@ -131,102 +268,67 @@ A boa Palavra de Deus coloca-a em íntima relação com o dom celestial, com o E
 <p>Teriam que declarar que Jesus de Nazaré não era o Cristo ou o Messias. Isto seria negar a fé cristã. Seria cometer apostasia.</p>
 <p>Foi por isto que insistimos em afirmar que para cometer o pecado de apostasia é preciso ter uma consciência plena do ato que se está realizando.</p>
 <p>Apostasia é a negação consciente da fé cristã. Entenda isto!</p>
-<hr>
-<h3 id="texto-2">TEXTO II</h3>
-<h4>A FALTA DE CONHECIMENTO DA PALAVRA DE DEUS É UMA DAS CAUSAS DA APOSTASIA</h4>
-<ul>
-<li><em>&quot;Porque, devendo já ser mestres pelo tempo, ainda necessitais de que se vos torne a ensinar quais sejam os primeiros rudimentos das palavras de Deus; e vos haveis feitos tais que necessitais de leite e não de sólido mantimento. Porque qualquer que ainda se alimenta de leite não está experimentado na palavra da justiça, porque é menino&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;12&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque, devendo j� ser mestres pelo tempo, ainda necessitais de que se vos torne a ensinar quais sejam os primeiros rudimentos das palavras de Deus; e vos haveis feito tais que necessitais de leite, e n�o de s�lido mantimento.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque qualquer que ainda se alimenta de leite n�o est� experimentado na palavra da justi�a, porque � menino.&lt;/div&gt;">Hb 5:12-13</span>).</em></li>
-</ul>
-<p>Muitos cristãos hebreus, pelo tempo que tinham de fé, ou pelo tempo que eram crentes, deveriam ser adultos e mestres, no entanto, não haviam crescido, continuavam meninos indoutos.</p>
-<p>A salvação, em si, não depende do tempo de fé, ou do tempo que o crente esteja na igreja. Depende do novo nascimento ou da regeneração. Este novo homem não nasce adulto, porém, espiritualmente, é um ser vivo.</p>
-<p>Crescer é uma característica de todo ser vivo. Assim, o novo homem que surge através do novo nascimento, é um ser vivo e deve crescer. Ninguém é gerado adulto.</p>
-<p>Um crescimento sadio e normal depende de uma série de fatores, tanto internos, como externos. Aqui, vamos considerar, apenas, o fator alimentação.</p>
-<p><strong>A Palavra de Deus como alimento espiritual</strong></p>
-<p>O escritor nos fala sobre um grupo de crentes que teve o crescimento retardado pela falta de uma ministração progressiva da Palavra de Deus. Eles haviam recebido apenas um ensino básico, uma alimentação leve, a base de leite. Só ficaram na base do edifício. Não ergueram a construção.</p>
-<p>Estamos considerando a Palavra de Deus como sendo um alimento essencial para o crescimento normal do crente.</p>
-<p>O leite é um bom alimento, mas não pode ser o único na fase de crescimento. Ele é apenas o alimento inicial. Na medida em que a criança vai se desenvolvendo, ela precisa receber alimentos sólidos, mais substanciais.</p>
-<p>No sentido espiritual, para um bom crescimento, a Palavra de Deus precisa ser ministrada no seu todo. Do contrário, o crente corre o risco de permanecer “menino” e ser levado por vento de doutrina –</p>
-<ul>
-<li><em>&quot;Para que não sejamos mais meninos inconstantes levados em roda por todo o vento de doutrina...&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;14&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Para que n�o sejamos mais meninos inconstantes, levados em roda por todo o vento de doutrina, pelo engano dos homens que com ast�cia enganam fraudulosamente.&lt;/div&gt;">Ef 4:14</span>).</em></li>
-</ul>
-<p>Por isto afirmamos que a falta de conhecimento da Palavra de Deus tem sido a causa do fracasso espiritual de muitos, até mesmo dos casos de apostasia.</p>
-<p>Entre nós é difícil acontecer de um crente convertido voltar às práticas demoníacas do espiritismo ou a idolatria da Igreja Católica Romana.</p>
-<p>Porém, tem acontecido de alguém que experimentou o novo nascimento tornando-se membro do corpo de Cristo, ter-se tornado membro da igreja visível, através do batismo nas águas, ter provado o dom celestial, ter sido participante do Espírito Santo e da vocação celestial e depois se tornar “testemunha de Jeová”, negando a divindade de Cristo e a personalidade do Espírito Santo; adventista, voltando aos rudimentos da Lei; de batizar-se outra vez só em “nome de Jesus”, negando a Trindade. Isto chama-se apostasia. A causa, quase sempre, é a falta de conhecimento da Palavra de Deus.</p>
-<p>São pessoas que ficam muito tempo na igreja, como ficaram os Hebreus, mas que não estudam a Palavra. Satisfazem-se, apenas com a leitura bíblica, quando leem. Ler é bem diferente de estudar.</p>
-<p>Qualquer crente que estiver bem estruturado no conhecimento da Palavra de Deus, ele pode cair, mas, apostatar, não!</p>
-<p>Podemos perceber que faltou um ensino completo da Palavra de Deus aos crentes hebreus. Eles tinham recebido apenas um ensino básico, porém, rudimentar. Estavam sem argumentos ante à pressão exercida pelos judaizantes.</p>
-<p>Quando o escritor da Epístola aos Hebreus pensou em falar-lhes sobre as verdades profundas do eterno sacerdócio de Cristo, percebeu que não tinham condições para entender a Palavra de Deus. Não estavam preparados para receber uma sólida alimentação.</p>
-<p>Certamente que não entenderiam que para ser sumo sacerdote de toda a humanidade, Jesus teria que ser constituído segundo a ordem de Melquisedeque e não segundo a ordem de Arão, bem como outras verdades profundas.</p>
-<p>O autor percebeu que eles conheciam apenas os rudimentos da doutrina cristã e que ainda não tinham conseguido se livrar de certos costumes advindos da Lei.</p>
-<p>Assim, por não estarem estruturados em toda Palavra de Deus corriam o risco de voltarem ao judaísmo, o que seria uma apostasia.</p>
-<p>Hoje o problema não é diferente. Muitos crentes estão na igreja, porém, não conhecem nada de Bíblia. Alguns apenas leem a Palavra. Outros, nem isto fazem!</p>
-<p>Podem ser salvos, como salvos eram os crentes hebreus. Mas correm perigo, como corriam os crentes hebreus.</p>
-<p>Ninguém poderá entender as grandes doutrinas da Bíblia se não se dispuser a estudar, tendo, inclusive, bons professores que ensinem. Dificilmente um aluno que ama e frequenta a Escola Dominical será levado <em>&quot;por vento de doutrina&quot;</em> e, mais dificilmente, cairá nas malhas da apostasia.</p>
-<p>Conhecer a Palavra de Deus é uma segurança para o cristão. Creia nisto!</p>
-<p><strong>O anão não podia ser sacerdote</strong></p>
-<p>Pela Lei de Moisés, por determinação de Deus, para ser sacerdote tinha que ser da tribo de Levi e da família de Arão. Porém, nem todo levita podia ser sacerdote. Exigia-se que a pessoa fosse física e moralmente perfeita.</p>
-<p>Em <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;16&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Falou mais o Senhor a Mois�s, dizendo:&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;17&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Fala a Ar�o, dizendo: Ningu�m da tua descend�ncia, nas suas gera��es, em que houver algum defeito, se chegar� a oferecer o p�o do seu Deus.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;18&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Pois nenhum homem em quem houver alguma deformidade se chegar�; como homem cego, ou coxo, ou de nariz chato, ou de membros demasiadamente compridos,&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;19&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Ou homem que tiver quebrado o p�, ou a m�o quebrada,&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;20&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Ou corcunda, ou an�o, ou que tiver defeito no olho, ou sarna, ou impigem, ou que tiver test�culo mutilado.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;21&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Nenhum homem da descend�ncia de Ar�o, o sacerdote, em quem houver alguma deformidade, se chegar� para oferecer as ofertas queimadas do Senhor; defeito nele h�; n�o se chegar� para oferecer o p�o do seu Deus.&lt;/div&gt;">Lv 21:16-21</span>, encontramos uma relação de doenças e defeitos físicos que incapacitavam um homem para o sacerdócio, mesmo que fosse levita e da família de Arão –</p>
-<ul>
-<li><em>&quot;Pois nenhum homem em quem houver alguma deformidade se chegará...&quot;</em></li>
-</ul>
-<p>No versículo 20 está incluído o anão.</p>
-<p>Anão, como sabemos, é uma pessoa de pequena estatura. Ela é pequena, mas não é menino. O menino, sendo pequeno deverá crescer. O anão não crescerá mais. É um adulto na idade, mas é como um menino, na estatura. Ele pode simbolizar o crente velho “de igreja”, mas que permaneceu “menino na fé”, imaturo!</p>
-<p>Não cresceu, espiritualmente –</p>
-<ul>
-<li><em>&quot;Porque, devendo já ser mestres pelo tempo, ainda necessitais de que se vos torne a ensinar quais sejam os primeiros rudimentos da palavra de Deus...&quot;</em></li>
-</ul>
-<p>Pastorear uma igreja formada por “anões” deve ser bastante complicado!</p>
-<p>Pela lei o anão não podia ser sacerdote; hoje, não pode ser separado para o ministério. Um obreiro precisa conhecer bem a Palavra de Deus –</p>
-<ul>
-<li><em>&quot;...que maneja bem a palavra da verdade&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;15&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Procura apresentar-te a Deus aprovado, como obreiro que n�o tem de que se envergonhar, que maneja bem a palavra da verdade.&lt;/div&gt;">2 Tm 2:15</span>).</em></li>
-</ul>
-<p>Porém, independente ou não de almejar o episcopado, o crente não pode se conformar sendo anão. O alvo de todo crente que conhece a Palavra de Deus é chegar à medida da estatura completa de Cristo, como escreveu Paulo.</p>
-<ul>
-<li><em>&quot;Até que todos cheguemos à unidade da fé, e ao conhecimento do Filho de Deus, a varão perfeito, a medida da estatura completa de Cristo&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;At� que todos cheguemos � unidade da f�, e ao conhecimento do Filho de Deus, a homem perfeito, � medida da estatura completa de Cristo,&lt;/div&gt;">Ef 4:13</span>).</em></li>
-</ul>
-<p>Como dissemos, crescer é uma característica de todo ser vivo. Nós temos vida –</p>
-<ul>
-<li><em>&quot;E vos vivificou, estando vós mortos em ofensas e pecados&quot;- (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;1&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E vos vivificou, estando v�s mortos em ofensas e pecados,&lt;/div&gt;">Ef 2:1</span>).</em></li>
-</ul>
-<p>Precisamos crescer! Um dos fatores que influem no crescimento é uma boa alimentação. Nós temos o mais excelente alimento espiritual – a Palavra de Deus -</p>
-<ul>
-<li><em>&quot;...nem só de pão viverá o homem, mas de toda a palavra que sai da boca de Deus&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;4&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Ele, por�m, respondendo, disse: Est� escrito: Nem s� de p�o viver� o homem, mas de toda a palavra que sai da boca de Deus.&lt;/div&gt;">Mt 4:4</span>)</em>, foi o que afirmou o Senhor Jesus.</li>
-</ul>
-<p>Não vamos correr o risco que estavam correndo os crentes hebreus. Eles não ergueram o edifício. Só ficaram no conhecimento básico da Palavra, ou seja, “<em>nos rudimentos da doutrina de Cristo</em>”.</p>
-<p>Lembre-se que o anão não podia ser sacerdote, e nós temos uma vocação sacerdotal – foi assim que João nos viu –</p>
-<ul>
-<li><em>&quot;...mas serão sacerdotes de Deus e de Cristo, e reinarão com ele mil anos&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;6&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Bem-aventurado e santo aquele que tem parte na primeira ressurrei��o; sobre estes n�o tem poder a segunda morte; mas ser�o sacerdotes de Deus e de Cristo, e reinar�o com ele mil anos.&lt;/div&gt;">Ap 20:6</span>).</em></li>
-</ul>
-<p>Permanecendo anão na fé e no conhecimento da Palavra de Deus, estamos correndo o risco de não sermos aprovados como “<em>sacerdotes de Deus e de Cristo</em>”.</p>
-<hr>
-<h3 id="texto-3">TEXTO III</h3>
-<h4>OS TRÊS ESTÁGIOS DO CRESCIMENTO ESPIRITUAL: “FILHINHOS”, “MANCEBOS” E “PAIS”</h4>
-<p>Quando João, no cap. 2:12-17 de sua primeira epístola, escreveu aos “filhinhos”, aos jovens ou “mancebos” e aos “pais”, certamente que não estava se referindo à idade cronológica das pessoas, mas, aos estágios do crescimento espiritual dos crentes.</p>
-<p><strong>Primeiro estágio – “Filhinhos”</strong></p>
-<p>Foi uma maneira carinhosa de tratar os crentes novos convertidos, os recém-nascidos na fé. Para estes João destaca a importância do conhecimento de Deus e a certeza do perdão dos pecados através do nome de Jesus –</p>
-<ul>
-<li><em>&quot;Filhinhos&quot;, escrevo-vos, porque pelo seu nome vos são perdoados os pecados...&quot; - (I <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;12&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E, levantando de longe os seus olhos, n�o o conheceram; e levantaram a sua voz e choraram, e rasgaram cada um o seu manto, e sobre as suas cabe�as lan�aram p� ao ar.&lt;/div&gt;">J� 2:12</span>).</em></li>
-</ul>
-<p>Para o novo convertido o conhecimento bíblico mais importante é saber que seus pecados foram perdoados e que ele pode ficar descansado –</p>
-<ul>
-<li><em>&quot;Assim que, se alguém está em Cristo, nova criatura é: as coisas velhas já passaram; eis que tudo se fez novo&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;17&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Assim que, se algu�m est� em Cristo, nova criatura �; as coisas velhas j� passaram; eis que tudo se fez novo.&lt;/div&gt;">2 Co 5:17</span>).</em></li>
-</ul>
-<p>Sem a certeza do perdão dos pecados, não se pode começar a carreira espiritual e nem o crescimento, em Cristo. Os cristãos hebreus tinham parado neste primeiro estágio. Continuavam sendo meninos!</p>
-<p><strong>Segundo estágio – “Jovens e mancebos”</strong></p>
-<ul>
-<li><em>&quot;...mancebos, escrevo-vos porque sois fortes, e a palavra de Deus está em vós, e já vencestes o maligno&quot; - (I J� 2:14).</em></li>
-</ul>
-<p>Os que já foram “filhinhos”, agora são mancebos e filhos. Cresceram. Ficaram fortes. Uma das causas do crescimento era que <em>“a Palavra de Deus habita em vós”</em>.</p>
-<p>Fortalecidos no conhecimento da Palavra, desenvolveram-se espiritualmente – <em>“E já vencestes o maligno”</em>.</p>
-<p>Estes não vão apostatar. O jovem é forte. Tem muito mais resistência do que os “filhinhos”. O desenvolvimento da Obra de Deus está confiado aos “mancebos”.</p>
-<p>Os jovens sadios, fortalecidos na Palavra de Deus, não têm as fraquezas das crianças e nem as doenças dos velhos. Aqueles crentes hebreus não tinham se tornado “mancebos”, por isto corriam o risco da apostasia.</p>
-<p><strong>Terceiro Estágio – “Pais”</strong></p>
-<ul>
-<li><em>&quot;Pais, escrevo-vos, porque conhecestes aquele que é desde o princípio...&quot; - (I <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E assentaram-se com ele na terra, sete dias e sete noites; e nenhum lhe dizia palavra alguma, porque viam que a dor era muito grande.&lt;/div&gt;">J� 2:13</span>).</em></li>
-</ul>
-<p>Pais, fala da firmeza espiritual. Experiência na fé. Crentes idôneos, maduros e sábios.</p>
-<p>Não são os crentes velhos, no sentido material. Pais são aqueles que geram filhos. Ganham almas e cuidam delas.</p>
-<p>Assim como na idade cronológica se diz que juventude e velhice são um estado de espírito, que há jovens velhos e velhos jovens, assim é também na vida espiritual.</p>
+    <hr>
+    <h3>Capítulo 2: A Base do Crescimento Espiritual</h3>
+    <h4>A FALTA DE CONHECIMENTO DA PALAVRA DE DEUS É UMA DAS CAUSAS DA APOSTASIA</h4>
+    <div class="bible-verse">
+      &quot;Porque, devendo já ser mestres pelo tempo, ainda necessitais de que se vos torne a ensinar quais sejam os primeiros rudimentos das palavras de Deus; e vos haveis feitos tais que necessitais de leite e não de sólido mantimento. Porque qualquer que ainda se alimenta de leite não está experimentado na palavra da justiça, porque é menino&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;12&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque, devendo j ser mestres pelo tempo, ainda necessitais de que se vos torne a ensinar quais sejam os primeiros rudimentos das palavras de Deus; e vos haveis feito tais que necessitais de leite, e n o de slido mantimento.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Porque qualquer que ainda se alimenta de leite n o est experimentado na palavra da justia, porque  menino.&lt;/div&gt;">Hb 5:12-13</span>).
+    </div>
+    <p>Muitos cristãos hebreus, pelo tempo que tinham de fé, ou pelo tempo que eram crentes, deveriam ser adultos e mestres, no entanto, não haviam crescido, continuavam meninos indoutos.</p>
+    <p>A salvação, em si, não depende do tempo de fé, ou do tempo que o crente esteja na igreja. Depende do novo nascimento ou da regeneração. Este novo homem não nasce adulto, porém, espiritualmente, é um ser vivo.</p>
+    <p>Crescer é uma característica de todo ser vivo. Assim, o novo homem que surge através do novo nascimento, é um ser vivo e deve crescer. Ninguém é gerado adulto.</p>
+    <p>Um crescimento sadio e normal depende de uma série de fatores, tanto internos, como externos. Aqui, vamos considerar, apenas, o fator alimentação.</p>
+    
+    <h4>A Palavra de Deus como alimento espiritual</h4>
+    <img src="https://images.unsplash.com/photo-1490818387583-bf52d75b477f?q=80&w=800" class="textbook-image" alt="Representação de alimento saudável e leite, simbolizando a nutrição espiritual">
+    <p class="image-caption">Assim como o corpo físico necessita de nutrientes progressivos, a alma requer a Palavra de Deus.</p>
+    <p>O escritor nos fala sobre um grupo de crentes que teve o crescimento retardado pela falta de uma ministração progressiva da Palavra de Deus. Eles haviam recebido apenas um ensino básico, uma alimentação leve, a base de leite. Só ficaram na base do edifício. Não ergueram a construção.</p>
+    <p>Estamos considerando a Palavra de Deus como sendo um alimento essencial para o crescimento normal do crente.</p>
+    <p>O leite é um bom alimento, mas não pode ser o único na fase de crescimento. Ele é apenas o alimento inicial. Na medida em que a criança vai se desenvolvendo, ela precisa receber alimentos sólidos, mais substanciais.</p>
+    <p>No sentido espiritual, para um bom crescimento, a Palavra de Deus precisa ser ministrada no seu todo. Do contrário, o crente corre o risco de permanecer “menino” e ser levado por vento de doutrina –</p>
+    <div class="bible-verse">
+      &quot;Para que não sejamos mais meninos inconstantes levados em roda por todo o vento de doutrina...&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;14&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Para que n o sejamos mais meninos inconstantes, levados em roda por todo o vento de doutrina, pelo engano dos homens que com astia enganam fraudulosamente.&lt;/div&gt;">Ef 4:14</span>).
+    </div>
+    <p>Por isto afirmamos que a falta de conhecimento da Palavra de Deus tem sido a causa do fracasso espiritual de muitos, até mesmo dos casos de apostasia.</p>
+    <div class="highlight-box">
+      <p><strong>O anão não podia ser sacerdote</strong></p>
+      <p>Pela Lei de Moisés, exigia-se que o sacerdote fosse física e moralmente perfeito. O anão, embora adulto na idade, é pequeno na estatura. Espiritualmente, ele simboliza o crente velho de igreja, mas que permaneceu imaturo na fé.</p>
+      <div class="bible-verse">
+        &quot;Procura apresentar-te a Deus aprovado, como obreiro que n o tem de que se envergonhar, que maneja bem a palavra da verdade&quot; - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;15&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Procura apresentar-te a Deus aprovado, como obreiro que n o tem de que se envergonhar, que maneja bem a palavra da verdade.&lt;/div&gt;">2 Tm 2:15</span>).
+      </div>
+      <p>Não se conformar em ser um "anão espiritual" é o objetivo de todo crente que busca a estatura completa de Cristo.</p>
+    </div>
+
+    <hr>
+    <h3>Capítulo 3: Estágios da Maturidade Cristã</h3>
+    <p>O crescimento espiritual não ocorre de forma instantânea, mas em estágios. Baseando-se nas cartas de João, podemos identificar três fases principais:</p>
+
+    <div class="growth-diagram">
+      <div class="growth-step">Filhinhos<br><small>Recém-nascidos na fé</small></div>
+      <div class="growth-arrow">➔</div>
+      <div class="growth-step">Mancebos<br><small>Jovens e Fortes</small></div>
+      <div class="growth-arrow">➔</div>
+      <div class="growth-step">Pais<br><small>Maduros e Sábios</small></div>
+    </div>
+
+    <h4>Primeiro estágio – “Filhinhos”</h4>
+    <p>Refere-se aos novos convertidos. Para estes, o conhecimento mais vital é a certeza do perdão dos pecados.</p>
+    <div class="bible-verse">
+      &quot;Filhinhos&quot;, escrevo-vos, porque pelo seu nome vos são perdoados os pecados...&quot; - (I J 2:12).
+    </div>
+    <p>Sem a certeza do perdão, o crescimento espiritual é interrompido. Os cristãos hebreus estagnaram-se neste estágio.</p>
+
+    <h4>Segundo estágio – “Jovens e mancebos”</h4>
+    <div class="bible-verse">
+      &quot;...mancebos, escrevo-vos porque sois fortes, e a palavra de Deus está em vós, e já vencestes o maligno&quot; - (I J 2:14).
+    </div>
+    <p>O crescimento aqui é impulsionado por ter a Palavra de Deus habitando em si. Estes crentes possuem resistência contra a apostasia.</p>
+
+    <h4>Terceiro Estágio – “Pais”</h4>
+    <div class="bible-verse">
+      &quot;Pais, escrevo-vos, porque conhecestes aquele que é desde o princípio...&quot; - (I J 2:13).
+    </div>
+    <p>Representa a firmeza e a maturidade. "Pais" são aqueles que não apenas cresceram, mas agora geram e cuidam de novos filhos na fé.</p>
 <p><strong>Vejamos o vigor físico de dois velhos, jovens: “Moisés e Calebe”</strong></p>
 <p><strong>A – Moisés</strong></p>
 <ul>
@@ -249,77 +351,85 @@ A boa Palavra de Deus coloca-a em íntima relação com o dom celestial, com o E
 <p>O conhecimento da Palavra de Deus nos permite descansar em paz, mesmo que o mar esteja bravio. Temos uma “âncora” segura e firme para nosso barco.</p>
 <p>O conhecimento da Palavra de Deus nos faz entender o ministério de Cristo como nosso Sumo Sacerdote <em>“que penetrou nos céus”</em>.</p>
 <p>Por isto procuramos dar ênfase ao conhecimento da Palavra de Deus para evitar o perigo da apostasia.</p>
-<hr>
-<h3 id="texto-4">TEXTO IV</h3>
-<h4>CRISTO - SUMO SACERDOTE SEGUNDO A ORDEM DE MELQUISEDEQUE</h4>
-<p>O autor da Epístola aos Hebreus identificou Jesus como Sumo Sacerdote de acordo com a ordem de Melquisedeque, tanto no cap. 5 como no 7.</p>
-<p>Mas quem é Melquisedeque?</p>
-<p>Por que Jesus é um sacerdote segundo a ordem de Melquisedeque, em vez de ser da ordem de Arão e da Tribo de Levi? No cap. 7, o autor responde estas duas questões.</p>
-<p>Melquisedeque aparece na história bíblica em – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;18&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E Melquisedeque, rei de Sal�m, trouxe p�o e vinho; e era este sacerdote do Deus Alt�ssimo.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;19&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E aben�oou-o, e disse: Bendito seja Abr�o pelo Deus Alt�ssimo, o Possuidor dos c�us e da terra;&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;20&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E bendito seja o Deus Alt�ssimo, que entregou os teus inimigos nas tuas m�os. E Abr�o deu-lhe o d�zimo de tudo.&lt;/div&gt;">Gn 14:18-20</span>.</p>
-<p>Portanto, o seu sacerdócio é anterior à existência da nação de Israel. Era, pois, um sacerdócio universal, visto que Deus não tinha, nessa época, um povo seu especial. Deus tratava com todas as nações.</p>
-<p>Assim a ordem sacerdotal de Melquisedeque era uma ordem universal, não como a ordem de Arão, a qual era restrita unicamente à nação de Israel.</p>
-<p>Ele é identificado como sendo tanto rei de Salém como sacerdote do Deus Altíssimo, tal como Jesus viria, como Rei e Sacerdote.</p>
-<p>O autor deseja demonstrar a superioridade do sacerdócio de Jesus sobre o de Arão e, assim, ele afirma a superioridade de Melquisedeque sobre Levi.</p>
-<p>Ele o faz, em parte, observando que Melquisedeque abençoou Abraão. Sabemos que o menor é abençoado pelo maior, e que Abraão, que tinha as promessas, pagou dízimo a Melquisedeque. Num sentido figurado, Levi, descendente de Abraão, também pagou dízimo a Melquisedeque, através de Abraão.</p>
-<p>Mas, por que uma outra ordem de sacerdócio segundo Melquisedeque era necessária?</p>
-<p>A resposta é que o sacerdócio levítico não era adequado, por ser restrito à Nação de Israel. Nem a Jesus era permitido ser sacerdote segundo a ordem de Levi.</p>
-<p>Os sacerdotes vinham da tribo de Levi, mas Jesus era da tribo de Judá. A lei de Moisés nada dizia sobre homens de Judá se tornarem sacerdotes e, assim, isso era proibido. O homem não deve ir além do que Deus autorizou.</p>
-<p><strong>O sacerdócio precisava ser mudado</strong></p>
-<p>Para que Jesus fosse um sacerdote, o sacerdócio tinha que ser mudado. Desde que o sacerdócio e a Lei de Moisés estavam intimamente ligados, para que o sacerdócio pudesse ser mudado, então a lei também precisava ser mudada, dando seu lugar à graça.</p>
-<p>Aqueles que querem viver sob a Lei de Moisés, hoje em dia, desligam-se do sacerdócio de Jesus porque ele não pode ser sacerdote sob essa lei!</p>
-<p>O sacerdócio de Jesus é, então, uma garantia de que uma lei melhor foi estabelecida e que não estamos mais debaixo da Lei de Moisés.</p>
-<p>Por que alguém haveria de querer voltar à velha lei e ao sacerdócio levítico?</p>
-<p>Jesus é um Sumo Sacerdote superior. Ele foi feito sacerdote pelo poder de uma vida infindável, e não através de um mandamento carnal. Diferentemente dos sacerdotes levíticos, que eram incapazes de continuar a servir por causa da morte, Jesus vive sempre para fazer intercessão por nós. Jesus foi feito sacerdote através do imutável juramento de Deus.</p>
-<p>Os sacerdotes levíticos eram fracos porque pecavam assim como os homens pelos quais eles faziam intercessão.</p>
-<p>Jesus, contudo, é santo, imaculado e separado dos pecadores. Ele não tem que fazer oferenda por si mesmo, como os sacerdotes levíticos tinham que fazer.</p>
-<p>De muitas maneiras, Jesus é, verdadeiramente, o Sumo Sacerdote superior!</p>
-<p><strong>“Sem pai, sem mãe” – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;3&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Sem pai, sem m�e, sem genealogia, n�o tendo princ�pio de dias nem fim de vida, mas sendo feito semelhante ao Filho de Deus, permanece sacerdote para sempre.&lt;/div&gt;">Hb 7:3</span></strong></p>
-<ul>
-<li><em>“Isto não significa que Melquisedeque, literalmente, não tivesse pais nem parentes, nem que era anjo. Significa tão somente que as Escrituras não registram a sua genealogia e que nada diz a respeito do seu começo e fim. Por isso, serve como tipo de Cristo eterno, cujo sacerdócio nunca terminará”</em> – (Bíblia de Estudo Pentecostal).</li>
-</ul>
-<p>É claro que os cristãos hebreus pela falta do ensino da Palavra de Deus, não tinham uma estrutura doutrinária para entender o que o autor da epístola gostaria de lhes explicar!</p>
-<p><strong>Algumas considerações sobre o sacerdote Melquisedeque</strong></p>
-<p>Tudo o que a Bíblia diz sobre Melquisedeque está em duas passagens do Antigo Testamento – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;18&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E Melquisedeque, rei de Sal�m, trouxe p�o e vinho; e era este sacerdote do Deus Alt�ssimo.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;19&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E aben�oou-o, e disse: Bendito seja Abr�o pelo Deus Alt�ssimo, o Possuidor dos c�us e da terra;&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;20&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E bendito seja o Deus Alt�ssimo, que entregou os teus inimigos nas tuas m�os. E Abr�o deu-lhe o d�zimo de tudo.&lt;/div&gt;">Gn 14:18-20</span> e <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;4&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Jurou o Senhor, e n�o se arrepender�: tu �s um sacerdote eterno, segundo a ordem de Melquisedeque.&lt;/div&gt;">Sl 110:4</span> e na Epístola aos Hebreus, capítulos 5, 6 e 7. Nada mais existe!</p>
-<p>Há quem diga que a melhor maneira de tratar a questão é considerar Melquisedeque como sendo apenas Melquisedeque, uma maneira simples de resolver a questão.</p>
-<p>Todavia, a título de informação vamos considerar a opinião de duas correntes de comentaristas: os que afirmam que Melquisedeque era Sem, um dos filhos de Noé e os que dizem ser ele o próprio Cristo.</p>
-<p><strong>Melquisedeque seria Sem, um dos filhos de Noé</strong></p>
-<p>Há quem “brigue” em defesa desta tese. Cronologicamente seria possível, pois Sem foi contemporâneo de Abraão. Vamos considerar algumas datas, embora sabendo que, em relação à idade antiga, elas são imprecisas e discutíveis.</p>
-<p>Sem viveu 502 anos depois do Dilúvio –</p>
-<ul>
-<li><em>&quot;Estas são as gerações de Sem: Sem era da idade de cem anos e gerou a Arpachade, dois anos depois do dilúvio. E viveu Sem, depois que gerou a Arpachade, quinhentos anos; e gerou filhos e filhas&quot;</em> - (<span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;10&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Estas s�o as gera��es de Sem: Sem era da idade de cem anos e gerou a Arfaxade, dois anos depois do dil�vio.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;11&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Sem, depois que gerou a Arfaxade, quinhentos anos, e gerou filhos e filhas.&lt;/div&gt;">Gn 11:10-11</span>).</li>
-</ul>
-<p>O dilúvio teria ocorrido 1656 anos depois de Adão ou seja por volta do ano 2348 aC.</p>
-<p>Como Sem viveu 502 anos depois do dilúvio, então ele teria morrido por volta de 1846 aC.</p>
-<p>Abraão, segundo a história, nasceu por volta do ano 1996 aC., ou seja 352 anos depois do dilúvio; tendo, pois, sido contemporâneo de Sem por 150 anos, visto que Sem viveu 502 anos depois do dilúvio.</p>
-<p>Sendo que a Bíblia informa que Abraão tinha 75 anos quando partiu de Harã – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;4&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Assim partiu Abr�o como o Senhor lhe tinha dito, e foi L� com ele; e era Abr�o da idade de setenta e cinco anos quando saiu de Har�.&lt;/div&gt;">Gn 12:4</span>, foi com essa idade que ele chegou em Canaã, no ano 1921 aC.</p>
-<p>Sendo que Sem morreu em 1846 aC. e que Abraão chegou em Canaã, onde vivia Sem, ou Melquisedeque, em 1921 aC., então ele conviveu com Sem, em Canaã, durante 75 anos.</p>
-<p>Portanto, cronologicamente, seria possível supor que Sem e Melquisedeque fossem a mesma pessoa.</p>
-<p>Outro argumento usado por esta corrente teológica é o respeito que Abraão devotou a Melquisedeque e o reconhecimento de sua superioridade.</p>
-<p>Abraão era descendente de Sem através de seu filho Arpachade, conforme se pode verificar em <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;10&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Estas s�o as gera��es de Sem: Sem era da idade de cem anos e gerou a Arfaxade, dois anos depois do dil�vio.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;11&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Sem, depois que gerou a Arfaxade, quinhentos anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;12&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Arfaxade trinta e cinco anos, e gerou a Sel�.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Arfaxade depois que gerou a Sel�, quatrocentos e tr�s anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;14&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Sel� trinta anos, e gerou a �ber;&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;15&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Sel�, depois que gerou a �ber, quatrocentos e tr�s anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;16&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu �ber trinta e quatro anos, e gerou a Pelegue.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;17&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu �ber, depois que gerou a Pelegue, quatrocentos e trinta anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;18&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Pelegue trinta anos, e gerou a Re�.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;19&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Pelegue, depois que gerou a Re�, duzentos e nove anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;20&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Re� trinta e dois anos, e gerou a Serugue.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;21&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Re�, depois que gerou a Serugue, duzentos e sete anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;22&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Serugue trinta anos, e gerou a Naor.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;23&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Serugue, depois que gerou a Naor, duzentos anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;24&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Naor vinte e nove anos, e gerou a Ter�.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;25&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Naor, depois que gerou a Ter�, cento e dezenove anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;26&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Ter� setenta anos, e gerou a Abr�o, a Naor, e a Har�.&lt;/div&gt;">Gn 11:10-26</span>.</p>
-<p>Daí, o direito que tinha Melquisedeque para abençoar Abraão, visto que <em>“...o menor é abençoado pelo maior”</em>. Sem era, pois, seu parente e era mais velho!</p>
-<p>Estes são os principais argumentos usados para afirmarem que Melquisedeque era Sem, um dos três filhos de Noé. São divagações teológicas. Se era mesmo, eu não sei, e isto não altera, em nada, a minha fé.</p>
-<p><strong>Melquisedeque seria o próprio Jesus</strong></p>
-<p>Esta é uma tese defendida por outra corrente teológica. Seria um caso de Teofania, ou mais propriamente, de Cristofania. Teofania – do grego “Theos’, Deus; “phania”, manifestação.</p>
-<p>Assim, Teofania é a manifestação de Deus em forma humana. Dizem que somente sendo Melquisedeque o próprio Cristo se poderá explicar ser ele –</p>
-<ul>
-<li><em>&quot;Sem pai, sem mãe, sem genealogia, não tendo princípio de dias nem fim de vida...&quot;</em>.</li>
-</ul>
-<p>Vamos, sem qualquer pretensão, e sem querer ser dono da verdade, apresentar apenas duas razões pelas quais acreditamos que Melquisedeque não era o próprio Cristo, encarnado.</p>
-<p><strong>A Palavra de Deus diz que ele era semelhante ao Filho de Deus</strong></p>
-<ul>
-<li><em>&quot;...mas sendo feito semelhante ao Filho de Deus...&quot;</em>.</li>
-</ul>
-<p>Por uma questão semântica, semelhante nunca foi igual. Ser semelhante é ser parecido. Melquisedeque, por ser semelhante a Jesus, foi usado como figura de Cristo como eterno Sacerdote.</p>
-<p>Sendo homem, e certamente Melquisedeque era um homem, pois, de acordo com o contexto geral da Bíblia, nunca surgiu na terra um homem através de geração espontânea. O próprio Jesus nasceu através de uma mulher.</p>
-<p>O que se deve aceitar é que ele era rei de Salém e Sacerdote do Deus Altíssimo. Não havia mais qualquer registro a respeito de sua vida –</p>
-<p>Acreditando-se ser ele o próprio Sem, então ele seria aquele que veio de um “outro mundo”, ou seja, o mundo antediluviano, do qual nenhum registro restava em qualquer “cartório”, pois que tudo fora destruído pelo dilúvio.</p>
-<ul>
-<li><em>&quot;Mas aquele cuja genealogia não é contada...&quot;</em>.</li>
-</ul>
-<p>Não ser contada não significa nunca ter existido! Quanto à “genealogia”, Melquisedeque não tinha genealogia sacerdotal, ou seja, seu pai, seu avô, nenhum de seus antepassados tinha sido sacerdote. No sacerdócio Arônico era necessário ter uma genealogia comprovando ser da descendência de Arão.</p>
-<p><strong>Abraão não adorou Melquisedeque</strong></p>
-<p>Em todos os casos em que Cristo apareceu aos homens, ele se apresentou na forma do “Anjo do Senhor”, segundo cremos. Sempre que isso ocorreu houve adoração e ele aceitou a adoração.</p>
-<p>Se Melquisedeque fosse o próprio Cristo, certamente Abraão teria prostrado aos seus pés, adorando-o. No entanto, o que houve foi um tratamento respeitoso do menor para o maior, porém, nenhum sinal de adoração. Isto nos faz crer que Melquisedeque era apenas um homem, um ancestral da família de Abraão. Era Rei de Salém e Sacerdote do Deus Altíssimo, sendo, portanto, um tipo de Jesus.</p>
+    <hr>
+    <h3>Capítulo 4: O Sacerdócio Superior de Cristo</h3>
+    <p>O autor da Epístola aos Hebreus identificou Jesus como Sumo Sacerdote de acordo com a ordem de Melquisedeque, tanto no cap. 5 como no 7.</p>
+    
+    <img src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=800" class="textbook-image" alt="Representação de um antigo santuário ou altar, simbolizando o sacerdócio">
+    <p class="image-caption">A transição do sacerdócio terreno para o celestial.</p>
+
+    <p>Mas quem é Melquisedeque? Por que Jesus é um sacerdote segundo a ordem de Melquisedeque, em vez de ser da ordem de Arão e da Tribo de Levi? No cap. 7, o autor responde estas duas questões.</p>
+    <div class="bible-verse">
+      Melquisedeque aparece na história bíblica em – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;18&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E Melquisedeque, rei de Salm, trouxe po e vinho; e era este sacerdote do Deus Altssimo.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;19&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E abenoou-o, e disse: Bendito seja Abro pelo Deus Altssimo, o Possuidor dos cus e da terra;&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;20&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E bendito seja o Deus Altssimo, que entregou os teus inimigos nas tuas mos. E Abro deu-lhe o dzimo de tudo.&lt;/div&gt;">Gn 14:18-20</span>.
+    </div>
+    <p>Portanto, o seu sacerdócio é anterior à existência da nação de Israel. Era, pois, um sacerdócio universal, visto que Deus não tinha, nessa época, um povo seu especial. Deus tratava com todas as nações.</p>
+    <p>Assim a ordem sacerdotal de Melquisedeque era uma ordem universal, não como a ordem de Arão, a qual era restrita unicamente à nação de Israel.</p>
+    <p>Ele é identificado como sendo tanto rei de Salém como sacerdote do Deus Altíssimo, tal como Jesus viria, como Rei e Sacerdote.</p>
+    <p>O autor deseja demonstrar a superioridade do sacerdócio de Jesus sobre o de Arão e, assim, ele afirma a superioridade de Melquisedeque sobre Levi.</p>
+    <p>Ele o faz, em parte, observando que Melquisedeque abençoou Abraão. Sabemos que o menor é abençoado pelo maior, e que Abraão, que tinha as promessas, pagou dízimo a Melquisedeque. Num sentido figurado, Levi, descendente de Abraão, também pagou dízimo a Melquisedeque, através de Abraão.</p>
+    <p>Mas, por que uma outra ordem de sacerdócio segundo Melquisedeque era necessária?</p>
+    <p>A resposta é que o sacerdócio levítico não era adequado, por ser restrito à Nação de Israel. Nem a Jesus era permitido ser sacerdote segundo a ordem de Levi.</p>
+    <p>Os sacerdotes vinham da tribo de Levi, mas Jesus era da tribo de Judá. A lei de Moisés nada dizia sobre homens de Judá se tornarem sacerdotes e, assim, isso era proibido. O homem não deve ir além do que Deus autorizou.</p>
+    
+    <div class="highlight-box">
+      <p><strong>O sacerdócio precisava ser mudado</strong></p>
+      <p>Para que Jesus fosse um sacerdote, o sacerdócio tinha que ser mudado. Desde que o sacerdócio e a Lei de Moisés estavam intimamente ligados, para que o sacerdócio pudesse ser mudado, então a lei também precisava ser mudada, dando seu lugar à graça.</p>
+      <p>Aqueles que querem viver sob a Lei de Moisés, hoje em dia, desligam-se do sacerdócio de Jesus porque ele não pode ser sacerdote sob essa lei!</p>
+    </div>
+
+    <p>O sacerdócio de Jesus é, então, uma garantia de que uma lei melhor foi estabelecida e que não estamos mais debaixo da Lei de Moisés.</p>
+    <p>Por que alguém haveria de querer voltar à velha lei e ao sacerdócio levítico?</p>
+    <p>Jesus é um Sumo Sacerdote superior. Ele foi feito sacerdote pelo poder de uma vida infindável, e não através de um mandamento carnal. Diferentemente dos sacerdotes levíticos, que eram incapazes de continuar a servir por causa da morte, Jesus vive sempre para fazer intercessão por nós. Jesus foi feito sacerdote através do imutável juramento de Deus.</p>
+    <p>Os sacerdotes levíticos eram fracos porque pecavam assim como os homens pelos quais eles faziam intercessão.</p>
+    <p>Jesus, contudo, é santo, imaculado e separado dos pecadores. Ele não tem que fazer oferenda por si mesmo, como os sacerdotes levíticos tinham que fazer.</p>
+    <p>De muitas maneiras, Jesus é, verdadeiramente, o Sumo Sacerdote superior!</p>
+    
+    <h4>“Sem pai, sem mãe” – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;3&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Sem pai, sem me, sem genealogia, no tendo princpio de dias nem fim de vida, mas sendo feito semelhante ao Filho de Deus, permanece sacerdote para sempre.&lt;/div&gt;">Hb 7:3</span></h4>
+    <div class="bible-verse">
+      &quot;Isto não significa que Melquisedeque, literalmente, não tivesse pais nem parentes, nem que era anjo. Significa tão somente que as Escrituras não registram a sua genealogia e que nada diz a respeito do seu começo e fim. Por isso, serve como tipo de Cristo eterno, cujo sacerdócio nunca terminará&quot; – (Bíblia de Estudo Pentecostal).
+    </div>
+    <p>É claro que os cristãos hebreus pela falta do ensino da Palavra de Deus, não tinham uma estrutura doutrinária para entender o que o autor da epístola gostaria de lhes explicar!</p>
+    
+    <h4>Algumas considerações sobre o sacerdote Melquisedeque</h4>
+    <p>Tudo o que a Bíblia diz sobre Melquisedeque está em duas passagens do Antigo Testamento – <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;18&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E Melquisedeque, rei de Salm, trouxe po e vinho; e era este sacerdote do Deus Altssimo.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;19&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E abenoou-o, e disse: Bendito seja Abro pelo Deus Altssimo, o Possuidor dos cus e da terra;&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;20&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E bendito seja o Deus Altssimo, que entregou os teus inimigos nas tuas mos. E Abro deu-lhe o dzimo de tudo.&lt;/div&gt;">Gn 14:18-20</span> e <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;4&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Jurou o Senhor, e no se arrepender: tu s um sacerdote eterno, segundo a ordem de Melquisedeque.&lt;/div&gt;">Sl 110:4</span> e na Epístola aos Hebreus, capítulos 5, 6 e 7. Nada mais existe!</p>
+    <p>Há quem diga que a melhor maneira de tratar a questão é considerar Melquisedeque como sendo apenas Melquisedeque, uma maneira simples de resolver a questão.</p>
+    <p>Todavia, a título de informação vamos considerar a opinião de duas correntes de comentaristas: os que afirmam que Melquisedeque era Sem, um dos filhos de Noé e os que dizem ser ele o próprio Cristo.</p>
+    
+    <div class="highlight-box">
+      <p><strong>Tese 1: Melquisedeque seria Sem, um dos filhos de Noé</strong></p>
+      <p>Cronologicamente seria possível, pois Sem foi contemporâneo de Abraão. Sem viveu 502 anos depois do Dilúvio. Abraão nasceu por volta do ano 1996 aC. Sendo que Sem morreu em 1846 aC. e que Abraão chegou em Canaã em 1921 aC., então ele conviveu com Sem durante 75 anos.</p>
+      <p>Outro argumento é o respeito que Abraão devotou a Melquisedeque e o reconhecimento de sua superioridade.</p>
+    </div>
+
+    <p>Abraão era descendente de Sem através de seu filho Arpachade, conforme se pode verificar em <span class="bible-ref" data-verses="&lt;span class=&quot;verse-num&quot;&gt;10&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;Estas so as geraes de Sem: Sem era da idade de cem anos e gerou a Arfaxade, dois anos depois do dilvio.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;11&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Sem, depois que gerou a Arfaxade, quinhentos anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;12&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Arfaxade trinta e cinco anos, e gerou a Sel.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;13&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Arfaxade depois que gerou a Sel, quatrocentos e trs anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;14&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Sel trinta anos, e gerou a ber.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;15&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Sel, depois que gerou a ber, quatrocentos e trs anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;16&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu ber trinta e quatro anos, e gerou a Pelegue.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;17&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu ber, depois que gerou a Pelegue, quatrocentos e trinta anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;18&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Pelegue trinta anos, e gerou a Re.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;19&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;E viveu Pelegue, depois que gerou a Re, duzentos e nove anos, e gerou filhos e filhas.&lt;/div&gt;&lt;span class=&quot;verse-num&quot;&gt;20&lt;/span&gt;&lt;div class=&quot;verse-text&quot;&gt;...&lt;/div&gt;">Gn 11:10-20</span>.</p>
+    <p>Daí, o direito que tinha Melquisedeque para abençoar Abraão, visto que <em>“...o menor é abençoado pelo maior”</em>. Sem era, pois, seu parente e era mais velho!</p>
+    <p>Estes são os principais argumentos usados para afirmarem que Melquisedeque era Sem, um dos três filhos de Noé. São divagações teológicas. Se era mesmo, eu não sei, e isto não altera, em nada, a minha fé.</p>
+    
+    <div class="highlight-box">
+      <p><strong>Tese 2: Melquisedeque seria o próprio Jesus</strong></p>
+      <p>Esta é uma tese defendida por outra corrente teológica. Seria um caso de Teofania, ou mais propriamente, de Cristofania. Teofania – do grego “Theos’, Deus; “phania”, manifestação.</p>
+      <p>Assim, Teofania é a manifestação de Deus em forma humana. Dizem que somente sendo Melquisedeque o próprio Cristo se poderá explicar ser ele –</p>
+      <div class="bible-verse">
+        &quot;Sem pai, sem mãe, sem genealogia, não tendo princípio de dias nem fim de vida...&quot;
+      </div>
+    </div>
+
+    <p>Vamos, sem qualquer pretensão, e sem querer ser dono da verdade, apresentar apenas duas razões pelas quais acreditamos que Melquisedeque não era o próprio Cristo, encarnado.</p>
+    <p><strong>A Palavra de Deus diz que ele era semelhante ao Filho de Deus</strong></p>
+    <div class="bible-verse">
+      &quot;...mas sendo feito semelhante ao Filho de Deus...&quot;
+    </div>
+    <p>Por uma questão semântica, semelhante nunca foi igual. Ser semelhante é ser parecido. Melquisedeque, por ser semelhante a Jesus, foi usado como figura de Cristo como eterno Sacerdote.</p>
+    <p>Sendo homem, e certamente Melquisedeque era um homem, pois, de acordo com o contexto geral da Bíblia, nunca surgiu na terra um homem através de geração espontânea. O próprio Jesus nasceu através de uma mulher.</p>
+    <p>O que se deve aceitar é que ele era rei de Salém e Sacerdote do Deus Altíssimo. Não havia mais qualquer registro a respeito de sua vida –</p>
+    <p>Acreditando-se ser ele o próprio Sem, então ele seria aquele que veio de um “outro mundo”, ou seja, o mundo antediluviano, do qual nenhum registro restava em qualquer “cartório”, pois que tudo fora destruído pelo dilúvio.</p>
+    <div class="bible-verse">
+      &quot;Mas aquele cuja genealogia não é contada...&quot;
+    </div>
+    <p>Não ser contada não significa nunca ter existido! Quanto à “genealogia”, Melquisedeque não tinha genealogia sacerdotal, ou seja, seu pai, seu avô, nenhum de seus antepassados tinha sido sacerdote. No sacerdócio Arônico era necessário ter uma genealogia comprovando ser da descendência de Arão.</p>
+    <p><strong>Abraão não adorou Melquisedeque</strong></p>
+    <p>Em todos os casos em que Cristo apareceu aos homens, ele se apresentou na forma do “Anjo do Senhor”, segundo cremos. Sempre que isso ocorreu houve adoração e ele aceitou a adoração.</p>
+    <p>Se Melquisedeque fosse o próprio Cristo, certamente Abraão teria prostrado aos seus pés, adorando-o. No entanto, o que houve foi um tratamento respeitoso do menor para o maior, porém, nenhum sinal de adoração. Isto nos faz crer que Melquisedeque era apenas um homem, um ancestral da família de Abraão. Era Rei de Salém e Sacerdote do Deus Altíssimo, sendo, portanto, um tipo de Jesus.</p>
 <hr>
 <h3 id="texto-5">TEXTO V</h3>
 <h4>CRISTO – O ÚNICO SACERDOTE ETERNO E PERFEITO</h4>
@@ -485,5 +595,6 @@ A boa Palavra de Deus coloca-a em íntima relação com o dom celestial, com o E
   <script src="exercicios-data.js"></script>
   <script src="../assets/exercicios-widget.js"></script>
   <script src="../assets/leitor-audio.js"></script>
-</body>
+    </div>
+  </body>
 </html>

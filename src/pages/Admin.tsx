@@ -196,6 +196,7 @@ const Admin = () => {
     if (selectedCourse) { setSelectedCourse(null); return; }
     if (dashboardView !== 'main') { setDashboardView('main'); return; }
     if (activeTab !== 'home') { setActiveTab('home'); return; }
+    window.history.back()
   }
 
   const isAtRoot = activeTab === 'home' && dashboardView === 'main'
@@ -299,7 +300,7 @@ const Admin = () => {
   
              <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button onClick={goToPanel} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }}>
+            <button onClick={handleGlobalBack} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }} title="Voltar">
               <ArrowLeft size={18} />
             </button>
               <h1 style={{

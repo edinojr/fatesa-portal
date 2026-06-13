@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
-import { supabase } from '../lib/supabase'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -10,62 +9,6 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
   const { profile, loading } = useProfile()
-
-  useEffect(() => {
-    const checkSessionActivity = async () => {
-      const THIRTY_MINUTES = 30 * 60 * 1000;
-      const lastActivity = localStorage.getItem('fatesa_last_activity');
-      const now = Date.now();
-
-      if (lastActivity && (now - parseInt(lastActivity, 10)) > THIRTY_MINUTES) {
-        localStorage.removeItem('fatesa_last_activity');
-        await supabase.auth.signOut();
-        window.location.href = '/login';
-      } else {
-        localStorage.setItem('fatesa_last_activity', now.toString());
-      }
-    };
-    
-    checkSessionActivity();
-
-    // Verificação contínua a cada 1 minuto
-    const intervalId = setInterval(() => {
-      const THIRTY_MINUTES = 30 * 60 * 1000;
-      const lastActivity = localStorage.getItem('fatesa_last_activity');
-      const now = Date.now();
-      if (lastActivity && (now - parseInt(lastActivity, 10)) > THIRTY_MINUTES) {
-        localStorage.removeItem('fatesa_last_activity');
-        supabase.auth.signOut().then(() => {
-          window.location.href = '/login';
-        });
-      }
-    }, 60000);
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        checkSessionActivity();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    const updateActivity = () => localStorage.setItem('fatesa_last_activity', Date.now().toString());
-    window.addEventListener('mousemove', updateActivity, { passive: true });
-    window.addEventListener('keydown', updateActivity, { passive: true });
-    window.addEventListener('scroll', updateActivity, { passive: true });
-    window.addEventListener('click', updateActivity, { passive: true });
-    window.addEventListener('touchstart', updateActivity, { passive: true });
-
-    return () => {
-      clearInterval(intervalId);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('mousemove', updateActivity);
-      window.removeEventListener('keydown', updateActivity);
-      window.removeEventListener('scroll', updateActivity);
-      window.removeEventListener('click', updateActivity);
-      window.removeEventListener('touchstart', updateActivity);
-    };
-  }, []);
 
   if (loading) {
     return (

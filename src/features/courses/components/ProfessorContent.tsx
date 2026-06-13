@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock, Lock, Unlock, ClipboardList, FileText, GraduationCap, ChevronDown, ChevronRight, CheckCircle, AlertCircle } from 'lucide-react'
+import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock, Lock, Unlock, ClipboardList, FileText, GraduationCap, ChevronDown, ChevronRight, CheckCircle, AlertCircle, ToggleLeft, ToggleRight, Zap } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
 import ModuleCard from './cards/ModuleCard'
 import ContentCard from './cards/ContentCard'
@@ -88,8 +88,10 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   submissions = [],
   hideReleaseControls = false
 }) => {
+  const navigate = useNavigate()
   const [releases, setReleases] = useState<any[]>([])
   const [expandedLesson, setExpandedLesson] = useState<string | null>(null)
+  const [selectedNucleus, setSelectedNucleus] = useState<string>('')
 
   useEffect(() => {
     fetchReleases()
@@ -106,12 +108,12 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
        if (existing) {
          const { error } = await supabase.from('liberacoes_nucleo').delete().eq('id', existing.id)
          if (error) throw error
-       } else {
-         const { error } = await supabase.from('liberacoes_nucleo').insert([{
-           nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true
-         }])
-         if (error) throw error
-       }
+        } else {
+          const { error } = await supabase.from('liberacoes_nucleo').upsert([{
+            nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true
+          }], { onConflict: 'nucleo_id,item_id,item_type' })
+          if (error) throw error
+        }
        fetchReleases()
      } catch (err: any) {
        alert('Erro ao atualizar liberação: ' + err.message)
@@ -206,6 +208,84 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     return { filled: withGabarito.length, total }
   }
 
+  const isLessonReleased = (lessonId: string, lessonTipo: string, isBlocoFinal?: boolean) => {
+    if (!selectedNucleus) return true
+    const isVideo = lessonTipo === 'gravada' || lessonTipo === 'ao_vivo' || lessonTipo === 'video'
+    const isExam = lessonTipo === 'prova' || isBlocoFinal
+    const itemType = isVideo ? 'video' : 'atividade'
+    return releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === lessonId && r.item_type === itemType)
+  }
+
+  const getLessonGabarito = (lesson: any) => {
+    if (!Array.isArray(lesson.questionario) || lesson.questionario.length === 0) return null
+    const LETTERS = ['A', 'B', 'C', 'D', 'E']
+    return lesson.questionario.map((q: any) => {
+      if (q.type === 'true_false') return q.isTrue ? 'V' : 'F'
+      if (q.type === 'multiple_choice' || !q.type) return typeof q.correct === 'number' ? (LETTERS[q.correct] || '?') : '?'
+      if (q.type === 'matching') return '↔'
+      if (q.type === 'discursive') return '✍'
+      return '?'
+    })
+  }
+
+  const handleToggleLessonRelease = async (lessonId: string, lessonTipo: string, isBlocoFinal?: boolean) => {
+    if (!selectedNucleus) {
+      alert('Selecione um polo primeiro.')
+      return
+    }
+    const isVideo = lessonTipo === 'gravada' || lessonTipo === 'ao_vivo' || lessonTipo === 'video'
+    const itemType = isVideo ? 'video' : 'atividade'
+    await toggleRelease(selectedNucleus, lessonId, itemType)
+  }
+
+  const toggleLessonActive = async (lessonId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('aulas')
+        .update({ professor_active: !currentStatus })
+        .eq('id', lessonId)
+      if (error) throw error
+    } catch (err: any) {
+      alert('Erro ao ativar/desativar avaliação: ' + err.message)
+    }
+  }
+
+  const getV1Status = (avaliacoes: any[]) => {
+    const v1 = avaliacoes.find((a: any) => (a.versao || 1) === 1)
+    if (!v1) return { hasV1: false, v1Active: false, v1Id: null }
+    return {
+      hasV1: true,
+      v1Active: v1.professor_active !== false,
+      v1Id: v1.id,
+      v1Lesson: v1
+    }
+  }
+
+  const isV2Unlocked = (avaliacoes: any[]) => {
+    const v1 = avaliacoes.find((a: any) => (a.versao || 1) === 1)
+    if (!v1) return false
+    if (v1.professor_active === false) return false
+    const hasGab = Array.isArray(v1.questionario) && v1.questionario.length > 0
+    if (!hasGab) return false
+    const allCorrect = (submissions || []).some(
+      (s: any) => s.aula_id === v1.id && s.status === 'corrigida' && (s.nota || 0) >= (v1.min_grade || 7)
+    )
+    return allCorrect
+  }
+
+  const isV3Unlocked = (avaliacoes: any[]) => {
+    const v2 = avaliacoes.find((a: any) => (a.versao || 1) === 2)
+    if (!v2) return isV2Unlocked(avaliacoes)
+    if (v2.professor_active === false) return false
+    const hasGab = Array.isArray(v2.questionario) && v2.questionario.length > 0
+    if (!hasGab) return false
+    const v2Passed = (submissions || []).some(
+      (s: any) => s.aula_id === v2.id && s.status === 'corrigida' && (s.nota || 0) >= (v2.min_grade || 7)
+    )
+    if (v2Passed) return true
+    return isV2Unlocked(avaliacoes)
+  }
+
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -262,7 +342,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                          showReleaseBadges={!hideReleaseControls ? (lesson) => {
                            const isVideo = (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video');
                            const isExam = (lesson.tipo === 'prova' || !!lesson.is_bloco_final);
-                           const itemType = isVideo ? 'video' : (isExam ? 'atividade' : 'licao');
+                            const itemType = isVideo ? 'video' : 'atividade';
                            return !releases.some(r => r.item_id === lesson.id && r.item_type === itemType);
                          } : undefined}
                  releaseControls={!hideReleaseControls && (
@@ -348,6 +428,88 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
             </div>
           </div>
 
+          {/* Controles de liberação do módulo */}
+          {!hideReleaseControls && (
+            <div style={{ padding: '1rem 1.5rem', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <ShieldCheck size={16} color="var(--primary)" />
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>Controle de Liberação do Módulo</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Polo:</span>
+                  <select
+                    value={selectedNucleus}
+                    onChange={(e) => setSelectedNucleus(e.target.value)}
+                    className="form-control"
+                    style={{ fontSize: '0.75rem', height: '32px', padding: '0 0.5rem', minWidth: '180px' }}
+                  >
+                    <option value="">Selecione um polo...</option>
+                    {professorNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => toggleModuleActive(selectedBook.id, selectedBook.professor_active ?? true)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '0.5rem',
+                    padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                    background: (selectedBook.professor_active ?? true) ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+                    border: `1px solid ${(selectedBook.professor_active ?? true) ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                    color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                  }}
+                >
+                  {(selectedBook.professor_active ?? true) ? <ToggleRight size={16} color="#10b981" /> : <ToggleLeft size={16} color="#ef4444" />}
+                  {(selectedBook.professor_active ?? true) ? 'Módulo Ativo' : 'Módulo Inativo'}
+                </button>
+
+                {selectedNucleus && (
+                  <>
+                    <button
+                      onClick={() => toggleRelease(selectedNucleus, selectedBook.id, 'modulo')}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                        background: releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.04)',
+                        border: `1px solid ${releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                        color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                      }}
+                    >
+                      {releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? <Unlock size={14} color="#10b981" /> : <Lock size={14} />}
+                      {releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'Módulo Liberado' : 'Liberar Módulo'}
+                    </button>
+
+                    <button
+                      onClick={() => handleReleaseContent(selectedNucleus, selectedBook)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                        background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)',
+                        color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                      }}
+                    >
+                      <BookOpen size={14} color="#3b82f6" /> Liberar Conteúdo
+                    </button>
+
+                    <button
+                      onClick={() => handleReleaseExams(selectedNucleus, selectedBook)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                        background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.25)',
+                        color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                      }}
+                    >
+                      <GraduationCap size={14} color="#eab308" /> Liberar Provas
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Grid 4 colunas */}
           {(() => {
             const isVideoType = (t: string) => t === 'gravada' || t === 'ao_vivo' || t === 'video' || t === 'aula_video'
@@ -379,19 +541,27 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               .filter((a: any) => a.tipo === 'avaliacao' || a.tipo === 'prova' || !!a.is_bloco_final)
               .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
 
-            const avaliacoesGrid = Array.from({ length: 11 }, (_, i) => {
-              const pos = i - 8
+            const totalGridRows = Math.max(
+              [panorama, ...licoes].length,
+              [null, ...exercicios].length,
+              [null, ...videos].length,
+              avaliacoes.length,
+              1
+            )
+            const avaliacoesStartRow = totalGridRows - avaliacoes.length
+            const avaliacoesGrid = Array.from({ length: totalGridRows }, (_, i) => {
+              const pos = i - avaliacoesStartRow
               return pos >= 0 && pos < avaliacoes.length ? avaliacoes[pos] : null
             })
 
             const gridData = {
-              lessons: [panorama, ...licoes].slice(0, 11),
-              exercises: [null, ...exercicios].slice(0, 11),
+              lessons: [panorama, ...licoes],
+              exercises: [null, ...exercicios],
               avaliacoes: avaliacoesGrid,
-              videos: [null, ...videos].slice(0, 11),
+              videos: [null, ...videos],
             }
 
-            const maxRows = Math.max(gridData.lessons.length, gridData.exercises.length, gridData.avaliacoes.length, gridData.videos.length, 11)
+            const maxRows = Math.max(gridData.lessons.length, gridData.exercises.length, gridData.avaliacoes.length, gridData.videos.length)
 
             const hasAnyContent = gridData.lessons.some(l => l !== null) || gridData.exercises.some(e => e !== null) || gridData.avaliacoes.some(a => a !== null) || gridData.videos.some(v => v !== null)
 
@@ -410,21 +580,22 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               const hasGabarito = Array.isArray(item.questionario) && item.questionario.length > 0
               const isAvaliacao = item.tipo === 'avaliacao' || item.tipo === 'prova' || item.is_bloco_final
               const isExercicio = item.tipo === 'exercicio' || item.tipo === 'atividade'
+              const isReleased = isLessonReleased(item.id, item.tipo, item.is_bloco_final)
+              const gabarito = getLessonGabarito(item)
 
               let borderColor = 'var(--glass-border)'
               if (isAvaliacao) borderColor = '#eab308'
               else if (isExercicio) borderColor = '#10b981'
 
-              return (
-                <Link
-                  to={`/lesson/${item.id}`}
+              const content = (
+                <div
                   style={{
                     padding: '1.1rem',
-                    background: 'var(--glass)',
-                    border: `1px solid ${borderColor}`,
-                    borderLeft: `5px solid ${borderColor}`,
+                    background: isReleased ? 'var(--glass)' : 'rgba(255,255,255,0.02)',
+                    border: `1px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.05)'}`,
+                    borderLeft: `5px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.08)'}`,
                     borderRadius: '14px',
-                    cursor: 'pointer',
+                    cursor: isReleased ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.85rem',
@@ -433,26 +604,198 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                     height: '90px',
                     overflow: 'hidden',
                     textDecoration: 'none',
-                    color: 'inherit'
+                    color: 'inherit',
+                    opacity: isReleased ? 1 : 0.55,
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--glass)' }}
+                  onMouseEnter={(e) => { if (isReleased) e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+                  onMouseLeave={(e) => { if (isReleased) e.currentTarget.style.background = 'var(--glass)' }}
                 >
                   <div style={{ flex: 1, overflow: 'hidden' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: isAvaliacao ? '#eab308' : isExercicio ? '#10b981' : 'var(--primary)', textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: isAvaliacao ? '#eab308' : isExercicio ? '#10b981' : 'var(--primary)', textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       {label}
+                      {!isReleased && <Lock size={10} style={{ opacity: 0.6 }} />}
                     </div>
                     <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {item.titulo}
                     </div>
-                    {hasGabarito && (
-                      <div style={{ fontSize: '0.6rem', fontWeight: 700, color: '#22c55e', marginTop: '2px' }}>
-                        ✓ Gabarito
+                    {hasGabarito && gabarito && (
+                      <div style={{ fontSize: '0.55rem', fontWeight: 700, color: '#22c55e', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '0.3rem', flexWrap: 'wrap' }}>
+                        <CheckCircle size={9} /> {gabarito.slice(0, 8).join(' ')}{gabarito.length > 8 ? '...' : ''}
                       </div>
                     )}
                   </div>
-                  <Eye size={16} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-                </Link>
+                  {!hideReleaseControls && selectedNucleus ? (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleToggleLessonRelease(item.id, item.tipo, item.is_bloco_final)
+                      }}
+                      style={{
+                        padding: '0.3rem 0.5rem', fontSize: '0.6rem', fontWeight: 700,
+                        display: 'flex', alignItems: 'center', gap: '0.25rem',
+                        background: isReleased ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.1)',
+                        border: `1px solid ${isReleased ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.2)'}`,
+                        borderRadius: '8px', color: isReleased ? '#10b981' : '#ef4444',
+                        cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+                        textTransform: 'uppercase', letterSpacing: '0.3px'
+                      }}
+                    >
+                      {isReleased ? <Unlock size={10} /> : <Lock size={10} />}
+                      {isReleased ? 'Liberado' : 'Bloqueado'}
+                    </button>
+                  ) : (
+                    <Eye size={16} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                  )}
+                </div>
+              )
+
+              if (isReleased) {
+                return (
+                  <Link to={`/lesson/${item.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    {content}
+                  </Link>
+                )
+              }
+              return content
+            }
+
+            const renderAvaliacaoItem = (item: any, avaliacoes: any[]) => {
+              if (!item) return <div style={{ height: '110px' }} />
+
+              const versao = item.versao || 1
+              const isActive = item.professor_active !== false
+              const hasGabarito = Array.isArray(item.questionario) && item.questionario.length > 0
+              const gabarito = getLessonGabarito(item)
+              const isReleased = isLessonReleased(item.id, item.tipo, item.is_bloco_final)
+
+              const v1Status = getV1Status(avaliacoes)
+              const v2Unlocked = isV2Unlocked(avaliacoes)
+              const v3Unlocked = isV3Unlocked(avaliacoes)
+
+              let isLocked = false
+              let lockReason = ''
+              if (versao === 2 && !v2Unlocked) {
+                isLocked = true
+                lockReason = 'Aguarda aprovação V1'
+              } else if (versao === 3 && !v3Unlocked) {
+                isLocked = true
+                lockReason = 'Aguarda aprovação V2'
+              }
+
+              const canToggle = versao === 1 || (versao === 2 && v2Unlocked) || (versao === 3 && v3Unlocked)
+              const versionLabel = versao === 1 ? 'AVALIAÇÃO' : versao === 2 ? 'RECUPERAÇÃO' : '2ª RECUPERAÇÃO'
+
+              return (
+                <div
+                  style={{
+                    padding: '0.85rem',
+                    background: isActive && !isLocked ? 'rgba(234,179,8,0.06)' : 'rgba(255,255,255,0.02)',
+                    border: `1px solid ${isActive && !isLocked ? 'rgba(234,179,8,0.3)' : 'rgba(255,255,255,0.05)'}`,
+                    borderLeft: `5px solid ${isActive && !isLocked ? '#eab308' : isLocked ? 'rgba(255,255,255,0.08)' : 'rgba(239,68,68,0.3)'}`,
+                    borderRadius: '14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                    transition: 'all 0.2s',
+                    marginBottom: '0.5rem',
+                    minHeight: '110px',
+                    opacity: isLocked ? 0.45 : 1,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', minWidth: 0 }}>
+                      <GraduationCap size={13} color={isActive && !isLocked ? '#eab308' : 'var(--text-muted)'} style={{ flexShrink: 0 }} />
+                      <span style={{
+                        fontSize: '0.55rem', fontWeight: 800, textTransform: 'uppercase',
+                        padding: '1px 5px', borderRadius: '4px',
+                        background: isActive && !isLocked ? 'rgba(234,179,8,0.15)' : 'rgba(255,255,255,0.04)',
+                        color: isActive && !isLocked ? '#eab308' : 'var(--text-muted)',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {versionLabel} V{versao}
+                      </span>
+                    </div>
+                    {!hideReleaseControls && !isLocked && canToggle && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          toggleLessonActive(item.id, isActive)
+                        }}
+                        style={{
+                          padding: '0.2rem 0.4rem', fontSize: '0.55rem', fontWeight: 700,
+                          display: 'flex', alignItems: 'center', gap: '0.2rem',
+                          background: isActive ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.1)',
+                          border: `1px solid ${isActive ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.2)'}`,
+                          borderRadius: '6px', color: isActive ? '#10b981' : '#ef4444',
+                          cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {isActive ? <ToggleRight size={9} /> : <ToggleLeft size={9} />}
+                        {isActive ? 'Ativo' : 'Inativo'}
+                      </button>
+                    )}
+                    {isLocked && (
+                      <span style={{
+                        fontSize: '0.5rem', fontWeight: 700, padding: '1px 5px', borderRadius: '4px',
+                        background: 'rgba(255,255,255,0.04)', color: 'var(--text-muted)',
+                        display: 'flex', alignItems: 'center', gap: '0.2rem',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                      }}>
+                        <Lock size={8} /> {lockReason}
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {item.titulo}
+                  </div>
+
+                  {hasGabarito && gabarito && (
+                    <div style={{ fontSize: '0.5rem', fontWeight: 700, color: '#22c55e', display: 'flex', alignItems: 'center', gap: '0.25rem', flexWrap: 'wrap' }}>
+                      <CheckCircle size={8} /> {gabarito.slice(0, 10).join(' ')}{gabarito.length > 10 ? '...' : ''}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', marginTop: 'auto' }}>
+                    {!hideReleaseControls && selectedNucleus && canToggle && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleToggleLessonRelease(item.id, item.tipo, item.is_bloco_final)
+                        }}
+                        style={{
+                          padding: '0.2rem 0.4rem', fontSize: '0.5rem', fontWeight: 700,
+                          display: 'flex', alignItems: 'center', gap: '0.2rem',
+                          background: isReleased ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.1)',
+                          border: `1px solid ${isReleased ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.2)'}`,
+                          borderRadius: '6px', color: isReleased ? '#10b981' : '#ef4444',
+                          cursor: 'pointer', transition: 'all 0.2s',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {isReleased ? <Unlock size={8} /> : <Lock size={8} />}
+                        {isReleased ? 'Lib' : 'Bloq'}
+                      </button>
+                    )}
+                    {canToggle && (
+                      <Link to={`/lesson/${item.id}`} style={{ textDecoration: 'none' }}>
+                        <span style={{
+                          padding: '0.2rem 0.4rem', fontSize: '0.5rem', fontWeight: 700,
+                          display: 'flex', alignItems: 'center', gap: '0.2rem',
+                          background: 'transparent', border: '1px solid rgba(234,179,8,0.3)',
+                          borderRadius: '6px', color: '#eab308', cursor: 'pointer',
+                          textTransform: 'uppercase',
+                        }}>
+                          <Eye size={8} /> Ver
+                        </span>
+                      </Link>
+                    )}
+                  </div>
+                </div>
               )
             }
 
@@ -468,7 +811,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                     {renderGridItem(gridData.lessons[rowIndex], rowIndex === 0 ? 'Panorama' : `Lição ${String(rowIndex).padStart(2, '0')}`)}
                     {renderGridItem(gridData.exercises[rowIndex], rowIndex === 0 ? '' : `Exercício ${String(rowIndex).padStart(2, '0')}`)}
                     {renderGridItem(gridData.videos[rowIndex], rowIndex === 0 ? '' : `Vídeo ${String(rowIndex).padStart(2, '0')}`)}
-                    {renderGridItem(gridData.avaliacoes[rowIndex], rowIndex === 8 ? 'Avaliação' : rowIndex === 9 ? 'Recuperação' : rowIndex === 10 ? '2ª Recuperação' : '')}
+                    {renderAvaliacaoItem(gridData.avaliacoes[rowIndex], avaliacoes)}
                   </React.Fragment>
                 ))}
               </div>

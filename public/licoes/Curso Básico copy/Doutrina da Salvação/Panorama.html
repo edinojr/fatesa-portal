@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama - Doutrina da Salvação</title>
+    <style>
+  .popup-window { background-color: #fff !important; color: #333 !important; border: 1px solid #e5e7eb; }
+  .popup-overlay { background-color: rgba(0,0,0,0.5); }
+  .biblical-ref { color: #2563eb; text-decoration: underline dotted; cursor: pointer; }
+  .biblical-ref:hover { color: #1d4ed8; }
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .nav-links { margin-bottom: 20px; }
+        .nav-links a { margin-right: 15px; text-decoration: none; color: blue; }
+        
+.popup-window {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    max-width: 80%;
+}
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+    </style>
+</head>
+<body>
+    <div class="nav-links">
+        <a href="Panorama.html">Panorama</a>
+        
+    </div>
+    <h1>Panorama - Doutrina da Salvação</h1><ul><li><a href="Lição 01 - Salvação - A Maior de Todas as Bênçãos.html">Lição 01 - Salvação - A Maior de Todas as Bênçãos</a></li><li><a href="Lição 02 - A Chamada dos Gentios.html">Lição 02 - A Chamada dos Gentios</a></li><li><a href="Lição 03 - Redenção e Expiação.html">Lição 03 - <PopUp trigger="Redenção" type="theology">Redenção</PopUp> e Expiação</a></li><li><a href="Lição 04 - Um Ato Unilateral ou Bilateral_.html">Lição 04 - Um Ato Unilateral ou Bilateral_</a></li><li><a href="Lição 05 - Oito Elos de Uma Mesma Corrente - Primeira Parte.html">Lição 05 - Oito Elos de Uma Mesma Corrente - Primeira Parte</a></li><li><a href="Lição 06 - Regeneração - Segunda Parte.html">Lição 06 - Regeneração - Segunda Parte</a></li><li><a href="Lição 07 - Regeneração - Continuação.html">Lição 07 - Regeneração - Continuação</a></li><li><a href="Lição 08 - Justificação e Adoção.html">Lição 08 - Justificação e Adoção</a></li><li><a href="Lição 09 - Santificação.html">Lição 09 - Santificação</a></li><li><a href="Lição 10 - Doutrina da Salvação - O Estágio Final.html">Lição 10 - Doutrina da Salvação - O Estágio Final</a></li></ul><h1>DOUTRINA DA SALVAÇÃO</h1>
+<p>PANORAMA</p>
+<p>Veremos neste livro que o homem, originariamente criado à imagem e semelhança de Deus, colocado para viver no paraíso desfrutando da companhia e da comunhão com seu <PopUp trigger="Criador" type="theology">Criador</PopUp>, não corria qualquer risco, tendo todas as condições para viver, eternamente, com segurança.</p>
+<p>Vamos imaginar Adão e Eva como que num seguro barco colocado num imenso lago de águas azuis, calmo e sereno.</p>
+<p>Nestas condições não havia porque falar de salvação para eles. Não teriam como entender o sentido do termo “salvação” e muito menos a necessidade de um “Salvador”.</p>
+<p>Porém, de repente aconteceu um desastre! Uma “bomba” inventada por Satanás, chamada pecado, explodiu e fez romper a barragem que sustentava aquele imenso lago azul e sereno, o qual se transformou num rio que passou a correr em direção ao mar, onde seriam sepultados para sempre.</p>
+<p>Imaginemos, agora, toda humanidade colocada nesse “barco” –</p>
+<ul>
+<li>“Porque todos pecaram...” - (<span class="biblical-ref" onclick="showBiblicalPopup(this)">Romanos 3:23</span>).</li>
+</ul>
+<p>Todos estarão indo rio abaixo. Ninguém, por si só poderá salvar-se, muito menos ajudar seu semelhante. O destino de todos será o mar da eternidade, sem Deus. Foi face a essa situação que entrou em cena a providência de Deus com a graça salvadora, através de seu Filho, Jesus.</p>
+<p>Assim é que, quando o homem aceita Jesus, ele muda de direção. Estava indo para baixo, para o “mar”, ou para o inferno. Agora ele começa a remar para cima, contra a correnteza, pois seu alvo é voltar ao “Lago Azul”, manso e sereno, ou à casa do Pai, à posição perdida por Adão.</p>
+<p>Este “remar” para cima, contra a correnteza, pode explicar o porquê das dificuldades para se chegar ao céu. O céu fica para cima. Subir é mais difícil do que descer! Esta mudança de direção e o caminhar de volta à “casa do Pai” é o que iremos estudar neste livro intitulado a “Doutrina da Salvação”.</p>
+    <div class="popup-overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup-window" id="popup">
+        <div id="popup-content"></div>
+        <button onclick="closePopup()">Fechar</button>
+    </div>
+    <script>
+        async function showBiblicalPopup(element) {
+            const ref = element.innerText;
+            const contentDiv = document.getElementById("popup-content");
+            const overlay = document.getElementById("overlay");
+            const popup = document.getElementById("popup");
+            contentDiv.innerText = "Carregando...";
+            overlay.style.display = "block";
+            popup.style.display = "block";
+            try {
+                const response = await fetch(`https://bible-api.com/${encodeURIComponent(ref)}?translation=almeida`);
+                const data = await response.json();
+                contentDiv.innerText = data.text || "Versículo não encontrado.";
+            } catch (error) {
+                contentDiv.innerText = "Erro ao carregar o versículo.";
+            }
+        }
+
+        function showPopup(content) {
+            document.getElementById('popup-content').innerText = content;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

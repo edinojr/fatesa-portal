@@ -400,7 +400,7 @@ const Dashboard = () => {
       setActiveTab('home');
       return;
     }
-    // If already at home, we don't navigate out to avoid quitting the dashboard unexpectedly
+    window.history.back()
   }
 
   return (

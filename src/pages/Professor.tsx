@@ -88,7 +88,9 @@ const Professor = () => {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const [dashboardView, setDashboardView] = React.useState<'main' | 'nucleos' | 'alunos' | 'conteudo'>('main');
+  const [dashboardView, setDashboardView] = React.useState<'main' | 'nucleos' | 'alunos' | 'conteudo'>(() => {
+    return (localStorage.getItem('fatesa_prof_dashboard_view') as any) || 'main'
+  });
 
   const goToPanel = () => {
     const role = profile?.tipo;
@@ -106,11 +108,17 @@ const Professor = () => {
     }
   }, [location.state, setActiveTab]);
 
+  React.useEffect(() => {
+    localStorage.setItem('fatesa_prof_dashboard_view', dashboardView);
+  }, [dashboardView]);
+
   const handleGlobalBack = () => {
     if (selectedSubmission) { setSelectedSubmission(null); return; }
     if (selectedBook) { setSelectedBook(null); return; }
     if (selectedCourse) { setSelectedCourse(null); return; }
+    if (dashboardView !== 'main') { setDashboardView('main'); return; }
     if (activeTab !== 'home') { setActiveTab('home'); return; }
+    window.history.back()
   }
 
   const isAtRoot = activeTab === 'home' && dashboardView === 'main'
@@ -122,7 +130,7 @@ const Professor = () => {
       {/* SIMPLIFIED HEADER */}
        <header className="dashboard-header-modern" style={{ justifyContent: 'space-between', padding: '1rem 2.5rem' }}>
          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-           <button onClick={goToPanel} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }}>
+            <button onClick={handleGlobalBack} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }} title="Voltar">
              <ArrowLeft size={18} />
            </button>
            <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
