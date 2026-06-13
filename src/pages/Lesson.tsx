@@ -41,6 +41,7 @@ const Lesson = () => {
   const submittedRef = useRef(submitted)
   submittedRef.current = submitted
   const [alreadyApproved, setAlreadyApproved] = useState(false)
+  const [lessonMap, setLessonMap] = useState<Record<string, string>>({})
   
 
 
@@ -59,6 +60,19 @@ const Lesson = () => {
 
   const fetchLessonData = async () => {
     if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+      // Try to match by title (for .html links from lesson content)
+      const decoded = decodeURIComponent(id || '').replace(/\/+$/, '').replace(/\.html?$/i, '').toLowerCase().trim()
+      if (decoded) {
+        const { data: match } = await supabase
+          .from('aulas')
+          .select('id')
+          .ilike('titulo', decoded)
+          .limit(1)
+        if (match && match.length > 0) {
+          navigate(`/lesson/${match[0].id}`, { replace: true })
+          return
+        }
+      }
       setLoading(false)
       return
     }
@@ -105,7 +119,7 @@ const Lesson = () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).maybeSingle();
-        const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+        const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r.toLowerCase()));
         setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, isStaff });
 
         // 1. Audit: Content Release Policy
@@ -114,7 +128,7 @@ const Lesson = () => {
         
         if (lessonData.livro_id) {
             const { data: rawModuleSubs } = await supabase.from('respostas_aulas')
-               .select('nota, status, aulas(livro_id)')
+               .select('nota, status, aulas(livro_id, is_bloco_final)')
 
               .eq('aluno_id', user.id);
 
@@ -283,7 +297,7 @@ const Lesson = () => {
         // 3. Check if module is finished
         if (lessonData.livro_id) {
           const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id').eq('livro_id', lessonData.livro_id);
-           const { data: rawSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id').eq('aluno_id', user.id);
+           const { data: rawSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id, aulas(livro_id)').eq('aluno_id', user.id);
           const bookSubs = (rawSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
           const finished = bookSubs.some(s => {
@@ -386,6 +400,19 @@ const Lesson = () => {
           .limit(1);
         
         setNextLessonId(nxt && nxt.length > 0 ? nxt[0].id : null);
+
+        // Load all lessons from this book for content link mapping
+        const { data: allLessons } = await supabase
+          .from('aulas')
+          .select('id, titulo')
+          .eq('livro_id', lesson.livro_id);
+        if (allLessons) {
+          const map: Record<string, string> = {};
+          for (const l of allLessons) {
+            if (l.titulo) map[l.titulo.toLowerCase().trim()] = l.id;
+          }
+          setLessonMap(map);
+        }
       } else {
         setRelatedExercise(null);
         setPrevLessonId(null);
@@ -904,15 +931,15 @@ const Lesson = () => {
             >
               {userProfile?.isStaff ? (userProfile.profile_tipo === 'admin' ? 'Painel Administrativo' : 'Painel do Professor') : 'Dashboard'}
             </button>
-           {hasHtmlFile && toc.length > 0 && (
-             <button 
-               onClick={() => setIsMenuOpen(!isMenuOpen)} 
-               className="btn btn-outline" 
-               style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-             >
-               <Menu size={18} /> Tópicos
-             </button>
-           )}
+            {hasHtmlFile && toc.length > 0 && (
+              <button 
+                onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                className="btn btn-outline" 
+                style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                <Menu size={18} /> Tópicos
+              </button>
+            )}
          </div>
        </div>
 
@@ -981,54 +1008,51 @@ const Lesson = () => {
                    </button>
                  </div>
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    {toc.filter(item => item.isMainSection).map((item, idx) => {
-                      const labelParts = item.label.split(/\.\s+/);
-                      const formattedLabel = labelParts.length > 1 
-                        ? `Texto ${labelParts[0]} - ${labelParts.slice(1).join('. ')}` 
-                        : `Texto ${idx + 1} - ${item.label}`;
-                      
-                      return (
-                        <a 
-                          key={item.id} 
-                          href="#" 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setIsMenuOpen(false);
-                            setTimeout(() => {
-                              const element = document.getElementById(item.id);
-                              if (element) {
-                                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                              }
-                            }, 100);
-                          }}
-                          style={{ 
-                            color: 'var(--text-muted)', 
-                            textDecoration: 'none', 
-                            fontSize: '0.95rem', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: '0.6rem',
-                            padding: '0.6rem 1rem',
-                            borderRadius: '8px',
-                            transition: 'all 0.2s',
-                            lineHeight: 1.4,
-                            background: 'rgba(255,255,255,0.03)',
-                            cursor: 'pointer'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.color = 'var(--primary)';
-                            e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.color = 'var(--text-muted)';
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                          }}
-                        >
-                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />
-                          {formattedLabel}
-                        </a>
-                      );
-                    })}
+                     {toc.filter(item => item.isMainSection).map((item, idx) => {
+                       const label = item.label.trim();
+                       
+                       return (
+                         <a 
+                           key={item.id} 
+                           href="#" 
+                           onClick={(e) => {
+                             e.preventDefault();
+                             setIsMenuOpen(false);
+                             setTimeout(() => {
+                               const element = document.getElementById(item.id);
+                               if (element) {
+                                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                               }
+                             }, 100);
+                           }}
+                           style={{ 
+                             color: 'var(--text-muted)', 
+                             textDecoration: 'none', 
+                             fontSize: '0.95rem', 
+                             display: 'flex', 
+                             alignItems: 'center', 
+                             gap: '0.6rem',
+                             padding: '0.6rem 1rem',
+                             borderRadius: '8px',
+                             transition: 'all 0.2s',
+                             lineHeight: 1.4,
+                             background: 'rgba(255,255,255,0.03)',
+                             cursor: 'pointer'
+                           }}
+                           onMouseEnter={(e) => {
+                             e.currentTarget.style.color = 'var(--primary)';
+                             e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
+                           }}
+                           onMouseLeave={(e) => {
+                             e.currentTarget.style.color = 'var(--text-muted)';
+                             e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                           }}
+                         >
+                           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />
+                           {label}
+                         </a>
+                       );
+                     })}
                  </div>
                </aside>
              </div>
@@ -1044,24 +1068,47 @@ const Lesson = () => {
              overflow: 'auto',
              transition: 'all 0.3s ease'
            }}
-             onClick={(e) => {
-               const btn = (e.target as HTMLElement).closest('.ref-btn');
-               if (btn) {
-                 const refId = btn.getAttribute('data-ref');
-                 const ref = lessonReferences.find(r => r.id === refId);
-                 if (ref) setActiveReference(ref);
-               }
-             }}
-             dangerouslySetInnerHTML={{ __html: renderHtmlWithReferences(htmlContent!) }}
-           />
-         </div>
-       )}
+              onClick={(e) => {
+                const btn = (e.target as HTMLElement).closest('.ref-btn');
+                if (btn) {
+                  const refId = btn.getAttribute('data-ref');
+                  const ref = lessonReferences.find(r => r.id === refId);
+                  if (ref) setActiveReference(ref);
+                  return
+                }
+                const link = (e.target as HTMLElement).closest('a');
+                if (link && link.href) {
+                  e.preventDefault()
+                  const url = new URL(link.href)
+                  let path = decodeURIComponent(url.pathname).replace(/\/+$/, '')
+                  if (path.endsWith('.html')) path = path.slice(0, -5)
+                  const key = path.replace(/^\/lesson\//, '').toLowerCase().trim()
+                  const targetId = lessonMap[key] || lessonMap[path.toLowerCase()]
+                  if (targetId) navigate(`/lesson/${targetId}`)
+                }
+              }}
+              dangerouslySetInnerHTML={{ __html: renderHtmlWithReferences(htmlContent!) }}
+            />
+          </div>
+        )}
 
-       {hasContentBlocks && !hasHtmlFile && (
-         <div className="lesson-content" style={{ marginBottom: '4rem' }}>
-           {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
-         </div>
-       )}
+        {hasContentBlocks && !hasHtmlFile && (
+          <div className="lesson-content" style={{ marginBottom: '4rem' }}
+            onClick={(e) => {
+              const link = (e.target as HTMLElement).closest('a');
+              if (link && link.href) {
+                e.preventDefault()
+                const url = new URL(link.href)
+                let path = decodeURIComponent(url.pathname).replace(/\/+$/, '')
+                if (path.endsWith('.html')) path = path.slice(0, -5)
+                const key = path.replace(/^\/lesson\//, '').toLowerCase().trim()
+                const targetId = lessonMap[key] || lessonMap[path.toLowerCase()]
+                if (targetId) navigate(`/lesson/${targetId}`)
+              }
+            }}>
+            {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
+          </div>
+        )}
 
        <div style={{ 
          display: 'flex', 
