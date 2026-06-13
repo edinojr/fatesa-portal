@@ -1142,7 +1142,7 @@ const Lesson = () => {
            <ChevronLeft size={20} /> Lição Anterior
          </button>
 
-            {lesson.ordem !== 10 && (
+            {Number(lesson.ordem) !== 10 && (
               <button 
                 onClick={() => nextLessonId ? navigate(`/lesson/${nextLessonId}`) : null} 
                 className="btn btn-primary" 
