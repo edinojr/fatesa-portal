@@ -1122,11 +1122,16 @@ body {
 .reading-page h3, 
 .reading-page h4, 
 .reading-page h5, 
-.reading-page h6, 
+.reading-page h6 {
+  color: #000 !important;
+  font-size: 1.4em !important; // Proportional increase
+}
+
 .reading-page p, 
 .reading-page span, 
 .reading-page div {
   color: #000 !important;
+  font-size: 1.4rem !important; // Increased by 40%
 }
 @media (max-width: 768px) {
   .mobile-menu-btn {
