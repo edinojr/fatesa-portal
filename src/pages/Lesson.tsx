@@ -1070,17 +1070,17 @@ const Lesson = () => {
                </aside>
              </div>
            )}
-               <div className="lesson-content" style={{ 
-                flex: 1, 
-                marginBottom: '4rem', 
-                lineHeight: 1.8, 
-                 maxWidth: '95%', // Expand to almost full width to prevent word cuts
-                 width: '100%',
-                 padding: '0 1rem',
-                textAlign: 'justify', // Justify text
-                overflow: 'auto',
-                transition: 'all 0.3s ease'
-              }}
+                <div className="lesson-content" style={{ 
+                 flex: 1, 
+                 marginBottom: '4rem', 
+                 lineHeight: 1.8, 
+                  maxWidth: '100%', // Fully expand
+                  width: '100%',
+                  padding: '0', // Remove internal padding
+                 textAlign: 'justify', // Justify text
+                 overflow: 'auto',
+                 transition: 'all 0.3s ease'
+               }}
               onClick={(e) => {
                 const btn = (e.target as HTMLElement).closest('.ref-btn');
                 if (btn) {
@@ -1106,16 +1106,16 @@ const Lesson = () => {
         )}
 
          {hasContentBlocks && !hasHtmlFile && (
-           <div className="lesson-content" style={{ 
-             marginBottom: '4rem',
-             lineHeight: 1.8,
-             maxWidth: '95%', // Expand to almost full width
-             width: '100%',
-             padding: '0 1rem',
-             textAlign: 'justify',
-             overflow: 'auto',
-             transition: 'all 0.3s ease'
-           }}
+            <div className="lesson-content" style={{ 
+              marginBottom: '4rem',
+              lineHeight: 1.8,
+              maxWidth: '100%', // Fully expand
+              width: '100%',
+              padding: '0', // Remove internal padding
+              textAlign: 'justify',
+              overflow: 'auto',
+              transition: 'all 0.3s ease'
+            }}
             onClick={(e) => {
               const link = (e.target as HTMLElement).closest('a');
               if (link && link.href) {
