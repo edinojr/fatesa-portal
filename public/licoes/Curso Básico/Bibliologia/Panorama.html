@@ -5,6 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panorama - Bibliologia</title>
     <style>
+  .popup-window { background-color: #fff !important; color: #333 !important; border: 1px solid #e5e7eb; }
+  .popup-overlay { background-color: rgba(0,0,0,0.5); }
+  .biblical-ref { color: #2563eb; text-decoration: underline dotted; cursor: pointer; }
+  .biblical-ref:hover { color: #1d4ed8; }
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+  
+
         body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
         .nav-links { margin-bottom: 20px; }
         .nav-links a { margin-right: 15px; text-decoration: none; color: blue; }
@@ -40,7 +85,7 @@
         <a href="Panorama.html">Panorama</a>
         
     </div>
-    <h1>Panorama - Bibliologia</h1><ul><li><a href="Lição 01 - Considerações Gerais.html">Lição 01 - Considerações Gerais</a></li><li><a href="Lição 02 - A Bíblia - O Livro da História da Redenção.html">Lição 02 - A Bíblia - O Livro da História da Redenção</a></li><li><a href="Lição 03 - Jesus nos Profetas Menores e no Novo Testamento.html">Lição 03 - Jesus nos Profetas Menores e no Novo Testamento</a></li><li><a href="Lição 04 - A Bíblia e sua Estrutura.html">Lição 04 - A Bíblia e sua Estrutura</a></li><li><a href="Lição 05 - As Línguas Originais da Bíblia.html">Lição 05 - As Línguas Originais da Bíblia</a></li><li><a href="Lição 06 - As Tentativas de Destruir a Bíblia.html">Lição 06 - As Tentativas de Destruir a Bíblia</a></li><li><a href="Lição 07 - A Teoria da Inspiração.html">Lição 07 - A Teoria da Inspiração</a></li><li><a href="Lição 08 - Os Fatos e a História do Éden Até o Profeta Malaquias.html">Lição 08 - Os Fatos e a História do Éden Até o Profeta Malaquias</a></li><li><a href="Lição 09 - Período Interbíblico - Primeira Parte.html">Lição 09 - Período Interbíblico - Primeira Parte</a></li><li><a href="Lição 10 - Período Interbíblico - Segunda Parte.html">Lição 10 - Período Interbíblico - Segunda Parte</a></li></ul><h1>BIBLIOLOGIA</h1>
+    <h1>Panorama - Bibliologia</h1><ul><li><a href="Lição 01 - Considerações Gerais.html">Lição 01 - Considerações Gerais</a></li><li><a href="Lição 02 - A Bíblia - O Livro da História da Redenção.html">Lição 02 - A Bíblia - O Livro da História da <PopUp trigger="Redenção" type="theology">Redenção</PopUp></a></li><li><a href="Lição 03 - Jesus nos Profetas Menores e no Novo Testamento.html">Lição 03 - Jesus nos Profetas Menores e no Novo Testamento</a></li><li><a href="Lição 04 - A Bíblia e sua Estrutura.html">Lição 04 - A Bíblia e sua Estrutura</a></li><li><a href="Lição 05 - As Línguas Originais da Bíblia.html">Lição 05 - As Línguas Originais da Bíblia</a></li><li><a href="Lição 06 - As Tentativas de Destruir a Bíblia.html">Lição 06 - As Tentativas de Destruir a Bíblia</a></li><li><a href="Lição 07 - A Teoria da Inspiração.html">Lição 07 - A Teoria da Inspiração</a></li><li><a href="Lição 08 - Os Fatos e a História do Éden Até o Profeta Malaquias.html">Lição 08 - Os Fatos e a História do Éden Até o Profeta Malaquias</a></li><li><a href="Lição 09 - Período Interbíblico - Primeira Parte.html">Lição 09 - Período Interbíblico - Primeira Parte</a></li><li><a href="Lição 10 - Período Interbíblico - Segunda Parte.html">Lição 10 - Período Interbíblico - Segunda Parte</a></li></ul><h1>BIBLIOLOGIA</h1>
 <h2>PANORAMA</h2>
 <p>Bibliologia, no seu sentido literal, é a ciência que trata da história e composição dos livros. Bibliólogo é o profissional dessa área.</p>
 <h3>No sentido teológico</h3>
@@ -51,7 +96,7 @@
 <p>Sua presença material não traz nenhuma proteção, nenhuma virtude. Portanto, não é recomendada para ser usada como “amuleto”. Não deve ser conservada em casa, mesmo que aberta em cima de uma mesa, com o objetivo de afugentar espíritos maus ou espantar azar.</p>
 <p>Outrossim, a Bíblia não deve ser tratada como se fosse um ídolo; ela é, radicalmente, contra a idolatria. Não pode ser objeto de culto, pois nela está escrito –</p>
 <ul>
-<li>“...ao Senhor, teu Deus, adorarás e só a ele servirás” - (Mateus 4:10).</li>
+<li>“...ao Senhor, teu Deus, adorarás e só a ele servirás” - (<span class="biblical-ref" onclick="showBiblicalPopup(this)">Mateus 4:10</span>).</li>
 </ul>
 <p>Contudo, é certo que ela deve ser amada e guardada com muito carinho por causa do seu conteúdo, porque a Bíblia é a Palavra de Deus. Quem ama a Deus também ama sua Palavra.</p>
 <p>Você ama sua Bíblia? Quem ama não passa um só dia sem lê-la! Considere isto!</p>
@@ -64,6 +109,23 @@
         <button onclick="closePopup()">Fechar</button>
     </div>
     <script>
+        async function showBiblicalPopup(element) {
+            const ref = element.innerText;
+            const contentDiv = document.getElementById("popup-content");
+            const overlay = document.getElementById("overlay");
+            const popup = document.getElementById("popup");
+            contentDiv.innerText = "Carregando...";
+            overlay.style.display = "block";
+            popup.style.display = "block";
+            try {
+                const response = await fetch(`https://bible-api.com/${encodeURIComponent(ref)}?translation=almeida`);
+                const data = await response.json();
+                contentDiv.innerText = data.text || "Versículo não encontrado.";
+            } catch (error) {
+                contentDiv.innerText = "Erro ao carregar o versículo.";
+            }
+        }
+
         function showPopup(content) {
             document.getElementById('popup-content').innerText = content;
             document.getElementById('overlay').style.display = 'block';
