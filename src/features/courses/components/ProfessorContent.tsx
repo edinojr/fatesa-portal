@@ -6,15 +6,18 @@ import { ProfessorCourse } from '../../../types/professor'
 import ModuleCard from './cards/ModuleCard'
 import ContentCard from './cards/ContentCard'
 import { getTipoConfig, getRootForLesson } from './cards/contentTypes'
+import QuizEditorModal from './modals/QuizEditorModal'
 
 interface ProfessorContentProps {
   courses: ProfessorCourse[]
   selectedCourse: any | null
   setSelectedCourse: (val: any | null) => void
   books: any[]
+  setBooks: (books: any[]) => void
   selectedBook: any | null
   setSelectedBook: (val: any | null) => void
   lessons: any[]
+  setLessons: (lessons: any[]) => void
   fetchBooks: (id: string) => void
   selectBookAndShowLessons: (book: any) => void
   professorNucleos: any[]
@@ -92,6 +95,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   const [releases, setReleases] = useState<any[]>([])
   const [expandedLesson, setExpandedLesson] = useState<string | null>(null)
   const [selectedNucleus, setSelectedNucleus] = useState<string>('')
+  const [editingQuiz, setEditingQuiz] = useState<any>(null)
+  const [quizQuestions, setQuizQuestions] = useState<any[]>([])
 
   useEffect(() => {
     fetchReleases()
@@ -127,10 +132,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         .update({ professor_active: !currentStatus })
         .eq('id', bookId)
       if (error) throw error
-      // Since we are not fetching books again in this component (they come from props), 
-      // we might need to tell the parent to refresh or just rely on the fact that 
-      // the UI will update on next load. However, we should ideally update the state.
-      // But the 'books' are props.
+      
+      setBooks(prev => prev.map(b => b.id === bookId ? { ...b, professor_active: !currentStatus } : b))
     } catch (err: any) {
       alert('Erro ao ativar/desativar módulo: ' + err.message)
     }
@@ -245,6 +248,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         .update({ professor_active: !currentStatus })
         .eq('id', lessonId)
       if (error) throw error
+      
+      setLessons(prev => prev.map(l => l.id === lessonId ? { ...l, professor_active: !currentStatus } : l))
     } catch (err: any) {
       alert('Erro ao ativar/desativar avaliação: ' + err.message)
     }
@@ -267,10 +272,11 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     if (v1.professor_active === false) return false
     const hasGab = Array.isArray(v1.questionario) && v1.questionario.length > 0
     if (!hasGab) return false
-    const allCorrect = (submissions || []).some(
-      (s: any) => s.aula_id === v1.id && s.status === 'corrigida' && (s.nota || 0) >= (v1.min_grade || 7)
+    // V2 unlocks ONLY if student FAILED V1 (nota < min_grade)
+    const v1Failed = (submissions || []).some(
+      (s: any) => s.aula_id === v1.id && s.status === 'corrigida' && (s.nota || 0) < (v1.min_grade || 7)
     )
-    return allCorrect
+    return v1Failed
   }
 
   const isV3Unlocked = (avaliacoes: any[]) => {
@@ -279,11 +285,11 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     if (v2.professor_active === false) return false
     const hasGab = Array.isArray(v2.questionario) && v2.questionario.length > 0
     if (!hasGab) return false
-    const v2Passed = (submissions || []).some(
-      (s: any) => s.aula_id === v2.id && s.status === 'corrigida' && (s.nota || 0) >= (v2.min_grade || 7)
+    // V3 unlocks ONLY if student FAILED V2 (nota < min_grade)
+    const v2Failed = (submissions || []).some(
+      (s: any) => s.aula_id === v2.id && s.status === 'corrigida' && (s.nota || 0) < (v2.min_grade || 7)
     )
-    if (v2Passed) return true
-    return isV2Unlocked(avaliacoes)
+    return v2Failed
   }
 
   return (
@@ -407,9 +413,9 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
       /* === GRID 4 COLUNAS - AULAS DO MÓDULO === */
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {/* Header do módulo */}
-          <div style={{ padding: '1.5rem 2rem', background: 'rgba(168,85,247,0.08)', borderRadius: '20px', borderLeft: '5px solid var(--primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '1rem 1.5rem', background: 'rgba(168,85,247,0.08)', borderRadius: '14px', borderLeft: '4px solid var(--primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <h3 style={{ color: 'var(--primary)', margin: 0, fontWeight: 800, fontSize: '1.3rem' }}>{selectedBook.titulo}</h3>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
@@ -575,7 +581,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
             }
 
             const renderGridItem = (item: any, label: string) => {
-              if (!item) return <div style={{ height: '90px' }} />
+              if (!item) return <div style={{ height: '80px' }} />
 
               const hasGabarito = Array.isArray(item.questionario) && item.questionario.length > 0
               const isAvaliacao = item.tipo === 'avaliacao' || item.tipo === 'prova' || item.is_bloco_final
@@ -590,18 +596,18 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               const content = (
                 <div
                   style={{
-                    padding: '1.1rem',
+                    padding: '1rem',
                     background: isReleased ? 'var(--glass)' : 'rgba(255,255,255,0.02)',
                     border: `1px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.05)'}`,
-                    borderLeft: `5px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.08)'}`,
-                    borderRadius: '14px',
+                    borderLeft: `4px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.08)'}`,
+                    borderRadius: '12px',
                     cursor: isReleased ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.85rem',
+                    gap: '0.75rem',
                     transition: 'all 0.2s',
-                    marginBottom: '0.5rem',
-                    height: '90px',
+                    marginBottom: '0',
+                    height: '80px',
                     overflow: 'hidden',
                     textDecoration: 'none',
                     color: 'inherit',
@@ -800,11 +806,11 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
             }
 
             return (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem', animation: 'fadeIn 0.5s ease-out' }}>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Lições</div>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: '#10b981', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Exercícios</div>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Vídeos</div>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: '#eab308', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', animation: 'fadeIn 0.5s ease-out' }}>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Lições</div>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: '#10b981', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Exercícios</div>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Vídeos</div>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: '#eab308', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
 
                 {Array.from({ length: maxRows }).map((_, rowIndex) => (
                   <React.Fragment key={rowIndex}>

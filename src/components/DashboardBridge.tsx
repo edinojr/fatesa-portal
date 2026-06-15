@@ -14,10 +14,11 @@ const DashboardBridge = () => {
 
       const isAdminUser = profile.tipo === 'admin' || roles.includes('admin') || roles.includes('suporte')
       const isProfessorUser = profile.tipo === 'professor' || roles.includes('professor')
+      const isCoordinatorUser = profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo')
 
       // Se o usuário escolheu um papel específico, redirecionar para ele
       if (storedRole === 'aluno') {
-        // Admin/professor escolheu ver como aluno - fica no dashboard
+        // Admin/professor/coordenador escolheu ver como aluno - fica no dashboard
         return
       }
       
@@ -26,11 +27,18 @@ const DashboardBridge = () => {
         return
       }
 
+      if (storedRole === 'coordenador' && (isAdminUser || isCoordinatorUser)) {
+        navigate('/coordenador', { replace: true })
+        return
+      }
+
       // Admin vai para admin por padrão
       if (isAdminUser) {
         navigate('/admin', { replace: true })
       } else if (isProfessorUser) {
         navigate('/professor', { replace: true })
+      } else if (isCoordinatorUser) {
+        navigate('/coordenador', { replace: true })
       }
       // Aluno fica no Dashboard
     }

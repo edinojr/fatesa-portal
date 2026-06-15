@@ -54,9 +54,9 @@ function App() {
           <Route path="/lesson/:id" element={<ProtectedRoute><MainLayout><Lesson /></MainLayout></ProtectedRoute>} />
           <Route path="/book/:id" element={<ProtectedRoute><MainLayout><SmartViewer /></MainLayout></ProtectedRoute>} />
           <Route path="/module/:id" element={<ProtectedRoute><MainLayout><ModuleDetails /></MainLayout></ProtectedRoute>} />
-           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
-           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><Professor /></ProtectedRoute>} />
-           <Route path="/coordenador" element={<ProtectedRoute requiredRole="coordenador_polo"><Coordinator /></ProtectedRoute>} />
+           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><MainLayout><Admin /></MainLayout></ProtectedRoute>} />
+           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><MainLayout><Professor /></MainLayout></ProtectedRoute>} />
+           <Route path="/coordenador" element={<ProtectedRoute requiredRole="coordenador_polo"><MainLayout><Coordinator /></MainLayout></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

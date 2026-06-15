@@ -30,9 +30,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   // Is admin if tipo is admin/suporte OR if caminhos_acesso contains them OR if specialized email
   const isAdmin = ['admin', 'suporte'].includes(userType) || roles.some(r => ['admin', 'suporte'].includes(r)) || profile.email === 'edi.ben.jr@gmail.com'
   
-  // Is professor if tipo is professor OR if caminhos_acesso contains professor OR if specialized email OR if is Admin
+  // Is professor if tipo is professor OR if caminhos_acesso contains professor OR if is Admin
   const isProfessor = userType === 'professor' || roles.includes('professor') || isAdmin
 
+  // Is coordinator if tipo is coordenador_polo OR if caminhos_acesso contains coordenador_polo OR if is Admin
   const isCoordinator = userType === 'coordenador_polo' || roles.includes('coordenador_polo') || isAdmin
 
   if (requiredRole === 'admin' && !isAdmin) {

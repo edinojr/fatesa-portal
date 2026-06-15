@@ -1016,9 +1016,9 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
 
       /* ── GRID 4 COLUNAS - AULAS DO MÓDULO ── */
       ) : !selectedLesson ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {/* Header do módulo */}
-          <div style={{ padding: '1.5rem 2rem', background: 'rgba(168,85,247,0.08)', borderRadius: '20px', borderLeft: '5px solid var(--primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '1rem 1.5rem', background: 'rgba(168,85,247,0.08)', borderRadius: '14px', borderLeft: '4px solid var(--primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <h3 style={{ color: 'var(--primary)', margin: 0, fontWeight: 800, fontSize: '1.3rem' }}>{selectedBook?.titulo}</h3>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
@@ -1036,9 +1036,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
 
             const licoes = sortedAulas
               .filter((a: any) => {
-                if (a.tipo === 'atividade' || a.tipo === 'exercicio' || a.tipo === 'avaliacao' || a.tipo === 'prova' || a.is_bloco_final) return false
-                if (isVideoType(a.tipo)) return false
-                if (a.video_url || a.url_video) return false
+                if (a.tipo !== 'licao' && a.tipo !== 'material') return false
                 if (a.ordem === 0) return false
                 if (a.titulo?.trim()?.toLowerCase() === 'panorama') return false
                 return true
@@ -1046,16 +1044,15 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
               .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
 
             const exercicios = sortedAulas
-              .filter((a: any) => (a.tipo === 'atividade' || a.tipo === 'exercicio') && a.tipo !== 'prova' && !a.is_bloco_final)
+              .filter((a: any) => a.tipo === 'exercicio' || a.tipo === 'atividade')
               .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
 
             const videos = sortedAulas
-              .filter((a: any) => isVideoType(a.tipo) || !!a.video_url || !!a.url_video)
-              .filter((a: any) => a.tipo !== 'atividade' && a.tipo !== 'exercicio' && a.tipo !== 'avaliacao' && a.tipo !== 'prova' && !a.is_bloco_final)
+              .filter((a: any) => isVideoType(a.tipo) || a.video_url || a.url_video)
               .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
 
             const avaliacoes = sortedAulas
-              .filter((a: any) => a.tipo === 'avaliacao' || a.tipo === 'prova' || !!a.is_bloco_final)
+              .filter((a: any) => a.tipo === 'avaliacao' || a.tipo === 'prova' || a.is_bloco_final)
               .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
 
             const totalGridRows = Math.max(
@@ -1096,7 +1093,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
             }
 
             const renderGridItem = (item: any, label: string) => {
-              if (!item) return <div style={{ height: '90px' }} />
+              if (!item) return <div style={{ height: '80px' }} />
 
               const isAvaliacao = item.tipo === 'avaliacao' || item.tipo === 'prova' || item.is_bloco_final
               const isExercicio = item.tipo === 'exercicio' || item.tipo === 'atividade'
@@ -1113,18 +1110,18 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                   onDragOver={(e) => onDragOver(e, item.id)}
                   onDrop={(e) => onDrop(e, item.id, lessons, () => fetchLessons(selectedBook.id), 'aulas')}
                   style={{
-                    padding: '1.1rem',
+                    padding: '1rem',
                     background: dragOverId === item.id ? 'rgba(var(--primary-rgb), 0.1)' : 'var(--glass)',
                     border: `1px solid ${borderColor}`,
-                    borderLeft: `5px solid ${borderColor}`,
-                    borderRadius: '14px',
+                    borderLeft: `4px solid ${borderColor}`,
+                    borderRadius: '12px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.85rem',
+                    gap: '0.75rem',
                     transition: 'all 0.2s',
-                    marginBottom: '0.5rem',
-                    height: '90px',
+                    marginBottom: '0',
+                    height: '80px',
                     overflow: 'hidden',
                     position: 'relative',
                     opacity: draggedId === item.id ? 0.4 : 1,
@@ -1164,11 +1161,11 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
             }
 
             return (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem', animation: 'fadeIn 0.5s ease-out' }}>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Lições</div>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: '#10b981', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Exercícios</div>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Vídeos</div>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: '#eab308', fontSize: '1rem', padding: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', animation: 'fadeIn 0.5s ease-out' }}>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Lições</div>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: '#10b981', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Exercícios</div>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Vídeos</div>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: '#eab308', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
 
                 {Array.from({ length: maxRows }).map((_, rowIndex) => (
                   <React.Fragment key={rowIndex}>

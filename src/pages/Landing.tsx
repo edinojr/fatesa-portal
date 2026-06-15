@@ -2,8 +2,6 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ChevronRight, LogIn, Info, BookOpen, UserCheck, GraduationCap, ArrowRight, Mail, ClipboardSignature } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
-import Navbar from '../components/common/Navbar'
-import Footer from '../components/common/Footer'
 import { useSEO } from '../hooks/useSEO'
 
 const Landing = () => {
@@ -17,21 +15,6 @@ const Landing = () => {
     return (
     <div className="landing-container">
       <Toaster position="top-center" />
-      {/* Top Subjects Banner */}
-      <div className="top-subjects-banner">
-        <div className="banner-overlay"></div>
-        <div className="subjects-scroll">
-          <div className="subject-item"><span></span> Doutrina da Salvação</div>
-          <div className="subject-item"><span></span> Atos dos Apóstolos</div>
-          <div className="subject-item"><span></span> Cristologia</div>
-          <div className="subject-item"><span></span> Epístolas aos Hebreus</div>
-          <div className="subject-item"><span></span> Teologia Sistemática</div>
-          <div className="subject-item"><span></span> Hermenêutica</div>
-          <div className="subject-item"><span></span> História da Igreja</div>
-        </div>
-      </div>
-
-      <Navbar />
 
       {/* Hero Section */}
       <section id="home" className="hero-section" style={{ padding: '5rem 2rem 3rem' }}>
@@ -51,7 +34,7 @@ const Landing = () => {
 
       {/* Iconic Navigation Hub - Small Icons Variant */}
       <section className="landing-hub" style={{ padding: '2rem' }}>
-        <div className="hub-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="hub-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', width: '100%' }}>
           
            <Link to="/sobre" className="nav-card-premium" style={{ textDecoration: 'none' }}>
              <div className="icon-badge-premium" style={{ background: 'rgba(0, 86, 179, 0.1)', color: 'var(--primary)' }}>
@@ -134,7 +117,7 @@ const Landing = () => {
 
       {/* App Promotion Section */}
       <section className="app-promotion-section" style={{ padding: '3rem 2rem', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ width: '100%', textAlign: 'center' }}>
           <h2 style={{ fontSize: '1.75rem', marginBottom: '0.75rem', fontWeight: 700 }}>Acesse por Aplicativo</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontSize: '0.9rem' }}>Leve a Fatesa com você. Estude de qualquer lugar.</p>
           
@@ -149,7 +132,6 @@ const Landing = () => {
         </div>
       </section>
 
-      <Footer />
     </div>
   )
 }

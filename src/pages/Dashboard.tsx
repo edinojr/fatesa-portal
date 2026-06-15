@@ -10,11 +10,14 @@ import {
   AlertCircle,
   CheckCircle2,
   XCircle,
+  X,
   MessageSquare,
   Home as HomeIcon,
   ChevronLeft,
   ChevronRight,
-  LayoutGrid
+  LayoutGrid,
+  Users,
+  Loader2
 } from 'lucide-react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
@@ -33,7 +36,7 @@ import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
 import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
 
-type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'boletim' | 'forum'
+type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'boletim' | 'forum' | 'modulos-concluidos'
 
 const Dashboard = () => {
   const { profile, signOut, refreshProfile } = useProfile();
@@ -51,7 +54,7 @@ const Dashboard = () => {
   
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'boletim', 'forum'];
+    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'boletim', 'forum', 'modulos-concluidos'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
@@ -88,6 +91,10 @@ const Dashboard = () => {
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+  const [showModuleCompletionModal, setShowModuleCompletionModal] = useState(false);
+  const [availableModules, setAvailableModules] = useState<any[]>([]);
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
+  const [savingModules, setSavingModules] = useState(false);
 
   const isBlocked = profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
@@ -98,6 +105,75 @@ const Dashboard = () => {
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
+  };
+
+  // Fetch available modules for manual completion
+  const fetchAvailableModules = async () => {
+    if (!profile?.id) return;
+    try {
+      const { data: allCourses } = await supabase.from('cursos').select('id, nome, nivel, livros(id, titulo, ordem)');
+      if (allCourses) {
+        const modules: any[] = [];
+        for (const course of allCourses) {
+          for (const livro of course.livros || []) {
+            // Check if already completed (via platform)
+            const isCompleted = atividades.some((s: any) => 
+              s.book_id === livro.id && 
+              s.is_bloco_final && 
+              s.status === 'corrigida' && 
+              (s.nota || 0) >= (s.min_grade || 7)
+            );
+            // Check if already manually marked
+            const manuallyCompleted = profile?.modulos_finalizados_manual?.includes(livro.id);
+            
+            if (!isCompleted && !manuallyCompleted) {
+              modules.push({
+                ...livro,
+                courseName: course.nome,
+                courseNivel: course.nivel,
+                isCompleted: false
+              });
+            }
+          }
+        }
+        setAvailableModules(modules);
+      }
+    } catch (err) {
+      console.error('Error fetching modules:', err);
+    }
+  };
+
+  const handleModuleSelection = (moduleId: string) => {
+    setSelectedModules(prev => 
+      prev.includes(moduleId) 
+        ? prev.filter(id => id !== moduleId)
+        : [...prev, moduleId]
+    );
+  };
+
+  const handleSaveManualModules = async () => {
+    if (!profile?.id || selectedModules.length === 0) return;
+    setSavingModules(true);
+    try {
+      const currentManual = profile?.modulos_finalizados_manual || [];
+      const updatedManual = [...new Set([...currentManual, ...selectedModules])];
+      
+      const { error } = await supabase
+        .from('users')
+        .update({ modulos_finalizados_manual: updatedManual })
+        .eq('id', profile.id);
+      
+      if (error) throw error;
+      
+      showToast(`${selectedModules.length} módulo(s) marcado(s) como concluído(s)!`, 'success');
+      setShowModuleCompletionModal(false);
+      setSelectedModules([]);
+      refreshProfile();
+    } catch (err: any) {
+      showToast('Erro ao salvar: ' + err.message, 'error');
+    } finally {
+      setSavingModules(false);
+    }
   };
 
   // Logica de Provas Pendentes e Recuperação (Refinada para Aprovação/Reprovação)
@@ -454,25 +530,28 @@ const Dashboard = () => {
            )}
         </nav>
 
-         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-           {(profile?.tipo === 'admin' || profile?.tipo === 'professor' || profile?.caminhos_acesso?.includes('admin') || profile?.email === 'edi.ben.jr@gmail.com') && (
-             <div style={{ display: 'flex', gap: '0.5rem', marginRight: '0.5rem' }}>
-               {profile?.tipo === 'professor' || profile?.caminhos_acesso?.includes('professor') ? (
-                 <button onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
-                   <GraduationCap size={18} /> <span className="mobile-hide">Painel Professor</span>
-                 </button>
-               ) : null}
-               {profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin') ? (
-                 <button onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
-                   <LayoutGrid size={18} /> <span className="mobile-hide">Painel Admin</span>
-                 </button>
-               ) : null}
-             </div>
-           )}
-           <button className="nav-btn-premium danger" onClick={() => signOut()}>
-             <LogOut size={18} /> <span className="mobile-hide">Sair</span>
-           </button>
-         </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {((profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin')) || profile?.email === 'edi.ben.jr@gmail.com') && (
+              <div style={{ display: 'flex', gap: '0.5rem', marginRight: '0.5rem' }}>
+                {profile?.caminhos_acesso?.includes('coordenador_polo') ? (
+                  <button onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
+                    <Users size={18} /> <span className="mobile-hide">Painel Coordenador</span>
+                  </button>
+                ) : null}
+                {profile?.caminhos_acesso?.includes('professor') ? (
+                  <button onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
+                    <GraduationCap size={18} /> <span className="mobile-hide">Painel Professor</span>
+                  </button>
+                ) : null}
+                <button onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
+                  <LayoutGrid size={18} /> <span className="mobile-hide">Painel Admin</span>
+                </button>
+              </div>
+            )}
+            <button className="nav-btn-premium danger" onClick={() => signOut()}>
+              <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+            </button>
+          </div>
       </header>
 
       <main className="admin-main">
@@ -509,6 +588,12 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
+
+              <div className="admin-action-card" onClick={() => { fetchAvailableModules(); setShowModuleCompletionModal(true); }}>
+                <div className="icon-wrapper"><Award size={32} /></div>
+                <h3>Módulos Concluídos</h3>
+                <p>Marque módulos que você já concluiu fora da plataforma.</p>
+              </div>
 
               <div className="admin-action-card" onClick={() => setActiveTab('boletim')}>
                 <div className="icon-wrapper"><Award size={32} /></div>
@@ -673,6 +758,79 @@ const Dashboard = () => {
           exams={pendingExams}
           onClose={() => setShowExamNotice(false)}
         />
+      )}
+
+      {/* Modal: Marcar Módulos como Concluídos Manualmente */}
+      {showModuleCompletionModal && (
+        <div className="modal-overlay" onClick={() => { setShowModuleCompletionModal(false); setSelectedModules([]); }}>
+          <div className="modal-content" style={{ maxWidth: '600px', maxHeight: '80vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid var(--glass-border)' }}>
+              <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <Award color="var(--primary)" /> Marcar Módulos Concluídos
+              </h3>
+              <button onClick={() => { setShowModuleCompletionModal(false); setSelectedModules([]); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.5rem' }}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+              Selecione os módulos que você já concluiu fora da plataforma (presencial, em outra instituição, etc.). 
+              Eles serão contabilizados para sua formatura.
+            </p>
+
+            {availableModules.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                <Award size={48} style={{ opacity: 0.3, marginBottom: '1rem' }} />
+                <p>Todos os módulos disponíveis já estão concluídos ou em andamento.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '400px', overflowY: 'auto' }}>
+                {availableModules.map(module => (
+                  <label key={module.id} style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '1rem', 
+                    padding: '1rem', 
+                    background: selectedModules.includes(module.id) ? 'rgba(var(--primary-rgb), 0.1)' : 'rgba(255,255,255,0.02)',
+                    border: `1px solid ${selectedModules.includes(module.id) ? 'var(--primary)' : 'var(--glass-border)'}`,
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedModules.includes(module.id)}
+                      onChange={() => handleModuleSelection(module.id)}
+                      style={{ width: '20px', height: '20px', accentColor: 'var(--primary)' }}
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{module.titulo}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        {module.courseName} • {module.courseNivel} • Ordem: {module.ordem}
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', justifyContent: 'flex-end' }}>
+              <button 
+                className="btn btn-outline" 
+                onClick={() => { setShowModuleCompletionModal(false); setSelectedModules([]); }}
+              >
+                Cancelar
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleSaveManualModules}
+                disabled={selectedModules.length === 0 || savingModules}
+              >
+                {savingModules ? <Loader2 className="spinner" size={18} /> : `Salvar (${selectedModules.length})`}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

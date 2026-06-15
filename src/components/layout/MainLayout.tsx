@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Calendar, MessageCircle } from 'lucide-react';
+import TopBanner from './TopBanner';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -30,9 +31,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <Navbar />
 
-      <main className="container" style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
-        {children}
-      </main>
+       <main className="container" style={{ paddingTop: '2rem', paddingBottom: '4rem' }}>
+         {children}
+       </main>
 
       <Footer />
     </div>

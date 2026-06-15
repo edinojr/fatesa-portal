@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ChevronRight,
-  ArrowLeft,
+  ChevronLeft,
   BookOpen,
   Lock,
   CheckCircle,
@@ -67,7 +67,7 @@ const ModuleDetails = () => {
 
     const { book, courseName } = currentBook;
 
-    if (!book.isUnlocked) {
+    if (!book.isUnlocked && !isStaff) {
         return (
             <div className="auth-container">
                 <Lock size={64} color="var(--primary)" style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
@@ -179,33 +179,68 @@ const ModuleDetails = () => {
     };
 
     // ── Grid Content Preparation ──
-    // Avaliações ficam alinhadas no final
-    const totalGridRows = Math.max(
-      [panorama, ...licoes].length,
-      [null, ...exercicios].length,
-      [null, ...videos].length,
-      avaliacoes.length,
-      1
-    );
-    const avaliacoesStartRow = totalGridRows - avaliacoes.length;
-    const avaliacoesGrid = Array.from({ length: totalGridRows }, (_, i) => {
-      const pos = i - avaliacoesStartRow;
-      return pos >= 0 && pos < avaliacoes.length ? avaliacoes[pos] : null;
+    // Build grid by 'ordem' for correct alignment across columns
+    // Panorama (ordem 0) -> Lição 1 (ordem 1) -> Lição 2 (ordem 2) etc.
+    
+    // Collect all items with their ordem
+    const allItemsByOrdem: Record<number, { 
+      lesson?: any; 
+      exercise?: any; 
+      video?: any; 
+      avaliacao?: any;
+    }> = {};
+
+    // Add panorama at ordem 0
+    if (panorama) {
+      allItemsByOrdem[0] = { ...allItemsByOrdem[0], lesson: panorama };
+    }
+
+    // Add lições by their ordem
+    licoes.forEach(licao => {
+      const ordem = licao.ordem || 0;
+      if (ordem > 0) {
+        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], lesson: licao };
+      }
     });
 
+    // Add exercícios by their ordem
+    exercicios.forEach(ex => {
+      const ordem = ex.ordem || 0;
+      if (ordem > 0) {
+        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], exercise: ex };
+      }
+    });
+
+    // Add videos by their ordem
+    videos.forEach(vid => {
+      const ordem = vid.ordem || 0;
+      if (ordem > 0) {
+        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], video: vid };
+      }
+    });
+
+    // Add avaliações by their ordem (they go in the last column)
+    avaliacoes.forEach(av => {
+      const ordem = av.ordem || 0;
+      if (ordem > 0) {
+        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], avaliacao: av };
+      }
+    });
+
+    // Get sorted ordem keys (0 for panorama, then 1, 2, 3...)
+    const sortedOrdens = Object.keys(allItemsByOrdem)
+      .map(k => parseInt(k))
+      .sort((a, b) => a - b);
+
+    // Build grid data arrays aligned by ordem
     const gridData = {
-      lessons: [panorama, ...licoes],
-      exercises: [null, ...exercicios],
-      avaliacoes: avaliacoesGrid,
-      videos: [null, ...videos],
+      lessons: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.lesson || null),
+      exercises: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.exercise || null),
+      videos: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.video || null),
+      avaliacoes: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.avaliacao || null),
     };
 
-    const maxRows = Math.max(
-      gridData.lessons.length,
-      gridData.exercises.length,
-      gridData.avaliacoes.length,
-      gridData.videos.length
-    );
+    const maxRows = sortedOrdens.length;
 
     const hasAnyContent = 
       gridData.lessons.some(l => l !== null) || 
@@ -268,10 +303,10 @@ const ModuleDetails = () => {
 
     return (
         <div className="admin-layout">
-            <header className="dashboard-header-modern">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                    <button onClick={() => goToPanel()} className="btn-icon" style={{ background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '12px' }}>
-                        <ArrowLeft size={20} />
+            <header className="dashboard-header-modern" style={{ justifyContent: 'space-between', padding: '1rem 2.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <button onClick={() => goToPanel()} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }} title="Voltar">
+                        <ChevronLeft size={18} />
                     </button>
                     <div>
                         <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>{book.titulo}</h1>
@@ -308,28 +343,30 @@ const ModuleDetails = () => {
                      <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Vídeos</div>
                      <div style={{ textAlign: 'center', fontWeight: 800, color: '#eab308', fontSize: '0.9rem', padding: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
  
-                     {/* Rows */}
-                       {Array.from({ length: maxRows }).map((_, rowIndex) => (
-                         <React.Fragment key={rowIndex}>
-                           {renderGridItem(
-                             gridData.lessons[rowIndex], 
-                             rowIndex === 0 ? 'Panorama' : `Lição ${String(rowIndex).padStart(2, '0')}`
-                           )}
-                           {renderGridItem(
-                             gridData.exercises[rowIndex], 
-                             rowIndex === 0 ? '' : `Exercício ${String(rowIndex).padStart(2, '0')}`
-                           )}
+                      {/* Rows */}
+                        {sortedOrdens.map((ordem, idx) => (
+                          <React.Fragment key={ordem}>
                             {renderGridItem(
-                              gridData.videos[rowIndex], 
-                              rowIndex === 0 ? '' : `Vídeo ${String(rowIndex).padStart(2, '0')}`
+                              gridData.lessons[idx], 
+                              ordem === 0 ? 'Panorama' : `Lição ${String(ordem).padStart(2, '0')}`
+                            )}
+                            {renderGridItem(
+                              gridData.exercises[idx], 
+                              ordem === 0 ? '' : `Exercício ${String(ordem).padStart(2, '0')}`
+                            )}
+                            {renderGridItem(
+                              gridData.videos[idx], 
+                              ordem === 0 ? '' : `Vídeo ${String(ordem).padStart(2, '0')}`
                             )}
                             {(() => {
-                              const evalIdx = rowIndex - (maxRows - avaliacoes.length);
-                              const label = evalIdx === 0 ? 'Avaliação' : evalIdx === 1 ? 'Recuperação' : evalIdx === 2 ? '2ª Recuperação' : '';
-                              return renderGridItem(gridData.avaliacoes[rowIndex], label);
+                              const av = gridData.avaliacoes[idx];
+                              if (!av) return null;
+                              const versao = av.versao || 1;
+                              const label = versao === 1 ? 'Avaliação' : versao === 2 ? 'Recuperação' : '2ª Recuperação';
+                              return renderGridItem(av, label);
                             })()}
-                         </React.Fragment>
-                       ))}
+                          </React.Fragment>
+                        ))}
                    </div>
                 )}
             </main>

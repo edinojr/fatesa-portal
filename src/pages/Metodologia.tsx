@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
 import { Book, Clock, History, Award } from 'lucide-react'
-import Navbar from '../components/common/Navbar'
-import Footer from '../components/common/Footer'
 
 const Metodologia = () => {
     useEffect(() => {
@@ -10,7 +8,6 @@ const Metodologia = () => {
 
     return (
         <div className="landing-container">
-            <Navbar />
             
             <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
                 <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
@@ -21,7 +18,7 @@ const Metodologia = () => {
             </section>
 
             <section id="metodologia" style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 10% 50%, rgba(0, 86, 179, 0.03), transparent 40%)' }}>
-                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <div style={{ width: '100%', padding: '0 2rem' }}>
                     <div className="section-header" style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <span className="badge">EAD e Presencial</span>
                         <h2>Metodologia de Ensino</h2>
@@ -86,7 +83,6 @@ const Metodologia = () => {
                 </div>
             </section>
 
-            <Footer />
         </div>
     );
 };

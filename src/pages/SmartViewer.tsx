@@ -369,27 +369,29 @@ const SmartViewer = () => {
         overflow: isMobile ? 'visible' : 'hidden' 
       }}
     >
-      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1.5rem', background: '#0f0f0f', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', zIndex: 100 }}>
+      <header className="dashboard-header-modern" style={{ height: 'auto', minHeight: '60px', padding: '0.75rem 2rem', background: '#0f0f0f', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={() => goToPanel()} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <ChevronLeft size={18} /> Painel
+          <button onClick={() => goToPanel()} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+            <ChevronLeft size={18} /> <span className="mobile-hide">Painel</span>
           </button>
           <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }}></div>
-          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>{data.titulo}</h3>
+          <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>{data.titulo}</h3>
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {!htmlContent && (
             <div className="viewer-header-desktop-only" style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '2px' }}>
               <button 
                 onClick={() => setViewType('single')} 
-                style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', background: viewType === 'single' ? 'var(--primary)' : 'transparent', color: viewType === 'single' ? '#fff' : 'rgba(255,255,255,0.6)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+                className={`nav-btn-premium ${viewType === 'single' ? 'active' : ''}`}
+                style={{ padding: '0.4rem 1rem', fontSize: '0.75rem', borderRadius: '6px' }}
               >
                 Página
               </button>
               <button 
                 onClick={() => setViewType('scroll')} 
-                style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px', background: viewType === 'scroll' ? 'var(--primary)' : 'transparent', color: viewType === 'scroll' ? '#fff' : 'rgba(255,255,255,0.6)', border: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+                className={`nav-btn-premium ${viewType === 'scroll' ? 'active' : ''}`}
+                style={{ padding: '0.4rem 1rem', fontSize: '0.75rem', borderRadius: '6px' }}
               >
                 Scroll
               </button>
@@ -398,8 +400,8 @@ const SmartViewer = () => {
           {htmlContent && (
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)} 
-              className="btn-outline" 
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '4px 12px', borderRadius: '8px', fontSize: '0.75rem' }}
+              className="nav-btn-premium"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 1rem', borderRadius: '8px', fontSize: '0.75rem' }}
             >
               <Menu size={16} /> Tópicos
             </button>
@@ -520,7 +522,7 @@ const SmartViewer = () => {
                   flex: 1, 
                   marginBottom: '4rem', 
                   lineHeight: 1.8, 
-                  maxWidth: '1200px', 
+                  maxWidth: '100%', 
                   width: '100%',
                   padding: '0 2rem',
                   textAlign: 'justify', 

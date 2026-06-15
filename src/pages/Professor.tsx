@@ -47,9 +47,11 @@ const Professor = () => {
     selectedCourse,
     setSelectedCourse,
     books,
+    setBooks,
     selectedBook,
     setSelectedBook,
     lessons,
+    setLessons,
     allStudents,
     searchTerm,
     setSearchTerm,
@@ -100,7 +102,13 @@ const Professor = () => {
   };
 
   React.useEffect(() => {
-    localStorage.setItem('fatesa_active_role', 'professor');
+    // Only set to 'professor' if the user is NOT an admin, 
+    // or if they explicitly navigated here (already handled by navigation)
+    // To prevent overriding admin preference, we check current active role
+    const activeRole = localStorage.getItem('fatesa_active_role');
+    if (activeRole !== 'admin') {
+      localStorage.setItem('fatesa_active_role', 'professor');
+    }
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab);
     } else if (!activeTab) {
@@ -137,19 +145,24 @@ const Professor = () => {
              PAINEL PROFESSOR
            </div>
          </div>
-         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-           <button onClick={() => navigate('/dashboard')} className="nav-btn-premium" style={{ width: 'auto' }}>
-             <ExternalLink size={18} /> <span className="mobile-hide">Painel Aluno</span>
-           </button>
-           {(profile?.tipo === 'admin' || (profile?.caminhos_acesso as string[])?.includes('admin')) && (
-             <button onClick={() => navigate('/admin')} className="nav-btn-premium" style={{ width: 'auto' }}>
-               <ShieldCheck size={18} /> <span className="mobile-hide">Painel Admin</span>
-             </button>
-           )}
-           <button className="nav-btn-premium danger" onClick={handleLogout} title="Sair" style={{ width: 'auto' }}>
-             <LogOut size={18} /> <span className="mobile-hide">Sair</span>
-           </button>
-         </div>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <button onClick={() => navigate('/dashboard')} className="nav-btn-premium" style={{ width: 'auto' }}>
+              <ExternalLink size={18} /> <span className="mobile-hide">Painel Aluno</span>
+            </button>
+            {(profile?.tipo === 'coordenador_polo' || (profile?.caminhos_acesso as string[])?.includes('coordenador_polo')) && (
+              <button onClick={() => navigate('/coordenador')} className="nav-btn-premium" style={{ width: 'auto' }}>
+                <Users size={18} /> <span className="mobile-hide">Painel Coordenador</span>
+              </button>
+            )}
+            {(profile?.tipo === 'admin' || (profile?.caminhos_acesso as string[])?.includes('admin')) && (
+              <button onClick={() => navigate('/admin')} className="nav-btn-premium" style={{ width: 'auto' }}>
+                <ShieldCheck size={18} /> <span className="mobile-hide">Painel Admin</span>
+              </button>
+            )}
+            <button className="nav-btn-premium danger" onClick={handleLogout} title="Sair" style={{ width: 'auto' }}>
+              <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+            </button>
+          </div>
        </header>
  
         <main className="admin-main">
@@ -293,38 +306,41 @@ const Professor = () => {
             )}
 
             {activeTab === 'content' && (
-              <ProfessorContent 
-                courses={courses}
-                selectedCourse={selectedCourse}
-                setSelectedCourse={setSelectedCourse}
-                books={books}
-                selectedBook={selectedBook}
-                setSelectedBook={setSelectedBook}
-                lessons={lessons}
-                fetchBooks={fetchBooks}
-                selectBookAndShowLessons={selectBookAndShowLessons}
-                profile={profile}
-                professorNucleos={professorNucleos}
-                submissions={submissions}
-              />
+               <ProfessorContent 
+                 courses={courses}
+                 selectedCourse={selectedCourse}
+                 setSelectedCourse={setSelectedCourse}
+                 books={books}
+                 setBooks={setBooks}
+                 selectedBook={selectedBook}
+                 setSelectedBook={setSelectedBook}
+                 lessons={lessons}
+                 setLessons={setLessons}
+                 fetchBooks={fetchBooks}
+                 selectBookAndShowLessons={selectBookAndShowLessons}
+                 profile={profile}
+                 professorNucleos={professorNucleos}
+                 submissions={submissions}
+               />
             )}
 
              {(activeTab as string) === 'modules' && (
-              <ProfessorContent 
-                courses={courses}
-                selectedCourse={selectedCourse}
-                setSelectedCourse={setSelectedCourse}
-                books={books}
-                selectedBook={selectedBook}
-                setSelectedBook={setSelectedBook}
-                lessons={lessons}
-                fetchBooks={fetchBooks}
-                selectBookAndShowLessons={selectBookAndShowLessons}
-                profile={profile}
-                professorNucleos={professorNucleos}
-                submissions={submissions}
-                hideReleaseControls={true}
-              />
+               <ProfessorContent 
+                 courses={courses}
+                 selectedCourse={selectedCourse}
+                 setSelectedCourse={setSelectedCourse}
+                 books={books}
+                 setBooks={setBooks}
+                 selectedBook={selectedBook}
+                 setSelectedBook={setSelectedBook}
+                 lessons={lessons}
+                 setLessons={setLessons}
+                 fetchBooks={fetchBooks}
+                 selectBookAndShowLessons={selectBookAndShowLessons}
+                 profile={profile}
+                 professorNucleos={professorNucleos}
+                 submissions={submissions}
+               />
             )}
 
             {activeTab === 'academic' && (

@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
 import { Award, Shield, Book, Users } from 'lucide-react'
-import Navbar from '../components/common/Navbar'
-import Footer from '../components/common/Footer'
 
 const Patrono = () => {
     useEffect(() => {
@@ -10,7 +8,6 @@ const Patrono = () => {
 
     return (
         <div className="landing-container">
-            <Navbar />
             
             <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
                 <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
@@ -75,11 +72,10 @@ const Patrono = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
-            <Footer />
         </div>
     );
 };

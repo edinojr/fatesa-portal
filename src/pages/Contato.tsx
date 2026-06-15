@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
 import { MessageCircle, Phone, MapPin } from 'lucide-react'
-import Navbar from '../components/common/Navbar'
-import Footer from '../components/common/Footer'
 
 const Contato = () => {
     useEffect(() => {
@@ -10,7 +8,6 @@ const Contato = () => {
 
     return (
         <div className="landing-container">
-            <Navbar />
             
             <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
                 <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
@@ -21,7 +18,7 @@ const Contato = () => {
             </section>
 
             <section className="contact-page-section" style={{ padding: '8rem 2rem' }}>
-                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <div style={{ width: '100%' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem' }}>
                         <div>
                             <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>Fale Conosco</h2>
@@ -93,7 +90,6 @@ const Contato = () => {
                 </div>
             </section>
 
-            <Footer />
         </div>
     );
 };

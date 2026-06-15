@@ -10,8 +10,10 @@ import {
   CheckCircle2,
   Clock,
   AlertCircle,
-  Trash2
+  Trash2,
+  PlusCircle
 } from 'lucide-react';
+import PaymentInsertionModal from './PaymentInsertionModal';
 
 interface FinanceReportProps {
   data: any[];
@@ -19,10 +21,12 @@ interface FinanceReportProps {
   handleDeleteValidation?: (target: 'doc' | 'pay', id: string) => Promise<void>;
   handleValidar?: (target: 'doc' | 'pay', id: string, status: 'aprovado' | 'rejeitado', modulo?: string) => Promise<void>;
   actionLoading?: string | null;
+  onRefresh?: () => Promise<void>;
 }
 
-const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleDeleteValidation, handleValidar, actionLoading }) => {
+const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleDeleteValidation, handleValidar, actionLoading, onRefresh }) => {
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
+  const [isInsertionOpen, setIsInsertionOpen] = useState(false);
   const filteredData = data.filter(item => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
@@ -193,6 +197,7 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
   );
 
   return (
+    <>
     <div className="finance-report-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -206,9 +211,18 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
             </p>
           </div>
         </div>
-        <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.5rem', width: 'auto' }}>
-          <Download size={18} /> Exportar CSV
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => setIsInsertionOpen(true)}
+            style={{ gap: '0.5rem', width: 'auto', background: 'var(--primary)', fontWeight: 700 }}
+          >
+            <PlusCircle size={18} /> Registrar Pagamento
+          </button>
+          <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.5rem', width: 'auto' }}>
+            <Download size={18} /> Exportar CSV
+          </button>
+        </div>
       </div>
 
       {data.length === 0 && (
@@ -494,9 +508,19 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
             </div>
           </div>
         );
-      })()}
+      })(      )}
     </div>
+    <PaymentInsertionModal 
+      isOpen={isInsertionOpen} 
+      onClose={() => setIsInsertionOpen(false)} 
+      onSuccess={async () => {
+        if (onRefresh) await onRefresh();
+      }}
+    />
+    </>
   );
 };
+
+
 
 export default FinanceReport;

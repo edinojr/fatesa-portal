@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { BookOpen, Book, GraduationCap } from 'lucide-react'
-import Navbar from '../components/common/Navbar'
-import Footer from '../components/common/Footer'
 
 const CursosPublic = () => {
     useEffect(() => {
@@ -11,7 +9,6 @@ const CursosPublic = () => {
 
     return (
         <div className="landing-container">
-            <Navbar />
             
             <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
                 <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
@@ -91,7 +88,6 @@ const CursosPublic = () => {
                 </div>
             </section>
 
-            <Footer />
         </div>
     );
 };

@@ -193,12 +193,34 @@ export const useStudentCourses = (profile: any) => {
       
       const exceptionIds = (exceptions || []).map((e: any) => e.livro_id);
       const examExceptionIds = (examExceptions || []).map((e: any) => e.aula_id);
+      
+      // Get manually completed modules from user profile
+      const manualCompletedModuleIds = (profile?.modulos_finalizados_manual || []) as string[];
       const userHasActivityInModule = (livroId: string) => {
         return resData.some((res: any) => res.book_id === livroId);
       };
 
       setAtividades(resData);
       setProgressoAulas(progData || []);
+
+      // Get all manually completed module IDs
+      const manualCompleted = new Set(manualCompletedModuleIds);
+      
+      // Determine which manually completed modules are basic vs medium
+      const manualBasicModules = new Set<string>();
+      const manualMediumModules = new Set<string>();
+      
+      manualCompletedModuleIds.forEach(manualId => {
+        const book = livrosMap[manualId];
+        if (book) {
+          const nivel = cursosNivelMap[book.curso_id];
+          if (nivel?.toLowerCase().includes('basico') || nivel?.toLowerCase().includes('básico')) {
+            manualBasicModules.add(manualId);
+          } else if (nivel?.toLowerCase().includes('medio') || nivel?.toLowerCase().includes('médio')) {
+            manualMediumModules.add(manualId);
+          }
+        }
+      });
 
       const finishedBasicModules = new Set((resData || [])
         .filter((r: any) => {
@@ -208,6 +230,9 @@ export const useStudentCourses = (profile: any) => {
         })
         .map((r: any) => r.book_id)
       );
+      
+      // Merge manual completions with actual completions
+      manualBasicModules.forEach(id => finishedBasicModules.add(id));
 
       const fBasicCount = finishedBasicModules.size;
       setFinishedBasicCount(fBasicCount);
@@ -220,6 +245,9 @@ export const useStudentCourses = (profile: any) => {
         })
         .map((r: any) => r.book_id)
       );
+      
+      // Merge manual completions with actual completions
+      manualMediumModules.forEach(id => finishedMediumModules.add(id));
 
       setFinishedMediumCount(finishedMediumModules.size);
       const isFinished = fBasicCount >= 27;
@@ -243,10 +271,12 @@ export const useStudentCourses = (profile: any) => {
              nivel: c.nivel,
              livros: sortedLivros.map((l: any) => {
                const bookOrdem = l.ordem || 1;
-                const isManualModuleRelease = releasedModulos.includes(l.id);
-                const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
-                const levelLocked = isMedium && !isBasicFinished && !isStaff;
+                 const isManualModuleRelease = releasedModulos.includes(l.id) || manualCompleted.has(l.id);
+                 const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
+                 const levelLocked = isMedium && !isBasicFinished && !isStaff;
 
+                const isManualFinished = manualCompleted.has(l.id);
+                
                 const isDP = !isStaff && resData.some((s: any) => {
                   const sa = (l.aulas || []).find((pa: any) => pa.id === s.lesson_id);
                   const isEx = sa?.is_bloco_final || sa?.tipo === 'prova';
@@ -275,7 +305,7 @@ export const useStudentCourses = (profile: any) => {
                   const minGrade = highestAula?.min_grade || 7.0;
                   isApproved = (highestExam.nota || 0) >= minGrade;
                 }
-                const isFinished = isApproved || isDP;
+                const isFinished = isApproved || isDP || isManualFinished;
 
                 const isPreviousFinishedOrReleased = bookOrdem === 1 || Array.from(releasedExamBookIds).some(rid => {
                   const prevBook = sortedLivros.find((sl: any) => sl.id === rid);
@@ -290,7 +320,7 @@ export const useStudentCourses = (profile: any) => {
                     const failedV3 = (s.nota || 0) < minGrade && sa?.versao === 3;
                     return s.book_id === sl.id && isEx && s.status === 'corrigida' && (passed || failedV3);
                   });
-                });
+                }) || manualCompleted.has(sortedLivros.find((sl: any) => sl.ordem === bookOrdem - 1)?.id || '');
 
                  const isModuleReleased = isManualModuleRelease || isFinished || isPreviousFinishedOrReleased;
                  const effectivelyLevelLocked = levelLocked && !isManualModuleRelease && !isFinished;
@@ -298,16 +328,16 @@ export const useStudentCourses = (profile: any) => {
                  const isCurrent = isModuleReleased && !isFinished;
                  const isUnlocked = isReleased;
 
-                const examReleaseDate = examReleaseDates[l.id];
-                const userCreatedAt = new Date(profile.created_at).getTime();
-                const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
-                const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
-                const hasException = exceptionIds.includes(l.id);
-                const hasStarted = userHasActivityInModule(l.id);
-                const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
-                
-                // Módulo é visível se: é staff, tem exceção, já começou, tem prova individual, OU foi liberado pelo professor
-                const isHidden = !isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease;
+                 const examReleaseDate = examReleaseDates[l.id];
+                 const userCreatedAt = new Date(profile.created_at).getTime();
+                 const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
+                 const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
+                 const hasException = exceptionIds.includes(l.id);
+                 const hasStarted = userHasActivityInModule(l.id);
+                 const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
+                 
+                 // Módulo é visível se: é staff, tem exceção, já começou, tem prova individual, OU foi liberado pelo professor, OU foi marcado manualmente como finalizado
+                 const isHidden = !isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease;
 
                 if (isHidden) return null;
 
@@ -375,7 +405,8 @@ export const useStudentCourses = (profile: any) => {
     profile?.bolsista,
     profile?.acesso_definitivo,
     profile?.caminhos_acesso, 
-    profile?.created_at
+    profile?.created_at,
+    profile?.modulos_finalizados_manual
   ]);
 
   return {

@@ -11,15 +11,18 @@
     "portal": "git add . && git commit -m \"chore: portal update\" && git push"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.71",
     "@supabase/supabase-js": "^2.39.7",
     "@types/jsdom": "^28.0.3",
     "@vercel/analytics": "^2.0.1",
+    "ai": "^6.0.205",
     "cheerio": "^1.2.0",
     "dotenv": "^17.4.2",
     "html2canvas": "^1.4.1",
     "jsdom": "^29.1.1",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.363.0",
+    "ollama": "^0.6.3",
     "pdfjs-dist": "5.4.296",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

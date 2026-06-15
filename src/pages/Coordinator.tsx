@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../hooks/useProfile';
 import { useCoordinatorData } from '../features/coordinator/hooks/useCoordinatorData';
-import Logo from '../components/common/Logo';
 import { 
   LayoutGrid, 
   Users, 
@@ -11,7 +10,9 @@ import {
   LogOut, 
   ExternalLink,
   ChevronLeft,
-  Loader2
+  Loader2,
+  GraduationCap,
+  ShieldCheck
 } from 'lucide-react';
 
 import MetricsCards from '../features/coordinator/components/MetricsCards';
@@ -39,89 +40,119 @@ const Coordinator = () => {
 
   if (loading && activeTab === 'home') {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-[#0a0a0a] text-primary">
-        <Loader2 className="animate-spin mb-4" size={48} />
-        <span className="font-bold tracking-widest uppercase">Carregando Painel do Polo...</span>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--bg)', color: 'var(--primary)' }}>
+        <Loader2 className="spinner" size={48} />
+        <span style={{ fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Carregando Painel do Polo...</span>
       </div>
     );
   }
 
+  const handleRoleNavigate = (role: string, path: string) => {
+    localStorage.setItem('fatesa_active_role', role);
+    navigate(path);
+  };
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Premium Header */}
-      <header className="fixed top-0 w-full z-50 px-8 py-4 bg-black/50 backdrop-blur-xl border-b border-white/10 flex justify-between items-center">
-        <div className="flex items-center gap-8">
-          <Logo size={120} />
-          <nav className="flex gap-2">
+    <div className="admin-layout">
+      <header className="dashboard-header-modern" style={{ height: 'auto', minHeight: '70px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <button onClick={() => navigate('/dashboard')} className="nav-btn-premium" title="Voltar ao Painel do Aluno">
+            <ChevronLeft size={20} />
+          </button>
+          <div>
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Painel do Coordenador</h1>
+            <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>{profile?.nucleo || 'Unidade Local'} • Gestão Acadêmica</p>
+          </div>
+          
+          <nav style={{ display: 'flex', gap: '0.5rem', marginLeft: '2rem', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
             <button 
               onClick={() => setActiveTab('home')}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
-                activeTab === 'home' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'
-              }`}
+              className={`nav-btn-premium ${activeTab === 'home' ? 'active' : ''}`}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
             >
-              <LayoutGrid size={18} /> Dashboard
+              <LayoutGrid size={16} /> Dashboard
             </button>
             <button 
               onClick={() => setActiveTab('students')}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
-                activeTab === 'students' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'
-              }`}
+              className={`nav-btn-premium ${activeTab === 'students' ? 'active' : ''}`}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
             >
-              <Users size={18} /> Alunos
+              <Users size={16} /> Alunos
             </button>
             <button 
               onClick={() => setActiveTab('attendance')}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
-                activeTab === 'attendance' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'
-              }`}
+              className={`nav-btn-premium ${activeTab === 'attendance' ? 'active' : ''}`}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
             >
-              <ClipboardList size={18} /> Chamada
+              <ClipboardList size={16} /> Chamada
             </button>
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right mr-4">
-            <p className="text-sm font-black">{profile?.nome}</p>
-            <p className="text-[10px] text-primary font-bold uppercase tracking-widest">Coordenador de Polo</p>
-          </div>
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="p-3 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-primary/50 transition-all"
-            title="Ir para Área do Aluno"
-          >
-            <ExternalLink size={20} />
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {(profile?.tipo === 'professor' || profile?.caminhos_acesso?.includes('professor')) && (
+            <button 
+              onClick={() => handleRoleNavigate('professor', '/professor')}
+              className="nav-btn-premium"
+              style={{ width: 'auto' }}
+              title="Ir para Painel do Professor"
+            >
+              <GraduationCap size={18} /> <span className="mobile-hide">Painel Professor</span>
+            </button>
+          )}
+          {(profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin') || profile?.caminhos_acesso?.includes('suporte')) && (
+            <button 
+              onClick={() => handleRoleNavigate('admin', '/admin')}
+              className="nav-btn-premium"
+              style={{ width: 'auto' }}
+              title="Ir para Painel Admin"
+            >
+              <ShieldCheck size={18} /> <span className="mobile-hide">Painel Admin</span>
+            </button>
+          )}
           <button 
             onClick={signOut}
-            className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+            className="nav-btn-premium danger"
             title="Sair"
           >
-            <LogOut size={20} />
+            <LogOut size={18} /> <span className="mobile-hide">Sair</span>
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="pt-32 pb-20 px-8 max-w-7xl mx-auto">
-        {/* Title Section */}
-        <div className="mb-12">
-          <h1 className="text-5xl font-black tracking-tighter mb-2">
-            Polo <span className="text-primary">{profile?.nucleo || 'Unidade Local'}</span>
-          </h1>
-          <p className="text-gray-400 font-medium">Gestão acadêmica e operacional do seu núcleo de ensino.</p>
-        </div>
+      <main className="admin-main">
+        <div className="admin-scroll-content" style={{ padding: '2rem' }}>
+          <div style={{ marginBottom: '2rem' }}>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+              Polo <span style={{ color: 'var(--primary)' }}>{profile?.nucleo || 'Unidade Local'}</span>
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Gestão acadêmica e operacional do seu núcleo de ensino.</p>
+          </div>
 
-        {activeTab === 'home' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <MetricsCards metrics={metrics} />
-            <div className="mt-12">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Atividade Recente</h2>
-                <button onClick={() => setActiveTab('students')} className="text-primary text-sm font-bold hover:underline">Ver todos os alunos</button>
+          {activeTab === 'home' && (
+            <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+              <MetricsCards metrics={metrics} />
+              <div style={{ marginTop: '3rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Atividade Recente</h2>
+                  <button onClick={() => setActiveTab('students')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer' }}>Ver todos os alunos</button>
+                </div>
+                <StudentDataGrid 
+                  students={students.slice(0, 5)} 
+                  page={page} 
+                  setPage={setPage} 
+                  totalCount={totalCount} 
+                  pageSize={pageSize} 
+                  loading={loading}
+                />
               </div>
+            </div>
+          )}
+
+          {activeTab === 'students' && (
+            <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
               <StudentDataGrid 
-                students={students.slice(0, 5)} 
+                students={students} 
                 page={page} 
                 setPage={setPage} 
                 totalCount={totalCount} 
@@ -129,42 +160,22 @@ const Coordinator = () => {
                 loading={loading}
               />
             </div>
-          </div>
-        )}
+          )}
 
-        {activeTab === 'students' && (
-          <div className="animate-in fade-in duration-500">
-            <StudentDataGrid 
-              students={students} 
-              page={page} 
-              setPage={setPage} 
-              totalCount={totalCount} 
-              pageSize={pageSize} 
-              loading={loading}
-            />
-          </div>
-        )}
-
-        {activeTab === 'attendance' && (
-          <div className="animate-in zoom-in-95 duration-500">
-            <BatchAttendance 
-              students={students} 
-              onSave={async (list) => {
-                const res = await saveBatchAttendance(list);
-                if (res.success) refresh();
-                return res;
-              }} 
-            />
-          </div>
-        )}
+          {activeTab === 'attendance' && (
+            <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+              <BatchAttendance 
+                students={students} 
+                onSave={async (list) => {
+                  const res = await saveBatchAttendance(list);
+                  if (res.success) refresh();
+                  return res;
+                }} 
+              />
+            </div>
+          )}
+        </div>
       </main>
-
-      {/* Footer Branding */}
-      <footer className="py-12 border-t border-white/5 text-center">
-        <p className="text-gray-600 text-xs font-bold uppercase tracking-[0.3em]">
-          Fatesa Casa do Saber • Gestão de Polos v1.0
-        </p>
-      </footer>
     </div>
   );
 };

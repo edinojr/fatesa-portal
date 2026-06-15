@@ -119,8 +119,13 @@ export function processHtmlForNav(html: string): { processedHtml: string; toc: N
   };
 
   removeSections();
-
+  
+  // Remove all images from the content
+  const images = doc.querySelectorAll('img');
+  images.forEach(img => img.remove());
+  
   // 3. Extract styles from <head> to ensure they are not lost
+
   const styles = Array.from(doc.head.querySelectorAll('style, link[rel="stylesheet"]'))
     .map(el => el.outerHTML)
     .join('\n');
@@ -142,10 +147,24 @@ export function processHtmlForNav(html: string): { processedHtml: string; toc: N
     }
   }
 
-  // 5. Re-evaluate TOC to remove deleted items
+  // 5. Re-evaluate TOC to remove deleted items and deduplicate labels
+  const seenLabels = new Set<string>();
   const finalToc = toc.filter(item => {
-     const el = doc.getElementById(item.id);
-     return el && doc.body.contains(el);
+    const el = doc.getElementById(item.id);
+    if (!el || !doc.body.contains(el)) return false;
+    
+    // Normalize label by removing numeral prefixes to catch logical duplicates
+    // (e.g., "I. Introdução" vs "Texto I - Introdução")
+    const normalized = item.label
+      .replace(/^Texto\s+[IVXLCDM\d]+(\.\s+)?[-–]?\s*/i, '')
+      .replace(/^[IVXLCDM\d]+\.\s+/i, '')
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .trim();
+
+    if (seenLabels.has(normalized)) return false;
+    seenLabels.add(normalized);
+    return true;
   });
 
   return { 

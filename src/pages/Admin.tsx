@@ -22,7 +22,9 @@ import {
   History,
   LayoutGrid,
   ExternalLink,
-  ArrowLeft
+  ArrowLeft,
+  Search,
+  ChevronDown
 } from 'lucide-react'
 
 // Features Components
@@ -41,7 +43,6 @@ import { Folder } from 'lucide-react'
 
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
-import Logo from '../components/common/Logo'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import ForumPanel from '../features/forum/components/ForumPanel'
 import ValidationPanel from '../features/finance/components/ValidationPanel'
@@ -62,12 +63,14 @@ import {
 // Hook
 import { useAdminManagement } from '../hooks/useAdminManagement'
 import { supabase } from '../lib/supabase'
+import PageHeader from '../components/layout/PageHeader'
 
 const Admin = () => {
   const navigate = useNavigate()
   
   useEffect(() => {
-    localStorage.setItem('fatesa_active_role', 'admin')
+    // No need to force set 'admin' every time, 
+    // as it will be set when the user explicitly chooses the Admin Panel
   }, [])
 
   const goToPanel = () => {
@@ -209,168 +212,122 @@ const Admin = () => {
     )
   }
 
+  const getTabTitle = () => {
+    switch (activeTab) {
+      case 'home': return 'Painel Administrativo';
+      case 'users': return 'Gestão de Usuários';
+      case 'professors': return 'Gestão de Professores';
+      case 'alumni': return 'Base de Formados (Alumni)';
+      case 'content': return 'Gestão de Conteúdo';
+      case 'forum': return 'Fórum da Comunidade';
+      case 'nucleos': return 'Gestão de Núcleos';
+      case 'attendance': return 'Relatório de Frequência';
+      case 'analytics': return 'Análise do Portal';
+      case 'reports': return 'Relatório de Pagamentos';
+      case 'docs_archive': return 'Arquivo de Documentação';
+      default: return 'Validação de Acesso';
+    }
+  }
+
+  const getTabSubtitle = () => {
+    switch (activeTab) {
+      case 'home': return 'Visão geral do sistema e atalhos rápidos.';
+      case 'users': return 'Administre os perfis, bloqueios e acessos.';
+      case 'professors': return 'Visualize professores e seus núcleos vinculados.';
+      case 'alumni': return 'Gerencie o banco de dados histórico de alunos formados.';
+      case 'content': return 'Gerencie as matérias, livros e atividades.';
+      case 'forum': return 'Acompanhe as discussões da comunidade.';
+      case 'nucleos': return 'Gerencie polos e núcleos de ensino.';
+      case 'attendance': return 'Acompanhe as listas de presença compartilhadas pelos professores.';
+      case 'analytics': return 'Monitore visualizações, acessos únicos e rotatividade de usuários.';
+      case 'reports': return 'Lista de alunos que enviaram comprovantes pelo portal.';
+      case 'docs_archive': return 'Central de arquivos organizada por polo e status.';
+      default: return 'Verifique envios dos alunos.';
+    }
+  }
+
+  const adminActions = (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      <div style={{ position: 'relative' }}>
+        <button
+          onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
+          className="nav-btn-premium"
+          style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem' }}
+        >
+          PAINEL ADMINISTRATIVO <ChevronDown size={14} />
+        </button>
+        {availableRoles.length > 1 && showRoleSwitcher && (
+          <div style={{ 
+            position: 'absolute', 
+            top: '100%', 
+            left: 0, 
+            background: 'var(--bg-card)', 
+            border: '1px solid var(--glass-border)', 
+            borderRadius: '14px', 
+            padding: '0.5rem', 
+            zIndex: 1100, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '0.25rem', 
+            minWidth: '200px', 
+            marginTop: '0.5rem', 
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)' 
+          }}>
+            <div style={{ padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '0.25rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Painel Atual:</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>Administração</span>
+            </div>
+            {availableRoles.filter((r: string) => ['aluno', 'professor', 'admin', 'coordenador_polo'].includes(r) && r !== userRole).map((r: string) => (
+              <Link 
+                key={r} 
+                to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : r === 'coordenador_polo' ? '/coordenador' : '/admin'}
+                className="nav-btn-premium" 
+                style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent', textDecoration: 'none', color: 'inherit', padding: '0.5rem' }}
+                onClick={() => { localStorage.setItem('fatesa_active_role', r); setShowRoleSwitcher(false); }}
+              >
+                {r === 'aluno' ? '👁 Área do Aluno' : r === 'professor' ? '🎓 Painel do Professor' : r === 'coordenador_polo' ? '👥 Painel do Coordenador' : '🔧 Administração'}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
+        <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>
+        <div style={{ position: 'relative' }}>
+          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
+          <input 
+            id="admin-global-search"
+            name="admin-search"
+            type="text" 
+            placeholder="Pesquisar..." 
+            className="form-control" 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+            style={{ paddingLeft: '2.5rem' }}
+          />
+        </div>
+      </div>
+      <button 
+        onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
+        className="nav-btn-premium danger"
+        style={{ width: 'auto' }}
+      >
+        <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+      </button>
+    </div>
+  )
+
   return (
     <div className="admin-layout">
-      <main className="admin-main">
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          padding: '0.75rem 2.5rem', 
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
-          marginBottom: '1rem' 
-        }}>
-          <div style={{ position: 'relative' }}>
-            <div 
-              onClick={() => setShowRoleSwitcher(!showRoleSwitcher)} 
-              style={{ 
-                color: 'var(--primary)', 
-                fontSize: '0.9rem', 
-                fontWeight: 800, 
-                cursor: 'pointer', 
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}
-            >
-              PAINEL ADMINISTRATIVO {showRoleSwitcher && '▾'}
-            </div>
-
-            {availableRoles.length > 1 && showRoleSwitcher && (
-              <div style={{ 
-                position: 'absolute', 
-                top: '100%', 
-                left: 0, 
-                background: 'var(--bg-card)', 
-                border: '1px solid var(--glass-border)', 
-                borderRadius: '14px', 
-                padding: '0.5rem', 
-                zIndex: 1100, 
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: '0.25rem', 
-                minWidth: '200px', 
-                marginTop: '0.5rem', 
-                boxShadow: '0 10px 30px rgba(0,0,0,0.5)' 
-              }}>
-                <div style={{ padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '0.25rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Painel Atual:</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>Administração</span>
-                </div>
-                {availableRoles.filter((r: string) => ['aluno', 'professor', 'admin'].includes(r) && r !== userRole).map((r: string) => (
-                  <Link 
-                    key={r} 
-                    to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : '/admin'}
-                    className="nav-btn-premium" 
-                    style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent', textDecoration: 'none', color: 'inherit', padding: '0.5rem' }}
-                    onClick={() => { localStorage.setItem('fatesa_active_role', r); setShowRoleSwitcher(false); }}
-                  >
-                    {r === 'aluno' ? '👁 Área do Aluno' : r === 'professor' ? '🎓 Painel do Professor' : '🔧 Administração'}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button 
-            onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
-            style={{ 
-              background: '#007bff', 
-              color: '#fff', 
-              border: 'none', 
-              padding: '5px 15px', 
-              borderRadius: '6px', 
-              fontSize: '0.85rem', 
-              fontWeight: 600, 
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}
-          >
-            <LogOut size={16} /> Sair
-          </button>
-        </div>
-
-  
-              {/* Role Switcher for Admins - Hidden as it is now in the header */}
-
-  
-             <header className="mobile-col-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button onClick={handleGlobalBack} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }} title="Voltar">
-              <ArrowLeft size={18} />
-            </button>
-              <h1 style={{
-                fontSize: '2.2rem', 
-                fontWeight: 900, 
-                letterSpacing: '-0.04em',
-                background: 'linear-gradient(135deg, var(--text) 0%, var(--primary) 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                marginBottom: '0.25rem'
-              }}>
-                {activeTab === 'home' ? 'Painel Administrativo' : 
-                 activeTab === 'users' ? 'Gestão de Usuários' : 
-                 activeTab === 'professors' ? 'Gestão de Professores' :
-                 activeTab === 'alumni' ? 'Base de Formados (Alumni)' :
-                 activeTab === 'content' ? 'Gestão de Conteúdo' : 
-                 activeTab === 'forum' ? 'Fórum da Comunidade' : 
-                 activeTab === 'nucleos' ? 'Gestão de Núcleos' :
-                 activeTab === 'attendance' ? 'Relatório de Frequência' :
-                 activeTab === 'analytics' ? 'Análise do Portal' :
-                 activeTab === 'reports' ? 'Relatório de Pagamentos' :
-                 activeTab === 'docs_archive' ? 'Arquivo de Documentação' :
-                 'Validação de Acesso'}
-              </h1>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 500, opacity: 0.7 }}>
-                {activeTab === 'home' ? 'Visão geral do sistema e atalhos rápidos.' : 
-                 activeTab === 'users' ? 'Administre os perfis, bloqueios e acessos.' : 
-                 activeTab === 'professors' ? 'Visualize professores e seus núcleos vinculados.' :
-                 activeTab === 'alumni' ? 'Gerencie o banco de dados histórico de alunos formados.' :
-                 activeTab === 'content' ? 'Gerencie as matérias, livros e atividades.' : 
-                 activeTab === 'forum' ? 'Acompanhe as discussões da comunidade.' :
-                 activeTab === 'nucleos' ? 'Gerencie polos e núcleos de ensino.' :
-                 activeTab === 'attendance' ? 'Acompanhe as listas de presença compartilhadas pelos professores.' :
-                 activeTab === 'analytics' ? 'Monitore visualizações, acessos únicos e rotatividade de usuários.' :
-                 activeTab === 'reports' ? 'Lista de alunos que enviaram comprovantes pelo portal.' :
-                 activeTab === 'docs_archive' ? 'Central de arquivos organizada por polo e status.' :
-                 'Verifique envios dos alunos.'}
-                </p>
-              </div>
-            
-            <div className="mobile-wrap-flex" style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', width: '100%' }}>
-              {activeTab === 'users' && (
-                <button className="btn btn-primary" onClick={() => setShowAddTeacher(true)} style={{ width: 'auto' }}>
-                  <Plus size={20} /> Cadastrar Professor
-                </button>
-              )}
-              {activeTab === 'alumni' && (
-                <button 
-                  className="btn btn-outline" 
-                  onClick={() => document.getElementById('import-alumni-file-global')?.click()} 
-                  style={{ width: 'auto' }}
-                  disabled={!!actionLoading}
-                >
-                  {actionLoading === 'importing-file' ? <Loader2 className="spinner" size={20} /> : <FileText size={20} />} Importar Planilha (Excel/CSV)
-                </button>
-              )}
-              <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
-                <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>
-                <input 
-                  id="admin-global-search"
-                  name="admin-search"
-                  type="text" 
-                  placeholder="Pesquisar..." 
-                  className="form-control" 
-                  value={searchTerm} 
-                  onChange={(e) => setSearchTerm(e.target.value)} 
-                />
-              </div>
-            </div>
-          </header>
+      <PageHeader
+        title={getTabTitle()}
+        subtitle={getTabSubtitle()}
+        variant="admin"
+        actions={adminActions}
+        onBack={handleGlobalBack}
+        showBackButton={!isAtRoot}
+        showTopBanner={false}
+      />
 
             {activeTab === 'home' && (
             <div className="admin-dashboard-grid transition-fade-in" style={{ gap: '2rem' }}>
@@ -861,7 +818,6 @@ const Admin = () => {
             <LayoutDashboard size={20} /> Início
           </button>
         </div>
-      </main>
 
       {/* Toast Notification */}
       {toast && (

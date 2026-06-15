@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-
-import Navbar from '../components/common/Navbar'
-import Footer from '../components/common/Footer'
 import Logo from '../components/common/Logo'
 
 const Sobre = () => {
@@ -12,7 +9,6 @@ const Sobre = () => {
 
     return (
         <div className="landing-container">
-            <Navbar />
             
             {/* Hero Section Simplified for Subpages */}
             <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
@@ -48,7 +44,7 @@ const Sobre = () => {
 
             {/* Vision and Values */}
             <section className="values-section" style={{ padding: '6rem 2rem', borderTop: '1px solid var(--glass-border)' }}>
-                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                <div style={{ width: '100%' }}>
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Capacitação que Gera Ação</h2>
                         <p style={{ maxWidth: '800px', margin: '1rem auto', opacity: 0.8 }}>
@@ -76,7 +72,7 @@ const Sobre = () => {
 
             {/* The Theology of Transformation Section */}
             <section style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 100% 50%, rgba(0, 86, 179, 0.05), transparent 40%)' }}>
-                <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+                <div style={{ width: '100%', textAlign: 'center', padding: '0 2rem' }}>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>A Teologia da Transformação</h2>
                     <p style={{ fontSize: '1.2rem', opacity: 0.9, lineHeight: '1.8', marginBottom: '3rem' }}>
                         Cremos que o conhecimento verdadeiro é aquele que resulta em edificação e amor. Em um mundo onde o saber pode gerar soberba, a Fatesa escolhe o caminho da humildade.
@@ -96,7 +92,7 @@ const Sobre = () => {
                         <span style={{ display: 'block', marginTop: '1rem', fontWeight: 700 }}>(2 Timóteo 2:15)</span>
                     </div>
 
-                    <p style={{ maxWidth: '800px', margin: '0 auto', opacity: 0.8 }}>
+                    <p style={{ width: '100%', maxWidth: '800px', margin: '0 auto', opacity: 0.8 }}>
                         Nesses 20 anos, nossa maior alegria é ver obreiros capacitados atuando com maestria em suas congregações, transformando comunidades através do Evangelho e servindo ao Corpo de Cristo com um coração moldado pela graça.
                     </p>
                 </div>
@@ -113,7 +109,6 @@ const Sobre = () => {
                 </Link>
             </section>
 
-            <Footer />
         </div>
     );
 };

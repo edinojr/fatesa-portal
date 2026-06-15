@@ -42,6 +42,8 @@ const Lesson = () => {
   submittedRef.current = submitted
   const [alreadyApproved, setAlreadyApproved] = useState(false)
   const [lessonMap, setLessonMap] = useState<Record<string, string>>({})
+  const [moduleLessons, setModuleLessons] = useState<any[]>([])
+  const [isPanorama, setIsPanorama] = useState(false)
   
 
 
@@ -103,6 +105,32 @@ const Lesson = () => {
         setLesson(lessonData);
         setBook(bookData);
         setQuestions(Array.isArray(lessonData?.questionario) ? lessonData.questionario : []);
+        
+        // Check if this is a Panorama (ordem 0)
+        const isPanoramaLesson = (lessonData.ordem || 0) === 0;
+        setIsPanorama(isPanoramaLesson);
+        
+        // If Panorama, fetch all lessons in the module for the Tópicos menu
+        if (isPanoramaLesson && lessonData.livro_id) {
+          const { data: allModuleLessons } = await supabase
+            .from('aulas')
+            .select('id, titulo, ordem, tipo')
+            .eq('livro_id', lessonData.livro_id)
+            .neq('tipo', 'atividade')
+            .neq('tipo', 'prova')
+            .neq('tipo', 'avaliacao')
+            .neq('tipo', 'exercicio')
+            .order('ordem', { ascending: true });
+          
+          if (allModuleLessons) {
+            // Filter to only actual lessons (not videos, not panorama)
+            const lessons = allModuleLessons.filter(l => 
+              (l.tipo === 'licao' || l.tipo === 'material' || l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video') 
+              && (l.ordem || 0) > 0
+            );
+            setModuleLessons(lessons);
+          }
+        }
 
 
       // Fetch HTML content from arquivo_url if it's a supported type
@@ -388,27 +416,26 @@ const Lesson = () => {
           }
         }
         
-        // Previous lesson for navigation (ignore activities/exams)
+        // Previous lesson for navigation (only actual lessons: licao, material)
         const { data: prev } = await supabase
           .from('aulas')
           .select('id')
           .eq('livro_id', lesson.livro_id)
           .lt('ordem', lesson.ordem || 0)
-          .neq('tipo', 'atividade')
-          .neq('tipo', 'prova')
+          .in('tipo', ['licao', 'material'])
           .order('ordem', { ascending: false })
           .limit(1);
         
         setPrevLessonId(prev && prev.length > 0 ? prev[0].id : null);
 
-        // Next lesson for navigation (ignore activities/exams)
+        // Next lesson for navigation (only actual lessons: licao, material)
+        // For Panorama (ordem 0), this will find Lição 1 (ordem 1)
         const { data: nxt } = await supabase
           .from('aulas')
           .select('id')
           .eq('livro_id', lesson.livro_id)
           .gt('ordem', lesson.ordem || 0)
-          .neq('tipo', 'atividade')
-          .neq('tipo', 'prova')
+          .in('tipo', ['licao', 'material'])
           .order('ordem', { ascending: true })
           .limit(1);
         
@@ -929,41 +956,58 @@ const Lesson = () => {
 
     return (
       <div className="lesson-container reading-page">
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', justifyContent: 'space-between', alignItems: 'center' }}>
-         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <button 
-              onClick={() => {
-                if (userProfile?.isStaff) {
-                  navigate(userProfile.profile_tipo === 'admin' ? '/admin' : '/professor');
-                } else {
-                  navigate('/dashboard');
-                }
-              }} 
-              className="btn btn-outline" 
-              style={{width:'auto'}}
+
+        {/* Header da Lição */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '0.75rem 1.5rem', marginBottom: '10px',
+          background: 'rgba(168,85,247,0.08)', borderRadius: '14px',
+          borderLeft: '4px solid var(--primary)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <button
+              onClick={() => navigate(`/module/${lesson.livro_id}`)}
+              className="btn btn-outline"
+              style={{ width: 'auto', padding: '0.4rem' }}
+              title="Voltar ao módulo"
             >
-              {userProfile?.isStaff ? (userProfile.profile_tipo === 'admin' ? 'Painel Administrativo' : 'Painel do Professor') : 'Dashboard'}
+              <ChevronLeft size={18} />
             </button>
-            {hasHtmlFile && toc.length > 0 && (
-              <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)} 
-                className="btn btn-outline" 
-                style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            <div>
+              <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>{lesson.titulo}</h2>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
+                {book?.titulo || 'Módulo'}
+              </span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {prevLessonId && (
+              <button
+                onClick={() => navigate(`/lesson/${prevLessonId}`)}
+                className="btn btn-outline"
+                style={{ width: 'auto', padding: '0.4rem' }}
+                title="Lição Anterior"
               >
-                <Menu size={18} /> Tópicos
+                <ChevronLeft size={16} />
               </button>
             )}
-         </div>
-       </div>
+            {nextLessonId && Number(lesson.ordem) !== 10 && (
+              <button
+                onClick={() => navigate(`/lesson/${nextLessonId}`)}
+                className="btn btn-primary"
+                style={{ width: 'auto', padding: '0.4rem' }}
+                title="Próxima Lição"
+              >
+                <ChevronRight size={16} />
+              </button>
+            )}
+          </div>
+        </div>
 
-       <div className="lesson-header-section" style={{ marginBottom: '3rem' }}>
-         <div style={{ textTransform: 'uppercase', fontSize: '0.75rem', color: 'var(--text-muted)', padding: '0 1.25rem' }}>{book?.titulo}</div>
-         <h1 style={{ fontSize: '2.5rem', fontWeight: 800 }}>{lesson.titulo}</h1>
-       </div>
        
        {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
-         <div className="video-section" style={{ marginBottom: '4rem' }}>
-           <div className="video-wrapper" style={{ aspectRatio: '16/9', background: '#000', borderRadius: '24px', overflow: 'hidden' }}>
+         <div className="video-section" style={{ marginBottom: '2rem' }}>
+            <div className="video-wrapper" style={{ aspectRatio: '16/9', background: '#000', borderRadius: '32px', overflow: 'hidden' }}>
              {lesson.video_url ? renderVideoPlayer(lesson.video_url) : <div style={{height:'100%', display:'flex', alignItems:'center', justifyContent:'center'}}>Vídeo Indisponível</div>}
            </div>
            {!complete && <button className="btn btn-primary" onClick={handleMarkAsComplete} style={{marginTop:'2rem', width:'auto', margin:'2rem auto', display:'block'}}>Marcar como Concluída</button>}
@@ -999,88 +1043,140 @@ const Lesson = () => {
                    backdropFilter: 'blur(4px)' 
                  }} 
                />
-               <aside style={{ 
-                 position: 'relative', 
-                 width: '300px', 
-                 background: 'var(--bg-dark)', 
-                 padding: '2rem', 
-                 borderRadius: '0 24px 24px 0', 
-                 borderRight: '1px solid var(--glass-border)',
-                 height: '100vh',
-                 overflowY: 'auto',
-                 boxShadow: '10px 0 30px rgba(0,0,0,0.5)',
-                 zIndex: 1001,
-                 transition: 'transform 0.3s ease'
-               }}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                   <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
-                     <List size={20} color="var(--primary)" /> Tópicos
-                   </h4>
-                   <button onClick={() => setIsMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                     <X size={24} />
-                   </button>
-                 </div>
-                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                     {toc.filter(item => item.isMainSection).map((item, idx) => {
-                       const label = item.label.trim();
-                       
-                       return (
-                         <a 
-                           key={item.id} 
-                           href="#" 
-                           onClick={(e) => {
-                             e.preventDefault();
-                             setIsMenuOpen(false);
-                             setTimeout(() => {
-                               const element = document.getElementById(item.id);
-                               if (element) {
-                                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                               }
-                             }, 100);
-                           }}
-                           style={{ 
-                             color: 'var(--text-muted)', 
-                             textDecoration: 'none', 
-                             fontSize: '0.95rem', 
-                             display: 'flex', 
-                             alignItems: 'center', 
-                             gap: '0.6rem',
-                             padding: '0.6rem 1rem',
-                             borderRadius: '8px',
-                             transition: 'all 0.2s',
-                             lineHeight: 1.4,
-                             background: 'rgba(255,255,255,0.03)',
-                             cursor: 'pointer'
-                           }}
-                           onMouseEnter={(e) => {
-                             e.currentTarget.style.color = 'var(--primary)';
-                             e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
-                           }}
-                           onMouseLeave={(e) => {
-                             e.currentTarget.style.color = 'var(--text-muted)';
-                             e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                           }}
-                         >
-                           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />
-                           {label}
-                         </a>
-                       );
-                     })}
-                 </div>
-               </aside>
+                <aside style={{ 
+                  position: 'relative', 
+                  width: '300px', 
+                  background: 'var(--bg-dark)', 
+                  padding: '2rem', 
+                  borderRadius: '0 24px 24px 0', 
+                  borderRight: '1px solid var(--glass-border)',
+                  height: '100vh',
+                  overflowY: 'auto',
+                  boxShadow: '10px 0 30px rgba(0,0,0,0.5)',
+                  zIndex: 1001,
+                  transition: 'transform 0.3s ease'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                    <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
+                      <List size={20} color="var(--primary)" /> {isPanorama ? 'Lições do Módulo' : 'Tópicos'}
+                    </h4>
+                    <button onClick={() => setIsMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                      <X size={24} />
+                    </button>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                      {isPanorama ? (
+                        // Panorama only shows link to Lição 01
+                        moduleLessons.length > 0 ? (
+                          (() => {
+                            const firstLesson = moduleLessons[0];
+                            return (
+                              <button
+                                key={firstLesson.id}
+                                onClick={() => {
+                                  setIsMenuOpen(false);
+                                  navigate(`/lesson/${firstLesson.id}`);
+                                }}
+                                style={{ 
+                                  color: 'var(--primary)', 
+                                  textDecoration: 'none', 
+                                  fontSize: '0.95rem', 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  gap: '0.6rem',
+                                  padding: '0.75rem 1rem',
+                                  borderRadius: '8px',
+                                  transition: 'all 0.2s',
+                                  lineHeight: 1.4,
+                                  background: 'rgba(var(--primary-rgb), 0.1)',
+                                  cursor: 'pointer',
+                                  border: '1px solid var(--primary)',
+                                  textAlign: 'left',
+                                  width: '100%',
+                                  fontWeight: 600
+                                }}
+                              >
+                                <div style={{ 
+                                  width: '28px', 
+                                  height: '28px', 
+                                  borderRadius: '50%', 
+                                  background: 'var(--primary)', 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  justifyContent: 'center',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 800,
+                                  color: '#fff'
+                                }}>
+                                  01
+                                </div>
+                                {firstLesson.titulo}
+                                <span style={{ marginLeft: 'auto', fontSize: '0.7rem', opacity: 0.7 }}>Iniciar</span>
+                              </button>
+                            );
+                          })()
+                        ) : null
+                      ) : (
+                        toc.filter(item => item.isMainSection).map((item, idx) => {
+                          const label = item.label.trim();
+                          
+                          return (
+                            <a 
+                              key={item.id} 
+                              href="#" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setIsMenuOpen(false);
+                                setTimeout(() => {
+                                  const element = document.getElementById(item.id);
+                                  if (element) {
+                                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                  }
+                                }, 100);
+                              }}
+                              style={{ 
+                                color: 'var(--text-muted)', 
+                                textDecoration: 'none', 
+                                fontSize: '0.95rem', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '0.6rem',
+                                padding: '0.6rem 1rem',
+                                borderRadius: '8px',
+                                transition: 'all 0.2s',
+                                lineHeight: 1.4,
+                                background: 'rgba(255,255,255,0.03)',
+                                cursor: 'pointer'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.color = 'var(--primary)';
+                                e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.color = 'var(--text-muted)';
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                              }}
+                            >
+                              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />
+                              {label}
+                            </a>
+                          );
+                        })
+                      )}
+                  </div>
+                </aside>
              </div>
            )}
                 <div className="lesson-content" style={{ 
-                 flex: 1, 
-                 marginBottom: '4rem', 
-                 lineHeight: 1.8, 
-                  maxWidth: '100%', // Fully expand
-                  width: '100%',
-                  padding: '0', // Remove internal padding
-                 textAlign: 'justify', // Justify text
-                 overflow: 'auto',
-                 transition: 'all 0.3s ease'
-               }}
+                  flex: 1, 
+                  marginBottom: '0', 
+                  lineHeight: 1.8, 
+                   maxWidth: '100%',
+                   width: '100%',
+                  textAlign: 'justify',
+                  overflow: 'auto',
+                  transition: 'all 0.3s ease'
+                }}
               onClick={(e) => {
                 const btn = (e.target as HTMLElement).closest('.ref-btn');
                 if (btn) {
@@ -1106,16 +1202,15 @@ const Lesson = () => {
         )}
 
          {hasContentBlocks && !hasHtmlFile && (
-            <div className="lesson-content" style={{ 
-              marginBottom: '4rem',
-              lineHeight: 1.8,
-              maxWidth: '100%', // Fully expand
-              width: '100%',
-              padding: '0', // Remove internal padding
-              textAlign: 'justify',
-              overflow: 'auto',
-              transition: 'all 0.3s ease'
-            }}
+             <div className="lesson-content" style={{ 
+               marginBottom: '0',
+               lineHeight: 1.8,
+               maxWidth: '100%',
+               width: '100%',
+               textAlign: 'justify',
+               overflow: 'auto',
+               transition: 'all 0.3s ease'
+             }}
             onClick={(e) => {
               const link = (e.target as HTMLElement).closest('a');
               if (link && link.href) {
@@ -1136,11 +1231,11 @@ const Lesson = () => {
          display: 'flex', 
          justifyContent: 'space-between', 
          alignItems: 'center', 
-         marginBottom: '4rem', 
-         padding: '1rem 0',
+         marginBottom: '10px', 
+         padding: '10px 1.5rem',
          borderTop: '1px solid var(--glass-border)',
          borderBottom: '1px solid var(--glass-border)',
-         gap: '1rem'
+         gap: '10px'
        }}>
          <button 
            onClick={() => prevLessonId ? navigate(`/lesson/${prevLessonId}`) : null} 
@@ -1189,7 +1284,7 @@ const Lesson = () => {
         {/* Avaliação / Questionário - Componente original */}
         {(lesson.tipo === 'atividade' || lesson.tipo === 'prova' || (questions.length > 0 && lesson.tipo !== 'exercicio' && lesson.tipo !== 'avaliacao')) && (
 
-        <div className="quiz-section" style={{ background: 'var(--glass)', padding: '3rem', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+         <div className="quiz-section quiz-section-modern" style={{ background: 'var(--glass)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'2rem'}}>
             <h2>{lesson.is_bloco_final ? 'Avaliação Final' : lesson.tipo === 'prova' ? 'Avaliação' : 'Questionário'}</h2>
             {isExamStarted && timeLeft && (
@@ -1665,7 +1760,7 @@ const Lesson = () => {
       )}
 
       {relatedExercise && (
-        <div style={{marginTop: '3rem', padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px', border: '1px solid var(--glass-border)', textAlign: 'center'}}>
+        <div style={{marginTop: '2rem', padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px', border: '1px solid var(--glass-border)', textAlign: 'center'}}>
           <p style={{color: 'var(--text-muted)', marginBottom: '1rem', fontSize:'0.85rem'}}>Pratique agora o que você aprendeu:</p>
           <button 
             className="btn btn-primary" 
@@ -1678,7 +1773,7 @@ const Lesson = () => {
       )}
 
       {/* Forum Discussion Section */}
-      <div style={{ marginTop: '3rem', padding: '2.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+      <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
         <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
           <MessageSquare size={24} color="var(--primary)" />
         </div>
@@ -1700,7 +1795,7 @@ const Lesson = () => {
 
       {/* References Section */}
       {lessonReferences.length > 0 && (
-        <div style={{ marginTop: '3rem', padding: '2.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+        <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
           <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <FileText size={20} color="var(--primary)" /> Referências
           </h3>
