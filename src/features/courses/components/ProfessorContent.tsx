@@ -13,11 +13,11 @@ interface ProfessorContentProps {
   selectedCourse: any | null
   setSelectedCourse: (val: any | null) => void
   books: any[]
-  setBooks: (books: any[]) => void
+  setBooks: (books: any[] | ((prev: any[]) => any[])) => void
   selectedBook: any | null
   setSelectedBook: (val: any | null) => void
   lessons: any[]
-  setLessons: (lessons: any[]) => void
+  setLessons: (lessons: any[] | ((prev: any[]) => any[])) => void
   fetchBooks: (id: string) => void
   selectBookAndShowLessons: (book: any) => void
   professorNucleos: any[]
@@ -82,9 +82,11 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   selectedCourse,
   setSelectedCourse,
   books,
+  setBooks,
   selectedBook,
   setSelectedBook,
   lessons,
+  setLessons,
   fetchBooks,
   selectBookAndShowLessons,
   professorNucleos,
