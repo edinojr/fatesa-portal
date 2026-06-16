@@ -36,6 +36,7 @@ import ProfessorsManagement from '../features/users/components/ProfessorsManagem
 import AnalyticsDashboard from '../features/admin/components/AnalyticsDashboard'
 import FinanceReport from '../features/finance/components/FinanceReport'
 import AcademicHistory from '../features/admin/components/AcademicHistory'
+import GradeHistoryInsertion from '../features/admin/components/GradeHistoryInsertion'
 import DocsArchive from '../features/admin/components/DocsArchive'
 
 // Icons and UI
@@ -224,6 +225,7 @@ const Admin = () => {
       case 'attendance': return 'Relatório de Frequência';
       case 'analytics': return 'Análise do Portal';
       case 'reports': return 'Relatório de Pagamentos';
+      case 'grade_history': return 'Histórico de Notas';
       case 'docs_archive': return 'Arquivo de Documentação';
       default: return 'Validação de Acesso';
     }
@@ -241,6 +243,7 @@ const Admin = () => {
       case 'attendance': return 'Acompanhe as listas de presença compartilhadas pelos professores.';
       case 'analytics': return 'Monitore visualizações, acessos únicos e rotatividade de usuários.';
       case 'reports': return 'Lista de alunos que enviaram comprovantes pelo portal.';
+      case 'grade_history': return 'Insira e gerencie notas de módulos concluídos pelos alunos.';
       case 'docs_archive': return 'Central de arquivos organizada por polo e status.';
       default: return 'Verifique envios dos alunos.';
     }
@@ -444,6 +447,12 @@ const Admin = () => {
                     <h3>Arquivo de Documentação</h3>
                     <p>Central de arquivos organizada por polo e status.</p>
                   </div>
+
+                  <div className="admin-action-card" onClick={() => setActiveTab('grade_history')}>
+                    <div className="icon-wrapper"><GraduationCap size={32} /></div>
+                    <h3>Histórico de Notas</h3>
+                    <p>Insira notas de módulos concluídos e histórico acadêmico.</p>
+                  </div>
                 </>
               )}
             </div>
@@ -616,6 +625,10 @@ const Admin = () => {
             onDelete={handleDeleteSubmission}
             onUpdateStatus={handleTypeChange}
           />
+        )}
+
+        {activeTab === 'grade_history' && (
+          <GradeHistoryInsertion />
         )}
 
         {activeTab === 'finance' && (
