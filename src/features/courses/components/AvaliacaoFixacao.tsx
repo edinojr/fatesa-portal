@@ -82,36 +82,47 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   };
 
   const handleFinalizar = async () => {
-    if (!profile?.id) return alert('Usuário não autenticado.');
+    console.log('[AvaliacaoFixacao] Iniciando handleFinalizar');
+    console.log('[AvaliacaoFixacao] profile?.id:', profile?.id);
+    console.log('[AvaliacaoFixacao] lessonId:', lessonId);
+    console.log('[AvaliacaoFixacao] respostasAluno:', respostasAluno);
+    console.log('[AvaliacaoFixacao] stats:', stats);
+    
+    if (!profile?.id) {
+      console.error('[AvaliacaoFixacao] ERRO: profile?.id é null/undefined');
+      return alert('Usuário não autenticado.');
+    }
     
     setSaving(true);
     try {
-      // 1. Salva as respostas e a nota calculada
-      const { error: saveError } = await supabase.from('respostas_aulas').upsert({
+      const upsertData = {
         aluno_id: profile.id,
         aula_id: lessonId,
         respostas: respostasAluno,
         nota: stats.grade,
         status: 'corrigida',
         updated_at: new Date().toISOString()
-      }, { onConflict: 'aluno_id,aula_id' });
+      };
+      console.log('[AvaliacaoFixacao] Dados para upsert:', upsertData);
 
-      if (saveError) throw saveError;
+      // 1. Salva as respostas e a nota calculada
+      const { data: saveData, error: saveError } = await supabase.from('respostas_aulas').upsert(upsertData, { onConflict: 'aluno_id,aula_id' });
 
-      // 2. Marca como concluído no progresso
-      const { error: progError } = await supabase.from('progresso').upsert({
-        aluno_id: profile.id,
-        aula_id: lessonId,
-        concluida: true
-      }, { onConflict: 'aluno_id,aula_id' });
+      console.log('[AvaliacaoFixacao] Resultado upsert respostas:', { saveData, saveError });
 
-      if (progError) throw progError;
+      if (saveError) {
+        console.error('[AvaliacaoFixacao] ERRO ao salvar respostas:', saveError);
+        throw saveError;
+      }
+
+      console.log('[AvaliacaoFixacao] Respostas salvas com sucesso!');
 
       setExercicioFinalizado(true);
       setShowGabarito(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       onSaved?.();
     } catch (err: any) {
+      console.error('[AvaliacaoFixacao] ERRO final:', err);
       alert('Erro ao salvar avaliação: ' + err.message);
     } finally {
       setSaving(false);

@@ -11,6 +11,7 @@ interface PageHeaderProps {
   onBack?: () => void
   showBackButton?: boolean
   actions?: React.ReactNode
+  nav?: React.ReactNode
   variant?: 'admin' | 'professor' | 'coordinator' | 'student' | 'viewer'
   breadcrumb?: Array<{ label: string; onClick?: () => void; isActive?: boolean }>
   showTopBanner?: boolean
@@ -22,6 +23,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   onBack,
   showBackButton = true,
   actions,
+  nav,
   variant = 'student',
   breadcrumb,
   showTopBanner = true
@@ -184,6 +186,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
                 </span>
               </React.Fragment>
             ))}
+          </div>
+        )}
+
+        {nav && (
+          <div style={{ marginLeft: '2rem', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
+            {nav}
           </div>
         )}
       </div>

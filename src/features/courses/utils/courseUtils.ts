@@ -1,3 +1,4 @@
+import { GRADUATION_CONFIG, getRequiredModules } from '../../../config/graduation';
 
 export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any[] = []) => {
     const allAulas = l.aulas || [];
@@ -6,17 +7,16 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     const getSubAulaId = (at: any) => at.aula_id || at.lesson_id || at.aulas?.id;
 
     const submittedIds = (atividades || [])
-        .filter(at => at.status === 'corrigida' || at.status === 'concluido')
+        .filter(at => at.status === 'corrigida')
         .map(getSubAulaId);
     const watchedIds = (progressoAulas || []).filter(p => p.concluida).map(p => p.aula_id || p.lesson_id);
 
-    const itemsForProgress = allAulas.filter((a: any) => a.tipo !== 'licao');
-    const totalItems = itemsForProgress.length;
+    const totalItems = allAulas.length;
     
     // Se não há itens, consideramos finalizado
     if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 10, isFinished: true, isApproved: true, examGrade: 10, hasExam: false };
     
-    const completedItems = itemsForProgress.filter((a: any) => 
+    const completedItems = allAulas.filter((a: any) => 
       (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
     ).length;
     
@@ -35,7 +35,7 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       // APENAS submissões corrigidas contam como tentativas válidas (não 'pendente')
       const examSubmissions = (atividades || []).filter(at => 
           finalExams.some((ex: any) => ex.id === getSubAulaId(at)) &&
-          (at.status === 'corrigida' || at.status === 'concluido')
+          at.status === 'corrigida'
       );
       attemptsCount = examSubmissions.length;
 
@@ -99,19 +99,6 @@ export const isCourseCompleted = (course: any, atividades: any[] = [], progresso
         return stats.isFinished && stats.isApproved;
     }).length;
 
-    const nivel = (course.nivel || '').toLowerCase();
-    
-    // Regras de Formatura da Fatesa:
-    // Nível Básico: 27 Módulos
-    // Nível Médio: 8 Módulos
-    if (nivel.includes('basico') || nivel.includes('básico')) {
-        return finishedCount >= 27;
-    }
-    
-    if (nivel.includes('medio') || nivel.includes('médio')) {
-        return finishedCount >= 8;
-    }
-
-    // Fallback: Se não for um dos níveis acima, exige todos os módulos do curso
-    return finishedCount >= course.livros.length && course.livros.length > 0;
+    const required = getRequiredModules(course.nivel || '');
+    return finishedCount >= required && required !== Infinity;
 };

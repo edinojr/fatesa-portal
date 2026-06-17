@@ -22,6 +22,7 @@ import {
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
+import { GRADUATION_CONFIG } from '../config/graduation'
 
 // Hooks Feature-based
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
@@ -208,8 +209,13 @@ const Dashboard = () => {
           const minGrade = (highestAula as any)?.min_grade || 7.0;
           isApproved = (highestExam.nota || 0) >= minGrade;
         }
-        const failedExamsCount = bookSubmissions.filter(s => s.status === 'corrigida' && (s.nota || 0) < 7.0).length;
-        const isRetido = failedExamsCount >= 3;
+        const isDP = bookSubmissions.some(s => {
+          const aula = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
+          const isEx = aula?.is_bloco_final || aula?.tipo === 'prova';
+          const minGrade = (aula as any)?.min_grade || GRADUATION_CONFIG.defaultMinGrade;
+          return isEx && s.status === 'corrigida' && (aula as any)?.versao === GRADUATION_CONFIG.maxExamVersion && (s.nota || 0) < minGrade;
+        });
+        const isRetido = isDP;
 
         // Se há alguma aula que foi explicitamente liberada individualmente, ignoramos o bloqueio de isApproved
         // Nota: A API não nos dá o examExceptionIds aqui diretamente, mas se aula.isHidden === false 
@@ -640,18 +646,18 @@ const Dashboard = () => {
                           <Award size={20} color="var(--primary)" />
                           <span style={{ fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Progresso Nível Básico</span>
                        </div>
-                       <span style={{ fontWeight: 900, color: 'var(--primary)' }}>{Math.min(finishedBasicCount || 0, 27)}/27</span>
+                        <span style={{ fontWeight: 900, color: 'var(--primary)' }}>{Math.min(finishedBasicCount || 0, GRADUATION_CONFIG.basico.requiredModules)}/{GRADUATION_CONFIG.basico.requiredModules}</span>
                     </div>
                     <div style={{ height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
                        <div style={{ 
                          height: '100%', 
-                         width: `${Math.min(((finishedBasicCount || 0) / 27) * 100, 100)}%`, 
-                         background: 'linear-gradient(90deg, var(--primary) 0%, #9333ea 100%)',
-                         borderRadius: '10px',
-                         transition: 'width 1s ease-out'
-                       }}></div>
-                    </div>
-                    {(finishedBasicCount || 0) >= 27 && (
+                          width: `${Math.min(((finishedBasicCount || 0) / GRADUATION_CONFIG.basico.requiredModules) * 100, 100)}%`, 
+                          background: 'linear-gradient(90deg, var(--primary) 0%, #9333ea 100%)',
+                          borderRadius: '10px',
+                          transition: 'width 1s ease-out'
+                        }}></div>
+                     </div>
+                     {(finishedBasicCount || 0) >= GRADUATION_CONFIG.basico.requiredModules && (
                       <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)', fontSize: '0.8rem', fontWeight: 700 }}>
                         <CheckCircle2 size={14} /> Formado no Nível Básico!
                       </div>
@@ -666,25 +672,25 @@ const Dashboard = () => {
                    border: '1px solid var(--glass-border)', 
                    position: 'relative', 
                    overflow: 'hidden',
-                   opacity: (finishedBasicCount || 0) < 27 ? 0.6 : 1
+                    opacity: (finishedBasicCount || 0) < GRADUATION_CONFIG.basico.requiredModules ? 0.6 : 1
                  }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <GraduationCap size={20} color={(finishedBasicCount || 0) < 27 ? 'var(--text-muted)' : 'var(--primary)'} />
+                          <GraduationCap size={20} color={(finishedBasicCount || 0) < GRADUATION_CONFIG.basico.requiredModules ? 'var(--text-muted)' : 'var(--primary)'} />
                           <span style={{ fontWeight: 800, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Progresso Nível Médio</span>
                        </div>
-                       <span style={{ fontWeight: 900 }}>{Math.min(finishedMediumCount || 0, 8)}/8</span>
+                       <span style={{ fontWeight: 900 }}>{Math.min(finishedMediumCount || 0, GRADUATION_CONFIG.medio.requiredModules)}/{GRADUATION_CONFIG.medio.requiredModules}</span>
                     </div>
                     <div style={{ height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
                        <div style={{ 
                          height: '100%', 
-                         width: `${Math.min(((finishedMediumCount || 0) / 8) * 100, 100)}%`, 
-                         background: (finishedBasicCount || 0) < 27 ? 'var(--text-muted)' : 'linear-gradient(90deg, #9333ea 0%, #7c3aed 100%)',
+                         width: `${Math.min(((finishedMediumCount || 0) / GRADUATION_CONFIG.medio.requiredModules) * 100, 100)}%`, 
+                         background: (finishedBasicCount || 0) < GRADUATION_CONFIG.basico.requiredModules ? 'var(--text-muted)' : 'linear-gradient(90deg, #9333ea 0%, #7c3aed 100%)',
                          borderRadius: '10px',
                          transition: 'width 1s ease-out'
                        }}></div>
                     </div>
-                    {(finishedBasicCount || 0) < 27 && (
+                    {(finishedBasicCount || 0) < GRADUATION_CONFIG.basico.requiredModules && (
                       <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>
                         <AlertCircle size={14} /> Conclua o Básico para ingressar no Médio.
                       </div>

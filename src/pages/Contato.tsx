@@ -1,23 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { MessageCircle, Phone, MapPin } from 'lucide-react'
+import PublicPageLayout from '../components/layout/PublicPageLayout'
 
 const Contato = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     return (
-        <div className="landing-container">
-            
-            <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
-                <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
-                <div className="hero-content">
-                    <h1>Contato</h1>
-                    <p className="slogan">Estamos prontos para atender você.</p>
-                </div>
-            </section>
-
-            <section className="contact-page-section" style={{ padding: '8rem 2rem' }}>
+        <PublicPageLayout title="Contato" subtitle="Estamos prontos para atender você.">
+            <section className="contact-page-section public-section">
                 <div style={{ width: '100%' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem' }}>
                         <div>
@@ -89,8 +77,7 @@ const Contato = () => {
                     </div>
                 </div>
             </section>
-
-        </div>
+        </PublicPageLayout>
     );
 };
 

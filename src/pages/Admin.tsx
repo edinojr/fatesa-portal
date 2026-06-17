@@ -332,6 +332,8 @@ const Admin = () => {
         showTopBanner={false}
       />
 
+      <main className="admin-main">
+        <div className="admin-scroll-content">
             {activeTab === 'home' && (
             <div className="admin-dashboard-grid transition-fade-in" style={{ gap: '2rem' }}>
               {/* CENTRAL DE ATIVIDADES (SINALIZAÇÃO) */}
@@ -822,6 +824,9 @@ const Admin = () => {
             </div>
           </div>
         )}
+
+        </div>
+      </main>
 
         <div className="bottom-nav-footer">
           <button onClick={() => window.history.back()} className="btn btn-outline">

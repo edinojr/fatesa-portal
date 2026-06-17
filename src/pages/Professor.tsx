@@ -32,7 +32,7 @@ import DocumentAnalysis from '../features/admin/components/DocumentAnalysis'
 import ForumPanel from '../features/forum/components/ForumPanel'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
-import Logo from '../components/common/Logo'
+import PageHeader from '../components/layout/PageHeader'
 
 const Professor = () => {
   const {
@@ -135,36 +135,14 @@ const Professor = () => {
 
   return (
     <div className="admin-layout">
-      {/* SIMPLIFIED HEADER */}
-       <header className="dashboard-header-modern" style={{ justifyContent: 'space-between', padding: '1rem 2.5rem' }}>
-         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button onClick={handleGlobalBack} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }} title="Voltar">
-             <ArrowLeft size={18} />
-           </button>
-           <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
-             PAINEL PROFESSOR
-           </div>
-         </div>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <button onClick={() => navigate('/dashboard')} className="nav-btn-premium" style={{ width: 'auto' }}>
-              <ExternalLink size={18} /> <span className="mobile-hide">Painel Aluno</span>
-            </button>
-            {(profile?.tipo === 'coordenador_polo' || (profile?.caminhos_acesso as string[])?.includes('coordenador_polo')) && (
-              <button onClick={() => navigate('/coordenador')} className="nav-btn-premium" style={{ width: 'auto' }}>
-                <Users size={18} /> <span className="mobile-hide">Painel Coordenador</span>
-              </button>
-            )}
-            {(profile?.tipo === 'admin' || (profile?.caminhos_acesso as string[])?.includes('admin')) && (
-              <button onClick={() => navigate('/admin')} className="nav-btn-premium" style={{ width: 'auto' }}>
-                <ShieldCheck size={18} /> <span className="mobile-hide">Painel Admin</span>
-              </button>
-            )}
-            <button className="nav-btn-premium danger" onClick={handleLogout} title="Sair" style={{ width: 'auto' }}>
-              <LogOut size={18} /> <span className="mobile-hide">Sair</span>
-            </button>
-          </div>
-       </header>
- 
+      <PageHeader
+        title="Painel Professor"
+        variant="professor"
+        onBack={handleGlobalBack}
+        showBackButton={!isAtRoot}
+        showTopBanner={false}
+      />
+
         <main className="admin-main">
          <div className="admin-scroll-content">
            <div className="tab-content">

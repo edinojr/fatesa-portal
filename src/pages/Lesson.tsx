@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen, List, Menu } from 'lucide-react'
+import AudioReader from '../components/AudioReader'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
 import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
@@ -106,8 +107,8 @@ const Lesson = () => {
         setBook(bookData);
         setQuestions(Array.isArray(lessonData?.questionario) ? lessonData.questionario : []);
         
-        // Check if this is a Panorama (ordem 0)
-        const isPanoramaLesson = (lessonData.ordem || 0) === 0;
+        // Check if this is a Panorama (by title)
+        const isPanoramaLesson = lessonData.titulo?.toLowerCase().startsWith('panorama');
         setIsPanorama(isPanoramaLesson);
         
         // If Panorama, fetch all lessons in the module for the Tópicos menu
@@ -123,10 +124,10 @@ const Lesson = () => {
             .order('ordem', { ascending: true });
           
           if (allModuleLessons) {
-            // Filter to only actual lessons (not videos, not panorama)
+            // Filter to only actual lessons (not panorama)
             const lessons = allModuleLessons.filter(l => 
               (l.tipo === 'licao' || l.tipo === 'material' || l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video') 
-              && (l.ordem || 0) > 0
+              && !l.titulo?.toLowerCase().startsWith('panorama')
             );
             setModuleLessons(lessons);
           }
@@ -426,10 +427,25 @@ const Lesson = () => {
           .order('ordem', { ascending: false })
           .limit(1);
         
-        setPrevLessonId(prev && prev.length > 0 ? prev[0].id : null);
+        let prevId = prev && prev.length > 0 ? prev[0].id : null;
+
+        // If Panorama is positioned after lessons (higher ordem), 
+        // lessons before it won't find Panorama as prev. Fallback to Panorama.
+        if (!prevId && !isPanorama && lesson.livro_id) {
+          const { data: panorama } = await supabase
+            .from('aulas')
+            .select('id')
+            .eq('livro_id', lesson.livro_id)
+            .ilike('titulo', 'Panorama')
+            .limit(1);
+          if (panorama && panorama.length > 0) {
+            prevId = panorama[0].id;
+          }
+        }
+        
+        setPrevLessonId(prevId);
 
         // Next lesson for navigation (only actual lessons: licao, material)
-        // For Panorama (ordem 0), this will find Lição 1 (ordem 1)
         const { data: nxt } = await supabase
           .from('aulas')
           .select('id')
@@ -439,7 +455,25 @@ const Lesson = () => {
           .order('ordem', { ascending: true })
           .limit(1);
         
-        setNextLessonId(nxt && nxt.length > 0 ? nxt[0].id : null);
+        let nextId = nxt && nxt.length > 0 ? nxt[0].id : null;
+
+        // If Panorama is positioned after lessons (e.g. ordem 11), 
+        // fallback to the first lesson as "next"
+        if (!nextId && isPanorama && lesson.livro_id) {
+          const { data: firstLesson } = await supabase
+            .from('aulas')
+            .select('id')
+            .eq('livro_id', lesson.livro_id)
+            .in('tipo', ['licao', 'material'])
+            .neq('id', lesson.id)
+            .order('ordem', { ascending: true })
+            .limit(1);
+          if (firstLesson && firstLesson.length > 0) {
+            nextId = firstLesson[0].id;
+          }
+        }
+        
+        setNextLessonId(nextId);
 
         // Load all lessons from this book for content link mapping
         const { data: allLessons } = await supabase
@@ -553,7 +587,15 @@ const Lesson = () => {
   };
 
   const handleSubmit = async (isSavingGabarito: boolean = false) => {
-    if (!lesson || !userProfile) return
+    console.log('[Lesson.handleSubmit] Iniciando');
+    console.log('[Lesson.handleSubmit] lesson:', lesson);
+    console.log('[Lesson.handleSubmit] userProfile:', userProfile);
+    console.log('[Lesson.handleSubmit] id:', id);
+    
+    if (!lesson || !userProfile) {
+      console.error('[Lesson.handleSubmit] ERRO: lesson ou userProfile é null/undefined');
+      return
+    }
     // Se for staff e não é chamada explícita de gabarito, redireciona para salvar gabarito
     if (userProfile?.isStaff && !isSavingGabarito) {
       return handleSubmit(true);
@@ -566,6 +608,11 @@ const Lesson = () => {
 
       const targetLesson = (lesson as any).linkedActivity || lesson;
       const currentSub = (lesson as any).linkedActivity ? (lesson as any).linkedSubmission : existingSubmission;
+      
+      console.log('[Lesson.handleSubmit] targetId:', targetId);
+      console.log('[Lesson.handleSubmit] targetLesson:', targetLesson);
+      console.log('[Lesson.handleSubmit] currentSub:', currentSub);
+      console.log('[Lesson.handleSubmit] answers:', answers);
       
 
       // Se for admin, salvar as respostas como gabarito oficial na aula
@@ -627,6 +674,9 @@ const Lesson = () => {
        const finalScore = isFinal ? score : null; 
        const status = 'corrigida'; // Correção agora é automática para todos
 
+       console.log('[Lesson.handleSubmit] isFinal:', isFinal);
+       console.log('[Lesson.handleSubmit] score:', score);
+       console.log('[Lesson.handleSubmit] finalScore:', finalScore);
 
       const payload: any = {
         aluno_id: userProfile.id, 
@@ -639,8 +689,17 @@ const Lesson = () => {
       };
       if (currentSub?.id) payload.id = currentSub.id;
 
-      const { error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
-      if (error) throw error;
+      console.log('[Lesson.handleSubmit] Payload:', payload);
+
+      const { data: upsertData, error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
+      console.log('[Lesson.handleSubmit] Resultado upsert:', { upsertData, error });
+      
+      if (error) {
+        console.error('[Lesson.handleSubmit] ERRO ao salvar:', error);
+        throw error;
+      }
+
+      console.log('[Lesson.handleSubmit] Salvo com sucesso!');
 
        if (isFinal) {
          alert('Avaliação enviada e corrigida automaticamente com sucesso!');
@@ -654,8 +713,6 @@ const Lesson = () => {
       setSubmitted(true); setIsExamStarted(false); setTimeLeft(null);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // Registra progresso (exercícios sempre concluem, pois são pedagógicos)
-      await supabase.from('progresso').upsert({ aluno_id: userProfile.id, aula_id: targetId, concluida: true }, { onConflict: 'aluno_id,aula_id' });
       setComplete(true);
     } catch (err: any) { 
       console.error(err);
@@ -677,7 +734,7 @@ const Lesson = () => {
     if (!lesson || !userProfile) return
     setSubmitting(true)
     try {
-      await supabase.from('progresso').upsert({ aluno_id: userProfile.id, aula_id: id, concluida: true }, { onConflict: 'aluno_id,aula_id' });
+      await supabase.from('progresso').upsert({ aluno_id: userProfile.id, aula_id: id, concluida: true, updated_at: new Date().toISOString() }, { onConflict: 'aluno_id,aula_id' });
       setComplete(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (lesson.bloco_id) await checkBlockCompletion(userProfile.id, lesson.bloco_id, lesson.livro_id);
@@ -957,12 +1014,13 @@ const Lesson = () => {
     return (
       <div className="lesson-container reading-page">
 
-        {/* Header da Lição */}
+        {/* Header da Lição - fixo no topo */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '0.75rem 1.5rem', marginBottom: '10px',
           background: 'rgba(168,85,247,0.08)', borderRadius: '14px',
-          borderLeft: '4px solid var(--primary)'
+          borderLeft: '4px solid var(--primary)',
+          position: 'sticky', top: 0, zIndex: 10
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <button
@@ -981,7 +1039,17 @@ const Lesson = () => {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            {prevLessonId && (
+            {/* Hamburger / Tópicos button — always visible */}
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="btn btn-outline"
+              style={{ width: 'auto', padding: '0.4rem 0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', fontWeight: 700 }}
+              title={isPanorama ? 'Lições do Módulo' : 'Tópicos da Lição'}
+            >
+              <Menu size={16} />
+              <span style={{ display: 'none' }} className="header-menu-label">{isPanorama ? 'Lições' : 'Tópicos'}</span>
+            </button>
+            {!isPanorama && prevLessonId && (
               <button
                 onClick={() => navigate(`/lesson/${prevLessonId}`)}
                 className="btn btn-outline"
@@ -991,7 +1059,7 @@ const Lesson = () => {
                 <ChevronLeft size={16} />
               </button>
             )}
-            {nextLessonId && Number(lesson.ordem) !== 10 && (
+            {nextLessonId && !lesson.titulo?.toLowerCase().startsWith('lição 10') && (
               <button
                 onClick={() => navigate(`/lesson/${nextLessonId}`)}
                 className="btn btn-primary"
@@ -1005,7 +1073,7 @@ const Lesson = () => {
         </div>
 
        
-       {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
+        {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
          <div className="video-section" style={{ marginBottom: '2rem' }}>
             <div className="video-wrapper" style={{ aspectRatio: '16/9', background: '#000', borderRadius: '32px', overflow: 'hidden' }}>
              {lesson.video_url ? renderVideoPlayer(lesson.video_url) : <div style={{height:'100%', display:'flex', alignItems:'center', justifyContent:'center'}}>Vídeo Indisponível</div>}
@@ -1058,67 +1126,81 @@ const Lesson = () => {
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                     <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
-                      <List size={20} color="var(--primary)" /> {isPanorama ? 'Lições do Módulo' : 'Tópicos'}
+                      <List size={20} color="var(--primary)" /> {isPanorama ? 'Lições do Módulo' : 'Tópicos da Lição'}
                     </h4>
                     <button onClick={() => setIsMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                       <X size={24} />
                     </button>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       {isPanorama ? (
-                        // Panorama only shows link to Lição 01
+                        // Panorama shows ALL lessons 1-10
                         moduleLessons.length > 0 ? (
-                          (() => {
-                            const firstLesson = moduleLessons[0];
+                          moduleLessons.map((lsn, lsnIdx) => {
+                            const lessonNum = String(lsn.ordem || (lsnIdx + 1)).padStart(2, '0');
                             return (
                               <button
-                                key={firstLesson.id}
+                                key={lsn.id}
                                 onClick={() => {
                                   setIsMenuOpen(false);
-                                  navigate(`/lesson/${firstLesson.id}`);
+                                  navigate(`/lesson/${lsn.id}`);
                                 }}
                                 style={{ 
-                                  color: 'var(--primary)', 
+                                  color: 'var(--text-main)', 
                                   textDecoration: 'none', 
-                                  fontSize: '0.95rem', 
+                                  fontSize: '0.88rem', 
                                   display: 'flex', 
                                   alignItems: 'center', 
-                                  gap: '0.6rem',
-                                  padding: '0.75rem 1rem',
-                                  borderRadius: '8px',
+                                  gap: '0.75rem',
+                                  padding: '0.65rem 0.85rem',
+                                  borderRadius: '10px',
                                   transition: 'all 0.2s',
                                   lineHeight: 1.4,
-                                  background: 'rgba(var(--primary-rgb), 0.1)',
+                                  background: 'rgba(255,255,255,0.04)',
                                   cursor: 'pointer',
-                                  border: '1px solid var(--primary)',
+                                  border: '1px solid var(--glass-border)',
                                   textAlign: 'left',
                                   width: '100%',
                                   fontWeight: 600
                                 }}
+                                onMouseEnter={e => {
+                                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(var(--primary-rgb), 0.12)';
+                                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--primary)';
+                                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--primary)';
+                                }}
+                                onMouseLeave={e => {
+                                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)';
+                                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-main)';
+                                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--glass-border)';
+                                }}
                               >
                                 <div style={{ 
-                                  width: '28px', 
-                                  height: '28px', 
+                                  width: '30px', 
+                                  height: '30px', 
                                   borderRadius: '50%', 
                                   background: 'var(--primary)', 
                                   display: 'flex', 
                                   alignItems: 'center', 
                                   justifyContent: 'center',
-                                  fontSize: '0.8rem',
+                                  fontSize: '0.75rem',
                                   fontWeight: 800,
-                                  color: '#fff'
+                                  color: '#fff',
+                                  flexShrink: 0
                                 }}>
-                                  01
+                                  {lessonNum}
                                 </div>
-                                {firstLesson.titulo}
-                                <span style={{ marginLeft: 'auto', fontSize: '0.7rem', opacity: 0.7 }}>Iniciar</span>
+                                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lsn.titulo}</span>
                               </button>
                             );
-                          })()
-                        ) : null
+                          })
+                        ) : (
+                          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', padding: '1rem' }}>Nenhuma lição encontrada.</p>
+                        )
                       ) : (
-                        toc.filter(item => item.isMainSection).map((item, idx) => {
+                        // Normal lesson: show ALL toc items (with indentation for sub-sections)
+                        toc.map((item, idx) => {
                           const label = item.label.trim();
+                          const isMain = item.isMainSection;
                           
                           return (
                             <a 
@@ -1135,29 +1217,35 @@ const Lesson = () => {
                                 }, 100);
                               }}
                               style={{ 
-                                color: 'var(--text-muted)', 
+                                color: isMain ? 'var(--text-main)' : 'var(--text-muted)', 
                                 textDecoration: 'none', 
-                                fontSize: '0.95rem', 
+                                fontSize: isMain ? '0.92rem' : '0.83rem', 
                                 display: 'flex', 
                                 alignItems: 'center', 
                                 gap: '0.6rem',
-                                padding: '0.6rem 1rem',
+                                padding: isMain ? '0.65rem 0.85rem' : '0.45rem 0.85rem 0.45rem 1.75rem',
                                 borderRadius: '8px',
                                 transition: 'all 0.2s',
                                 lineHeight: 1.4,
-                                background: 'rgba(255,255,255,0.03)',
-                                cursor: 'pointer'
+                                background: isMain ? 'rgba(255,255,255,0.04)' : 'transparent',
+                                cursor: 'pointer',
+                                fontWeight: isMain ? 700 : 500,
+                                borderLeft: isMain ? 'none' : '2px solid rgba(var(--primary-rgb), 0.25)',
+                                marginLeft: isMain ? '0' : '0.5rem'
                               }}
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.color = 'var(--primary)';
                                 e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = 'var(--text-muted)';
-                                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                                e.currentTarget.style.color = isMain ? 'var(--text-main)' : 'var(--text-muted)';
+                                e.currentTarget.style.background = isMain ? 'rgba(255,255,255,0.04)' : 'transparent';
                               }}
                             >
-                              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />
+                              {isMain 
+                                ? <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)', flexShrink: 0 }} />
+                                : <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'rgba(var(--primary-rgb), 0.5)', flexShrink: 0 }} />
+                              }
                               {label}
                             </a>
                           );
@@ -1210,53 +1298,10 @@ const Lesson = () => {
                textAlign: 'justify',
                overflow: 'auto',
                transition: 'all 0.3s ease'
-             }}
-            onClick={(e) => {
-              const link = (e.target as HTMLElement).closest('a');
-              if (link && link.href) {
-                e.preventDefault()
-                const url = new URL(link.href)
-                let path = decodeURIComponent(url.pathname).replace(/\/+$/, '')
-                if (path.endsWith('.html')) path = path.slice(0, -5)
-                const key = path.replace(/^\/lesson\//, '').toLowerCase().trim()
-                const targetId = lessonMap[key] || lessonMap[path.toLowerCase()]
-                if (targetId) navigate(`/lesson/${targetId}`)
-              }
-            }}>
-            {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
-          </div>
-        )}
-
-       <div style={{ 
-         display: 'flex', 
-         justifyContent: 'space-between', 
-         alignItems: 'center', 
-         marginBottom: '10px', 
-         padding: '10px 1.5rem',
-         borderTop: '1px solid var(--glass-border)',
-         borderBottom: '1px solid var(--glass-border)',
-         gap: '10px'
-       }}>
-         <button 
-           onClick={() => prevLessonId ? navigate(`/lesson/${prevLessonId}`) : null} 
-           className="btn btn-outline" 
-           style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-           disabled={!prevLessonId}
-         >
-           <ChevronLeft size={20} /> Lição Anterior
-         </button>
-
-            {Number(lesson.ordem) !== 10 && (
-              <button 
-                onClick={() => nextLessonId ? navigate(`/lesson/${nextLessonId}`) : null} 
-                className="btn btn-primary" 
-                style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                disabled={!nextLessonId}
-              >
-                Próxima Lição <ChevronRight size={20} />
-              </button>
-            )}
-       </div>
+             }}>
+               {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
+             </div>
+         )}
 
         {/* Exercício de Fixação - Componente separado */}
         {lesson.tipo === 'exercicio' && questions.length > 0 && (
@@ -1833,19 +1878,6 @@ const Lesson = () => {
         </div>
       )}
 
-      {/* Footer replaced with the result navigation buttons above */}
-      <div className="lesson-footer-responsive" style={{ display: 'none' }}>
-        <button onClick={() => navigate(-1)} className="btn btn-outline" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Voltar">
-          <ChevronLeft size={24} style={{marginRight:'0.5rem'}}/> Aula Anterior
-        </button>
-        
-        {nextLessonId && (
-          <button onClick={() => navigate(`/lesson/${nextLessonId}`)} className="btn btn-primary" style={{width:'auto', padding:'1rem 2rem', borderRadius:'50px'}} title="Próxima Aula">
-            Próxima Aula <ChevronRight size={24} style={{marginLeft:'0.5rem'}}/>
-          </button>
-        )}
-      </div>
-
       {showQuizEditor && (
         <QuizEditorModal 
           editingQuiz={lesson} setEditingQuiz={() => setShowQuizEditor(false)}
@@ -2069,6 +2101,39 @@ const Lesson = () => {
           </div>
         </div>
       )}
+
+      {/* Navegação entre lições */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        marginTop: '3rem', padding: '1.5rem 0', borderTop: '1px solid var(--glass-border)',
+        gap: '1rem'
+      }}>
+        <div style={{ flex: 1 }}>
+          {!isPanorama && prevLessonId && (
+            <button
+              onClick={() => navigate(`/lesson/${prevLessonId}`)}
+              className="btn btn-outline"
+              style={{ padding: '0.75rem 1.5rem', borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              title="Lição Anterior"
+            >
+              <ChevronLeft size={20} /> Lição Anterior
+            </button>
+          )}
+        </div>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+          {nextLessonId && !lesson.titulo?.toLowerCase().startsWith('lição 10') && (
+            <button
+              onClick={() => navigate(`/lesson/${nextLessonId}`)}
+              className="btn btn-primary"
+              style={{ padding: '0.75rem 1.5rem', borderRadius: '50px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              title="Próxima Lição"
+            >
+              Próxima Lição <ChevronRight size={20} />
+            </button>
+          )}
+        </div>
+      </div>
+      <AudioReader />
     </div>
   )
 }

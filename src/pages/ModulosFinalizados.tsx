@@ -6,6 +6,7 @@ import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import Logo from '../components/common/Logo'
 import CourseList from '../features/courses/components/CourseList'
 import { getBookStats, isCourseCompleted } from '../features/courses/utils/courseUtils'
+import { GRADUATION_CONFIG, isNivelBasico, isNivelMedio } from '../config/graduation'
 import GraduationFormModal from '../features/users/components/GraduationFormModal'
 import LevelCertificate from '../features/users/components/LevelCertificate'
 import { graduationService } from '../services/graduationService'
@@ -28,13 +29,13 @@ const ModulosFinalizados = () => {
     useEffect(() => {
         if (!coursesLoading && courses && courses.length > 0 && profile) {
             courses.forEach(course => {
-                const isBasic = (course.nivel || '').toLowerCase().includes('basico') || (course.nivel || '').toLowerCase().includes('básico') || !course.nivel;
-                const isMedium = (course.nivel || '').toLowerCase().includes('medio') || (course.nivel || '').toLowerCase().includes('médio');
+                const isBasic = isNivelBasico(course.nivel || '') || !course.nivel;
+                const isMedium = isNivelMedio(course.nivel || '');
 
                 let meetsGraduationRequirement = false;
-                if (isBasic && (finishedBasicCount || 0) >= 27) {
+                if (isBasic && (finishedBasicCount || 0) >= GRADUATION_CONFIG.basico.requiredModules) {
                     meetsGraduationRequirement = true;
-                } else if (isMedium && (finishedMediumCount || 0) >= 8) {
+                } else if (isMedium && (finishedMediumCount || 0) >= GRADUATION_CONFIG.medio.requiredModules) {
                     meetsGraduationRequirement = true;
                 }
 

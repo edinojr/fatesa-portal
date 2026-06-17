@@ -56,18 +56,24 @@ export const useCoordinatorData = (profile: any) => {
       const rate = totalAttendance > 0 ? (presents / totalAttendance) * 100 : 0;
 
       // Evasion Alerts (Students inactive for more than 15 days)
-      // Note: This logic depends on a 'last_access' field if available, 
-      // or we can estimate based on progress updates.
-      // For now, let's count students with no progress in 15 days.
+      // Check both progresso and respostas_aulas for recent activity
       const fifteenDaysAgo = new Date();
       fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
-      const { data: inactiveStudents } = await supabase
+      const { data: recentProgress } = await supabase
         .from('progresso')
         .select('aluno_id')
         .gte('updated_at', fifteenDaysAgo.toISOString());
       
-      const activeIds = new Set(inactiveStudents?.map(i => i.aluno_id));
+      const { data: recentSubmissions } = await supabase
+        .from('respostas_aulas')
+        .select('aluno_id')
+        .gte('updated_at', fifteenDaysAgo.toISOString());
+      
+      const activeIds = new Set([
+        ...(recentProgress?.map(i => i.aluno_id) || []),
+        ...(recentSubmissions?.map(i => i.aluno_id) || [])
+      ]);
       const evasionCount = (studentData || []).filter(s => !activeIds.has(s.id)).length;
 
       // Academic Success (Students with at least one approval >= 7.0)

@@ -30,6 +30,29 @@
 .portal-container {
   width: 100%;
   max-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.public-main {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+}
+
+.auth-root {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-root {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg-subtle);
 }
 
 .portal-nav {
@@ -616,11 +639,6 @@ body {
   box-sizing: border-box;
 }
 
-.lesson-content {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
 .video-wrapper {
   position: relative;
   width: 100%;
@@ -1151,19 +1169,19 @@ body {
   border: 1px solid var(--primary) !important;
 }
 
-.reading-page h1, 
-.reading-page h2, 
-.reading-page h3, 
-.reading-page h4, 
-.reading-page h5, 
-.reading-page h6 {
+.reading-page .lesson-content h1, 
+.reading-page .lesson-content h2, 
+.reading-page .lesson-content h3, 
+.reading-page .lesson-content h4, 
+.reading-page .lesson-content h5, 
+.reading-page .lesson-content h6 {
   color: #000 !important;
   font-size: 1.3em !important;
 }
 
-.reading-page p, 
-.reading-page span, 
-.reading-page div {
+.reading-page .lesson-content p, 
+.reading-page .lesson-content span, 
+.reading-page .lesson-content div {
   color: #000 !important;
   font-size: 1.2rem !important;
 }
@@ -1337,6 +1355,7 @@ body {
   .quiz-section-modern {
   padding: 2rem;
 }
+}
 
 @media (max-width: 768px) {
   .quiz-section-modern {
@@ -1344,23 +1363,20 @@ body {
   }
 }
 
-.lesson-container {
-  padding: 10px 0 !important;
-  width: 100% !important;
-  max-width: 100vw !important;
-}
-
 .lesson-content {
-  padding: 0 10px;
   width: 100%;
-  max-width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
-  .lesson-content {
-    padding: 0 10px;
+  .lesson-container {
+    padding: 10px 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
   }
-}
 
   .lesson-container h1 {
     font-size: 1.75rem !important;
@@ -1500,6 +1516,24 @@ body {
 }
 
 /* Hero Section */
+.hero-section--page {
+  height: 40vh;
+  min-height: 300px;
+}
+
+.hero-section--home {
+  padding: 5rem 2rem 3rem;
+  min-height: 65vh;
+}
+
+.hero-section--page .hero-overlay {
+  opacity: 0.8;
+}
+
+.public-section {
+  padding: 6rem 2rem;
+}
+
 .hero-section {
   position: relative;
   min-height: 65vh;

@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import MainLayout from './components/layout/MainLayout'
+import { PublicLayout, AuthLayout, DashboardLayout } from './components/layout/MainLayout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Landing from './pages/Landing'
@@ -34,29 +34,29 @@ function App() {
       <AnalyticsTracker />
       <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0a', color: 'var(--primary)' }}>Carregando...</div>}>
         <Routes>
-          <Route path="/" element={<MainLayout><Landing /></MainLayout>} />
-          <Route path="/sobre" element={<MainLayout><Sobre /></MainLayout>} />
-          <Route path="/metodologia" element={<MainLayout><Metodologia /></MainLayout>} />
-          <Route path="/patrono" element={<MainLayout><Patrono /></MainLayout>} />
-          <Route path="/cursos" element={<MainLayout><CursosPublic /></MainLayout>} />
-          <Route path="/contato" element={<MainLayout><Contato /></MainLayout>} />
-          <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
-          <Route path="/signup" element={<MainLayout><Signup /></MainLayout>} />
-          <Route path="/forgot-password" element={<MainLayout><ForgotPassword /></MainLayout>} />
-          <Route path="/reset-password" element={<MainLayout><ResetPassword /></MainLayout>} />
-          <Route path="/matricula" element={<MainLayout><Matricula /></MainLayout>} />
-          <Route path="/verificacao" element={<MainLayout><CertificateVerification /></MainLayout>} />
-          <Route path="/verificacao/:code" element={<MainLayout><CertificateVerification /></MainLayout>} />
-          <Route path="/app-mobile" element={<MainLayout><AppConstruction /></MainLayout>} />
-          <Route path="/dashboard" element={<ProtectedRoute><MainLayout><DashboardBridge /></MainLayout></ProtectedRoute>} />
-          <Route path="/modulos-finalizados" element={<ProtectedRoute><MainLayout><ModulosFinalizados /></MainLayout></ProtectedRoute>} />
-          <Route path="/vencido" element={<ProtectedRoute><MainLayout><BlockedAccess /></MainLayout></ProtectedRoute>} />
-          <Route path="/lesson/:id" element={<ProtectedRoute><MainLayout><Lesson /></MainLayout></ProtectedRoute>} />
-          <Route path="/book/:id" element={<ProtectedRoute><MainLayout><SmartViewer /></MainLayout></ProtectedRoute>} />
-          <Route path="/module/:id" element={<ProtectedRoute><MainLayout><ModuleDetails /></MainLayout></ProtectedRoute>} />
-           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><MainLayout><Admin /></MainLayout></ProtectedRoute>} />
-           <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><MainLayout><Professor /></MainLayout></ProtectedRoute>} />
-           <Route path="/coordenador" element={<ProtectedRoute requiredRole="coordenador_polo"><MainLayout><Coordinator /></MainLayout></ProtectedRoute>} />
+          <Route path="/" element={<PublicLayout><Landing /></PublicLayout>} />
+          <Route path="/sobre" element={<PublicLayout><Sobre /></PublicLayout>} />
+          <Route path="/metodologia" element={<PublicLayout><Metodologia /></PublicLayout>} />
+          <Route path="/patrono" element={<PublicLayout><Patrono /></PublicLayout>} />
+          <Route path="/cursos" element={<PublicLayout><CursosPublic /></PublicLayout>} />
+          <Route path="/contato" element={<PublicLayout><Contato /></PublicLayout>} />
+          <Route path="/verificacao" element={<PublicLayout><CertificateVerification /></PublicLayout>} />
+          <Route path="/verificacao/:code" element={<PublicLayout><CertificateVerification /></PublicLayout>} />
+          <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
+          <Route path="/signup" element={<AuthLayout><Signup /></AuthLayout>} />
+          <Route path="/forgot-password" element={<AuthLayout><ForgotPassword /></AuthLayout>} />
+          <Route path="/reset-password" element={<AuthLayout><ResetPassword /></AuthLayout>} />
+          <Route path="/matricula" element={<AuthLayout><Matricula /></AuthLayout>} />
+          <Route path="/app-mobile" element={<AuthLayout><AppConstruction /></AuthLayout>} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><DashboardBridge /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/modulos-finalizados" element={<ProtectedRoute><DashboardLayout><ModulosFinalizados /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/vencido" element={<ProtectedRoute><DashboardLayout><BlockedAccess /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/lesson/:id" element={<ProtectedRoute><DashboardLayout><Lesson /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/book/:id" element={<ProtectedRoute><DashboardLayout><SmartViewer /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/module/:id" element={<ProtectedRoute><DashboardLayout><ModuleDetails /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><DashboardLayout><Admin /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/professor" element={<ProtectedRoute requiredRole="professor"><DashboardLayout><Professor /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/coordenador" element={<ProtectedRoute requiredRole="coordenador_polo"><DashboardLayout><Coordinator /></DashboardLayout></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
@@ -65,4 +65,3 @@ function App() {
 }
 
 export default App
-

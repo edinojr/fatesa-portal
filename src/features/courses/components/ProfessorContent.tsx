@@ -57,7 +57,7 @@ function GabaritoSummary({ questions }: { questions: any[] }) {
           if (q.type === 'true_false') ans = q.isTrue ? 'V' : 'F'
           else if (q.type === 'multiple_choice' || !q.type) {
             ans = typeof q.correct === 'number' ? (LETTERS[q.correct] || '?') : '?'
-          } else if (q.type === 'matching') ans = '↔'
+          } else if (q.type === 'matching') ans = q.matchingPairs?.map((p: any) => `${p.left} → ${p.right}`).join('; ') || '↔'
           else if (q.type === 'discursive') ans = '✍'
           const hasAns = ans !== '?'
           return (
@@ -227,7 +227,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     return lesson.questionario.map((q: any) => {
       if (q.type === 'true_false') return q.isTrue ? 'V' : 'F'
       if (q.type === 'multiple_choice' || !q.type) return typeof q.correct === 'number' ? (LETTERS[q.correct] || '?') : '?'
-      if (q.type === 'matching') return '↔'
+      if (q.type === 'matching') return q.matchingPairs?.map((p: any) => `${p.left} → ${p.right}`).join('; ') || '↔'
       if (q.type === 'discursive') return '✍'
       return '?'
     })

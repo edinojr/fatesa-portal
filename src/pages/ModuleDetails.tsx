@@ -179,66 +179,29 @@ const ModuleDetails = () => {
     };
 
     // ── Grid Content Preparation ──
-    // Build grid by 'ordem' for correct alignment across columns
-    // Panorama (ordem 0) -> Lição 1 (ordem 1) -> Lição 2 (ordem 2) etc.
+    // We want exactly 11 rows: Row 0 (Panorama) + Rows 1-10 (Content)
+    const sortedOrdens = Array.from({ length: 11 }, (_, i) => i);
     
-    // Collect all items with their ordem
-    const allItemsByOrdem: Record<number, { 
-      lesson?: any; 
-      exercise?: any; 
-      video?: any; 
-      avaliacao?: any;
-    }> = {};
-
-    // Add panorama at ordem 0
-    if (panorama) {
-      allItemsByOrdem[0] = { ...allItemsByOrdem[0], lesson: panorama };
-    }
-
-    // Add lições by their ordem
-    licoes.forEach(licao => {
-      const ordem = licao.ordem || 0;
-      if (ordem > 0) {
-        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], lesson: licao };
-      }
-    });
-
-    // Add exercícios by their ordem
-    exercicios.forEach(ex => {
-      const ordem = ex.ordem || 0;
-      if (ordem > 0) {
-        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], exercise: ex };
-      }
-    });
-
-    // Add videos by their ordem
-    videos.forEach(vid => {
-      const ordem = vid.ordem || 0;
-      if (ordem > 0) {
-        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], video: vid };
-      }
-    });
-
-    // Add avaliações by their ordem (they go in the last column)
-    avaliacoes.forEach(av => {
-      const ordem = av.ordem || 0;
-      if (ordem > 0) {
-        allItemsByOrdem[ordem] = { ...allItemsByOrdem[ordem], avaliacao: av };
-      }
-    });
-
-    // Get sorted ordem keys (0 for panorama, then 1, 2, 3...)
-    const sortedOrdens = Object.keys(allItemsByOrdem)
-      .map(k => parseInt(k))
-      .sort((a, b) => a - b);
-
-    // Build grid data arrays aligned by ordem
+    // Align by sequence rather than absolute ordem to ensure Lesson 1 aligns with Exercise 1
     const gridData = {
-      lessons: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.lesson || null),
-      exercises: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.exercise || null),
-      videos: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.video || null),
-      avaliacoes: sortedOrdens.map(ordem => allItemsByOrdem[ordem]?.avaliacao || null),
+      lessons: [panorama, ...licoes].slice(0, 11),
+      exercises: [null, ...exercicios].slice(0, 11),
+      videos: [null, ...videos].slice(0, 11),
+      avaliacoes: Array(11).fill(null),
     };
+
+    // Fill the lessons/exercises/videos arrays to exactly 11 elements if they are shorter
+    while (gridData.lessons.length < 11) gridData.lessons.push(null);
+    while (gridData.exercises.length < 11) gridData.exercises.push(null);
+    while (gridData.videos.length < 11) gridData.videos.push(null);
+
+    // Evaluations must align with the last 3 rows (8, 9, 10)
+    // We fill from the bottom (row 10) up to 3 items
+    const evalCount = avaliacoes.length;
+    const evalLimit = Math.min(evalCount, 3);
+    for (let i = 0; i < evalLimit; i++) {
+      gridData.avaliacoes[10 - i] = avaliacoes[evalCount - 1 - i];
+    }
 
     const maxRows = sortedOrdens.length;
 
@@ -358,13 +321,13 @@ const ModuleDetails = () => {
                               gridData.videos[idx], 
                               ordem === 0 ? '' : `Vídeo ${String(ordem).padStart(2, '0')}`
                             )}
-                            {(() => {
-                              const av = gridData.avaliacoes[idx];
-                              if (!av) return null;
-                              const versao = av.versao || 1;
-                              const label = versao === 1 ? 'Avaliação' : versao === 2 ? 'Recuperação' : '2ª Recuperação';
-                              return renderGridItem(av, label);
-                            })()}
+                              {(() => {
+                                const av = gridData.avaliacoes[idx];
+                                if (!av) return <div style={{ height: '80px' }} />;
+                                const versao = av.versao || 1;
+                                const label = versao === 1 ? 'Avaliação 01' : versao === 2 ? 'Avaliação 02 (Recuperação)' : 'Avaliação 03 (2ª Recuperação)';
+                                return renderGridItem(av, label);
+                              })()}
                           </React.Fragment>
                         ))}
                    </div>

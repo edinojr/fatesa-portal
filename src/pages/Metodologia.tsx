@@ -1,23 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Book, Clock, History, Award } from 'lucide-react'
+import PublicPageLayout from '../components/layout/PublicPageLayout'
 
 const Metodologia = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     return (
-        <div className="landing-container">
-            
-            <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
-                <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
-                <div className="hero-content">
-                    <h1>Metodologia</h1>
-                    <p className="slogan">Excelência no ensino presencial e à distância.</p>
-                </div>
-            </section>
-
-            <section id="metodologia" style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 10% 50%, rgba(0, 86, 179, 0.03), transparent 40%)' }}>
+        <PublicPageLayout title="Metodologia" subtitle="Excelência no ensino presencial e à distância.">
+            <section id="metodologia" className="public-section" style={{ background: 'radial-gradient(circle at 10% 50%, rgba(0, 86, 179, 0.03), transparent 40%)' }}>
                 <div style={{ width: '100%', padding: '0 2rem' }}>
                     <div className="section-header" style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <span className="badge">EAD e Presencial</span>
@@ -29,7 +17,6 @@ const Metodologia = () => {
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-                        {/* Card 1: Material */}
                         <div className="course-card" style={{ padding: '2.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)' }}>
                             <div style={{ display: 'inline-flex', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '16px', marginBottom: '1.5rem' }}>
                                 <Book size={24} color="var(--primary)" />
@@ -40,7 +27,6 @@ const Metodologia = () => {
                             </p>
                         </div>
 
-                        {/* Card 2: Formato */}
                         <div className="course-card" style={{ padding: '2.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)' }}>
                             <div style={{ display: 'inline-flex', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '16px', marginBottom: '1.5rem' }}>
                                 <Clock size={24} color="var(--primary)" />
@@ -54,7 +40,6 @@ const Metodologia = () => {
                             </p>
                         </div>
 
-                        {/* Card 3: Abandono */}
                         <div className="course-card" style={{ padding: '2.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)' }}>
                             <div style={{ display: 'inline-flex', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '16px', marginBottom: '1.5rem' }}>
                                 <History size={24} color="var(--primary)" />
@@ -65,7 +50,6 @@ const Metodologia = () => {
                             </p>
                         </div>
 
-                        {/* Card 4: Conclusão */}
                         <div className="course-card" style={{ padding: '2.5rem', background: 'var(--glass)', border: '1px solid var(--glass-border)' }}>
                             <div style={{ display: 'inline-flex', padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '16px', marginBottom: '1.5rem' }}>
                                 <Award size={24} color="var(--primary)" />
@@ -82,8 +66,7 @@ const Metodologia = () => {
                     </div>
                 </div>
             </section>
-
-        </div>
+        </PublicPageLayout>
     );
 };
 

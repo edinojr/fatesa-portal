@@ -7,6 +7,7 @@ export interface AnswerKey {
   questionIndex: number;
   questionType: 'true_false' | 'multiple_choice' | 'matching' | 'discursive';
   correctAnswer: any;
+  matchingPairs?: { left: string; right: string }[];
   points: number;
 }
 
@@ -38,24 +39,38 @@ export function extractAnswerKey(html: string): { cleanedHtml: string; answerKey
       const text = (item.textContent || '').trim();
       const dataAnswer = item.getAttribute('data-answer') || item.getAttribute('data-correct');
       
-      // Try to parse answer from text (e.g., "1. V" or "Questão 1: A")
-      const match = text.match(/(\d+)\s*[.:)]\s*([VFVA-D]|VERDADEIRO|FALSO|\d+)/i);
-      if (match) {
-        const qNum = parseInt(match[1]) - 1;
-        const ans = match[2].toUpperCase();
+      // Try to parse matching pairs (e.g., "1. A → B" or "1. Coluna1: Valor1")
+      const matchingMatch = text.match(/(\d+)\s*[.:)]\s*(.+?)\s*(?:→|➔|->)\s*(.+)/i);
+      if (matchingMatch) {
+        const qNum = parseInt(matchingMatch[1]) - 1;
         answerKey.push({
           questionIndex: qNum,
-          questionType: ans === 'V' || ans === 'VERDADEIRO' || ans === 'F' || ans === 'FALSO' ? 'true_false' : 'multiple_choice',
-          correctAnswer: ans === 'V' || ans === 'VERDADEIRO' ? true : ans === 'F' || ans === 'FALSO' ? false : ans.charCodeAt(0) - 65,
+          questionType: 'matching',
+          correctAnswer: matchingMatch[0],
+          matchingPairs: [{ left: matchingMatch[2].trim(), right: matchingMatch[3].trim() }],
           points: 0.5
         });
-      } else if (dataAnswer) {
-        answerKey.push({
-          questionIndex: idx,
-          questionType: 'multiple_choice',
-          correctAnswer: dataAnswer,
-          points: 0.5
-        });
+      }
+      // Try to parse answer from text (e.g., "1. V" or "Questão 1: A")
+      else {
+        const match = text.match(/(\d+)\s*[.:)]\s*([VFVA-D]|VERDADEIRO|FALSO|\d+)/i);
+        if (match) {
+          const qNum = parseInt(match[1]) - 1;
+          const ans = match[2].toUpperCase();
+          answerKey.push({
+            questionIndex: qNum,
+            questionType: ans === 'V' || ans === 'VERDADEIRO' || ans === 'F' || ans === 'FALSO' ? 'true_false' : 'multiple_choice',
+            correctAnswer: ans === 'V' || ans === 'VERDADEIRO' ? true : ans === 'F' || ans === 'FALSO' ? false : ans.charCodeAt(0) - 65,
+            points: 0.5
+          });
+        } else if (dataAnswer) {
+          answerKey.push({
+            questionIndex: idx,
+            questionType: 'multiple_choice',
+            correctAnswer: dataAnswer,
+            points: 0.5
+          });
+        }
       }
     });
     gabaritoDiv.remove();
@@ -131,6 +146,8 @@ export function renderAnswerKeyHtml(answerKey: AnswerKey[]): string {
     } else if (item.questionType === 'multiple_choice') {
       const letters = ['A', 'B', 'C', 'D', 'E'];
       display = typeof item.correctAnswer === 'number' ? letters[item.correctAnswer] : String(item.correctAnswer);
+    } else if (item.questionType === 'matching') {
+      display = item.matchingPairs?.map(p => `${p.left} → ${p.right}`).join('<br>') || String(item.correctAnswer);
     } else {
       display = String(item.correctAnswer);
     }

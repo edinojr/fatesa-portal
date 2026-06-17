@@ -96,15 +96,6 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
 
       if (saveError) throw saveError;
 
-      // 2. Marca como concluído no progresso
-      const { error: progError } = await supabase.from('progresso').upsert({
-        aluno_id: profile.id,
-        aula_id: lessonId,
-        concluida: true
-      }, { onConflict: 'aluno_id,aula_id' });
-
-      if (progError) throw progError;
-
       setExercicioFinalizado(true);
       setShowGabarito(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });

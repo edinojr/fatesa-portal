@@ -1,24 +1,12 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { BookOpen, Book, GraduationCap } from 'lucide-react'
+import PublicPageLayout from '../components/layout/PublicPageLayout'
 
 const CursosPublic = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     return (
-        <div className="landing-container">
-            
-            <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
-                <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
-                <div className="hero-content">
-                    <h1>Nossos Cursos</h1>
-                    <p className="slogan">Formação teológica sólida para o seu ministério.</p>
-                </div>
-            </section>
-
-            <section id="cursos" className="courses-section" style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 90% 10%, rgba(0, 86, 179, 0.05), transparent 40%)' }}>
+        <PublicPageLayout title="Nossos Cursos" subtitle="Formação teológica sólida para o seu ministério.">
+            <section id="cursos" className="courses-section public-section" style={{ background: 'radial-gradient(circle at 90% 10%, rgba(0, 86, 179, 0.05), transparent 40%)' }}>
                 <div className="section-header" style={{ textAlign: 'center', marginBottom: '5rem' }}>
                     <span className="badge" style={{ marginBottom: '1rem' }}>Excelência Acadêmica</span>
                     <h2 style={{ fontSize: '3.5rem', fontWeight: 900, letterSpacing: '-0.04em' }}>Programas de Formação</h2>
@@ -28,7 +16,6 @@ const CursosPublic = () => {
                 </div>
 
                 <div className="hub-grid">
-                    {/* Básico */}
                     <div className="hub-card" style={{ cursor: 'default' }}>
                         <div className="hub-icon"><BookOpen size={40} /></div>
                         <div className="hub-info">
@@ -57,7 +44,6 @@ const CursosPublic = () => {
                         </div>
                     </div>
 
-                    {/* Médio */}
                     <div className="hub-card" style={{ cursor: 'default' }}>
                         <div className="hub-icon"><GraduationCap size={40} /></div>
                         <div className="hub-info">
@@ -87,8 +73,7 @@ const CursosPublic = () => {
                     </div>
                 </div>
             </section>
-
-        </div>
+        </PublicPageLayout>
     );
 };
 

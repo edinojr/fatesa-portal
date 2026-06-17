@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ChevronRight, LogIn, Info, BookOpen, UserCheck, GraduationCap, ArrowRight, Mail, ClipboardSignature } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useSEO } from '../hooks/useSEO'
+import PublicPageLayout from '../components/layout/PublicPageLayout'
 
 const Landing = () => {
     const navigate = useNavigate();
@@ -13,11 +14,10 @@ const Landing = () => {
     });
 
     return (
-    <div className="landing-container">
+    <PublicPageLayout>
       <Toaster position="top-center" />
 
-      {/* Hero Section */}
-      <section id="home" className="hero-section" style={{ padding: '5rem 2rem 3rem' }}>
+      <section id="home" className="hero-section hero-section--home">
         <div className="hero-overlay"></div>
         <div className="hero-content">
           <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Formação Teológica de Alto Nível</h1>
@@ -32,7 +32,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Iconic Navigation Hub - Small Icons Variant */}
       <section className="landing-hub" style={{ padding: '2rem' }}>
         <div className="hub-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', width: '100%' }}>
           
@@ -115,7 +114,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* App Promotion Section */}
       <section className="app-promotion-section" style={{ padding: '3rem 2rem', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>
         <div style={{ width: '100%', textAlign: 'center' }}>
           <h2 style={{ fontSize: '1.75rem', marginBottom: '0.75rem', fontWeight: 700 }}>Acesse por Aplicativo</h2>
@@ -132,10 +130,9 @@ const Landing = () => {
         </div>
       </section>
 
-    </div>
+    </PublicPageLayout>
   )
 }
 
 
 export default Landing
-

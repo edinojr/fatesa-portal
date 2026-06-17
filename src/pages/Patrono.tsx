@@ -1,23 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Award, Shield, Book, Users } from 'lucide-react'
+import PublicPageLayout from '../components/layout/PublicPageLayout'
 
 const Patrono = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     return (
-        <div className="landing-container">
-            
-            <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
-                <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
-                <div className="hero-content">
-                    <h1>Nosso Patrono</h1>
-                    <p className="slogan">Liderança e Visão Teológica.</p>
-                </div>
-            </section>
-
-            <section id="professores" className="faculty-section" style={{ padding: '6rem 2rem' }}>
+        <PublicPageLayout title="Nosso Patrono" subtitle="Liderança e Visão Teológica.">
+            <section id="professores" className="faculty-section public-section">
                 <div className="container">
                     <div className="faculty-header" style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <span className="badge">Nosso Magistério</span>
@@ -72,11 +60,10 @@ const Patrono = () => {
                                 </div>
                             </div>
                         </div>
-            </div>
-        </div>
-    </section>
-
-        </div>
+                    </div>
+                </div>
+            </section>
+        </PublicPageLayout>
     );
 };
 

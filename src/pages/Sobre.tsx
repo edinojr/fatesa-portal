@@ -1,25 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import Logo from '../components/common/Logo'
+import PublicPageLayout from '../components/layout/PublicPageLayout'
 
 const Sobre = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     return (
-        <div className="landing-container">
-            
-            {/* Hero Section Simplified for Subpages */}
-            <section className="hero-section" style={{ height: '40vh', minHeight: '300px' }}>
-                <div className="hero-overlay" style={{ opacity: 0.8 }}></div>
-                <div className="hero-content">
-                    <h1>A Fatesa</h1>
-                    <p className="slogan">Duas décadas de excelência no ensino teológico.</p>
-                </div>
-            </section>
-
-            {/* About Section */}
+        <PublicPageLayout title="A Fatesa" subtitle="Duas décadas de excelência no ensino teológico.">
             <section className="about-section">
                 <div className="section-grid">
                     <div className="about-image">
@@ -42,8 +28,7 @@ const Sobre = () => {
                 </div>
             </section>
 
-            {/* Vision and Values */}
-            <section className="values-section" style={{ padding: '6rem 2rem', borderTop: '1px solid var(--glass-border)' }}>
+            <section className="values-section public-section" style={{ borderTop: '1px solid var(--glass-border)' }}>
                 <div style={{ width: '100%' }}>
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Capacitação que Gera Ação</h2>
@@ -70,8 +55,7 @@ const Sobre = () => {
                 </div>
             </section>
 
-            {/* The Theology of Transformation Section */}
-            <section style={{ padding: '8rem 2rem', background: 'radial-gradient(circle at 100% 50%, rgba(0, 86, 179, 0.05), transparent 40%)' }}>
+            <section className="public-section" style={{ background: 'radial-gradient(circle at 100% 50%, rgba(0, 86, 179, 0.05), transparent 40%)' }}>
                 <div style={{ width: '100%', textAlign: 'center', padding: '0 2rem' }}>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>A Teologia da Transformação</h2>
                     <p style={{ fontSize: '1.2rem', opacity: 0.9, lineHeight: '1.8', marginBottom: '3rem' }}>
@@ -98,7 +82,6 @@ const Sobre = () => {
                 </div>
             </section>
             
-            {/* CTA Final */}
             <section style={{ padding: '6rem 2rem', textAlign: 'center', background: 'var(--primary)', color: '#fff', borderRadius: '40px', margin: '4rem 2rem' }}>
                 <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Prepare-se para o seu Chamado</h2>
                 <p style={{ maxWidth: '700px', margin: '0 auto 2.5rem auto', fontSize: '1.1rem', opacity: 0.9 }}>
@@ -108,8 +91,7 @@ const Sobre = () => {
                     FAZER MATRÍCULA AGORA
                 </Link>
             </section>
-
-        </div>
+        </PublicPageLayout>
     );
 };
 

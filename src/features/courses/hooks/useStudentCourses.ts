@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
+import { GRADUATION_CONFIG } from '../../../config/graduation';
 
 const missingTables = new Set<string>();
 const tableMissing = (name: string) => missingTables.has(name);
@@ -250,7 +251,7 @@ export const useStudentCourses = (profile: any) => {
       manualMediumModules.forEach(id => finishedMediumModules.add(id));
 
       setFinishedMediumCount(finishedMediumModules.size);
-      const isFinished = fBasicCount >= 27;
+      const isFinished = fBasicCount >= GRADUATION_CONFIG.basico.requiredModules;
       setIsBasicFinished(isFinished);
 
       const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, aulas(id, titulo, tipo, versao, min_grade, ordem, nucleo_id, status_liberacao, data_liberacao, professor_active))';

@@ -103,22 +103,22 @@ const CourseList: React.FC<CourseListProps> = ({
           </div>
         </BaseCard>
 
-        {isExpanded && currentBook.aulas && currentBook.aulas.length > 0 && (
-          <div style={{ 
-            padding: '0.75rem', 
-            marginTop: '0.5rem',
-            background: 'rgba(0,0,0,0.15)', 
-            border: '1px solid var(--glass-border)',
-            borderRadius: '10px',
-          }}>
-            <h4 style={{ fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.6rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <BookOpen size={14} /> Lições do Módulo
-            </h4>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.5rem' }}>
-              {(currentBook.aulas || []).map(renderLessonItem)}
-            </div>
-          </div>
-        )}
+            {isExpanded && currentBook.aulas && currentBook.aulas.length > 0 && (
+              <div style={{ 
+                padding: '0.75rem', 
+                marginTop: '0.5rem',
+                background: 'rgba(0,0,0,0.15)', 
+                border: '1px solid var(--glass-border)',
+                borderRadius: '10px',
+              }}>
+                <h4 style={{ fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.6rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <BookOpen size={14} /> Lições do Módulo
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {(currentBook.aulas || []).map(renderLessonItem)}
+                </div>
+              </div>
+            )}
       </div>
     );
   };
