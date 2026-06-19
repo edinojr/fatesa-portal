@@ -48,6 +48,11 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number } | null>(null)
 
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const updateDropdownPos = useCallback(() => {
     if (searchInputRef.current) {
       const rect = searchInputRef.current.getBoundingClientRect()
