@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import DOMPurify from 'dompurify'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen, List, Menu } from 'lucide-react'
@@ -203,7 +204,7 @@ const Lesson = () => {
            
            if (releaseData) {
              setIsReleased(true);
-           } else if (lessonData.tipo === 'prova' || lessonData.is_bloco_final) {
+            } else if (lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || lessonData.is_bloco_final) {
              const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
                .select('id')
                .eq('nucleo_id', profile?.nucleo_id)
@@ -230,7 +231,7 @@ const Lesson = () => {
         if (subData) {
           setExistingSubmission(subData);
           setAnswers(subData.respostas || {});
-          if (subData.nota !== null && subData.status !== 'liberado') setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
+          if (subData.nota !== null && subData.status !== 'liberado') setResult({ score: subData.nota, passed: subData.nota >= (lessonData.min_grade || (lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' ? 7 : 0)), pendingReview: subData.status === 'pendente' });
           
           if (lessonData.is_bloco_final && subData.start_time && subData.status === 'liberado') {
             const startTime = new Date(subData.start_time).getTime();
@@ -240,8 +241,8 @@ const Lesson = () => {
           }
 
           if (subData.status !== 'liberado') {
-            const isExam = lessonData.tipo === 'prova' || lessonData.is_bloco_final;
-            const canRetake = isExam && subData.status === 'corrigida' && subData.nota !== null && subData.nota < (lessonData.min_grade || (lessonData.tipo === 'prova' ? 7 : 0)) && (subData.tentativas || 0) < 3;
+            const isExam = lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || lessonData.is_bloco_final;
+            const canRetake = isExam && subData.status === 'corrigida' && subData.nota !== null && subData.nota < (lessonData.min_grade || (lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' ? 7 : 0)) && (subData.tentativas || 0) < 3;
             
             if (!canRetake) {
               setSubmitted(true);
@@ -270,7 +271,7 @@ const Lesson = () => {
           // Check if student already passed the HIGHEST version of the exam for this module
           const examSubs = moduleSubs.filter(s => {
             const aula = s.aulas as any;
-            return aula?.tipo === 'prova' || aula?.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(aula?.titulo || '');
+            return aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(aula?.titulo || '');
           });
           
           let passedAny = false;
@@ -308,7 +309,7 @@ const Lesson = () => {
           
           const didPrevious = moduleSubs.some(s => {
             const aula = s.aulas as any;
-            const isExam = aula?.tipo === 'prova' || aula?.is_bloco_final;
+            const isExam = aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final;
             const v = aula?.versao || 1;
             return isExam && v === versao - 1 && s.status === 'corrigida';
           });
@@ -343,7 +344,7 @@ const Lesson = () => {
           const bookSubs = (rawSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
           const finished = bookSubs.some(s => {
-            const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.is_bloco_final));
+            const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.tipo === 'avaliacao' || ba.is_bloco_final));
             return isEx && s.status === 'corrigida' && ((s.nota || 0) >= 7.0);
           });
           setIsModuleFinished(finished);
@@ -888,7 +889,8 @@ const Lesson = () => {
               if (ref) setActiveReference(ref);
             }
           }}
-          dangerouslySetInnerHTML={{ __html: processedHtml }}
+           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processedHtml) }}
+
         />
       );
     }
@@ -1137,7 +1139,7 @@ const Lesson = () => {
                         // Panorama shows ALL lessons 1-10
                         moduleLessons.length > 0 ? (
                           moduleLessons.map((lsn, lsnIdx) => {
-                            const lessonNum = String(lsn.ordem || (lsnIdx + 1)).padStart(2, '0');
+                             const lessonNum = String(lsnIdx + 1).padStart(2, '0');
                             return (
                               <button
                                 key={lsn.id}
@@ -1302,6 +1304,48 @@ const Lesson = () => {
                {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
              </div>
          )}
+
+        {/* Indicador de Concluída / Botão Marcar como Concluída para lições e materiais */}
+        {(lesson.tipo === 'licao' || lesson.tipo === 'material') && complete && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.75rem',
+              padding: '0.75rem 2rem',
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              borderRadius: '50px',
+              color: 'var(--success)',
+              fontWeight: 700
+            }}>
+              <CheckCircle2 size={20} />
+              Aula Concluída
+            </div>
+          </div>
+        )}
+        {(lesson.tipo === 'licao' || lesson.tipo === 'material') && !complete && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+            <button
+              className="btn btn-primary"
+              onClick={handleMarkAsComplete}
+              disabled={submitting}
+              style={{
+                padding: '1rem 2.5rem',
+                fontSize: '1.05rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                width: 'auto',
+                justifyContent: 'center',
+                borderRadius: '50px',
+                boxShadow: '0 4px 20px rgba(var(--primary-rgb), 0.35)'
+              }}
+            >
+              {submitting ? <Loader2 className="spinner" size={18} /> : <CheckCircle2 size={20} />}
+              Marcar como Concluída
+            </button>
+          </div>
+        )}
 
         {/* Exercício de Fixação - Componente separado */}
         {lesson.tipo === 'exercicio' && questions.length > 0 && (
@@ -1618,23 +1662,23 @@ const Lesson = () => {
 
               {submitted && result && (
                 <div style={{textAlign:'center', marginTop:'2rem', padding:'2rem', background:'var(--glass)', borderRadius:'16px', border: '1px solid var(--glass-border)'}}>
-                  {((lesson?.tipo === 'prova' || lesson?.is_bloco_final) && (existingSubmission?.status !== 'corrigida' && result.pendingReview)) ? (
+                  {((lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao' || lesson?.is_bloco_final) && (existingSubmission?.status !== 'corrigida' && result.pendingReview)) ? (
                     <>
                       <Clock size={48} color="var(--warning)" style={{marginBottom:'1rem'}}/>
                       <h3>Avaliação Enviada!</h3>
-                      <p style={{color:'var(--text-muted)'}}>Sua prova foi enviada para correção. Por favor, aguarde o feedback do professor no seu boletim.</p>
+                      <p style={{color:'var(--text-muted)'}}>Sua avaliação foi enviada para correção. Por favor, aguarde o feedback do professor no seu boletim.</p>
                     </>
                   ) : (
                     <>
-                      {(lesson.tipo === 'prova' || lesson.is_bloco_final) && result.pendingReview ? (
+                      {(lesson.tipo === 'prova' || lesson.tipo === 'avaliacao' || lesson.is_bloco_final) && result.pendingReview ? (
                         <>
                           <Clock size={40} color="var(--warning)" style={{marginBottom:'1rem'}}/>
-                          <h2 style={{ color: 'var(--warning)', fontWeight: 800, marginBottom: '0.5rem' }}>Prova em Correção</h2>
-                          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Sua avaliação foi enviada e será corrigida manualmente pelo professor.</p>
+                          <h2 style={{ color: 'var(--warning)', fontWeight: 800, marginBottom: '0.5rem' }}>Avaliação em Correção</h2>
+                          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Sua avaliação foi enviada e será corrigida pelo professor.</p>
                         </>
                       ) : (
                         <>
-                          {lesson.tipo === 'prova' ? (
+                          {(lesson.tipo === 'prova' || lesson.tipo === 'avaliacao') ? (
                             <>
                               <Award size={40} color="var(--primary)" style={{marginBottom:'1rem'}}/>
                               {lesson.is_bloco_final && result.passed && (

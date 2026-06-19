@@ -653,19 +653,61 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const handleToggleException = async (studentId: string, livroId: string, currentStatus: boolean) => {
     setActionLoading(`toggle_exception_${livroId}`)
     try {
+      const { data: { user } } = await supabase.auth.getUser()
       if (!currentStatus) {
-        const { data: { user } } = await supabase.auth.getUser()
-        await supabase.from('liberacoes_excecao').insert({
+        const { error: modErr } = await supabase.from('liberacoes_excecao').insert({
           user_id: studentId,
           livro_id: livroId,
           granted_by: user?.id
         })
+        if (modErr) throw modErr
+
+        // Also release V1 avaliacao for this module
+        const { data: avaliacoes } = await supabase
+          .from('aulas')
+          .select('id')
+          .eq('livro_id', livroId)
+          .eq('tipo', 'avaliacao')
+          .or('versao.is.null,versao.eq.1')
+
+        if (avaliacoes && avaliacoes.length > 0) {
+          const novosIds = avaliacoes.map(a => a.id)
+          const { error: insErr } = await supabase
+            .from('liberacoes_excecao_atividade')
+            .insert(novosIds.map(aulaId => ({
+              user_id: studentId,
+              aula_id: aulaId,
+              granted_by: user?.id
+            })))
+          if (insErr && insErr.code !== '23505') throw insErr
+          setStudentExamExceptions([...studentExamExceptions, ...novosIds])
+        }
+
         setStudentExceptions([...studentExceptions, livroId])
       } else {
         await supabase.from('liberacoes_excecao').delete().match({
           user_id: studentId,
           livro_id: livroId
         })
+
+        // Also remove V1 avaliacao releases for this module
+        const { data: avaliacoes } = await supabase
+          .from('aulas')
+          .select('id')
+          .eq('livro_id', livroId)
+          .eq('tipo', 'avaliacao')
+          .or('versao.is.null,versao.eq.1')
+
+        if (avaliacoes && avaliacoes.length > 0) {
+          const ids = avaliacoes.map(a => a.id)
+          await supabase
+            .from('liberacoes_excecao_atividade')
+            .delete()
+            .eq('user_id', studentId)
+            .in('aula_id', ids)
+          setStudentExamExceptions(studentExamExceptions.filter(id => !ids.includes(id)))
+        }
+
         setStudentExceptions(studentExceptions.filter(id => id !== livroId))
       }
     } catch (err: any) {

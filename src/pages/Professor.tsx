@@ -30,6 +30,7 @@ import AcademicHistory from '../features/admin/components/AcademicHistory'
 import AlumniManagement from '../features/users/components/AlumniManagement'
 import DocumentAnalysis from '../features/admin/components/DocumentAnalysis'
 import ForumPanel from '../features/forum/components/ForumPanel'
+import BoletimPanel from '../features/professor/components/BoletimPanel'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import PageHeader from '../components/layout/PageHeader'
@@ -85,7 +86,8 @@ const Professor = () => {
     handleSaveAttendance,
     academicReport,
     handleUpdateUserType,
-    handleGrantModuleException
+    handleGrantModuleException,
+    fetchData
   } = useProfessorManagement();
 
   const navigate = useNavigate()
@@ -249,6 +251,13 @@ const Professor = () => {
                       <h3>Módulos e Lições</h3>
                       <p>Estrutura pedagógica de matérias e atividades.</p>
                     </div>
+
+                    <div className="admin-action-card" onClick={() => setActiveTab('boletim')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Conteúdo</span>
+                      <div className="icon-wrapper"><GraduationCap size={32} /></div>
+                      <h3>Boletim</h3>
+                      <p>Notas dos alunos por módulo com edição inline.</p>
+                    </div>
  
                     <div className="admin-action-card" onClick={() => setActiveTab('materiais')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
                       <span className="category-badge">Conteúdo</span>
@@ -366,7 +375,17 @@ const Professor = () => {
               />
            )}
 
-          {activeTab === 'grading' && (
+            {activeTab === 'boletim' && (
+              <BoletimPanel
+                courses={courses}
+                submissions={submissions}
+                allStudents={allStudents}
+                professorNucleos={professorNucleos}
+                onRefresh={fetchData}
+              />
+            )}
+
+            {activeTab === 'grading' && (
               <GradingPanel 
                 courses={courses}
                 submissions={submissions}

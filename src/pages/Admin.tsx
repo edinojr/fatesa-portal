@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { 
   Users, 
@@ -24,7 +24,8 @@ import {
   ExternalLink,
   ArrowLeft,
   Search,
-  ChevronDown
+  ChevronDown,
+  ClipboardList
 } from 'lucide-react'
 
 // Features Components
@@ -38,6 +39,7 @@ import FinanceReport from '../features/finance/components/FinanceReport'
 import AcademicHistory from '../features/admin/components/AcademicHistory'
 import GradeHistoryInsertion from '../features/admin/components/GradeHistoryInsertion'
 import DocsArchive from '../features/admin/components/DocsArchive'
+import BoletimPanel from '../features/professor/components/BoletimPanel'
 
 // Icons and UI
 import { Folder } from 'lucide-react'
@@ -184,11 +186,38 @@ const Admin = () => {
     updateParams
   } = useAdminManagement()
 
+  const [boletimSubmissions, setBoletimSubmissions] = useState<any[]>([])
   const [addingLessonType, setAddingLessonType] = useState('')
   const [addingBloco, setAddingBloco] = useState<number | null>(null)
   const [editingLessonContent, setEditingLessonContent] = useState<any>(null)
   const [lessonBlocks, setLessonBlocks] = useState<any[]>([])
   const [lessonMaterials, setLessonMaterials] = useState<any[]>([])
+
+  const fetchBoletimSubmissions = useCallback(async () => {
+    const { data: subDataRaw } = await supabase
+      .from('respostas_aulas')
+      .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+      .order('created_at', { ascending: false })
+    if (!subDataRaw) return
+    const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)))
+    const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)))
+    const [aulasRes, usersRes] = await Promise.all([
+      aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
+      alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
+    ])
+    const aulasMap = (aulasRes.data || []).reduce((acc: any, a: any) => { acc[a.id] = a; return acc }, {} as any)
+    const usersMap = (usersRes.data || []).reduce((acc: any, u: any) => { acc[u.id] = u; return acc }, {} as any)
+    const mapped = (subDataRaw || []).map((r: any) => {
+      const aula = aulasMap[r.aula_id]
+      const user = usersMap[r.aluno_id]
+      return { ...r, submission_id: r.id, student_id: r.aluno_id, lesson_id: r.aula_id, lesson_title: aula?.titulo, lesson_type: aula?.tipo, questionario: aula?.questionario, min_grade: aula?.min_grade, versao: aula?.versao, aulas: aula, student_name: user?.nome, student_email: user?.email, nucleus_id: user?.nucleos?.id, nucleus_name: user?.nucleos?.nome || 'Sem Polo', book_id: aula?.livro_id?.id, book_title: aula?.livro_id?.titulo || 'Módulo Geral', submitted_at: r.created_at }
+    }).filter((s: any) => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao')
+    setBoletimSubmissions(mapped)
+  }, [])
+
+  useEffect(() => {
+    if (activeTab === 'boletim') fetchBoletimSubmissions()
+  }, [activeTab, fetchBoletimSubmissions])
   const [pixKey, setPixKey] = useState('')
   const [pixQrUrl, setPixQrUrl] = useState('')
 
@@ -227,6 +256,7 @@ const Admin = () => {
       case 'reports': return 'Relatório de Pagamentos';
       case 'grade_history': return 'Histórico de Notas';
       case 'docs_archive': return 'Arquivo de Documentação';
+      case 'boletim': return 'Boletim de Notas';
       default: return 'Validação de Acesso';
     }
   }
@@ -245,6 +275,7 @@ const Admin = () => {
       case 'reports': return 'Lista de alunos que enviaram comprovantes pelo portal.';
       case 'grade_history': return 'Insira e gerencie notas de módulos concluídos pelos alunos.';
       case 'docs_archive': return 'Central de arquivos organizada por polo e status.';
+      case 'boletim': return 'Visualize e edite notas de provas e avaliações de todos os alunos.';
       default: return 'Verifique envios dos alunos.';
     }
   }
@@ -450,6 +481,12 @@ const Admin = () => {
                     <p>Central de arquivos organizada por polo e status.</p>
                   </div>
 
+                  <div className="admin-action-card" onClick={() => setActiveTab('boletim')} style={{ border: '1px solid rgba(var(--primary-rgb), 0.3)', background: 'rgba(var(--primary-rgb), 0.02)' }}>
+                    <div className="icon-wrapper"><GraduationCap size={32} /></div>
+                    <h3>Boletim de Notas</h3>
+                    <p>Visualize e edite notas de todos os alunos em todos os módulos.</p>
+                  </div>
+
                   <div className="admin-action-card" onClick={() => setActiveTab('grade_history')}>
                     <div className="icon-wrapper"><GraduationCap size={32} /></div>
                     <h3>Histórico de Notas</h3>
@@ -497,6 +534,7 @@ const Admin = () => {
             searchTerm={searchTerm}
             actionLoading={actionLoading}
             handleUpdateProfessorNucleo={handleUpdateUserNucleo}
+            onDelete={(professorId) => setConfirmDelete({ type: 'user', id: professorId, title: 'Tem certeza que deseja excluir este professor?' })}
           />
         )}
 
@@ -621,11 +659,56 @@ const Admin = () => {
         )}
 
           {activeTab === 'academic' && (
-          <AcademicHistory 
-            data={academicReport} 
-            searchTerm={searchTerm} 
-            onDelete={handleDeleteSubmission}
-            onUpdateStatus={handleTypeChange}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              {/* Cabeçalho */}
+              <div style={{ padding: '1.5rem 2rem', background: 'linear-gradient(135deg, rgba(168,85,247,0.12) 0%, rgba(168,85,247,0.02) 100%)', borderRadius: '20px', border: '1px solid rgba(168,85,247,0.2)' }}>
+                <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.5rem' }}>
+                  <History size={28} color="var(--primary)" /> Controle Acadêmico
+                </h2>
+                <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  Boletim completo e inserção manual de notas para alunos com progresso iniciado no formato analógico.
+                </p>
+              </div>
+
+              {/* Seção 1: Boletim de Notas */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+                <div style={{ padding: '1rem 1.5rem', background: 'rgba(var(--primary-rgb), 0.04)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <GraduationCap size={20} color="var(--primary)" />
+                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Boletim de Notas</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '2px 10px', borderRadius: '6px' }}>EDIÇÃO INLINE</span>
+                </div>
+                <div style={{ padding: '1rem' }}>
+                  <BoletimPanel
+                    courses={courses}
+                    submissions={boletimSubmissions}
+                    allStudents={users}
+                    professorNucleos={allNucleos}
+                    onRefresh={fetchBoletimSubmissions}
+                  />
+                </div>
+              </div>
+
+              {/* Seção 2: Inserção Manual de Histórico */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+                <div style={{ padding: '1rem 1.5rem', background: 'rgba(245,158,11,0.06)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <FileText size={20} color="#f59e0b" />
+                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Inserir Notas do Processo Manual (Analógico)</span>
+                  <span style={{ fontSize: '0.7rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', padding: '2px 10px', borderRadius: '6px' }}>HISTÓRICO</span>
+                </div>
+                <div style={{ padding: '1.5rem' }}>
+                  <GradeHistoryInsertion onRefresh={fetchBoletimSubmissions} />
+                </div>
+              </div>
+            </div>
+          )}
+
+        {activeTab === 'boletim' && (
+          <BoletimPanel
+            courses={courses}
+            submissions={boletimSubmissions}
+            allStudents={users}
+            professorNucleos={allNucleos}
+            onRefresh={fetchBoletimSubmissions}
           />
         )}
 

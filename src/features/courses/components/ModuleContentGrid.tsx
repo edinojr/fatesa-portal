@@ -78,7 +78,7 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
       if (passedAny) return true;
       const didPrevious = moduleSubs.some((s: any) => {
         const aula = s.aulas;
-        return (aula?.tipo === 'prova' || aula?.is_bloco_final) && (aula?.versao || 1) === versao - 1 && s.status === 'corrigida';
+        return (aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final) && (aula?.versao || 1) === versao - 1 && s.status === 'corrigida';
       });
       if (didPrevious) return false;
     }

@@ -157,7 +157,10 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
         return String(r) === String(q.correct);
       case 'matching':
         if (!q.matchingPairs) return false;
-        return q.matchingPairs.every((_, mIdx) => String(r?.[mIdx]) === String(mIdx));
+        return q.matchingPairs.every((pair, mIdx) => {
+          const selectedIndex = Number(r?.[mIdx]);
+          return !isNaN(selectedIndex) && selectedIndex === mIdx;
+        });
       case 'discursive':
         return false; // Discursive is always manual review
       default:
@@ -470,10 +473,7 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
     if (!q.matchingPairs) return null;
 
     // Create shuffled options for column B
-    const shuffledOptions = useMemo(() => {
-      const options = q.matchingPairs!.map(p => p.right);
-      return [...options].sort(() => Math.random() - 0.5);
-    }, [q.matchingPairs]);
+    const shuffledOptions = shuffledMatchingOptions[q.id] || [];
 
     return (
       <div
@@ -708,6 +708,16 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
       matching: questions.filter(q => q.type === 'matching')
     };
     return groups;
+  }, [questions]);
+  
+  const shuffledMatchingOptions = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    questions.forEach(q => {
+      if (q.type === 'matching' && q.matchingPairs) {
+        map[q.id] = [...q.matchingPairs.map(p => p.right)].sort(() => Math.random() - 0.5);
+      }
+    });
+    return map;
   }, [questions]);
 
   // Calculate global index for each question

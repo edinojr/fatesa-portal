@@ -100,7 +100,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         aula_id: lessonId,
         respostas: respostasAluno,
         nota: stats.grade,
-        status: 'corrigida',
+        status: 'pendente',
         updated_at: new Date().toISOString()
       };
       console.log('[AvaliacaoFixacao] Dados para upsert:', upsertData);
@@ -177,9 +177,13 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         return r === q.isTrue;
       case 'multiple_choice':
         return String(r) === String(q.correct);
-      case 'matching':
-        if (!q.matchingPairs) return false;
-        return q.matchingPairs.every((_, mIdx) => String(r?.[mIdx]) === String(mIdx));
+       case 'matching':
+         if (!q.matchingPairs) return false;
+         return q.matchingPairs.every((pair, mIdx) => {
+           const selectedIndex = Number(r?.[mIdx]);
+           return !isNaN(selectedIndex) && selectedIndex === mIdx;
+         });
+
       default:
         return false;
     }
@@ -218,8 +222,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   const renderTrueFalse = (q: QuizQuestion, idx: number) => {
     const qKey = q.id;
     const studentAns = respostasAluno[qKey];
-    const showResult = exercicioFinalizado && mode === 'student';
-    const correct = showResult ? isCorrect(q, qKey) : null;
+    const showResult = false;
+    const correct = null;
 
     return (
       <div
@@ -228,9 +232,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
           padding: '1.5rem',
           background: 'rgba(255,255,255,0.02)',
           borderRadius: '12px',
-          border: showResult
-            ? `2px solid ${correct ? 'var(--success)' : 'var(--error)'}`
-            : '1px solid var(--glass-border)',
+          border: '1px solid var(--glass-border)',
           marginBottom: '1rem'
         }}
       >
@@ -328,19 +330,19 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             Falso
           </label>
         </div>
-        {showResult && (
+        {exercicioFinalizado && mode === 'student' && (
           <div style={{
             marginTop: '1rem',
             padding: '0.75rem',
             borderRadius: '8px',
-            background: correct ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-            color: correct ? 'var(--success)' : 'var(--error)',
+            background: 'rgba(234, 179, 8, 0.1)',
+            color: 'var(--warning)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem'
           }}>
-            {correct ? <CheckCircle size={18} /> : <XCircle size={18} />}
-            Resposta correta: <strong>{q.isTrue ? 'Verdadeiro' : 'Falso'}</strong>
+            <Clock size={18} />
+            Aguardando correção do professor
           </div>
         )}
       </div>
@@ -351,8 +353,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   const renderMultipleChoice = (q: QuizQuestion, idx: number) => {
     const qKey = q.id;
     const studentAns = respostasAluno[qKey];
-    const showResult = exercicioFinalizado && mode === 'student';
-    const correct = showResult ? isCorrect(q, qKey) : null;
+    const showResult = false;
+    const correct = null;
 
     return (
       <div
@@ -435,7 +437,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                   fontWeight: 700,
                   flexShrink: 0
                 }}>
-                  {isSelected && (showResult ? (correct ? '✓' : '✗') : '●')}
+                  {isSelected && '●'}
                   {isCorrectOption && !isSelected && '✓'}
                 </span>
                 <span>{option}</span>
@@ -443,19 +445,19 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             );
           })}
         </div>
-        {showResult && !correct && (
+        {exercicioFinalizado && mode === 'student' && (
           <div style={{
             marginTop: '1rem',
             padding: '0.75rem',
             borderRadius: '8px',
-            background: 'rgba(239, 68, 68, 0.1)',
-            color: 'var(--error)',
+            background: 'rgba(234, 179, 8, 0.1)',
+            color: 'var(--warning)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem'
           }}>
-            <XCircle size={18} />
-            Resposta correta: <strong>{q.options?.[q.correct ?? 0]}</strong>
+            <Clock size={18} />
+            Aguardando correção do professor
           </div>
         )}
       </div>
@@ -466,15 +468,12 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   const renderMatching = (q: QuizQuestion, idx: number) => {
     const qKey = q.id;
     const studentAns = respostasAluno[qKey] || {};
-    const showResult = exercicioFinalizado && mode === 'student';
+    const showResult = false;
 
     if (!q.matchingPairs) return null;
 
     // Create shuffled options for column B
-    const shuffledOptions = useMemo(() => {
-      const options = q.matchingPairs!.map(p => p.right);
-      return [...options].sort(() => Math.random() - 0.5);
-    }, [q.matchingPairs]);
+    const shuffledOptions = shuffledMatchingOptions[q.id] || [];
 
     return (
       <div
@@ -590,6 +589,21 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             })}
           </div>
         </div>
+        {exercicioFinalizado && mode === 'student' && (
+          <div style={{
+            marginTop: '1rem',
+            padding: '0.75rem',
+            borderRadius: '8px',
+            background: 'rgba(234, 179, 8, 0.1)',
+            color: 'var(--warning)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            <Clock size={18} />
+            Aguardando correção do professor
+          </div>
+        )}
       </div>
     );
   };
@@ -705,6 +719,16 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     };
     return groups;
   }, [questions]);
+  
+  const shuffledMatchingOptions = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    questions.forEach(q => {
+      if (q.type === 'matching' && q.matchingPairs) {
+        map[q.id] = [...q.matchingPairs.map(p => p.right)].sort(() => Math.random() - 0.5);
+      }
+    });
+    return map;
+  }, [questions]);
 
   // Calculate global index for each question
   const getGlobalIndex = (q: QuizQuestion): number => {
@@ -804,16 +828,16 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             gap: '1rem',
             padding: '1rem',
             borderRadius: '8px',
-            background: stats.passed ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-            border: `1px solid ${stats.passed ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
+            background: 'rgba(234, 179, 8, 0.1)',
+            border: '1px solid rgba(234, 179, 8, 0.3)'
           }}>
-            {stats.passed ? <CheckCircle size={24} color="var(--success)" /> : <XCircle size={24} color="var(--error)" />}
+            <Clock size={24} color="var(--warning)" />
             <div>
-              <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: '1.25rem' }}>
-                Nota: {stats.grade.toFixed(1)}
+              <div style={{ fontWeight: 700, color: 'var(--warning)', fontSize: '1.25rem' }}>
+                Avaliação Enviada!
               </div>
-              <div style={{ fontSize: '0.85rem', color: stats.passed ? 'var(--success)' : 'var(--error)' }}>
-                {stats.passed ? 'Aprovado' : 'Reprovado'} (mínimo: {minGrade})
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                Aguardando revisão do professor. A nota será divulgada no boletim assim que corrigida.
               </div>
             </div>
           </div>

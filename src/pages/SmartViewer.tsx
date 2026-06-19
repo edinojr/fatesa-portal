@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useProfile } from '../hooks/useProfile';
+import DOMPurify from 'dompurify';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -529,7 +530,8 @@ const SmartViewer = () => {
                   overflow: 'auto',
                   transition: 'all 0.3s ease'
                 }}
-                dangerouslySetInnerHTML={{ __html: htmlContent }}
+                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(htmlContent) }}
+
               />
             </div>
           ) : viewMode === 'pdf' && pdfUrl ? (

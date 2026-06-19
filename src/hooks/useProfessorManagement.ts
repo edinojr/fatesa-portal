@@ -64,7 +64,7 @@ export const useProfessorManagement = () => {
           const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
 
           const [aulasRes, usersRes] = await Promise.all([
-            aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
+            aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
             alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
           ]);
 
@@ -81,6 +81,10 @@ export const useProfessorManagement = () => {
               lesson_id: r.aula_id,
               lesson_title: aula?.titulo,
               lesson_type: aula?.tipo,
+              questionario: aula?.questionario,
+              min_grade: aula?.min_grade,
+              versao: aula?.versao,
+              aulas: aula,
               student_name: user?.nome,
               student_email: user?.email,
               nucleus_id: user?.nucleos?.id,
@@ -89,7 +93,7 @@ export const useProfessorManagement = () => {
               book_title: aula?.livro_id?.titulo || 'Módulo Geral',
               submitted_at: r.created_at,
             };
-          }).filter(s => s.lesson_type === 'prova');
+          }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
           
           if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
         }
@@ -118,7 +122,7 @@ export const useProfessorManagement = () => {
                 const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
 
                 const [aulasRes, usersRes] = await Promise.all([
-                  aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
+                  aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
                   alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
                 ]);
 
@@ -135,6 +139,10 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
                     lesson_id: r.aula_id,
                     lesson_title: aula?.titulo,
                     lesson_type: aula?.tipo,
+                    questionario: aula?.questionario,
+                    min_grade: aula?.min_grade,
+                    versao: aula?.versao,
+                    aulas: aula,
                     student_name: user?.nome,
                     student_email: user?.email,
                     nucleus_id: user?.nucleos?.id,
@@ -143,7 +151,7 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
                     book_title: aula?.livro_id?.titulo || 'Módulo Geral',
                     submitted_at: r.created_at,
                   };
-                }).filter(s => s.lesson_type === 'prova');
+                }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
                 
                 if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
               }

@@ -43,26 +43,26 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       const gradedSubs = examSubmissions.filter(s => s.status === 'corrigida' && s.nota !== undefined && s.nota !== null);
       
       if (gradedSubs.length > 0) {
-        // Encontrar a submissão com a maior versão
-        const subsWithVersion = gradedSubs.map(sub => {
+        // Encontrar a submissão com a maior nota (não a maior versão)
+        const subsWithGrade = gradedSubs.map(sub => {
           const exam = finalExams.find((ex: any) => ex.id === getSubAulaId(sub));
           return {
             sub,
             exam,
+            nota: sub.nota || 0,
             versao: exam?.versao || 1,
             minGrade: exam?.min_grade || 7.0
           };
         });
 
-        // Ordenar por versão (descendente)
-        subsWithVersion.sort((a, b) => b.versao - a.versao);
+        // Usar a maior nota para determinar aprovação
+        const bestAttempt = subsWithGrade.reduce((best, curr) =>
+          curr.nota > best.nota ? curr : best
+        );
         
-        // A avaliação que conta é a de maior versão que o aluno fez
-        const latestAttempt = subsWithVersion[0];
-        
-        if (latestAttempt) {
-          examGrade = latestAttempt.sub.nota || 0;
-          isApproved = examGrade >= latestAttempt.minGrade;
+        if (bestAttempt) {
+          examGrade = bestAttempt.nota;
+          isApproved = examGrade >= bestAttempt.minGrade;
         }
       }
 

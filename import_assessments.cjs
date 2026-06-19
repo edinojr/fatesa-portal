@@ -258,6 +258,9 @@ async function main() {
         const questions = convertAssessmentToQuizQuestions(assessment);
         const bookTitle = extractBookName(assessment.title);
         
+        // Map version to numeric value
+        const versaoNum = assessment.title.includes('V1') ? 1 : assessment.title.includes('V2') ? 2 : assessment.title.includes('V3') ? 3 : 1;
+
         // Create aula record with proper name
         const aulaRecord = {
           livro_id: bookId,
@@ -265,7 +268,8 @@ async function main() {
           tipo: 'avaliacao',
           ordem: versionToOrdem[version] || 1000,
           questionario: questions,
-          min_grade: 7.0
+          min_grade: 7.0,
+          versao: versaoNum
         };
 
         const { error: insertError } = await supabase

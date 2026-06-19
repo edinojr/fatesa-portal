@@ -146,6 +146,24 @@ export const useProfessorStudents = () => {
         }
         throw error;
       }
+
+      // Also release V1 avaliacao for this module
+      const { data: avaliacoes } = await supabase
+        .from('aulas')
+        .select('id')
+        .eq('livro_id', bookId)
+        .eq('tipo', 'avaliacao')
+        .or('versao.is.null,versao.eq.1');
+
+      if (avaliacoes && avaliacoes.length > 0) {
+        await supabase
+          .from('liberacoes_excecao_atividade')
+          .insert(avaliacoes.map(a => ({
+            user_id: userId,
+            aula_id: a.id
+          })));
+      }
+
       alert('Módulo liberado com sucesso!');
       if (onSuccess) onSuccess();
     } catch (err: any) {

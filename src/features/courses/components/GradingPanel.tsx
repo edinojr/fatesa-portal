@@ -124,7 +124,9 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
             {(() => {
               const allExamsStats = submissions.filter(s => 
                 (s as any).lesson_type === 'prova' || 
+                (s as any).lesson_type === 'avaliacao' || 
                 (s as any).aulas?.tipo === 'prova' || 
+                (s as any).aulas?.tipo === 'avaliacao' || 
                 (s as any).is_bloco_final === true || 
                 (s as any).aulas?.is_bloco_final === true
               );
@@ -221,7 +223,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {(() => {
               const filteredSubmissions = submissions.filter(s => {
-                const isProva = (s as any).lesson_type === 'prova' || (s as any).aulas?.tipo === 'prova' || (s as any).is_bloco_final === true || (s as any).aulas?.is_bloco_final === true;
+                const isProva = (s as any).lesson_type === 'prova' || (s as any).lesson_type === 'avaliacao' || (s as any).aulas?.tipo === 'prova' || (s as any).aulas?.tipo === 'avaliacao' || (s as any).is_bloco_final === true || (s as any).aulas?.is_bloco_final === true;
                 if (!isProva) return false;
 
                 if (selectedNucleoFilter !== 'todos') {

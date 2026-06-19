@@ -100,6 +100,14 @@ const CourseList: React.FC<CourseListProps> = ({
               </div>
               <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)', minWidth: '35px' }}>{stats.percent}%</span>
             </div>
+            {stats.hasExam && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', padding: '0.4rem 0.6rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
+                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota da Prova</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: stats.isApproved ? 'var(--success)' : '#eab308' }}>
+                  {stats.examGrade != null ? stats.examGrade.toFixed(1) : '—'}
+                </span>
+              </div>
+            )}
           </div>
         </BaseCard>
 

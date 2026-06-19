@@ -294,12 +294,10 @@ export const useStudentCourses = (profile: any) => {
                 let isApproved = false;
                 if (examSubs.length > 0) {
                   const highestExam = examSubs.reduce((prev: any, current: any) => {
-                    const prevAula = (l.aulas || []).find((pa: any) => pa.id === prev.lesson_id);
-                    const currAula = (l.aulas || []).find((pa: any) => pa.id === current.lesson_id);
-                    const prevV = prevAula?.versao || 1;
-                    const currV = currAula?.versao || 1;
-                    if (currV > prevV) return current;
-                    if (currV < prevV) return prev;
+                    const prevGrade = prev.nota || 0;
+                    const currGrade = current.nota || 0;
+                    if (currGrade > prevGrade) return current;
+                    if (currGrade < prevGrade) return prev;
                     return new Date(current.created_at || 0).getTime() > new Date(prev.created_at || 0).getTime() ? current : prev;
                   });
                   const highestAula = (l.aulas || []).find((pa: any) => pa.id === highestExam.lesson_id);
@@ -351,8 +349,8 @@ export const useStudentCourses = (profile: any) => {
                    })
                    .map((a: any) => {
                      if (isStaff) return { ...a, lockedByProfessor: false };
-                     const matchesNucleo = isStaff || !a.nucleo_id || !profile?.nucleo_id || a.nucleo_id === profile?.nucleo_id;
-                     if (!matchesNucleo) return { ...a, isHidden: true };
+                      const matchesNucleo = isStaff || !a.nucleo_id || !profile?.nucleo_id || a.nucleo_id === profile?.nucleo_id || a.tipo === 'licao';
+                      if (!matchesNucleo) return { ...a, isHidden: true };
 
                       let lockedByProfessor = false;
                       const displayTitle = a.titulo || '';

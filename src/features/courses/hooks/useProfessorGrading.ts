@@ -37,7 +37,7 @@ export const useProfessorGrading = () => {
 
         const [aulasRes, usersRes] = await Promise.all([
           aulaIds.length > 0 
-            ? supabase.from('aulas').select('id, titulo, tipo, questionario, livro_id(id, titulo)').in('id', aulaIds)
+            ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)').in('id', aulaIds)
             : Promise.resolve({ data: [] }),
           alunoIds.length > 0 
             ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds)
@@ -57,13 +57,17 @@ export const useProfessorGrading = () => {
             lesson_id: r.aula_id,
             lesson_title: aula?.titulo,
             lesson_type: aula?.tipo,
+            questionario: aula?.questionario,
+            min_grade: aula?.min_grade,
+            versao: aula?.versao,
+            aulas: aula,
             student_name: user?.nome,
             student_email: user?.email,
             nucleus_id: user?.nucleos?.id,
             nucleus_name: user?.nucleos?.nome || 'Sem Polo',
             submitted_at: r.created_at,
           };
-        }).filter((s: any) => s.lesson_type === 'prova');
+        }).filter((s: any) => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
 
         if (mapped) setSortedSubmissions(mapped);
       } catch (err) {

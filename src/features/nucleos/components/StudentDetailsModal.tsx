@@ -101,7 +101,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {courseSubmissions
                 .filter(sub => 
-                  (sub.aulas?.tipo === 'prova' || sub.aulas?.is_bloco_final) && 
+                  (sub.aulas?.tipo === 'prova' || sub.aulas?.tipo === 'avaliacao' || sub.aulas?.is_bloco_final) && 
                   (sub.status === 'liberado' || sub.status === 'pendente') &&
                   (!sub.respostas || Object.keys(sub.respostas || {}).length === 0)
                 )
@@ -109,7 +109,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                   <div key={sub.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px' }}>
                     <div style={{ flex: 1 }}>
                       <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--error)' }}>
-                        ⚠ {sub.aulas?.titulo || 'Prova'}
+                        ⚠ {sub.aulas?.titulo || 'Avaliação'}
                       </span>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>
                         (Status: {sub.status} - Sem respostas)
@@ -126,7 +126,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                         border: 'none'
                       }}
                       onClick={() => {
-                        if (window.confirm(`Deseja remover esta submissão indevida de "${sub.aulas?.titulo}"? O aluno poderá refazer a prova.`)) {
+                        if (window.confirm(`Deseja remover esta submissão indevida de "${sub.aulas?.titulo}"? O aluno poderá refazer a avaliação.`)) {
                           handleDeleteSubmission(sub.id);
                         }
                       }}
@@ -137,7 +137,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                   </div>
                 ))}
               {courseSubmissions.filter(sub => 
-                (sub.aulas?.tipo === 'prova' || sub.aulas?.is_bloco_final) && 
+                (sub.aulas?.tipo === 'prova' || sub.aulas?.tipo === 'avaliacao' || sub.aulas?.is_bloco_final) && 
                 (sub.status === 'liberado' || sub.status === 'pendente') &&
                 (!sub.respostas || Object.keys(sub.respostas || {}).length === 0)
               ).length === 0 && (

@@ -7,9 +7,10 @@ interface ProfessorsManagementProps {
   searchTerm: string
   actionLoading: string | null
   handleUpdateProfessorNucleo: (professorId: string, nucleoId: string) => Promise<void>
+  onDelete?: (professorId: string) => void
 }
 
-const ProfessorsManagement: React.FC<ProfessorsManagementProps> = ({ professors, allNucleos, searchTerm, actionLoading, handleUpdateProfessorNucleo }) => {
+const ProfessorsManagement: React.FC<ProfessorsManagementProps> = ({ professors, allNucleos, searchTerm, actionLoading, handleUpdateProfessorNucleo, onDelete }) => {
   const filteredProfessors = professors.filter(p => 
     p.nome?.toLowerCase().includes(searchTerm.toLowerCase()) || 
     p.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -74,6 +75,11 @@ const ProfessorsManagement: React.FC<ProfessorsManagementProps> = ({ professors,
                     cursor: 'pointer'
                   }}
                   title="Excluir Professor"
+                  onClick={() => {
+                    if (window.confirm(`Tem certeza que deseja excluir o professor "${professor.nome}"? Esta ação não pode ser desfeita.`)) {
+                      onDelete?.(professor.id)
+                    }
+                  }}
                 >
                   <Trash2 size={16} />
                   Excluir

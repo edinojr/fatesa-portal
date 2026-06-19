@@ -13,10 +13,7 @@ export function processHtmlForNav(html: string): { processedHtml: string; toc: N
   const toc: NavItem[] = [];
   let idCounter = 0;
 
-  const romanNumeralPattern = /^([IVXLCDM]+\.\s+)(.*)/i;
-  const arabicNumeralPattern = /^(\d+\.\s+)(.*)/i;
   const textoRomanPattern = /^Texto\s+([IVXLCDM]+)(\.\s+)?(.*)/i;
-  const textoArabicPattern = /^Texto\s+(\d+)(\.\s+)?(.*)/i;
 
   // Use DOMParser for reliable HTML manipulation
   const parser = new DOMParser();
@@ -26,10 +23,7 @@ export function processHtmlForNav(html: string): { processedHtml: string; toc: N
   const headers = doc.querySelectorAll('h1, h2, h3, h4');
   headers.forEach((header) => {
     const text = header.textContent?.trim() || '';
-    const isMain = romanNumeralPattern.test(text) || 
-                   arabicNumeralPattern.test(text) || 
-                   textoRomanPattern.test(text) || 
-                   textoArabicPattern.test(text);
+    if (!textoRomanPattern.test(text)) return;
     
     const id = `nav-${idCounter++}`;
     header.setAttribute('id', id);
@@ -37,32 +31,36 @@ export function processHtmlForNav(html: string): { processedHtml: string; toc: N
       id,
       label: text,
       level: parseInt(header.tagName[1]),
-      isMainSection: isMain,
+      isMainSection: true,
     });
   });
-
-  // 2. Find paragraphs and divs that start with numerals (and aren't already processed as headers)
+  
+  // 2. Find paragraphs and divs that match the pattern
   const blocks = doc.querySelectorAll('p, div');
   blocks.forEach((block) => {
     const textContent = block.textContent?.trim() || '';
+    if (!textoRomanPattern.test(textContent)) return;
     
-    if (romanNumeralPattern.test(textContent) || 
-        arabicNumeralPattern.test(textContent) || 
-        textoRomanPattern.test(textContent) || 
-        textoArabicPattern.test(textContent)) {
-      
-      // Avoid adding if it's a wrapper for a header we already added
-      if (block.querySelector('h1, h2, h3, h4')) return;
+    // Avoid adding if it's a wrapper for a header we already added
+    if (block.querySelector('h1, h2, h3, h4')) return;
 
-      const id = `nav-${idCounter++}`;
-      block.setAttribute('id', id);
-      toc.push({
-        id,
-        label: textContent,
-        level: 2,
-        isMainSection: true,
-      });
+    // CRITICAL: Avoid adding if this is a wrapper for another matching block (p or div)
+    // This prevents the "Double Text" effect where a div captures its children's text
+    const children = block.querySelectorAll('p, div');
+    for (const child of children) {
+      if (textoRomanPattern.test(child.textContent?.trim() || '')) {
+        return; // Skip this parent block
+      }
     }
+
+    const id = `nav-${idCounter++}`;
+    block.setAttribute('id', id);
+    toc.push({
+      id,
+      label: textContent,
+      level: 2,
+      isMainSection: true,
+    });
   });
 
   // 2.5 Remove Esboço da Lição and Bibliografia
@@ -147,25 +145,46 @@ export function processHtmlForNav(html: string): { processedHtml: string; toc: N
     }
   }
 
-  // 5. Re-evaluate TOC to remove deleted items and deduplicate labels
-  const seenLabels = new Set<string>();
-  const finalToc = toc.filter(item => {
-    const el = doc.getElementById(item.id);
-    if (!el || !doc.body.contains(el)) return false;
-    
-    // Normalize label by removing numeral prefixes to catch logical duplicates
-    // (e.g., "I. Introdução" vs "Texto I - Introdução")
-    const normalized = item.label
-      .replace(/^Texto\s+[IVXLCDM\d]+(\.\s+)?[-–]?\s*/i, '')
-      .replace(/^[IVXLCDM\d]+\.\s+/i, '')
-      .replace(/\s+/g, ' ')
-      .toLowerCase()
-      .trim();
+    // 5. Re-evaluate TOC to remove deleted items and deduplicate labels
+    const seenLabels = new Set<string>();
+    const finalToc = toc.filter(item => {
+      const el = doc.getElementById(item.id);
+      if (!el || !doc.body.contains(el)) return false;
+      
+      const label = item.label.trim();
+      if (!label) return false;
 
-    if (seenLabels.has(normalized)) return false;
-    seenLabels.add(normalized);
-    return true;
-  });
+      // Normalize label: remove numeral prefixes, collapse whitespace, lowercase
+      const normalized = label
+        .replace(/^Texto\s+[IVXLCDM\d]+(\.\s+)?[-–]?\s*/i, '')
+        .replace(/^[IVXLCDM\d]+\.\s+/i, '')
+        .replace(/\s+/g, ' ')
+        .toLowerCase()
+        .trim();
+
+      if (!normalized) return true;
+
+      // 1. Direct Duplicate Check (Exact normalized match)
+      if (seenLabels.has(normalized)) return false;
+
+      // 2. "Corrupted" Duplicate Check (e.g., "Title Title")
+      // If the original label contains the normalized text twice, it's a duplication error
+      const lowerLabel = label.toLowerCase();
+      const occurrences = lowerLabel.split(normalized).length - 1;
+      if (occurrences > 1) return false;
+
+      // 3. Containment Check (Fuzzy duplicate)
+      // If this label is a significant subset of an already seen label, or vice-versa
+      for (const seen of seenLabels) {
+        if ((normalized.length > 10 && seen.includes(normalized)) || 
+            (normalized.length > 10 && normalized.includes(seen))) {
+          return false;
+        }
+      }
+
+      seenLabels.add(normalized);
+      return true;
+    });
 
   return { 
     processedHtml: styles + '\n' + bodyHtml, 

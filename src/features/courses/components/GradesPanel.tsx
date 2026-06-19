@@ -12,6 +12,7 @@ interface GradesPanelProps {
   handleChangeNucleo: (id: string) => void
   atividades: any[]
   courses: any[]
+  historyGrades?: any[]
 }
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -292,7 +293,7 @@ function FormativeCard({ f }: { f: any }) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
-const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, handleChangeNucleo, atividades, courses }) => {
+const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, handleChangeNucleo, atividades, courses, historyGrades = [] }) => {
   const navigate = useNavigate()
   const [expandedModule, setExpandedModule] = useState<string | null>(null)
 
@@ -329,7 +330,7 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
         {modules.map(m => {
           const isExpanded = expandedModule === m.id
           const formative = m.items.filter(i => (i.lesson_type || i.aulas?.tipo) === 'atividade')
-          const examSubs = m.items.filter(i => (i.lesson_type || i.aulas?.tipo) === 'prova' || !!i.is_bloco_final)
+          const examSubs = m.items.filter(i => (i.lesson_type || i.aulas?.tipo) === 'prova' || (i.lesson_type || i.aulas?.tipo) === 'avaliacao' || !!i.is_bloco_final)
           const approved = examSubs.find(s => s.status === 'corrigida' && s.nota && s.nota >= 7)
 
           const libro = (courses || []).flatMap((c: any) => c.livros || []).find((l: any) => l.id === m.id)
@@ -397,10 +398,10 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
 
                     {(() => {
                       if (!libro) return <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Módulo não encontrado.</p>
-                      const allExams = (libro.aulas || []).filter((a: any) => a.tipo === 'prova' || !!a.is_bloco_final).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
-                      if (allExams.length === 0) return <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sem provas configuradas.</p>
+                      const allExams = (libro.aulas || []).filter((a: any) => a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
+                      if (allExams.length === 0) return <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Sem avaliações configuradas.</p>
 
-                      const subs = m.items.filter(i => (i.lesson_type || i.aulas?.tipo) === 'prova' || !!i.is_bloco_final).sort((a: any, b: any) => (a.tentativas || 1) - (b.tentativas || 1))
+                      const subs = m.items.filter(i => (i.lesson_type || i.aulas?.tipo) === 'prova' || (i.lesson_type || i.aulas?.tipo) === 'avaliacao' || !!i.is_bloco_final).sort((a: any, b: any) => (a.tentativas || 1) - (b.tentativas || 1))
                       const approved = subs.find(s => s.status === 'corrigida' && s.nota && s.nota >= 7)
 
                       if (approved) return (
@@ -486,6 +487,43 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
           )
         })}
       </div>
+
+      {/* ─── SEÇÃO: HISTÓRICO MANUAL ─── */}
+      {historyGrades.length > 0 && (
+        <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '2px dashed var(--glass-border)' }}>
+          <h4 style={{ fontSize: '0.85rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)' }}>
+            <FileText size={16} /> Histórico de Notas (Registro Manual)
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {historyGrades.map((h: any) => (
+              <div key={h.id} style={{
+                padding: '1rem 1.2rem', borderRadius: '14px',
+                border: '1px solid var(--glass-border)',
+                background: 'rgba(255,255,255,0.02)',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem'
+              }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{h.modulo_nome}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    {h.curso_nome} • {new Date(h.data_conclusao).toLocaleDateString('pt-BR')}
+                  </div>
+                  {h.observacao && (
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px', fontStyle: 'italic' }}>{h.observacao}</div>
+                  )}
+                </div>
+                <div style={{
+                  padding: '4px 12px', borderRadius: '8px', fontWeight: 900, fontSize: '1rem',
+                  background: h.nota >= 7 ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)',
+                  color: h.nota >= 7 ? 'var(--success)' : 'var(--error)',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {h.nota?.toFixed(1)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

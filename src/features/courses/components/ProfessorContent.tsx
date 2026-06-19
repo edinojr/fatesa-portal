@@ -148,7 +148,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         if (!allLessons) return
         const releaseModulo = { nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo', liberado: true }
         const itemsToRelease = allLessons
-          .filter(l => !(l.tipo === 'prova' || !!l.is_bloco_final))
+          .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
           .map(l => {
             const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
             return { 
@@ -173,7 +173,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         const { data: allLessons } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', book.id)
         if (!allLessons) return
         const itemsToRelease = allLessons
-          .filter(l => l.tipo === 'prova' || !!l.is_bloco_final)
+          .filter(l => l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final)
           .map(l => ({ 
             nucleo_id: nucleoId, 
             item_id: l.id, 

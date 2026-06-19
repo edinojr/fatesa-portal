@@ -94,12 +94,10 @@ const ModuleDetails = () => {
       a.ordem === 0 || a.titulo?.trim()?.toLowerCase() === 'panorama'
     );
 
-    // Lições: tudo que NÃO é exercício, avaliação, prova, vídeo, panorama
+    // Lições: matched with Admin panel logic (tipo licao or material)
     const licoes = sortedAulas
       .filter((a: any) => {
-        if (a.tipo === 'atividade' || a.tipo === 'exercicio' || a.tipo === 'avaliacao' || a.tipo === 'prova' || a.is_bloco_final) return false;
-        if (isVideoType(a.tipo)) return false;
-        if (a.video_url || a.url_video) return false;
+        if (a.tipo !== 'licao' && a.tipo !== 'material') return false;
         if (a.ordem === 0) return false;
         if (a.titulo?.trim()?.toLowerCase() === 'panorama') return false;
         return true;
@@ -161,7 +159,7 @@ const ModuleDetails = () => {
 
         const didPrevious = moduleSubs.some((s: any) => {
           const aula = s.aulas;
-          return (aula?.tipo === 'prova' || aula?.is_bloco_final) && (aula?.versao || 1) === versao - 1 && s.status === 'corrigida';
+          return (aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final) && (aula?.versao || 1) === versao - 1 && s.status === 'corrigida';
         });
 
         if (didPrevious) return false; // Automatically unlocked

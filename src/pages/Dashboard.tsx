@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { 
   BookOpen, 
@@ -96,6 +96,7 @@ const Dashboard = () => {
   const [availableModules, setAvailableModules] = useState<any[]>([]);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [savingModules, setSavingModules] = useState(false);
+  const [historyGrades, setHistoryGrades] = useState<any[]>([]);
 
   const isBlocked = profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
@@ -177,6 +178,16 @@ const Dashboard = () => {
     }
   };
 
+  const fetchHistoryGrades = useCallback(async () => {
+    if (!profile?.id) return
+    const { data } = await supabase
+      .from('historico_notas')
+      .select('*')
+      .eq('aluno_id', profile.id)
+      .order('created_at', { ascending: false })
+    setHistoryGrades(data || [])
+  }, [profile?.id])
+
   // Logica de Provas Pendentes e Recuperação (Refinada para Aprovação/Reprovação)
   const pendingExams = useMemo(() => {
     if (!courses.length || profile?.bloqueado) return [];
@@ -190,7 +201,7 @@ const Dashboard = () => {
         const bookSubmissions = atividades.filter(s => s.book_id === libro.id);
         const examSubs = bookSubmissions.filter(s => {
           const sa = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-          const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || /V[1-3]|RECUPERAÇ/i.test(sa?.titulo || '');
+          const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || sa?.tipo === 'avaliacao' || /V[1-3]|RECUPERAÇ/i.test(sa?.titulo || '');
           return isEx && s.status === 'corrigida';
         });
 
@@ -211,7 +222,7 @@ const Dashboard = () => {
         }
         const isDP = bookSubmissions.some(s => {
           const aula = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-          const isEx = aula?.is_bloco_final || aula?.tipo === 'prova';
+          const isEx = aula?.is_bloco_final || aula?.tipo === 'prova' || aula?.tipo === 'avaliacao';
           const minGrade = (aula as any)?.min_grade || GRADUATION_CONFIG.defaultMinGrade;
           return isEx && s.status === 'corrigida' && (aula as any)?.versao === GRADUATION_CONFIG.maxExamVersion && (s.nota || 0) < minGrade;
         });
@@ -226,7 +237,7 @@ const Dashboard = () => {
         if (isApproved || isRetido) {
            // Checa se há alguma exceção manual (se a aula não está oculta e não está travada pelo professor, mas é uma prova)
            const hasManualOverride = libro.aulas.some((a: any) => 
-              (a.tipo === 'prova' || !!a.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(a.titulo || '')) &&
+               (a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(a.titulo || '')) &&
               !a.isHidden && !a.lockedByProfessor &&
               ((a.versao || 1) > 1) // É uma prova de recuperação
            );
@@ -236,7 +247,7 @@ const Dashboard = () => {
 
         libro.aulas.forEach(aula => {
           const title = aula.titulo || '';
-          const isExam = aula.tipo === 'prova' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
+          const isExam = aula.tipo === 'prova' || aula.tipo === 'avaliacao' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
           
           const isReleasedNow = (aula as any).status_liberacao !== false && 
                                 (!(aula as any).data_liberacao || new Date((aula as any).data_liberacao) <= new Date());
@@ -323,8 +334,9 @@ const Dashboard = () => {
     if (profile?.id) {
       fetchStudentDashboardData();
       fetchPayments();
+      fetchHistoryGrades();
     }
-  }, [profile?.id, fetchStudentDashboardData, fetchPayments]);
+  }, [profile?.id, fetchStudentDashboardData, fetchPayments, fetchHistoryGrades]);
 
   useEffect(() => {
     // Só mostrar o aviso se houver provas E se ainda não tiver sido mostrado nesta sessão para este usuário
@@ -749,6 +761,7 @@ const Dashboard = () => {
               handleChangeNucleo={handleChangeNucleo} 
               courses={courses}
               atividades={atividades}
+              historyGrades={historyGrades}
             />
           )}
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -11,7 +11,8 @@ import {
   Edit,
   X,
   Calendar,
-  FileText
+  FileText,
+  MapPin
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
@@ -24,6 +25,8 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
   const [saving, setSaving] = useState(false);
   const [students, setStudents] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
+  const [nucleos, setNucleos] = useState<any[]>([]);
+  const [selectedNucleo, setSelectedNucleo] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [showStudentDropdown, setShowStudentDropdown] = useState(false);
@@ -41,20 +44,16 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
 
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
+  const searchRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number } | null>(null)
 
-  useEffect(() => {
-    if (selectedStudent) {
-      fetchHistory();
+  const updateDropdownPos = useCallback(() => {
+    if (searchInputRef.current) {
+      const rect = searchInputRef.current.getBoundingClientRect()
+      setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width })
     }
-  }, [selectedStudent]);
-
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  }, [])
 
   const fetchCourses = async () => {
     try {
@@ -69,23 +68,45 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
     }
   };
 
-  const searchStudents = async (term: string) => {
-    if (term.length < 2) {
+  const fetchNucleos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('nucleos')
+        .select('id, nome')
+        .order('nome');
+      if (error) throw error;
+      setNucleos(data || []);
+    } catch (err) {
+      console.error('Error fetching nuclei:', err);
+    }
+  };
+
+  const searchStudents = useCallback(async (term: string) => {
+    if (term.length < 2 && !selectedNucleo) {
       setStudents([]);
       return;
     }
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('users')
         .select('id, nome, email, cpf, curso_opcao, nucleos(nome)')
-        .ilike('nome', `%${term}%`)
-        .limit(10);
+        .limit(20);
+
+      if (term.length >= 2) {
+        query = query.ilike('nome', `%${term}%`);
+      }
+
+      if (selectedNucleo) {
+        query = query.eq('nucleo_id', selectedNucleo);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       setStudents(data || []);
     } catch (err) {
       console.error('Error searching students:', err);
     }
-  };
+  }, [selectedNucleo]);
 
   const fetchHistory = async () => {
     if (!selectedStudent) return;
@@ -104,6 +125,29 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowStudentDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  useEffect(() => {
+    fetchCourses();
+    fetchNucleos();
+  }, []);
+
+  useEffect(() => {
+    if (selectedNucleo) {
+      searchStudents('');
+      setShowStudentDropdown(true);
+      updateDropdownPos();
+    }
+  }, [selectedNucleo, searchStudents, updateDropdownPos]);
 
   const handleSubmit = async () => {
     if (!selectedStudent) return alert('Selecione um aluno.');
@@ -200,60 +244,117 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
         </div>
       </div>
 
-      {/* Student Search */}
-      <div style={{ position: 'relative' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem', opacity: 0.7 }}>
-          <User size={14} /> Buscar Aluno
-        </label>
+      {/* Selection Flow */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+        {/* Nucleus Selection */}
         <div style={{ position: 'relative' }}>
-          <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
-          <input
-            type="text"
-            placeholder="Digite o nome do aluno..."
-            value={searchTerm}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem', opacity: 0.7 }}>
+            <MapPin size={14} /> Filtrar por Núcleo
+          </label>
+          <select
+            value={selectedNucleo}
             onChange={(e) => {
-              setSearchTerm(e.target.value);
-              searchStudents(e.target.value);
-              setShowStudentDropdown(true);
+              setSelectedNucleo(e.target.value);
+              setSearchTerm('');
+              setStudents([]);
+              setSelectedStudent(null);
             }}
-            style={{
-              width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem',
-              borderRadius: '12px', background: 'rgba(255,255,255,0.05)',
-              border: selectedStudent ? '2px solid var(--primary)' : '1px solid var(--glass-border)',
-              color: '#fff', fontSize: '0.9rem'
+            style={{ 
+              width: '100%', padding: '0.75rem', borderRadius: '12px', 
+              background: '#fff', border: '1px solid var(--glass-border)', 
+              color: '#000', fontSize: '0.9rem', outline: 'none', transition: 'all 0.2s' 
             }}
-          />
+            onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; }}
+            onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; }}
+          >
+            <option value="">Todos os Núcleos</option>
+            {nucleos.map(n => (
+              <option key={n.id} value={n.id}>{n.nome}</option>
+            ))}
+          </select>
         </div>
 
-        {students.length > 0 && showStudentDropdown && !selectedStudent && (
+        {/* Student Search */}
+        <div ref={searchRef} style={{ position: 'relative' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem', opacity: 0.7 }}>
+            <User size={14} /> Buscar Aluno
+          </label>
+          <div style={{ position: 'relative' }}>
+            <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
+             <input
+               ref={searchInputRef}
+               type="text"
+               placeholder={selectedNucleo ? "Buscar aluno neste núcleo..." : "Digite o nome do aluno..."}
+               value={searchTerm}
+               onChange={(e) => {
+                 const val = e.target.value
+                 setSearchTerm(val);
+                 searchStudents(val);
+                 setShowStudentDropdown(true);
+                 updateDropdownPos()
+               }}
+               onFocus={(e) => { 
+                 setShowStudentDropdown(true); 
+                 updateDropdownPos();
+                 e.target.style.borderColor = 'var(--primary)';
+                 e.target.style.boxShadow = '0 0 0 3px rgba(var(--primary-rgb), 0.2)';
+               }}
+               style={{
+                 width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem',
+                 borderRadius: '12px', background: '#fff',
+                 border: selectedStudent ? '2px solid var(--primary)' : '1px solid var(--glass-border)',
+                 color: '#000', fontSize: '0.9rem',
+                 transition: 'all 0.2s ease',
+                 outline: 'none'
+               }}
+               onBlur={(e) => {
+                 if (!selectedStudent) {
+                   e.target.style.borderColor = 'var(--glass-border)';
+                   e.target.style.boxShadow = 'none';
+                 }
+               }}
+             />
+
+          </div>
+        </div>
+
+
+        {!selectedStudent && showStudentDropdown && dropdownPos && (
           <div style={{
-            position: 'absolute', top: '100%', left: 0, right: 0,
+            position: 'fixed', zIndex: 9999,
+            top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width,
             background: 'var(--bg-card)', border: '1px solid var(--glass-border)',
-            borderRadius: '12px', zIndex: 10, marginTop: '4px',
+            borderRadius: '12px',
             maxHeight: '250px', overflowY: 'auto',
-            boxShadow: '0 10px 20px rgba(0,0,0,0.4)'
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
           }}>
-            {students.map(s => (
-              <div
-                key={s.id}
-                onClick={() => {
-                  setSelectedStudent(s);
-                  setSearchTerm(s.nome);
-                  setShowStudentDropdown(false);
-                  setStudents([]);
-                }}
-                style={{
-                  padding: '0.75rem 1rem', cursor: 'pointer',
-                  borderBottom: '1px solid rgba(255,255,255,0.05)',
-                  transition: 'background 0.2s'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{s.nome}</div>
-                <div style={{ fontSize: '0.75rem', opacity: 0.5 }}>{s.email}</div>
+            {students.length === 0 ? (
+              <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                {searchTerm.length < 2 ? 'Digite ao menos 2 caracteres' : 'Nenhum aluno encontrado'}
               </div>
-            ))}
+            ) : (
+              students.map(s => (
+                <div
+                  key={s.id}
+                  onMouseDown={() => {
+                    setSelectedStudent(s);
+                    setSearchTerm(s.nome);
+                    setShowStudentDropdown(false);
+                    setStudents([]);
+                  }}
+                  style={{
+                    padding: '0.75rem 1rem', cursor: 'pointer',
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{s.nome}</div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.5 }}>{s.email}{s.cpf ? ` • ${s.cpf}` : ''}</div>
+                </div>
+              ))
+            )}
           </div>
         )}
 
@@ -296,11 +397,14 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
                 <BookOpen size={12} /> Curso
               </label>
-              <select
-                value={formData.curso_nome}
-                onChange={(e) => setFormData({ ...formData, curso_nome: e.target.value, modulo_nome: '' })}
-                style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: '#fff', fontSize: '0.85rem' }}
-              >
+               <select
+                 value={formData.curso_nome}
+                 onChange={(e) => setFormData({ ...formData, curso_nome: e.target.value, modulo_nome: '' })}
+                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
+                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
+                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
+               >
+
                 <option value="">Selecione...</option>
                 {courses.map(c => (
                   <option key={c.id} value={c.nome}>{c.nome} ({c.nivel})</option>
@@ -312,12 +416,15 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
                 <FileText size={12} /> Módulo
               </label>
-              <select
-                value={formData.modulo_nome}
-                onChange={(e) => setFormData({ ...formData, modulo_nome: e.target.value })}
-                style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: '#fff', fontSize: '0.85rem' }}
-                disabled={!formData.curso_nome}
-              >
+               <select
+                 value={formData.modulo_nome}
+                 onChange={(e) => setFormData({ ...formData, modulo_nome: e.target.value })}
+                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
+                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
+                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
+                 disabled={!formData.curso_nome}
+               >
+
                 <option value="">Selecione...</option>
                 {availableModules.map((m: any) => (
                   <option key={m.id} value={m.titulo}>{m.titulo}</option>
@@ -331,28 +438,34 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
                 <GraduationCap size={12} /> Nota
               </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="10"
-                value={formData.nota}
-                onChange={(e) => setFormData({ ...formData, nota: e.target.value })}
-                placeholder="0.00"
-                style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: '#fff', fontSize: '0.85rem' }}
-              />
+               <input
+                 type="number"
+                 step="0.01"
+                 min="0"
+                 max="10"
+                 value={formData.nota}
+                 onChange={(e) => setFormData({ ...formData, nota: e.target.value })}
+                 placeholder="0.00"
+                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
+                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
+                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
+               />
+
             </div>
 
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
                 <Calendar size={12} /> Data de Conclusão
               </label>
-              <input
-                type="date"
-                value={formData.data_conclusao}
-                onChange={(e) => setFormData({ ...formData, data_conclusao: e.target.value })}
-                style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: '#fff', fontSize: '0.85rem' }}
-              />
+               <input
+                 type="date"
+                 value={formData.data_conclusao}
+                 onChange={(e) => setFormData({ ...formData, data_conclusao: e.target.value })}
+                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
+                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
+                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
+               />
+
             </div>
           </div>
 
@@ -360,13 +473,16 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
               Observação
             </label>
-            <textarea
-              value={formData.observacao}
-              onChange={(e) => setFormData({ ...formData, observacao: e.target.value })}
-              rows={2}
-              placeholder="Observação opcional..."
-              style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: '#fff', fontSize: '0.85rem', resize: 'none' }}
-            />
+               <textarea
+                 value={formData.observacao}
+                 onChange={(e) => setFormData({ ...formData, observacao: e.target.value })}
+                 rows={2}
+                 placeholder="Observação opcional..."
+                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', resize: 'none', outline: 'none', transition: 'all 0.2s' }}
+                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
+                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
+               />
+
           </div>
 
           <div style={{ display: 'flex', gap: '0.75rem' }}>
