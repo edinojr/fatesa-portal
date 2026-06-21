@@ -133,14 +133,15 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
             </div>
             <div className="form-group">
               <label>WhatsApp / Telefone</label>
-              <input 
-                type="text" 
-                className="form-control" 
-                placeholder="(00) 00000-0000"
-                value={formData.telefone}
-                onChange={e => setFormData({...formData, telefone: e.target.value})}
-                required
-              />
+<input 
+                     type="text" 
+                     className="form-control" 
+                     placeholder="(00) 00000-0000"
+                     pattern="\\(\\d{2}\\) \\d{5}-\\d{4}"
+                     value={formData.telefone}
+                     onChange={e => setFormData({...formData, telefone: e.target.value})}
+                     required
+                   />
             </div>
           </div>
 
@@ -151,15 +152,16 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
               <div className="form-group">
                 <label>CEP</label>
                 <div style={{ position: 'relative' }}>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    placeholder="00000-000"
-                    value={formData.cep}
-                    onChange={e => setFormData({...formData, cep: e.target.value})}
-                    onBlur={handleCepBlur}
-                    required
-                  />
+<input 
+                     type="text" 
+                     className="form-control" 
+                     placeholder="00000-000"
+                     pattern="\\d{5}-\\d{3}"
+                     value={formData.cep}
+                     onChange={e => setFormData({...formData, cep: e.target.value})}
+                     onBlur={handleCepBlur}
+                     required
+                   />
                   {cepLoading && <Loader2 className="spinner" size={14} style={{ position: 'absolute', right: '10px', top: '12px' }} />}
                 </div>
               </div>

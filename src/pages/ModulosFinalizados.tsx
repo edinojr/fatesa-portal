@@ -16,9 +16,10 @@ const ModulosFinalizados = () => {
     const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData, finishedBasicCount, finishedMediumCount } = useStudentCourses(profile);
     const navigate = useNavigate();
 
-    const goToPanel = () => {
-        window.history.back()
+const goToPanel = () => {
+        navigate('/dashboard');
     };
+
 
     const [showGraduationForm, setShowGraduationForm] = React.useState(false);
     const [showCertificate, setShowCertificate] = React.useState(false);
@@ -157,7 +158,7 @@ const ModulosFinalizados = () => {
                         <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '0.5rem auto 2rem' }}>
                             Continue seus estudos para ver aqui suas conquistas e certificados.
                         </p>
-                        <button onClick={() => goToPanel()} className="btn btn-primary" style={{ width: 'auto' }}>Ir para Meus Cursos</button>
+                        <button onClick={() => navigate('/dashboard?tab=cursos')} className="btn btn-primary" style={{ width: 'auto' }}>Ir para Meus Cursos</button>
                     </div>
                 ) : (
                     <CourseList 

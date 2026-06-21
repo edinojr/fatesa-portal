@@ -336,7 +336,7 @@ export const useStudentCourses = (profile: any) => {
                  const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
                  
                  // Módulo é visível se: é staff, tem exceção, já começou, tem prova individual, OU foi liberado pelo professor, OU foi marcado manualmente como finalizado
-                 const isHidden = !isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease;
+                  const isHidden = !isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease && profile.accessStatus !== 'blocked_payment';
 
                 if (isHidden) return null;
 

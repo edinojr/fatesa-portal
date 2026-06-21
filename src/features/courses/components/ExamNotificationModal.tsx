@@ -49,13 +49,14 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
         width: '94%',
         textAlign: 'center', 
         padding: '2rem 1.5rem', 
-        background: 'rgba(15, 16, 18, 0.98)', 
+        background: '#fff', 
         borderRadius: '32px',
-        border: `1px solid ${hasFailures ? 'rgba(244, 63, 94, 0.4)' : isRecoveryMode ? 'rgba(245, 158, 11, 0.4)' : 'rgba(124, 58, 237, 0.4)'}`,
-        boxShadow: '0 40px 100px rgba(0,0,0,0.9)',
+        border: `1px solid ${hasFailures ? '#f43f5e' : isRecoveryMode ? '#f59e0b' : 'var(--primary)'}`,
+        boxShadow: '0 40px 100px rgba(0,0,0,0.1)',
         position: 'relative',
         overflow: 'hidden',
-        animation: 'zoomIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+        animation: 'zoomIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        color: '#000'
       }}>
         {/* Close Button Top Right */}
         <button 
@@ -64,9 +65,9 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
             position: 'absolute',
             top: '1.5rem',
             right: '1.5rem',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: 'rgba(255,255,255,0.4)',
+            background: 'rgba(0,0,0,0.05)',
+            border: '1px solid rgba(0,0,0,0.1)',
+            color: 'rgba(0,0,0,0.4)',
             width: '32px',
             height: '32px',
             borderRadius: '10px',
@@ -77,8 +78,8 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
             zIndex: 10,
             transition: 'all 0.2s'
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.4)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#000'; e.currentTarget.style.background = 'rgba(0,0,0,0.1)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(0,0,0,0.4)'; e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; }}
         >
           <X size={18} />
         </button>
@@ -113,9 +114,10 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
             <AlertCircle size={32} strokeWidth={2.5} />
           </div>
 
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
-            {hasFailures ? 'Atenção: Resultado de Prova' : isRecoveryMode ? 'Recuperação Disponível!' : 'Avisos Pedagógicos'}
-          </h2>
+           <h2 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.02em', color: '#000' }}>
+             {hasFailures ? 'Atenção: Resultado de Prova' : isRecoveryMode ? 'Recuperação Disponível!' : 'Avisos Pedagógicos'}
+           </h2>
+
           
           <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: 1.5, fontSize: '0.9rem' }}>
             {hasFailures 
@@ -125,43 +127,45 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem', textAlign: 'left' }}>
             {exams.slice(0, 3).map(exam => (
-              <div 
-                key={exam.id} 
-                onClick={() => { onClose(); navigate(`/lesson/${exam.id}`); }}
-                className="modal-list-item-hover"
-                style={{ 
-                  padding: '1rem', 
-                  background: 'rgba(255,255,255,0.02)', 
-                  borderRadius: '16px', 
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <div style={{ 
-                  width: '36px', 
-                  height: '36px', 
-                  borderRadius: '10px', 
-                  background: 'rgba(255,255,255,0.05)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: 'var(--primary)',
-                  flexShrink: 0
-                }}>
-                  <GraduationCap size={18} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {exam.livro}
-                  </div>
-                  <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {exam.titulo}
-                  </div>
-                </div>
+               <div 
+                 key={exam.id} 
+                 onClick={() => { onClose(); navigate(`/lesson/${exam.id}`); }}
+                 className="modal-list-item-hover"
+                 style={{ 
+                   padding: '1rem', 
+                   background: 'rgba(0,0,0,0.03)', 
+                   borderRadius: '16px', 
+                   border: '1px solid rgba(0,0,0,0.08)',
+                   display: 'flex',
+                   alignItems: 'center',
+                   gap: '0.75rem',
+                   cursor: 'pointer',
+                   transition: 'all 0.2s ease',
+                   color: '#000'
+                 }}
+               >
+                 <div style={{ 
+                   width: '36px', 
+                   height: '36px', 
+                   borderRadius: '10px', 
+                   background: 'rgba(0,0,0,0.05)', 
+                   display: 'flex', 
+                   alignItems: 'center', 
+                   justifyContent: 'center',
+                   color: 'var(--primary)',
+                   flexShrink: 0
+                 }}>
+                   <GraduationCap size={18} />
+                 </div>
+                 <div style={{ flex: 1, minWidth: 0 }}>
+                   <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                     {exam.livro}
+                   </div>
+                   <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#000', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                     {exam.titulo}
+                   </div>
+                 </div>
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <div style={{ 
                     fontSize: '0.6rem', 
@@ -196,13 +200,14 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
           </div>
 
           <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button 
-              className="btn btn-outline" 
-              onClick={onClose}
-              style={{ flex: 1, height: '48px', justifyContent: 'center', borderRadius: '14px', background: 'rgba(255,255,255,0.02)', fontSize: '0.9rem', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-            >
-              Fechar
-            </button>
+             <button 
+               className="btn btn-outline" 
+               onClick={onClose}
+               style={{ flex: 1, height: '48px', justifyContent: 'center', borderRadius: '14px', background: '#fff', fontSize: '0.9rem', border: '1px solid rgba(0,0,0,0.1)', color: '#000' }}
+             >
+               Fechar
+             </button>
+
             <button 
               className="btn btn-primary" 
               style={{ 

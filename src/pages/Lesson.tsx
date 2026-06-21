@@ -86,7 +86,6 @@ const Lesson = () => {
     setResult(null)
     setSubmitted(false)
     setExistingSubmission(null)
-      try {
         const { data: lessonData, error: lessonError } = await supabase
           .from('aulas')
           .select('*')
@@ -182,49 +181,47 @@ const Lesson = () => {
         }
 
         // 2. Main Logic: Submission Fetch & Timer
+        // Staff e alunos com módulo completo têm acesso total
         if (isStaff || modulePassed) {
           setIsReleased(true);
-        } else if (versao > 1) {
-          // For V2/V3, if they reached this point without being 'alreadyApproved'
-          // and they passed the 'didPrevious' check, it's automatically released.
-          setIsReleased(true);
         } else {
-            // ALL content now requires explicit release for the student's nucleus
-               const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' :
-                                (lessonData.tipo === 'licao' || lessonData.tipo === 'material' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'licao' : 'atividade';
+          // Lógica de liberação hierárquica V1 -> V2 -> V3
+          const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' :
+                          (lessonData.tipo === 'licao' || lessonData.tipo === 'material' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'licao' : 'atividade';
 
-
-           const { data: releaseData } = await supabase.from('liberacoes_nucleo')
-             .select('id')
-             .eq('nucleo_id', profile?.nucleo_id)
-             .eq('item_id', id)
-             .eq('item_type', itemType)
-             .eq('liberado', true)
-             .maybeSingle();
-           
-           if (releaseData) {
-             setIsReleased(true);
-            } else if (lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || lessonData.is_bloco_final) {
-             const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
-               .select('id')
-               .eq('nucleo_id', profile?.nucleo_id)
-               .eq('item_type', 'atividade')
-               .in('item_id', (moduleExams || []).map(ex => ex.id))
-               .eq('liberado', true)
-               .maybeSingle();
-             setIsReleased(!!siblingRel);
-           } else {
-             // Check if the parent module was released
-             const { data: moduleRelease } = await supabase.from('liberacoes_nucleo')
-               .select('id')
-               .eq('nucleo_id', profile?.nucleo_id)
-               .eq('item_id', lessonData.livro_id)
-               .eq('item_type', 'modulo')
-               .eq('liberado', true)
-               .maybeSingle();
-             setIsReleased(!!moduleRelease);
-           }
-         }
+          // Primeiro: verificar liberação explícita via painel
+          const { data: releaseData } = await supabase.from('liberacoes_nucleo')
+            .select('id')
+            .eq('nucleo_id', profile?.nucleo_id)
+            .eq('item_id', id)
+            .eq('item_type', itemType)
+            .eq('liberado', true)
+            .maybeSingle();
+          
+          if (releaseData) {
+            setIsReleased(true);
+          } else if (lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || lessonData.is_bloco_final) {
+            // Provas: verificar se houve liberação de atividade para este item
+            const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
+              .select('id')
+              .eq('nucleo_id', profile?.nucleo_id)
+              .eq('item_type', 'atividade')
+              .in('item_id', (moduleExams || []).map(ex => ex.id))
+              .eq('liberado', true)
+              .maybeSingle();
+            setIsReleased(!!siblingRel);
+          } else {
+            // Conteúdo comum: verificar liberação do módulo
+            const { data: moduleRelease } = await supabase.from('liberacoes_nucleo')
+              .select('id')
+              .eq('nucleo_id', profile?.nucleo_id)
+              .eq('item_id', lessonData.livro_id)
+              .eq('item_type', 'modulo')
+              .eq('liberado', true)
+              .maybeSingle();
+            setIsReleased(!!moduleRelease);
+            }
+          }
 
         // 2. Main Logic: Submission Fetch & Timer
         const { data: subData } = await supabase.from('respostas_aulas').select('*').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
@@ -350,8 +347,7 @@ const Lesson = () => {
           setIsModuleFinished(finished);
         }
       }
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+      setLoading(false)
   }
 
   // Shuffle effect for matching questions
@@ -2181,5 +2177,6 @@ const Lesson = () => {
     </div>
   )
 }
+
 
 export default Lesson

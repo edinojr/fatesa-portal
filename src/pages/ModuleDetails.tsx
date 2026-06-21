@@ -18,8 +18,8 @@ const ModuleDetails = () => {
     const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData } = useStudentCourses(profile);
     const [nucleusReleases, setNucleusReleases] = useState<any[]>([]);
 
-    const goToPanel = () => {
-        window.history.back()
+    const goToPanel = (path = '/dashboard') => {
+        navigate(path);
     };
 
     const isStaff = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.tipo === 'professor' ||
@@ -279,9 +279,9 @@ const ModuleDetails = () => {
 
                 <main className="admin-main" style={{ padding: '1rem' }}>
                 <div className="nav-breadcrumb-modern" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span onClick={goToPanel} style={{ color: 'inherit', textDecoration: 'none', opacity: 0.7, cursor: 'pointer' }}>Início</span>
+                    <span onClick={() => navigate('/dashboard')} style={{ color: 'inherit', textDecoration: 'none', opacity: 0.7, cursor: 'pointer' }}>Início</span>
                     <ChevronRight size={14} style={{ opacity: 0.3 }} />
-                    <span onClick={goToPanel} style={{ color: 'inherit', textDecoration: 'none', opacity: 0.7, cursor: 'pointer' }}>Meus Cursos</span>
+                    <span onClick={() => navigate('/dashboard?tab=cursos')} style={{ color: 'inherit', textDecoration: 'none', opacity: 0.7, cursor: 'pointer' }}>Meus Cursos</span>
                     <ChevronRight size={14} style={{ opacity: 0.3 }} />
                     <span className="active" style={{ color: 'var(--primary)', fontWeight: 700 }}>{book.titulo}</span>
                 </div>

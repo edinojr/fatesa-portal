@@ -23,7 +23,7 @@ const Footer = () => {
           <div className="footer-links">
             <h4 style={{ color: 'var(--secondary)', fontSize: '1.1rem', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Navegação</h4>
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              <li style={{ marginBottom: '0.8rem' }}><Link to="/" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Início</Link></li>
+                <li style={{ marginBottom: '0.8rem' }}><Link to="/dashboard" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Início</Link></li>
               <li style={{ marginBottom: '0.8rem' }}><Link to="/sobre" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Instituição</Link></li>
               <li style={{ marginBottom: '0.8rem' }}><Link to="/patrono" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Patrono</Link></li>
               <li style={{ marginBottom: '0.8rem' }}><Link to="/cursos" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Nossos Cursos</Link></li>

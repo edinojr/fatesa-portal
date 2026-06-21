@@ -75,7 +75,20 @@ const Matricula = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const formatValue = (name: string, value: string) => {
+      const digits = value.replace(/\D/g, '')
+      switch (name) {
+        case 'cpf':
+          return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})$/, (_, p1, p2, p3, p4) => `${p1}.${p2}.${p3}-${p4}`)
+        case 'telefone':
+          return digits.replace(/^(\d{2})(\d{5})(\d{0,4})$/, (_, a, b, c) => `(${a}) ${b}-${c}`)
+        case 'cep':
+          return digits.replace(/^(\d{5})(\d{0,3})$/, (_, a, b) => `${a}-${b}`)
+        default:
+          return value
+      }
+    }
+    setFormData(prev => ({ ...prev, [name]: formatValue(name, value) }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -119,7 +132,7 @@ const Matricula = () => {
             Recebemos seus dados, <b>{formData.nome.split(' ')[0]}</b>. No prazo de até 24h entraremos em contato via WhatsApp para finalizar sua matrícula e liberar seu acesso ao portal.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <button onClick={() => navigate('/')} className="btn btn-primary" style={{ height: '3.5rem' }}>Voltar ao Início</button>
+            <button onClick={() => navigate('/dashboard')} className="btn btn-primary" style={{ height: '3.5rem' }}>Voltar ao Início</button>
           </div>
         </div>
       </div>
@@ -153,11 +166,11 @@ const Matricula = () => {
               </div>
               <div className="form-group">
                 <label>CPF</label>
-                <input type="text" name="cpf" className="form-control" placeholder="000.000.000-00" value={formData.cpf} onChange={handleInputChange} required />
+                <input type="text" name="cpf" className="form-control" placeholder="000.000.000-00" pattern="\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}" value={formData.cpf} onChange={handleInputChange} required />
               </div>
               <div className="form-group">
                 <label>WhatsApp / Telefone</label>
-                <input type="tel" name="telefone" className="form-control" placeholder="(00) 00000-0000" value={formData.telefone} onChange={handleInputChange} required />
+                <input type="tel" name="telefone" className="form-control" placeholder="(00) 00000-0000" pattern="\\(\\d{2}\\) \\d{5}-\\d{4}" value={formData.telefone} onChange={handleInputChange} required />
               </div>
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label>E-mail</label>
@@ -175,7 +188,7 @@ const Matricula = () => {
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label>CEP</label>
                 <div style={{ position: 'relative' }}>
-                  <input type="text" name="cep" className="form-control" placeholder="00000-000" value={formData.cep} onChange={handleInputChange} onBlur={handleCEPBlur} required />
+                  <input type="text" name="cep" className="form-control" placeholder="00000-000" pattern="\\d{5}-\\d{3}" value={formData.cep} onChange={handleInputChange} onBlur={handleCEPBlur} required />
                   <Search size={18} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3 }} />
                 </div>
               </div>

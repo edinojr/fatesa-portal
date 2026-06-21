@@ -915,7 +915,7 @@ const Admin = () => {
           <button onClick={() => window.history.back()} className="btn btn-outline">
             <ChevronLeft size={20} /> Voltar
           </button>
-          <button onClick={() => setActiveTab('home')} className="btn btn-primary">
+          <button onClick={() => navigate('/admin?tab=content&view=main')} className="btn btn-primary">
             <LayoutDashboard size={20} /> Início
           </button>
         </div>

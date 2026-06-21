@@ -24,9 +24,12 @@ const Landing = () => {
           <p className="slogan" style={{ fontSize: '1.1rem', maxWidth: '700px', margin: '0 auto 2.5rem' }}>
             Aprofunde seu conhecimento nas Escrituras com uma metodologia transformadora e professores renomados.
           </p>
-          <div className="hero-btns" style={{ justifyContent: 'center' }}>
-            <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ padding: '1rem 3rem', borderRadius: '50px', fontSize: '1rem', fontWeight: 800, letterSpacing: '1px', boxShadow: '0 15px 30px var(--primary-glow)' }}>
-               ENTRAR NO PORTAL <ChevronRight size={20} />
+          <div className="hero-btns" style={{ justifyContent: 'center', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ padding: '0.875rem 2rem', borderRadius: '50px', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.5px', boxShadow: '0 10px 25px var(--primary-glow)', flex: '1', minWidth: '180px' }}>
+               ENTRAR NO PORTAL <ChevronRight size={18} />
+            </button>
+            <button onClick={() => navigate('/matricula')} className="btn btn-outline" style={{ padding: '0.875rem 2rem', borderRadius: '50px', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.5px', flex: '1', minWidth: '180px' }}>
+               CADASTRE-SE <ChevronRight size={18} />
             </button>
           </div>
         </div>

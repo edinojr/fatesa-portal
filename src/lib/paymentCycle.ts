@@ -15,8 +15,20 @@ export const getTargetDueDate = (date: Date = new Date()): string => {
 };
 
 export const checkAccessStatus = (profile: any): 'active' | 'blocked_payment' | 'blocked_admin' => {
-  // Conforme solicitado pelo usuário:
-  // "o aluno estará sempre ativo mesmo não enviando o comprovante, quem bloqueia o usuário é o administrador."
+  // Bloqueio administrativo tem prioridade
   if (profile?.bloqueado) return 'blocked_admin';
+
+  // Verifica pagamentos pendentes
+  const payments = profile?.pagamentos || [];
+  const hasOpenPayment = payments.some((p: any) => p.status === 'aberto');
+  const day = new Date().getDate();
+  const todayStr = new Date().toISOString().split('T')[0];
+  const extensionDate = profile?.extensao_pagamento_ate;
+  const isUnderExtension = extensionDate && todayStr <= extensionDate && day <= 15;
+
+  if (hasOpenPayment && day > 12 && !isUnderExtension) {
+    return 'blocked_payment';
+  }
+
   return 'active';
-};
+};;
