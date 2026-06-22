@@ -109,35 +109,64 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     if (data) setReleases(data)
   }
 
-   const toggleRelease = async (nucleoId: string, itemId: string, itemType: string) => {
-     const existing = releases.find(r => r.nucleo_id === nucleoId && r.item_id === itemId && r.item_type === itemType)
-     try {
-       if (existing) {
-         const { error } = await supabase.from('liberacoes_nucleo').delete().eq('id', existing.id)
-         if (error) throw error
-        } else {
-          const { error } = await supabase.from('liberacoes_nucleo').upsert([{
-            nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true
-          }], { onConflict: 'nucleo_id,item_id,item_type' })
-          if (error) throw error
-        }
-       fetchReleases()
-     } catch (err: any) {
-       alert('Erro ao atualizar liberação: ' + err.message)
-     }
-   }
+  const toggleRelease = async (nucleoId: string, itemId: string, itemType: string) => {
+    const existing = releases.find(r => r.nucleo_id === nucleoId && r.item_id === itemId && r.item_type === itemType)
+    
+    // Optimistic update for immediate UI response
+    setReleases(prev => {
+      if (existing) {
+        return prev.filter(r => !(r.nucleo_id === nucleoId && r.item_id === itemId && r.item_type === itemType));
+      } else {
+        return [...prev, { nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true, id: 'temp-' + Date.now() }];
+      }
+    });
+
+    try {
+      if (existing) {
+        const { error } = await supabase.from('liberacoes_nucleo').delete().match({
+          nucleo_id: nucleoId,
+          item_id: itemId,
+          item_type: itemType
+        })
+        if (error) throw error
+      } else {
+        const { error } = await supabase.from('liberacoes_nucleo').upsert([{
+          nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true
+        }], { onConflict: 'nucleo_id, item_id, item_type' })
+        if (error) throw error
+      }
+      // Não busca do DB após sucesso — o update otimista é confiável
+      // e evita RLS que esconda registros do admin.
+    } catch (err: any) {
+      alert('Erro ao atualizar liberação: ' + err.message)
+      await fetchReleases() // Rollback state on error
+    }
+  }
 
   const toggleModuleActive = async (bookId: string, currentStatus: boolean) => {
     try {
+      const { data: colCheck, error: colError } = await supabase.from('livros').select('professor_active').eq('id', bookId).maybeSingle()
+      if (colError && colError.code === '42703') {
+        alert('Coluna professor_active não existe na tabela livros. Execute a migration pendente.')
+        return
+      }
       const { error } = await supabase
         .from('livros')
         .update({ professor_active: !currentStatus })
         .eq('id', bookId)
-      if (error) throw error
+      if (error) {
+        console.error('[toggleModuleActive] Supabase error:', error)
+        throw error
+      }
       
       setBooks(prev => prev.map(b => b.id === bookId ? { ...b, professor_active: !currentStatus } : b))
+      if (selectedBook && selectedBook.id === bookId) {
+        setSelectedBook({ ...selectedBook, professor_active: !currentStatus })
+      }
     } catch (err: any) {
-      alert('Erro ao ativar/desativar módulo: ' + err.message)
+      const msg = err?.message || err?.details || JSON.stringify(err)
+      console.error('[toggleModuleActive] Exception:', err)
+      alert('Erro ao ativar/desativar módulo: ' + msg)
     }
   }
 
@@ -158,40 +187,91 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               liberado: true 
             }
           })
-        const { error } = await supabase.from('liberacoes_nucleo').upsert([releaseModulo, ...itemsToRelease], { onConflict: 'nucleo_id,item_id,item_type' })
+        const { data: upserted, error } = await supabase.from('liberacoes_nucleo').upsert([releaseModulo, ...itemsToRelease], { onConflict: 'nucleo_id, item_id, item_type' }).select()
         if (error) throw error
-        fetchReleases()
+        if (upserted) {
+          setReleases(prev => {
+            const ids = new Set(upserted.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+            return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...upserted]
+          })
+        }
         alert('Conteúdo liberado com sucesso!')
       } catch (err: any) {
         alert('Erro ao liberar conteúdo: ' + err.message)
       }
     }
 
-    const handleReleaseExams = async (nucleoId: string, book: any) => {
-      if (!window.confirm(`Liberar TODAS as PROVAS/ATIVIDADES do módulo "${book.titulo}" para o polo selecionado?`)) return
+    const handleReleaseExams = async (nucleoId: string, currentBook: any) => {
       try {
-        const { data: allLessons } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', book.id)
-        if (!allLessons) return
-        const itemsToRelease = allLessons
-          .filter(l => l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final)
-          .map(l => ({ 
-            nucleo_id: nucleoId, 
-            item_id: l.id, 
-            item_type: 'atividade', 
-            liberado: true 
-          }))
-        
-        if (itemsToRelease.length === 0) {
-          alert('Nenhuma prova ou atividade encontrada neste módulo.');
-          return;
+        const TOTAL_MODULOS = 27;
+        const currentNumero = currentBook.numero_modulo;
+
+        const nextNumero = currentNumero === TOTAL_MODULOS ? 1 : currentNumero + 1;
+
+        const { data: currentExams } = await supabase
+          .from('aulas')
+          .select('id')
+          .eq('livro_id', currentBook.id)
+          .eq('tipo_prova', 'V1');
+
+        const { data: nextBook } = await supabase
+          .from('livros')
+          .select('id')
+          .eq('numero_modulo', nextNumero)
+          .single();
+
+        let itemsToRelease = [];
+
+        if (currentExams) {
+          currentExams.forEach(exam => {
+            itemsToRelease.push({
+              nucleo_id: nucleoId,
+              item_id: exam.id,
+              item_type: 'atividade',
+              liberado: true
+            });
+          });
         }
 
-        const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id,item_id,item_type' })
-        if (error) throw error
-        fetchReleases()
-        alert('Provas liberadas com sucesso!')
-      } catch (err: any) {
-        alert('Erro ao liberar provas: ' + err.message)
+        if (nextBook) {
+          const { data: nextContent } = await supabase
+            .from('aulas')
+            .select('id, tipo')
+            .eq('livro_id', nextBook.id)
+            .not('tipo', 'eq', 'prova')
+            .not('tipo', 'eq', 'avaliacao')
+            .is('tipo_prova', null);
+
+          if (nextContent) {
+            nextContent.forEach(item => {
+              itemsToRelease.push({
+                nucleo_id: nucleoId,
+                item_id: item.id,
+                item_type: item.tipo === 'video' ? 'video' : 'atividade',
+                liberado: true
+              });
+            });
+          }
+        }
+
+        if (itemsToRelease.length === 0) return;
+
+        const { data: upserted, error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, {
+          onConflict: 'nucleo_id, item_id, item_type'
+        }).select();
+        if (error) throw error;
+
+        if (upserted) {
+          setReleases(prev => {
+            const ids = new Set(upserted.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+            return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...upserted]
+          })
+        }
+
+        alert("Avaliação V1 liberada e conteúdo do próximo módulo destravado!");
+      } catch (error: any) {
+        console.error("Erro na liberação circular:", error);
+        alert('Erro ao liberar provas: ' + (error?.message || error));
       }
     }
  
@@ -359,7 +439,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                       <ShieldCheck size={12} /> Acesso por Polo
                     </p>
                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-                       <button onClick={() => toggleModuleActive(book.id, book.professor_active ?? true)} style={{
+                       <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleModuleActive(book.id, book.professor_active ?? true); }} style={{
                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                          padding: '0.55rem 0.85rem', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s', marginBottom: '0.5rem',
                          background: (book.professor_active ?? true) ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
@@ -377,7 +457,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                        {professorNucleos.map(n => {
                          const isModReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo')
                          return (
-                            <button key={n.id} onClick={() => toggleRelease(n.id, book.id, 'modulo')} style={{
+                            <button key={n.id} onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }} style={{
                               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                               padding: '0.55rem 0.85rem', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s',
                               background: isModReleased ? 'rgba(16,185,129,0.15)' : 'var(--glass)',

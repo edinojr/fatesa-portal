@@ -57,6 +57,46 @@ const Lesson = () => {
   const [prevLessonId, setPrevLessonId] = useState<string | null>(null)
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
 
+  const checarAcessoSeguroAvaliacao = async (alunoId: string, moduloId: string, aulaAtual: any, nucleoId?: string) => {
+    const NOTA_APROVACAO = 7.0;
+
+    if (!aulaAtual.tipo_prova || aulaAtual.tipo_prova === 'V1') {
+      const { data: rel } = await supabase
+        .from('liberacoes_nucleo')
+        .select('liberado')
+        .eq('nucleo_id', nucleoId)
+        .eq('item_id', aulaAtual.id)
+        .maybeSingle();
+      return !!rel?.liberado;
+    }
+
+    if (aulaAtual.tipo_prova === 'V2') {
+      const { data: notaV1 } = await supabase
+        .from('notas_avaliacoes')
+        .select('nota')
+        .eq('aluno_id', alunoId)
+        .eq('modulo_id', moduloId)
+        .eq('tipo_prova', 'V1')
+        .maybeSingle();
+
+      return !!notaV1 && notaV1.nota < NOTA_APROVACAO;
+    }
+
+    if (aulaAtual.tipo_prova === 'V3') {
+      const { data: notaV2 } = await supabase
+        .from('notas_avaliacoes')
+        .select('nota')
+        .eq('aluno_id', alunoId)
+        .eq('modulo_id', moduloId)
+        .eq('tipo_prova', 'V2')
+        .maybeSingle();
+
+      return !!notaV2 && notaV2.nota < NOTA_APROVACAO;
+    }
+
+    return false;
+  };
+
   useEffect(() => {
     fetchLessonData()
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -162,15 +202,11 @@ const Lesson = () => {
 
         // 1. Audit: Content Release Policy
         let modulePassed = false;
-        const { data: moduleExams } = await supabase.from('aulas').select('id').eq('livro_id', lessonData.livro_id).or('tipo.eq.prova');
-        
         if (lessonData.livro_id) {
             const { data: rawModuleSubs } = await supabase.from('respostas_aulas')
-               .select('nota, status, aulas(livro_id, is_bloco_final)')
-
+               .select('nota, status, aulas(livro_id, is_bloco_final, tipo, versao)')
               .eq('aluno_id', user.id);
 
-          
           const moduleSubs = (rawModuleSubs || []).find((s: any) => 
             s.aulas?.livro_id === lessonData.livro_id && 
             s.aulas?.is_bloco_final && 
@@ -178,50 +214,27 @@ const Lesson = () => {
             (s.nota || 0) >= 7.0
           );
           if (moduleSubs) modulePassed = true;
+
+          // Verificar se o aluno já foi aprovado em qualquer versão de prova
+          if (!modulePassed) {
+            const approvedInAny = (rawModuleSubs || []).some((s: any) => {
+              const isExam = s.aulas?.tipo === 'prova' || s.aulas?.tipo === 'avaliacao' || s.aulas?.is_bloco_final;
+              const minGrade = (s as any).min_grade || 7.0;
+              return s.aulas?.livro_id === lessonData.livro_id && isExam && s.status === 'corrigida' && (s.nota || 0) >= minGrade;
+            });
+            if (approvedInAny) modulePassed = true;
+          }
         }
 
-        // 2. Main Logic: Submission Fetch & Timer
+        const isExam = lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || !!lessonData.is_bloco_final;
+
         // Staff e alunos com módulo completo têm acesso total
         if (isStaff || modulePassed) {
           setIsReleased(true);
         } else {
-          // Lógica de liberação hierárquica V1 -> V2 -> V3
-          const itemType = (lessonData.tipo === 'gravada' || lessonData.tipo === 'ao_vivo' || lessonData.tipo === 'video') ? 'video' :
-                          (lessonData.tipo === 'licao' || lessonData.tipo === 'material' || lessonData.tipo === 'exercicio' || lessonData.tipo === 'avaliacao') ? 'licao' : 'atividade';
-
-          // Primeiro: verificar liberação explícita via painel
-          const { data: releaseData } = await supabase.from('liberacoes_nucleo')
-            .select('id')
-            .eq('nucleo_id', profile?.nucleo_id)
-            .eq('item_id', id)
-            .eq('item_type', itemType)
-            .eq('liberado', true)
-            .maybeSingle();
-          
-          if (releaseData) {
-            setIsReleased(true);
-          } else if (lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || lessonData.is_bloco_final) {
-            // Provas: verificar se houve liberação de atividade para este item
-            const { data: siblingRel } = await supabase.from('liberacoes_nucleo')
-              .select('id')
-              .eq('nucleo_id', profile?.nucleo_id)
-              .eq('item_type', 'atividade')
-              .in('item_id', (moduleExams || []).map(ex => ex.id))
-              .eq('liberado', true)
-              .maybeSingle();
-            setIsReleased(!!siblingRel);
-          } else {
-            // Conteúdo comum: verificar liberação do módulo
-            const { data: moduleRelease } = await supabase.from('liberacoes_nucleo')
-              .select('id')
-              .eq('nucleo_id', profile?.nucleo_id)
-              .eq('item_id', lessonData.livro_id)
-              .eq('item_type', 'modulo')
-              .eq('liberado', true)
-              .maybeSingle();
-            setIsReleased(!!moduleRelease);
-            }
-          }
+          const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id);
+          setIsReleased(acesso);
+        }
 
         // 2. Main Logic: Submission Fetch & Timer
         const { data: subData } = await supabase.from('respostas_aulas').select('*').eq('aula_id', id).eq('aluno_id', user.id).maybeSingle();
@@ -593,11 +606,39 @@ const Lesson = () => {
       console.error('[Lesson.handleSubmit] ERRO: lesson ou userProfile é null/undefined');
       return
     }
-    // Se for staff e não é chamada explícita de gabarito, redireciona para salvar gabarito
-    if (userProfile?.isStaff && !isSavingGabarito) {
-      return handleSubmit(true);
+    
+    const targetId = (lesson as any).linkedActivity?.id || id;
+    
+    if (userProfile?.isStaff && isSavingGabarito) {
+      const gabarito = questions.map((q, idx) => {
+        const qKey = q.id || idx;
+        const adminAns = answers[qKey];
+        const gabaritoQ = { ...q };
+        if (q.type === 'multiple_choice' || !q.type) {
+          gabaritoQ.correct = typeof adminAns === 'number' ? adminAns : (q.correct ?? 0);
+        } else if (q.type === 'true_false') {
+          gabaritoQ.isTrue = typeof adminAns === 'boolean' ? adminAns : (q.isTrue ?? true);
+        } else if (q.type === 'matching') {
+          gabaritoQ.matchingPairs = q.matchingPairs?.map((pair, mIdx) => {
+            const selectedIdx = adminAns?.[mIdx];
+            if (selectedIdx !== undefined && selectedIdx !== '') {
+              const selectedRight = q.matchingPairs?.[parseInt(selectedIdx)];
+              return { left: pair.left, right: selectedRight?.right || pair.right };
+            }
+            return pair;
+          });
+        } else if (q.type === 'discursive') {
+          gabaritoQ.expectedAnswer = adminAns || q.expectedAnswer || '';
+        }
+        return gabaritoQ;
+      });
+
+      const { error } = await supabase.from('aulas').update({ questionario: gabarito }).eq('id', targetId);
+      if (error) throw error;
+      alert('Gabarito Oficial salvo com sucesso!');
+      setSubmitting(false);
+      return;
     }
-    setSubmitting(true)
     try {
       let score = 0; 
       

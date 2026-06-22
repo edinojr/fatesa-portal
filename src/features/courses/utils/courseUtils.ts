@@ -23,6 +23,7 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     // Identificação Robusta de Avaliações Finais
     const finalExams = allAulas.filter((a: any) => 
       a.tipo === 'prova' || 
+      a.tipo === 'avaliacao' || 
       !!a.is_bloco_final
     );
     
@@ -79,7 +80,7 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       isFinished = (completedItems === totalItems && totalItems > 0);
     }
     
-    return {
+    const result = {
       percent: Math.round((completedItems / totalItems) * 100),
       completed: completedItems,
       total: totalItems,
@@ -89,6 +90,17 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       attemptsCount,
       hasExam: finalExams.length > 0
     };
+    
+    console.log(`[getBookStats] "${l.titulo}":`, {
+      totalAulas: allAulas.length,
+      aulaTipos: allAulas.map((a: any) => a.tipo),
+      finalExams: finalExams.map((e: any) => e.titulo || e.tipo),
+      examSubmissionsCount: (atividades || []).filter(at => finalExams.some((ex: any) => ex.id === getSubAulaId(at))).length,
+      submittedIds,
+      result
+    });
+    
+    return result;
 };
 
 export const isCourseCompleted = (course: any, atividades: any[] = [], progressoAulas: any[] = []) => {

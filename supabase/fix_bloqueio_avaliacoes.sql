@@ -46,8 +46,7 @@ alunos_aprovados AS (
     WHERE status = 'corrigida' AND nota >= 7.0
 )
 UPDATE public.liberacoes_nucleo ln
-SET liberado = true,
-    updated_at = now()
+SET liberado = true
 WHERE EXISTS (
     SELECT 1 FROM alunos_aprovados aa
     WHERE aa.livro_id = ln.item_id

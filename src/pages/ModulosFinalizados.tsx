@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Award, BookOpen, ChevronLeft } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
+import { supabase } from '../lib/supabase'
 import Logo from '../components/common/Logo'
 import CourseList from '../features/courses/components/CourseList'
+import GradesPanel from '../features/courses/components/GradesPanel'
 import { getBookStats, isCourseCompleted } from '../features/courses/utils/courseUtils'
 import { GRADUATION_CONFIG, isNivelBasico, isNivelMedio } from '../config/graduation'
 import GraduationFormModal from '../features/users/components/GraduationFormModal'
@@ -25,6 +27,7 @@ const goToPanel = () => {
     const [showCertificate, setShowCertificate] = React.useState(false);
     const [completedCourse, setCompletedCourse] = React.useState<any>(null);
     const [alumniRecord, setAlumniRecord] = React.useState<any>(null);
+    const [historyGrades, setHistoryGrades] = useState<any[]>([]);
 
     // Verificar se algum curso foi finalizado totalmente
     useEffect(() => {
@@ -75,7 +78,18 @@ const goToPanel = () => {
         }
     }, [profileLoading, profile]);
 
+    useEffect(() => {
+        if (!profileLoading && profile?.id) {
+            supabase.from('historico_notas').select('*').eq('aluno_id', profile.id).order('created_at', { ascending: false }).then(({ data }) => setHistoryGrades(data || []));
+        }
+    }, [profileLoading, profile?.id]);
+
     // Filtrar apenas cursos que possuem pelo menos um livro finalizado
+    console.log('[ModulosFinalizados] cursos:', courses?.length, 'atividades:', atividades?.length, 'progresso:', progressoAulas?.length);
+    courses?.forEach(c => c.livros?.forEach(l => {
+        const stats = getBookStats(l, atividades, progressoAulas);
+        console.log(`[MF] "${c.nome}" / "${l.titulo}" → isFinished:${stats.isFinished} isApproved:${stats.isApproved} examGrade:${stats.examGrade}`);
+    }));
     const finishedCourses = (courses || []).map(course => {
         const finishedBooks = (course.livros || []).filter(l => getBookStats(l, atividades, progressoAulas).isFinished);
         return { ...course, livros: finishedBooks };
@@ -168,6 +182,20 @@ const goToPanel = () => {
                         showOnlyFinished={true}
                     />
                 )}
+
+                <div style={{ marginTop: '4rem', borderTop: '2px solid var(--glass-border)', paddingTop: '2rem' }}>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: 900, margin: '0 0 1.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <Award size={22} /> Meu Boletim
+                    </h2>
+                    <GradesPanel
+                        profile={profile}
+                        availableNucleos={[]}
+                        handleChangeNucleo={() => {}}
+                        courses={courses}
+                        atividades={atividades}
+                        historyGrades={historyGrades}
+                    />
+                </div>
             </main>
 
             {showGraduationForm && completedCourse && profile && (

@@ -21,7 +21,7 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
   const [expandedCourse, setExpandedCourse] = React.useState<string | null>(null);
   const isAdmin = userRole === 'admin' || userRole === 'suporte';
   const isProfessor = userRole === 'professor';
-
+  const canManage = isAdmin || isProfessor;
 
   return (
     <div style={{ flex: '1 1 350px' }}>
@@ -83,7 +83,7 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                         <button 
                           className="btn"
                            onClick={() => handleToggleRelease(livro.id, 'modulo', !!isLivroReleased)}
-                           disabled={actionLoading === `release_modulo:${livro.id}` || !isAdmin}
+                           disabled={actionLoading === `release_modulo:${livro.id}` || !canManage}
                            style={{ 
                              width: 'auto', 
                              padding: '0.2rem 0.6rem', 
@@ -91,8 +91,8 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                              background: isLivroReleased ? 'var(--success)' : 'rgba(255,255,255,0.05)',
                              color: '#fff',
                              border: 'none',
-                             opacity: isAdmin ? 1 : 0.4,
-                             cursor: isAdmin ? 'pointer' : 'not-allowed'
+                             opacity: canManage ? 1 : 0.4,
+                             cursor: canManage ? 'pointer' : 'not-allowed'
                            }}
                         >
                             {actionLoading === `release_modulo:${livro.id}` ? <Loader2 className="spinner" size={12} /> : isLivroReleased ? 'Liberado' : 'Bloqueado'}

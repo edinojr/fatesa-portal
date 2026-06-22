@@ -133,39 +133,27 @@ const ModuleDetails = () => {
     const isActuallyLocked = (item: any) => {
       if (isStaff) return false;
 
-      // Automatic release for V2/V3
-      if ((item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final) && (item.versao || 1) > 1) {
-        const versao = item.versao || 1;
-        const moduleSubs = (atividades || []).filter((s: any) => s.book_id === currentBook?.book.id);
-        
-        const examSubs = moduleSubs.filter((s: any) => 
-          s.is_bloco_final || s.lesson_type === 'prova' || (s.aulas && /V[1-3]|RECUPERAÇ/i.test(s.aulas.titulo || ''))
-        );
+      const versao = item.versao || 1;
+      const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;
+      const moduleSubs = (atividades || []).filter((s: any) => s.book_id === currentBook?.book.id);
+      const examSubs = moduleSubs.filter((s: any) => s.lesson_type === 'prova' || s.is_bloco_final || (s.aulas?.tipo === 'prova'));
 
-        let passedAny = false;
-        if (examSubs.length > 0) {
-          const highestExam = examSubs.reduce((prev, current) => {
-            const prevV = prev.aulas?.versao || 1;
-            const currV = current.aulas?.versao || 1;
-            return currV >= prevV ? current : prev;
-          });
-          const minGrade = highestExam.aulas?.min_grade || 7.0;
-          if ((highestExam.aulas?.versao || 1) < versao && highestExam.status === 'corrigida' && (highestExam.nota || 0) >= minGrade) {
-            passedAny = true;
-          }
-        }
-
-        if (passedAny) return true; // Locked because already approved
-
-        const didPrevious = moduleSubs.some((s: any) => {
-          const aula = s.aulas;
-          return (aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final) && (aula?.versao || 1) === versao - 1 && s.status === 'corrigida';
+      // V2: liberado se aluno reprovou na V1
+      // V3: liberado se aluno reprovou na V2
+      // Bloco final: usa regra padrão de liberação por núcleo
+      if (isExam && versao > 1) {
+        const prevExam = examSubs.find((s: any) => {
+          const sv = s.aulas?.versao || 1;
+          return sv === versao - 1 && s.status === 'corrigida';
         });
-
-        if (didPrevious) return false; // Automatically unlocked
+        if (!prevExam) return true; // Versão anterior não feita → bloqueado
+        const prevMinGrade = prevExam.aulas?.min_grade || 7.0;
+        const failed = (prevExam.nota || 0) < prevMinGrade;
+        if (!failed) return true; // Passou na anterior → aprovado, bloqueado
+        return false; // Reprovou na anterior → V2/V3 liberado
       }
 
-      // Se houver liberação explícita para o núcleo, está desbloqueado
+      // V1 ou conteúdo regular: verificar liberação por núcleo
       const hasNucleusRelease = nucleusReleases.some(r => 
         r.item_id === item.id && 
         (r.item_type === 'atividade' || r.item_type === 'video' || r.item_type === 'modulo')

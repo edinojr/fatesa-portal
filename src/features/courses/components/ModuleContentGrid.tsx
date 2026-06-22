@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react'
 import { Lock, CheckCircle } from 'lucide-react'
 
+const MEDIA_APROVACAO = 7.0;
+
 interface ModuleContentGridProps {
   aulas: any[]
   progressoAulas: any[]
@@ -18,7 +20,6 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
   onItemClick,
   compact = false,
 }) => {
-  // 1. Ordenação Estrita: Ordem -> ID para garantir consistência absoluta
   const sortedAulas = useMemo(() => {
     return [...aulas].sort((a, b) => {
       const ordA = Number(a.ordem) || 0;
@@ -30,7 +31,6 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
 
   const isVideoType = (t: string) => t === 'gravada' || t === 'ao_vivo' || t === 'video' || t === 'aula_video';
 
-  // 2. Extração de Categorias (Mutuamente Exclusivas)
   const panorama = sortedAulas.find((a: any) => a.ordem === 0 || a.titulo?.trim()?.toLowerCase() === 'panorama');
 
   const licoes = sortedAulas.filter((a: any) => {
@@ -55,46 +55,73 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
     return watchedIds.includes(item.id);
   };
 
+  const getVersao = (it: any) => {
+    if (it.versao) return it.versao;
+    if (it.titulo?.match(/v2/i) || it.titulo?.match(/recupera/i)) return 2;
+    if (it.titulo?.match(/v3/i) || it.titulo?.match(/2ª rec/i)) return 3;
+    return 1;
+  };
+
   const isActuallyLocked = (item: any) => {
     const isStaff = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.tipo === 'professor' ||
                     (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
     if (isStaff) return false;
-    if ((item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final) && (item.versao || 1) > 1) {
-      const versao = item.versao || 1;
-      const moduleSubs = (atividades || []).filter((s: any) => s.book_id === item.livro_id);
-      const examSubs = moduleSubs.filter((s: any) => s.is_bloco_final || s.lesson_type === 'prova' || (s.aulas && /V[1-3]|RECUPERAÇ/i.test(s.aulas.titulo || '')));
-      let passedAny = false;
-      if (examSubs.length > 0) {
-        const highestExam = examSubs.reduce((prev, current) => {
-          const prevV = prev.aulas?.versao || 1;
-          const currV = current.aulas?.versao || 1;
-          return currV >= prevV ? current : prev;
+    
+    const versao = getVersao(item);
+    const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;
+
+    if (isExam && versao > 1) {
+      const livroId = item.livro_id;
+      
+      const moduleSubs = (atividades || []).filter((s: any) => s.book_id === livroId);
+      
+      if (versao === 2) {
+        const subV1 = moduleSubs.find((s: any) => {
+          const aula = s.aulas || {};
+          return (aula.tipo === 'prova' || aula.tipo === 'avaliacao' || aula.is_bloco_final) && 
+                 getVersao(aula) === 1 && 
+                 s.status === 'corrigida';
         });
-        const minGrade = highestExam.aulas?.min_grade || 7.0;
-        if ((highestExam.aulas?.versao || 1) < versao && highestExam.status === 'corrigida' && (highestExam.nota || 0) >= minGrade) {
-          passedAny = true;
+        
+        if (!subV1 || (subV1.nota || 0) >= MEDIA_APROVACAO) {
+          return true;
         }
       }
-      if (passedAny) return true;
-      const didPrevious = moduleSubs.some((s: any) => {
-        const aula = s.aulas;
-        return (aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final) && (aula?.versao || 1) === versao - 1 && s.status === 'corrigida';
-      });
-      if (didPrevious) return false;
+      
+      if (versao === 3) {
+        const subV2 = moduleSubs.find((s: any) => {
+          const aula = s.aulas || {};
+          return (aula.tipo === 'prova' || aula.tipo === 'avaliacao' || aula.is_bloco_final) && 
+                 getVersao(aula) === 2 && 
+                 s.status === 'corrigida';
+        });
+        
+        if (!subV2 || (subV2.nota || 0) >= MEDIA_APROVACAO) {
+          return true;
+        }
+      }
+      return false; // If failed previous version, this is unlocked
     }
+
+    if (isExam && versao === 1) {
+      // Check progress of non-exam items
+      const requiredContent = sortedAulas.filter((a: any) => 
+        a.tipo !== 'prova' && a.tipo !== 'avaliacao' && !a.is_bloco_final && a.id !== item.id
+      );
+      const allContentCompleted = requiredContent.every((c: any) => isCompleted(c));
+      if (!allContentCompleted) return true;
+    }
+    
     if (!!item.lockedByProfessor) return true;
     if (item.status_liberacao === false) return true;
     if (item.data_liberacao && new Date(item.data_liberacao) > new Date()) return true;
     return false;
   };
 
-  // 3. Montagem Matemática da Grade
   const hasPanorama = !!panorama;
   
-  // CORREÇÃO: Coluna de lições só deve incluir o panorama se ele existir, caso contrário começa com as lições
   const colLessons = panorama ? [panorama, ...licoes] : licoes;
   
-  // Coluna 2 e 3: Alinhamento horizontal com a primeira lição
   const colExercises = hasPanorama ? [null, ...exercicios] : exercicios;
   const colVideos = hasPanorama ? [null, ...videos] : videos;
   

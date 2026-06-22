@@ -30,14 +30,13 @@ import { useFinanceControl } from '../features/finance/hooks/useFinanceControl'
 
 // Componentes Feature-based
 import CourseList from '../features/courses/components/CourseList'
-import GradesPanel from '../features/courses/components/GradesPanel'
 import ForumPanel from '../features/forum/components/ForumPanel'
 import AlumniCertificate from '../components/documents/AlumniCertificate'
 import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
 import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
 
-type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'boletim' | 'forum' | 'modulos-concluidos'
+type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'forum' | 'modulos-concluidos'
 
 const Dashboard = () => {
   const { profile, signOut, refreshProfile } = useProfile();
@@ -55,7 +54,7 @@ const Dashboard = () => {
   
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'boletim', 'forum', 'modulos-concluidos'];
+    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'forum', 'modulos-concluidos'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
@@ -326,9 +325,25 @@ const Dashboard = () => {
     
     return courses.map(course => ({
       ...course,
-      livros: course.livros || []
-    }));
+      livros: (course.livros || []).filter((livro: any) => !livro.isFinished)
+    })).filter(course => course.livros.length > 0);
   }, [courses, isStaff]);
+
+  // Módulos em andamento (não finalizados)
+  const modulosAtivos = useMemo(() => {
+    return courses.map(course => ({
+      ...course,
+      livros: (course.livros || []).filter((livro: any) => !livro.isFinished)
+    })).filter(course => course.livros.length > 0);
+  }, [courses]);
+
+  // Módulos concluídos/arquivados (finalizados)
+  const modulosFinalizados = useMemo(() => {
+    return courses.map(course => ({
+      ...course,
+      livros: (course.livros || []).filter((livro: any) => livro.isFinished)
+    })).filter(course => course.livros.length > 0);
+  }, [courses]);
 
   useEffect(() => {
     if (profile?.id) {
@@ -613,7 +628,7 @@ const Dashboard = () => {
                 <p>Marque módulos que você já concluiu fora da plataforma.</p>
               </div>
 
-              <div className="admin-action-card" onClick={() => setActiveTab('boletim')}>
+              <div className="admin-action-card" onClick={() => navigate('/modulos-finalizados')}>
                 <div className="icon-wrapper"><Award size={32} /></div>
                 <h3>Meu Boletim</h3>
                 <p>Consulte suas notas e desempenho acadêmico.</p>
@@ -724,10 +739,26 @@ const Dashboard = () => {
                 </button>
               </div>
                <CourseList 
-                 courses={currentCourses}
-                 progressoAulas={progressoAulas}
-                 atividades={atividades}
-               />
+                  courses={currentCourses}
+                  progressoAulas={progressoAulas}
+                  atividades={atividades}
+                />
+
+                {modulosFinalizados.length > 0 && (
+                  <div style={{ marginTop: '3rem', borderTop: '1px solid var(--glass-border)', paddingTop: '2rem' }}>
+                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.2rem', fontWeight: 800, color: '#d97706', marginBottom: '1.5rem' }}>
+                      <Award size={22} /> Módulos Finalizados e Concluídos
+                    </h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+                      Estes módulos você já finalizou com aprovação. Seu histórico de notas está preservado.
+                    </p>
+                    <CourseList 
+                      courses={modulosFinalizados}
+                      progressoAulas={progressoAulas}
+                      atividades={atividades}
+                    />
+                  </div>
+                )}
             </>
           )}
 
@@ -751,17 +782,6 @@ const Dashboard = () => {
               isBlockedDueToPayment={isBlockedDueToPayment}
               isPastDue={isPastDue}
               handleRequestExtension={handleRequestExtension}
-            />
-          )}
-
-          {activeTab === 'boletim' && (
-            <GradesPanel 
-              profile={profile}
-              availableNucleos={availableNucleos}
-              handleChangeNucleo={handleChangeNucleo} 
-              courses={courses}
-              atividades={atividades}
-              historyGrades={historyGrades}
             />
           )}
 
