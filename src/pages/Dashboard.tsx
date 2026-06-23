@@ -557,7 +557,7 @@ const Dashboard = () => {
                  {activeTab === 'cursos' ? 'Meus Cursos' :
                   activeTab === 'documentos' ? 'Documentos' :
                   activeTab === 'financeiro' ? 'Pagamentos' :
-                  activeTab === 'boletim' ? 'Boletim' : 'Fórum'}
+                  activeTab === 'modulos-concluidos' ? 'Boletim' : 'Fórum'}
                </span>
              </div>
            )}

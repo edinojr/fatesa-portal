@@ -220,7 +220,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
           .eq('numero_modulo', nextNumero)
           .single();
 
-        let itemsToRelease = [];
+        let itemsToRelease: Array<{ nucleo_id: string; item_id: number; item_type: string; liberado: boolean }> = [];
 
         if (currentExams) {
           currentExams.forEach(exam => {
