@@ -175,12 +175,19 @@ const goToPanel = () => {
                         <button onClick={() => navigate('/dashboard?tab=cursos')} className="btn btn-primary" style={{ width: 'auto' }}>Ir para Meus Cursos</button>
                     </div>
                 ) : (
-                    <CourseList 
-                        courses={finishedCourses}
-                        atividades={atividades}
-                        progressoAulas={progressoAulas}
-                        showOnlyFinished={true}
-                    />
+                    <>
+                        <CourseList 
+                            courses={finishedCourses}
+                            atividades={atividades}
+                            progressoAulas={progressoAulas}
+                            showOnlyFinished={true}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+                            <button onClick={() => navigate('/dashboard?tab=cursos')} className="btn btn-primary" style={{ gap: '0.5rem', padding: '0.75rem 2rem' }}>
+                                <ChevronLeft size={18} /> Voltar para Meus Cursos
+                            </button>
+                        </div>
+                    </>
                 )}
 
                 <div style={{ marginTop: '4rem', borderTop: '2px solid var(--glass-border)', paddingTop: '2rem' }}>

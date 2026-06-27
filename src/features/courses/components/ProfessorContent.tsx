@@ -203,24 +203,15 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
     const handleReleaseExams = async (nucleoId: string, currentBook: any) => {
       try {
-        const TOTAL_MODULOS = 27;
-        const currentNumero = currentBook.numero_modulo;
-
-        const nextNumero = currentNumero === TOTAL_MODULOS ? 1 : currentNumero + 1;
-
         const { data: currentExams } = await supabase
           .from('aulas')
           .select('id')
           .eq('livro_id', currentBook.id)
-          .eq('tipo_prova', 'V1');
+          .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
+          .order('ordem', { ascending: true })
+          .limit(1);
 
-        const { data: nextBook } = await supabase
-          .from('livros')
-          .select('id')
-          .eq('numero_modulo', nextNumero)
-          .single();
-
-        let itemsToRelease: Array<{ nucleo_id: string; item_id: number; item_type: string; liberado: boolean }> = [];
+        let itemsToRelease: Array<{ nucleo_id: string; item_id: any; item_type: string; liberado: boolean }> = [];
 
         if (currentExams) {
           currentExams.forEach(exam => {
@@ -233,21 +224,44 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
           });
         }
 
+        // Find next module: try numero_modulo first, fallback to ordem
+        let nextBook: any = null;
+        const currentNumero = currentBook.numero_modulo;
+        if (currentNumero && !isNaN(currentNumero)) {
+          const TOTAL_MODULOS = 27;
+          const nextNumero = currentNumero === TOTAL_MODULOS ? 1 : currentNumero + 1;
+          const { data: nb } = await supabase
+            .from('livros')
+            .select('id')
+            .eq('numero_modulo', nextNumero)
+            .maybeSingle();
+          nextBook = nb;
+        }
+        if (!nextBook && typeof currentBook.ordem === 'number' && currentBook.curso_id) {
+          const { data: nb } = await supabase
+            .from('livros')
+            .select('id')
+            .eq('ordem', currentBook.ordem + 1)
+            .eq('curso_id', currentBook.curso_id)
+            .maybeSingle();
+          nextBook = nb;
+        }
+
         if (nextBook) {
           const { data: nextContent } = await supabase
             .from('aulas')
             .select('id, tipo')
             .eq('livro_id', nextBook.id)
             .not('tipo', 'eq', 'prova')
-            .not('tipo', 'eq', 'avaliacao')
-            .is('tipo_prova', null);
+            .not('tipo', 'eq', 'avaliacao');
 
           if (nextContent) {
             nextContent.forEach(item => {
+              const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo';
               itemsToRelease.push({
                 nucleo_id: nucleoId,
                 item_id: item.id,
-                item_type: item.tipo === 'video' ? 'video' : 'atividade',
+                item_type: isVideo ? 'video' : 'atividade',
                 liberado: true
               });
             });
@@ -268,7 +282,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
           })
         }
 
-        alert("Avaliação V1 liberada e conteúdo do próximo módulo destravado!");
+        alert("Avaliação V1 liberada! O conteúdo do próximo módulo também foi liberado, pois mesmo sem aprovação o aluno segue o curso. Hierarquia: V2 liberada se reprovar na V1, V3 se reprovar na V2.");
       } catch (error: any) {
         console.error("Erro na liberação circular:", error);
         alert('Erro ao liberar provas: ' + (error?.message || error));
@@ -296,9 +310,17 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   const isLessonReleased = (lessonId: string, lessonTipo: string, isBlocoFinal?: boolean) => {
     if (!selectedNucleus) return true
     const isVideo = lessonTipo === 'gravada' || lessonTipo === 'ao_vivo' || lessonTipo === 'video'
-    const isExam = lessonTipo === 'prova' || isBlocoFinal
-    const itemType = isVideo ? 'video' : 'atividade'
-    return releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === lessonId && r.item_type === itemType)
+    const isExam = lessonTipo === 'prova' || lessonTipo === 'avaliacao' || isBlocoFinal
+    
+    if (isExam) {
+      const itemType = isVideo ? 'video' : 'atividade'
+      return releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === lessonId && r.item_type === itemType)
+    }
+    
+    return releases.some(r => {
+      if (r.nucleo_id !== selectedNucleus || r.item_id !== lessonId) return false
+      return r.item_type === 'video' || r.item_type === 'atividade'
+    })
   }
 
   const getLessonGabarito = (lesson: any) => {
@@ -334,6 +356,51 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
       setLessons(prev => prev.map(l => l.id === lessonId ? { ...l, professor_active: !currentStatus } : l))
     } catch (err: any) {
       alert('Erro ao ativar/desativar avaliação: ' + err.message)
+    }
+  }
+
+  const handleToggleBlockModule = async () => {
+    if (!selectedBook) return
+    const isCurrentlyActive = selectedBook.professor_active ?? true
+    const isReleasedForNucleus = selectedNucleus ? releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') : false
+
+    if (!isCurrentlyActive || !isReleasedForNucleus) {
+      const nucleusToUse = selectedNucleus || professorNucleos[0]?.id
+      if (!nucleusToUse) {
+        alert('Selecione um polo primeiro.')
+        return
+      }
+      try {
+        const { data: allLessons } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', selectedBook.id)
+        const releaseModulo = { nucleo_id: nucleusToUse, item_id: selectedBook.id, item_type: 'modulo', liberado: true }
+        const itemsToRelease = (allLessons || [])
+          .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
+          .map(l => {
+            const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
+            return { nucleo_id: nucleusToUse, item_id: l.id, item_type: isVideo ? 'video' : 'atividade', liberado: true }
+          })
+        await supabase.from('liberacoes_nucleo').upsert([releaseModulo, ...itemsToRelease], { onConflict: 'nucleo_id, item_id, item_type' })
+        await supabase.from('livros').update({ professor_active: true }).eq('id', selectedBook.id)
+        setBooks(prev => prev.map(b => b.id === selectedBook.id ? { ...b, professor_active: true } : b))
+        setSelectedBook({ ...selectedBook, professor_active: true })
+        await fetchReleases()
+        alert('Módulo liberado com sucesso!')
+      } catch (err: any) {
+        alert('Erro ao liberar módulo: ' + err.message)
+      }
+    } else {
+      if (!window.confirm(`Bloquear TODO o conteúdo do módulo "${selectedBook.titulo}"? Os alunos não podrán mais ver este módulo.`)) return
+      try {
+        await supabase.from('livros').update({ professor_active: false }).eq('id', selectedBook.id)
+        await supabase.from('liberacoes_nucleo').delete().eq('item_id', selectedBook.id).eq('item_type', 'modulo')
+        setBooks(prev => prev.map(b => b.id === selectedBook.id ? { ...b, professor_active: false } : b))
+        setSelectedBook({ ...selectedBook, professor_active: false })
+        await fetchReleases()
+        setSelectedBook(null)
+        alert('Módulo bloqueado! Alunos não verão mais este conteúdo.')
+      } catch (err: any) {
+        alert('Erro ao bloquear módulo: ' + err.message)
+      }
     }
   }
 
@@ -433,35 +500,35 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                             const itemType = isVideo ? 'video' : 'atividade';
                            return !releases.some(r => r.item_id === lesson.id && r.item_type === itemType);
                          } : undefined}
-                 releaseControls={!hideReleaseControls && (
-                   <div style={{ background: 'var(--glass)', padding: '0.85rem', borderRadius: '14px', border: '1px solid var(--glass-border)' }}>
-                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.6rem', textTransform: 'uppercase', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <ShieldCheck size={12} /> Acesso por Polo
-                    </p>
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
-                       <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleModuleActive(book.id, book.professor_active ?? true); }} style={{
-                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                         padding: '0.55rem 0.85rem', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s', marginBottom: '0.5rem',
-                         background: (book.professor_active ?? true) ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
-                         border: `1px solid ${(book.professor_active ?? true) ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'}`,
-                          color: 'var(--text-main)', fontWeight: 800, fontSize: '0.8rem'
+releaseControls={!hideReleaseControls && (
+                    <div style={{ background: 'var(--glass)', padding: '0.85rem', borderRadius: '14px', border: '1px solid var(--glass-border)', position: 'relative', zIndex: 10 }}>
+                     <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.6rem', textTransform: 'uppercase', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                       <ShieldCheck size={12} /> Acesso por Polo
+                     </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                        <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleModuleActive(book.id, book.professor_active ?? true); }} style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          padding: '0.55rem 0.85rem', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s', marginBottom: '0.5rem',
+                          background: (book.professor_active ?? true) ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
+                          border: `1px solid ${(book.professor_active ?? true) ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)'}`,
+                           color: 'var(--text-main)', fontWeight: 800, fontSize: '0.8rem', position: 'relative', zIndex: 11
                         }}>
                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                           {(book.professor_active ?? true) ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-                           <span>Status Global: {(book.professor_active ?? true) ? 'Ativo' : 'Inativo'}</span>
-                         </div>
-                            <span style={{ fontSize: '0.6rem', textTransform: 'uppercase', background: 'rgba(0,0,0,0.1)', padding: '2px 8px', borderRadius: '20px', color: 'var(--text-main)' }}>
-                            {(book.professor_active ?? true) ? 'Desativar' : 'Ativar'}
-                          </span>
-                       </button>
-                       {professorNucleos.map(n => {
-                         const isModReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo')
-                         return (
-                            <button key={n.id} onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }} style={{
-                              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                              padding: '0.55rem 0.85rem', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s',
-                              background: isModReleased ? 'rgba(16,185,129,0.15)' : 'var(--glass)',
-                              border: `1px solid ${isModReleased ? 'rgba(16,185,129,0.3)' : 'var(--glass-border)'}`,
+                            {(book.professor_active ?? true) ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
+                            <span>Status Global: {(book.professor_active ?? true) ? 'Ativo' : 'Inativo'}</span>
+                          </div>
+                             <span style={{ fontSize: '0.6rem', textTransform: 'uppercase', background: 'rgba(0,0,0,0.1)', padding: '2px 8px', borderRadius: '20px', color: 'var(--text-main)' }}>
+                             {(book.professor_active ?? true) ? 'Desativar' : 'Ativar'}
+                           </span>
+                        </button>
+                        {professorNucleos.map(n => {
+                          const isModReleased = releases.some(r => r.nucleo_id === n.id && r.item_id === book.id && r.item_type === 'modulo')
+                          return (
+                             <button type="button" key={n.id} onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleRelease(n.id, book.id, 'modulo'); }} style={{
+                               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                               padding: '0.55rem 0.85rem', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s',
+                               background: isModReleased ? 'rgba(16,185,129,0.15)' : 'var(--glass)',
+                               border: `1px solid ${isModReleased ? 'rgba(16,185,129,0.3)' : 'var(--glass-border)'}`, position: 'relative', zIndex: 11
                             }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                             {isModReleased ? <Unlock size={14} color="#10b981" /> : <Lock size={14} style={{ opacity: 0.5, color: 'var(--primary)' }} />}
@@ -471,22 +538,22 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                             {isModReleased ? 'Ativo' : 'Ativar'}
                           </span>
                            </button>
-                         )
-                       })}
-                     </div>
+                          )
+                        })}
+                      </div>
 
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.6rem' }}>
-                       <select onChange={(e) => { if (e.target.value) handleReleaseContent(e.target.value, book); e.target.value = '' }} className="form-control" style={{ fontSize: '0.7rem', height: '30px', padding: '0 0.5rem' }}>
-                         <option value="">📚 Liberar CONTEÚDO para polo...</option>
-                         {professorNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
-                       </select>
-                       <select onChange={(e) => { if (e.target.value) handleReleaseExams(e.target.value, book); e.target.value = '' }} className="form-control" style={{ fontSize: '0.7rem', height: '30px', padding: '0 0.5rem' }}>
-                         <option value="">🎓 Liberar PROVAS para polo...</option>
-                         {professorNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
-                       </select>
-                     </div>
-                  </div>
-                )}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.6rem' }}>
+                       <select onChange={(e) => { if (e.target.value) handleReleaseContent(e.target.value, book); e.target.value = '' }} className="form-control" style={{ fontSize: '0.7rem', height: '30px', padding: '0 0.5rem', position: 'relative', zIndex: 11 }}>
+                          <option value="">📚 Liberar CONTEÚDO para polo...</option>
+                          {professorNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
+                        </select>
+                        <select onChange={(e) => { if (e.target.value) handleReleaseExams(e.target.value, book); e.target.value = '' }} className="form-control" style={{ fontSize: '0.7rem', height: '30px', padding: '0 0.5rem', position: 'relative', zIndex: 11 }}>
+                          <option value="">🎓 Liberar PROVAS para polo...</option>
+                          {professorNucleos.map(n => <option key={n.id} value={n.id}>{n.nome}</option>)}
+                        </select>
+                      </div>
+                   </div>
+                 )}
               />
             )
           })}
@@ -513,6 +580,21 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                     </span>
                 )
               })()}
+              {!hideReleaseControls && selectedBook && (
+                <button
+                  onClick={handleToggleBlockModule}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '0.4rem',
+                    padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                    background: (selectedBook.professor_active ?? true) ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
+                    border: `1px solid ${(selectedBook.professor_active ?? true) ? 'rgba(239,68,68,0.4)' : 'rgba(16,185,129,0.4)'}`,
+                    color: (selectedBook.professor_active ?? true) ? '#ef4444' : '#10b981',
+                    fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                  }}
+                >
+                  {(selectedBook.professor_active ?? true) ? <><Lock size={14} /> Bloquear Módulo</> : <><Unlock size={14} /> Liberar Módulo</>}
+                </button>
+              )}
             </div>
           </div>
 
@@ -540,7 +622,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <button
-                  onClick={() => toggleModuleActive(selectedBook.id, selectedBook.professor_active ?? true)}
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); toggleModuleActive(selectedBook.id, selectedBook.professor_active ?? true); }}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '0.5rem',
                     padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
@@ -553,24 +636,42 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                   {(selectedBook.professor_active ?? true) ? 'Módulo Ativo' : 'Módulo Inativo'}
                 </button>
 
+                {selectedNucleus ? (
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); toggleRelease(selectedNucleus, selectedBook.id, 'modulo'); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                      padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                      background: releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.04)',
+                      border: `1px solid ${releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                      color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                    }}
+                  >
+                    {releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? <Unlock size={14} color="#10b981" /> : <Lock size={14} />}
+                    {releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'Módulo Liberado' : 'Liberar Módulo'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); alert('Selecione um polo primeiro.'); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                      padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                    }}
+                  >
+                    <Lock size={14} /> Selecione polo para liberar
+                  </button>
+                )}
+
                 {selectedNucleus && (
                   <>
                     <button
-                      onClick={() => toggleRelease(selectedNucleus, selectedBook.id, 'modulo')}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '0.5rem',
-                        padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
-                        background: releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                        color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
-                      }}
-                    >
-                      {releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? <Unlock size={14} color="#10b981" /> : <Lock size={14} />}
-                      {releases.some(r => r.nucleo_id === selectedNucleus && r.item_id === selectedBook.id && r.item_type === 'modulo') ? 'Módulo Liberado' : 'Liberar Módulo'}
-                    </button>
-
-                    <button
-                      onClick={() => handleReleaseContent(selectedNucleus, selectedBook)}
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); handleReleaseContent(selectedNucleus, selectedBook); }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '0.5rem',
                         padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
@@ -582,7 +683,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                     </button>
 
                     <button
-                      onClick={() => handleReleaseExams(selectedNucleus, selectedBook)}
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); handleReleaseExams(selectedNucleus, selectedBook); }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '0.5rem',
                         padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
@@ -680,7 +782,9 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                   style={{
                     padding: '1rem',
                     background: isReleased ? 'var(--glass)' : 'rgba(255,255,255,0.02)',
-                    border: `1px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.05)'}`,
+                    borderTop: `1px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.05)'}`,
+                    borderRight: `1px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.05)'}`,
+                    borderBottom: `1px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.05)'}`,
                     borderLeft: `4px solid ${isReleased ? borderColor : 'rgba(255,255,255,0.08)'}`,
                     borderRadius: '12px',
                     cursor: isReleased ? 'pointer' : 'not-allowed',

@@ -68,6 +68,7 @@ const CourseList: React.FC<CourseListProps> = ({
     const isExpanded = expandedBookId === currentBook.id;
 
     if (showOnlyFinished && !stats.isFinished) return null;
+    if (!showOnlyFinished && stats.isFinished) return null;
 
     return (
       <div key={currentBook.id} style={{ marginBottom: '0.75rem' }}>

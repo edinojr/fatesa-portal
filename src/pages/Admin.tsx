@@ -25,7 +25,8 @@ import {
   ArrowLeft,
   Search,
   ChevronDown,
-  ClipboardList
+  ClipboardList,
+  AlertCircle
 } from 'lucide-react'
 
 // Features Components
@@ -51,6 +52,8 @@ import ForumPanel from '../features/forum/components/ForumPanel'
 import ValidationPanel from '../features/finance/components/ValidationPanel'
 
 // Modals
+import AvisosManagement from '../features/communication/components/AvisosManagement'
+import PopupAlertsManagement from '../features/admin/components/PopupAlertsManagement'
 import LessonContentEditorModal from '../features/courses/components/modals/LessonContentEditorModal'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import { 
@@ -257,6 +260,7 @@ const Admin = () => {
       case 'grade_history': return 'Histórico de Notas';
       case 'docs_archive': return 'Arquivo de Documentação';
       case 'boletim': return 'Boletim de Notas';
+      case 'popups': return 'Pop-ups de Alertas e Informes';
       default: return 'Validação de Acesso';
     }
   }
@@ -276,6 +280,7 @@ const Admin = () => {
       case 'grade_history': return 'Insira e gerencie notas de módulos concluídos pelos alunos.';
       case 'docs_archive': return 'Central de arquivos organizada por polo e status.';
       case 'boletim': return 'Visualize e edite notas de provas e avaliações de todos os alunos.';
+      case 'popups': return 'Crie pop-ups para avisar os usuários sobre manutenções, problemas e informes importantes.';
       default: return 'Verifique envios dos alunos.';
     }
   }
@@ -405,11 +410,23 @@ const Admin = () => {
                     <p>Gestão de polos e unidades de ensino.</p>
                   </div>
 
-                  <div className="admin-action-card" onClick={() => setActiveTab('forum')}>
-                    <div className="icon-wrapper"><MessageSquare size={32} /></div>
-                    <h3>Fórum</h3>
-                    <p>Modere discussões e dúvidas da comunidade.</p>
-                  </div>
+                    <div className="admin-action-card" onClick={() => setActiveTab('avisos')}>
+                      <div className="icon-wrapper"><AlertCircle size={32} /></div>
+                      <h3>Quadro de Avisos</h3>
+                      <p>Publique comunicados para tranquilizar usuários sobre manutenção e atualizações.</p>
+                    </div>
+
+                    <div className="admin-action-card" onClick={() => setActiveTab('forum')}>
+                      <div className="icon-wrapper"><MessageSquare size={32} /></div>
+                      <h3>Fórum</h3>
+                      <p>Modere discussões e dúvidas da comunidade.</p>
+                    </div>
+
+                    <div className="admin-action-card" onClick={() => setActiveTab('popups')} style={{ border: '1px solid rgba(245, 158, 11, 0.3)', background: 'rgba(245, 158, 11, 0.02)' }}>
+                      <div className="icon-wrapper" style={{ background: '#f59e0b' }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+                      <h3>Pop-ups de Alertas</h3>
+                      <p>Crie pop-ups para avisar os usuários sobre manutenções, problemas e informes importantes.</p>
+                    </div>
 
                   {userRole === 'admin' && (
                     <div className="admin-action-card" onClick={() => setActiveTab('settings')}>
@@ -736,9 +753,9 @@ const Admin = () => {
           />
         )}
 
-        {activeTab === 'forum' && (
-          <ForumPanel userProfile={profile} />
-        )}
+        {activeTab === 'avisos' && <AvisosManagement />}
+
+        {activeTab === 'popups' && <PopupAlertsManagement />}
 
         {/* Modals */}
         <AddTeacherModal 

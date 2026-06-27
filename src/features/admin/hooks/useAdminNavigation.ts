@@ -1,14 +1,14 @@
 import { useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics' | 'reports' | 'docs_archive' | 'academic' | 'grade_history' | 'boletim';
+export type Tab = 'home' | 'users' | 'alumni' | 'content' | 'nucleos' | 'settings' | 'finance' | 'forum' | 'attendance' | 'professors' | 'analytics' | 'reports' | 'docs_archive' | 'academic' | 'grade_history' | 'boletim' | 'avisos' | 'popups';
 
 export const useAdminNavigation = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'users', 'alumni', 'content', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports', 'docs_archive', 'academic'];
+    const validTabs: Tab[] = ['home', 'users', 'alumni', 'content', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports', 'docs_archive', 'academic', 'avisos', 'popups'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 

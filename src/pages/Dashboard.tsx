@@ -35,6 +35,7 @@ import AlumniCertificate from '../components/documents/AlumniCertificate'
 import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
 import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
+import PopupAlertsDisplay from '../features/communication/components/PopupAlertsDisplay'
 
 type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'forum' | 'modulos-concluidos'
 
@@ -337,13 +338,18 @@ const Dashboard = () => {
     })).filter(course => course.livros.length > 0);
   }, [courses]);
 
-  // Módulos concluídos/arquivados (finalizados)
-  const modulosFinalizados = useMemo(() => {
-    return courses.map(course => ({
-      ...course,
-      livros: (course.livros || []).filter((livro: any) => livro.isFinished)
-    })).filter(course => course.livros.length > 0);
-  }, [courses]);
+  // Módulo atual do aluno (primeiro módulo ativo)
+  const currentModule = useMemo(() => {
+    for (const course of modulosAtivos) {
+      if (course.livros.length > 0) {
+        return {
+          courseName: course.nome || course.nivel,
+          livro: course.livros[0]
+        };
+      }
+    }
+    return null;
+  }, [modulosAtivos]);
 
   useEffect(() => {
     if (profile?.id) {
@@ -590,6 +596,32 @@ const Dashboard = () => {
       <main className="admin-main">
          <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
           {activeTab === 'home' && (
+            <>
+              {/* Welcome Section */}
+              <div style={{
+                marginBottom: '2rem',
+                padding: '2rem',
+                background: 'var(--glass)',
+                borderRadius: '24px',
+                border: '1px solid var(--glass-border)',
+                animation: 'fadeIn 0.5s'
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>
+                    Bem-vindo(a), {profile?.nome || 'Aluno'}!
+                  </h1>
+                  {currentModule ? (
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
+                      Seu módulo atual: <strong style={{ color: 'var(--primary)' }}>{currentModule.courseName} — {currentModule.livro.titulo}</strong>
+                    </p>
+                  ) : (
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
+                      Você concluiu todos os módulos disponíveis.
+                    </p>
+                  )}
+                </div>
+              </div>
+
             <div className="admin-dashboard-grid transition-fade-in" style={{ marginTop: '1rem' }}>
               <div className="admin-action-card" onClick={() => setActiveTab('cursos')}>
                 <div className="icon-wrapper"><BookOpen size={32} /></div>
@@ -634,6 +666,7 @@ const Dashboard = () => {
                 <p>Consulte suas notas e desempenho acadêmico.</p>
               </div>
             </div>
+            </>
           )}
 
           {isAlumniData && activeTab === 'home' && (
@@ -743,22 +776,6 @@ const Dashboard = () => {
                   progressoAulas={progressoAulas}
                   atividades={atividades}
                 />
-
-                {modulosFinalizados.length > 0 && (
-                  <div style={{ marginTop: '3rem', borderTop: '1px solid var(--glass-border)', paddingTop: '2rem' }}>
-                    <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.2rem', fontWeight: 800, color: '#d97706', marginBottom: '1.5rem' }}>
-                      <Award size={22} /> Módulos Finalizados e Concluídos
-                    </h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
-                      Estes módulos você já finalizou com aprovação. Seu histórico de notas está preservado.
-                    </p>
-                    <CourseList 
-                      courses={modulosFinalizados}
-                      progressoAulas={progressoAulas}
-                      atividades={atividades}
-                    />
-                  </div>
-                )}
             </>
           )}
 
@@ -790,6 +807,9 @@ const Dashboard = () => {
           )}
         </div>
       </main>
+
+      {/* POP-UP DE ALERTAS E INFORMES DO ADMIN */}
+      <PopupAlertsDisplay />
 
       {/* POP-UP DE PROVAS PENDENTES OU RECUPERAÇÃO */}
       {showExamNotice && pendingExams.length > 0 && (

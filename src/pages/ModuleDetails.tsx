@@ -153,6 +153,9 @@ const ModuleDetails = () => {
         return false; // Reprovou na anterior → V2/V3 liberado
       }
 
+      // Se o professor desativou a avaliação, fica bloqueada independente da liberação por núcleo
+      if (item.professor_active === false) return true;
+
       // V1 ou conteúdo regular: verificar liberação por núcleo
       const hasNucleusRelease = nucleusReleases.some(r => 
         r.item_id === item.id && 
@@ -220,7 +223,9 @@ const ModuleDetails = () => {
            style={{ 
             padding: '1rem', 
             background: locked ? 'rgba(255,255,255,0.02)' : 'var(--glass)', 
-            border: `1px solid ${borderColor}`,
+            borderTop: `1px solid ${borderColor}`,
+            borderRight: `1px solid ${borderColor}`,
+            borderBottom: `1px solid ${borderColor}`,
             borderLeft: `4px solid ${borderColor}`,
             borderRadius: '12px', 
             cursor: locked ? 'not-allowed' : 'pointer',

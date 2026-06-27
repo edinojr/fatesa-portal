@@ -162,7 +162,9 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
         style={{ 
           padding: compact ? '0.5rem' : '1rem', 
           background: locked ? 'rgba(255,255,255,0.02)' : 'var(--glass)', 
-          border: `1px solid ${borderColor}`,
+          borderTop: `1px solid ${borderColor}`,
+          borderRight: `1px solid ${borderColor}`,
+          borderBottom: `1px solid ${borderColor}`,
           borderLeft: `4px solid ${borderColor}`,
           borderRadius: '12px', 
           cursor: locked ? 'not-allowed' : 'pointer',

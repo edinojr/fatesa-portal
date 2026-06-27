@@ -60,41 +60,48 @@ const Lesson = () => {
   const checarAcessoSeguroAvaliacao = async (alunoId: string, moduloId: string, aulaAtual: any, nucleoId?: string) => {
     const NOTA_APROVACAO = 7.0;
 
-    if (!aulaAtual.tipo_prova || aulaAtual.tipo_prova === 'V1') {
-      const { data: rel } = await supabase
+    // Non-exam items are handled by module-level release, not individual exam control
+    if (aulaAtual.tipo !== 'prova' && aulaAtual.tipo !== 'avaliacao' && !aulaAtual.is_bloco_final) {
+      return true;
+    }
+
+    // Get all exams in the module sorted by ordem to determine version position
+    const { data: exames } = await supabase
+      .from('aulas')
+      .select('id, titulo, versao, ordem, is_bloco_final')
+      .eq('livro_id', moduloId)
+      .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
+      .order('ordem', { ascending: true });
+
+    const idx = (exames || []).findIndex((e: any) => e.id === aulaAtual.id);
+    if (idx === -1) return false;
+
+    // First exam in module = V1: check professor_active + nucleo release
+    if (idx === 0) {
+      if (aulaAtual.professor_active === false) return false;
+      let query = supabase
         .from('liberacoes_nucleo')
         .select('liberado')
-        .eq('nucleo_id', nucleoId)
-        .eq('item_id', aulaAtual.id)
-        .maybeSingle();
+        .eq('item_id', aulaAtual.id);
+      if (nucleoId) {
+        query = query.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
+      } else {
+        query = query.is('nucleo_id', null);
+      }
+      const { data: rel } = await query.maybeSingle();
       return !!rel?.liberado;
     }
 
-    if (aulaAtual.tipo_prova === 'V2') {
-      const { data: notaV1 } = await supabase
-        .from('notas_avaliacoes')
-        .select('nota')
-        .eq('aluno_id', alunoId)
-        .eq('modulo_id', moduloId)
-        .eq('tipo_prova', 'V1')
-        .maybeSingle();
+    // V2/V3+: check if the previous exam was attempted and failed
+    const prevExam = exames![idx - 1];
+    const { data: sub } = await supabase
+      .from('respostas_aulas')
+      .select('nota, status')
+      .eq('aula_id', prevExam.id)
+      .eq('aluno_id', alunoId)
+      .maybeSingle();
 
-      return !!notaV1 && notaV1.nota < NOTA_APROVACAO;
-    }
-
-    if (aulaAtual.tipo_prova === 'V3') {
-      const { data: notaV2 } = await supabase
-        .from('notas_avaliacoes')
-        .select('nota')
-        .eq('aluno_id', alunoId)
-        .eq('modulo_id', moduloId)
-        .eq('tipo_prova', 'V2')
-        .maybeSingle();
-
-      return !!notaV2 && notaV2.nota < NOTA_APROVACAO;
-    }
-
-    return false;
+    return !!sub && sub.status === 'corrigida' && (sub.nota ?? 0) < NOTA_APROVACAO;
   };
 
   useEffect(() => {
@@ -200,14 +207,28 @@ const Lesson = () => {
         const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r.toLowerCase()));
         setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, isStaff });
 
-        // 1. Audit: Content Release Policy
+        // 1. Audit: Content Release Policy — fetch submissions + aula data without nested join
         let modulePassed = false;
+        let allSubs: any[] = [];
         if (lessonData.livro_id) {
-            const { data: rawModuleSubs } = await supabase.from('respostas_aulas')
-               .select('nota, status, aulas(livro_id, is_bloco_final, tipo, versao)')
-              .eq('aluno_id', user.id);
+          const { data: rawSubs } = await supabase.from('respostas_aulas')
+            .select('id, aula_id, nota, status, tentativas, created_at')
+            .eq('aluno_id', user.id);
 
-          const moduleSubs = (rawModuleSubs || []).find((s: any) => 
+          const subAulaIds = [...new Set((rawSubs || []).map((s: any) => s.aula_id).filter(Boolean))];
+          const aulaMap: Record<string, any> = {};
+          if (subAulaIds.length > 0) {
+            const { data: aulasData } = await supabase.from('aulas')
+              .select('id, livro_id, tipo, versao, min_grade, is_bloco_final, titulo')
+              .in('id', subAulaIds);
+            (aulasData || []).forEach((a: any) => { aulaMap[a.id] = a; });
+          }
+          allSubs = (rawSubs || []).map((s: any) => ({
+            ...s,
+            aulas: aulaMap[s.aula_id] || null
+          }));
+
+          const moduleSubs = allSubs.find((s: any) => 
             s.aulas?.livro_id === lessonData.livro_id && 
             s.aulas?.is_bloco_final && 
             s.status === 'corrigida' && 
@@ -215,11 +236,10 @@ const Lesson = () => {
           );
           if (moduleSubs) modulePassed = true;
 
-          // Verificar se o aluno já foi aprovado em qualquer versão de prova
           if (!modulePassed) {
-            const approvedInAny = (rawModuleSubs || []).some((s: any) => {
+            const approvedInAny = allSubs.some((s: any) => {
               const isExam = s.aulas?.tipo === 'prova' || s.aulas?.tipo === 'avaliacao' || s.aulas?.is_bloco_final;
-              const minGrade = (s as any).min_grade || 7.0;
+              const minGrade = s.aulas?.min_grade || 7.0;
               return s.aulas?.livro_id === lessonData.livro_id && isExam && s.status === 'corrigida' && (s.nota || 0) >= minGrade;
             });
             if (approvedInAny) modulePassed = true;
@@ -267,16 +287,8 @@ const Lesson = () => {
 
         // 2.5 BLOQUEIO DE RECUPERAÇÃO: Se for V2/V3 e já passou na V1/V2, ou não fez a anterior
         if (!isStaff && (versao === 2 || versao === 3)) {
-          // Precisamos buscar as submissões deste livro (módulo) de forma segura
-           const { data: previousSubs } = await supabase
-             .from('respostas_aulas')
-             .select('nota, status, aula_id, created_at, aulas(versao, tipo, livro_id, min_grade, titulo)')
-             .eq('aluno_id', user.id);
-
-
-          
-          // Filtramos pelo livro_id no JS para evitar erros de sintaxe complexa no join filter do PostgREST
-          const moduleSubs = (previousSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
+          // Use the already-fetched allSubs (no join needed)
+          const moduleSubs = allSubs.filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
           // Check if student already passed the HIGHEST version of the exam for this module
           const examSubs = moduleSubs.filter(s => {
@@ -350,8 +362,7 @@ const Lesson = () => {
         // 3. Check if module is finished
         if (lessonData.livro_id) {
           const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id').eq('livro_id', lessonData.livro_id);
-           const { data: rawSubs } = await supabase.from('respostas_aulas').select('nota, status, tentativas, aula_id, aulas(livro_id)').eq('aluno_id', user.id);
-          const bookSubs = (rawSubs || []).filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
+          const bookSubs = allSubs.filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
           const finished = bookSubs.some(s => {
             const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.tipo === 'avaliacao' || ba.is_bloco_final));
