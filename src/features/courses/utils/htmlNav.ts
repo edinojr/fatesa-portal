@@ -23,10 +23,18 @@ export function processHtmlForNav(html: string): { processedHtml: string; toc: N
   const headers = doc.querySelectorAll('h1, h2, h3, h4');
   headers.forEach((header) => {
     const text = header.textContent?.trim() || '';
-    if (!textoRomanPattern.test(text)) return;
+    const hasSecaoClass = header.classList.contains('secao-titulo-menu');
+    const matchesPattern = textoRomanPattern.test(text);
+    const hasTopicoId = header.id && header.id.includes('-topico-');
     
-    const id = `nav-${idCounter++}`;
-    header.setAttribute('id', id);
+    if (!hasSecaoClass && !matchesPattern && !hasTopicoId) return;
+    
+    let id = header.getAttribute('id');
+    if (!id) {
+      id = `nav-${idCounter++}`;
+      header.setAttribute('id', id);
+    }
+    
     toc.push({
       id,
       label: text,

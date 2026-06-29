@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import DOMPurify from 'dompurify'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -9,6 +9,73 @@ import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
 import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
 import { QuizQuestion } from '../types/admin'
 import { processHtmlForNav, NavItem } from '../features/courses/utils/htmlNav'
+import { BibleReaderPopup } from '../components/BibleReaderPopup'
+import { processHtmlWithReferences } from '../lib/bibleParser'
+
+function parseBibliaLocal(text: string): Record<string, string> {
+  const match = text.match(/(?:const|let|var)\s+BIBLIA_LOCAL\s*=\s*({)/)
+  if (!match) return {}
+
+  const objStart = match.index! + match[0].length - 1
+  let depth = 0
+  let inString = false
+  let escape = false
+  let objEnd = -1
+
+  for (let i = objStart; i < text.length; i++) {
+    const ch = text[i]
+    if (escape) { escape = false; continue }
+    if (ch === '\\' && inString) { escape = true; continue }
+    if (ch === '"') { inString = !inString; continue }
+    if (!inString) {
+      if (ch === '{') depth++
+      if (ch === '}') {
+        depth--
+        if (depth === 0) { objEnd = i; break }
+      }
+    }
+  }
+
+  if (objEnd === -1) return {}
+
+  const objStr = text.substring(objStart, objEnd + 1)
+
+  try {
+    return new Function('return (' + objStr + ')')()
+  } catch {
+    // Fallback: manually parse key-value pairs from the object literal
+    const result: Record<string, string> = {}
+    let i = 1
+    while (i < objStr.length) {
+      while (i < objStr.length && objStr[i] !== '"') i++
+      if (i >= objStr.length) break
+      const keyStart = i + 1
+      i++
+      while (i < objStr.length) {
+        if (objStr[i] === '\\') { i += 2; continue }
+        if (objStr[i] === '"') break
+        i++
+      }
+      const key = objStr.substring(keyStart, i)
+      i++
+      while (i < objStr.length && objStr[i] !== '"') i++
+      if (i >= objStr.length) break
+      const valStart = i + 1
+      i++
+      while (i < objStr.length) {
+        if (objStr[i] === '\\') { i += 2; continue }
+        if (objStr[i] === '"') break
+        i++
+      }
+      const val = objStr.substring(valStart, i)
+        .replace(/\\(["\\/bfnrt])/g, (_, c) => c === 'n' ? '\n' : c === 't' ? '\t' : c === 'r' ? '\r' : c === 'b' ? '\b' : c === 'f' ? '\f' : c)
+        .replace(/\\(u[0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
+      result[key] = val
+      i++
+    }
+    return Object.keys(result).length > 0 ? result : {}
+  }
+}
 
 const Lesson = () => {
   const { id } = useParams<{ id: string }>()
@@ -33,6 +100,7 @@ const Lesson = () => {
   const [showExamModal, setShowExamModal] = useState(false)
   const [activeReference, setActiveReference] = useState<{ id: string; text: string; source: string } | null>(null)
   const [htmlContent, setHtmlContent] = useState<string | null>(null)
+  const [bibliaLocal, setBibliaLocal] = useState<Record<string, string>>({})
   const [htmlLoading, setHtmlLoading] = useState(false)
   const [toc, setToc] = useState<NavItem[]>([])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -46,8 +114,8 @@ const Lesson = () => {
   const [lessonMap, setLessonMap] = useState<Record<string, string>>({})
   const [moduleLessons, setModuleLessons] = useState<any[]>([])
   const [isPanorama, setIsPanorama] = useState(false)
-  
-
+  const [showBibleReader, setShowBibleReader] = useState(false)
+  const [wikiPopup, setWikiPopup] = useState<{ titulo: string; texto: string; tipo: string } | null>(null)
 
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
@@ -186,13 +254,17 @@ const Lesson = () => {
         const isHtml = /\.html?$/i.test(lessonData.arquivo_url);
         const isPdf = /\.pdf$/i.test(lessonData.arquivo_url);
        if (isHtml && !isPdf) {
-         setHtmlLoading(true);
-         try {
-           const resp = await fetch(lessonData.arquivo_url);
-           const text = await resp.text();
-           const { processedHtml, toc: extractedToc } = processHtmlForNav(text);
-           setHtmlContent(processedHtml);
-           setToc(extractedToc);
+          setHtmlLoading(true);
+          try {
+            const resp = await fetch(lessonData.arquivo_url);
+            const text = await resp.text();
+            const { processedHtml, toc: extractedToc } = processHtmlForNav(text);
+            const { processed: bibleProcessed } = processHtmlWithReferences(processedHtml);
+            setHtmlContent(bibleProcessed);
+            setToc(extractedToc);
+
+            const dict = parseBibliaLocal(text);
+            setBibliaLocal(dict);
          } catch (err) {
            console.error('Failed to fetch HTML content:', err);
          } finally {
@@ -966,6 +1038,16 @@ const Lesson = () => {
     return processed;
   };
 
+  const handleBibleRefClick = useCallback((target: HTMLElement) => {
+    const ref = target.getAttribute('data-ref') || target.textContent?.trim() || '';
+    if (!ref) return;
+    setActiveReference({
+      id: ref,
+      text: bibliaLocal[ref] || 'Referência bíblica reconhecida, mas o texto não foi localizado nesta base.',
+      source: 'Bíblia ACF',
+    });
+  }, [bibliaLocal]);
+
   if (loading) return <div className="auth-container"><Loader2 className="spinner" /></div>
 
   if (alreadyApproved) {
@@ -1316,22 +1398,103 @@ const Lesson = () => {
                   transition: 'all 0.3s ease'
                 }}
               onClick={(e) => {
-                const btn = (e.target as HTMLElement).closest('.ref-btn');
+                const target = e.target as HTMLElement;
+
+                // 1. Bible reference click (handles .biblia-ref)
+                const bibRef = target.closest('.biblia-ref');
+                if (bibRef) {
+                  e.preventDefault();
+                  handleBibleRefClick(bibRef as HTMLElement);
+                  return;
+                }
+
+                // 2. Wiki reference click (handles .wiki-ref)
+                const wikiRef = target.closest('.wiki-ref');
+                if (wikiRef) {
+                  e.preventDefault();
+                  const title = wikiRef.getAttribute('data-wiki-title') || wikiRef.textContent?.trim() || '';
+                  const tipo = wikiRef.getAttribute('data-wiki-tipo') || 'Referência de apoio';
+                  const desc = wikiRef.getAttribute('data-wiki-desc') || 'Referência de apoio ao conteúdo da lição.';
+                  setWikiPopup({ titulo: title, texto: desc, tipo });
+                  return;
+                }
+
+                // 3. Hamburger menu click (.hamb-btn)
+                const hambBtn = target.closest('.hamb-btn');
+                if (hambBtn) {
+                  e.preventDefault();
+                  const container = e.currentTarget;
+                  const drawer = container.querySelector('.drawer');
+                  const overlay = container.querySelector('.overlay');
+                  if (drawer && overlay) {
+                    drawer.classList.toggle('open');
+                    overlay.classList.toggle('open');
+                    hambBtn.setAttribute('aria-expanded', drawer.classList.contains('open') ? 'true' : 'false');
+                  }
+                  return;
+                }
+
+                // 5. Drawer close click (.drawer-close or clicking the overlay)
+                if (target.closest('.drawer-close') || target.closest('.overlay')) {
+                  e.preventDefault();
+                  const container = e.currentTarget;
+                  const drawer = container.querySelector('.drawer');
+                  const overlay = container.querySelector('.overlay');
+                  if (drawer && overlay) {
+                    drawer.classList.remove('open');
+                    overlay.classList.remove('open');
+                  }
+                  return;
+                }
+
+                // 6. Original ref-btn (retained for backward compatibility)
+                const btn = target.closest('.ref-btn');
                 if (btn) {
                   const refId = btn.getAttribute('data-ref');
                   const ref = lessonReferences.find(r => r.id === refId);
                   if (ref) setActiveReference(ref);
-                  return
+                  return;
                 }
-                const link = (e.target as HTMLElement).closest('a');
+
+                // 7. Links and anchors
+                const link = target.closest('a');
                 if (link && link.href) {
-                  e.preventDefault()
-                  const url = new URL(link.href)
-                  let path = decodeURIComponent(url.pathname).replace(/\/+$/, '')
-                  if (path.endsWith('.html')) path = path.slice(0, -5)
-                  const key = path.replace(/^\/lesson\//, '').toLowerCase().trim()
-                  const targetId = lessonMap[key] || lessonMap[path.toLowerCase()]
-                  if (targetId) navigate(`/lesson/${targetId}`)
+                  const url = new URL(link.href);
+                  
+                  // Hash/anchor links (e.g. #topic-1)
+                  if (url.hash && url.pathname === window.location.pathname) {
+                    e.preventDefault();
+                    // Close drawer if open
+                    const container = e.currentTarget;
+                    const drawer = container.querySelector('.drawer');
+                    const overlay = container.querySelector('.overlay');
+                    if (drawer && overlay) {
+                      drawer.classList.remove('open');
+                      overlay.classList.remove('open');
+                    }
+                    
+                    // Smooth scroll to the heading
+                    const targetId = decodeURIComponent(url.hash.substring(1));
+                    const targetEl = document.getElementById(targetId);
+                    if (targetEl) {
+                      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    return;
+                  }
+                  
+                  e.preventDefault();
+                  let path = decodeURIComponent(url.pathname).replace(/\/+$/, '');
+                  if (path.endsWith('.html')) path = path.slice(0, -5);
+                  const key = path.replace(/^\/lesson\//, '').toLowerCase().trim();
+                  
+                  // Direct UUID navigation
+                  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key);
+                  if (isUuid) {
+                    navigate(`/lesson/${key}`);
+                  } else {
+                    const targetId = lessonMap[key] || lessonMap[path.toLowerCase()];
+                    if (targetId) navigate(`/lesson/${targetId}`);
+                  }
                 }
               }}
               dangerouslySetInnerHTML={{ __html: renderHtmlWithReferences(htmlContent!) }}
@@ -2226,6 +2389,81 @@ const Lesson = () => {
         </div>
       </div>
       <AudioReader />
+
+      {/* WIKI REFERENCE POPUP */}
+      {wikiPopup && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(8px)', zIndex: 9999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '2rem', animation: 'fadeIn 0.2s ease-out'
+        }} onClick={() => setWikiPopup(null)}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+            borderRadius: '24px', padding: '2.5rem',
+            maxWidth: '520px', width: '100%',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 40px 80px rgba(0,0,0,0.5)',
+            animation: 'slideUp 0.25s ease-out',
+            position: 'relative'
+          }} onClick={e => e.stopPropagation()}>
+            <button onClick={() => setWikiPopup(null)} style={{
+              position: 'absolute', top: '1rem', right: '1rem',
+              background: 'rgba(255,255,255,0.05)', border: 'none',
+              borderRadius: '50%', width: '32px', height: '32px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: 'var(--text-muted)'
+            }}><X size={18} /></button>
+            <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+              {wikiPopup.tipo}
+            </h4>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1rem' }}>{wikiPopup.titulo}</h3>
+            <p style={{ fontSize: '1rem', lineHeight: 1.6, margin: 0, color: 'var(--text-muted)' }}>
+              {wikiPopup.texto}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* BIBLE READER POPUP */}
+      {showBibleReader && (
+        <BibleReaderPopup onClose={() => setShowBibleReader(false)} />
+      )}
+
+      {/* FLOATING BIBLE BUTTON */}
+      <button
+        onClick={() => setShowBibleReader(true)}
+        className="bible-floating-btn"
+        aria-label="Abrir Bíblia"
+        title="Abrir Bíblia"
+      >
+        <BookOpen size={24} />
+      </button>
+
+      <style>{`
+        .bible-floating-btn {
+          position: fixed;
+          bottom: 2rem;
+          right: 2rem;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #c9a84c, #b8942e);
+          color: #1a1a2e;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 8px 32px rgba(201, 168, 76, 0.35);
+          transition: all 0.3s ease;
+          z-index: 999;
+        }
+        .bible-floating-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 12px 40px rgba(201, 168, 76, 0.5);
+        }
+      `}</style>
     </div>
   )
 }
