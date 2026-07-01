@@ -74,12 +74,14 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
       alert('Gabarito atualizado com sucesso!');
       setEditingGabarito(false);
       if (confirm('Recalcular a nota deste aluno com o novo gabarito?')) {
-        setQuestionEvaluations({});
         handleSelectSubmission({
           ...selectedSubmission,
           aulas: {
-            ...selectedSubmission.aulas,
-            questionario: editableQuestions
+            id: selectedSubmission.aulas?.id || selectedSubmission.lesson_id || '',
+            titulo: selectedSubmission.aulas?.titulo || selectedSubmission.lesson_title || '',
+            questionario: editableQuestions,
+            tipo: selectedSubmission.aulas?.tipo,
+            is_bloco_final: selectedSubmission.aulas?.is_bloco_final,
           },
           questionario: editableQuestions
         });
@@ -445,7 +447,7 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '3rem' }}>
             {/* 1. Render questions from the Lesson Questionnaire */}
             {Array.isArray(editingGabarito ? editableQuestions : selectedSubmission.aulas?.questionario) ? (
-              (editingGabarito ? editableQuestions : selectedSubmission.aulas.questionario).map((q: any, idx: number) => {
+              (editingGabarito ? editableQuestions : selectedSubmission.aulas?.questionario || []).map((q: any, idx: number) => {
                 const studentAnswer = selectedSubmission.respostas?.[q.id || idx];
                 let displayAnswer: React.ReactNode = <em style={{ color: 'var(--text-muted)' }}>Sem resposta</em>;
 
