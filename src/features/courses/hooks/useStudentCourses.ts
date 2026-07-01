@@ -336,11 +336,12 @@ export const useStudentCourses = (profile: any) => {
               const hasStarted = userHasActivityInModule(l.id);
               const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
               
-              // Módulo não finalizado fica oculto se: não é staff, sem exceção, não começou, sem prova individual,
-              // sem liberação manual, sem bloqueio de pagamento, ou bloqueado pelo professor.
-              // O primeiro módulo de cada curso (bookOrdem === 1) NUNCA fica oculto para alunos ativos.
-              const isFirstModule = bookOrdem === 1;
-              const isHidden = !isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isBookBlockedByProfessor;
+               // Módulo não finalizado fica oculto se: bloqueado pelo professor, ou se não é staff,
+               // sem exceção, não começou, sem prova individual, sem liberação manual,
+               // sem bloqueio de pagamento. O primeiro módulo de cada curso NUNCA fica oculto,
+               // A MENOS QUE esteja bloqueado pelo professor.
+               const isFirstModule = bookOrdem === 1;
+               const isHidden = isBookBlockedByProfessor || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease && profile.accessStatus !== 'blocked_payment' && !moduleFinished);
 
               if (isHidden) return null;
 
@@ -375,6 +376,9 @@ export const useStudentCourses = (profile: any) => {
                     const isExamType = a.tipo === 'prova' || !!a.is_bloco_final;
                     const isMediaType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
                     if (isExamType && !releasedAtividades.includes(a.id) && !isStaff) {
+                      return { ...a, isHidden: true };
+                    }
+                    if (!isStaff && l.professor_active === false) {
                       return { ...a, isHidden: true };
                     }
                     if ((isExamType || isMediaType) && a.professor_active === false && !isStaff) {

@@ -224,20 +224,9 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
           });
         }
 
-        // Find next module: try numero_modulo first, fallback to ordem
+        // Find next module by ordem
         let nextBook: any = null;
-        const currentNumero = currentBook.numero_modulo;
-        if (currentNumero && !isNaN(currentNumero)) {
-          const TOTAL_MODULOS = 27;
-          const nextNumero = currentNumero === TOTAL_MODULOS ? 1 : currentNumero + 1;
-          const { data: nb } = await supabase
-            .from('livros')
-            .select('id')
-            .eq('numero_modulo', nextNumero)
-            .maybeSingle();
-          nextBook = nb;
-        }
-        if (!nextBook && typeof currentBook.ordem === 'number' && currentBook.curso_id) {
+        if (typeof currentBook.ordem === 'number' && currentBook.curso_id) {
           const { data: nb } = await supabase
             .from('livros')
             .select('id')
@@ -248,6 +237,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         }
 
         if (nextBook) {
+          // Liberar conteúdo (lições + exercícios) do próximo módulo
           const { data: nextContent } = await supabase
             .from('aulas')
             .select('id, tipo')
@@ -266,6 +256,13 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
               });
             });
           }
+
+          // Ativar o próximo módulo (professor_active = true) para que alunos o vejam
+          await supabase.from('livros').update({ professor_active: true }).eq('id', nextBook.id);
+          setBooks(prev => prev.map(b => b.id === nextBook.id ? { ...b, professor_active: true } : b));
+          if (selectedBook && selectedBook.id === nextBook.id) {
+            setSelectedBook({ ...selectedBook, professor_active: true });
+          }
         }
 
         if (itemsToRelease.length === 0) return;
@@ -282,7 +279,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
           })
         }
 
-        alert("Avaliação V1 liberada! O conteúdo do próximo módulo também foi liberado, pois mesmo sem aprovação o aluno segue o curso. Hierarquia: V2 liberada se reprovar na V1, V3 se reprovar na V2.");
+        alert("Avaliação V1 liberada! O módulo seguinte foi ativado automaticamente com seu conteúdo (lições e exercícios) liberado para o polo.");
       } catch (error: any) {
         console.error("Erro na liberação circular:", error);
         alert('Erro ao liberar provas: ' + (error?.message || error));

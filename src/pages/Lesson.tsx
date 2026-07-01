@@ -320,8 +320,11 @@ const Lesson = () => {
 
         const isExam = lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || !!lessonData.is_bloco_final;
 
-        // Staff e alunos com módulo completo têm acesso total
-        if (isStaff || modulePassed) {
+        // Se o módulo está bloqueado pelo professor, negar acesso
+        const isModuleBlocked = bookData && bookData.professor_active === false;
+        if (!isStaff && isModuleBlocked) {
+          setIsReleased(false);
+        } else if (isStaff || modulePassed) {
           setIsReleased(true);
         } else {
           const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id);
@@ -2302,56 +2305,67 @@ const Lesson = () => {
       {/* REFERENCE POP-UP MODAL */}
       {activeReference && (
         <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(8px)', zIndex: 9999,
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(6px)', zIndex: 9999,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '2rem', animation: 'fadeIn 0.2s ease-out'
         }} onClick={() => setActiveReference(null)}>
           <div style={{
-            background: 'linear-gradient(135deg, #0f172a, #1e293b)',
-            borderRadius: '24px', padding: '2.5rem',
+            background: '#fff',
+            borderRadius: '20px', padding: '2rem',
             maxWidth: '520px', width: '100%',
-            border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow: '0 40px 80px rgba(0,0,0,0.5)',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
             animation: 'slideUp 0.25s ease-out',
             position: 'relative'
           }} onClick={e => e.stopPropagation()}>
             <button onClick={() => setActiveReference(null)} style={{
               position: 'absolute', top: '1rem', right: '1rem',
-              background: 'rgba(255,255,255,0.05)', border: 'none',
+              background: '#f3f4f6', border: 'none',
               borderRadius: '50%', width: '32px', height: '32px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', color: 'var(--text-muted)'
+              cursor: 'pointer', color: '#6b7280'
             }}><X size={18} /></button>
 
             <div style={{
-              width: '40px', height: '40px', borderRadius: '50%',
-              background: 'rgba(var(--primary-rgb), 0.12)', color: 'var(--primary)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 800, fontSize: '1rem', marginBottom: '1.25rem'
+              display: 'flex', alignItems: 'center', gap: '0.75rem',
+              marginBottom: '1.25rem'
             }}>
-              {activeReference.id}
+              <span style={{
+                fontFamily: 'Georgia, serif', fontSize: '0.9rem',
+                fontWeight: 700, color: '#b8860b',
+                background: '#fef9e7', padding: '0.35rem 0.75rem',
+                borderRadius: '8px'
+              }}>
+                {activeReference.id}
+              </span>
+              <span style={{
+                fontSize: '0.75rem', textTransform: 'uppercase',
+                letterSpacing: '1px', color: '#9ca3af'
+              }}>
+                Referência Bíblica
+              </span>
             </div>
 
-            <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
-              Referência {activeReference.id}
-            </h4>
-
-            <p style={{ fontSize: '1.05rem', lineHeight: 1.6, margin: 0 }}>
-              {activeReference.text}
-            </p>
+            <div style={{
+              background: '#f9fafb', borderRadius: '12px',
+              padding: '1.25rem', border: '1px solid #f3f4f6'
+            }}>
+              <p style={{
+                fontSize: '1rem', lineHeight: 1.7, margin: 0,
+                color: '#1f2937', fontFamily: 'Georgia, serif'
+              }}>
+                {activeReference.text}
+              </p>
+            </div>
 
             {activeReference.source && (
-              <a href={activeReference.source} target="_blank" rel="noopener noreferrer" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                marginTop: '1.5rem', padding: '0.6rem 1.2rem',
-                background: 'rgba(var(--primary-rgb), 0.1)',
-                borderRadius: '10px', color: 'var(--primary)',
-                textDecoration: 'none', fontSize: '0.85rem',
-                fontWeight: 600, transition: 'background 0.2s'
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                marginTop: '1rem', fontSize: '0.8rem', color: '#9ca3af'
               }}>
-                <ExternalLink size={16} /> Acessar Fonte
-              </a>
+                <BookOpen size={14} /> {activeReference.source}
+              </div>
             )}
           </div>
         </div>

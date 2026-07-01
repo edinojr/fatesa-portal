@@ -31,6 +31,7 @@ import AlumniManagement from '../features/users/components/AlumniManagement'
 import DocumentAnalysis from '../features/admin/components/DocumentAnalysis'
 import ForumPanel from '../features/forum/components/ForumPanel'
 import BoletimPanel from '../features/professor/components/BoletimPanel'
+import ContentReleasePanel from '../features/courses/components/ContentReleasePanel'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import PageHeader from '../components/layout/PageHeader'
@@ -252,6 +253,13 @@ const Professor = () => {
                       <p>Estrutura pedagógica de matérias e atividades.</p>
                     </div>
 
+                    <div className="admin-action-card" onClick={() => setActiveTab('release')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Conteúdo</span>
+                      <div className="icon-wrapper"><ShieldCheck size={32} /></div>
+                      <h3>Liberação de Conteúdos</h3>
+                      <p>Ativar/desativar módulos e liberar conteúdos por polo.</p>
+                    </div>
+
                     <div className="admin-action-card" onClick={() => setActiveTab('boletim')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
                       <span className="category-badge">Conteúdo</span>
                       <div className="icon-wrapper"><GraduationCap size={32} /></div>
@@ -427,7 +435,14 @@ const Professor = () => {
 
             {activeTab === 'documents' && <DocumentAnalysis />}
 
-             {activeTab === 'forum' && profile && <ForumPanel userProfile={profile} />}
+              {activeTab === 'forum' && profile && <ForumPanel userProfile={profile} />}
+
+              {activeTab === 'release' && (
+                <ContentReleasePanel
+                  professorNucleos={professorNucleos}
+                  profile={profile}
+                />
+              )}
           </div>
         </div>
       </main>

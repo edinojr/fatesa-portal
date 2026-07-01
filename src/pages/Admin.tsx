@@ -932,7 +932,7 @@ const Admin = () => {
           <button onClick={() => window.history.back()} className="btn btn-outline">
             <ChevronLeft size={20} /> Voltar
           </button>
-          <button onClick={() => navigate('/admin?tab=content&view=main')} className="btn btn-primary">
+          <button onClick={() => { setActiveTab('home'); setDashboardView('main'); setSelectedCourse(null); setSelectedBook(null); setSelectedLesson(null); navigate('/admin'); }} className="btn btn-primary">
             <LayoutDashboard size={20} /> Início
           </button>
         </div>

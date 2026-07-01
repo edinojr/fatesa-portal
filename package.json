@@ -25,6 +25,7 @@
     "ollama": "^0.6.3",
     "openai": "^6.43.0",
     "pdfjs-dist": "5.4.296",
+    "pg": "^8.22.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.6.0",
@@ -44,6 +45,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "postcss": "^8.5.8",
+    "supabase": "^2.108.0",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"

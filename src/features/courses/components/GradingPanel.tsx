@@ -1,6 +1,8 @@
 import React from 'react'
-import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users, BookOpen, ClipboardList, ShieldCheck, ExternalLink } from 'lucide-react'
+import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users, BookOpen, ClipboardList, ShieldCheck, ExternalLink, Edit3, Save } from 'lucide-react'
 import { Submission } from '../../../types/professor'
+import { QuizQuestion } from '../../../types/admin'
+import { supabase } from '../../../lib/supabase'
 
 interface GradingPanelProps {
   courses?: any[]
@@ -48,6 +50,46 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   const [showGabaritosModal, setShowGabaritosModal] = React.useState(false);
   const [selectedNucleoFilter, setSelectedNucleoFilter] = React.useState<string>('todos');
   const [activeStatusFilter, setActiveStatusFilter] = React.useState<'pendente' | 'aprovado' | 'reprovado'>('pendente');
+  const [editingGabarito, setEditingGabarito] = React.useState(false);
+  const [editableQuestions, setEditableQuestions] = React.useState<QuizQuestion[]>([]);
+  const [savingGabarito, setSavingGabarito] = React.useState(false);
+
+  const handleStartEditGabarito = () => {
+    const qs = selectedSubmission?.aulas?.questionario || selectedSubmission?.questionario || [];
+    setEditableQuestions(JSON.parse(JSON.stringify(qs)));
+    setEditingGabarito(true);
+  };
+
+  const handleSaveGabarito = async () => {
+    if (!selectedSubmission) return;
+    const lessonId = selectedSubmission.lesson_id || selectedSubmission.aula_id || selectedSubmission.aulas?.id;
+    if (!lessonId) return;
+    setSavingGabarito(true);
+    try {
+      const { error } = await supabase
+        .from('aulas')
+        .update({ questionario: editableQuestions })
+        .eq('id', lessonId);
+      if (error) throw error;
+      alert('Gabarito atualizado com sucesso!');
+      setEditingGabarito(false);
+      if (confirm('Recalcular a nota deste aluno com o novo gabarito?')) {
+        setQuestionEvaluations({});
+        handleSelectSubmission({
+          ...selectedSubmission,
+          aulas: {
+            ...selectedSubmission.aulas,
+            questionario: editableQuestions
+          },
+          questionario: editableQuestions
+        });
+      }
+    } catch (err: any) {
+      alert('Erro ao salvar gabarito: ' + err.message);
+    } finally {
+      setSavingGabarito(false);
+    }
+  };
 
   const renderSubmissionCard = (sub: any) => (
     <div key={sub.submission_id} style={{ 
@@ -361,9 +403,19 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
         </div>
       ) : (
         <div className="data-card grading-area" style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <button className="btn btn-outline" style={{ width: 'auto', marginBottom: '2rem', padding: '0.5rem 1rem' }} onClick={() => setSelectedSubmission(null)}>
-            <ChevronLeft size={16} /> Voltar para Fila
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+            <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1rem' }} onClick={() => setSelectedSubmission(null)}>
+              <ChevronLeft size={16} /> Voltar para Fila
+            </button>
+            <button className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1rem', color: '#38bdf8', borderColor: 'rgba(56,189,248,0.4)' }} onClick={handleStartEditGabarito}>
+              <Edit3 size={14} /> {editingGabarito ? 'Editando Gabarito...' : 'Editar Gabarito'}
+            </button>
+            {editingGabarito && (
+              <button className="btn btn-primary" style={{ width: 'auto', padding: '0.5rem 1rem', background: '#10b981', borderColor: '#10b981' }} onClick={handleSaveGabarito} disabled={savingGabarito}>
+                {savingGabarito ? <Loader2 className="spinner" size={14} /> : <Save size={14} />} Salvar Gabarito
+              </button>
+            )}
+          </div>
 
           <div style={{ borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>
             <div className="grading-header-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -392,8 +444,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '3rem' }}>
             {/* 1. Render questions from the Lesson Questionnaire */}
-            {Array.isArray(selectedSubmission.aulas?.questionario) ? (
-              selectedSubmission.aulas.questionario.map((q: any, idx: number) => {
+            {Array.isArray(editingGabarito ? editableQuestions : selectedSubmission.aulas?.questionario) ? (
+              (editingGabarito ? editableQuestions : selectedSubmission.aulas.questionario).map((q: any, idx: number) => {
                 const studentAnswer = selectedSubmission.respostas?.[q.id || idx];
                 let displayAnswer: React.ReactNode = <em style={{ color: 'var(--text-muted)' }}>Sem resposta</em>;
 
@@ -453,8 +505,79 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                     </h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       <div style={{ padding: '1rem', background: 'rgba(168, 85, 247, 0.1)', borderLeft: '4px solid var(--primary)', borderRadius: '12px', fontSize: '0.85rem' }}>
-                        <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px' }}>Gabarito Correto</div>
+                        <div style={{ fontWeight: 800, fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '0.6rem', letterSpacing: '1px' }}>
+                          {editingGabarito ? 'Editar Gabarito (Clique para alterar)' : 'Gabarito Correto'}
+                        </div>
                         <div style={{ color: 'rgba(255,255,255,0.9)', lineHeight: '1.5' }}>
+                          {editingGabarito ? (
+                            q.type === 'multiple_choice' || !q.type ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {(q.options || []).map((opt: string, oIdx: number) => (
+                                  <label key={oIdx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.3rem 0.5rem', borderRadius: '6px', background: q.correct === oIdx ? 'rgba(16,185,129,0.15)' : 'transparent' }}>
+                                    <input type="radio" name={`gabarito-${q.id || idx}`} checked={q.correct === oIdx} onChange={() => {
+                                      const newQ = [...editableQuestions];
+                                      const questionIdx = newQ.findIndex((eq: any) => eq.id === q.id || newQ.indexOf(q));
+                                      if (questionIdx >= 0) {
+                                        newQ[questionIdx].correct = oIdx;
+                                        setEditableQuestions(newQ);
+                                      }
+                                    }} style={{ accentColor: 'var(--success)' }} />
+                                    <span>{String.fromCharCode(65 + oIdx)}. {opt}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            ) : q.type === 'true_false' ? (
+                              <div style={{ display: 'flex', gap: '1rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: '8px', background: q.isTrue ? 'rgba(16,185,129,0.15)' : 'transparent', border: q.isTrue ? '1px solid var(--success)' : '1px solid transparent' }}>
+                                  <input type="radio" name={`gabarito-tf-${q.id || idx}`} checked={q.isTrue === true} onChange={() => {
+                                    const newQ = [...editableQuestions];
+                                    const questionIdx = newQ.findIndex((eq: any) => eq.id === q.id || newQ.indexOf(q));
+                                    if (questionIdx >= 0) { newQ[questionIdx].isTrue = true; setEditableQuestions(newQ); }
+                                  }} style={{ accentColor: 'var(--success)' }} /> Verdadeiro
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: '8px', background: q.isTrue === false ? 'rgba(239,68,68,0.15)' : 'transparent', border: q.isTrue === false ? '1px solid var(--error)' : '1px solid transparent' }}>
+                                  <input type="radio" name={`gabarito-tf-${q.id || idx}`} checked={q.isTrue === false} onChange={() => {
+                                    const newQ = [...editableQuestions];
+                                    const questionIdx = newQ.findIndex((eq: any) => eq.id === q.id || newQ.indexOf(q));
+                                    if (questionIdx >= 0) { newQ[questionIdx].isTrue = false; setEditableQuestions(newQ); }
+                                  }} style={{ accentColor: 'var(--error)' }} /> Falso
+                                </label>
+                              </div>
+                            ) : q.type === 'matching' && q.matchingPairs ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                {q.matchingPairs.map((pair: any, pIdx: number) => (
+                                  <div key={pIdx} style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '0.5rem', alignItems: 'center' }}>
+                                    <div style={{ padding: '0.4rem 0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', fontSize: '0.8rem', textAlign: 'right' }}>{pair.left}</div>
+                                    <ChevronRight size={14} style={{ opacity: 0.5 }} />
+                                    <select className="form-control" style={{ fontSize: '0.8rem', padding: '0.3rem' }} value={q.matchingPairs.findIndex((_: any, mIdx: number) => mIdx === pIdx)} onChange={(e) => {
+                                      const targetPairIdx = parseInt(e.target.value);
+                                      const newQ = [...editableQuestions];
+                                      const questionIdx = newQ.findIndex((eq: any) => eq.id === q.id || newQ.indexOf(q));
+                                      if (questionIdx >= 0) {
+                                        const pairs = [...newQ[questionIdx].matchingPairs!];
+                                        const temp = pairs[pIdx].right;
+                                        pairs[pIdx].right = pairs[targetPairIdx].right;
+                                        pairs[targetPairIdx].right = temp;
+                                        newQ[questionIdx].matchingPairs = pairs;
+                                        setEditableQuestions(newQ);
+                                      }
+                                    }}>
+                                      {q.matchingPairs.map((mp: any, mIdx: number) => (
+                                        <option key={mIdx} value={mIdx}>{mp.right}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <textarea className="form-control" rows={2} style={{ fontSize: '0.85rem', background: 'rgba(0,0,0,0.3)' }} value={q.expectedAnswer || ''} onChange={(e) => {
+                                const newQ = [...editableQuestions];
+                                const questionIdx = newQ.findIndex((eq: any) => eq.id === q.id || newQ.indexOf(q));
+                                if (questionIdx >= 0) { newQ[questionIdx].expectedAnswer = e.target.value; setEditableQuestions(newQ); }
+                              }} placeholder="Resposta esperada para correção manual..." />
+                            )
+                          ) : (
+                            <>
                           {q.type === 'multiple_choice' || !q.type ? (
                             q.options?.[q.correct] ? (<span><strong>Opção {parseInt(q.correct) + 1}:</strong> {q.options[q.correct]}</span>) : <span>Não definido</span>
                           ) : q.type === 'true_false' ? (
@@ -470,6 +593,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                               ))}
                             </div>
                           ) : <p>{q.expectedAnswer || 'Avaliação manual necessária.'}</p>}
+                            </>
+                          )}
                         </div>
                       </div>
                       <div style={{ padding: '1.25rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '14px', border: '1px solid rgba(16, 185, 129, 0.1)' }}>

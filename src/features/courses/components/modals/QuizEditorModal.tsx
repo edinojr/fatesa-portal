@@ -115,19 +115,14 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
         }
     });
 
-    // Reconstruct 10-2-2-1
+    // Reconstruct 10-4-1 (10 VF + 4 MC + 1 Matching)
     // VF
     for(let i=0; i<10; i++) {
         const item = vfItems[i];
         newQuestions.push({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: item?.text || `V/F ${i+1}`, isTrue: item ? item.isTrue : true });
     }
-    // Discursive
-    for(let i=0; i<2; i++) {
-        const item = disItems[i];
-        newQuestions.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: item?.text || `Dissertativa ${i+1}` });
-    }
-    // MC
-    for(let i=0; i<2; i++) {
+    // MC (4 instead of old 2)
+    for(let i=0; i<4; i++) {
         const item = mcItems[i];
         newQuestions.push({ 
             id: `mc-${Date.now()}-${i}`, 
@@ -192,10 +187,8 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 const template: QuizQuestion[] = [];
                 // 10 True/False
                 for(let i=0; i<10; i++) template.push({ id: `tf-${Date.now()}-${i}`, type: 'true_false', text: '', isTrue: true });
-                // 2 Discursive
-                for(let i=0; i<2; i++) template.push({ id: `dis-${Date.now()}-${i}`, type: 'discursive', text: '' });
-                // 2 Multiple Choice
-                for(let i=0; i<2; i++) template.push({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 });
+                // 4 Multiple Choice
+                for(let i=0; i<4; i++) template.push({ id: `mc-${Date.now()}-${i}`, type: 'multiple_choice', text: '', options: ['', '', '', ''], correct: 0 });
                 // 1 Matching (6 pairs)
                 template.push({ 
                   id: `mat-${Date.now()}`, 
@@ -207,7 +200,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                   ] 
                 });
                 
-                if (window.confirm('Isso substituirá as questões atuais pelo padrão Fatesa de 15 itens (10 V/F, 2 Dissert., 2 M.C., 1 Coluna com 6 pares). Deseja continuar?')) {
+                if (window.confirm('Isso substituirá as questões atuais pelo novo padrão Fatesa (10 V/F, 4 M.C., 1 Coluna com 6 pares). Deseja continuar?')) {
                   setQuizQuestions(template);
                 }
               }}
@@ -459,8 +452,8 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 const matCount = matchingQuestions.length;
                 const matchingPairsCount = matchingQuestions[0]?.matchingPairs?.length || 0;
                 
-                if (tfCount !== 10 || disCount !== 2 || mcCount !== 2 || matCount !== 1 || matchingPairsCount !== 6) {
-                  if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O padrão Fatesa exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 02 Dissertativas (Atuais: ${disCount})\n- 02 Múltipla Escolha (Atuais: ${mcCount})\n- 01 Relacione Colunas com 6 pares (Atuais: ${matCount} questão com ${matchingPairsCount} pares)\n\nDeseja salvar assim mesmo?`)) {
+                if (tfCount !== 10 || mcCount !== 4 || matCount !== 1 || matchingPairsCount !== 6) {
+                  if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O novo padrão Fatesa exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 04 Múltipla Escolha (Atuais: ${mcCount})\n- 01 Relacione Colunas com 6 pares (Atuais: ${matCount} questão com ${matchingPairsCount} pares)\n\nDeseja salvar assim mesmo?`)) {
                     return;
                   }
                 }
