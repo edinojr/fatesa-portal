@@ -196,6 +196,7 @@ const Dashboard = () => {
     courses.forEach(course => {
       course.livros.forEach(libro => {
         if (!libro.isReleased) return;
+        if (libro.isFinished) return;
 
         // Verifica se o aluno já foi aprovado ou está em DP no módulo
         const bookSubmissions = atividades.filter(s => s.book_id === libro.id);

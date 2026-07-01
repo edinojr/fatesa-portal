@@ -275,9 +275,9 @@ const Lesson = () => {
 
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).maybeSingle();
+        const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id, modulos_finalizados_manual').eq('id', user.id).maybeSingle();
         const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r.toLowerCase()));
-        setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, isStaff });
+        setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, modulos_finalizados_manual: profile?.modulos_finalizados_manual, isStaff });
 
         // 1. Audit: Content Release Policy — fetch submissions + aula data without nested join
         let modulePassed = false;
@@ -439,11 +439,13 @@ const Lesson = () => {
           const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id').eq('livro_id', lessonData.livro_id);
           const bookSubs = allSubs.filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
-          const finished = bookSubs.some(s => {
+          const finishedByExam = bookSubs.some(s => {
             const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.tipo === 'avaliacao' || ba.is_bloco_final));
             return isEx && s.status === 'corrigida' && ((s.nota || 0) >= 7.0);
           });
-          setIsModuleFinished(finished);
+          const manualModules = (userProfile as any)?.modulos_finalizados_manual || [];
+          const finishedByManual = manualModules.includes(lessonData.livro_id);
+          setIsModuleFinished(finishedByExam || finishedByManual);
         }
       }
       setLoading(false)
@@ -1597,8 +1599,8 @@ const Lesson = () => {
             )}
           </div>
 
-          {/* REGULAR PROVA — show warning gate (only if NOT already in progress) */}
-          {lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && existingSubmission?.status !== 'liberado' && (
+          {/* REGULAR PROVA — show warning gate (only if NOT already in progress, skip if module finished) */}
+          {lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && existingSubmission?.status !== 'liberado' && !isModuleFinished && (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
               <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
               <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Prova: {lesson.titulo}</h3>
@@ -1615,7 +1617,7 @@ const Lesson = () => {
             </div>
           )}
 
-           {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode && !userProfile?.isStaff ? (
+           {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode && !userProfile?.isStaff && !isModuleFinished ? (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
               <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
               <h3>Prova do Bloco {lesson.bloco_id}</h3>
@@ -1640,9 +1642,10 @@ const Lesson = () => {
                                   q.type === 'true_false' ? studentAns === q.isTrue :
                                   q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
                 
-                 // Gabarito: staff sempre vê | aluno vê apenas se submeter e atingir a nota mínima (Efeito Avaliativo)
+                 // Gabarito: staff sempre vê | aluno vê se submeter e atingir nota mínima ou módulo finalizado
                  const showGabarito = reviewMode ||
                                       userProfile?.isStaff ||
+                                      isModuleFinished ||
                                        (submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0));
 
                 return (
