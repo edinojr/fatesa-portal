@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase, onSupabaseAuthError } from '../lib/supabase';
 import { checkAccessStatus } from '../lib/paymentCycle';
+import { isTokenExpired } from '../lib/authUtils';
 
 // Global cache to prevent race conditions (5000ms Lock error) when multiple components mount
 let globalProfilePromise: Promise<any> | null = null;
@@ -11,21 +12,61 @@ export const useProfile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const navigatingRef = useRef(false);
+
+  const goToLogin = (message?: string) => {
+    if (navigatingRef.current) return
+    navigatingRef.current = true
+    setProfile(null)
+    setLoading(false)
+    const path = message ? `/login?expired=true&message=${encodeURIComponent(message)}` : '/login?expired=true'
+    navigate(path, { replace: true })
+  }
 
   useEffect(() => {
     fetchProfile();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        setProfile(null);
-        navigate('/login', { replace: true });
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        if (session) fetchProfile();
+      switch (event) {
+        case 'SIGNED_OUT':
+          goToLogin('Sessão encerrada.');
+          break
+        case 'TOKEN_REFRESHED':
+          if (session) fetchProfile()
+          break
+        case 'SIGNED_IN':
+          if (session) fetchProfile()
+          break
+        case 'INITIAL_SESSION':
+          if (!session) {
+            goToLogin()
+          }
+          break
+        default:
+          if (event.toLowerCase().includes('failed') || event.toLowerCase().includes('error')) {
+            goToLogin('Sessão expirada. Faça login novamente.')
+          }
       }
     });
 
+    const healthCheck = setInterval(async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session && isTokenExpired(session.access_token)) {
+        const { data: refreshed } = await supabase.auth.refreshSession()
+        if (!refreshed.session) {
+          goToLogin('Sua sessão expirou.')
+        }
+      }
+    }, 60000)
+
+    const unsubAuthError = onSupabaseAuthError(() => {
+      goToLogin('Sessão expirada. Faça login novamente.')
+    })
+
     return () => {
-      subscription.unsubscribe();
+      subscription.unsubscribe()
+      clearInterval(healthCheck)
+      unsubAuthError()
     };
   }, []);
 
@@ -48,11 +89,23 @@ export const useProfile = () => {
         const { data: { session: s }, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) {
           console.error('Session Error:', sessionError);
+          if (sessionError.message?.toLowerCase().includes('refresh') || sessionError.message?.toLowerCase().includes('token')) {
+            goToLogin('Sessão expirada. Faça login novamente.')
+          }
           setLoading(false);
           return;
         }
         if (s) {
-          session = s;
+          if (isTokenExpired(s.access_token)) {
+            const { data: refreshed } = await supabase.auth.refreshSession()
+            if (!refreshed.session) {
+              goToLogin('Sua sessão expirou.')
+              return
+            }
+            session = refreshed.session
+          } else {
+            session = s
+          }
           break;
         }
         if (attempt < 2) {
@@ -61,22 +114,40 @@ export const useProfile = () => {
       }
       
       if (!session) {
-        setLoading(false);
+        goToLogin();
         return;
       }
 
-      const { data, error } = await supabase
+      let data, error;
+      // Try with full joins first
+      const result = await supabase
         .from('users')
-        .select(`
-          *,
-          nucleos(nome),
-          pagamentos (*)
-        `)
+        .select(`*, nucleos(nome), pagamentos (*)`)
         .eq('id', session.user.id)
         .maybeSingle();
+      data = result.data;
+      error = result.error;
+      
+      // If full query fails (e.g., missing column or RLS issue), retry without joins
+      if (error) {
+        console.warn('Full profile query failed, retrying without joins:', error.message || error);
+        const retry = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        if (!retry.error && retry.data) {
+          data = retry.data;
+          error = null;
+        }
+      }
       
       if (error) {
         console.error('Database Profile Error:', error);
+        if (error.code === 'PGRST301' || error.code === '401' || error.message?.toLowerCase().includes('jwt')) {
+          goToLogin('Sua sessão expirou.')
+          return
+        }
         throw error;
       }
 

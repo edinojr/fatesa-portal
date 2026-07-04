@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock, Lock, Unlock, ClipboardList, FileText, GraduationCap, ChevronDown, ChevronRight, CheckCircle, AlertCircle, ToggleLeft, ToggleRight, Zap } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
+import { handleSupabaseError } from '../../../lib/authUtils'
 import { useNavigate, Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
 import ModuleCard from './cards/ModuleCard'
@@ -136,10 +137,12 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         if (error) throw error
       }
       // Não busca do DB após sucesso — o update otimista é confiável
-      // e evita RLS que esconda registros do admin.
     } catch (err: any) {
-      alert('Erro ao atualizar liberação: ' + err.message)
-      await fetchReleases() // Rollback state on error
+      const handled = await handleSupabaseError(err)
+      if (!handled) {
+        alert('Erro ao atualizar liberação: ' + err.message)
+        await fetchReleases()
+      }
     }
   }
 
@@ -170,122 +173,119 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     }
   }
 
-    const handleReleaseContent = async (nucleoId: string, book: any) => {
-      if (!window.confirm(`Liberar TODO o CONTEÚDO (vídeos e lições) do módulo "${book.titulo}" para o polo selecionado? (Provas não serão liberadas)`)) return
-      try {
-        const { data: allLessons } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', book.id)
-        if (!allLessons) return
-        const releaseModulo = { nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo', liberado: true }
-        const itemsToRelease = allLessons
-          .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
-          .map(l => {
-            const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
-            return { 
-              nucleo_id: nucleoId, 
-              item_id: l.id, 
-               item_type: isVideo ? 'video' : 'atividade', 
-              liberado: true 
-            }
-          })
-        const { data: upserted, error } = await supabase.from('liberacoes_nucleo').upsert([releaseModulo, ...itemsToRelease], { onConflict: 'nucleo_id, item_id, item_type' }).select()
-        if (error) throw error
-        if (upserted) {
-          setReleases(prev => {
-            const ids = new Set(upserted.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-            return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...upserted]
-          })
-        }
-        alert('Conteúdo liberado com sucesso!')
-      } catch (err: any) {
-        alert('Erro ao liberar conteúdo: ' + err.message)
-      }
+  const handleReleaseContent = async (nucleoId: string, book: any) => {
+    if (!window.confirm(`Liberar TODO o CONTEÚDO (vídeos e lições) do módulo "${book.titulo}" para o polo selecionado? (Provas não serão liberadas)`)) return
+    try {
+      const { data: allLessons } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', book.id)
+      if (!allLessons) return
+      const releaseModulo = { nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo', liberado: true }
+      const itemsToRelease = allLessons
+        .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
+        .map(l => {
+          const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
+          return { 
+            nucleo_id: nucleoId, 
+            item_id: l.id, 
+            item_type: isVideo ? 'video' : 'atividade', 
+            liberado: true 
+          }
+        })
+      const payload = [releaseModulo, ...itemsToRelease]
+      const { error } = await supabase.from('liberacoes_nucleo').upsert(payload, { onConflict: 'nucleo_id, item_id, item_type' })
+      if (error) throw error
+      setReleases(prev => {
+        const ids = new Set(payload.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+        return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...payload]
+      })
+      alert('Conteúdo liberado com sucesso!')
+    } catch (err: any) {
+      alert('Erro ao liberar conteúdo: ' + err.message)
     }
+  }
 
-    const handleReleaseExams = async (nucleoId: string, currentBook: any) => {
-      try {
-        const { data: currentExams } = await supabase
-          .from('aulas')
+  const handleReleaseExams = async (nucleoId: string, currentBook: any) => {
+    try {
+      const { data: currentExams } = await supabase
+        .from('aulas')
+        .select('id')
+        .eq('livro_id', currentBook.id)
+        .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
+        .order('ordem', { ascending: true })
+        .limit(1);
+
+      let itemsToRelease: Array<{ nucleo_id: string; item_id: any; item_type: string; liberado: boolean }> = [];
+
+      if (currentExams) {
+        currentExams.forEach(exam => {
+          itemsToRelease.push({
+            nucleo_id: nucleoId,
+            item_id: exam.id,
+            item_type: 'atividade',
+            liberado: true
+          });
+        });
+      }
+
+      // Find next module by ordem
+      let nextBook: any = null;
+      if (typeof currentBook.ordem === 'number' && currentBook.curso_id) {
+        const { data: nb } = await supabase
+          .from('livros')
           .select('id')
-          .eq('livro_id', currentBook.id)
-          .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
-          .order('ordem', { ascending: true })
-          .limit(1);
+          .eq('ordem', currentBook.ordem + 1)
+          .eq('curso_id', currentBook.curso_id)
+          .maybeSingle();
+        nextBook = nb;
+      }
 
-        let itemsToRelease: Array<{ nucleo_id: string; item_id: any; item_type: string; liberado: boolean }> = [];
+      if (nextBook) {
+        // Liberar conteúdo (lições + exercícios) do próximo módulo
+        const { data: nextContent } = await supabase
+          .from('aulas')
+          .select('id, tipo')
+          .eq('livro_id', nextBook.id)
+          .not('tipo', 'eq', 'prova')
+          .not('tipo', 'eq', 'avaliacao');
 
-        if (currentExams) {
-          currentExams.forEach(exam => {
+        if (nextContent) {
+          nextContent.forEach(item => {
+            const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo';
             itemsToRelease.push({
               nucleo_id: nucleoId,
-              item_id: exam.id,
-              item_type: 'atividade',
+              item_id: item.id,
+              item_type: isVideo ? 'video' : 'atividade',
               liberado: true
             });
           });
         }
 
-        // Find next module by ordem
-        let nextBook: any = null;
-        if (typeof currentBook.ordem === 'number' && currentBook.curso_id) {
-          const { data: nb } = await supabase
-            .from('livros')
-            .select('id')
-            .eq('ordem', currentBook.ordem + 1)
-            .eq('curso_id', currentBook.curso_id)
-            .maybeSingle();
-          nextBook = nb;
+        // Ativar o próximo módulo (professor_active = true) para que alunos o vejam
+        await supabase.from('livros').update({ professor_active: true }).eq('id', nextBook.id);
+        setBooks(prev => prev.map(b => b.id === nextBook.id ? { ...b, professor_active: true } : b));
+        if (selectedBook && selectedBook.id === nextBook.id) {
+          setSelectedBook({ ...selectedBook, professor_active: true });
         }
-
-        if (nextBook) {
-          // Liberar conteúdo (lições + exercícios) do próximo módulo
-          const { data: nextContent } = await supabase
-            .from('aulas')
-            .select('id, tipo')
-            .eq('livro_id', nextBook.id)
-            .not('tipo', 'eq', 'prova')
-            .not('tipo', 'eq', 'avaliacao');
-
-          if (nextContent) {
-            nextContent.forEach(item => {
-              const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo';
-              itemsToRelease.push({
-                nucleo_id: nucleoId,
-                item_id: item.id,
-                item_type: isVideo ? 'video' : 'atividade',
-                liberado: true
-              });
-            });
-          }
-
-          // Ativar o próximo módulo (professor_active = true) para que alunos o vejam
-          await supabase.from('livros').update({ professor_active: true }).eq('id', nextBook.id);
-          setBooks(prev => prev.map(b => b.id === nextBook.id ? { ...b, professor_active: true } : b));
-          if (selectedBook && selectedBook.id === nextBook.id) {
-            setSelectedBook({ ...selectedBook, professor_active: true });
-          }
-        }
-
-        if (itemsToRelease.length === 0) return;
-
-        const { data: upserted, error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, {
-          onConflict: 'nucleo_id, item_id, item_type'
-        }).select();
-        if (error) throw error;
-
-        if (upserted) {
-          setReleases(prev => {
-            const ids = new Set(upserted.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-            return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...upserted]
-          })
-        }
-
-        alert("Avaliação V1 liberada! O módulo seguinte foi ativado automaticamente com seu conteúdo (lições e exercícios) liberado para o polo.");
-      } catch (error: any) {
-        console.error("Erro na liberação circular:", error);
-        alert('Erro ao liberar provas: ' + (error?.message || error));
       }
+
+      if (itemsToRelease.length === 0) return;
+
+      const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, {
+        onConflict: 'nucleo_id, item_id, item_type'
+      });
+      if (error) throw error;
+
+      setReleases(prev => {
+        const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+        return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
+      })
+
+      alert("Avaliação V1 liberada! O módulo seguinte foi ativado automaticamente com seu conteúdo (lições e exercícios) liberado para o polo.");
+    } catch (error: any) {
+      console.error("Erro na liberação circular:", error);
+      alert('Erro ao liberar provas: ' + (error?.message || error));
     }
- 
+  }
+
   const getBookCompletionStats = (book: any) => {
     const bookLessonIds = (book.aulas || []).map((l: any) => l.id)
     return (submissions || []).filter(sub => {

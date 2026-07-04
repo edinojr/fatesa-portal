@@ -91,7 +91,7 @@ const goToPanel = () => {
         console.log(`[MF] "${c.nome}" / "${l.titulo}" → isFinished:${stats.isFinished} isApproved:${stats.isApproved} examGrade:${stats.examGrade}`);
     }));
     const finishedCourses = (courses || []).map(course => {
-        const finishedBooks = (course.livros || []).filter(l => getBookStats(l, atividades, progressoAulas).isFinished);
+        const finishedBooks = (course.livros || []).filter(l => l.isFinished || getBookStats(l, atividades, progressoAulas).isFinished);
         return { ...course, livros: finishedBooks };
     }).filter(course => course.livros.length > 0);
 

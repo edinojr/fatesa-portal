@@ -162,10 +162,17 @@ const Dashboard = () => {
       
       const { error } = await supabase
         .from('users')
-        .update({ modulos_finalizados_manual: updatedManual })
+        .update({ modulos_finalizados_manual: updatedManual } as any)
         .eq('id', profile.id);
       
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42703' || /column.*does not exist/i.test(error.message || '')) {
+          showToast('Funcionalidade temporariamente indisponível: coluna não encontrada no servidor.', 'error');
+        } else {
+          throw error;
+        }
+        return;
+      }
       
       showToast(`${selectedModules.length} módulo(s) marcado(s) como concluído(s)!`, 'success');
       setShowModuleCompletionModal(false);

@@ -162,11 +162,12 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
 
     setSaving(true);
     try {
+      const nota = parseFloat(formData.nota);
       const payload = {
         aluno_id: selectedStudent.id,
         curso_nome: formData.curso_nome,
         modulo_nome: formData.modulo_nome,
-        nota: parseFloat(formData.nota),
+        nota,
         data_conclusao: formData.data_conclusao,
         observacao: formData.observacao || null,
       };
@@ -177,15 +178,37 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
           .update({ ...payload, updated_at: new Date().toISOString() })
           .eq('id', editingId);
         if (error) throw error;
-        showToast('Nota atualizada com sucesso!');
       } else {
         const { error } = await supabase
           .from('historico_notas')
           .insert({ ...payload, inserido_por: (await supabase.auth.getUser()).data.user?.id });
         if (error) throw error;
-        showToast('Nota inserida com sucesso!');
       }
 
+      // Se a nota for de aprovação (>= 7), finalizar o módulo automaticamente
+      if (nota >= 7) {
+        const modulo = availableModules.find((m: any) => m.titulo === formData.modulo_nome);
+        if (modulo?.id) {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('modulos_finalizados_manual')
+            .eq('id', selectedStudent.id)
+            .maybeSingle();
+
+          const currentManual = userData?.modulos_finalizados_manual || [];
+          if (!currentManual.includes(modulo.id)) {
+            const updatedManual = [...currentManual, modulo.id];
+            await supabase
+              .from('users')
+              .update({ modulos_finalizados_manual: updatedManual })
+              .eq('id', selectedStudent.id);
+          }
+        } else {
+          console.warn(`Módulo "${formData.modulo_nome}" não encontrado nos cursos para finalização automática.`);
+        }
+      }
+
+      showToast('Nota salva com sucesso!');
       setFormData({ curso_nome: '', modulo_nome: '', nota: '', data_conclusao: new Date().toISOString().split('T')[0], observacao: '' });
       setEditingId(null);
       setShowForm(false);

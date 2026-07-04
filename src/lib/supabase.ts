@@ -43,6 +43,19 @@ if (!isConfigured) {
   throw new Error('Supabase not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY')
 }
 
+// Auth error listeners — called when any Supabase request returns an auth error
+const authErrorListeners: Array<() => void> = []
+export const onSupabaseAuthError = (listener: () => void) => {
+  authErrorListeners.push(listener)
+  return () => {
+    const idx = authErrorListeners.indexOf(listener)
+    if (idx >= 0) authErrorListeners.splice(idx, 1)
+  }
+}
+const notifyAuthError = () => {
+  authErrorListeners.forEach(fn => fn())
+}
+
 // Configuração do Cliente Supabase
 export const supabase = createClient(
   supabaseUrl,
@@ -57,7 +70,21 @@ export const supabase = createClient(
       flowType: 'pkce'
     },
     global: {
-      headers: { 'x-application-name': 'fatesa-portal' }
+      headers: { 'x-application-name': 'fatesa-portal' },
+      fetch: (input, init) => {
+        return fetch(input, init).then(async response => {
+          if (response.status === 401) {
+            notifyAuthError()
+          }
+          return response
+        }).catch(err => {
+          const msg = err?.message || ''
+          if (msg.toLowerCase().includes('jwt') || msg.toLowerCase().includes('token') || msg.toLowerCase().includes('auth')) {
+            notifyAuthError()
+          }
+          throw err
+        })
+      }
     }
   }
 )

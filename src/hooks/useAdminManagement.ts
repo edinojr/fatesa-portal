@@ -31,7 +31,7 @@ export const useAdminManagement = () => {
     if (nav.activeTab === 'users' || nav.activeTab === 'professors') users.fetchUsers();
     if (nav.activeTab === 'content') content.fetchCourses();
     if (nav.activeTab === 'finance') finance.fetchFinanceData();
-    if (nav.activeTab === 'analytics') analytics.fetchAnalytics();
+    if (nav.activeTab === 'analytics' || nav.activeTab === 'academic') analytics.fetchAnalytics();
     if (nav.activeTab === 'reports') finance.fetchFinanceReport();
   }, [
     nav.activeTab, 

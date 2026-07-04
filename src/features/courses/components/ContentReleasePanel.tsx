@@ -111,14 +111,12 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
         const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
         return { nucleo_id: nucleoId, item_id: l.id, item_type: isVideo ? 'video' : 'atividade' as const, liberado: true }
       })
-    const { data: upserted, error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id, item_id, item_type' }).select()
+    const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id, item_id, item_type' })
     if (error) { alert('Erro: ' + error.message); return }
-    if (upserted) {
-      setReleases(prev => {
-        const ids = new Set(upserted.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-        return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...upserted]
-      })
-    }
+    setReleases(prev => {
+      const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+      return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
+    })
     alert('Conteúdo liberado com sucesso!')
   }
 
@@ -159,14 +157,12 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
     }
 
     if (itemsToRelease.length === 0) return
-    const { data: upserted, error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id, item_id, item_type' }).select()
+    const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id, item_id, item_type' })
     if (error) { alert('Erro: ' + error.message); return }
-    if (upserted) {
-      setReleases(prev => {
-        const ids = new Set(upserted.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-        return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...upserted]
-      })
-    }
+    setReleases(prev => {
+      const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+      return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
+    })
     alert('Prova V1 liberada! O módulo seguinte foi ativado com seu conteúdo (lições e exercícios) liberado para o polo.')
   }
 
@@ -184,11 +180,11 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
           const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
           return { nucleo_id: nucleoId, item_id: l.id, item_type: isVideo ? 'video' : 'atividade' as const, liberado: true }
         })
-        const { data: upserted } = await supabase.from('liberacoes_nucleo').upsert(items, { onConflict: 'nucleo_id, item_id, item_type' }).select()
-        if (upserted) {
+        const { error } = await supabase.from('liberacoes_nucleo').upsert(items, { onConflict: 'nucleo_id, item_id, item_type' })
+        if (!error) {
           setReleases(prev => {
-            const ids = new Set(upserted.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-            return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...upserted]
+            const ids = new Set(items.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+            return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...items]
           })
         }
       }

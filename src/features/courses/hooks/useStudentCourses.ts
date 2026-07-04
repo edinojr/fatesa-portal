@@ -341,7 +341,7 @@ export const useStudentCourses = (profile: any) => {
                // sem bloqueio de pagamento. O primeiro módulo de cada curso NUNCA fica oculto,
                // A MENOS QUE esteja bloqueado pelo professor.
                const isFirstModule = bookOrdem === 1;
-               const isHidden = isBookBlockedByProfessor || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease && profile.accessStatus !== 'blocked_payment' && !moduleFinished);
+               const isHidden = isBookBlockedByProfessor || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished);
 
               if (isHidden) return null;
 

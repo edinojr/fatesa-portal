@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Users, Plus, Award, ChevronRight, Loader2, Save, Trash2, XCircle, Clock, MapPin } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { handleSupabaseError } from '../lib/authUtils'
 import StudentRow from '../features/nucleos/components/StudentRow'
 import NucleoSolicitacoes from '../features/nucleos/components/NucleoSolicitacoes'
 import NucleoReleaseManager from '../features/nucleos/components/NucleoReleaseManager'
@@ -176,7 +177,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       }
       setReleasedItems({ ...releasedItems, [key]: newStatus })
     } catch (err: any) {
-      alert('Erro ao alterar liberação: ' + err.message)
+      const handled = await handleSupabaseError(err)
+      if (!handled) alert('Erro ao alterar liberação: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -235,7 +237,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       setReleasedItems(newReleased)
       alert(`Conteúdo ${release ? 'liberado' : 'bloqueado'} com sucesso!`)
     } catch (err: any) {
-      alert('Erro na ação em massa: ' + err.message)
+      const handled = await handleSupabaseError(err)
+      if (!handled) alert('Erro na ação em massa: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -280,7 +283,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       setShowAddModal(false)
       fetchInitialData()
     } catch(err: any) {
-      alert('Erro: ' + err.message)
+      const handled = await handleSupabaseError(err)
+      if (!handled) alert('Erro: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -323,7 +327,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       if (selectedNucleo?.id === nucleoId) setSelectedNucleo(null);
       await fetchInitialData();
     } catch (err: any) {
-      alert('Erro ao sair do núcleo: ' + (err.message || 'Erro de conexão'));
+      const handled = await handleSupabaseError(err)
+      if (!handled) alert('Erro ao sair do núcleo: ' + (err.message || 'Erro de conexão'));
     } finally {
       setActionLoading(null);
     }

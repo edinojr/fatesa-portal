@@ -687,7 +687,25 @@ const Admin = () => {
                 </p>
               </div>
 
-              {/* Seção 1: Boletim de Notas */}
+              {/* Seção 1: Visão Geral do Histórico */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+                <div style={{ padding: '1rem 1.5rem', background: 'rgba(59,130,246,0.06)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <ClipboardList size={20} color="#3b82f6" />
+                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Histórico Acadêmico dos Alunos</span>
+                  <span style={{ fontSize: '0.7rem', color: '#3b82f6', background: 'rgba(59,130,246,0.1)', padding: '2px 10px', borderRadius: '6px' }}>VISÃO COMPLETA</span>
+                </div>
+                <div style={{ padding: '1rem' }}>
+                  <AcademicHistory
+                    data={academicReport}
+                    searchTerm={searchTerm}
+                    onDelete={handleDeleteSubmission}
+                    onUpdateStatus={handleTypeChange}
+                    allStudents={users}
+                  />
+                </div>
+              </div>
+
+              {/* Seção 2: Boletim de Notas */}
               <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
                 <div style={{ padding: '1rem 1.5rem', background: 'rgba(var(--primary-rgb), 0.04)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <GraduationCap size={20} color="var(--primary)" />
@@ -705,7 +723,7 @@ const Admin = () => {
                 </div>
               </div>
 
-              {/* Seção 2: Inserção Manual de Histórico */}
+              {/* Seção 3: Inserção Manual de Histórico */}
               <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
                 <div style={{ padding: '1rem 1.5rem', background: 'rgba(245,158,11,0.06)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <FileText size={20} color="#f59e0b" />

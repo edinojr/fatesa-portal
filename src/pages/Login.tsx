@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { LogIn, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react'
+import { LogIn, Loader2, Eye, EyeOff, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Logo from '../components/common/Logo'
 import { useSEO } from '../hooks/useSEO'
 
@@ -12,6 +12,8 @@ const Login = () => {
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const expiredMessage = searchParams.get('expired') === 'true' ? (searchParams.get('message') || 'Sua sessão expirou. Faça login novamente.') : null
 
   useSEO({
     title: 'Entrar na Plataforma | Fatesa',
@@ -212,6 +214,11 @@ const Login = () => {
               </div>
             </div>
 
+            {expiredMessage && (
+              <div className="error-msg" style={{ marginBottom: '1.5rem', background: 'rgba(245,158,11,0.1)', borderColor: 'rgba(245,158,11,0.3)', color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertTriangle size={18} /> {expiredMessage}
+              </div>
+            )}
             {error && <div className="error-msg" style={{ marginBottom: '1.5rem' }}>{error}</div>}
 
             <button type="submit" className="btn btn-primary" disabled={loading}>

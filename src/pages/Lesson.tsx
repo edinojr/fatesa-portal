@@ -275,9 +275,16 @@ const Lesson = () => {
 
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data: profile } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id, modulos_finalizados_manual').eq('id', user.id).maybeSingle();
+        let profile: any = {};
+        const { data: profileData } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id, modulos_finalizados_manual').eq('id', user.id).maybeSingle();
+        if (profileData) {
+          profile = profileData;
+        } else {
+          const fallback = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).maybeSingle();
+          profile = { ...(fallback.data || {}), modulos_finalizados_manual: [] };
+        }
         const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r.toLowerCase()));
-        setUserProfile({ ...user, profile_tipo: profile?.tipo, caminhos_acesso: profile?.caminhos_acesso, nucleo_id: profile?.nucleo_id, modulos_finalizados_manual: profile?.modulos_finalizados_manual, isStaff });
+        setUserProfile({ ...user, profile_tipo: profile.tipo, caminhos_acesso: profile.caminhos_acesso, nucleo_id: profile.nucleo_id, modulos_finalizados_manual: profile.modulos_finalizados_manual || [], isStaff });
 
         // 1. Audit: Content Release Policy — fetch submissions + aula data without nested join
         let modulePassed = false;

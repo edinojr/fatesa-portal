@@ -8,6 +8,7 @@ import {
   CheckCircle,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { handleSupabaseError } from '../lib/authUtils'
 import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 
@@ -42,7 +43,11 @@ const ModuleDetails = () => {
 
     const fetchNucleusReleases = async () => {
       if (!profile?.nucleo_id) return;
-      const { data } = await supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
+      const { data, error } = await supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
+      if (error) {
+        await handleSupabaseError(error)
+        return
+      }
       if (data) setNucleusReleases(data);
     };
 
