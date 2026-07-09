@@ -1,5 +1,6 @@
 import React from 'react'
-import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw } from 'lucide-react'
+import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock } from 'lucide-react'
+import { supabase } from '../../../lib/supabase'
 import { Student } from '../../../types/professor'
 
 interface StudentsManagementProps {
@@ -14,6 +15,7 @@ interface StudentsManagementProps {
   handleUpdateUserNucleo: (userId: string, nId: string, nNome: string) => Promise<void>
   handleUpdateUserType: (userId: string, type: string) => Promise<void>
   handleGrantModuleException?: (userId: string, bookId: string) => Promise<void>
+  handleRevokeModuleException?: (userId: string, bookId: string) => Promise<void>
   userRole?: string | null
   allNucleos?: any[]
   courses?: any[]
@@ -23,10 +25,33 @@ export default function StudentsManagement({
   allStudents, searchTerm, setSearchTerm, actionLoading,
   handleApproveAccess, handleRejectAccess, handleDeleteUser,
   handleResetActivities, handleUpdateUserNucleo, handleUpdateUserType,
-  handleGrantModuleException,
+  handleGrantModuleException, handleRevokeModuleException,
   userRole, allNucleos = [], courses = []
 }: StudentsManagementProps) {
   const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null);
+  const [expandedReleases, setExpandedReleases] = React.useState<string | null>(null);
+  const [releasesData, setReleasesData] = React.useState<Record<string, any[]>>({});
+  const [loadingReleases, setLoadingReleases] = React.useState<string | null>(null);
+
+  const fetchStudentReleases = async (studentId: string) => {
+    if (releasesData[studentId]) {
+      setExpandedReleases(expandedReleases === studentId ? null : studentId);
+      return;
+    }
+    setLoadingReleases(studentId);
+    try {
+      const { data } = await supabase
+        .from('liberacoes_excecao')
+        .select('id, livro_id, created_at, livros(titulo)')
+        .eq('user_id', studentId);
+      setReleasesData(prev => ({ ...prev, [studentId]: data || [] }));
+      setExpandedReleases(studentId);
+    } catch {
+      setReleasesData(prev => ({ ...prev, [studentId]: [] }));
+    } finally {
+      setLoadingReleases(null);
+    }
+  }
 
   const filteredStudents = allStudents.filter(s => {
     // Excluir professores da gestão de alunos, exceto o Edino Junior
@@ -157,6 +182,7 @@ export default function StudentsManagement({
                       <th>Nome</th>
                       <th>E-mail</th>
                       <th>Status</th>
+                      <th>Liberações</th>
                       <th style={{ textAlign: 'right' }}>Ações</th>
                     </tr>
                   </thead>
@@ -171,6 +197,84 @@ export default function StudentsManagement({
                             <span className={`admin-badge status-${student.status_nucleo || 'pendente'}`}>
                               {student.status_nucleo || 'pendente'}
                             </span>
+                          </td>
+                          <td>
+                            <div style={{ position: 'relative' }}>
+                            <button
+                              className="btn"
+                              style={{
+                                padding: '0.2rem 0.5rem',
+                                fontSize: '0.7rem',
+                                width: 'auto',
+                                background: releasesData[student.id]?.length > 0 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255,255,255,0.05)',
+                                color: releasesData[student.id]?.length > 0 ? '#f59e0b' : 'var(--text-muted)',
+                                border: '1px solid rgba(245, 158, 11, 0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.3rem'
+                              }}
+                              onClick={() => fetchStudentReleases(student.id)}
+                              title="Ver liberações individuais deste aluno"
+                            >
+                              {loadingReleases === student.id ? (
+                                <Loader2 className="spinner" size={12} />
+                              ) : (
+                                <Unlock size={12} />
+                              )}
+                              {releasesData[student.id]?.length || 0}
+                            </button>
+                            {expandedReleases === student.id && releasesData[student.id]?.length > 0 && (
+                              <div style={{
+                                position: 'absolute',
+                                zIndex: 100,
+                                background: 'var(--card-bg)',
+                                border: '1px solid var(--glass-border)',
+                                borderRadius: '8px',
+                                padding: '0.5rem',
+                                marginTop: '0.25rem',
+                                minWidth: '220px',
+                                boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                              }}>
+                                {releasesData[student.id].map((rel: any) => (
+                                  <div key={rel.id} style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    padding: '0.3rem 0',
+                                    borderBottom: '1px solid var(--glass-border)',
+                                    fontSize: '0.75rem'
+                                  }}>
+                                    <span style={{ fontWeight: 600 }}>{rel.livros?.titulo || 'Módulo'}</span>
+                                    <button
+                                      className="btn"
+                                      style={{
+                                        width: 'auto',
+                                        padding: '0.15rem 0.4rem',
+                                        fontSize: '0.65rem',
+                                        background: 'rgba(239, 68, 68, 0.15)',
+                                        color: 'var(--error)',
+                                        border: 'none'
+                                      }}
+                                      onClick={() => {
+                                        if (handleRevokeModuleException) {
+                                          handleRevokeModuleException(student.id, rel.livro_id);
+                                          setReleasesData(prev => ({
+                                            ...prev,
+                                            [student.id]: prev[student.id]?.filter(r => r.id !== rel.id) || []
+                                          }));
+                                        }
+                                      }}
+                                      disabled={actionLoading === student.id}
+                                    >
+                                      {actionLoading === student.id ? <Loader2 className="spinner" size={10} /> : <Lock size={10} />}
+                                      <span style={{ marginLeft: '2px' }}>Revogar</span>
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            </div>
                           </td>
                           <td>
                             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>

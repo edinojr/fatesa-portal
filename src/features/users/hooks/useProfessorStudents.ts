@@ -137,37 +137,74 @@ export const useProfessorStudents = () => {
     try {
       const { error } = await supabase
         .from('liberacoes_excecao')
-        .insert({ user_id: userId, livro_id: bookId });
+        .upsert({ user_id: userId, livro_id: bookId }, { onConflict: 'user_id,livro_id' });
       
-      if (error) {
-        if (error.code === '23505') {
-           alert('Este módulo já está liberado para este aluno.');
-           return;
-        }
-        throw error;
-      }
+      if (error) throw error;
 
-      // Also release V1 avaliacao for this module
+      // Release apenas avaliações V1 (V2/V3 dependem de reprovação anterior)
       const { data: avaliacoes } = await supabase
         .from('aulas')
-        .select('id')
+        .select('id, tipo, versao, is_bloco_final')
         .eq('livro_id', bookId)
-        .eq('tipo', 'avaliacao')
-        .or('versao.is.null,versao.eq.1');
+        .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true');
 
-      if (avaliacoes && avaliacoes.length > 0) {
-        await supabase
+      const v1Items = (avaliacoes || []).filter(a => {
+        if (a.is_bloco_final) return true;
+        const v = a.versao;
+        if (v == null) return true;
+        return Number(v) === 1;
+      });
+
+      if (v1Items.length > 0) {
+        const { error: examErr } = await supabase
           .from('liberacoes_excecao_atividade')
-          .insert(avaliacoes.map(a => ({
+          .upsert(v1Items.map(a => ({
             user_id: userId,
             aula_id: a.id
-          })));
+          })), { onConflict: 'user_id,aula_id' });
+        if (examErr && examErr.code !== '23505') throw examErr;
       }
 
       alert('Módulo liberado com sucesso!');
       if (onSuccess) onSuccess();
     } catch (err: any) {
       alert('Erro ao liberar módulo: ' + err.message);
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  const handleRevokeModuleException = async (userId: string, bookId: string, onSuccess?: () => void) => {
+    setActionLoading(userId);
+    try {
+      // Remove module exception
+      const { error: modErr } = await supabase
+        .from('liberacoes_excecao')
+        .delete()
+        .eq('user_id', userId)
+        .eq('livro_id', bookId);
+      if (modErr) throw modErr;
+
+      // Remove V1 assessment releases for this module
+      const { data: avaliacoes } = await supabase
+        .from('aulas')
+        .select('id')
+        .eq('livro_id', bookId)
+        .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true');
+
+      if (avaliacoes && avaliacoes.length > 0) {
+        const { error: examErr } = await supabase
+          .from('liberacoes_excecao_atividade')
+          .delete()
+          .eq('user_id', userId)
+          .in('aula_id', avaliacoes.map(a => a.id));
+        if (examErr) throw examErr;
+      }
+
+      alert('Liberação de módulo revogada com sucesso!');
+      if (onSuccess) onSuccess();
+    } catch (err: any) {
+      alert('Erro ao revogar liberação: ' + err.message);
     } finally {
       setActionLoading(null);
     }
@@ -185,6 +222,7 @@ export const useProfessorStudents = () => {
     handleResetProgress,
     handleUpdateUserNucleo,
     handleUpdateUserType,
-    handleGrantModuleException
+    handleGrantModuleException,
+    handleRevokeModuleException
   }
 }

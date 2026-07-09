@@ -144,9 +144,28 @@ const Lesson = () => {
     const idx = (exames || []).findIndex((e: any) => e.id === aulaAtual.id);
     if (idx === -1) return false;
 
-    // First exam in module = V1: check professor_active + nucleo release
+    // First exam in module = V1: check professor_active + nucleo release + individual exception
     if (idx === 0) {
       if (aulaAtual.professor_active === false) return false;
+
+      // Check individual exception first (liberacoes_excecao_atividade)
+      const { data: indivRel, error: indivErr } = await supabase
+        .from('liberacoes_excecao_atividade')
+        .select('id')
+        .eq('user_id', alunoId)
+        .eq('aula_id', aulaAtual.id)
+        .maybeSingle();
+      if (!indivErr && indivRel) return true;
+
+      // Check module-level individual exception (liberacoes_excecao)
+      const { data: modExRel, error: modExErr } = await supabase
+        .from('liberacoes_excecao')
+        .select('id')
+        .eq('user_id', alunoId)
+        .eq('livro_id', moduloId)
+        .maybeSingle();
+      if (!modExErr && modExRel) return true;
+
       let query = supabase
         .from('liberacoes_nucleo')
         .select('liberado')
@@ -327,11 +346,21 @@ const Lesson = () => {
 
         const isExam = lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || !!lessonData.is_bloco_final;
 
+        // Verifica exceção individual do aluno para este módulo
+        const { data: modException } = await supabase
+          .from('liberacoes_excecao')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('livro_id', lessonData.livro_id)
+          .maybeSingle();
+        const hasModuleException = !!modException;
+
         // Se o módulo está bloqueado pelo professor, negar acesso
-        const isModuleBlocked = bookData && bookData.professor_active === false;
+        // A MENOS que o aluno tenha exceção individual
+        const isModuleBlocked = bookData && bookData.professor_active === false && !hasModuleException;
         if (!isStaff && isModuleBlocked) {
           setIsReleased(false);
-        } else if (isStaff || modulePassed) {
+        } else if (isStaff || modulePassed || hasModuleException) {
           setIsReleased(true);
         } else {
           const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id);
@@ -781,11 +810,9 @@ const Lesson = () => {
         return;
       }
 
-       // Regra Fatesa: Avaliações agora possuem correção automática baseada no gabarito oficial.
-       // Padrão: 10 Verdadeiro/Falso (5 pts), 4 Múltipla Escolha (2 pts), 1 Relacione Colunas 6 pares (3 pts).
        const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
        
-       // Calculamos a pontuação para todas as avaliações (agora automática)
+       // Calculamos a pontuação para todas as avaliações
        questions.forEach((q, idx) => {
          const qKey = q.id || idx;
          const studentAns = answers[qKey];
@@ -804,8 +831,21 @@ const Lesson = () => {
          }
        });
 
+       // Verificar se o gabarito está completo para auto-correção
+       const temQuestaoObjetiva = questions.some((q: any) =>
+         q.type === 'multiple_choice' || q.type === 'true_false' || q.type === 'matching'
+       );
+       const temGabarito = questions.every((q: any) => {
+         if (q.type === 'multiple_choice' || !q.type) return typeof q.correct === 'number';
+         if (q.type === 'true_false') return typeof q.isTrue === 'boolean';
+         if (q.type === 'matching') return q.matchingPairs?.length > 0;
+         return true;
+       });
+
+       // Sem questões objetivas ou sem gabarito → correção manual do professor
+       const precisaRevisao = isFinal && (!temQuestaoObjetiva || !temGabarito);
        const finalScore = isFinal ? score : null; 
-       const status = 'corrigida'; // Correção agora é automática para todos
+       const status = precisaRevisao ? 'pendente' : 'corrigida';
 
        console.log('[Lesson.handleSubmit] isFinal:', isFinal);
        console.log('[Lesson.handleSubmit] score:', score);
@@ -834,11 +874,15 @@ const Lesson = () => {
 
       console.log('[Lesson.handleSubmit] Salvo com sucesso!');
 
-       if (isFinal) {
-         alert('Avaliação enviada e corrigida automaticamente com sucesso!');
-         navigate('/dashboard');
-         return;
-       }
+        if (isFinal) {
+          if (precisaRevisao) {
+            alert('Avaliação enviada! Aguarde a correção do professor.');
+          } else {
+            alert('Avaliação enviada e corrigida automaticamente com sucesso!');
+          }
+          navigate('/dashboard');
+          return;
+        }
 
 
       // Exercício pedagógico: marcado como concluído independente das respostas

@@ -65,7 +65,7 @@ export const useProfessorGrading = () => {
             student_email: user?.email,
             nucleus_id: user?.nucleos?.id,
             nucleus_name: user?.nucleos?.nome || 'Sem Polo',
-            submitted_at: r.created_at,
+            submitted_at: r.updated_at,
           };
         }).filter((s: any) => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
 
@@ -266,6 +266,24 @@ export const useProfessorGrading = () => {
               questionario: currentExam.questionario || []
             });
           }
+        }
+      }
+      
+      // Se a nota for de aprovação (>= minGrade), finalizar o módulo automaticamente
+      if (nota >= minGrade && livroId) {
+        const { data: userData } = await supabase
+          .from('users')
+          .select('modulos_finalizados_manual')
+          .eq('id', (selectedSubmission as any).aluno_id)
+          .maybeSingle();
+
+        const currentManual = userData?.modulos_finalizados_manual || [];
+        if (!currentManual.includes(livroId)) {
+          const updatedManual = [...currentManual, livroId];
+          await supabase
+            .from('users')
+            .update({ modulos_finalizados_manual: updatedManual })
+            .eq('id', (selectedSubmission as any).aluno_id);
         }
       }
       

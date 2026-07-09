@@ -294,6 +294,7 @@ const Professor = () => {
                 handleUpdateUserNucleo={handleUpdateUserNucleo}
                 handleUpdateUserType={handleUpdateUserType}
                 handleGrantModuleException={handleGrantModuleException}
+                handleRevokeModuleException={handleRevokeModuleException}
                 userRole={profile?.tipo}
                 allNucleos={professorNucleos}
                 courses={courses}
@@ -369,7 +370,7 @@ const Professor = () => {
                         nucleus_name: rawData.users?.nucleos?.nome || 'Sem Polo',
                         book_id: rawData.aulas?.livros?.id,
                         book_title: rawData.aulas?.livros?.titulo || 'Módulo Geral',
-                        submitted_at: rawData.created_at,
+                        submitted_at: rawData.updated_at,
                       } as any;
                     }
                   }

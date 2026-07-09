@@ -21,6 +21,8 @@ interface StudentDetailsModalProps {
   studentExams?: any[];
   studentExamExceptions?: string[];
   handleToggleExamException?: (sId: string, aulaId: string, current: boolean) => void;
+  studentExclusions?: string[];
+  handleToggleExclusion?: (sId: string, lId: string, current: boolean) => void;
 }
 
 const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
@@ -42,7 +44,9 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
   handleToggleException,
   studentExams = [],
   studentExamExceptions = [],
-  handleToggleExamException
+  handleToggleExamException,
+  studentExclusions = [],
+  handleToggleExclusion
 }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -195,6 +199,49 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                         <><Unlock size={12} /> Liberada</>
                       ) : (
                         <><Lock size={12} /> Bloqueada</>
+                      )}
+                    </button>
+                  </div>
+);
+                })}
+            </div>
+          </div>
+        )}
+
+        {/* SEÇÃO DE EXCLUSÃO INDIVIDUAL DE MÓDULOS */}
+        {isProfessor && studentCourseLivros.length > 0 && handleToggleExclusion && (
+          <div style={{ marginBottom: '2rem', padding: '1.25rem', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+            <h4 style={{ color: 'var(--error)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Trash2 size={18} /> Exclusão Individual de Módulos
+            </h4>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              Exclua módulos específicos para este aluno caso ele não precise realizá-los.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
+              {studentCourseLivros.map(livro => {
+                const isExcluded = studentExclusions.includes(livro.id);
+                return (
+                  <div key={livro.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{livro.titulo}</span>
+                    <button 
+                      className="btn" 
+                      style={{ 
+                        width: 'auto', 
+                        padding: '0.2rem 0.6rem', 
+                        fontSize: '0.7rem', 
+                        background: isExcluded ? 'var(--error)' : 'rgba(255,255,255,0.1)',
+                        color: '#fff',
+                        border: 'none'
+                      }}
+                      onClick={() => handleToggleExclusion(student.id, livro.id, isExcluded)}
+                      disabled={actionLoading === `toggle_exclusion_${livro.id}`}
+                    >
+                      {actionLoading === `toggle_exclusion_${livro.id}` ? (
+                        <Loader2 className="spinner" size={12} />
+                      ) : isExcluded ? (
+                        'Excluído'
+                      ) : (
+                        'Excluir'
                       )}
                     </button>
                   </div>

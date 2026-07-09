@@ -116,6 +116,13 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
+      const moduleReleaseDates: Record<string, string> = {};
+      (releases || []).forEach((r: any) => {
+        if (r.item_type === 'modulo' && !moduleReleaseDates[r.item_id]) {
+          moduleReleaseDates[r.item_id] = r.created_at;
+        }
+      });
+
       const bookOrdens = (courseBooks || []).map((b: any) => b.ordem || 1).sort((a: number, b: number) => a - b);
       const minBookOrdem = bookOrdens[0] || 1;
 
@@ -202,9 +209,11 @@ export const useStudentCourses = (profile: any) => {
       const { data: progData } = await safeSelect(supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id));
       const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id));
       const { data: examExceptions } = await safeSelect(supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id));
+      const { data: exclusions } = await safeSelect(supabase.from('exclusoes_modulo_aluno').select('livro_id').eq('user_id', profile.id));
 
       const exceptionIds = (exceptions || []).map((e: any) => e.livro_id);
       const examExceptionIds = (examExceptions || []).map((e: any) => e.aula_id);
+      const studentExclusions = (exclusions || []).map((e: any) => e.livro_id);
       
       // Get manually completed modules from user profile
       const manualCompletedModuleIds = (profile?.modulos_finalizados_manual || []) as string[];
@@ -322,26 +331,41 @@ export const useStudentCourses = (profile: any) => {
                 });
               }) || manualCompleted.has(sortedLivros.find((sl: any) => sl.ordem === bookOrdem - 1)?.id || '');
 
-              const isModuleReleased = isManualModuleRelease || moduleFinished || isPreviousFinishedOrReleased;
-              const effectivelyLevelLocked = levelLocked && !isManualModuleRelease && !moduleFinished;
+const hasException = exceptionIds.includes(l.id);
+              const isModuleReleased = isManualModuleRelease || moduleFinished || isPreviousFinishedOrReleased || hasException;
+              const effectivelyLevelLocked = levelLocked && !isManualModuleRelease && !moduleFinished && !hasException;
               const isReleased = isModuleReleased && !effectivelyLevelLocked;
               const isCurrent = isModuleReleased && !moduleFinished;
               const isUnlocked = isReleased;
 
-              const examReleaseDate = examReleaseDates[l.id];
+              const examReleaseDate = examReleaseDates[l.id] || moduleReleaseDates[l.id];
               const userCreatedAt = new Date(profile.created_at).getTime();
               const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
               const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
-              const hasException = exceptionIds.includes(l.id);
               const hasStarted = userHasActivityInModule(l.id);
               const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
-              
+
                // Módulo não finalizado fica oculto se: bloqueado pelo professor, ou se não é staff,
                // sem exceção, não começou, sem prova individual, sem liberação manual,
                // sem bloqueio de pagamento. O primeiro módulo de cada curso NUNCA fica oculto,
                // A MENOS QUE esteja bloqueado pelo professor.
+               // Alunos que entraram após a liberação de um módulo só veem o módulo atualmente liberado
+               // (o de maior ordem com data de liberação), não os módulos anteriores já liberados.
+               const latestReleasedOrdem = Math.max(0, ...sortedLivros
+                 .filter((sl: any) => (examReleaseDates[sl.id] || moduleReleaseDates[sl.id]))
+                 .map((sl: any) => sl.ordem || 1)
+               );
+               const isPastAndNotLatest = isPastModule && bookOrdem < latestReleasedOrdem;
+
                const isFirstModule = bookOrdem === 1;
-               const isHidden = isBookBlockedByProfessor || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished);
+               const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished) || (!isStaff && isPastAndNotLatest && !hasException && !hasStarted && !hasIndividualExamInModule && !moduleFinished);
+
+                const isExcluded = studentExclusions.includes(l.id);
+                if (isExcluded) {
+                  if (!isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isPastAndNotLatest) {
+                    return null;
+                  }
+                }
 
               if (isHidden) return null;
 
@@ -375,13 +399,13 @@ export const useStudentCourses = (profile: any) => {
                   }).map(a => {
                     const isExamType = a.tipo === 'prova' || !!a.is_bloco_final;
                     const isMediaType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
-                    if (isExamType && !releasedAtividades.includes(a.id) && !isStaff) {
+if (isExamType && !releasedAtividades.includes(a.id) && !examExceptionIds.includes(a.id) && !isStaff && !hasException) {
+                       return { ...a, isHidden: true };
+                    }
+                    if (!isStaff && l.professor_active === false && !hasException && !hasIndividualExamInModule) {
                       return { ...a, isHidden: true };
                     }
-                    if (!isStaff && l.professor_active === false) {
-                      return { ...a, isHidden: true };
-                    }
-                    if ((isExamType || isMediaType) && a.professor_active === false && !isStaff) {
+                    if ((isExamType || isMediaType) && a.professor_active === false && !isStaff && !hasException) {
                       return { ...a, isHidden: true };
                     }
                     // Hierarquia V2/V3: oculta se a versão anterior não foi reprovada

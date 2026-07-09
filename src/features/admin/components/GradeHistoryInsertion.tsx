@@ -154,6 +154,14 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
     }
   }, [selectedNucleo, searchStudents, updateDropdownPos]);
 
+  useEffect(() => {
+    if (selectedStudent) {
+      fetchHistory();
+    } else {
+      setHistoryData([]);
+    }
+  }, [selectedStudent]);
+
   const handleSubmit = async () => {
     if (!selectedStudent) return alert('Selecione um aluno.');
     if (!formData.curso_nome) return alert('Informe o nome do curso.');
@@ -314,13 +322,19 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
                type="text"
                placeholder={selectedNucleo ? "Buscar aluno neste núcleo..." : "Digite o nome do aluno..."}
                value={searchTerm}
-               onChange={(e) => {
-                 const val = e.target.value
-                 setSearchTerm(val);
-                 searchStudents(val);
-                 setShowStudentDropdown(true);
-                 updateDropdownPos()
-               }}
+onChange={(e) => {
+                  const val = e.target.value
+                  if (selectedStudent && val !== selectedStudent.nome) {
+                    setSelectedStudent(null);
+                    setHistoryData([]);
+                    setShowForm(false);
+                    setEditingId(null);
+                  }
+                  setSearchTerm(val);
+                  searchStudents(val);
+                  setShowStudentDropdown(true);
+                  updateDropdownPos()
+                }}
                onFocus={(e) => { 
                  setShowStudentDropdown(true); 
                  updateDropdownPos();
@@ -347,7 +361,7 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
         </div>
 
 
-        {!selectedStudent && showStudentDropdown && dropdownPos && (
+        {showStudentDropdown && dropdownPos && (
           <div style={{
             position: 'fixed', zIndex: 9999,
             top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width,

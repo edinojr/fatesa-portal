@@ -39,6 +39,7 @@ import AnalyticsDashboard from '../features/admin/components/AnalyticsDashboard'
 import FinanceReport from '../features/finance/components/FinanceReport'
 import AcademicHistory from '../features/admin/components/AcademicHistory'
 import GradeHistoryInsertion from '../features/admin/components/GradeHistoryInsertion'
+import ManualHistoryPanel from '../features/admin/components/ManualHistoryPanel'
 import DocsArchive from '../features/admin/components/DocsArchive'
 import BoletimPanel from '../features/professor/components/BoletimPanel'
 
@@ -732,6 +733,18 @@ const Admin = () => {
                 </div>
                 <div style={{ padding: '1.5rem' }}>
                   <GradeHistoryInsertion onRefresh={fetchBoletimSubmissions} />
+                </div>
+              </div>
+
+              {/* Seção 4: Histórico Manual Consolidado (todos os alunos alterados) */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+                <div style={{ padding: '1rem 1.5rem', background: 'rgba(168,85,247,0.06)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <History size={20} color="#a855f7" />
+                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Histórico Alterado Manualmente (Todos os Alunos)</span>
+                  <span style={{ fontSize: '0.7rem', color: '#a855f7', background: 'rgba(168,85,247,0.1)', padding: '2px 10px', borderRadius: '6px' }}>CONSOLIDADO</span>
+                </div>
+                <div style={{ padding: '1.5rem' }}>
+                  <ManualHistoryPanel onRefresh={fetchBoletimSubmissions} />
                 </div>
               </div>
             </div>

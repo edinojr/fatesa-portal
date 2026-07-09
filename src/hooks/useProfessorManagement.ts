@@ -91,7 +91,7 @@ export const useProfessorManagement = () => {
               nucleus_name: user?.nucleos?.nome || 'Sem Polo',
               book_id: aula?.livro_id?.id,
               book_title: aula?.livro_id?.titulo || 'Módulo Geral',
-              submitted_at: r.created_at,
+              submitted_at: r.updated_at,
             };
           }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
           
@@ -149,7 +149,7 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
                     nucleus_name: user?.nucleos?.nome || 'Sem Polo',
                     book_id: aula?.livro_id?.id,
                     book_title: aula?.livro_id?.titulo || 'Módulo Geral',
-                    submitted_at: r.created_at,
+                    submitted_at: r.updated_at,
                   };
                 }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
                 
@@ -207,6 +207,7 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
     handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData),
     handleUpdateUserType: (id: string, type: string) => studentHook.handleUpdateUserType(id, type, fetchData),
     handleGrantModuleException: (uId: string, bId: string) => studentHook.handleGrantModuleException(uId, bId, fetchData),
+    handleRevokeModuleException: (uId: string, bId: string) => studentHook.handleRevokeModuleException(uId, bId, fetchData),
   }), [att, studentHook, gradingHook, fetchData]);
 
   return useMemo(() => ({

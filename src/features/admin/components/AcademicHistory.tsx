@@ -59,16 +59,18 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
        const nucName = adminUser.nucleos?.nome || 'Administração';
        const studentId = adminUser.id;
        if (!groups[nucName]) groups[nucName] = {};
-       groups[nucName][studentId] = {
-         name: adminUser.nome,
-         email: adminUser.email,
-         tipo: adminUser.tipo,
-         modulos: {},
-         stats: {
-           finishedBasic: new Set<string>(),
-           finishedMedium: new Set<string>()
-         }
-       };
+groups[nucName][studentId] = {
+          name: adminUser.nome,
+          email: adminUser.email,
+          tipo: adminUser.tipo,
+          nucleo: nucName,
+          modulos: {},
+          stats: {
+            finishedBasic: new Set<string>(),
+            finishedMedium: new Set<string>(),
+            hasManual: false
+          }
+        };
     }
 
     filtered.forEach(item => {
@@ -84,12 +86,18 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
           name: studentName,
           email: item.users?.email,
           tipo: item.users?.tipo,
+          nucleo: nucName,
           modulos: {},
           stats: {
             finishedBasic: new Set<string>(),
-            finishedMedium: new Set<string>()
+            finishedMedium: new Set<string>(),
+            hasManual: false
           }
         };
+      }
+
+      if (item.is_manual) {
+        groups[nucName][studentId].stats.hasManual = true;
       }
       if (!groups[nucName][studentId].modulos[modName]) {
         groups[nucName][studentId].modulos[modName] = { atividades: [], provas: [] };
@@ -304,7 +312,15 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                           <User size={24} color={std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--primary)'} />
                         </div>
                         <div>
-                          <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>{std.name}</h4>
+                          <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            <span>{std.name}</span>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>— {nucName}</span>
+                            {std.stats.hasManual && (
+                              <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#fff', background: '#a855f7', padding: '2px 8px', borderRadius: '6px', letterSpacing: '0.5px' }}>
+                                HISTÓRICO ALTERADO
+                              </span>
+                            )}
+                          </h4>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                             {std.email} • 
                             <span style={{ color: std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--success)', fontWeight: 700 }}>
@@ -471,7 +487,12 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                                       position: 'relative'
                                     }}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#f59e0b', paddingRight: '2rem' }}>{item.aulas?.titulo}</div>
+                                        <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#f59e0b', paddingRight: '2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                          {item.aulas?.titulo}
+                                          {item.is_manual && (
+                                            <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#fff', background: '#a855f7', padding: '1px 6px', borderRadius: '6px', letterSpacing: '0.5px' }}>MANUAL</span>
+                                          )}
+                                        </div>
                                         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                                           <div style={{ 
                                             fontSize: '1rem', 

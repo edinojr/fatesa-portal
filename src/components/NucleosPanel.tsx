@@ -56,6 +56,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const [studentExceptions, setStudentExceptions] = useState<string[]>([])
   const [studentExamExceptions, setStudentExamExceptions] = useState<string[]>([])
   const [studentExams, setStudentExams] = useState<any[]>([])
+  const [studentExclusions, setStudentExclusions] = useState<string[]>([])
 
   const isAdmin = userRole === 'admin'
   const isProfessor = userRole === 'professor'
@@ -633,7 +634,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
             .from('aulas')
             .select('id, titulo, tipo, is_bloco_final, versao, livro_id, livros(titulo)')
             .in('livro_id', bData.map((l: any) => l.id))
-            .or('tipo.eq.prova,is_bloco_final.eq.true')
+            .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
             .order('livro_id')
           
           if (aulasData) setStudentExams(aulasData)
@@ -650,6 +651,14 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       } else if (examExData) {
         setStudentExamExceptions(examExData.map(e => e.aula_id))
       }
+
+      // Fetch individual module exclusions
+      const { data: exclData, error: exclErr } = await supabase.from('exclusoes_modulo_aluno').select('livro_id').eq('user_id', student.id)
+      if (exclErr && (exclErr.code === '42P01' || /does not exist/i.test(exclErr.message))) {
+        setStudentExclusions([])
+      } else if (exclData) {
+        setStudentExclusions(exclData.map(e => e.livro_id))
+      }
     } finally {
       setLoading(false)
     }
@@ -660,51 +669,64 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!currentStatus) {
-        const { error: modErr } = await supabase.from('liberacoes_excecao').insert({
+        const { error: modErr } = await supabase.from('liberacoes_excecao').upsert({
           user_id: studentId,
           livro_id: livroId,
           granted_by: user?.id
-        })
+        }, { onConflict: 'user_id,livro_id' })
         if (modErr) throw modErr
 
-        // Also release V1 avaliacao for this module
+        // Release apenas avaliações V1 (V2/V3 dependem de reprovação anterior)
         const { data: avaliacoes } = await supabase
           .from('aulas')
-          .select('id')
+          .select('id, tipo, versao, is_bloco_final')
           .eq('livro_id', livroId)
-          .eq('tipo', 'avaliacao')
-          .or('versao.is.null,versao.eq.1')
+          .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
 
-        if (avaliacoes && avaliacoes.length > 0) {
-          const novosIds = avaliacoes.map(a => a.id)
+        const v1Items = (avaliacoes || []).filter(a => {
+          if (a.is_bloco_final) return true;
+          const v = a.versao;
+          if (v == null) return true;
+          return Number(v) === 1;
+        })
+
+        if (v1Items.length > 0) {
+          const novosIds = v1Items.map(a => a.id)
           const { error: insErr } = await supabase
             .from('liberacoes_excecao_atividade')
-            .insert(novosIds.map(aulaId => ({
+            .upsert(novosIds.map(aulaId => ({
               user_id: studentId,
               aula_id: aulaId,
               granted_by: user?.id
-            })))
-          if (insErr && insErr.code !== '23505') throw insErr
+            })), { onConflict: 'user_id,aula_id' })
+          if (insErr) throw insErr
           setStudentExamExceptions([...studentExamExceptions, ...novosIds])
         }
 
         setStudentExceptions([...studentExceptions, livroId])
+        alert('Módulo liberado com sucesso! O aluno já pode acessar este módulo.')
       } else {
         await supabase.from('liberacoes_excecao').delete().match({
           user_id: studentId,
           livro_id: livroId
         })
 
-        // Also remove V1 avaliacao releases for this module
+        // Also remove V1 assessment releases for this module
         const { data: avaliacoes } = await supabase
           .from('aulas')
-          .select('id')
+          .select('id, tipo, versao, is_bloco_final')
           .eq('livro_id', livroId)
-          .eq('tipo', 'avaliacao')
-          .or('versao.is.null,versao.eq.1')
+          .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
 
-        if (avaliacoes && avaliacoes.length > 0) {
-          const ids = avaliacoes.map(a => a.id)
+        const v1Items = (avaliacoes || []).filter(a => {
+          if (a.is_bloco_final) return true;
+          const v = a.versao;
+          if (v == null) return true;
+          return Number(v) === 1;
+        })
+
+        if (v1Items.length > 0) {
+          const ids = v1Items.map(a => a.id)
           await supabase
             .from('liberacoes_excecao_atividade')
             .delete()
@@ -714,6 +736,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         }
 
         setStudentExceptions(studentExceptions.filter(id => id !== livroId))
+        alert('Autorização removida. O aluno não terá mais acesso a este módulo.')
       }
     } catch (err: any) {
       alert('Erro ao alterar autorização: ' + err.message)
@@ -727,13 +750,14 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       if (!currentStatus) {
         const { data: { user } } = await supabase.auth.getUser()
-        const { error: insErr } = await supabase.from('liberacoes_excecao_atividade').insert({
+        const { error: insErr } = await supabase.from('liberacoes_excecao_atividade').upsert({
           user_id: studentId,
           aula_id: aulaId,
           granted_by: user?.id
-        })
+        }, { onConflict: 'user_id,aula_id' })
         if (insErr) throw insErr
         setStudentExamExceptions([...studentExamExceptions, aulaId])
+        alert('Prova liberada com sucesso para o aluno!')
       } else {
         const { error: delErr } = await supabase.from('liberacoes_excecao_atividade').delete().match({
           user_id: studentId,
@@ -744,6 +768,39 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       }
     } catch (err: any) {
       alert('Erro ao alterar liberação da prova: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleToggleExclusion = async (studentId: string, livroId: string, currentStatus: boolean) => {
+    setActionLoading(`toggle_exclusion_${livroId}`)
+    try {
+      if (!currentStatus) {
+        const { data: { user } } = await supabase.auth.getUser()
+        const { error: insErr } = await supabase.from('exclusoes_modulo_aluno').upsert({
+          user_id: studentId,
+          livro_id: livroId,
+          excluded_by: user?.id
+        }, { onConflict: 'user_id,livro_id' })
+        if (insErr) throw insErr
+        setStudentExclusions([...studentExclusions, livroId])
+        alert('Módulo excluído para este aluno. Ele não verá mais este módulo.')
+      } else {
+        const { error: delErr } = await supabase.from('exclusoes_modulo_aluno').delete().match({
+          user_id: studentId,
+          livro_id: livroId
+        })
+        if (delErr) throw delErr
+        setStudentExclusions(studentExclusions.filter(id => id !== livroId))
+        alert('Exclusão removida. O aluno voltará a ver este módulo.')
+      }
+    } catch (err: any) {
+      if (err.code === '42P01' || /does not exist/i.test(err.message)) {
+        alert('Tabela de exclusões não existe. Execute a migration 20260708_module_exclusion.sql no banco.')
+      } else {
+        alert('Erro ao excluir módulo: ' + err.message)
+      }
     } finally {
       setActionLoading(null)
     }
@@ -765,6 +822,32 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           .update({ nota, status: 'corrigida' })
           .match({ aluno_id: showStudentModal.id, aula_id: aulaId });
         if (error) throw error;
+
+        // Se a nota for de aprovação (>= 7), finalizar o módulo automaticamente
+        if (nota >= 7) {
+          const { data: aulaData } = await supabase
+            .from('aulas')
+            .select('livro_id')
+            .eq('id', aulaId)
+            .maybeSingle();
+
+          if (aulaData?.livro_id) {
+            const { data: userData } = await supabase
+              .from('users')
+              .select('modulos_finalizados_manual')
+              .eq('id', showStudentModal.id)
+              .maybeSingle();
+
+            const currentManual = userData?.modulos_finalizados_manual || [];
+            if (!currentManual.includes(aulaData.livro_id)) {
+              const updatedManual = [...currentManual, aulaData.livro_id];
+              await supabase
+                .from('users')
+                .update({ modulos_finalizados_manual: updatedManual })
+                .eq('id', showStudentModal.id);
+            }
+          }
+        }
       } else {
         throw new Error("Formato de atividade inválido. Use atividades vinculadas ao curso.");
       }
@@ -1139,6 +1222,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           studentExams={studentExams}
           studentExamExceptions={studentExamExceptions}
           handleToggleExamException={handleToggleExamException}
+          studentExclusions={studentExclusions}
+          handleToggleExclusion={handleToggleExclusion}
         />
       )}
 

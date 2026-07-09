@@ -9,12 +9,16 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
-      const [logsResponse, academicResponse] = await Promise.all([
+      const [logsResponse, academicResponse, manualResponse] = await Promise.all([
         supabase.from('portal_access_logs').select('*').order('created_at', { ascending: false }).limit(5000),
         supabase.from('respostas_aulas').select(`
             *,
             users:aluno_id(id, nome, email, tipo, nucleos:nucleo_id(id, nome)),
             aulas:aula_id(id, titulo, tipo, versao, min_grade, livros:livro_id(id, titulo, cursos:curso_id(id, nivel)))
+          `),
+        supabase.from('historico_notas').select(`
+            id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at,
+            users:aluno_id(id, nome, email, tipo, nucleos:nucleo_id(id, nome))
           `)
       ]);
 
@@ -34,7 +38,27 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
       }
 
       if (academicResponse.data) {
-        setAcademicReport(academicResponse.data);
+        const manualRecords = (manualResponse.data || []).map((r: any) => ({
+          id: r.id,
+          is_manual: true,
+          nota: r.nota,
+          status: 'corrigida',
+          created_at: r.created_at,
+          updated_at: r.updated_at,
+          data_conclusao: r.data_conclusao,
+          observacao: r.observacao,
+          users: r.users,
+          aulas: {
+            id: null,
+            titulo: r.modulo_nome,
+            tipo: 'prova',
+            versao: 1,
+            min_grade: 7,
+            is_bloco_final: true,
+            livros: { id: null, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
+          }
+        }));
+        setAcademicReport([...academicResponse.data, ...manualRecords]);
       }
     } catch (err: any) {
       showToast(err.message, 'error');

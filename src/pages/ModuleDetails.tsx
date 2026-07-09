@@ -18,6 +18,8 @@ const ModuleDetails = () => {
     const { profile, loading: profileLoading } = useProfile();
     const { courses, progressoAulas, atividades, loading: coursesLoading, fetchStudentDashboardData } = useStudentCourses(profile);
     const [nucleusReleases, setNucleusReleases] = useState<any[]>([]);
+    const [moduleException, setModuleException] = useState<boolean>(false);
+    const [examExceptions, setExamExceptions] = useState<string[]>([]);
 
     const goToPanel = (path = '/dashboard') => {
         navigate(path);
@@ -38,8 +40,9 @@ const ModuleDetails = () => {
         if (!profileLoading && profile) {
             fetchStudentDashboardData();
             fetchNucleusReleases();
+            fetchIndividualExceptions();
         }
-    }, [profileLoading, profile, fetchStudentDashboardData]);
+    }, [profileLoading, profile, fetchStudentDashboardData, id]);
 
     const fetchNucleusReleases = async () => {
       if (!profile?.nucleo_id) return;
@@ -49,6 +52,23 @@ const ModuleDetails = () => {
         return
       }
       if (data) setNucleusReleases(data);
+    };
+
+    const fetchIndividualExceptions = async () => {
+      if (!profile?.id || !id) return;
+      const { data: modEx } = await supabase
+        .from('liberacoes_excecao')
+        .select('id')
+        .eq('user_id', profile.id)
+        .eq('livro_id', id)
+        .maybeSingle();
+      setModuleException(!!modEx);
+
+      const { data: examEx } = await supabase
+        .from('liberacoes_excecao_atividade')
+        .select('aula_id')
+        .eq('user_id', profile.id);
+      if (examEx) setExamExceptions(examEx.map((e: any) => e.aula_id));
     };
 
     if (profileLoading || coursesLoading) {
@@ -72,7 +92,7 @@ const ModuleDetails = () => {
 
     const { book, courseName } = currentBook;
 
-    if (!book.isUnlocked && !isStaff) {
+    if (!book.isUnlocked && !isStaff && !moduleException) {
         return (
             <div className="auth-container">
                 <Lock size={64} color="var(--primary)" style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
@@ -138,6 +158,11 @@ const ModuleDetails = () => {
     const isActuallyLocked = (item: any) => {
       if (isStaff) return false;
 
+      // Exceção individual de módulo desbloqueia tudo
+      if (moduleException) return false;
+      // Exceção individual de prova específica desbloqueia aquela prova
+      const hasIndividualExamRelease = examExceptions.includes(item.id);
+
       const versao = item.versao || 1;
       const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;
       const moduleSubs = (atividades || []).filter((s: any) => s.book_id === currentBook?.book.id);
@@ -146,7 +171,7 @@ const ModuleDetails = () => {
       // V2: liberado se aluno reprovou na V1
       // V3: liberado se aluno reprovou na V2
       // Bloco final: usa regra padrão de liberação por núcleo
-      if (isExam && versao > 1) {
+      if (isExam && versao > 1 && !hasIndividualExamRelease) {
         const prevExam = examSubs.find((s: any) => {
           const sv = s.aulas?.versao || 1;
           return sv === versao - 1 && s.status === 'corrigida';
@@ -159,14 +184,15 @@ const ModuleDetails = () => {
       }
 
       // Se o professor desativou a avaliação, fica bloqueada independente da liberação por núcleo
-      if (item.professor_active === false) return true;
+      // A MENOS que haja exceção individual
+      if (item.professor_active === false && !hasIndividualExamRelease) return true;
 
       // V1 ou conteúdo regular: verificar liberação por núcleo
       const hasNucleusRelease = nucleusReleases.some(r => 
         r.item_id === item.id && 
         (r.item_type === 'atividade' || r.item_type === 'video' || r.item_type === 'modulo')
       );
-      if (hasNucleusRelease) return false;
+      if (hasNucleusRelease || hasIndividualExamRelease) return false;
   
       if (!!item.lockedByProfessor) return true;
       return isLocked(item);
