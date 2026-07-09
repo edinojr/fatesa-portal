@@ -88,6 +88,7 @@ const Professor = () => {
     academicReport,
     handleUpdateUserType,
     handleGrantModuleException,
+    handleRevokeModuleException,
     fetchData
   } = useProfessorManagement();
 
