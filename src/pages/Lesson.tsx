@@ -1795,13 +1795,13 @@ const Lesson = () => {
 
                      {q.type === 'discursive' && (
                        <div style={{display:'flex', flexDirection:'column', gap:'0.5rem'}}>
-                         <textarea className="form-control" rows={4} value={answers[qKey] || ''} onChange={e => setAnswers(p => ({...p, [qKey]: e.target.value}))} placeholder="Sua resposta..." disabled={!userProfile?.isStaff && submitted}></textarea>
-                         { (userProfile?.isStaff || (submitted && answers[qKey])) && q.expectedAnswer && (
-                           <div style={{marginTop:'1rem', padding:'1rem', background:'rgba(var(--primary-rgb), 0.1)', borderRadius:'12px', fontSize:'0.9rem'}}>
-                             <strong style={{color:'var(--primary)', display:'block', marginBottom:'0.5rem'}}>Gabarito sugerido:</strong>
-                             {q.expectedAnswer}
-                           </div>
-                         )}
+<textarea className="form-control" rows={4} value={answers[qKey] || ''} onChange={e => setAnswers(p => ({...p, [qKey]: e.target.value}))} placeholder="Sua resposta..." disabled={!userProfile?.isStaff && submitted}></textarea>
+                          { (userProfile?.isStaff || showGabarito) && q.expectedAnswer && (
+                            <div style={{marginTop:'1rem', padding:'1rem', background:'rgba(var(--primary-rgb), 0.1)', borderRadius:'12px', fontSize:'0.9rem'}}>
+                              <strong style={{color:'var(--primary)', display:'block', marginBottom:'0.5rem'}}>Gabarito sugerido:</strong>
+                              {q.expectedAnswer}
+                            </div>
+                          )}
                        </div>
                      )}
 
@@ -2018,7 +2018,7 @@ const Lesson = () => {
               )}
 
               {/* Gabarito Oficial e Desempenho Detalhado */}
-              {submitted && result && questions.length > 0 && (
+              {submitted && result && questions.length > 0 && (userProfile?.isStaff || isModuleFinished || (result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0))) && (
                 <div style={{marginTop:'2.5rem', padding:'2rem', background:'var(--glass)', borderRadius:'20px', border:'1px solid var(--glass-border)'}}>
                   <div style={{display:'flex', alignItems:'center', gap:'0.75rem', marginBottom:'1.5rem'}}>
                     <BookOpen size={24} color="var(--primary)"/>
