@@ -78,17 +78,48 @@ const Matricula = () => {
     const formatValue = (name: string, value: string) => {
       const digits = value.replace(/\D/g, '')
       switch (name) {
-        case 'cpf':
-          return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})$/, (_, p1, p2, p3, p4) => `${p1}.${p2}.${p3}-${p4}`)
-        case 'telefone':
-          return digits.replace(/^(\d{2})(\d{5})(\d{0,4})$/, (_, a, b, c) => `(${a}) ${b}-${c}`)
-        case 'cep':
-          return digits.replace(/^(\d{5})(\d{0,3})$/, (_, a, b) => `${a}-${b}`)
+        case 'cpf': {
+          const v = digits.slice(0, 11)
+          return v
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+        }
+        case 'telefone': {
+          const v = digits.slice(0, 11)
+          if (v.length > 10) {
+            return v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+          } else if (v.length > 6) {
+            return v.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3')
+          } else if (v.length > 2) {
+            return v.replace(/^(\d{2})(\d{0,5})$/, '($1) $2')
+          }
+          return v
+        }
+        case 'cep': {
+          const v = digits.slice(0, 8)
+          return v.replace(/^(\d{5})(\d{1,3})$/, '$1-$2')
+        }
         default:
           return value
       }
     }
     setFormData(prev => ({ ...prev, [name]: formatValue(name, value) }))
+  }
+
+  const handleNumericKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Permitir teclas de controle (Backspace, Tab, Setas, etc), e atalhos como Ctrl+C, Ctrl+V
+    if (
+      ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key) ||
+      e.ctrlKey || 
+      e.metaKey
+    ) {
+      return;
+    }
+    // Bloquear se não for número
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -166,11 +197,11 @@ const Matricula = () => {
               </div>
               <div className="form-group">
                 <label>CPF</label>
-                <input type="text" name="cpf" className="form-control" placeholder="000.000.000-00" pattern="\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}" value={formData.cpf} onChange={handleInputChange} required />
+                <input type="text" inputMode="numeric" name="cpf" className="form-control" placeholder="000.000.000-00" pattern="[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}" maxLength={14} value={formData.cpf} onChange={handleInputChange} onKeyDown={handleNumericKeyDown} required />
               </div>
               <div className="form-group">
                 <label>WhatsApp / Telefone</label>
-                <input type="tel" name="telefone" className="form-control" placeholder="(00) 00000-0000" pattern="\\(\\d{2}\\) \\d{5}-\\d{4}" value={formData.telefone} onChange={handleInputChange} required />
+                <input type="tel" inputMode="numeric" name="telefone" className="form-control" placeholder="(00) 00000-0000" pattern="\([0-9]{2}\) [0-9]{4,5}-[0-9]{4}" maxLength={15} value={formData.telefone} onChange={handleInputChange} onKeyDown={handleNumericKeyDown} required />
               </div>
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label>E-mail</label>
@@ -188,7 +219,7 @@ const Matricula = () => {
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label>CEP</label>
                 <div style={{ position: 'relative' }}>
-                  <input type="text" name="cep" className="form-control" placeholder="00000-000" pattern="\\d{5}-\\d{3}" value={formData.cep} onChange={handleInputChange} onBlur={handleCEPBlur} required />
+                  <input type="text" inputMode="numeric" name="cep" className="form-control" placeholder="00000-000" pattern="[0-9]{5}-[0-9]{3}" maxLength={9} value={formData.cep} onChange={handleInputChange} onBlur={handleCEPBlur} onKeyDown={handleNumericKeyDown} required />
                   <Search size={18} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3 }} />
                 </div>
               </div>
@@ -210,7 +241,7 @@ const Matricula = () => {
               </div>
               <div className="form-group" style={{ gridColumn: 'span 3' }}>
                 <label>Cidade / UF</label>
-                <input type="text" className="form-control" value={`${formData.cidade} - ${formData.uf}`} disabled />
+                <input type="text" className="form-control" value={formData.cidade && formData.uf ? `${formData.cidade} - ${formData.uf}` : ''} disabled />
               </div>
             </div>
           </section>

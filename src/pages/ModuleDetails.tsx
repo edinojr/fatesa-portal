@@ -158,13 +158,17 @@ const ModuleDetails = () => {
     const isActuallyLocked = (item: any) => {
       if (isStaff) return false;
 
-      // Exceção individual de módulo desbloqueia tudo
-      if (moduleException) return false;
+      const versao = item.versao || 1;
+      const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;
+
+      // Exceção individual de módulo desbloqueia conteúdo e V1, mas NÃO V2/V3
+      if (moduleException) {
+        if (!isExam || versao <= 1) return false;
+      }
+
       // Exceção individual de prova específica desbloqueia aquela prova
       const hasIndividualExamRelease = examExceptions.includes(item.id);
 
-      const versao = item.versao || 1;
-      const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;
       const moduleSubs = (atividades || []).filter((s: any) => s.book_id === currentBook?.book.id);
       const examSubs = moduleSubs.filter((s: any) => s.lesson_type === 'prova' || s.is_bloco_final || (s.aulas?.tipo === 'prova'));
 

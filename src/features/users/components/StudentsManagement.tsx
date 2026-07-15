@@ -1,5 +1,5 @@
 import React from 'react'
-import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock } from 'lucide-react'
+import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock, ShieldOff } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { Student } from '../../../types/professor'
 
@@ -30,6 +30,7 @@ export default function StudentsManagement({
 }: StudentsManagementProps) {
   const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null);
   const [expandedReleases, setExpandedReleases] = React.useState<string | null>(null);
+  const [expandedBlock, setExpandedBlock] = React.useState<string | null>(null);
   const [releasesData, setReleasesData] = React.useState<Record<string, any[]>>({});
   const [loadingReleases, setLoadingReleases] = React.useState<string | null>(null);
 
@@ -340,28 +341,131 @@ export default function StudentsManagement({
                                 ))}
                               </select>
 
-                              {/* LIBERAÇÃO MANUAL DE MÓDULOS */}
-                              <select 
-                                className="form-control"
-                                style={{ width: '150px', fontSize: '0.75rem', padding: '0.2rem', height: 'auto', background: 'rgba(168, 85, 247, 0.1)', color: 'var(--primary)', border: '1px solid rgba(168, 85, 247, 0.2)', fontWeight: 700 }}
-                                value=""
-                                onChange={(e) => {
-                                  const bId = e.target.value;
-                                  if (bId && handleGrantModuleException) {
-                                    handleGrantModuleException(student.id, bId);
-                                  }
-                                }}
-                                disabled={actionLoading === student.id}
-                              >
-                                <option value="" disabled>🔓 Liberar Módulo...</option>
-                                {courses.map((c: any) => (
-                                  <optgroup key={c.id} label={c.nome}>
-                                    {(c.livros || []).map((l: any) => (
-                                      <option key={l.id} value={l.id}>{l.titulo}</option>
-                                    ))}
-                                  </optgroup>
-                                ))}
-                              </select>
+                              {/* LIBERAR/BLOQUEAR MÓDULO */}
+                              <div style={{ position: 'relative' }}>
+                                <button
+                                  className="btn"
+                                  style={{
+                                    padding: '0.2rem 0.5rem',
+                                    fontSize: '0.7rem',
+                                    width: 'auto',
+                                    background: releasesData[student.id]?.length > 0 ? 'rgba(168, 85, 247, 0.1)' : 'rgba(255,255,255,0.05)',
+                                    color: 'var(--primary)',
+                                    border: '1px solid rgba(168, 85, 247, 0.2)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.3rem',
+                                    fontWeight: 700
+                                  }}
+                                  onClick={() => {
+                                    if (!releasesData[student.id]) {
+                                      fetchStudentReleases(student.id);
+                                    }
+                                    setExpandedBlock(expandedBlock === student.id ? null : student.id);
+                                  }}
+                                  disabled={actionLoading === student.id}
+                                >
+                                  {loadingReleases === student.id ? (
+                                    <Loader2 className="spinner" size={12} />
+                                  ) : (
+                                    <Unlock size={12} />
+                                  )}
+                                  Liberar/Bloquear
+                                </button>
+                                {expandedBlock === student.id && (
+                                  <div style={{
+                                    position: 'absolute',
+                                    zIndex: 100,
+                                    background: 'var(--card-bg)',
+                                    border: '1px solid var(--glass-border)',
+                                    borderRadius: '8px',
+                                    padding: '0.5rem',
+                                    marginTop: '0.25rem',
+                                    minWidth: '260px',
+                                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                                    right: 0,
+                                    maxHeight: '300px',
+                                    overflowY: 'auto'
+                                  }}>
+                                    {loadingReleases === student.id ? (
+                                      <div style={{ padding: '0.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                        <Loader2 className="spinner" size={14} /> Carregando...
+                                      </div>
+                                    ) : courses.length === 0 ? (
+                                      <div style={{ padding: '0.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                        Nenhum curso disponível
+                                      </div>
+                                    ) : (
+                                      courses.map((c: any) => (
+                                        <div key={c.id}>
+                                          <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', padding: '0.3rem 0', textTransform: 'uppercase' }}>
+                                            {c.nome}
+                                          </div>
+                                          {(c.livros || []).map((l: any) => {
+                                            const isReleased = releasesData[student.id]?.some((r: any) => r.livro_id === l.id);
+                                            return (
+                                              <div key={l.id} style={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                padding: '0.3rem 0.3rem',
+                                                borderBottom: '1px solid var(--glass-border)',
+                                                fontSize: '0.75rem',
+                                                cursor: 'pointer',
+                                                borderRadius: '4px',
+                                                transition: 'background 0.15s'
+                                              }}
+                                                onClick={() => {
+                                                  if (isReleased) {
+                                                    if (handleRevokeModuleException) {
+                                                      handleRevokeModuleException(student.id, l.id);
+                                                      setReleasesData(prev => ({
+                                                        ...prev,
+                                                        [student.id]: prev[student.id]?.filter(r => r.livro_id !== l.id) || []
+                                                      }));
+                                                    }
+                                                  } else {
+                                                    if (handleGrantModuleException) {
+                                                      handleGrantModuleException(student.id, l.id);
+                                                      setReleasesData(prev => {
+                                                        const current = prev[student.id] || [];
+                                                        if (current.some(r => r.livro_id === l.id)) return prev;
+                                                        return {
+                                                          ...prev,
+                                                          [student.id]: [...current, { id: l.id, livro_id: l.id, livros: { titulo: l.titulo } }]
+                                                        };
+                                                      });
+                                                    }
+                                                  }
+                                                  setExpandedBlock(null);
+                                                }}
+                                                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                                                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                                              >
+                                                <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                                  {isReleased ? <Lock size={10} color="#ef4444" /> : <Unlock size={10} color="var(--primary)" />}
+                                                  {l.titulo}
+                                                </span>
+                                                <span style={{
+                                                  fontSize: '0.65rem',
+                                                  fontWeight: 600,
+                                                  padding: '0.1rem 0.3rem',
+                                                  borderRadius: '4px',
+                                                  background: isReleased ? 'rgba(239, 68, 68, 0.15)' : 'rgba(168, 85, 247, 0.15)',
+                                                  color: isReleased ? '#ef4444' : 'var(--primary)'
+                                                }}>
+                                                  {isReleased ? 'Bloquear' : 'Liberar'}
+                                                </span>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      ))
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </td>
                         </tr>
