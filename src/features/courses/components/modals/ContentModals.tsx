@@ -384,7 +384,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                     tipo: 'material',
                     arquivo_url: publicUrl,
                     ordem: ordem + i,
-                    bloco_id: addingBloco
+                    bloco_id: addingBloco,
+                    conteudo: null
                   });
                   if (insertError) throw insertError;
                 }
@@ -651,6 +652,10 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               if (uploadError) throw uploadError;
               const { data: { publicUrl: rawUrl3 } } = supabase.storage.from('livros').getPublicUrl(filePath);
               updates.arquivo_url = toPublicUrl(rawUrl3);
+              // Se o arquivo enviado é PDF, limpa blocos de conteúdo HTML legados
+              if (/\.pdf(\?|$)/i.test(file.name)) {
+                updates.conteudo = null;
+              }
             }
 
             const { error } = await supabase.from(table).update(updates).eq('id', editingItem.data.id);

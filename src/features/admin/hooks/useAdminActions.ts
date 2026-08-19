@@ -131,7 +131,12 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl: rawUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
-      const { error: updateError } = await supabase.from(table).update({ [column]: toPublicUrl(rawUrl) }).eq('id', id);
+      const updatePayload: Record<string, any> = { [column]: toPublicUrl(rawUrl) };
+      // Se for PDF subido para aula, limpa blocos de conteúdo HTML legados
+      if (table === 'aulas' && /\.pdf(\?|$)/i.test(file.name)) {
+        updatePayload.conteudo = null;
+      }
+      const { error: updateError } = await supabase.from(table).update(updatePayload).eq('id', id);
       if (updateError) throw updateError;
 
       showToast('Arquivo enviado com sucesso!');
@@ -165,7 +170,8 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
           parent_aula_id: parentId,
           arquivo_url: publicUrl,
           ordem: startOrder + index,
-          bloco_id: blocoId
+          bloco_id: blocoId,
+          conteudo: null
         });
       });
 

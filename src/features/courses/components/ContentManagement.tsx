@@ -190,12 +190,13 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
         const publicUrl = toPublicUrl(rawUrl1)
 
         const { error: insertError } = await supabase.from('aulas').insert({
-          livro_id: bookId,
-          titulo,
-          tipo: 'licao',
-          ordem: startOrder + i,
-          arquivo_url: publicUrl
-        })
+            livro_id: bookId,
+            titulo,
+            tipo: 'licao',
+            ordem: startOrder + i,
+            arquivo_url: publicUrl,
+            conteudo: null
+          })
         if (insertError) throw insertError
         successCount++
       }
@@ -468,7 +469,9 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
         if (existingLesson) {
           await supabase.from('aulas').update({
             titulo,
-            arquivo_url: publicUrl
+            arquivo_url: publicUrl,
+            conteudo: null,
+            pdf_url: null
           }).eq('id', existingLesson.id)
         } else {
           await supabase.from('aulas').insert({
@@ -476,7 +479,8 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
             titulo,
             tipo: 'licao',
             ordem,
-            arquivo_url: publicUrl
+            arquivo_url: publicUrl,
+            conteudo: null
           })
         }
         successCount++
