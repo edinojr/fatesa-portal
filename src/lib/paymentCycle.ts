@@ -31,4 +31,4 @@ export const checkAccessStatus = (profile: any): 'active' | 'blocked_payment' | 
   }
 
   return 'active';
-};;
+};

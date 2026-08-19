@@ -29,7 +29,7 @@ export const useFinanceControl = (userProfile: any) => {
       const isUnderExtension = extensionDate && todayStr <= extensionDate && day <= 15;
       
       const isPresencial = userProfile?.tipo === 'presencial';
-      const isStaff = ['admin', 'professor', 'suporte'].includes(userProfile?.tipo || '') || (userProfile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+      const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(userProfile?.tipo || '') || (userProfile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
       const isExempt = userProfile?.bolsista || isStaff || isPresencial;
 
       if (hasOpenPayment && !isExempt) {
@@ -50,6 +50,7 @@ export const useFinanceControl = (userProfile: any) => {
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile?.id, userProfile?.extensao_pagamento_ate]);
 
   const requestExtension = async () => {

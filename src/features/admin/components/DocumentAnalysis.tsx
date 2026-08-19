@@ -80,16 +80,9 @@ const DocumentAnalysis: React.FC = () => {
         .eq('id', docId);
 
       if (error) throw error;
-      
+
       // Atualiza a lista local
       await fetchDocuments();
-      
-      // Se tiver um aluno selecionado, atualiza ele também para refletir no painel lateral
-      if (selectedStudent) {
-        const updatedStudent = students.find(s => s.id === selectedStudent.id);
-        // a nova lista de students só estará pronta no próximo render, mas fetchDocuments já a setou.
-        // Faremos um refetch completo no modal
-      }
 
     } catch (err) {
       console.error('Erro ao atualizar status do documento:', err);

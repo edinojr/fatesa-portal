@@ -1,8 +1,7 @@
 import React from 'react'
-import { ChevronLeft, ChevronRight, LogOut, ExternalLink, LayoutDashboard, ShieldCheck, Users, GraduationCap, Home, BookOpen, Award } from 'lucide-react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, LogOut, ExternalLink, LayoutDashboard, Users, GraduationCap } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
-import Logo from '../common/Logo'
 import TopBanner from './TopBanner'
 
 interface PageHeaderProps {
@@ -29,7 +28,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   showTopBanner = true
 }) => {
   const navigate = useNavigate()
-  const location = useLocation()
   const { profile, signOut } = useProfile()
 
   const handleBack = () => {
@@ -49,8 +47,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     navigate(path)
   }
 
-  const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || 
-                  (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r))
+  const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo || '') || 
+                  (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r))
   const isAdmin = profile?.tipo === 'admin' || (profile?.caminhos_acesso || []).includes('admin')
   const isProfessor = profile?.tipo === 'professor' || (profile?.caminhos_acesso || []).includes('professor')
   const isCoordinator = profile?.tipo === 'coordenador_polo' || (profile?.caminhos_acesso || []).includes('coordenador_polo')

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { useProfile } from '../hooks/useProfile';
 import DOMPurify from 'dompurify';
 import { 
   ChevronLeft, 
@@ -12,7 +11,8 @@ import {
   Minimize, 
   BookOpen,
   List,
-  Menu
+  Menu,
+  LayoutGrid
 } from 'lucide-react';
 
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -27,20 +27,19 @@ const SmartViewer = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const location = useLocation();
-    const { profile } = useProfile();
 
-    const goToPanel = () => {
-        const role = profile?.tipo;
-        const roles = (profile?.caminhos_acesso as string[]) || [];
-        const isAdmin = role === 'admin' || roles.includes('admin') || roles.includes('suporte');
-        const isProfessor = role === 'professor' || roles.includes('professor');
-        if (isAdmin) navigate('/admin');
-        else if (isProfessor) navigate('/professor');
-        else {
-            const stored = localStorage.getItem('fatesa_active_role');
-            if (stored === 'admin') navigate('/admin');
-            else if (stored === 'professor') navigate('/professor');
-            else navigate('/dashboard');
+    // URL da página de seleção de lições (módulo)
+    // Se for aula, usa livro_id; se for livro, o próprio id é o módulo
+    const getModuleUrl = () => data?.livro_id ? `/module/${data.livro_id}` : (data?.id ? `/module/${data.id}` : null);
+
+    const goToModule = () => {
+        const url = getModuleUrl();
+        if (url) {
+            // replace: true remove o SmartViewer do histórico, então
+            // ao voltar do painel, o usuário retorna à página de seleção de lições
+            navigate(url, { replace: true });
+        } else {
+            navigate(-1);
         }
     };
 
@@ -106,12 +105,14 @@ const SmartViewer = () => {
     const handleResize = () => setContainerWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
     if (isMobile && viewType !== 'scroll') {
       setViewType('scroll');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
   useEffect(() => {
@@ -134,6 +135,14 @@ const SmartViewer = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // ESC: se estiver em tela cheia, sai do fullscreen (comportamento nativo do browser)
+      // Se não estiver em tela cheia, volta à página de seleção de lições (módulo)
+      if (e.key === 'Escape') {
+        if (isAnyFullscreen) return; // deixa o browser tratar (sair de tela cheia)
+        e.preventDefault();
+        goToModule();
+        return;
+      }
       if ((e.key === 'f' || e.key === 'F') && viewerRef.current) {
         toggleFullscreen();
       }
@@ -144,7 +153,8 @@ const SmartViewer = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen, viewType, loading, pageNumber, numPages]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFullscreen, isPseudoFullscreen, viewType, loading, pageNumber, numPages]);
 
   useEffect(() => {
     if (viewMode === 'epub' && data?.epub_url) {
@@ -189,11 +199,33 @@ const SmartViewer = () => {
       if (res.arquivo_url && /\.html?([#?].*)?$/i.test(res.arquivo_url)) {
         setHtmlLoading(true);
         try {
-          const resp = await fetch(res.arquivo_url);
-          const text = await resp.text();
-          const { processedHtml, toc: extractedToc } = processHtmlForNav(text);
-          setHtmlContent(processedHtml);
-          setToc(extractedToc);
+          const urlObj = new URL(res.arquivo_url);
+          const pathMatch = urlObj.pathname.match(/\/storage\/v1\/object(?:\/public)?\/livros\/(.+)/);
+          let text: string | null = null;
+
+          if (pathMatch) {
+            const storagePath = pathMatch[1];
+            const publicUrl = `${urlObj.origin}/storage/v1/object/public/livros/${storagePath}`;
+            const pubResp = await fetch(publicUrl);
+            if (pubResp.ok) {
+              text = await pubResp.text();
+            } else {
+              // Fallback: signed URL for private buckets
+              const { data: signedData, error: signedError } = await supabase.storage
+                .from('livros')
+                .createSignedUrl(storagePath, 3600);
+              if (!signedError && signedData?.signedUrl) {
+                const signedResp = await fetch(signedData.signedUrl);
+                if (signedResp.ok) text = await signedResp.text();
+              }
+            }
+          }
+
+          if (text) {
+            const { processedHtml, toc: extractedToc } = processHtmlForNav(text);
+            setHtmlContent(processedHtml);
+            setToc(extractedToc);
+          }
         } catch (err) {
           console.error('Failed to fetch HTML content:', err);
         } finally {
@@ -331,12 +363,12 @@ const SmartViewer = () => {
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0a0a0a', color: '#fff', overflow: 'hidden' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1.5rem', background: '#0f0f0f', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button onClick={() => goToPanel()} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <ChevronLeft size={18} /> Painel
+            <button onClick={goToModule} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <LayoutGrid size={16} /> <span className="mobile-hide">Lições do Módulo</span>
             </button>
             <h3 style={{ margin: 0, fontSize: '1rem' }}>{data?.titulo || 'Módulo'}</h3>
           </div>
-          <button onClick={() => navigate(-1)} style={{ color: '#ef4444', background:'none', border:'none' }}><X size={20} /></button>
+          <button onClick={goToModule} style={{ color: '#ef4444', background:'none', border:'none' }}><X size={20} /></button>
         </header>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
           <div className="glass-card" style={{ padding: '3rem', borderRadius: '24px', maxWidth: '600px', textAlign: 'center' }}>
@@ -371,9 +403,9 @@ const SmartViewer = () => {
       }}
     >
       <header className="dashboard-header-modern" style={{ height: 'auto', minHeight: '60px', padding: '0.75rem 2rem', background: '#0f0f0f', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={() => goToPanel()} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
-            <ChevronLeft size={18} /> <span className="mobile-hide">Painel</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button onClick={goToModule} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(var(--primary-rgb), 0.15)', borderColor: 'rgba(var(--primary-rgb), 0.3)' }} title="Voltar à página de seleção de lições (ESC)">
+            <LayoutGrid size={16} /> <span className="mobile-hide">Lições do Módulo</span>
           </button>
           <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }}></div>
           <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>{data.titulo}</h3>
@@ -410,7 +442,7 @@ const SmartViewer = () => {
           <button onClick={toggleFullscreen} className="btn-icon">
             {isAnyFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
           </button>
-          <button onClick={() => navigate(-1)} className="btn-icon" style={{ color: '#ef4444' }}><X size={20} /></button>
+          <button onClick={goToModule} className="btn-icon" style={{ color: '#ef4444' }} title="Voltar (ESC)"><X size={20} /></button>
         </div>
       </header>
 
@@ -607,11 +639,11 @@ const SmartViewer = () => {
               
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                 <button 
-                  onClick={() => navigate(-1)} 
+                  onClick={goToModule} 
                   className="btn btn-outline" 
                   style={{ width: 'auto', padding: '0.5rem 1.5rem', borderRadius: '50px' }}
                 >
-                  <ChevronLeft size={18} /> Lição Anterior
+                  <ChevronLeft size={18} /> Lições do Módulo
                 </button>
                 {nextLesson ? (
                   <button 
@@ -622,8 +654,8 @@ const SmartViewer = () => {
                     Próxima Lição <ChevronRight size={18} />
                   </button>
                 ) : (
-                  <button onClick={() => goToPanel()} className="btn btn-outline" style={{ border:'none', width: 'auto', borderRadius: '50px' }}>
-                    Voltar ao Painel
+                  <button onClick={goToModule} className="btn btn-outline" style={{ border:'none', width: 'auto', borderRadius: '50px' }}>
+                    Voltar ao Módulo
                   </button>
                 )}
               </div>

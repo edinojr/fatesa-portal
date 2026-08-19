@@ -63,8 +63,8 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
   };
 
   const isActuallyLocked = (item: any) => {
-    const isStaff = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.tipo === 'professor' ||
-                    (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+    const isStaff = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.tipo === 'professor' || profile?.tipo === 'colaborador' ||
+                    (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
     if (isStaff) return false;
     
     const versao = getVersao(item);
@@ -112,7 +112,7 @@ const ModuleContentGrid: React.FC<ModuleContentGridProps> = ({
       if (!allContentCompleted) return true;
     }
     
-    if (!!item.lockedByProfessor) return true;
+    if (item.lockedByProfessor) return true;
     if (item.status_liberacao === false) return true;
     if (item.data_liberacao && new Date(item.data_liberacao) > new Date()) return true;
     return false;

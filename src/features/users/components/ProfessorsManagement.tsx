@@ -1,5 +1,5 @@
 import React from 'react'
-import { User, Mail, GraduationCap, MapPin, Users as UsersIcon, Trash2 } from 'lucide-react'
+import { User, Mail, GraduationCap, Users as UsersIcon, Trash2 } from 'lucide-react'
 
 interface ProfessorsManagementProps {
   professors: any[]

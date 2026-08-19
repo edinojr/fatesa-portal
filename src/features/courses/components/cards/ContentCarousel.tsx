@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, Inbox } from 'lucide-react'
+import React, { useState, useRef } from 'react'
+import { Inbox } from 'lucide-react'
 import ContentCard from './ContentCard'
 import { ContentRoot, ROOT_CONFIG, ROOT_ORDER, groupByRoot } from './contentTypes'
 

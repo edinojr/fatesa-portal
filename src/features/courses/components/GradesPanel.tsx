@@ -293,9 +293,22 @@ function FormativeCard({ f }: { f: any }) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
-const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, handleChangeNucleo, atividades, courses, historyGrades = [] }) => {
+const GradesPanel: React.FC<GradesPanelProps> = ({ atividades, courses, historyGrades = [] }) => {
   const navigate = useNavigate()
   const [expandedModule, setExpandedModule] = useState<string | null>(null)
+
+  // Conjunto de títulos de livros já marcados como finalizados nos courses
+  // (Usado apenas para referência. Mostramos TODOS os registros manuais,
+  //  pois cada nota >= 7 é uma "aprovação" que deve aparecer como finalizada.)
+  const finishedBookTitles = new Set<string>();
+  (courses || []).forEach(c => {
+    (c.livros || []).forEach((l: any) => {
+      if (l.isFinished) finishedBookTitles.add(l.titulo)
+    })
+  })
+
+  // Mostra todos os registros manuais — inclusive os de módulos finalizados.
+  const filteredHistoryGrades = historyGrades
 
   // Agrupar por módulo
   const modulesMap: Record<string, { title: string; id: string; items: any[] }> = {}
@@ -372,6 +385,12 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
                       {approved && (
                         <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--success)', background: 'rgba(16,185,129,0.1)', padding: '1px 7px', borderRadius: '6px' }}>
                           ✓ APROVADO {approved.nota?.toFixed(1)}
+                        </span>
+                      )}
+                      {approved && (
+                        <span style={{ fontSize: '0.62rem', fontWeight: 900, color: 'var(--primary)', background: 'rgba(var(--primary-rgb),0.12)', padding: '2px 8px', borderRadius: '6px', border: '1px solid rgba(var(--primary-rgb),0.3)', letterSpacing: '0.8px' }}>
+                          <Award size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
+                          MÓDULO FINALIZADO
                         </span>
                       )}
                       {avgPct !== null && (
@@ -489,21 +508,28 @@ const GradesPanel: React.FC<GradesPanelProps> = ({ profile, availableNucleos, ha
       </div>
 
       {/* ─── SEÇÃO: HISTÓRICO MANUAL ─── */}
-      {historyGrades.length > 0 && (
+      {filteredHistoryGrades.length > 0 && (
         <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '2px dashed var(--glass-border)' }}>
           <h4 style={{ fontSize: '0.85rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)' }}>
             <FileText size={16} /> Histórico de Notas (Registro Manual)
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {historyGrades.map((h: any) => (
+            {filteredHistoryGrades.map((h: any) => (
               <div key={h.id} style={{
                 padding: '1rem 1.2rem', borderRadius: '14px',
-                border: '1px solid var(--glass-border)',
-                background: 'rgba(255,255,255,0.02)',
+                border: `1px solid ${h.nota >= 7 ? 'rgba(16,185,129,0.3)' : 'var(--glass-border)'}`,
+                background: h.nota >= 7 ? 'rgba(16,185,129,0.04)' : 'rgba(255,255,255,0.02)',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem'
               }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{h.modulo_nome}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{h.modulo_nome}</span>
+                    {h.nota >= 7 && (
+                      <span style={{ fontSize: '0.58rem', fontWeight: 900, color: 'var(--primary)', background: 'rgba(var(--primary-rgb),0.12)', padding: '2px 7px', borderRadius: '5px', border: '1px solid rgba(var(--primary-rgb),0.3)', letterSpacing: '0.7px', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <Award size={9} /> MÓDULO FINALIZADO
+                      </span>
+                    )}
+                  </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     {h.curso_nome} • {new Date(h.data_conclusao).toLocaleDateString('pt-BR')}
                   </div>

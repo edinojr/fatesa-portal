@@ -29,6 +29,7 @@ const Login = () => {
       }
     };
     initCheck();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const checkSessionRoles = async (user: any) => {
@@ -63,8 +64,16 @@ const Login = () => {
       fetchError = retryFetch.error;
     }
     
-    // Auto-repair missing profile or handle errors for Admin
-    const isAdminEmail = user.email === 'edi.ben.jr@gmail.com' || user.email === 'ap.panisso@gmail.com';
+    // Auto-repair missing profile or handle errors for Admin (DB-driven via admins_autorizados)
+    let isAdminEmail = false;
+    if (user.email) {
+      const { data: authorized } = await supabase
+        .from('admins_autorizados')
+        .select('email')
+        .eq('email', user.email.toLowerCase().trim())
+        .maybeSingle();
+      isAdminEmail = !!authorized;
+    }
     
     if ((!data && !fetchError) || (fetchError && isAdminEmail)) {
       console.warn("Perfil não encontrado ou erro de RLS para Admin. Tentando auto-reparo...", user.id);
@@ -113,19 +122,11 @@ const Login = () => {
       return;
     }
 
-    const roles = data.caminhos_acesso || [];
-    const rolesSet = new Set(roles);
-
-    if (user.email === 'edi.ben.jr@gmail.com') {
-      ['suporte', 'professor', 'aluno'].forEach(r => rolesSet.add(r));
-    }
-    if (user.email === 'ap.panisso@gmail.com') rolesSet.add('admin');
-
-    const finalRoles = Array.from(rolesSet);
+    const roles = (data.caminhos_acesso as string[]) || [];
     const userType = (data.tipo || '') as string;
     
-    const isAdmin = finalRoles.some((r: any) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType);
-    const isProfessor = finalRoles.some((r: any) => r === 'professor') || userType === 'professor';
+    const isAdmin = roles.some((r: string) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType);
+    const isProfessor = roles.some((r: string) => r === 'professor') || userType === 'professor' || isAdmin;
 
     if (isAdmin) navigate('/admin', { replace: true });
     else if (isProfessor) navigate('/professor', { replace: true });

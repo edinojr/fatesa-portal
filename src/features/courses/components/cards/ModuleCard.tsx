@@ -1,7 +1,7 @@
 import React from 'react'
-import { Eye, CheckSquare, CheckCircle, BookOpen, Clock } from 'lucide-react'
 import BaseCard from './BaseCard'
 import ContentCarousel from './ContentCarousel'
+import ModalityBadge from '../../../../components/ui/ModalityBadge'
 
 export interface ModuleCardProps {
   book: any
@@ -17,7 +17,6 @@ export interface ModuleCardProps {
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
   book,
-  index,
   completionCount = 0,
   gabaritoStats,
   showReleaseControls = true,
@@ -57,6 +56,9 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         accentColor={gabComplete ? '#22c55e' : 'var(--primary)'}
         onClick={onOpenLessons ? (e) => { e.preventDefault(); onOpenLessons(); } : undefined}
       >
+        <div style={{ marginTop: '0.3rem' }}>
+          <ModalityBadge ensinoTipo={book.ensino_tipo} />
+        </div>
         {gab.total > 0 && (
           <div style={{ marginTop: '0.3rem' }}>
             <div

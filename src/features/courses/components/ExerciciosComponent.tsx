@@ -12,10 +12,7 @@ import {
   AlertCircle,
   Award,
   CheckCircle2,
-  ClipboardList,
-  ChevronDown,
-  ChevronUp,
-  X as XIcon
+  ClipboardList
 } from 'lucide-react';
 import { QuizQuestion } from '../../../types/admin';
 import { useProfile } from '../../../hooks/useProfile';
@@ -321,7 +318,6 @@ const ExerciciosComponent: React.FC<ExerciciosComponentProps> = ({
               const selected = studentAns?.[mIdx];
               const expectedIdx = String(mIdx);
               const isMatch = String(selected) === expectedIdx;
-              const isWrongSelection = isExerciseFinished && selected !== undefined && !isMatch;
               return (
                 <div
                   key={mIdx}

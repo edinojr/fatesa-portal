@@ -133,6 +133,7 @@ export const useProfessorGrading = () => {
     } else {
       setGradeInput('10.0'); 
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleEvaluation = useCallback((questionId: string, isCorrect: boolean) => {

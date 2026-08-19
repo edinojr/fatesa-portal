@@ -19,17 +19,6 @@ for (const [k, v] of Object.entries(BOOK_NAME_MAP)) {
 }
 REVERSE_BOOK_MAP['Cantares'] = 'Cantares'
 
-function normalizeBookName(name: string): string {
-  const mapped = BOOK_NAME_MAP[name]
-  if (mapped) return mapped
-  if (name in REVERSE_BOOK_MAP) return name
-
-  const rev = REVERSE_BOOK_MAP[name]
-  if (rev) return name
-
-  return name
-}
-
 function toJsonKey(name: string): string {
   const m = BOOK_NAME_MAP[name]
   if (m) return m

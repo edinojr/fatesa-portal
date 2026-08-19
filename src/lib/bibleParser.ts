@@ -374,7 +374,7 @@ export function processHtmlWithReferences(html: string): { processed: string; re
     // (check by looking at preceding tags)
     
     // Process text content for references
-    let textContent = part.content;
+    const textContent = part.content;
     let modified = false;
     
     const textRefs = extractReferences(textContent);

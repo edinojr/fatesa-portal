@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, FileText, Loader2, CheckCircle } from 'lucide-react';
+import { FileText, Loader2, CheckCircle } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
 interface GabaritoUploadProps {

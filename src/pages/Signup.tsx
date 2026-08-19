@@ -123,6 +123,7 @@ const Signup = () => {
       const timer = setTimeout(() => verifyAlumniStatus(email), 1000);
       return () => clearTimeout(timer);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email]);
 
   useEffect(() => {
@@ -178,11 +179,21 @@ const Signup = () => {
           .eq('id', alumniVerified.id);
       }
 
-      if (authData.session) {
-        // Redirecionamento instantâneo para dentro da plataforma (Bypass da confirmação superado)
+      // 4. Roteamento pós-cadastro respeitando confirmação de e-mail
+      // Alumni verificado e staff autorizado (professor/admin pré-cadastrado) já
+      // tiveram seu e-mail validado por outro canal e podem acessar imediatamente.
+      // Demais alunos precisam confirmar o e-mail (toggle "Confirm email" no Supabase).
+      const trustedImmediate = !!alumniVerified || isProfessor || isAdmin
+
+      if (authData.user && authData.session && (authData.user.email_confirmed_at || trustedImmediate)) {
         navigate('/dashboard', { replace: true })
       } else if (authData.user) {
-        // Fallback caso a trava do Supabase ainda não tenha atualizado no backend
+        // Sem sessão confirmada: encerra qualquer sessão temporária e avisa o aluno
+        if (authData.session) {
+          await supabase.auth.signOut()
+        }
+        setError('Cadastro iniciado! Verifique seu e-mail (incluindo pasta de spam) e clique no link de confirmação para ativar sua conta. Após confirmar, faça login.')
+      } else {
         navigate('/login', { replace: true })
       }
 

@@ -6,8 +6,7 @@ import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/common/Logo'
 import CourseList from '../features/courses/components/CourseList'
-import GradesPanel from '../features/courses/components/GradesPanel'
-import { getBookStats, isCourseCompleted } from '../features/courses/utils/courseUtils'
+import { getBookStats } from '../features/courses/utils/courseUtils'
 import { GRADUATION_CONFIG, isNivelBasico, isNivelMedio } from '../config/graduation'
 import GraduationFormModal from '../features/users/components/GraduationFormModal'
 import LevelCertificate from '../features/users/components/LevelCertificate'
@@ -49,6 +48,7 @@ const goToPanel = () => {
                 }
             });
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [coursesLoading, courses, finishedBasicCount, finishedMediumCount, profile]);
 
     const checkAlumni = async (userId: string) => {
@@ -76,24 +76,90 @@ const goToPanel = () => {
         if (!profileLoading && profile) {
             fetchStudentDashboardData();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [profileLoading, profile]);
 
     useEffect(() => {
         if (!profileLoading && profile?.id) {
-            supabase.from('historico_notas').select('*').eq('aluno_id', profile.id).order('created_at', { ascending: false }).then(({ data }) => setHistoryGrades(data || []));
+            supabase.from('historico_notas').select('*').eq('aluno_id', profile.id).order('created_at', { ascending: false }).then(({ data, error }) => {
+                if (error) console.error('[ModulosFinalizados] Erro ao buscar histórico:', error.message);
+                console.log('[ModulosFinalizados] historyGrades carregados:', data?.length || 0, data);
+                setHistoryGrades(data || []);
+            });
         }
     }, [profileLoading, profile?.id]);
 
-    // Filtrar apenas cursos que possuem pelo menos um livro finalizado
-    console.log('[ModulosFinalizados] cursos:', courses?.length, 'atividades:', atividades?.length, 'progresso:', progressoAulas?.length);
-    courses?.forEach(c => c.livros?.forEach(l => {
-        const stats = getBookStats(l, atividades, progressoAulas);
-        console.log(`[MF] "${c.nome}" / "${l.titulo}" → isFinished:${stats.isFinished} isApproved:${stats.isApproved} examGrade:${stats.examGrade}`);
-    }));
+    // Filtrar apenas cursos que possuem pelo menos um livro finalizado (ou aprovado por histórico manual)
+    console.log('[ModulosFinalizados] cursos:', courses?.length, 'atividades:', atividades?.length, 'progresso:', progressoAulas?.length, 'historyGrades:', historyGrades?.length);
+
+    // Normalização de título simples
+    const normalizeTitle = (s: string) =>
+      (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[.,;:!?]+$/g, '').replace(/\s+/g, ' ');
+
+    // Detectar nível (Básico/Médio) a partir de qualquer string
+    const detectNivel = (s: string) => {
+        const n = (s || '').toLowerCase();
+        if (n.includes('medio') || n.includes('médio')) return 'medio';
+        return 'basico';
+    };
+
+    // 1) Históricos aprovados (nota >= 7)
+    const approvedHistory = (historyGrades || []).filter((h: any) => h && h.nota != null && Number(h.nota) >= 7);
+    const approvedByHistoryTitles = new Set(approvedHistory.map((h: any) => normalizeTitle(h.modulo_nome)));
+
+    // 2) finishedCourses — marca books finalizados por prova OU por histórico manual
     const finishedCourses = (courses || []).map(course => {
-        const finishedBooks = (course.livros || []).filter(l => l.isFinished || getBookStats(l, atividades, progressoAulas).isFinished);
+        const finishedBooks = (course.livros || []).filter(l => {
+            const stats = getBookStats(l, atividades, progressoAulas);
+            const approvedManual = approvedByHistoryTitles.has(normalizeTitle(l.titulo));
+            return l.isFinished || stats.isFinished || approvedManual;
+        }).map(l => ({ ...l, isFinished: true, isApproved: true }));
         return { ...course, livros: finishedBooks };
     }).filter(course => course.livros.length > 0);
+
+    // 3) Construir lista única de títulos já exibidos (para evitar duplicação)
+    const displayedTitles = new Set<string>();
+    finishedCourses.forEach(c => c.livros.forEach((l: any) => displayedTitles.add(normalizeTitle(l.titulo))));
+
+    // 4) Módulos do histórico que ainda não foram exibidos como livros cadastrados
+    //    — criar "books" sintéticos e colocá-los no curso Básico ou Médio
+    const orfaosAprovados = approvedHistory.filter((h: any) =>
+        !displayedTitles.has(normalizeTitle(h.modulo_nome))
+    );
+
+    if (orfaosAprovados.length > 0) {
+        const orfaosByNivel: Record<string, any[]> = { basico: [], medio: [] };
+        orfaosAprovados.forEach((h: any) => {
+            const nivel = detectNivel(h.curso_nome || h.modulo_nome || '');
+            orfaosByNivel[nivel].push({
+                id: `historico-${h.id || h.modulo_nome}`,
+                titulo: h.modulo_nome,
+                aulas: [],
+                capa_url: undefined,
+                isFinished: true,
+                isApproved: true,
+                nota: h.nota,
+                data_conclusao: h.data_conclusao,
+                curso_nome: h.curso_nome,
+            });
+        });
+
+        ['basico', 'medio'].forEach((nivel) => {
+            if (orfaosByNivel[nivel].length === 0) return;
+            // Procurar um curso do mesmo nível para anexar; se não houver, criar sintético
+            const cursoAlvo = finishedCourses.find(c => detectNivel(c.nivel || c.nome || '') === nivel);
+            if (cursoAlvo) {
+                cursoAlvo.livros.push(...orfaosByNivel[nivel]);
+            } else {
+                finishedCourses.push({
+                    id: `sintetico-${nivel}`,
+                    nome: nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio',
+                    nivel: nivel as any,
+                    livros: orfaosByNivel[nivel],
+                });
+            }
+        });
+    }
 
     if (profileLoading || coursesLoading) {
         return (
@@ -189,20 +255,6 @@ const goToPanel = () => {
                         </div>
                     </>
                 )}
-
-                <div style={{ marginTop: '4rem', borderTop: '2px solid var(--glass-border)', paddingTop: '2rem' }}>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: 900, margin: '0 0 1.5rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <Award size={22} /> Meu Boletim
-                    </h2>
-                    <GradesPanel
-                        profile={profile}
-                        availableNucleos={[]}
-                        handleChangeNucleo={() => {}}
-                        courses={courses}
-                        atividades={atividades}
-                        historyGrades={historyGrades}
-                    />
-                </div>
             </main>
 
             {showGraduationForm && completedCourse && profile && (

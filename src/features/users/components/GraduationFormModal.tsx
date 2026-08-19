@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, MapPin, Loader2, Save, CheckCircle } from 'lucide-react';
 
 interface GraduationFormModalProps {
@@ -13,10 +13,6 @@ interface GraduationFormModalProps {
 
 const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
   studentName,
-  studentEmail,
-  courseId,
-  courseName,
-  levelName,
   onComplete,
   onClose
 }) => {

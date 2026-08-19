@@ -1,4 +1,4 @@
-import { GRADUATION_CONFIG, getRequiredModules } from '../../../config/graduation';
+import { getRequiredModules } from '../../../config/graduation';
 
 export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any[] = []) => {
     const allAulas = l.aulas || [];

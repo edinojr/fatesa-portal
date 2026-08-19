@@ -351,7 +351,7 @@ const ModuloBoletim: React.FC<ModuloBoletimProps> = ({
                   {aluno.nucleos?.nome || 'Sem Polo'}
                 </td>
                 {aulas.map((aula: any) => {
-                  const { sub, nota } = getStudentGrade(aluno.id, livroId, aula.id)
+                  const { nota } = getStudentGrade(aluno.id, livroId, aula.id)
                   const isEditing = editCell?.alunoId === aluno.id && editCell?.aulaId === aula.id
                   const isSaving = saving === `${aluno.id}_${aula.id}`
 

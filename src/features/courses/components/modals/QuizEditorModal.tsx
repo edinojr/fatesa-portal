@@ -159,6 +159,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
     if (editingQuiz) {
       setQuizQuestions(Array.isArray(editingQuiz.questionario) ? editingQuiz.questionario : []);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingQuiz?.id]);
 
   if (!editingQuiz) return null;
@@ -446,7 +447,6 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
               // Validation for Final Assesment
               if (editingQuiz.is_bloco_final) {
                 const tfCount = quizQuestions.filter(q => q.type === 'true_false').length;
-                const disCount = quizQuestions.filter(q => q.type === 'discursive').length;
                 const mcCount = quizQuestions.filter(q => q.type === 'multiple_choice' || !q.type).length;
                 const matchingQuestions = quizQuestions.filter(q => q.type === 'matching');
                 const matCount = matchingQuestions.length;

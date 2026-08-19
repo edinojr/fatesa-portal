@@ -1,17 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { 
-  Users, 
-  BookOpen, 
-  FileText, 
-  Settings, 
-  Plus,
+import {
+  Users,
+  BookOpen,
+  FileText,
+  Settings,
   Trash2,
   CheckCircle2,
   ShieldCheck,
-  FileCheck,
   XCircle,
-  Loader2, 
+  Loader2,
   GraduationCap,
   ChevronLeft,
   LayoutDashboard,
@@ -20,9 +18,6 @@ import {
   MapPin,
   TrendingUp,
   History,
-  LayoutGrid,
-  ExternalLink,
-  ArrowLeft,
   Search,
   ChevronDown,
   ClipboardList,
@@ -49,7 +44,6 @@ import { Folder } from 'lucide-react'
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
-import ForumPanel from '../features/forum/components/ForumPanel'
 import ValidationPanel from '../features/finance/components/ValidationPanel'
 
 // Modals
@@ -70,6 +64,7 @@ import {
 // Hook
 import { useAdminManagement } from '../hooks/useAdminManagement'
 import { supabase } from '../lib/supabase'
+import { hasStudentScope } from '../lib/authUtils'
 import PageHeader from '../components/layout/PageHeader'
 
 const Admin = () => {
@@ -80,18 +75,12 @@ const Admin = () => {
     // as it will be set when the user explicitly chooses the Admin Panel
   }, [])
 
-  const goToPanel = () => {
-    navigate('/dashboard');
-  };
-
   const {
-    profile,
     activeTab,
     setActiveTab,
     dashboardView,
     setDashboardView,
     userTypeFilter,
-    setUserTypeFilter,
     userRole,
     users,
     courses,
@@ -182,8 +171,6 @@ const Admin = () => {
     pendingPaysCount,
     pendingDocs,
     pendingPaysValidation,
-    pendingStudentsCount,
-    pendingProofsCount,
     academicReport,
     handleDeleteNucleo,
     handleResetAutoCorrectedExams,
@@ -223,7 +210,7 @@ const Admin = () => {
     if (activeTab === 'boletim') fetchBoletimSubmissions()
   }, [activeTab, fetchBoletimSubmissions])
   const [pixKey, setPixKey] = useState('')
-  const [pixQrUrl, setPixQrUrl] = useState('')
+  const [pixQrUrl] = useState('')
 
   const totalPendingUsers = Object.values(pendingUsersByNucleo).reduce((acc: number, curr: any) => acc + (curr || 0), 0)
 
@@ -523,7 +510,7 @@ const Admin = () => {
             users={(() => {
               let filtered = users;
               if (userTypeFilter === 'administrativos') filtered = filtered.filter((u: any) => ['admin', 'suporte', 'colaborador'].includes(u.tipo));
-              if (userTypeFilter === 'alunos' || userTypeFilter === 'pendentes') filtered = filtered.filter((u: any) => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo) || u.email === 'edi.ben.jr@gmail.com');
+              if (userTypeFilter === 'alunos' || userTypeFilter === 'pendentes') filtered = filtered.filter((u: any) => !['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo) || hasStudentScope(u));
               return filtered;
             })()}
             userTypeFilter={userTypeFilter || undefined}

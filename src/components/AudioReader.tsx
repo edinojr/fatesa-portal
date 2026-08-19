@@ -13,13 +13,11 @@ const AudioReader: React.FC<AudioReaderProps> = ({ contentSelector = '.lesson-co
   const [speed, setSpeed] = useState(1)
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [selectedVoice, setSelectedVoice] = useState('')
-  const [progress, setProgress] = useState('')
 
   const synthRef = useRef<SpeechSynthesis | null>(null)
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
   const sentencesRef = useRef<string[]>([])
   const currentIndexRef = useRef(0)
-  const contentRef = useRef<HTMLDivElement | null>(null)
   const highlightElementsRef = useRef<HTMLElement[]>([])
 
   const getTextContent = useCallback(() => {
@@ -30,6 +28,7 @@ const AudioReader: React.FC<AudioReaderProps> = ({ contentSelector = '.lesson-co
 
     const removeSelectors = [
       '.leitor-panel', '.leitor-btn-flutuante',
+      '.pdf-audio-panel', '.pdf-audio-floating-btn',
       'script', 'style', 'nav', 'header', 'footer',
       '.ref-btn',
     ]
@@ -50,7 +49,8 @@ const AudioReader: React.FC<AudioReaderProps> = ({ contentSelector = '.lesson-co
     if (!container) return []
     const els = container.querySelectorAll<HTMLElement>('p, h1, h2, h3, h4, h5, h6, li, blockquote, td, th')
     return Array.from(els).filter(el => {
-      if (el.closest('.leitor-panel') || el.closest('.leitor-btn-flutuante')) return false
+      if (el.closest('.leitor-panel') || el.closest('.leitor-btn-flutuante') ||
+          el.closest('.pdf-audio-panel') || el.closest('.pdf-audio-floating-btn')) return false
       return (el.textContent || '').trim().length > 0
     })
   }, [contentSelector])
@@ -90,7 +90,6 @@ const AudioReader: React.FC<AudioReaderProps> = ({ contentSelector = '.lesson-co
     currentIndexRef.current = 0
     clearHighlight()
     setStatus('Parado')
-    setProgress('')
   }, [clearHighlight])
 
   const readNextSentence = useCallback(() => {
@@ -111,7 +110,6 @@ const AudioReader: React.FC<AudioReaderProps> = ({ contentSelector = '.lesson-co
     }
 
     setStatus(`Lendo… (${idx + 1}/${sentences.length})`)
-    setProgress(`${idx + 1}/${sentences.length}`)
     highlightSentence(text)
 
     const utterance = new SpeechSynthesisUtterance(text)

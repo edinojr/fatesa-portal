@@ -1,5 +1,7 @@
 import { supabase } from './supabase'
 
+const STUDENT_SCOPES = ['aluno', 'estudante']
+
 export function isTokenExpired(accessToken: string | null): boolean {
   if (!accessToken) return true
   try {
@@ -9,6 +11,21 @@ export function isTokenExpired(accessToken: string | null): boolean {
   } catch {
     return true
   }
+}
+
+export function hasStudentScope(user: any): boolean {
+  if (!user) return false
+  const scopes: string[] = (user.caminhos_acesso as string[]) || []
+  return scopes.some(s => STUDENT_SCOPES.includes(s))
+}
+
+export function isStaff(user: any): boolean {
+  if (!user) return false
+  return ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase())
+}
+
+export function isStaffStudentProxy(user: any): boolean {
+  return isStaff(user) && hasStudentScope(user)
 }
 
 export async function checkSessionAndRedirect(): Promise<boolean> {

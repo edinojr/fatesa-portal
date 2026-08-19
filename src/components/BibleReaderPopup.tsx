@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { X, Search, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react'
-import { useBibleData, VerseResult, BibleBook } from '../hooks/useBibleData'
+import { useBibleData, VerseResult } from '../hooks/useBibleData'
 
 interface BibleReaderPopupProps {
   onClose: () => void
@@ -29,42 +29,8 @@ const NT_BOOKS = [
   'Judas', 'Apocalipse',
 ]
 
-function jsonKeyToDisplay(key: string): string {
-  const map: Record<string, string> = {
-    'Gênesis': 'Gênesis', 'Êxodo': 'Êxodo', 'Levítico': 'Levítico',
-    'Números': 'Números', 'Deuteronômio': 'Deuteronômio',
-    'Josué': 'Josué', 'Juízes': 'Juízes', 'Rute': 'Rute',
-    'I Samuel': 'I Samuel', 'II Samuel': 'II Samuel',
-    'I Reis': 'I Reis', 'II Reis': 'II Reis',
-    'I Crônicas': 'I Crônicas', 'II Crônicas': 'II Crônicas',
-    'Esdras': 'Esdras', 'Neemias': 'Neemias', 'Ester': 'Ester',
-    'Jó': 'Jó', 'Salmos': 'Salmos', 'Provérbios': 'Provérbios',
-    'Eclesiastes': 'Eclesiastes', 'Cantares': 'Cantares',
-    'Isaías': 'Isaías', 'Jeremias': 'Jeremias',
-    'Lamentações': 'Lamentações', 'Ezequiel': 'Ezequiel',
-    'Daniel': 'Daniel', 'Oseias': 'Oseias', 'Joel': 'Joel',
-    'Amós': 'Amós', 'Obadias': 'Obadias', 'Jonas': 'Jonas',
-    'Miquéias': 'Miquéias', 'Naum': 'Naum', 'Habacuque': 'Habacuque',
-    'Sofonias': 'Sofonias', 'Ageu': 'Ageu', 'Zacarias': 'Zacarias',
-    'Malaquias': 'Malaquias',
-    'Mateus': 'Mateus', 'Marcos': 'Marcos', 'Lucas': 'Lucas',
-    'João': 'João', 'Atos': 'Atos',
-    'Romanos': 'Romanos', 'I Coríntios': 'I Coríntios',
-    'II Coríntios': 'II Coríntios', 'Gálatas': 'Gálatas',
-    'Efésios': 'Efésios', 'Filipenses': 'Filipenses',
-    'Colossenses': 'Colossenses', 'I Tessalonicenses': 'I Tessalonicenses',
-    'II Tessalonicenses': 'II Tessalonicenses',
-    'I Timóteo': 'I Timóteo', 'II Timóteo': 'II Timóteo',
-    'Tito': 'Tito', 'Filemom': 'Filemom', 'Hebreus': 'Hebreus',
-    'Tiago': 'Tiago', 'I Pedro': 'I Pedro', 'II Pedro': 'II Pedro',
-    'I João': 'I João', 'II João': 'II João', 'III João': 'III João',
-    'Judas': 'Judas', 'Apocalipse': 'Apocalipse',
-  }
-  return map[key] || key
-}
-
 export function BibleReaderPopup({ onClose, initialBook, initialChapter }: BibleReaderPopupProps) {
-  const { data, loading, getChapter, searchVerses } = useBibleData()
+  const { data, loading, searchVerses } = useBibleData()
   const [selectedBook, setSelectedBook] = useState<string>(initialBook || OT_BOOKS[0])
   const [selectedChapter, setSelectedChapter] = useState<number>(initialChapter || 1)
   const [tab, setTab] = useState<'books' | 'search'>('books')

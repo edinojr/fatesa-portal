@@ -91,3 +91,15 @@ export const supabase = createClient(
 
 export const isSupabaseConfigured = isConfigured
 export { supabaseUrl, supabaseAnonKey }
+
+/**
+ * Ensure a Supabase Storage URL always contains /public/ in the path.
+ * Without /public/ the file is treated as private and returns a 400 error.
+ */
+export const toPublicUrl = (url: string): string => {
+  if (!url) return url;
+  if (url.includes('/storage/v1/object/') && !url.includes('/storage/v1/object/public/')) {
+    return url.replace('/storage/v1/object/', '/storage/v1/object/public/');
+  }
+  return url;
+}

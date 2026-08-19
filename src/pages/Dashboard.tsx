@@ -48,8 +48,7 @@ const Dashboard = () => {
     localStorage.setItem('fatesa_active_role', 'aluno')
   }, [])
 
-  const [showRoleSwitcher, setShowRoleSwitcher] = useState(false)
-  const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+  const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
   
   const [searchParams, setSearchParams] = useSearchParams();
   
@@ -67,6 +66,7 @@ const Dashboard = () => {
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab as Tab);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
   
   // Custom Hooks para lógica de negócio
@@ -96,7 +96,7 @@ const Dashboard = () => {
   const [availableModules, setAvailableModules] = useState<any[]>([]);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [savingModules, setSavingModules] = useState(false);
-  const [historyGrades, setHistoryGrades] = useState<any[]>([]);
+  const [, setHistoryGrades] = useState<any[]>([]);
 
   const isBlocked = profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
@@ -501,19 +501,6 @@ const Dashboard = () => {
     }
   };
 
-  const availableNucleos: any[] = []; // Se necessário para staff
-  const handleChangeNucleo = async (newNucleoId: string) => {
-    if (!profile) return;
-    try {
-      const { error } = await supabase.from('users').update({ nucleo_id: newNucleoId }).eq('id', profile.id);
-      if (error) throw error;
-      refreshProfile();
-      showToast('Núcleo alterado!');
-    } catch (err: any) {
-      showToast(err.message, 'error');
-    }
-  }; 
-
   const handleStudentBack = () => {
     if (selectedBook) {
       setSelectedBook(null);
@@ -578,7 +565,7 @@ const Dashboard = () => {
         </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            {((profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin')) || profile?.email === 'edi.ben.jr@gmail.com') && (
+            {((profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin'))) && (
               <div style={{ display: 'flex', gap: '0.5rem', marginRight: '0.5rem' }}>
                 {profile?.caminhos_acesso?.includes('coordenador_polo') ? (
                   <button onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }} className="nav-btn-premium" style={{ width: 'auto' }}>

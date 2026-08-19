@@ -41,6 +41,7 @@ const BlockedAccess: React.FC = () => {
     if (!loading && profile && !profile.status_bloqueio) {
       goToPanel();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, loading, navigate]);
 
 

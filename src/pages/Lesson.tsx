@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import DOMPurify from 'dompurify'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen, List, Menu } from 'lucide-react'
+import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen, List, Menu, LayoutGrid } from 'lucide-react'
 import AudioReader from '../components/AudioReader'
+import PdfAudioReader from '../components/PdfAudioReader'
+import PdfViewer, { PdfViewerHandle } from '../components/PdfViewer'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
 import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
 import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
@@ -105,13 +107,15 @@ const Lesson = () => {
   const [toc, setToc] = useState<NavItem[]>([])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [examModalConfirmed, setExamModalConfirmed] = useState(false)
-  const [isModuleApproved] = useState(false)
   const [isModuleFinished, setIsModuleFinished] = useState(false)
-  const [tabSwitchCount, setTabSwitchCount] = useState(0)
+  const [, setTabSwitchCount] = useState(0)
   const submittedRef = useRef(submitted)
   submittedRef.current = submitted
   const [alreadyApproved, setAlreadyApproved] = useState(false)
   const [lessonMap, setLessonMap] = useState<Record<string, string>>({})
+  const [pdfExtractedText, setPdfExtractedText] = useState<string>('')
+  const [pdfIsLastPage, setPdfIsLastPage] = useState(false)
+  const pdfViewerRef = useRef<PdfViewerHandle>(null)
   const [moduleLessons, setModuleLessons] = useState<any[]>([])
   const [isPanorama, setIsPanorama] = useState(false)
   const [showBibleReader, setShowBibleReader] = useState(false)
@@ -194,6 +198,7 @@ const Lesson = () => {
   useEffect(() => {
     fetchLessonData()
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const fetchLessonData = async () => {
@@ -275,15 +280,39 @@ const Lesson = () => {
        if (isHtml && !isPdf) {
           setHtmlLoading(true);
           try {
-            const resp = await fetch(lessonData.arquivo_url);
-            const text = await resp.text();
-            const { processedHtml, toc: extractedToc } = processHtmlForNav(text);
-            const { processed: bibleProcessed } = processHtmlWithReferences(processedHtml);
-            setHtmlContent(bibleProcessed);
-            setToc(extractedToc);
+            // Extract the storage path from the URL (e.g. 'licoes/filename.html')
+            const urlObj = new URL(lessonData.arquivo_url);
+            // pathname looks like /storage/v1/object[/public]/livros/licoes/file.html
+            const pathMatch = urlObj.pathname.match(/\/storage\/v1\/object(?:\/public)?\/livros\/(.+)/);
+            let text: string | null = null;
 
-            const dict = parseBibliaLocal(text);
-            setBibliaLocal(dict);
+            if (pathMatch) {
+              const storagePath = pathMatch[1]; // e.g. licoes/1234_file.html
+              // Try public URL first
+              const publicUrl = `${urlObj.origin}/storage/v1/object/public/livros/${storagePath}`;
+              const pubResp = await fetch(publicUrl);
+              if (pubResp.ok) {
+                text = await pubResp.text();
+              } else {
+                // Fallback: signed URL (works for private buckets)
+                const { data: signedData, error: signedError } = await supabase.storage
+                  .from('livros')
+                  .createSignedUrl(storagePath, 3600);
+                if (!signedError && signedData?.signedUrl) {
+                  const signedResp = await fetch(signedData.signedUrl);
+                  if (signedResp.ok) text = await signedResp.text();
+                }
+              }
+            }
+
+            if (text) {
+              const { processedHtml, toc: extractedToc } = processHtmlForNav(text);
+              const { processed: bibleProcessed } = processHtmlWithReferences(processedHtml);
+              setHtmlContent(bibleProcessed);
+              setToc(extractedToc);
+              const dict = parseBibliaLocal(text);
+              setBibliaLocal(dict);
+            }
          } catch (err) {
            console.error('Failed to fetch HTML content:', err);
          } finally {
@@ -302,7 +331,7 @@ const Lesson = () => {
           const fallback = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).maybeSingle();
           profile = { ...(fallback.data || {}), modulos_finalizados_manual: [] };
         }
-        const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r.toLowerCase()));
+        const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r.toLowerCase()));
         setUserProfile({ ...user, profile_tipo: profile.tipo, caminhos_acesso: profile.caminhos_acesso, nucleo_id: profile.nucleo_id, modulos_finalizados_manual: profile.modulos_finalizados_manual || [], isStaff });
 
         // 1. Audit: Content Release Policy — fetch submissions + aula data without nested join
@@ -343,8 +372,6 @@ const Lesson = () => {
             if (approvedInAny) modulePassed = true;
           }
         }
-
-        const isExam = lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || !!lessonData.is_bloco_final;
 
         // Verifica exceção individual do aluno para este módulo
         const { data: modException } = await supabase
@@ -628,6 +655,7 @@ const Lesson = () => {
       }
     }
     fetchRelated();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson, id]);
 
   const handleStartExam = async () => {
@@ -931,6 +959,7 @@ const Lesson = () => {
       int = setInterval(() => setTimeLeft(p => { if (p && p <= 1) { clearInterval(int); handleSubmit(); return 0; } return p?p-1:0; }), 1000);
     }
     return () => clearInterval(int);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExamStarted, timeLeft, userProfile]);
 
   // Lock window: prevent close/tab switch/cache while exam is active
@@ -1016,6 +1045,7 @@ const Lesson = () => {
         document.exitFullscreen().catch(() => {});
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examModalConfirmed, isExamStarted, lesson, submitted]);
 
   // Extract references from lesson conteudo
@@ -1075,6 +1105,10 @@ const Lesson = () => {
 
   const hasContentBlocks = lesson?.conteudo && Array.isArray(lesson.conteudo) && lesson.conteudo.some((b: any) => b.type === 'text' || b.type === 'image');
   const hasHtmlFile = htmlContent !== null;
+  const hasPdfFile = !!(lesson?.arquivo_url && /\.pdf$/i.test(lesson.arquivo_url)) || !!lesson?.pdf_url;
+  const pdfUrl = lesson?.pdf_url || (lesson?.arquivo_url && /\.pdf$/i.test(lesson.arquivo_url) ? lesson.arquivo_url : null);
+
+  const hasRichContent = hasHtmlFile || hasContentBlocks || hasPdfFile;
 
   const renderHtmlWithReferences = (html: string) => {
     const processed = html.replace(
@@ -1103,6 +1137,25 @@ const Lesson = () => {
       source: 'Bíblia ACF',
     });
   }, [bibliaLocal]);
+
+  // ESC: volta à página de seleção de lições (módulo)
+  // Ignora se o usuário estiver digitando em campos de formulário ou provas
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      const target = e.target as HTMLElement
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return
+      // Não interferir durante provas/avaliações em andamento
+      if (lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao') return
+      if (isExamStarted || submitted) return
+      if (lesson?.livro_id) {
+        e.preventDefault()
+        navigate(`/module/${lesson.livro_id}`, { replace: true })
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [lesson, isExamStarted, submitted, navigate])
 
   if (loading) return <div className="auth-container"><Loader2 className="spinner" /></div>
 
@@ -1173,6 +1226,7 @@ const Lesson = () => {
     lesson.tipo === 'licao' ||
     hasHtmlFile ||
     hasContentBlocks ||
+    hasPdfFile ||
     lesson.arquivo_url ||
     lesson.pdf_url ||
     lesson.tipo === 'atividade' ||
@@ -1199,10 +1253,102 @@ const Lesson = () => {
     )
   }
 
+    const isPdfLesson = hasPdfFile && !hasHtmlFile && pdfUrl
+
+    // Botão "Próxima": avança página do PDF; se já estiver na última página, vai para a próxima lição
+    const handlePdfNext = () => {
+      const advanced = pdfViewerRef.current?.nextPage()
+      if (!advanced) {
+        // Chegou ao fim do PDF — encaminha para a lição seguinte
+        if (nextLessonId && !lesson.titulo?.toLowerCase().startsWith('lição 10')) {
+          navigate(`/lesson/${nextLessonId}`)
+        } else {
+          // Sem próxima lição — volta à página de seleção de lições
+          navigate(`/module/${lesson.livro_id}`)
+        }
+      }
+    }
+
     return (
-      <div className="lesson-container reading-page">
+      <div className={`lesson-container reading-page${isPdfLesson ? ' pdf-immersive-mode' : ''}`}>
 
         {/* Header da Lição - fixo no topo */}
+        {isPdfLesson ? (
+          /* Header enxuto para modo imersivo de PDF — alto contraste */
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '0.5rem 1rem',
+            background: '#0a0a12',
+            backdropFilter: 'blur(12px)',
+            borderRadius: '0',
+            position: 'sticky', top: 0, zIndex: 20,
+            borderBottom: '2px solid rgba(168,85,247,0.4)',
+            width: '100%',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.4)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+              <button
+                onClick={() => navigate(`/module/${lesson.livro_id}`)}
+                style={{
+                  width: 'auto', padding: '0.45rem 0.9rem', display: 'flex', alignItems: 'center',
+                  gap: '0.4rem', fontSize: '0.82rem', fontWeight: 700, flexShrink: 0,
+                  background: 'rgba(255,255,255,0.08)', color: '#fff',
+                  border: '1px solid rgba(255,255,255,0.15)', borderRadius: '10px',
+                  cursor: 'pointer', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)' }}
+                title="Voltar à página de seleção de lições (ESC)"
+              >
+                <LayoutGrid size={16} /> <span className="mobile-hide">Lições do Módulo</span>
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+                <div style={{
+                  width: '32px', height: '32px', borderRadius: '8px',
+                  background: 'rgba(168,85,247,0.2)', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  border: '1px solid rgba(168,85,247,0.3)'
+                }}>
+                  <FileText size={18} color="#c4b5fd" />
+                </div>
+                <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lesson.titulo}</h2>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+              <button
+                onClick={handlePdfNext}
+                style={{
+                  width: 'auto', padding: '0.45rem 1rem', display: 'flex', alignItems: 'center',
+                  gap: '0.4rem', fontSize: '0.82rem', fontWeight: 700,
+                  background: pdfIsLastPage ? 'rgba(168,85,247,0.25)' : '#7c3aed',
+                  color: '#fff', border: pdfIsLastPage ? '1px solid rgba(168,85,247,0.5)' : '1px solid #6d28d9',
+                  borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(124,58,237,0.4)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+                title={pdfIsLastPage ? 'Ir para a próxima lição' : 'Próxima página do PDF'}
+              >
+                {pdfIsLastPage ? 'Próxima Lição' : 'Próxima'} <ChevronRight size={16} />
+              </button>
+              <button
+                onClick={() => navigate(`/module/${lesson.livro_id}`, { replace: true })}
+                style={{
+                  width: 'auto', padding: '0.45rem', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(239,68,68,0.12)', color: '#fca5a5',
+                  border: '1px solid rgba(239,68,68,0.35)', borderRadius: '10px',
+                  cursor: 'pointer', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.25)'; e.currentTarget.style.color = '#fff' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.12)'; e.currentTarget.style.color = '#fca5a5' }}
+                title="Sair (ESC)"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>
+        ) : (
+        /* Header padrão para outros tipos de conteúdo */
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '0.75rem 1.5rem', marginBottom: '10px',
@@ -1214,10 +1360,10 @@ const Lesson = () => {
             <button
               onClick={() => navigate(`/module/${lesson.livro_id}`)}
               className="btn btn-outline"
-              style={{ width: 'auto', padding: '0.4rem' }}
-              title="Voltar ao módulo"
+              style={{ width: 'auto', padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem', fontWeight: 700 }}
+              title="Voltar à página de seleção de lições (ESC)"
             >
-              <ChevronLeft size={18} />
+              <ChevronLeft size={18} /> <span className="mobile-hide">Lições do Módulo</span>
             </button>
             <div>
               <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>{lesson.titulo}</h2>
@@ -1259,8 +1405,9 @@ const Lesson = () => {
             )}
           </div>
         </div>
+        )}
 
-       
+        
         {(lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo') && (
          <div className="video-section" style={{ marginBottom: '2rem' }}>
             <div className="video-wrapper" style={{ aspectRatio: '16/9', background: '#000', borderRadius: '32px', overflow: 'hidden' }}>
@@ -1278,298 +1425,312 @@ const Lesson = () => {
          </div>
        )}
        
-       {hasHtmlFile && !htmlLoading && (
-         <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', position: 'relative' }}>
-           {isMenuOpen && (
-             <div 
-               style={{ 
-                 position: 'fixed', 
-                 inset: 0, 
-                 zIndex: 1000, 
-                 display: 'flex', 
-                 justifyContent: 'flex-start' 
+{hasRichContent && !htmlLoading && (
+           <div style={{ display: 'flex', gap: isPdfLesson ? '0' : '2rem', alignItems: isPdfLesson ? 'stretch' : 'flex-start', position: 'relative', width: isPdfLesson ? '100%' : 'auto' }}>
+             {isMenuOpen && !isPdfLesson && (
+              <div 
+                style={{ 
+                  position: 'fixed', 
+                  inset: 0, 
+                  zIndex: 1000, 
+                  display: 'flex', 
+                  justifyContent: 'flex-start' 
+                }}
+              >
+                <div 
+                  onClick={() => setIsMenuOpen(false)} 
+                  style={{ 
+                    position: 'absolute', 
+                    inset: 0, 
+                    background: 'rgba(0,0,0,0.5)', 
+                    backdropFilter: 'blur(4px)' 
+                  }} 
+                />
+                 <aside style={{ 
+                   position: 'relative', 
+                   width: '300px', 
+                   background: 'var(--bg-dark)', 
+                   padding: '2rem', 
+                   borderRadius: '0 24px 24px 0', 
+                   borderRight: '1px solid var(--glass-border)',
+                   height: '100vh',
+                   overflowY: 'auto',
+                   boxShadow: '10px 0 30px rgba(0,0,0,0.5)',
+                   zIndex: 1001,
+                   transition: 'transform 0.3s ease'
+                 }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                     <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
+                       <List size={20} color="var(--primary)" /> {isPanorama ? 'Lições do Módulo' : 'Tópicos da Lição'}
+                     </h4>
+                     <button onClick={() => setIsMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                       <X size={24} />
+                     </button>
+                   </div>
+                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                       {isPanorama ? (
+                         // Panorama shows ALL lessons 1-10
+                         moduleLessons.length > 0 ? (
+                           moduleLessons.map((lsn, lsnIdx) => {
+                              const lessonNum = String(lsnIdx + 1).padStart(2, '0');
+                             return (
+                               <button
+                                 key={lsn.id}
+                                 onClick={() => {
+                                   setIsMenuOpen(false);
+                                   navigate(`/lesson/${lsn.id}`);
+                                 }}
+                                 style={{ 
+                                   color: 'var(--text-main)', 
+                                   textDecoration: 'none', 
+                                   fontSize: '0.88rem', 
+                                   display: 'flex', 
+                                   alignItems: 'center', 
+                                   gap: '0.75rem',
+                                   padding: '0.65rem 0.85rem',
+                                   borderRadius: '10px',
+                                   transition: 'all 0.2s',
+                                   lineHeight: 1.4,
+                                   background: 'rgba(255,255,255,0.04)',
+                                   cursor: 'pointer',
+                                   border: '1px solid var(--glass-border)',
+                                   textAlign: 'left',
+                                   width: '100%',
+                                   fontWeight: 600
+                                 }}
+                                 onMouseEnter={e => {
+                                   (e.currentTarget as HTMLButtonElement).style.background = 'rgba(var(--primary-rgb), 0.12)';
+                                   (e.currentTarget as HTMLButtonElement).style.color = 'var(--primary)';
+                                   (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--primary)';
+                                 }}
+                                 onMouseLeave={e => {
+                                   (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)';
+                                   (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-main)';
+                                   (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--glass-border)';
+                                 }}
+                               >
+                                <div style={{ 
+                                   width: '30px', 
+                                   height: '30px', 
+                                   borderRadius: '50%', 
+                                   background: 'var(--primary)', 
+                                   display: 'flex', 
+                                   alignItems: 'center', 
+                                   justifyContent: 'center',
+                                   fontSize: '0.75rem',
+                                   fontWeight: 800,
+                                   color: '#fff',
+                                   flexShrink: 0
+                                 }}>
+                                   {lessonNum}
+                                 </div>
+                                 <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lsn.titulo}</span>
+                               </button>
+                             );
+                           })
+                         ) : (
+                           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', padding: '1rem' }}>Nenhuma lição encontrada.</p>
+                         )
+                       ) : toc.length > 0 ? (
+                         // Normal lesson: show ALL toc items (with indentation for sub-sections)
+                         toc.map((item) => {
+                           const label = item.label.trim();
+                           const isMain = item.isMainSection;
+                           
+                           return (
+                             <a 
+                               key={item.id} 
+                               href="#" 
+                               onClick={(e) => {
+                                 e.preventDefault();
+                                 setIsMenuOpen(false);
+                                 setTimeout(() => {
+                                   const element = document.getElementById(item.id);
+                                   if (element) {
+                                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                   }
+                                 }, 100);
+                               }}
+                               style={{ 
+                                 color: isMain ? 'var(--text-main)' : 'var(--text-muted)', 
+                                 textDecoration: 'none', 
+                                 fontSize: isMain ? '0.92rem' : '0.83rem', 
+                                 display: 'flex', 
+                                 alignItems: 'center', 
+                                 gap: '0.6rem',
+                                 padding: isMain ? '0.65rem 0.85rem' : '0.45rem 0.85rem 0.45rem 1.75rem',
+                                 borderRadius: '8px',
+                                 transition: 'all 0.2s',
+                                 lineHeight: 1.4,
+                                 background: isMain ? 'rgba(255,255,255,0.04)' : 'transparent',
+                                 cursor: 'pointer',
+                                 fontWeight: isMain ? 700 : 500,
+                                 borderLeft: isMain ? 'none' : '2px solid rgba(var(--primary-rgb), 0.25)',
+                                 marginLeft: isMain ? '0' : '0.5rem'
+                               }}
+                               onMouseEnter={(e) => {
+                                 e.currentTarget.style.color = 'var(--primary)';
+                                 e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
+                               }}
+                               onMouseLeave={(e) => {
+                                 e.currentTarget.style.color = isMain ? 'var(--text-main)' : 'var(--text-muted)';
+                                 e.currentTarget.style.background = isMain ? 'rgba(255,255,255,0.04)' : 'transparent';
+                               }}
+                             >
+                               {isMain 
+                                 ? <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)', flexShrink: 0 }} />
+                                 : <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'rgba(var(--primary-rgb), 0.5)', flexShrink: 0 }} />
+                               }
+                               {label}
+                             </a>
+                           );
+                         })
+                       ) : (
+                         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', padding: '1rem' }}>Sem tópicos disponíveis para esta lição.</p>
+                       )}
+                   </div>
+                 </aside>
+              </div>
+            )}
+                  <div className="lesson-content" style={{ 
+                    flex: 1, 
+                    marginBottom: '0', 
+                    lineHeight: 1.8, 
+                     maxWidth: '100%',
+                     width: '100%',
+                    textAlign: 'justify',
+                    overflow: 'auto',
+                    padding: isPdfLesson ? '0' : undefined,
+                    margin: isPdfLesson ? '0' : undefined,
+                    transition: 'all 0.3s ease'
+                  }}
+               onClick={(e) => {
+                 const target = e.target as HTMLElement;
+
+                 // 1. Bible reference click (handles .biblia-ref)
+                 const bibRef = target.closest('.biblia-ref');
+                 if (bibRef) {
+                   e.preventDefault();
+                   handleBibleRefClick(bibRef as HTMLElement);
+                   return;
+                 }
+
+                 // 2. Wiki reference click (handles .wiki-ref)
+                 const wikiRef = target.closest('.wiki-ref');
+                 if (wikiRef) {
+                   e.preventDefault();
+                   const title = wikiRef.getAttribute('data-wiki-title') || wikiRef.textContent?.trim() || '';
+                   const tipo = wikiRef.getAttribute('data-wiki-tipo') || 'Referência de apoio';
+                   const desc = wikiRef.getAttribute('data-wiki-desc') || 'Referência de apoio ao conteúdo da lição.';
+                   setWikiPopup({ titulo: title, texto: desc, tipo });
+                   return;
+                 }
+
+                 // 3. Hamburger menu click (.hamb-btn)
+                 const hambBtn = target.closest('.hamb-btn');
+                 if (hambBtn) {
+                   e.preventDefault();
+                   const container = e.currentTarget;
+                   const drawer = container.querySelector('.drawer');
+                   const overlay = container.querySelector('.overlay');
+                   if (drawer && overlay) {
+                     drawer.classList.toggle('open');
+                     overlay.classList.toggle('open');
+                     hambBtn.setAttribute('aria-expanded', drawer.classList.contains('open') ? 'true' : 'false');
+                   }
+                   return;
+                 }
+
+                 // 5. Drawer close click (.drawer-close or clicking the overlay)
+                 if (target.closest('.drawer-close') || target.closest('.overlay')) {
+                   e.preventDefault();
+                   const container = e.currentTarget;
+                   const drawer = container.querySelector('.drawer');
+                   const overlay = container.querySelector('.overlay');
+                   if (drawer && overlay) {
+                     drawer.classList.remove('open');
+                     overlay.classList.remove('open');
+                   }
+                   return;
+                 }
+
+                 // 6. Original ref-btn (retained for backward compatibility)
+                 const btn = target.closest('.ref-btn');
+                 if (btn) {
+                   const refId = btn.getAttribute('data-ref');
+                   const ref = lessonReferences.find(r => r.id === refId);
+                   if (ref) setActiveReference(ref);
+                   return;
+                 }
+
+                 // 7. Links and anchors
+                 const link = target.closest('a');
+                 if (link && link.href) {
+                   const url = new URL(link.href);
+                   
+                   // Hash/anchor links (e.g. #topic-1)
+                   if (url.hash && url.pathname === window.location.pathname) {
+                     e.preventDefault();
+                     // Close drawer if open
+                     const container = e.currentTarget;
+                     const drawer = container.querySelector('.drawer');
+                     const overlay = container.querySelector('.overlay');
+                     if (drawer && overlay) {
+                       drawer.classList.remove('open');
+                       overlay.classList.remove('open');
+                     }
+                     
+                     // Smooth scroll to the heading
+                     const targetId = decodeURIComponent(url.hash.substring(1));
+                     const targetEl = document.getElementById(targetId);
+                     if (targetEl) {
+                       targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     }
+                     return;
+                   }
+                   
+                   e.preventDefault();
+                   let path = decodeURIComponent(url.pathname).replace(/\/+$/, '');
+                   if (path.endsWith('.html')) path = path.slice(0, -5);
+                   const key = path.replace(/^\/lesson\//, '').toLowerCase().trim();
+                   
+                   // Direct UUID navigation
+                   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key);
+                   if (isUuid) {
+                     navigate(`/lesson/${key}`);
+                   } else {
+                     const targetId = lessonMap[key] || lessonMap[path.toLowerCase()];
+                     if (targetId) navigate(`/lesson/${targetId}`);
+                   }
+                 }
                }}
              >
-               <div 
-                 onClick={() => setIsMenuOpen(false)} 
-                 style={{ 
-                   position: 'absolute', 
-                   inset: 0, 
-                   background: 'rgba(0,0,0,0.5)', 
-                   backdropFilter: 'blur(4px)' 
-                 }} 
-               />
-                <aside style={{ 
-                  position: 'relative', 
-                  width: '300px', 
-                  background: 'var(--bg-dark)', 
-                  padding: '2rem', 
-                  borderRadius: '0 24px 24px 0', 
-                  borderRight: '1px solid var(--glass-border)',
-                  height: '100vh',
-                  overflowY: 'auto',
-                  boxShadow: '10px 0 30px rgba(0,0,0,0.5)',
-                  zIndex: 1001,
-                  transition: 'transform 0.3s ease'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
-                      <List size={20} color="var(--primary)" /> {isPanorama ? 'Lições do Módulo' : 'Tópicos da Lição'}
-                    </h4>
-                    <button onClick={() => setIsMenuOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                      <X size={24} />
-                    </button>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      {isPanorama ? (
-                        // Panorama shows ALL lessons 1-10
-                        moduleLessons.length > 0 ? (
-                          moduleLessons.map((lsn, lsnIdx) => {
-                             const lessonNum = String(lsnIdx + 1).padStart(2, '0');
-                            return (
-                              <button
-                                key={lsn.id}
-                                onClick={() => {
-                                  setIsMenuOpen(false);
-                                  navigate(`/lesson/${lsn.id}`);
-                                }}
-                                style={{ 
-                                  color: 'var(--text-main)', 
-                                  textDecoration: 'none', 
-                                  fontSize: '0.88rem', 
-                                  display: 'flex', 
-                                  alignItems: 'center', 
-                                  gap: '0.75rem',
-                                  padding: '0.65rem 0.85rem',
-                                  borderRadius: '10px',
-                                  transition: 'all 0.2s',
-                                  lineHeight: 1.4,
-                                  background: 'rgba(255,255,255,0.04)',
-                                  cursor: 'pointer',
-                                  border: '1px solid var(--glass-border)',
-                                  textAlign: 'left',
-                                  width: '100%',
-                                  fontWeight: 600
-                                }}
-                                onMouseEnter={e => {
-                                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(var(--primary-rgb), 0.12)';
-                                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--primary)';
-                                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--primary)';
-                                }}
-                                onMouseLeave={e => {
-                                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.04)';
-                                  (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-main)';
-                                  (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--glass-border)';
-                                }}
-                              >
-                                <div style={{ 
-                                  width: '30px', 
-                                  height: '30px', 
-                                  borderRadius: '50%', 
-                                  background: 'var(--primary)', 
-                                  display: 'flex', 
-                                  alignItems: 'center', 
-                                  justifyContent: 'center',
-                                  fontSize: '0.75rem',
-                                  fontWeight: 800,
-                                  color: '#fff',
-                                  flexShrink: 0
-                                }}>
-                                  {lessonNum}
-                                </div>
-                                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lsn.titulo}</span>
-                              </button>
-                            );
-                          })
-                        ) : (
-                          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', padding: '1rem' }}>Nenhuma lição encontrada.</p>
-                        )
-                      ) : (
-                        // Normal lesson: show ALL toc items (with indentation for sub-sections)
-                        toc.map((item, idx) => {
-                          const label = item.label.trim();
-                          const isMain = item.isMainSection;
-                          
-                          return (
-                            <a 
-                              key={item.id} 
-                              href="#" 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setIsMenuOpen(false);
-                                setTimeout(() => {
-                                  const element = document.getElementById(item.id);
-                                  if (element) {
-                                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                  }
-                                }, 100);
-                              }}
-                              style={{ 
-                                color: isMain ? 'var(--text-main)' : 'var(--text-muted)', 
-                                textDecoration: 'none', 
-                                fontSize: isMain ? '0.92rem' : '0.83rem', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '0.6rem',
-                                padding: isMain ? '0.65rem 0.85rem' : '0.45rem 0.85rem 0.45rem 1.75rem',
-                                borderRadius: '8px',
-                                transition: 'all 0.2s',
-                                lineHeight: 1.4,
-                                background: isMain ? 'rgba(255,255,255,0.04)' : 'transparent',
-                                cursor: 'pointer',
-                                fontWeight: isMain ? 700 : 500,
-                                borderLeft: isMain ? 'none' : '2px solid rgba(var(--primary-rgb), 0.25)',
-                                marginLeft: isMain ? '0' : '0.5rem'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.color = 'var(--primary)';
-                                e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.1)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.color = isMain ? 'var(--text-main)' : 'var(--text-muted)';
-                                e.currentTarget.style.background = isMain ? 'rgba(255,255,255,0.04)' : 'transparent';
-                              }}
-                            >
-                              {isMain 
-                                ? <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)', flexShrink: 0 }} />
-                                : <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'rgba(var(--primary-rgb), 0.5)', flexShrink: 0 }} />
-                              }
-                              {label}
-                            </a>
-                          );
-                        })
-                      )}
-                  </div>
-                </aside>
+               {hasHtmlFile && (
+                 <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderHtmlWithReferences(htmlContent!)) }} />
+               )}
+               {hasContentBlocks && !hasHtmlFile && (
+                 <div>
+                   {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
+                 </div>
+               )}
+                {hasPdfFile && !hasHtmlFile && pdfUrl && (() => {
+                  let pdfFinalUrl = pdfUrl;
+                  if (pdfFinalUrl.includes('/storage/v1/object/') && !pdfFinalUrl.includes('/storage/v1/object/public/')) {
+                    pdfFinalUrl = pdfFinalUrl.replace('/storage/v1/object/', '/storage/v1/object/public/');
+                  }
+                   return (
+                     <PdfViewer
+                       ref={pdfViewerRef}
+                       url={pdfFinalUrl}
+                       height="calc(100vh - 56px)"
+                       immersive={true}
+                       onTextExtracted={(text) => setPdfExtractedText(text)}
+                       onPageChange={(_page, _total, isLast) => setPdfIsLastPage(isLast)}
+                     />
+                   );
+                })()}
              </div>
-           )}
-                <div className="lesson-content" style={{ 
-                  flex: 1, 
-                  marginBottom: '0', 
-                  lineHeight: 1.8, 
-                   maxWidth: '100%',
-                   width: '100%',
-                  textAlign: 'justify',
-                  overflow: 'auto',
-                  transition: 'all 0.3s ease'
-                }}
-              onClick={(e) => {
-                const target = e.target as HTMLElement;
-
-                // 1. Bible reference click (handles .biblia-ref)
-                const bibRef = target.closest('.biblia-ref');
-                if (bibRef) {
-                  e.preventDefault();
-                  handleBibleRefClick(bibRef as HTMLElement);
-                  return;
-                }
-
-                // 2. Wiki reference click (handles .wiki-ref)
-                const wikiRef = target.closest('.wiki-ref');
-                if (wikiRef) {
-                  e.preventDefault();
-                  const title = wikiRef.getAttribute('data-wiki-title') || wikiRef.textContent?.trim() || '';
-                  const tipo = wikiRef.getAttribute('data-wiki-tipo') || 'Referência de apoio';
-                  const desc = wikiRef.getAttribute('data-wiki-desc') || 'Referência de apoio ao conteúdo da lição.';
-                  setWikiPopup({ titulo: title, texto: desc, tipo });
-                  return;
-                }
-
-                // 3. Hamburger menu click (.hamb-btn)
-                const hambBtn = target.closest('.hamb-btn');
-                if (hambBtn) {
-                  e.preventDefault();
-                  const container = e.currentTarget;
-                  const drawer = container.querySelector('.drawer');
-                  const overlay = container.querySelector('.overlay');
-                  if (drawer && overlay) {
-                    drawer.classList.toggle('open');
-                    overlay.classList.toggle('open');
-                    hambBtn.setAttribute('aria-expanded', drawer.classList.contains('open') ? 'true' : 'false');
-                  }
-                  return;
-                }
-
-                // 5. Drawer close click (.drawer-close or clicking the overlay)
-                if (target.closest('.drawer-close') || target.closest('.overlay')) {
-                  e.preventDefault();
-                  const container = e.currentTarget;
-                  const drawer = container.querySelector('.drawer');
-                  const overlay = container.querySelector('.overlay');
-                  if (drawer && overlay) {
-                    drawer.classList.remove('open');
-                    overlay.classList.remove('open');
-                  }
-                  return;
-                }
-
-                // 6. Original ref-btn (retained for backward compatibility)
-                const btn = target.closest('.ref-btn');
-                if (btn) {
-                  const refId = btn.getAttribute('data-ref');
-                  const ref = lessonReferences.find(r => r.id === refId);
-                  if (ref) setActiveReference(ref);
-                  return;
-                }
-
-                // 7. Links and anchors
-                const link = target.closest('a');
-                if (link && link.href) {
-                  const url = new URL(link.href);
-                  
-                  // Hash/anchor links (e.g. #topic-1)
-                  if (url.hash && url.pathname === window.location.pathname) {
-                    e.preventDefault();
-                    // Close drawer if open
-                    const container = e.currentTarget;
-                    const drawer = container.querySelector('.drawer');
-                    const overlay = container.querySelector('.overlay');
-                    if (drawer && overlay) {
-                      drawer.classList.remove('open');
-                      overlay.classList.remove('open');
-                    }
-                    
-                    // Smooth scroll to the heading
-                    const targetId = decodeURIComponent(url.hash.substring(1));
-                    const targetEl = document.getElementById(targetId);
-                    if (targetEl) {
-                      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                    return;
-                  }
-                  
-                  e.preventDefault();
-                  let path = decodeURIComponent(url.pathname).replace(/\/+$/, '');
-                  if (path.endsWith('.html')) path = path.slice(0, -5);
-                  const key = path.replace(/^\/lesson\//, '').toLowerCase().trim();
-                  
-                  // Direct UUID navigation
-                  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key);
-                  if (isUuid) {
-                    navigate(`/lesson/${key}`);
-                  } else {
-                    const targetId = lessonMap[key] || lessonMap[path.toLowerCase()];
-                    if (targetId) navigate(`/lesson/${targetId}`);
-                  }
-                }
-              }}
-              dangerouslySetInnerHTML={{ __html: renderHtmlWithReferences(htmlContent!) }}
-            />
-          </div>
-        )}
-
-         {hasContentBlocks && !hasHtmlFile && (
-             <div className="lesson-content" style={{ 
-               marginBottom: '0',
-               lineHeight: 1.8,
-               maxWidth: '100%',
-               width: '100%',
-               textAlign: 'justify',
-               overflow: 'auto',
-               transition: 'all 0.3s ease'
-             }}>
-               {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
-             </div>
+           </div>
          )}
 
         {/* Indicador de Concluída / Botão Marcar como Concluída para lições e materiais */}
@@ -2456,7 +2617,14 @@ const Lesson = () => {
           )}
         </div>
       </div>
-      <AudioReader />
+      {hasPdfFile && !hasHtmlFile ? (
+        <PdfAudioReader
+          pdfText={pdfExtractedText}
+          title={lesson?.titulo ? `Ouvir: ${lesson.titulo}` : 'Ouvir PDF'}
+        />
+      ) : (
+        <AudioReader />
+      )}
 
       {/* WIKI REFERENCE POPUP */}
       {wikiPopup && (
@@ -2531,6 +2699,24 @@ const Lesson = () => {
           transform: scale(1.1);
           box-shadow: 0 12px 40px rgba(201, 168, 76, 0.5);
         }
+        /* Modo imersivo de PDF: maximiza área de leitura, remove distrações */
+        .pdf-immersive-mode {
+          padding: 0 !important;
+          margin: 0 !important;
+          max-width: 100% !important;
+          width: 100% !important;
+        }
+        .pdf-immersive-mode .lesson-content {
+          padding: 0 !important;
+          margin: 0 !important;
+          max-width: 100% !important;
+        }
+        /* Em modo PDF, esconde o botão "Ouvir Lição" do AudioReader (canto direito)
+           pois o PdfAudioReader (canto esquerdo) cuida da leitura */
+        .pdf-immersive-mode .leitor-btn-flutuante {
+          display: none !important;
+        }
+        /* Bíblia permanece acessível no canto direito durante PDF */
       `}</style>
     </div>
   )

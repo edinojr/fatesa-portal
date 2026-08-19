@@ -68,6 +68,7 @@ export const useProfile = () => {
       clearInterval(healthCheck)
       unsubAuthError()
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchProfile = async (forceRefresh = false) => {

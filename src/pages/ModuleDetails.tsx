@@ -25,8 +25,8 @@ const ModuleDetails = () => {
         navigate(path);
     };
 
-    const isStaff = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.tipo === 'professor' ||
-                    (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
+    const isStaff = profile?.tipo === 'admin' || profile?.tipo === 'suporte' || profile?.tipo === 'professor' || profile?.tipo === 'colaborador' ||
+                    (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
 
     const currentBook = useMemo(() => {
         for (const course of courses) {
@@ -42,6 +42,7 @@ const ModuleDetails = () => {
             fetchNucleusReleases();
             fetchIndividualExceptions();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [profileLoading, profile, fetchStudentDashboardData, id]);
 
     const fetchNucleusReleases = async () => {
@@ -198,7 +199,7 @@ const ModuleDetails = () => {
       );
       if (hasNucleusRelease || hasIndividualExamRelease) return false;
   
-      if (!!item.lockedByProfessor) return true;
+      if (item.lockedByProfessor) return true;
       return isLocked(item);
     };
 
@@ -226,8 +227,6 @@ const ModuleDetails = () => {
     for (let i = 0; i < evalLimit; i++) {
       gridData.avaliacoes[10 - i] = avaliacoes[evalCount - 1 - i];
     }
-
-    const maxRows = sortedOrdens.length;
 
     const hasAnyContent = 
       gridData.lessons.some(l => l !== null) || 

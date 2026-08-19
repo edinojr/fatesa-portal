@@ -21,7 +21,7 @@ function isInsideTag(html: string, index: number): boolean {
 /**
  * Check if a reference is already wrapped in a span
  */
-function isAlreadyWrapped(html: string, index: number, matchLen: number): boolean {
+function isAlreadyWrapped(html: string, index: number): boolean {
   // Check the 200 chars before to see if there's an opening span tag that hasn't been closed
   const searchStart = Math.max(0, index - 200);
   const before = html.substring(searchStart, index);
@@ -57,7 +57,7 @@ export function processGeoReferences(html: string): string {
     if (isInsideTag(result, index)) continue;
     
     // Skip if already wrapped in a span
-    if (isAlreadyWrapped(result, index, match.length)) continue;
+    if (isAlreadyWrapped(result, index)) continue;
 
     // Get the text around this match to check for duplicates
     const afterMatch = result.substring(index + match.length, index + match.length + 20);

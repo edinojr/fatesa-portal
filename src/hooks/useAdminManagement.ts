@@ -33,6 +33,7 @@ export const useAdminManagement = () => {
     if (nav.activeTab === 'finance') finance.fetchFinanceData();
     if (nav.activeTab === 'analytics' || nav.activeTab === 'academic') analytics.fetchAnalytics();
     if (nav.activeTab === 'reports') finance.fetchFinanceReport();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     nav.activeTab, 
     stats.fetchStats, 
@@ -55,8 +56,7 @@ export const useAdminManagement = () => {
 
       const roles = (profile.caminhos_acesso as string[]) || [];
       const isAdmin = ['admin', 'suporte'].includes(profile.tipo || '') || 
-                      roles.some(r => ['admin', 'suporte'].includes(r)) || 
-                      profile.email === 'edi.ben.jr@gmail.com';
+                      roles.some(r => ['admin', 'suporte'].includes(r));
 
       if (!isAdmin) {
         navigate('/dashboard');
@@ -83,7 +83,7 @@ export const useAdminManagement = () => {
     ...analytics,
     ...actions,
     profile,
-    userRole: profile?.tipo,
+    userRole: (['admin', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r))) ? 'admin' : profile?.tipo,
     availableRoles: profile?.caminhos_acesso || [profile?.tipo].filter(Boolean),
     fetchData,
     loading: profileLoading || stats.loading || users.loading || content.loading || finance.loading || analytics.loading

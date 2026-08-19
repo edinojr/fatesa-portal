@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { BookOpen, Eye, PlayCircle, ShieldCheck, CheckSquare, Clock, Lock, Unlock, ClipboardList, FileText, GraduationCap, ChevronDown, ChevronRight, CheckCircle, AlertCircle, ToggleLeft, ToggleRight, Zap } from 'lucide-react'
+import { BookOpen, Eye, ShieldCheck, Clock, Lock, Unlock, GraduationCap, CheckCircle, AlertCircle, ToggleLeft, ToggleRight } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { handleSupabaseError } from '../../../lib/authUtils'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
 import ModuleCard from './cards/ModuleCard'
-import ContentCard from './cards/ContentCard'
-import { getTipoConfig, getRootForLesson } from './cards/contentTypes'
-import QuizEditorModal from './modals/QuizEditorModal'
 
 interface ProfessorContentProps {
   courses: ProfessorCourse[]
@@ -27,57 +24,6 @@ interface ProfessorContentProps {
   hideReleaseControls?: boolean
 }
 
-const TIPO_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
-  gravada:   { label: 'Vídeo Aula',  color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  icon: <PlayCircle size={18} /> },
-  ao_vivo:   { label: 'Ao Vivo',     color: '#f59e0b', bg: 'rgba(245,158,11,0.12)',   icon: <PlayCircle size={18} /> },
-  video:     { label: 'Vídeo',       color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  icon: <PlayCircle size={18} /> },
-  atividade: { label: 'Atividade',   color: '#10b981', bg: 'rgba(16,185,129,0.12)',   icon: <ClipboardList size={18} /> },
-  exercicio: { label: 'Exercício de Fixação', color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)', icon: <ClipboardList size={18} /> },
-  prova:     { label: 'Prova',       color: '#eab308', bg: 'rgba(234,179,8,0.12)',    icon: <GraduationCap size={18} /> },
-  licao:     { label: 'Lição',       color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',   icon: <FileText size={18} /> },
-  aula:      { label: 'Aula',        color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',   icon: <FileText size={18} /> },
-}
-
-const DEFAULT_TIPO = { label: 'Aula', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)', icon: <FileText size={18} /> }
-
-function GabaritoSummary({ questions }: { questions: any[] }) {
-  const LETTERS = ['A', 'B', 'C', 'D', 'E']
-  if (!questions || questions.length === 0) return null
-  return (
-    <div style={{
-      marginTop: '0.75rem', padding: '0.75rem 1rem',
-      background: 'rgba(34, 197, 94, 0.07)', border: '1px solid rgba(34, 197, 94, 0.2)',
-      borderRadius: '12px'
-    }}>
-      <p style={{ fontSize: '0.65rem', fontWeight: 800, color: '#22c55e', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-        <CheckCircle size={12} /> Gabarito Oficial ({questions.length} questões)
-      </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-        {questions.map((q: any, idx: number) => {
-          let ans = '?'
-          if (q.type === 'true_false') ans = q.isTrue ? 'V' : 'F'
-          else if (q.type === 'multiple_choice' || !q.type) {
-            ans = typeof q.correct === 'number' ? (LETTERS[q.correct] || '?') : '?'
-          } else if (q.type === 'matching') ans = q.matchingPairs?.map((p: any) => `${p.left} → ${p.right}`).join('; ') || '↔'
-          else if (q.type === 'discursive') ans = '✍'
-          const hasAns = ans !== '?'
-          return (
-            <div key={idx} style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center',
-              background: hasAns ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.04)',
-              border: `1px solid ${hasAns ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.08)'}`,
-              borderRadius: '8px', padding: '0.25rem 0.45rem', minWidth: '36px'
-            }}>
-              <span style={{ fontSize: '0.55rem', color: 'var(--text-muted)', lineHeight: 1 }}>Q{idx + 1}</span>
-              <span style={{ fontSize: '0.8rem', fontWeight: 900, color: hasAns ? '#22c55e' : 'var(--text-muted)', lineHeight: 1.3 }}>{ans}</span>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
 const ProfessorContent: React.FC<ProfessorContentProps> = ({
   courses,
   selectedCourse,
@@ -94,12 +40,8 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   submissions = [],
   hideReleaseControls = false
 }) => {
-  const navigate = useNavigate()
   const [releases, setReleases] = useState<any[]>([])
-  const [expandedLesson, setExpandedLesson] = useState<string | null>(null)
   const [selectedNucleus, setSelectedNucleus] = useState<string>('')
-  const [editingQuiz, setEditingQuiz] = useState<any>(null)
-  const [quizQuestions, setQuizQuestions] = useState<any[]>([])
 
   useEffect(() => {
     fetchReleases()
@@ -148,7 +90,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
   const toggleModuleActive = async (bookId: string, currentStatus: boolean) => {
     try {
-      const { data: colCheck, error: colError } = await supabase.from('livros').select('professor_active').eq('id', bookId).maybeSingle()
+      const { error: colError } = await supabase.from('livros').select('professor_active').eq('id', bookId).maybeSingle()
       if (colError && colError.code === '42703') {
         alert('Coluna professor_active não existe na tabela livros. Execute a migration pendente.')
         return
@@ -213,7 +155,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         .order('ordem', { ascending: true })
         .limit(1);
 
-      let itemsToRelease: Array<{ nucleo_id: string; item_id: any; item_type: string; liberado: boolean }> = [];
+      const itemsToRelease: Array<{ nucleo_id: string; item_id: any; item_type: string; liberado: boolean }> = [];
 
       if (currentExams) {
         currentExams.forEach(exam => {
@@ -332,7 +274,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     })
   }
 
-  const handleToggleLessonRelease = async (lessonId: string, lessonTipo: string, isBlocoFinal?: boolean) => {
+  const handleToggleLessonRelease = async (lessonId: string, lessonTipo: string) => {
     if (!selectedNucleus) {
       alert('Selecione um polo primeiro.')
       return
@@ -398,17 +340,6 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
       } catch (err: any) {
         alert('Erro ao bloquear módulo: ' + err.message)
       }
-    }
-  }
-
-  const getV1Status = (avaliacoes: any[]) => {
-    const v1 = avaliacoes.find((a: any) => (a.versao || 1) === 1)
-    if (!v1) return { hasV1: false, v1Active: false, v1Id: null }
-    return {
-      hasV1: true,
-      v1Active: v1.professor_active !== false,
-      v1Id: v1.id,
-      v1Lesson: v1
     }
   }
 
@@ -493,8 +424,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                 onOpenLessons={() => selectBookAndShowLessons(book)}
                          showReleaseBadges={!hideReleaseControls ? (lesson) => {
                            const isVideo = (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video');
-                           const isExam = (lesson.tipo === 'prova' || !!lesson.is_bloco_final);
-                            const itemType = isVideo ? 'video' : 'atividade';
+                           const itemType = isVideo ? 'video' : 'atividade';
                            return !releases.some(r => r.item_id === lesson.id && r.item_type === itemType);
                          } : undefined}
 releaseControls={!hideReleaseControls && (
@@ -818,7 +748,7 @@ releaseControls={!hideReleaseControls && (
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        handleToggleLessonRelease(item.id, item.tipo, item.is_bloco_final)
+                        handleToggleLessonRelease(item.id, item.tipo)
                       }}
                       style={{
                         padding: '0.3rem 0.5rem', fontSize: '0.6rem', fontWeight: 700,
@@ -858,7 +788,6 @@ releaseControls={!hideReleaseControls && (
               const gabarito = getLessonGabarito(item)
               const isReleased = isLessonReleased(item.id, item.tipo, item.is_bloco_final)
 
-              const v1Status = getV1Status(avaliacoes)
               const v2Unlocked = isV2Unlocked(avaliacoes)
               const v3Unlocked = isV3Unlocked(avaliacoes)
 
@@ -954,7 +883,7 @@ releaseControls={!hideReleaseControls && (
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
-                          handleToggleLessonRelease(item.id, item.tipo, item.is_bloco_final)
+                          handleToggleLessonRelease(item.id, item.tipo)
                         }}
                         style={{
                           padding: '0.2rem 0.4rem', fontSize: '0.5rem', fontWeight: 700,

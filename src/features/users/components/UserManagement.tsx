@@ -1,6 +1,7 @@
 import React from 'react'
 import { GraduationCap, Users, ShieldCheck, Loader2, Trash2, UserPlus, Edit2, BookOpen, RotateCcw, CreditCard, LayoutGrid, MapPin } from 'lucide-react'
 import Badge from '../../../components/ui/Badge'
+import { hasStudentScope } from '../../../lib/authUtils'
 
 interface UserManagementProps {
   users: any[]
@@ -277,7 +278,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
     const groupedByNucleo = filteredUsers.reduce((acc: any, user: any) => {
       const nucName = user.nucleos?.nome || 'Sem Núcleo Definido'
       if (!acc[nucName]) acc[nucName] = { professors: [], students: [] }
-      if (STAFF_TYPES.includes(user.tipo) && user.email !== 'edi.ben.jr@gmail.com') {
+      if (STAFF_TYPES.includes(user.tipo) && !hasStudentScope(user)) {
         acc[nucName].professors.push(user)
       } else {
         acc[nucName].students.push(user)

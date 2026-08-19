@@ -17,7 +17,6 @@ import {
 import { QuizQuestion } from '../../../types/admin';
 import { useProfile } from '../../../hooks/useProfile';
 import { supabase } from '../../../lib/supabase';
-import { convertQuizQuestionsToJsonLesson } from '../utils/exerciseParser';
 
 type UserMode = 'admin' | 'professor' | 'student';
 
@@ -31,7 +30,6 @@ interface ExercicioFixacaoProps {
 const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
   lessonId,
   questions: initialQuestions,
-  lessonTitle = '',
   onSaved
 }) => {
   const { profile } = useProfile();
@@ -185,6 +183,7 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
     }
 
     return { total, answered, correct };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions, respostasAluno]);
 
   // Render True/False question
@@ -935,7 +934,7 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
           </div>
           {expandedSections.trueFalse && (
             <div>
-              {groupedQuestions.trueFalse.map((q, idx) => renderTrueFalse(q, getGlobalIndex(q) - 1))}
+              {groupedQuestions.trueFalse.map((q) => renderTrueFalse(q, getGlobalIndex(q) - 1))}
             </div>
           )}
         </div>
@@ -969,7 +968,7 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
           </div>
           {expandedSections.shortAnswer && (
             <div>
-              {groupedQuestions.shortAnswer.map((q, idx) => renderShortAnswer(q, getGlobalIndex(q) - 1))}
+              {groupedQuestions.shortAnswer.map((q) => renderShortAnswer(q, getGlobalIndex(q) - 1))}
             </div>
           )}
         </div>
@@ -1003,7 +1002,7 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
           </div>
           {expandedSections.multipleChoice && (
             <div>
-              {groupedQuestions.multipleChoice.map((q, idx) => renderMultipleChoice(q, getGlobalIndex(q) - 1))}
+              {groupedQuestions.multipleChoice.map((q) => renderMultipleChoice(q, getGlobalIndex(q) - 1))}
             </div>
           )}
         </div>
@@ -1037,7 +1036,7 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
           </div>
           {expandedSections.matching && (
             <div>
-              {groupedQuestions.matching.map((q, idx) => renderMatching(q, getGlobalIndex(q) - 1))}
+              {groupedQuestions.matching.map((q) => renderMatching(q, getGlobalIndex(q) - 1))}
             </div>
           )}
         </div>

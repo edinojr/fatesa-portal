@@ -1,7 +1,8 @@
 import React from 'react'
-import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock, ShieldOff } from 'lucide-react'
+import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { Student } from '../../../types/professor'
+import { hasStudentScope } from '../../../lib/authUtils'
 
 interface StudentsManagementProps {
   allStudents: Student[]
@@ -21,10 +22,10 @@ interface StudentsManagementProps {
   courses?: any[]
 }
 
-export default function StudentsManagement({ 
+export default function StudentsManagement({
   allStudents, searchTerm, setSearchTerm, actionLoading,
   handleApproveAccess, handleRejectAccess, handleDeleteUser,
-  handleResetActivities, handleUpdateUserNucleo, handleUpdateUserType,
+  handleResetActivities, handleUpdateUserNucleo,
   handleGrantModuleException, handleRevokeModuleException,
   userRole, allNucleos = [], courses = []
 }: StudentsManagementProps) {
@@ -55,10 +56,9 @@ export default function StudentsManagement({
   }
 
   const filteredStudents = allStudents.filter(s => {
-    // Excluir professores da gestão de alunos, exceto o Edino Junior
+    // Excluir professores da gestão de alunos, exceto se também forem alunos (escopo)
     const isProfessor = s.tipo === 'professor';
-    const isEdino = s.nome?.toLowerCase().includes('edino junior') || s.email === 'edi.ben.jr@gmail.com';
-    if (isProfessor && !isEdino) return false;
+    if (isProfessor && !hasStudentScope(s)) return false;
 
     // Filtro por Núcleo selecionado nos cards
     if (selectedNucleoId && s.nucleo_id !== selectedNucleoId) return false;

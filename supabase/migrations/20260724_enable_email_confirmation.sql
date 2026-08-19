@@ -1,0 +1,25 @@
+-- ==============================================================================
+-- #5 ATIVAR CONFIRMAÇÃO DE E-MAIL NO SUPABASE AUTH
+-- ==============================================================================
+-- A confirmação de e-mail NÃO é um SQL — é um toggle do projeto Supabase:
+--
+--   Painel Supabase → Authentication → Sign In / Providers → Email
+--     ✅ Marcar "Confirm email"
+--     (Opcional) Ajustar "Confirm token expiry" para 24h
+--
+-- Esta migração apenas documenta o passo e(funções) ajusta a janela padrão de
+-- confirmação do usuário já existente (opcional, só se quiser forçar re-confirmação).
+--
+-- Para REENVIAR confirmação de usuários pendentes:
+--   SELECT id, email, confirmation_sent_at
+--   FROM auth.users
+--   WHERE email_confirmed_at IS NULL AND created_at < now() - interval '7 days';
+--
+-- (O código em src/pages/Signup.tsx agora respeita `email_confirmed_at` —
+--  usuários comuns não logam até confirmar. Alumni verificado e staff autorizado
+--  continuam acessando imediatamente, pois seus e-mails foram validados por canal
+--  externo.)
+-- ==============================================================================
+
+-- (Nenhum comando SQL necessário — apenas ajuste de config no dashboard.)
+SELECT 'Configuração de confirmação de e-mail deve ser aplicada no painel do Supabase.' AS mensagem;

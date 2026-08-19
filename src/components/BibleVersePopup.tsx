@@ -1,5 +1,5 @@
 import React from 'react'
-import { X, Bookmark, Copy, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, Bookmark, Copy } from 'lucide-react'
 import { useBibleData, VerseResult } from '../hooks/useBibleData'
 import { BibleReaderPopup } from './BibleReaderPopup'
 
@@ -8,10 +8,9 @@ interface BibleVersePopupProps {
   chapter: number
   verses: number[]
   onClose: () => void
-  onOpenReader?: (book: string, chapter: number) => void
 }
 
-export function BibleVersePopup({ book, chapter, verses, onClose, onOpenReader }: BibleVersePopupProps) {
+export function BibleVersePopup({ book, chapter, verses, onClose }: BibleVersePopupProps) {
   const { getVerse, getChapter } = useBibleData()
   const [showReader, setShowReader] = React.useState(false)
   const [copied, setCopied] = React.useState(false)
@@ -36,6 +35,7 @@ export function BibleVersePopup({ book, chapter, verses, onClose, onOpenReader }
       }
     }
     return data
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book, chapter, verses, getVerse])
 
   const hasVerse = verseData.length > 0

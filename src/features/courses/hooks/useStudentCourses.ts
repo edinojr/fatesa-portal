@@ -32,10 +32,8 @@ export const useStudentCourses = (profile: any) => {
     if (!profile) return;
     setLoading(true);
     try {
-      const isStaff = ['admin', 'professor', 'suporte'].includes(profile?.tipo || '') ||
-                      (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte'].includes(r));
-
-      const cursoId = (profile.curso_id && profile.curso_id !== 'null') ? profile.curso_id : null;
+      const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo || '') ||
+                      (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
 
       const safeSelect = async (queryPromise: PromiseLike<{ data: any; error: any }>) => {
         const tableName = extractTableName(queryPromise)
@@ -59,12 +57,6 @@ export const useStudentCourses = (profile: any) => {
           return { data: null, error: null }
         }
       }
-
-      let courseBooksQuery = supabase.from('livros').select('id, ordem, professor_active');
-      if (cursoId) {
-        courseBooksQuery = courseBooksQuery.eq('curso_id', cursoId);
-      }
-      const { data: courseBooks } = await safeSelect(courseBooksQuery.order('ordem'));
 
       const { data: releases } = await safeSelect(
         profile.nucleo_id
@@ -123,34 +115,15 @@ export const useStudentCourses = (profile: any) => {
         }
       });
 
-      const bookOrdens = (courseBooks || []).map((b: any) => b.ordem || 1).sort((a: number, b: number) => a - b);
-      const minBookOrdem = bookOrdens[0] || 1;
-
-      let maxReleasedModuleOrdem = 0;
-      if (courseBooks && releases) {
-        courseBooks.forEach((b: any) => {
-          const isModuleReleased = releasedModulos.includes(b.id);
-          const isExamReleased = releasedExamBookIds.has(b.id);
-          if (isModuleReleased && (b.ordem || 0) > maxReleasedModuleOrdem) {
-            maxReleasedModuleOrdem = b.ordem;
-          }
-          if (isExamReleased && (b.ordem || 0) + 1 > maxReleasedModuleOrdem) {
-            maxReleasedModuleOrdem = (b.ordem || 0) + 1;
-          }
-        });
-      }
-
-      const pedagogicalLimit = maxReleasedModuleOrdem > 0 ? maxReleasedModuleOrdem : minBookOrdem;
-
       const { data: resDataRaw } = await safeSelect(supabase
         .from('respostas_aulas')
         .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
         .eq('aluno_id', profile.id));
 
       const aulaIds = Array.from(new Set((resDataRaw || []).map((r: any) => r.aula_id).filter(Boolean)))
-      let aulasMap: Record<string, any> = {}
-      let livrosMap: Record<string, any> = {}
-      let cursosNivelMap: Record<string, string> = {}
+      const aulasMap: Record<string, any> = {}
+      const livrosMap: Record<string, any> = {}
+      const cursosNivelMap: Record<string, string> = {}
 
       if (aulaIds.length > 0) {
         const { data: aulasData } = await safeSelect(supabase
@@ -163,7 +136,7 @@ export const useStudentCourses = (profile: any) => {
         if (livroIds.length > 0) {
           const { data: livrosData } = await safeSelect(supabase
             .from('livros')
-            .select('id, titulo, curso_id, professor_active')
+            .select('id, titulo, curso_id, professor_active, ensino_tipo')
             .in('id', livroIds))
           ;(livrosData || []).forEach((l: any) => { livrosMap[l.id] = l })
 
@@ -210,6 +183,7 @@ export const useStudentCourses = (profile: any) => {
       const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id));
       const { data: examExceptions } = await safeSelect(supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id));
       const { data: exclusions } = await safeSelect(supabase.from('exclusoes_modulo_aluno').select('livro_id').eq('user_id', profile.id));
+      const { data: historyGrades } = await safeSelect(supabase.from('historico_notas').select('modulo_nome, nota').eq('aluno_id', profile.id));
 
       const exceptionIds = (exceptions || []).map((e: any) => e.livro_id);
       const examExceptionIds = (examExceptions || []).map((e: any) => e.aula_id);
@@ -239,6 +213,55 @@ export const useStudentCourses = (profile: any) => {
             manualBasicModules.add(manualId);
           } else if (nivel?.toLowerCase().includes('medio') || nivel?.toLowerCase().includes('médio')) {
             manualMediumModules.add(manualId);
+          }
+        }
+      });
+
+      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, professor_active, aulas(id, titulo, tipo, versao, min_grade, ordem, nucleo_id, status_liberacao, data_liberacao, professor_active, is_bloco_final))';
+      const { data: allCourses } = await safeSelect(
+        supabase.from('cursos').select(courseSelect)
+      );
+
+      // Build a title to book mapping from allCourses to resolve historyGrades
+      const titleToBook: Record<string, any> = {};
+      const normalizedTitleToBook: Record<string, any> = {};
+      const normalizeTitle = (s: string) =>
+        (s || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .trim()
+          .replace(/[.,;:!?\s]+$/g, '')
+          .replace(/\s+/g, ' ');
+      if (allCourses) {
+        allCourses.forEach((c: any) => {
+          (c.livros || []).forEach((l: any) => {
+            titleToBook[l.titulo] = { ...l, curso_nivel: c.nivel };
+            normalizedTitleToBook[normalizeTitle(l.titulo)] = { ...l, curso_nivel: c.nivel };
+          });
+        });
+      }
+
+      // Match history grades to books (try exact, normalized, then contains)
+      (historyGrades || []).forEach((h: any) => {
+        if (!h || h.nota == null || h.nota < 7) return;
+        let book = titleToBook[h.modulo_nome] || normalizedTitleToBook[normalizeTitle(h.modulo_nome)];
+        if (!book) {
+          const histNorm = normalizeTitle(h.modulo_nome);
+          for (const b of Object.values(normalizedTitleToBook)) {
+            const bookNorm = normalizeTitle(b.titulo);
+            if (bookNorm === histNorm || bookNorm.includes(histNorm) || histNorm.includes(bookNorm)) {
+              book = b;
+              break;
+            }
+          }
+        }
+        if (book) {
+          manualCompleted.add(book.id);
+          if (book.curso_nivel?.toLowerCase().includes('basico') || book.curso_nivel?.toLowerCase().includes('básico')) {
+            manualBasicModules.add(book.id);
+          } else if (book.curso_nivel?.toLowerCase().includes('medio') || book.curso_nivel?.toLowerCase().includes('médio')) {
+            manualMediumModules.add(book.id);
           }
         }
       });
@@ -274,11 +297,6 @@ export const useStudentCourses = (profile: any) => {
       const isFinished = fBasicCount >= GRADUATION_CONFIG.basico.requiredModules;
       setIsBasicFinished(isFinished);
 
-      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, professor_active, aulas(id, titulo, tipo, versao, min_grade, ordem, nucleo_id, status_liberacao, data_liberacao, professor_active, is_bloco_final))';
-      const { data: allCourses } = await safeSelect(
-        supabase.from('cursos').select(courseSelect)
-      );
-
       if (allCourses && allCourses.length > 0) {
         const mappedCourses: Course[] = allCourses.map((c: any) => {
           const sortedLivros = (c.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
@@ -289,11 +307,11 @@ export const useStudentCourses = (profile: any) => {
             livros: sortedLivros.map((l: any) => {
               const bookOrdem = l.ordem || 1;
               const isBookBlockedByProfessor = l.professor_active === false;
-              const isManualModuleRelease = (releasedModulos.includes(l.id) || manualCompleted.has(l.id)) && !isBookBlockedByProfessor;
+              // manualCompleted agora já inclui historyGrades também (mapeado pelo titulo).
+              const isManualFinished = manualCompleted.has(l.id);
+              const isManualModuleRelease = (releasedModulos.includes(l.id) || isManualFinished) && !isBookBlockedByProfessor;
               const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
               const levelLocked = isMedium && !isBasicFinished && !isStaff;
-
-              const isManualFinished = manualCompleted.has(l.id);
 
               // Recalcular aprovação/DP diretamente de resData (sem notas_avaliacoes)
               const moduleSubs = resData.filter((s: any) => s.book_id === l.id);
@@ -381,11 +399,10 @@ const hasException = exceptionIds.includes(l.id);
                     const matchesNucleo = isStaff || !a.nucleo_id || !profile?.nucleo_id || a.nucleo_id === profile?.nucleo_id || a.tipo === 'licao';
                     if (!matchesNucleo) return { ...a, isHidden: true };
 
-                    let lockedByProfessor = false;
+                    const lockedByProfessor = false;
                     const displayTitle = a.titulo || '';
-                    const v = a.versao || 1;
 
-                    let isHiddenItem = false;
+                    const isHiddenItem = false;
 
                     return { 
                       ...a, 
@@ -446,6 +463,7 @@ if (isExamType && !releasedAtividades.includes(a.id) && !examExceptionIds.includ
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     profile?.id, 
     profile?.curso_id, 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Check, X, Save, Loader2, Calendar, Users as UsersIcon } from 'lucide-react'
 import { AttendanceRecord, Nucleo, Student } from '../../../types/professor'
+import { hasStudentScope } from '../../../lib/authUtils'
 
 interface AttendanceListProps {
   professorNucleos: Nucleo[]
@@ -30,11 +31,9 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
     const isInNucleo = s.nucleo_id === selectedNucleo || s.nucleos?.id === selectedNucleo;
     if (!isInNucleo) return false;
 
-    // Excluir professores da lista de chamada, exceto o Edino Junior
+    // Excluir professores da lista de chamada, exceto se também forem alunos (escopo)
     const isProfessor = s.tipo === 'professor';
-    const isEdino = s.nome?.toLowerCase().includes('edino junior') || s.email === 'edi.ben.jr@gmail.com';
-
-    if (isProfessor && !isEdino) return false;
+    if (isProfessor && !hasStudentScope(s)) return false;
     
     return true;
   })
@@ -57,6 +56,7 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
       setIsReadOnly(false)
     }
     setCurrentAttendance(newAttendance)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, selectedNucleo, history, allStudents])
 
   const handleStatusChange = (studentId: string, status: 'P' | 'F') => {

@@ -38,7 +38,7 @@ export const useProfessorManagement = () => {
   const fetchData = useCallback(async () => {
     if (!profile) return;
     
-    const isAdmin = ['admin', 'suporte'].includes(profile.tipo || '') || profile.email === 'edi.ben.jr@gmail.com';
+    const isAdmin = ['admin', 'suporte'].includes(profile.tipo || '') || (profile.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r));
     
     try {
       // Fetch Nucleos based on role
@@ -98,7 +98,7 @@ export const useProfessorManagement = () => {
           if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
         }
         
-        acad.fetchAcademicReport(true);
+        acad.fetchAcademicReport();
       } else {
         // Professor: Restricted to linked nucleos
         const { data: myNucs } = await supabase.from('professor_nucleo').select('nucleo_id').eq('professor_id', profile.id);
@@ -168,6 +168,7 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.id]);
 
 
@@ -176,14 +177,10 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
     if (!profileLoading) {
       if (!profile) { navigate('/login'); return; }
       
-      const isProfessor = profile.tipo === 'professor' || profile.caminhos_acesso?.includes('professor') || profile.email === 'edi.ben.jr@gmail.com';
+      const isProfessor = profile.tipo === 'professor' || profile.caminhos_acesso?.includes('professor') || (profile.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r));
       if (!isProfessor) { navigate('/dashboard'); return; }
 
       const roles = [...(profile.caminhos_acesso || [])];
-      if (profile.email === 'edi.ben.jr@gmail.com') {
-        const adminRoles = ['aluno', 'professor', 'suporte'];
-        adminRoles.forEach(r => { if (!roles.includes(r)) roles.push(r); });
-      }
       setAvailableRoles(roles);
       
       fetchData().finally(() => setLoading(false));

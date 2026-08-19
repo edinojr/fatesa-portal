@@ -22,7 +22,11 @@ const PopupAlertsDisplay = () => {
       const storageKey = `fatesa_popup_dismissed_${user.id}`;
       const stored = sessionStorage.getItem(storageKey);
       if (stored) {
-        try { setDismissedIds(new Set(JSON.parse(stored))); } catch { }
+        try {
+          setDismissedIds(new Set(JSON.parse(stored)));
+        } catch (err) {
+          console.warn('Sessão com JSON inválido descartada:', err);
+        }
       }
 
       const now = new Date().toISOString();
@@ -54,8 +58,6 @@ const PopupAlertsDisplay = () => {
     newDismissed.add(id);
     setDismissedIds(newDismissed);
 
-    const storageKey = `fatesa_popup_dismissed_${currentIndex}_${id}`;
-    const userKey = `fatesa_popup_dismissed_user`;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
         const key = `fatesa_popup_dismissed_${user.id}`;

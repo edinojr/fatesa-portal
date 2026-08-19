@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, Lock, CheckCircle, BookOpen, ClipboardList, GraduationCap, PlayCircle, Compass, FileText, Award } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Lock, CheckCircle, BookOpen, ClipboardList, GraduationCap, PlayCircle, Compass } from 'lucide-react'
 
 export interface PathStep {
   key: string

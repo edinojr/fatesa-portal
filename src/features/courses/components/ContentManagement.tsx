@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabase'
 import { extractAnswerKey, AnswerKey } from '../../../lib/answerKeyParser'
 import GabaritoUpload from './GabaritoUpload'
+import ModalityBadge from '../../../components/ui/ModalityBadge'
 
 interface ContentManagementProps {
   courses: any[]
@@ -102,13 +103,11 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
     fetchLessons,
     fetchLessonItems,
     handleDelete,
-    handleRemoveFile,
     handleFileUpload,
     handleReorder,
     handleMoveTo,
     setShowAddCourse,
     setShowAddBook,
-    setShowAddLesson,
     setShowAddContent,
     setAddingLessonType,
     setAddingBloco,
@@ -118,7 +117,6 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
     setLessonMaterials,
     setEditingQuiz,
     setQuizQuestions,
-    pendingExamMeta,
     setPendingExamMeta,
     uploading,
     cleanupExcessExams,
@@ -154,6 +152,15 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
     return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9.-]/g, '_').toLowerCase()
   }
 
+  // Ensure Supabase storage URL always has /public/ in the path
+  const toPublicUrl = (url: string) => {
+    if (!url) return url;
+    if (url.includes('/storage/v1/object/') && !url.includes('/storage/v1/object/public/')) {
+      return url.replace('/storage/v1/object/', '/storage/v1/object/public/');
+    }
+    return url;
+  }
+
   const handleBatchLessonUpload = async (e: React.ChangeEvent<HTMLInputElement>, bookId: string) => {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -179,7 +186,8 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
         const filePath = `licoes/${Date.now()}_${safeName}`
         const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file)
         if (uploadError) throw uploadError
-        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
+        const { data: { publicUrl: rawUrl1 } } = supabase.storage.from('livros').getPublicUrl(filePath)
+        const publicUrl = toPublicUrl(rawUrl1)
 
         const { error: insertError } = await supabase.from('aulas').insert({
           livro_id: bookId,
@@ -236,12 +244,12 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
         let detectedLabel = ''
 
         const lessonMatch =
-          fileNameLower.match(/li[cç][aã]o[_\-\s]*(\d+)/i) ||
-          fileNameLower.match(/licao[_\-]?(\d+)/i) ||
-          fileNameLower.match(/lesson[_\-\s]*(\d+)/i) ||
-          fileNameLower.match(/aula[_\-\s]*(\d+)/i) ||
-          fileNameLower.match(/cap[ií]tulo[_\-\s]*(\d+)/i) ||
-          fileNameLower.match(/exerc[íi]cio[_\-\s]+(?:da[_\-\s]+)?li[cç][aã]o[_\-\s]*(\d+)/i) ||
+          fileNameLower.match(/li[cç][aã]o[_\s-]*(\d+)/i) ||
+          fileNameLower.match(/licao[_-]?(\d+)/i) ||
+          fileNameLower.match(/lesson[_\s-]*(\d+)/i) ||
+          fileNameLower.match(/aula[_\s-]*(\d+)/i) ||
+          fileNameLower.match(/cap[ií]tulo[_\s-]*(\d+)/i) ||
+          fileNameLower.match(/exerc[íi]cio[_\s-]+(?:da[_\s-]+)?li[cç][aã]o[_\s-]*(\d+)/i) ||
           fileNameLower.match(/(\d+)/i)
 
         if (lessonMatch && bookLessons && bookLessons.length > 0) {
@@ -279,7 +287,8 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
         const filePath = `exercicios/${Date.now()}_${safeName}`
         const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file)
         if (uploadError) throw uploadError
-        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
+        const { data: { publicUrl: rawUrl2 } } = supabase.storage.from('livros').getPublicUrl(filePath)
+        const publicUrl = toPublicUrl(rawUrl2)
 
         await supabase.from('aulas').insert({
           livro_id: bookId,
@@ -307,157 +316,6 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
     }
   }
 
-  const handleSplitExerciseHtmlUpload = async (e: React.ChangeEvent<HTMLInputElement>, bookId: string) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setLocalUploading('split-exercises')
-
-    try {
-      const text = await file.text()
-      const fileNameBase = file.name.replace(/\.(pdf|html?)$/i, '').trim()
-
-      const { data: bookLessons } = await supabase
-        .from('aulas')
-        .select('id, titulo, ordem')
-        .eq('livro_id', bookId)
-        .eq('tipo', 'licao')
-        .order('ordem')
-
-      const { data: existingActivities } = await supabase
-        .from('aulas')
-        .select('ordem')
-        .eq('livro_id', bookId)
-        .eq('tipo', 'atividade')
-        .order('ordem', { ascending: false })
-        .limit(1)
-
-      const startOrder = (existingActivities?.[0]?.ordem || 0) + 1
-
-      const parser = new DOMParser()
-      const doc = parser.parseFromString(text, 'text/html')
-      const body = doc.body
-      if (!body) throw new Error('HTML inválido')
-
-      const headerRegex = /li[cç][aã]o[_\-\s]*(\d+)|licao[_\-]?(\d+)|exerc[íi]cio[_\-\s]*(\d+)|aula[_\-\s]*(\d+)|lesson[_\-\s]*(\d+)|cap[íi]tulo[_\-\s]*(\d+)/i
-      const fallbackNumberRegex = /(\d+)/
-
-      type Section = { lessonNum: number; title: string; html: string }
-      const sections: Section[] = []
-      let current: Section | null = null
-      let preSectionBuffer: string[] = []
-
-      const topChildren = Array.from(body.children) as HTMLElement[]
-      for (const node of topChildren) {
-        const tag = node.tagName.toLowerCase()
-        const text = (node.textContent || '').trim()
-
-        if (['h1', 'h2', 'h3', 'h4', 'h5'].includes(tag) && text) {
-          const m =
-            text.match(headerRegex) ||
-            (text.length < 60 ? text.match(fallbackNumberRegex) : null)
-          if (m) {
-            const numStr = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || m[7]
-            if (numStr) {
-              const num = parseInt(numStr)
-              if (!isNaN(num) && num >= 1 && num <= 99) {
-                if (current) sections.push(current)
-                current = { lessonNum: num, title: text, html: node.outerHTML }
-                continue
-              }
-            }
-          }
-        }
-
-        if (current) {
-          current.html += '\n' + node.outerHTML
-        } else {
-          preSectionBuffer.push(node.outerHTML)
-        }
-      }
-      if (current) sections.push(current)
-
-      if (sections.length === 0) {
-        const confirmFull = confirm(
-          'Não encontrei cabeçalhos "Lição N" / "Exercício N" no HTML.\n\n' +
-          'Deseja cadastrar o HTML INTEIRO como UM único exercício vinculado à Lição 1?'
-        )
-        if (confirmFull && bookLessons && bookLessons[0]) {
-          const safeName = normalizeFile(file.name)
-          const filePath = `exercicios/${Date.now()}_${safeName}`
-          const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file)
-          if (uploadError) throw uploadError
-          const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
-
-          await supabase.from('aulas').insert({
-            livro_id: bookId,
-            parent_aula_id: bookLessons[0].id,
-            titulo: `${fileNameBase} (completo)`,
-            tipo: 'atividade',
-            ordem: startOrder,
-            arquivo_url: publicUrl
-          })
-          alert('1 exercício completo cadastrado vinculado à Lição 1.')
-        } else {
-          alert('Upload cancelado.')
-        }
-        return
-      }
-
-      const splitDir = `exercicios/${Date.now()}_${normalizeFile(fileNameBase)}`
-      let linkedCount = 0
-      let unlinkedCount = 0
-      const details: string[] = []
-
-      for (let i = 0; i < sections.length; i++) {
-        const s = sections[i]
-        const matched = bookLessons?.find((l: any) => l.ordem === s.lessonNum) ||
-          bookLessons?.find((l: any) => {
-            const t = l.titulo.match(/(\d+)/)
-            return t && parseInt(t[1]) === s.lessonNum
-          })
-
-        const htmlShell = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${s.title}</title></head><body>${s.html}</body></html>`
-        const blob = new Blob([htmlShell], { type: 'text/html' })
-        const fakeFile = new File([blob], `Licao_${String(s.lessonNum).padStart(2, '0')}.html`, { type: 'text/html' })
-
-        const safeName = normalizeFile(fakeFile.name)
-        const filePath = `${splitDir}/${safeName}`
-        const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, fakeFile)
-        if (uploadError) throw uploadError
-        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
-
-        await supabase.from('aulas').insert({
-          livro_id: bookId,
-          parent_aula_id: matched?.id || null,
-          titulo: `Exercícios - Lição ${String(s.lessonNum).padStart(2, '0')}`,
-          tipo: 'atividade',
-          ordem: startOrder + i,
-          arquivo_url: publicUrl
-        })
-
-        if (matched) {
-          linkedCount++
-          details.push(`✅ Lição ${s.lessonNum} → ${matched.titulo}`)
-        } else {
-          unlinkedCount++
-          details.push(`⚠️ Lição ${s.lessonNum} → sem lição correspondente`)
-        }
-      }
-
-      const summary =
-        `✂️ HTML dividido em ${sections.length} parte(s):\n\n` +
-        `🔗 ${linkedCount} vinculado(s) à lição | ⚠️ ${unlinkedCount} sem vínculo\n\n` +
-        details.join('\n')
-      alert(summary)
-      if (selectedCourse) fetchBooks(selectedCourse.id)
-    } catch (err: any) {
-      alert('Erro ao dividir HTML de exercícios: ' + err.message)
-    } finally {
-      e.target.value = ''
-      setLocalUploading(null)
-    }
-  }
-
   // Upload de Avaliação via HTML — parseia, abre editor, admin define gabarito, depois salva
   const handleExamHtmlUpload = async (e: React.ChangeEvent<HTMLInputElement>, bookId: string) => {
     const files = e.target.files
@@ -478,17 +336,18 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
         .order('ordem', { ascending: false })
         .limit(1)
 
-      let currentOrder = (existingItems?.[0]?.ordem || 0) + 1
+      const currentOrder = (existingItems?.[0]?.ordem || 0) + 1
 
       // Upload do arquivo para storage
       const safeName = normalizeFile(file.name)
       const filePath = `avaliacoes/${Date.now()}_${safeName}`
       const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file)
       if (uploadError) throw uploadError
-      const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
+      const { data: { publicUrl: rawUrl3 } } = supabase.storage.from('livros').getPublicUrl(filePath)
+      const publicUrl = toPublicUrl(rawUrl3)
 
       // Extrair gabarito do HTML (se existir)
-      const { cleanedHtml, answerKey } = extractAnswerKey(text)
+      const { answerKey } = extractAnswerKey(text)
 
       // Template de provas: 10 V/F + 4 MC + 6 pares
       const examTemplate = [
@@ -552,50 +411,6 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
     }
   }
 
-  const handleMultiUploadToLesson = async (e: React.ChangeEvent<HTMLInputElement>, lessonId: string, livroId: string) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
-    setLocalUploading('multi-' + lessonId)
-
-    const { data: existingItems } = await supabase
-      .from('aulas')
-      .select('ordem')
-      .eq('parent_aula_id', lessonId)
-      .order('ordem', { ascending: false })
-      .limit(1)
-
-    const startOrder = (existingItems?.[0]?.ordem || 0) + 1
-    let successCount = 0
-
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        const safeName = normalizeFile(file.name)
-        const filePath = `materiais/${Date.now()}_${safeName}`
-        const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file)
-        if (uploadError) throw uploadError
-        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
-
-        await supabase.from('aulas').insert({
-          livro_id: livroId,
-          parent_aula_id: lessonId,
-          titulo: file.name.replace(/\.(pdf|html?)$/i, ''),
-          tipo: 'material',
-          arquivo_url: publicUrl,
-          ordem: startOrder + i
-        })
-        successCount++
-      }
-      alert(`${successCount} material(is) adicionado(s) à lição!`)
-      fetchLessons(livroId)
-    } catch (err: any) {
-      alert('Erro: ' + err.message)
-    } finally {
-      e.target.value = ''
-      setLocalUploading(null)
-    }
-  }
-
   const handleSmartLessonUpload = async (e: React.ChangeEvent<HTMLInputElement>, bookId: string) => {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -615,7 +430,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
           ordem = 0
           panoramaCount++
         } else {
-          const numberMatch = fileNameLower.match(/(?:li[çc][ãa]o|aula|licao|lesson|chap|cap[ií]tulo)\s*[\-_]?\s*(\d+)/i) ||
+          const numberMatch = fileNameLower.match(/(?:li[çc][ãa]o|aula|licao|lesson|chap|cap[ií]tulo)\s*[-_]?\s*(\d+)/i) ||
                              fileNameLower.match(/(\d+)/)
           if (numberMatch) {
             ordem = parseInt(numberMatch[1])
@@ -639,7 +454,8 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
         const filePath = `licoes/${Date.now()}_${safeName}`
         const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file)
         if (uploadError) throw uploadError
-        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
+        const { data: { publicUrl: rawUrl4 } } = supabase.storage.from('livros').getPublicUrl(filePath)
+        const publicUrl = toPublicUrl(rawUrl4)
 
         const { data: existingLesson } = await supabase
           .from('aulas')
@@ -692,7 +508,8 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
       const filePath = `videos/${Date.now()}_${safeName}`
       const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file)
       if (uploadError) throw uploadError
-      const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath)
+      const { data: { publicUrl: rawUrl5 } } = supabase.storage.from('livros').getPublicUrl(filePath)
+      const publicUrl = toPublicUrl(rawUrl5)
 
       const { data: maxOrder } = await supabase
         .from('aulas')
@@ -923,6 +740,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                     </div>
                   )}
                   <h4 style={{ fontSize: '1.25rem', marginBottom: 0 }}>{book.titulo}</h4>
+                  <ModalityBadge ensinoTipo={book.ensino_tipo} size="md" />
                 </div>
                 {isAdmin && (
                   <div style={{ display: 'flex', gap: '0.5rem' }}>

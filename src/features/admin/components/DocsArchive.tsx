@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import Badge from '../../../components/ui/Badge';
+import { isStaffStudentProxy } from '../../../lib/authUtils';
 
 interface DocsArchiveProps {
   allNucleos: any[];
@@ -26,6 +27,7 @@ const DocsArchive: React.FC<DocsArchiveProps> = ({ allNucleos }) => {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNucleo, viewType]);
 
   const fetchData = async () => {
@@ -34,20 +36,18 @@ const DocsArchive: React.FC<DocsArchiveProps> = ({ allNucleos }) => {
       if (viewType === 'ativos') {
         let query = supabase
           .from('users')
-          .select('id, nome, email, tipo, nucleo_id, nucleos(nome), documentos(count)')
-          .or('tipo.not.in.(admin,suporte,professor,colaborador),email.eq.edi.ben.jr@gmail.com')
+          .select('id, nome, email, tipo, nucleo_id, caminhos_acesso, nucleos(nome), documentos(count)')
           .order('nome');
-        
+
         if (selectedNucleo) {
           query = query.eq('nucleo_id', selectedNucleo);
         }
 
         const { data: usersData } = await query;
-        // Filtro de segurança no JS com exceção para o administrador-aluno
+        // Filtro no JS: não-staff sempre aparecem; staff só se também for aluno (escopo)
         const filteredUsers = (usersData || []).filter(u => {
           const isStaff = ['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo?.toLowerCase());
-          const isSpecialAdmin = u.email === 'edi.ben.jr@gmail.com';
-          return !isStaff || isSpecialAdmin;
+          return !isStaff || isStaffStudentProxy(u);
         });
         setData(filteredUsers);
       } else {

@@ -5,7 +5,7 @@ export const useProfessorAcademic = () => {
   const [academicReport, setAcademicReport] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchAcademicReport = useCallback(async (isAdmin: boolean) => {
+  const fetchAcademicReport = useCallback(async () => {
     setLoading(true);
     try {
       // Step 1: Fetch submissions

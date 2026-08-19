@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { 
-  Search, 
+import {
+  Search,
   Download,
   User,
   MapPin,
@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
+import { isStaffStudentProxy } from '../../../lib/authUtils';
 
 interface AcademicHistoryProps {
   data: any[];
@@ -53,13 +54,14 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     // 2. Grouping: Nucleo -> Aluno -> Modulo -> Type
     const groups: Record<string, any> = {};
 
-    // Ensure the admin edi.ben.jr@gmail.com is included if search matches or no search
-    const adminUser = (allStudents || []).find(s => s.email === 'edi.ben.jr@gmail.com');
-    if (adminUser && (!term || adminUser.nome?.toLowerCase().includes(term) || adminUser.email?.toLowerCase().includes(term))) {
-       const nucName = adminUser.nucleos?.nome || 'Administração';
-       const studentId = adminUser.id;
-       if (!groups[nucName]) groups[nucName] = {};
-groups[nucName][studentId] = {
+// Inclui staff que também são alunos (escopo 'aluno'/'estudante') mesmo sem histórico
+    const proxyUsers = (allStudents || []).filter(s => isStaffStudentProxy(s));
+    proxyUsers.forEach(adminUser => {
+      if (!term || adminUser.nome?.toLowerCase().includes(term) || adminUser.email?.toLowerCase().includes(term)) {
+        const nucName = adminUser.nucleos?.nome || 'Administração';
+        const studentId = adminUser.id;
+        if (!groups[nucName]) groups[nucName] = {};
+        groups[nucName][studentId] = {
           name: adminUser.nome,
           email: adminUser.email,
           tipo: adminUser.tipo,
@@ -71,7 +73,8 @@ groups[nucName][studentId] = {
             hasManual: false
           }
         };
-    }
+      }
+    });
 
     filtered.forEach(item => {
       const nucName = item.users?.nucleos?.nome || 'Geral / Sem Núcleo';
@@ -125,6 +128,7 @@ groups[nucName][studentId] = {
     });
 
     return groups;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, searchTerm]);
 
   const nucleusSummary = useMemo(() => {

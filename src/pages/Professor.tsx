@@ -1,23 +1,18 @@
 import React from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { 
-  Users, 
-  BookOpen, 
-  LogOut, 
+import {
+  Users,
+  BookOpen,
   Loader2,
   AlertCircle,
   FileText,
   ClipboardList,
   MessageSquare,
-  LayoutGrid,
-  ExternalLink,
   MapPin,
   GraduationCap,
   Video,
-   History,
    ShieldCheck,
-   ArrowLeft,
 } from 'lucide-react'
 import AttendanceList from '../features/users/components/AttendanceList'
 import NucleosPanel from '../components/NucleosPanel'
@@ -42,9 +37,6 @@ const Professor = () => {
     activeTab,
     setActiveTab,
     loading,
-    availableRoles,
-    showRoleSwitcher,
-    setShowRoleSwitcher,
     courses,
     selectedCourse,
     setSelectedCourse,
@@ -79,7 +71,6 @@ const Professor = () => {
     handleRejectAccess,
     handleDeleteUser,
     handleResetProgress,
-    handleLogout,
     handleUpdateUserNucleo,
     fetchBooks,
     selectBookAndShowLessons,
@@ -92,18 +83,10 @@ const Professor = () => {
     fetchData
   } = useProfessorManagement();
 
-  const navigate = useNavigate()
   const location = useLocation()
   const [dashboardView, setDashboardView] = React.useState<'main' | 'nucleos' | 'alunos' | 'conteudo'>(() => {
     return (localStorage.getItem('fatesa_prof_dashboard_view') as any) || 'main'
   });
-
-  const goToPanel = () => {
-    const role = profile?.tipo;
-    const roles = (profile?.caminhos_acesso as string[]) || [];
-    const isAdmin = role === 'admin' || roles.includes('admin') || roles.includes('suporte');
-    navigate(isAdmin ? '/admin' : '/professor');
-  };
 
   React.useEffect(() => {
     // Only set to 'professor' if the user is NOT an admin, 
@@ -118,6 +101,7 @@ const Professor = () => {
     } else if (!activeTab) {
       setActiveTab('home');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state, setActiveTab]);
 
   React.useEffect(() => {
@@ -247,13 +231,6 @@ const Professor = () => {
                       <p>Correção e acompanhamento das avaliações do curso.</p>
                     </div>
  
-                    <div className="admin-action-card" onClick={() => setActiveTab('modules')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
-                      <span className="category-badge">Conteúdo</span>
-                      <div className="icon-wrapper"><LayoutGrid size={32} /></div>
-                      <h3>Módulos e Lições</h3>
-                      <p>Estrutura pedagógica de matérias e atividades.</p>
-                    </div>
-
                     <div className="admin-action-card" onClick={() => setActiveTab('release')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
                       <span className="category-badge">Conteúdo</span>
                       <div className="icon-wrapper"><ShieldCheck size={32} /></div>
@@ -280,7 +257,7 @@ const Professor = () => {
               </div>
             )}
 
-            {activeTab === 'nucleos' && <NucleosPanel userRole={profile?.tipo} />}
+            {activeTab === 'nucleos' && <NucleosPanel userRole="professor" />}
 
             {activeTab === 'students' && (
               <StudentsManagement 
@@ -296,7 +273,7 @@ const Professor = () => {
                 handleUpdateUserType={handleUpdateUserType}
                 handleGrantModuleException={handleGrantModuleException}
                 handleRevokeModuleException={handleRevokeModuleException}
-                userRole={profile?.tipo}
+                userRole="professor"
                 allNucleos={professorNucleos}
                 courses={courses}
               />
@@ -321,24 +298,7 @@ const Professor = () => {
                />
             )}
 
-             {(activeTab as string) === 'modules' && (
-               <ProfessorContent 
-                 courses={courses}
-                 selectedCourse={selectedCourse}
-                 setSelectedCourse={setSelectedCourse}
-                 books={books}
-                 setBooks={setBooks}
-                 selectedBook={selectedBook}
-                 setSelectedBook={setSelectedBook}
-                 lessons={lessons}
-                 setLessons={setLessons}
-                 fetchBooks={fetchBooks}
-                 selectBookAndShowLessons={selectBookAndShowLessons}
-                 profile={profile}
-                 professorNucleos={professorNucleos}
-                 submissions={submissions}
-               />
-            )}
+             
 
             {activeTab === 'academic' && (
               <AcademicHistory 

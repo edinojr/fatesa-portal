@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Loader2, Eye, EyeOff, Upload, Award } from 'lucide-react'
+import { toPublicUrl } from '../../../../lib/supabase'
 
 interface AddTeacherModalProps {
   showAddTeacher: boolean
@@ -183,7 +184,7 @@ export const AddBookModal: React.FC<AddBookModalProps> = ({
               const capaPath = `capas/${Date.now()}_${safeName}`;
               const { error: uploadError } = await supabase.storage.from('livros').upload(capaPath, capaFile, { cacheControl: 'max-age=31536000' });
               if (uploadError) throw uploadError;
-              capa_url = supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl;
+              capa_url = toPublicUrl(supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl);
             }
 
             const { error } = await supabase.from('livros').insert({ 
@@ -372,7 +373,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
                   const filePath = `materiais/${Date.now()}_${safeName}`;
                   const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: 'max-age=31536000' });
                   if (uploadError) throw uploadError;
-                  const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+                   const { data: { publicUrl: rawUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+                  const publicUrl = toPublicUrl(rawUrl);
                   
                   // For multiple upload, we ignore complex quiz templates
                   const { error: insertError } = await supabase.from('aulas').insert({
@@ -401,8 +403,8 @@ export const AddContentModal: React.FC<AddContentModalProps> = ({
               const filePath = `conteudo/${Date.now()}_${safeName}`;
               const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: 'max-age=31536000' });
               if (uploadError) throw uploadError;
-              const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
-              arquivo_url = publicUrl;
+              const { data: { publicUrl: rawUrl2 } } = supabase.storage.from('livros').getPublicUrl(filePath);
+              arquivo_url = toPublicUrl(rawUrl2);
             }
 
             const examTemplate = [
@@ -637,7 +639,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                 const capaPath = `capas/${Date.now()}_${safeName}`;
                 const { error: uploadError } = await supabase.storage.from('livros').upload(capaPath, capaFile, { cacheControl: 'max-age=31536000' });
                 if (uploadError) throw uploadError;
-                updates.capa_url = supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl;
+                updates.capa_url = toPublicUrl(supabase.storage.from('livros').getPublicUrl(capaPath).data.publicUrl);
               }
             }
 
@@ -647,8 +649,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               const filePath = `conteudo/${Date.now()}_${safeName}`;
               const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file, { cacheControl: 'max-age=31536000' });
               if (uploadError) throw uploadError;
-              const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
-              updates.arquivo_url = publicUrl;
+              const { data: { publicUrl: rawUrl3 } } = supabase.storage.from('livros').getPublicUrl(filePath);
+              updates.arquivo_url = toPublicUrl(rawUrl3);
             }
 
             const { error } = await supabase.from(table).update(updates).eq('id', editingItem.data.id);

@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users, BookOpen, ClipboardList, ShieldCheck, ExternalLink, Edit3, Save } from 'lucide-react'
+import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, MapPin, Users, BookOpen, ShieldCheck, ExternalLink, Edit3, Save } from 'lucide-react'
 import { Submission } from '../../../types/professor'
 import { QuizQuestion } from '../../../types/admin'
 import { supabase } from '../../../lib/supabase'

@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   CheckCircle,
-  XCircle,
   RefreshCw,
   Eye,
   EyeOff,
   ChevronDown,
   ChevronUp,
-  ClipboardList,
   BookOpen,
   AlertCircle,
   Edit3,
@@ -33,7 +31,6 @@ interface AvaliacaoFixacaoProps {
 const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   lessonId,
   questions: initialQuestions,
-  lessonTitle = '',
   minGrade = 7.0,
   onSaved
 }) => {
@@ -216,14 +213,13 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     const passed = grade >= minGrade;
 
     return { totalQuestions, answered, correct, totalPoints, earnedPoints, grade, passed };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions, respostasAluno, minGrade]);
 
   // Render True/False question
   const renderTrueFalse = (q: QuizQuestion, idx: number) => {
     const qKey = q.id;
     const studentAns = respostasAluno[qKey];
-    const showResult = false;
-    const correct = null;
 
     return (
       <div
@@ -978,7 +974,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
           </div>
           {expandedSections.trueFalse && (
             <div>
-              {groupedQuestions.trueFalse.map((q, idx) => renderTrueFalse(q, getGlobalIndex(q) - 1))}
+              {groupedQuestions.trueFalse.map((q) => renderTrueFalse(q, getGlobalIndex(q) - 1))}
             </div>
           )}
         </div>
@@ -1012,7 +1008,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
           </div>
           {expandedSections.multipleChoice && (
             <div>
-              {groupedQuestions.multipleChoice.map((q, idx) => renderMultipleChoice(q, getGlobalIndex(q) - 1))}
+              {groupedQuestions.multipleChoice.map((q) => renderMultipleChoice(q, getGlobalIndex(q) - 1))}
             </div>
           )}
         </div>
@@ -1046,7 +1042,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
           </div>
           {expandedSections.matching && (
             <div>
-              {groupedQuestions.matching.map((q, idx) => renderMatching(q, getGlobalIndex(q) - 1))}
+              {groupedQuestions.matching.map((q) => renderMatching(q, getGlobalIndex(q) - 1))}
             </div>
           )}
         </div>

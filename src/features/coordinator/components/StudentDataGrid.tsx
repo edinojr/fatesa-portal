@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, User, Mail, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Mail, Calendar } from 'lucide-react';
 
 interface Student {
   id: string;

@@ -1,9 +1,10 @@
-import { BookOpen, PlayCircle, LayoutGrid, Lock, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react'
+import { BookOpen, PlayCircle, ChevronRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 import { getBookStats } from '../utils/courseUtils'
 import { useState } from 'react'
 import BaseCard from './cards/BaseCard'
+import ModalityBadge from '../../../components/ui/ModalityBadge'
 
 interface CourseListProps {
   courses: Course[]
@@ -20,7 +21,7 @@ const CourseList: React.FC<CourseListProps> = ({
   showOnlyFinished = false,
 }) => {
   const navigate = useNavigate();
-  const [expandedBookId, setExpandedBookId] = useState<string | null>(null);
+  const [expandedBookId] = useState<string | null>(null);
   const getBookStatsWrapper = (l: any) => getBookStats(l, atividades, progressoAulas);
 
   const renderLessonItem = (aula: any) => {
@@ -66,30 +67,40 @@ const CourseList: React.FC<CourseListProps> = ({
   const renderBookCard = (currentBook: any) => {
     const stats = getBookStatsWrapper(currentBook);
     const isExpanded = expandedBookId === currentBook.id;
+    const isHistoricoSintetico = !currentBook.aulas || currentBook.aulas.length === 0;
+    const isFinalizadoManual = isHistoricoSintetico && currentBook.isFinished && currentBook.nota != null;
 
-    if (showOnlyFinished && !stats.isFinished) return null;
-    if (!showOnlyFinished && stats.isFinished) return null;
+    if (showOnlyFinished && !stats.isFinished && !currentBook.isFinished) return null;
+    if (!showOnlyFinished && (stats.isFinished || currentBook.isFinished)) return null;
+
+    const subtitulo = isFinalizadoManual
+      ? `Nota ${Number(currentBook.nota).toFixed(1)} • Aprovado por Histórico`
+      : isHistoricoSintetico
+        ? 'Finalizado por Histórico Manual'
+        : `${stats.total} aulas • ${stats.percent}% concluído`;
 
     return (
       <div key={currentBook.id} style={{ marginBottom: '0.75rem' }}>
         <BaseCard
-          href={`/module/${currentBook.id}`}
+          href={isHistoricoSintetico ? '#' : `/module/${currentBook.id}`}
           capaUrl={currentBook.capa_url}
           titulo={currentBook.titulo}
-          subtitulo={`${stats.total} aulas • ${stats.percent}% concluído`}
+          subtitulo={subtitulo}
           badge={
-            stats.isFinished
+            (stats.isFinished || currentBook.isFinished)
               ? {
-                  label: stats.hasExam ? (stats.isApproved ? 'FINALIZADO' : 'D.P.') : 'FINALIZADO',
-                  color: stats.isApproved ? 'var(--success)' : '#eab308',
-                  bg: stats.isApproved ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
+                  label: (stats.isApproved || currentBook.isApproved) ? 'FINALIZADO' : 'D.P.',
+                  color: (stats.isApproved || currentBook.isApproved) ? 'var(--success)' : '#eab308',
+                  bg: (stats.isApproved || currentBook.isApproved) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
                 }
               : undefined
           }
-          status={!currentBook.isUnlocked ? 'locked' : stats.isFinished && stats.isApproved ? 'completed' : 'default'}
-          accentColor={stats.isFinished && stats.isApproved ? 'var(--success)' : 'var(--primary)'}
+          status={!currentBook.isUnlocked ? 'locked' : (stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'completed' : 'default'}
+          accentColor={(stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'var(--success)' : 'var(--primary)'}
         >
-          <div style={{ marginTop: '0.3rem' }}>
+          <div style={{ marginTop: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <ModalityBadge ensinoTipo={currentBook.ensino_tipo} />
+            {!isHistoricoSintetico && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ flex: 1, height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
                 <div style={{ 
@@ -101,7 +112,16 @@ const CourseList: React.FC<CourseListProps> = ({
               </div>
               <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)', minWidth: '35px' }}>{stats.percent}%</span>
             </div>
-            {stats.hasExam && (
+            )}
+            {isFinalizadoManual && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.6rem', background: 'rgba(16,185,129,0.05)', borderRadius: '6px' }}>
+                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota Final</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--success)' }}>
+                  {Number(currentBook.nota).toFixed(1)}
+                </span>
+              </div>
+            )}
+            {stats.hasExam && !isHistoricoSintetico && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', padding: '0.4rem 0.6rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
                 <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota da Prova</span>
                 <span style={{ fontSize: '0.85rem', fontWeight: 800, color: stats.isApproved ? 'var(--success)' : '#eab308' }}>

@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { supabase } from '../../../lib/supabase';
+import { useState } from 'react';
+import { supabase, toPublicUrl } from '../../../lib/supabase';
 
 export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'error') => void, fetchData: () => void) => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -130,8 +130,8 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
       const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
-      const { error: updateError } = await supabase.from(table).update({ [column]: publicUrl }).eq('id', id);
+      const { data: { publicUrl: rawUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+      const { error: updateError } = await supabase.from(table).update({ [column]: toPublicUrl(rawUrl) }).eq('id', id);
       if (updateError) throw updateError;
 
       showToast('Arquivo enviado com sucesso!');
@@ -155,7 +155,8 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
         const { error: uploadError } = await supabase.storage.from('livros').upload(filePath, file);
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage.from('livros').getPublicUrl(filePath);
+        const { data: { publicUrl: rawUrl2 } } = supabase.storage.from('livros').getPublicUrl(filePath);
+        const publicUrl = toPublicUrl(rawUrl2);
         
         return supabase.from('aulas').insert({
           titulo: file.name.replace(`.${fileExt}`, ''),

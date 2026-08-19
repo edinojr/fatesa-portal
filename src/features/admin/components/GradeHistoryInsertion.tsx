@@ -20,7 +20,7 @@ interface GradeHistoryInsertionProps {
   onRefresh?: () => void;
 }
 
-const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh }) => {
+const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [students, setStudents] = useState<any[]>([]);
@@ -160,6 +160,7 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
     } else {
       setHistoryData([]);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedStudent]);
 
   const handleSubmit = async () => {
