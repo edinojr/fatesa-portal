@@ -1705,15 +1705,15 @@ const Lesson = () => {
                  }
                }}
              >
-               {hasHtmlFile && (
-                 <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderHtmlWithReferences(htmlContent!)) }} />
-               )}
-               {hasContentBlocks && !hasHtmlFile && (
-                 <div>
-                   {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
-                 </div>
-               )}
-                {hasPdfFile && !hasHtmlFile && pdfUrl && (() => {
+                {hasHtmlFile && !hasPdfFile && (
+                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderHtmlWithReferences(htmlContent!)) }} />
+                )}
+                {hasContentBlocks && !hasHtmlFile && !hasPdfFile && (
+                  <div>
+                    {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
+                  </div>
+                )}
+                 {hasPdfFile && !hasHtmlFile && pdfUrl && (() => {
                   let pdfFinalUrl = pdfUrl;
                   if (pdfFinalUrl.includes('/storage/v1/object/') && !pdfFinalUrl.includes('/storage/v1/object/public/')) {
                     pdfFinalUrl = pdfFinalUrl.replace('/storage/v1/object/', '/storage/v1/object/public/');
@@ -1734,7 +1734,7 @@ const Lesson = () => {
          )}
 
         {/* Indicador de Concluída / Botão Marcar como Concluída para lições e materiais */}
-        {(lesson.tipo === 'licao' || lesson.tipo === 'material') && complete && (
+        {(lesson.tipo === 'licao' || lesson.tipo === 'material') && complete && !isPdfLesson && (
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
             <div style={{
               display: 'flex', alignItems: 'center', gap: '0.75rem',
@@ -1750,7 +1750,7 @@ const Lesson = () => {
             </div>
           </div>
         )}
-        {(lesson.tipo === 'licao' || lesson.tipo === 'material') && !complete && (
+        {(lesson.tipo === 'licao' || lesson.tipo === 'material') && !complete && !isPdfLesson && (
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
             <button
               className="btn btn-primary"
