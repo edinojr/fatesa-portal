@@ -225,6 +225,9 @@ const Lesson = () => {
     setResult(null)
     setSubmitted(false)
     setExistingSubmission(null)
+    setHtmlContent(null)
+    setPdfExtractedText('')
+    setPdfIsLastPage(false)
         const { data: lessonData, error: lessonError } = await supabase
           .from('aulas')
           .select('*')
@@ -275,9 +278,12 @@ const Lesson = () => {
 
       // Fetch HTML content from arquivo_url if it's a supported type
       if (lessonData.arquivo_url) {
-        const isHtml = /\.html?$/i.test(lessonData.arquivo_url);
-        const isPdf = /\.pdf$/i.test(lessonData.arquivo_url);
-       if (isHtml && !isPdf) {
+        const isHtml = /\.html?(\?|$)/i.test(lessonData.arquivo_url);
+        const isPdf = /\.pdf(\?|$)/i.test(lessonData.arquivo_url) || !!lessonData.pdf_url;
+        if (isPdf) {
+          // Lição em PDF: garante que nenhum HTML residual seja exibido
+          setHtmlContent(null);
+        } else if (isHtml) {
           setHtmlLoading(true);
           try {
             // Extract the storage path from the URL (e.g. 'licoes/filename.html')
@@ -1105,10 +1111,14 @@ const Lesson = () => {
 
   const hasContentBlocks = lesson?.conteudo && Array.isArray(lesson.conteudo) && lesson.conteudo.some((b: any) => b.type === 'text' || b.type === 'image');
   const hasHtmlFile = htmlContent !== null;
-  const hasPdfFile = !!(lesson?.arquivo_url && /\.pdf$/i.test(lesson.arquivo_url)) || !!lesson?.pdf_url;
-  const pdfUrl = lesson?.pdf_url || (lesson?.arquivo_url && /\.pdf$/i.test(lesson.arquivo_url) ? lesson.arquivo_url : null);
+  // Detecção robusta de PDF: arquivo_url pode terminar com .pdf, ter query params, ou estar em pdf_url
+  const hasPdfFile = !!(lesson?.arquivo_url && /\.pdf(\?|$)/i.test(lesson.arquivo_url)) || !!lesson?.pdf_url;
+  const pdfUrl = lesson?.pdf_url || (lesson?.arquivo_url && /\.pdf(\?|$)/i.test(lesson.arquivo_url) ? lesson.arquivo_url : null);
 
-  const hasRichContent = hasHtmlFile || hasContentBlocks || hasPdfFile;
+  // Quando há PDF, ignoramos completamente blocos de conteúdo HTML legados
+  const effectiveHasContentBlocks = hasPdfFile ? false : hasContentBlocks;
+
+  const hasRichContent = hasHtmlFile || effectiveHasContentBlocks || hasPdfFile;
 
   const renderHtmlWithReferences = (html: string) => {
     const processed = html.replace(
@@ -1708,12 +1718,12 @@ const Lesson = () => {
                 {hasHtmlFile && !hasPdfFile && (
                   <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderHtmlWithReferences(htmlContent!)) }} />
                 )}
-                {hasContentBlocks && !hasHtmlFile && !hasPdfFile && (
+                {effectiveHasContentBlocks && !hasHtmlFile && (
                   <div>
                     {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
                   </div>
                 )}
-                 {hasPdfFile && !hasHtmlFile && pdfUrl && (() => {
+                  {hasPdfFile && pdfUrl && (() => {
                   let pdfFinalUrl = pdfUrl;
                   if (pdfFinalUrl.includes('/storage/v1/object/') && !pdfFinalUrl.includes('/storage/v1/object/public/')) {
                     pdfFinalUrl = pdfFinalUrl.replace('/storage/v1/object/', '/storage/v1/object/public/');
