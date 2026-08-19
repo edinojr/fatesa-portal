@@ -17,7 +17,6 @@ import {
 
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import { processHtmlForNav, NavItem } from '../features/courses/utils/htmlNav';
 
 // Configurando o worker do PDF.js (v4.4.168+ para react-pdf 10.x)

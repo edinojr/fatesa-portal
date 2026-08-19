@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
-import 'react-pdf/dist/Page/TextLayer.css'
 import {
   ChevronLeft, ChevronRight, X, Loader2, Maximize, Minimize,
   ZoomIn, ZoomOut, FileText, ExternalLink, ScrollText, LayoutGrid
@@ -428,8 +427,8 @@ const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>((
                   <Page
                     pageNumber={index + 1}
                     width={pageWidth}
-                    renderTextLayer={true}
-                    renderAnnotationLayer={true}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
                     loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.05)' }} />}
                   />
                 </div>
@@ -441,8 +440,8 @@ const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>((
                 <Page
                   pageNumber={pageNumber}
                   width={pageWidth}
-                  renderTextLayer={true}
-                  renderAnnotationLayer={true}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
                   loading={<div style={{ width: pageWidth, height: pageWidth * 1.4, background: 'rgba(255,255,255,0.05)' }} />}
                 />
               </div>
