@@ -1115,10 +1115,12 @@ const Lesson = () => {
   const hasPdfFile = !!(lesson?.arquivo_url && /\.pdf(\?|$)/i.test(lesson.arquivo_url)) || !!lesson?.pdf_url;
   const pdfUrl = lesson?.pdf_url || (lesson?.arquivo_url && /\.pdf(\?|$)/i.test(lesson.arquivo_url) ? lesson.arquivo_url : null);
 
-  // Quando há PDF, ignoramos completamente blocos de conteúdo HTML legados
+  // PRIORIDADE ABSOLUTA: quando há PDF, ignoramos TUDO — HTML e blocos legados
+  // Garante que apenas o PDF seja exibido, mesmo se o banco tiver conteudo residual
   const effectiveHasContentBlocks = hasPdfFile ? false : hasContentBlocks;
+  const effectiveHasHtmlFile = hasPdfFile ? false : hasHtmlFile;
 
-  const hasRichContent = hasHtmlFile || effectiveHasContentBlocks || hasPdfFile;
+  const hasRichContent = effectiveHasHtmlFile || effectiveHasContentBlocks || hasPdfFile;
 
   const renderHtmlWithReferences = (html: string) => {
     const processed = html.replace(
@@ -1234,8 +1236,8 @@ const Lesson = () => {
     (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video') ||
     lesson.tipo === 'material' ||
     lesson.tipo === 'licao' ||
-    hasHtmlFile ||
-    hasContentBlocks ||
+    effectiveHasHtmlFile ||
+    effectiveHasContentBlocks ||
     hasPdfFile ||
     lesson.arquivo_url ||
     lesson.pdf_url ||
@@ -1715,10 +1717,10 @@ const Lesson = () => {
                  }
                }}
              >
-                {hasHtmlFile && !hasPdfFile && (
+                {effectiveHasHtmlFile && (
                   <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderHtmlWithReferences(htmlContent!)) }} />
                 )}
-                {effectiveHasContentBlocks && !hasHtmlFile && (
+                {effectiveHasContentBlocks && !effectiveHasHtmlFile && (
                   <div>
                     {Array.isArray(lesson.conteudo) && lesson.conteudo.map((block: any, idx: number) => renderContentBlock(block, idx))}
                   </div>
