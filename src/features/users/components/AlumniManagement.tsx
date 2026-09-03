@@ -3,6 +3,7 @@ import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, X, FileText, Histor
 import { supabase } from '../../../lib/supabase'
 import Logo from '../../../components/common/Logo'
 import LevelCertificate from './LevelCertificate'
+import TranscriptDocument from './TranscriptDocument'
 
 interface AlumniRecord {
   id: string
@@ -67,6 +68,7 @@ const AlumniManagement = () => {
   })
   
   const [showLevelCertificate, setShowLevelCertificate] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false);
 
   useEffect(() => {
     fetchRecords()
@@ -611,13 +613,22 @@ const AlumniManagement = () => {
               <button className="btn-icon" onClick={() => setShowDossie(false)}><X /></button>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
                 <button 
                   className="btn btn-primary" 
                   style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem' }}
                   onClick={() => setShowLevelCertificate(true)}
                 >
                   <Award size={20} /> EMITIR CERTIFICADO DE NÍVEL ({selectedAlumni.nivel_curso})
+                </button>
+                <button
+                  className="btn btn-outline"
+                  style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem' }}
+                  onClick={() => setShowTranscript(true)}
+                  disabled={!selectedAlumni.historico || selectedAlumni.historico.length === 0}
+                  title={(!selectedAlumni.historico || selectedAlumni.historico.length === 0) ? 'Insira as notas no histórico primeiro' : 'Documento A4 pronto para impressão / PDF'}
+                >
+                  <HistoryIcon size={20} /> EMITIR HISTÓRICO ESCOLAR (PDF)
                 </button>
             </div>
 
@@ -894,6 +905,14 @@ const AlumniManagement = () => {
           date={selectedAlumni.ano_formacao}
           verificationCode={selectedAlumni.codigo_verificacao || selectedAlumni.id}
           onClose={() => setShowLevelCertificate(false)}
+        />
+      )}
+
+      {/* HISTÓRICO ESCOLAR COMPLETO (A4 / PDF) */}
+      {showTranscript && selectedAlumni && (
+        <TranscriptDocument
+          alumni={selectedAlumni}
+          onClose={() => setShowTranscript(false)}
         />
       )}
     </div>

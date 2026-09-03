@@ -14,7 +14,8 @@ import {
   Video,
    ShieldCheck,
   RotateCcw,
-} from 'lucide-react'
+  Lock,
+ } from 'lucide-react'
 import AttendanceList from '../features/users/components/AttendanceList'
 import NucleosPanel from '../components/NucleosPanel'
 import StudentsManagement from '../features/users/components/StudentsManagement'
@@ -29,6 +30,7 @@ import ForumPanel from '../features/forum/components/ForumPanel'
 import BoletimPanel from '../features/professor/components/BoletimPanel'
 import ContentReleasePanel from '../features/courses/components/ContentReleasePanel'
 import ModuleResetPanel from '../features/professor/components/ModuleResetPanel'
+import LessonLockPanel from '../features/professor/components/LessonLockPanel'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import PageHeader from '../components/layout/PageHeader'
@@ -213,6 +215,13 @@ const Professor = () => {
                       <div className="icon-wrapper"><FileText size={32} /></div>
                       <h3>Arquivos e Documentos</h3>
                       <p>Validação da documentação pessoal enviada pelos alunos.</p>
+                    </div>
+
+                    <div className="admin-action-card" onClick={() => setActiveTab('lessonlock')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
+                      <span className="category-badge">Alunos</span>
+                      <div className="icon-wrapper"><Lock size={32} /></div>
+                      <h3>Liberação/Bloqueio de Lição</h3>
+                      <p>Libere ou bloqueie matérias e lições de forma individual por aluno, inclusive controle de hiato.</p>
                     </div>
                   </>
                 )}
@@ -417,6 +426,13 @@ const Professor = () => {
 
               {activeTab === 'progress' && (
                 <ModuleResetPanel
+                  professorNucleos={professorNucleos}
+                  onRefresh={fetchData}
+                />
+              )}
+
+              {activeTab === 'lessonlock' && (
+                <LessonLockPanel
                   professorNucleos={professorNucleos}
                   onRefresh={fetchData}
                 />

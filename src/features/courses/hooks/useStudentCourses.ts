@@ -74,7 +74,7 @@ export const useStudentCourses = (profile: any) => {
       const { data: exams } = await safeSelect(supabase
         .from('aulas')
         .select('id, livro_id, tipo, titulo, is_bloco_final')
-        .or('tipo.eq.prova,is_bloco_final.eq.true,titulo.ilike.%V1%,titulo.ilike.%V2%,titulo.ilike.%V3%,titulo.ilike.%RECUPERACAO%'));
+        .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true,titulo.ilike.%V1%,titulo.ilike.%V2%,titulo.ilike.%V3%,titulo.ilike.%RECUPERA%'));
 
       const releasedModulos = (releases || []).filter((r: any) => r.item_type === 'modulo').map((r: any) => r.item_id);
       const releasedAtividades = (releases || []).filter((r: any) => r.item_type === 'atividade').map((r: any) => r.item_id);
@@ -96,7 +96,7 @@ export const useStudentCourses = (profile: any) => {
       const examReleaseDates: Record<string, string> = {};
       if (exams && releases) {
         exams.forEach((exam: any) => {
-          const isEx = exam.is_bloco_final || exam.tipo === 'prova' || (exam.titulo && /V[1-3]|RECUPERAÇ/i.test(exam.titulo));
+          const isEx = exam.is_bloco_final || exam.tipo === 'prova' || exam.tipo === 'avaliacao' || (exam.titulo && /V[1-3]|RECUPERA|AVALIA/i.test(exam.titulo));
           if (isEx) {
             const rel = (releases as any[]).find((r: any) => r.item_id === exam.id && r.item_type === 'atividade');
             if (rel) {

@@ -60,7 +60,7 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
   const loadBooks = async (courseId: string) => {
     const { data } = await supabase
 .from('livros')
-        .select('id, titulo, professor_active, ordem, numero_modulo, curso_id, ensino_tipo')
+        .select('id, titulo, professor_active, ordem, curso_id, ensino_tipo')
       .eq('curso_id', courseId)
       .order('ordem')
     if (data) setBooks(data)
@@ -121,6 +121,11 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
         await supabase.from('liberacoes_nucleo').upsert([{ nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true }], { onConflict: 'nucleo_id, item_id, item_type' })
         // Cascade: liberar todas as aulas não-prova (vídeos + exercícios) do módulo para o polo
         if (itemType === 'modulo') {
+          // Garantir que o módulo esteja ativo globalmente — sem isso a
+          // liberação por polo não tem efeito para os alunos
+          const { error: actErr } = await supabase.from('livros').update({ professor_active: true }).eq('id', itemId)
+          if (actErr) throw actErr
+          setBooks(prev => prev.map(b => b.id === itemId ? { ...b, professor_active: true } : b))
           const lessons = await fetchLessonsByBook(itemId)
           const items = buildLessonReleases(nucleoId, lessons)
           if (items.length > 0) {
@@ -150,6 +155,10 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
       })
     const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id, item_id, item_type' })
     if (error) { alert('Erro: ' + error.message); return }
+    // Garantir que o módulo esteja ativo globalmente (liberação por polo não
+    // tem efeito se o módulo estiver inativo)
+    const { error: actErr } = await supabase.from('livros').update({ professor_active: true }).eq('id', book.id)
+    if (!actErr) setBooks(prev => prev.map(b => b.id === book.id ? { ...b, professor_active: true } : b))
     setReleases(prev => {
       const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
       return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
@@ -179,17 +188,24 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
     }
 
     if (nextBookId) {
-      // Liberar conteúdo (lições + exercícios) do próximo módulo
-      const { data: nextContent } = await supabase.from('aulas').select('id, tipo').eq('livro_id', nextBookId).not('tipo', 'eq', 'prova').not('tipo', 'eq', 'avaliacao')
+      // Liberar conteúdo (lições + exercícios, SEM provas) do próximo módulo
+      const { data: nextContent } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', nextBookId)
       if (nextContent) {
-        nextContent.forEach(item => {
-          const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo'
-          itemsToRelease.push({ nucleo_id: nucleoId, item_id: item.id, item_type: isVideo ? 'video' : 'atividade', liberado: true })
-        })
+        nextContent
+          .filter(item => !(item.tipo === 'prova' || item.tipo === 'avaliacao' || item.is_bloco_final))
+          .forEach(item => {
+            const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo'
+            itemsToRelease.push({ nucleo_id: nucleoId, item_id: item.id, item_type: isVideo ? 'video' : 'atividade', liberado: true })
+          })
       }
 
+      // Liberar o próximo módulo para o polo (item_type='modulo') — sem isso o
+      // módulo seguinte não aparece no painel dos alunos
+      itemsToRelease.push({ nucleo_id: nucleoId, item_id: nextBookId, item_type: 'modulo', liberado: true })
+
       // Ativar o próximo módulo para que alunos o vejam
-      await supabase.from('livros').update({ professor_active: true }).eq('id', nextBookId)
+      const { error: actErr } = await supabase.from('livros').update({ professor_active: true }).eq('id', nextBookId)
+      if (actErr) { alert('Erro ao ativar o módulo seguinte: ' + actErr.message); return }
       setBooks(prev => prev.map(b => b.id === nextBookId ? { ...b, professor_active: true } : b))
     }
 
@@ -200,7 +216,7 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
       const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
       return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
     })
-    alert('Prova V1 liberada! O módulo seguinte foi ativado com seu conteúdo (lições e exercícios) liberado para o polo.')
+    alert('Prova V1 liberada! O módulo seguinte foi liberado e ativado para o polo, com seu conteúdo (lições e exercícios).')
   }
 
   const isReleased = (itemId: string, itemType: string, nucleoId: string) =>
