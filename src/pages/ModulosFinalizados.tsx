@@ -109,11 +109,20 @@ const goToPanel = () => {
 
     // 2) finishedCourses — marca books finalizados por prova OU por histórico manual
     const finishedCourses = (courses || []).map(course => {
-        const finishedBooks = (course.livros || []).filter(l => {
+        const finishedBooks = (course.livros || []).map(l => {
             const stats = getBookStats(l, atividades, progressoAulas);
             const approvedManual = approvedByHistoryTitles.has(normalizeTitle(l.titulo));
-            return l.isFinished || stats.isFinished || approvedManual;
-        }).map(l => ({ ...l, isFinished: true, isApproved: true }));
+            return { l, stats, approvedManual };
+        }).filter(({ l, stats, approvedManual }) =>
+            l.isFinished || stats.isFinished || approvedManual
+        ).map(({ l, stats, approvedManual }) => ({
+            ...l,
+            isFinished: true,
+            // Não forçar aprovação: só fica aprovado se passou na prova (stats/l.isApproved)
+            // ou se foi aprovado por histórico manual (approvedManual).
+            // Alunos em DP (reprovaram na V3) continuam isApproved=false para exibir "D.P.".
+            isApproved: !!(stats.isApproved || l.isApproved || approvedManual)
+        }));
         return { ...course, livros: finishedBooks };
     }).filter(course => course.livros.length > 0);
 

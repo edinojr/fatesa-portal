@@ -1,4 +1,4 @@
-import { BookOpen, PlayCircle, ChevronRight } from 'lucide-react'
+import { BookOpen, PlayCircle, ChevronRight, AlertCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 import { getBookStats } from '../utils/courseUtils'
@@ -73,34 +73,64 @@ const CourseList: React.FC<CourseListProps> = ({
     if (showOnlyFinished && !stats.isFinished && !currentBook.isFinished) return null;
     if (!showOnlyFinished && (stats.isFinished || currentBook.isFinished)) return null;
 
+    // Módulo em manutenção: sem conteúdo ou sem prova final configurada.
+    // Só exibe o aviso se o aluno não foi finalizado manualmente nem por histórico.
+    const isMaintenance = stats.isMaintenance && !currentBook.isFinished && !isFinalizadoManual;
+
     const subtitulo = isFinalizadoManual
       ? `Nota ${Number(currentBook.nota).toFixed(1)} • Aprovado por Histórico`
-      : isHistoricoSintetico
-        ? 'Finalizado por Histórico Manual'
-        : `${stats.total} aulas • ${stats.percent}% concluído`;
+      : isMaintenance
+        ? 'Módulo em manutenção — conteúdo indisponível'
+        : isHistoricoSintetico
+          ? 'Finalizado por Histórico Manual'
+          : `${stats.total} aulas • ${stats.percent}% concluído`;
 
     return (
       <div key={currentBook.id} style={{ marginBottom: '0.75rem' }}>
         <BaseCard
-          href={isHistoricoSintetico ? '#' : `/module/${currentBook.id}`}
+          href={isHistoricoSintetico || isMaintenance ? '#' : `/module/${currentBook.id}`}
           capaUrl={currentBook.capa_url}
           titulo={currentBook.titulo}
           subtitulo={subtitulo}
           badge={
-            (stats.isFinished || currentBook.isFinished)
+            isMaintenance
               ? {
-                  label: (stats.isApproved || currentBook.isApproved) ? 'FINALIZADO' : 'D.P.',
-                  color: (stats.isApproved || currentBook.isApproved) ? 'var(--success)' : '#eab308',
-                  bg: (stats.isApproved || currentBook.isApproved) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
+                  label: 'EM MANUTENÇÃO',
+                  color: '#f59e0b',
+                  bg: 'rgba(245, 158, 11, 0.1)',
                 }
-              : undefined
+              : (stats.isFinished || currentBook.isFinished)
+                ? {
+                    label: (stats.isApproved || currentBook.isApproved) ? 'FINALIZADO' : 'D.P.',
+                    color: (stats.isApproved || currentBook.isApproved) ? 'var(--success)' : '#eab308',
+                    bg: (stats.isApproved || currentBook.isApproved) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
+                  }
+                : undefined
           }
-          status={!currentBook.isUnlocked ? 'locked' : (stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'completed' : 'default'}
-          accentColor={(stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'var(--success)' : 'var(--primary)'}
+          status={!currentBook.isUnlocked ? 'locked' : isMaintenance ? 'locked' : (stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'completed' : 'default'}
+          accentColor={isMaintenance ? '#f59e0b' : (stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'var(--success)' : 'var(--primary)'}
         >
           <div style={{ marginTop: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <ModalityBadge ensinoTipo={currentBook.ensino_tipo} />
-            {!isHistoricoSintetico && (
+            {isMaintenance && (
+              <div style={{
+                width: '100%',
+                marginTop: '0.4rem',
+                padding: '0.5rem 0.7rem',
+                background: 'rgba(245, 158, 11, 0.08)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}>
+                <AlertCircle size={14} color="#f59e0b" style={{ flexShrink: 0 }} />
+                <span style={{ fontSize: '0.72rem', color: '#f59e0b', lineHeight: 1.4 }}>
+                  Este módulo está em manutenção. Aguarde a introdução do conteúdo e do processo de avaliação.
+                </span>
+              </div>
+            )}
+            {!isHistoricoSintetico && !isMaintenance && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ flex: 1, height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
                 <div style={{ 
@@ -121,7 +151,7 @@ const CourseList: React.FC<CourseListProps> = ({
                 </span>
               </div>
             )}
-            {stats.hasExam && !isHistoricoSintetico && (
+            {stats.hasExam && !isHistoricoSintetico && !isMaintenance && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', padding: '0.4rem 0.6rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
                 <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota da Prova</span>
                 <span style={{ fontSize: '0.85rem', fontWeight: 800, color: stats.isApproved ? 'var(--success)' : '#eab308' }}>

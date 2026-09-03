@@ -38,6 +38,11 @@ const AlumniManagement = () => {
   const [selectedAlumni, setSelectedAlumni] = useState<AlumniRecord | null>(null)
   const [showCertificate, setShowCertificate] = useState(false)
   const [activeHistoryItem, setActiveHistoryItem] = useState<any>(null)
+  const [showHistoryModal, setShowHistoryModal] = useState(false)
+  const [historyCourseId, setHistoryCourseId] = useState('')
+  const [historyDrafts, setHistoryDrafts] = useState<{ modulo: string; nota: string; data: string; manual?: boolean; registered?: boolean }[]>([])
+  const [courses, setCourses] = useState<any[]>([])
+  const [fetchError, setFetchError] = useState<string | null>(null)
   
   // Níveis de curso pré-definidos
   const niveis = ['Básico', 'Médio']
@@ -65,11 +70,30 @@ const AlumniManagement = () => {
 
   useEffect(() => {
     fetchRecords()
+    fetchCourses()
   }, [])
+
+  const fetchCourses = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cursos')
+        .select('id, nome, nivel, livros(id, titulo, ordem)')
+        .order('nome')
+      if (error) throw error
+      const sorted = (data || []).map((c: any) => ({
+        ...c,
+        livros: [...(c.livros || [])].sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
+      }))
+      setCourses(sorted)
+    } catch (err) {
+      console.error('Error fetching courses for history:', err)
+    }
+  }
 
   const fetchRecords = async () => {
     try {
       setLoading(true)
+      setFetchError(null)
       const { data, error } = await supabase
         .from('registros_alumni')
         .select('*')
@@ -78,10 +102,114 @@ const AlumniManagement = () => {
       
       if (error) throw error
       setRecords(data || [])
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching alumni records:', err)
+      setFetchError(err?.message || String(err))
     } finally {
       setLoading(false)
+    }
+  }
+
+  const toISODate = (s: string): string => {
+    if (!s) return new Date().toISOString().split('T')[0]
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s
+    const m = String(s).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+    if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`
+    const d = new Date(s)
+    return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0]
+  }
+
+  const toDisplayDate = (iso: string): string => {
+    const d = new Date(iso + 'T12:00:00')
+    return isNaN(d.getTime()) ? iso : d.toLocaleDateString()
+  }
+
+  const buildHistoryDrafts = (courseId: string, alumni: AlumniRecord | null) => {
+    const course = courses.find(c => c.id === courseId)
+    const histMap = new Map(
+      (alumni?.historico || []).map((h: any) => [String(h.modulo || '').toLowerCase().trim(), h])
+    )
+    const today = new Date().toISOString().split('T')[0]
+    const drafts = (course?.livros || []).map((m: any) => {
+      const existing = histMap.get(String(m.titulo || '').toLowerCase().trim())
+      return {
+        modulo: m.titulo as string,
+        nota: existing?.nota != null ? String(existing.nota) : '',
+        data: toISODate(existing?.data || today),
+        registered: !!existing
+      }
+    })
+    if (drafts.length === 0) drafts.push({ modulo: '', nota: '', data: today, manual: true })
+    return drafts
+  }
+
+  const saveAllHistory = async () => {
+    if (!selectedAlumni) return
+    const filled = historyDrafts.filter(d => d.modulo.trim() !== '' && d.nota.trim() !== '')
+    if (filled.length === 0) {
+      alert('Preencha ao menos um módulo com nota.')
+      return
+    }
+    for (const d of filled) {
+      const n = parseFloat(d.nota.replace(',', '.'))
+      if (isNaN(n) || n < 0 || n > 10) {
+        alert(`Nota inválida em "${d.modulo}". Use um valor entre 0 e 10.`)
+        return
+      }
+    }
+    setActionLoading('history')
+    try {
+      // Entradas antigas de módulos que estão na lista são substituídas pelas
+      // notas digitadas; nota esvaziada = registro removido. Entradas de
+      // matérias fora da grade são preservadas.
+      const draftTitles = new Set(
+        historyDrafts.filter(d => d.modulo.trim() !== '').map(d => d.modulo.toLowerCase().trim())
+      )
+      const others = (selectedAlumni.historico || []).filter(
+        (h: any) => !draftTitles.has(String(h.modulo || '').toLowerCase().trim())
+      )
+      const newHistory = [
+        ...others,
+        ...filled.map(d => ({
+          modulo: d.modulo.trim(),
+          nota: d.nota.replace(',', '.').trim(),
+          data: toDisplayDate(d.data)
+        }))
+      ]
+      const { error } = await supabase
+        .from('registros_alumni')
+        .update({ historico: newHistory })
+        .eq('id', selectedAlumni.id)
+      if (error) throw error
+      const updated = { ...selectedAlumni, historico: newHistory }
+      setSelectedAlumni(updated)
+      setRecords(prev => prev.map(r => (r.id === updated.id ? updated : r)))
+      setShowHistoryModal(false)
+    } catch (err: any) {
+      alert('Erro ao salvar o histórico: ' + (err?.message || err))
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const removeHistoryEntry = async (idx: number) => {
+    if (!selectedAlumni || !selectedAlumni.historico) return
+    if (!window.confirm('Remover este registro do histórico?')) return
+    setActionLoading('history')
+    try {
+      const newHistory = selectedAlumni.historico.filter((_: any, i: number) => i !== idx)
+      const { error } = await supabase
+        .from('registros_alumni')
+        .update({ historico: newHistory })
+        .eq('id', selectedAlumni.id)
+      if (error) throw error
+      const updated = { ...selectedAlumni, historico: newHistory }
+      setSelectedAlumni(updated)
+      setRecords(prev => prev.map(r => (r.id === updated.id ? updated : r)))
+    } catch (err: any) {
+      alert('Erro ao remover do histórico: ' + (err?.message || err))
+    } finally {
+      setActionLoading(null)
     }
   }
 
@@ -175,6 +303,9 @@ const AlumniManagement = () => {
   // Ordenar anos (descendente)
   const years = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
 
+  // Modal de histórico: lista única com todos os módulos do curso
+  const historyFilledCount = historyDrafts.filter(d => d.modulo.trim() !== '' && d.nota.trim() !== '').length
+
   if (loading) return <div style={{ textAlign: 'center', padding: '4rem' }}><Loader2 className="spinner" /> Carregando base de Formados...</div>
 
   return (
@@ -249,6 +380,15 @@ const AlumniManagement = () => {
           </button>
         </div>
       </header>
+
+      {fetchError && (
+        <div className="admin-card" style={{ border: '1px solid #dc2626', background: 'rgba(220,38,38,0.06)', padding: '1rem 1.5rem', color: '#dc2626' }}>
+          <strong>Erro ao carregar a Base de Formados.</strong>{' '}
+          {fetchError.includes('does not exist') || fetchError.includes('42703')
+            ? 'O schema da tabela registros_alumni está desatualizado no banco. Aplique a migração supabase/migrations/20260903_alumni_full_schema.sql no SQL Editor do Supabase.'
+            : fetchError}
+        </div>
+      )}
 
       {years.length === 0 ? (
         <div className="admin-card" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
@@ -490,17 +630,16 @@ const AlumniManagement = () => {
                   className="btn btn-outline" 
                   style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.8rem' }}
                   onClick={() => {
-                    const modulo = prompt('Nome do Módulo/Disciplina:');
-                    const nota = prompt('Nota Final:');
-                    const data = new Date().toLocaleDateString();
-                    if (modulo && nota) {
-                      const newHistory = [...(selectedAlumni.historico || []), { modulo, nota, data }];
-                      const updatedAlumni = { ...selectedAlumni, historico: newHistory };
-                      setSelectedAlumni(updatedAlumni);
-                      // Update in DB
-                      supabase.from('registros_alumni').update({ historico: newHistory }).eq('id', selectedAlumni.id).then(fetchRecords);
-                    }
+                    const nivelMap: Record<string, string> = { 'Básico': 'basico', 'Basico': 'basico', 'Médio': 'medio', 'Medio': 'medio' }
+                    const matched = courses.find(c => c.nome === selectedAlumni.curso)
+                      || courses.find(c => c.nivel === nivelMap[selectedAlumni.nivel_curso])
+                      || courses[0]
+                    const courseId = matched?.id || ''
+                    setHistoryCourseId(courseId)
+                    setHistoryDrafts(buildHistoryDrafts(courseId, selectedAlumni))
+                    setShowHistoryModal(true)
                   }}
+                  disabled={actionLoading === 'history'}
                 >
                   <Plus size={14} /> Adicionar Registro
                 </button>
@@ -544,11 +683,8 @@ const AlumniManagement = () => {
                             </button>
                             <button 
                               className="btn btn-icon text-error"
-                              onClick={() => {
-                                const newHistory = selectedAlumni.historico!.filter((_: any, i: number) => i !== idx);
-                                setSelectedAlumni({ ...selectedAlumni, historico: newHistory });
-                                supabase.from('registros_alumni').update({ historico: newHistory }).eq('id', selectedAlumni.id).then(fetchRecords);
-                              }}
+                              onClick={() => removeHistoryEntry(idx)}
+                              disabled={actionLoading === 'history'}
                             >
                               <Trash2 size={14} />
                             </button>
@@ -560,6 +696,124 @@ const AlumniManagement = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE INSERÇÃO DE HISTÓRICO (LISTA ÚNICA) */}
+      {showHistoryModal && selectedAlumni && (
+        <div className="modal-overlay" onClick={() => setShowHistoryModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '660px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div>
+                <h2 style={{ margin: 0 }}>Inserir Notas do Histórico</h2>
+                <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>{selectedAlumni.nome} • {selectedAlumni.nivel_curso} • lista única da grade</p>
+              </div>
+              <button className="btn-icon" onClick={() => setShowHistoryModal(false)}><X /></button>
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); saveAllHistory(); }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {courses.length > 0 && (
+                <div className="form-group">
+                  <label>Curso (matérias cadastradas)</label>
+                  <select
+                    className="form-control"
+                    value={historyCourseId}
+                    onChange={(e) => {
+                      const id = e.target.value
+                      setHistoryCourseId(id)
+                      setHistoryDrafts(buildHistoryDrafts(id, selectedAlumni))
+                    }}
+                  >
+                    {courses.map(c => (
+                      <option key={c.id} value={c.id}>{c.nome}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div style={{ border: '1px solid var(--glass-border)', borderRadius: '10px', overflow: 'hidden' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 90px 140px 40px', gap: '0.5rem', padding: '0.6rem 0.75rem', background: 'rgba(var(--primary-rgb), 0.06)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <span>Matéria</span>
+                  <span style={{ textAlign: 'center' }}>Nota</span>
+                  <span style={{ textAlign: 'center' }}>Conclusão</span>
+                  <span />
+                </div>
+                <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                  {historyDrafts.map((d, idx) => (
+                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 90px 140px 40px', gap: '0.5rem', alignItems: 'center', padding: '0.5rem 0.75rem', borderTop: '1px solid var(--glass-border)', background: d.nota.trim() !== '' ? 'rgba(var(--primary-rgb), 0.03)' : 'transparent' }}>
+                      {d.manual ? (
+                        <input
+                          type="text"
+                          className="form-control"
+                          style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem' }}
+                          placeholder="Nome da matéria (fora da grade)"
+                          value={d.modulo}
+                          onChange={(e) => setHistoryDrafts(prev => prev.map((p, i) => (i === idx ? { ...p, modulo: e.target.value } : p)))}
+                        />
+                      ) : (
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {d.modulo}
+                          </div>
+                          <div style={{ fontSize: '0.7rem', color: d.registered ? 'var(--success)' : 'var(--text-muted)', fontWeight: 600 }}>
+                            {d.registered ? 'no histórico' : 'novo'}
+                          </div>
+                        </div>
+                      )}
+                      <input
+                        type="number"
+                        className="form-control"
+                        style={{ padding: '0.4rem 0.5rem', fontSize: '0.85rem', textAlign: 'center' }}
+                        placeholder="—"
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        value={d.nota}
+                        onChange={(e) => setHistoryDrafts(prev => prev.map((p, i) => (i === idx ? { ...p, nota: e.target.value } : p)))}
+                      />
+                      <input
+                        type="date"
+                        className="form-control"
+                        style={{ padding: '0.4rem 0.5rem', fontSize: '0.8rem' }}
+                        value={d.data}
+                        onChange={(e) => setHistoryDrafts(prev => prev.map((p, i) => (i === idx ? { ...p, data: e.target.value } : p)))}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-icon text-error"
+                        title={d.manual ? 'Remover linha' : 'Limpar nota (remove do histórico ao salvar)'}
+                        onClick={() => {
+                          if (d.manual) {
+                            setHistoryDrafts(prev => prev.filter((_, i) => i !== idx))
+                          } else {
+                            setHistoryDrafts(prev => prev.map((p, i) => (i === idx ? { ...p, nota: '', data: new Date().toISOString().split('T')[0] } : p)))
+                          }
+                        }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.8rem' }}
+                onClick={() => setHistoryDrafts(prev => [...prev, { modulo: '', nota: '', data: new Date().toISOString().split('T')[0], manual: true }])}
+              >
+                <Plus size={14} /> Adicionar matéria fora da grade
+              </button>
+
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem' }}>
+                <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setShowHistoryModal(false)} disabled={actionLoading === 'history'}>Cancelar</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 2 }} disabled={actionLoading === 'history'}>
+                  {actionLoading === 'history' ? <Loader2 className="spinner" /> : `Salvar Histórico (${historyFilledCount} nota${historyFilledCount === 1 ? '' : 's'})`}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

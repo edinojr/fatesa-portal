@@ -13,6 +13,7 @@ import {
   GraduationCap,
   Video,
    ShieldCheck,
+  RotateCcw,
 } from 'lucide-react'
 import AttendanceList from '../features/users/components/AttendanceList'
 import NucleosPanel from '../components/NucleosPanel'
@@ -27,6 +28,7 @@ import DocumentAnalysis from '../features/admin/components/DocumentAnalysis'
 import ForumPanel from '../features/forum/components/ForumPanel'
 import BoletimPanel from '../features/professor/components/BoletimPanel'
 import ContentReleasePanel from '../features/courses/components/ContentReleasePanel'
+import ModuleResetPanel from '../features/professor/components/ModuleResetPanel'
 
 import { useProfessorManagement } from '../hooks/useProfessorManagement'
 import PageHeader from '../components/layout/PageHeader'
@@ -244,6 +246,13 @@ const Professor = () => {
                       <h3>Boletim</h3>
                       <p>Notas dos alunos por módulo com edição inline.</p>
                     </div>
+
+                    <div className="admin-action-card" onClick={() => setActiveTab('progress')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)', border: '1px solid rgba(255,77,77,0.2)' }}>
+                      <span className="category-badge">Conteúdo</span>
+                      <div className="icon-wrapper"><RotateCcw size={32} color="var(--error)" /></div>
+                      <h3>Progresso & Reset</h3>
+                      <p>Visualize o progresso de cada aluno e resete módulos finalizados indevidamente.</p>
+                    </div>
  
                     <div className="admin-action-card" onClick={() => setActiveTab('materiais')} style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.05)' }}>
                       <span className="category-badge">Conteúdo</span>
@@ -403,6 +412,13 @@ const Professor = () => {
                 <ContentReleasePanel
                   professorNucleos={professorNucleos}
                   profile={profile}
+                />
+              )}
+
+              {activeTab === 'progress' && (
+                <ModuleResetPanel
+                  professorNucleos={professorNucleos}
+                  onRefresh={fetchData}
                 />
               )}
           </div>

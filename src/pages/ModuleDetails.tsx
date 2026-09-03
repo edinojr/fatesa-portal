@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom'
 import {
   ChevronRight,
   ChevronLeft,
-  BookOpen,
   Lock,
   CheckCircle,
+  AlertTriangle,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { handleSupabaseError } from '../lib/authUtils'
@@ -314,9 +314,26 @@ const ModuleDetails = () => {
                 </div>
 
                 {!hasAnyContent ? (
-                  <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'var(--glass)', borderRadius: '32px', border: '1px dashed var(--glass-border)' }}>
-                    <BookOpen size={64} style={{ opacity: 0.1, marginBottom: '1.5rem' }} />
-                    <h2 style={{ opacity: 0.5 }}>Nenhum conteúdo liberado para visualização no momento.</h2>
+                  <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'var(--glass)', borderRadius: '32px', border: '1px dashed rgba(245, 158, 11, 0.4)' }}>
+                    <AlertTriangle size={64} color="#f59e0b" style={{ opacity: 0.4, marginBottom: '1.5rem' }} />
+                    <h2 style={{ color: '#f59e0b', marginBottom: '0.75rem' }}>Módulo em Manutenção</h2>
+                    <p style={{ color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto 1.5rem', lineHeight: 1.6 }}>
+                      Este módulo ainda não possui conteúdo ou processo de avaliação disponível.
+                      O aluno não será aprovado automaticamente.
+                      Aguarde a introdução do conteúdo e do processo de avaliação pela administração.
+                    </p>
+                    <button onClick={() => goToPanel('/dashboard?tab=cursos')} className="btn btn-primary" style={{ width: 'auto' }}>
+                      Voltar para Meus Cursos
+                    </button>
+                  </div>
+                ) : !avaliacoes.length ? (
+                  <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--glass)', borderRadius: '32px', border: '1px dashed rgba(245, 158, 11, 0.4)', marginBottom: '2rem' }}>
+                    <AlertTriangle size={48} color="#f59e0b" style={{ opacity: 0.4, marginBottom: '1rem' }} />
+                    <h3 style={{ color: '#f59e0b', marginBottom: '0.5rem' }}>Avaliação em Manutenção</h3>
+                    <p style={{ color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto', lineHeight: 1.6 }}>
+                      As lições estão disponíveis para estudo, mas o módulo ainda não possui prova final configurada.
+                      O aluno não será aprovado automaticamente até que o processo de avaliação seja introduzido.
+                    </p>
                   </div>
                 ) : (
                    <div style={{ 

@@ -13,8 +13,9 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
 
     const totalItems = allAulas.length;
     
-    // Se não há itens, consideramos finalizado
-    if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 10, isFinished: true, isApproved: true, examGrade: 10, hasExam: false };
+    // Módulo sem aulas não pode ser aprovado automaticamente.
+    // O aluno só é finalizado/aprovado mediante prova OU liberação manual do administrador.
+    if (totalItems === 0) return { percent: 0, completed: 0, total: 0, averageGrade: 0, isFinished: false, isApproved: false, examGrade: 0, hasExam: false, isMaintenance: true };
     
     const completedItems = allAulas.filter((a: any) => 
       (a.tipo === 'atividade' || a.tipo === 'prova') ? submittedIds.includes(a.id) : watchedIds.includes(a.id)
@@ -76,9 +77,14 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       isFinished = isApproved || hasFailedV3;
     } else {
       isApproved = false;
-      // Se não tem prova, finaliza quando completar todos os itens
-      isFinished = (completedItems === totalItems && totalItems > 0);
+      // Sem prova final = sem processo de aprovação concluído.
+      // O módulo só é finalizado mediante aprovação em prova OU liberação manual do administrador.
+      isFinished = false;
     }
+
+    // Módulo em manutenção: sem aulas OU sem prova final configurada.
+    // Permanece em hiato até que o conteúdo seja introduzido e o aluno passe pelo processo.
+    const isMaintenance = finalExams.length === 0;
     
     const result = {
       percent: Math.round((completedItems / totalItems) * 100),
@@ -88,7 +94,8 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       isApproved: isApproved,
       isFinished: isFinished,
       attemptsCount,
-      hasExam: finalExams.length > 0
+      hasExam: finalExams.length > 0,
+      isMaintenance
     };
     
     console.log(`[getBookStats] "${l.titulo}":`, {

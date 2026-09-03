@@ -191,8 +191,12 @@ export const useStudentCourses = (profile: any) => {
       
       // Get manually completed modules from user profile
       const manualCompletedModuleIds = (profile?.modulos_finalizados_manual || []) as string[];
-      const userHasActivityInModule = (livroId: string) => {
-        return resData.some((res: any) => res.book_id === livroId);
+      // Helper: verifica se o aluno já começou o módulo (submissões OU aulas assistidas).
+      // Antes considerava apenas respostas_aulas, escondendo módulos onde o aluno
+      // só assistiu vídeos. Agora inclui progresso para refletir a realidade.
+      const userHasActivityInModule = (livroId: string, aulaIds: string[] = []) => {
+        return resData.some((res: any) => res.book_id === livroId)
+          || (progData || []).some((p: any) => aulaIds.includes(p.aula_id));
       };
 
       setAtividades(resData);
@@ -332,7 +336,20 @@ export const useStudentCourses = (profile: any) => {
               const notaV3 = subV3?.nota || 0;
 
               const isDP = !isStaff && fezV1 && fezV2 && fezV3 && notaV3 < 7.0;
-              const moduleFinished = isApproved || isManualFinished;
+
+              // Módulo em manutenção: sem aulas OU sem prova final configurada.
+              // Deve ser calculado ANTES de moduleFinished porque um módulo em
+              // manutenção NUNCA pode ser considerado finalizado — não há
+              // conteúdo/prova para concluir. Previne finalização manual indevida
+              // (modulos_finalizados_manual ou historico_notas) de esconder o
+              // módulo do painel do aluno quando ainda não há conteúdo.
+              const hasAnyAulasInModule = (l.aulas || []).length > 0;
+              const hasExamInModule = (l.aulas || []).some((a: any) =>
+                a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final
+              );
+              const isMaintenanceModule = !hasAnyAulasInModule || !hasExamInModule;
+
+              const moduleFinished = (isApproved || isManualFinished) && !isMaintenanceModule;
 
               const isPreviousFinishedOrReleased = bookOrdem === 1 || Array.from(releasedExamBookIds).some(rid => {
                 const prevBook = sortedLivros.find((sl: any) => sl.id === rid);
@@ -356,32 +373,27 @@ const hasException = exceptionIds.includes(l.id);
               const isCurrent = isModuleReleased && !moduleFinished;
               const isUnlocked = isReleased;
 
-              const examReleaseDate = examReleaseDates[l.id] || moduleReleaseDates[l.id];
-              const userCreatedAt = new Date(profile.created_at).getTime();
-              const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
-              const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
-              const hasStarted = userHasActivityInModule(l.id);
-              const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
+               const examReleaseDate = examReleaseDates[l.id] || moduleReleaseDates[l.id];
+               const userCreatedAt = new Date(profile.created_at).getTime();
+               const releaseTime = examReleaseDate ? new Date(examReleaseDate).getTime() : 0;
+               const isPastModule = releaseTime > 0 && userCreatedAt > releaseTime;
+               const moduleAulaIds = (l.aulas || []).map((a: any) => a.id);
+               const hasStarted = userHasActivityInModule(l.id, moduleAulaIds);
+               const hasIndividualExamInModule = (l.aulas || []).some((a: any) => examExceptionIds.includes(a.id));
 
-               // Módulo não finalizado fica oculto se: bloqueado pelo professor, ou se não é staff,
-               // sem exceção, não começou, sem prova individual, sem liberação manual,
-               // sem bloqueio de pagamento. O primeiro módulo de cada curso NUNCA fica oculto,
-               // A MENOS QUE esteja bloqueado pelo professor.
-               // Alunos que entraram após a liberação de um módulo só veem o módulo atualmente liberado
-               // (o de maior ordem com data de liberação), não os módulos anteriores já liberados.
                const latestReleasedOrdem = Math.max(0, ...sortedLivros
-                 .filter((sl: any) => (examReleaseDates[sl.id] || moduleReleaseDates[sl.id]))
-                 .map((sl: any) => sl.ordem || 1)
-               );
-               const isPastAndNotLatest = isPastModule && bookOrdem < latestReleasedOrdem;
+                  .filter((sl: any) => (examReleaseDates[sl.id] || moduleReleaseDates[sl.id]))
+                  .map((sl: any) => sl.ordem || 1)
+                );
+                const isPastAndNotLatest = isPastModule && bookOrdem < latestReleasedOrdem;
 
-               const isFirstModule = bookOrdem === 1;
-               const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished) || (!isStaff && isPastAndNotLatest && !hasException && !hasStarted && !hasIndividualExamInModule && !moduleFinished);
+                const isFirstModule = bookOrdem === 1;
+                const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isMaintenanceModule) || (!isStaff && isPastAndNotLatest && !hasException && !hasStarted && !hasIndividualExamInModule && !moduleFinished && !isMaintenanceModule);
 
-                const isExcluded = studentExclusions.includes(l.id);
-                if (isExcluded) {
-                  if (!isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isPastAndNotLatest) {
-                    return null;
+                 const isExcluded = studentExclusions.includes(l.id);
+                 if (isExcluded) {
+                   if (!isStaff && !hasException && !hasStarted && !hasIndividualExamInModule && !isManualModuleRelease && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isPastAndNotLatest && !isMaintenanceModule) {
+                     return null;
                   }
                 }
 
@@ -416,9 +428,12 @@ const hasException = exceptionIds.includes(l.id);
                   }).map(a => {
                     const isExamType = a.tipo === 'prova' || !!a.is_bloco_final;
                     const isMediaType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
-if (isExamType && !releasedAtividades.includes(a.id) && !examExceptionIds.includes(a.id) && !isStaff && !hasException) {
-                       return { ...a, isHidden: true };
-                    }
+                    // Provas seguem a liberação do módulo: quando o módulo tem
+                    // exceção (liberacoes_excecao), as provas V1 também ficam visíveis.
+                    // V2/V3 continuam ocultas até reprovação na versão anterior.
+                    if (isExamType && !releasedAtividades.includes(a.id) && !examExceptionIds.includes(a.id) && !isStaff && !hasException) {
+                        return { ...a, isHidden: true };
+                     }
                     if (!isStaff && l.professor_active === false && !hasException && !hasIndividualExamInModule) {
                       return { ...a, isHidden: true };
                     }

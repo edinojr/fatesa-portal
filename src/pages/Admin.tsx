@@ -37,9 +37,10 @@ import GradeHistoryInsertion from '../features/admin/components/GradeHistoryInse
 import ManualHistoryPanel from '../features/admin/components/ManualHistoryPanel'
 import DocsArchive from '../features/admin/components/DocsArchive'
 import BoletimPanel from '../features/professor/components/BoletimPanel'
+import ModuleResetPanel from '../features/professor/components/ModuleResetPanel'
 
 // Icons and UI
-import { Folder } from 'lucide-react'
+import { Folder, RotateCcw } from 'lucide-react'
 
 // Legacy / Shared Components
 import NucleosPanel from '../components/NucleosPanel'
@@ -492,6 +493,12 @@ const Admin = () => {
                     <p>Visualize e edite notas de todos os alunos em todos os módulos.</p>
                   </div>
 
+                  <div className="admin-action-card" onClick={() => setActiveTab('progress')} style={{ border: '1px solid rgba(255,77,77,0.3)', background: 'rgba(255,77,77,0.03)' }}>
+                    <div className="icon-wrapper" style={{ background: 'rgba(255,77,77,0.1)' }}><RotateCcw size={32} color="var(--error)" /></div>
+                    <h3>Progresso & Reset de Módulos</h3>
+                    <p>Visualize o progresso de cada aluno e resete módulos finalizados indevidamente.</p>
+                  </div>
+
                   <div className="admin-action-card" onClick={() => setActiveTab('grade_history')}>
                     <div className="icon-wrapper"><GraduationCap size={32} /></div>
                     <h3>Histórico de Notas</h3>
@@ -744,6 +751,13 @@ const Admin = () => {
             allStudents={users}
             professorNucleos={allNucleos}
             onRefresh={fetchBoletimSubmissions}
+          />
+        )}
+
+        {activeTab === 'progress' && (
+          <ModuleResetPanel
+            professorNucleos={allNucleos}
+            onRefresh={fetchData}
           />
         )}
 
