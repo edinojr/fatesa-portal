@@ -611,17 +611,21 @@ const Lesson = () => {
         
         setPrevLessonId(prevId);
 
-        // Next lesson for navigation (only actual lessons: licao, material)
+        // Next lesson for navigation (only actual lessons: licao, material).
+        // Panorama (título 'Panorama' ou ordem 0) não é lição numerada — excluído.
         const { data: nxt } = await supabase
           .from('aulas')
-          .select('id')
+          .select('id, titulo, ordem')
           .eq('livro_id', lesson.livro_id)
           .gt('ordem', lesson.ordem || 0)
           .in('tipo', ['licao', 'material'])
           .order('ordem', { ascending: true })
-          .limit(1);
-        
-        let nextId = nxt && nxt.length > 0 ? nxt[0].id : null;
+          .limit(5);
+
+        const nextReal = (nxt || []).find((n: any) =>
+          (n.titulo || '').trim().toLowerCase() !== 'panorama' && n.ordem !== 0
+        );
+        let nextId = nextReal ? nextReal.id : null;
 
         // If Panorama is positioned after lessons (e.g. ordem 11), 
         // fallback to the first lesson as "next"
@@ -1280,7 +1284,7 @@ const Lesson = () => {
       const advanced = pdfViewerRef.current?.nextPage()
       if (!advanced) {
         // Chegou ao fim do PDF — encaminha para a lição seguinte
-        if (nextLessonId && !lesson.titulo?.toLowerCase().startsWith('lição 10')) {
+        if (nextLessonId) {
           navigate(`/lesson/${nextLessonId}`)
         } else {
           // Sem próxima lição — volta à página de seleção de lições
@@ -1413,7 +1417,7 @@ const Lesson = () => {
                 <ChevronLeft size={16} />
               </button>
             )}
-            {nextLessonId && !lesson.titulo?.toLowerCase().startsWith('lição 10') && (
+            {nextLessonId && (
               <button
                 onClick={() => navigate(`/lesson/${nextLessonId}`)}
                 className="btn btn-primary"
@@ -2702,7 +2706,7 @@ const Lesson = () => {
           )}
         </div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-          {nextLessonId && !lesson.titulo?.toLowerCase().startsWith('lição 10') && (
+          {nextLessonId && (
             <button
               onClick={() => navigate(`/lesson/${nextLessonId}`)}
               className="btn btn-primary"
