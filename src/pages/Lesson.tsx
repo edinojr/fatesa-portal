@@ -127,6 +127,8 @@ const Lesson = () => {
   const [relatedExercise, setRelatedExercise] = useState<any>(null)
   const [prevLessonId, setPrevLessonId] = useState<string | null>(null)
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null)
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const checarAcessoSeguroAvaliacao = async (alunoId: string, moduloId: string, aulaAtual: any, nucleoId?: string) => {
     // Non-exam items are handled by module-level release, not individual exam control
@@ -957,6 +959,29 @@ const Lesson = () => {
     return () => clearInterval(int);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExamStarted, timeLeft, userProfile]);
+
+  // Auto-save debounced das respostas durante a prova (não envia, não muda status/tentativa)
+  useEffect(() => {
+    if (!isExamStarted || submitted || userProfile?.isStaff || !userProfile?.id || !lesson) return;
+    if (Object.keys(answers).length === 0) return;
+    const targetId = (lesson as any).linkedActivity?.id || id;
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(async () => {
+      const { error } = await supabase
+        .from('respostas_aulas')
+        .upsert({
+          aluno_id: userProfile.id,
+          aula_id: targetId,
+          respostas: answers,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'aluno_id,aula_id' });
+      if (!error) {
+        setLastSavedAt(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }));
+      }
+    }, 5000);
+    return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answers, isExamStarted, submitted, userProfile?.id, lesson, id]);
 
   // Lock window: prevent close/tab switch/cache while exam is active
   useEffect(() => {
@@ -1806,11 +1831,30 @@ const Lesson = () => {
          <div className="quiz-section quiz-section-modern" style={{ background: 'var(--glass)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'2rem'}}>
             <h2>{lesson.is_bloco_final ? 'Avaliação Final' : lesson.tipo === 'prova' ? 'Avaliação' : 'Questionário'}</h2>
-            {isExamStarted && timeLeft && (
-              <div style={{background:'var(--primary)', color:'#fff', padding:'0.5rem 1.5rem', borderRadius:'50px', fontWeight:800}}>
-                TEMPO: {Math.floor(timeLeft/60)}:{(timeLeft%60).toString().padStart(2,'0')}
-              </div>
-            )}
+            {isExamStarted && timeLeft ? (
+              <>
+                <style>{`@keyframes examTimerPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.65; transform: scale(1.05); } }`}</style>
+                <div style={{
+                  background: timeLeft <= 300 ? 'var(--error)' : 'var(--primary)',
+                  color: '#fff',
+                  padding: '0.5rem 1.5rem',
+                  borderRadius: '50px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  animation: timeLeft <= 300 ? `examTimerPulse ${timeLeft <= 60 ? 0.5 : 1}s ease-in-out infinite` : undefined
+                }}>
+                  {timeLeft <= 300 && '⏰'}
+                  TEMPO: {Math.floor(timeLeft/60)}:{(timeLeft%60).toString().padStart(2,'0')}
+                  {timeLeft <= 300 && (
+                    <span style={{ fontWeight: 600, fontSize: '0.7rem' }}>
+                      {timeLeft <= 60 ? 'último minuto!' : 'menos de 5 min'}
+                    </span>
+                  )}
+                </div>
+              </>
+            ) : null}
           </div>
 
           {/* REGULAR PROVA — show warning gate (only if NOT already in progress, skip if module finished) */}
@@ -2110,6 +2154,11 @@ const Lesson = () => {
                   >
                     {submitting ? <Loader2 className="spinner" size={18} /> : '💾 Salvar Respostas'}
                   </button>
+                  {lastSavedAt && (
+                    <span style={{ alignSelf: 'center', fontSize: '0.8rem', color: 'var(--success)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <CheckCircle2 size={14} /> salvo às {lastSavedAt}
+                    </span>
+                  )}
                   <button 
                     className="btn btn-primary" 
                     onClick={() => handleSubmit(false)}
