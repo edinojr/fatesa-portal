@@ -85,7 +85,7 @@ const Lesson = () => {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [answers, setAnswers] = useState<Record<string, any>>({})
-  const [result, setResult] = useState<{ score: number | null; passed: boolean; pendingReview?: boolean; scoreOriginal?: number | null; canRetry?: boolean } | null>(null)
+  const [result, setResult] = useState<{ score: number | null; passed: boolean; pendingReview?: boolean; scoreOriginal?: number | null } | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [complete, setComplete] = useState(false)
   const [existingSubmission, setExistingSubmission] = useState<any | null>(null)
@@ -94,7 +94,6 @@ const Lesson = () => {
   const [showQuizEditor, setShowQuizEditor] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [isReleased, setIsReleased] = useState<boolean>(true)
-  const [reviewMode] = useState(false)
   const [shuffledOptions, setShuffledOptions] = useState<Record<string, string[]>>({})
   const [shuffledMatchingRows, setShuffledMatchingRows] = useState<Record<string, any[]>>({})
   const [showExamModal, setShowExamModal] = useState(false)
@@ -123,7 +122,6 @@ const Lesson = () => {
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [isExamStarted, setIsExamStarted] = useState(false)
   const [staffExamMode, setStaffExamMode] = useState(false)
-  const [deadlineInfo] = useState<{ deadline: Date, stage: number, expired: boolean } | null>(null)
   const [relatedExercise, setRelatedExercise] = useState<any>(null)
   const [prevLessonId, setPrevLessonId] = useState<string | null>(null)
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
@@ -818,39 +816,6 @@ const Lesson = () => {
       console.log('[Lesson.handleSubmit] currentSub:', currentSub);
       console.log('[Lesson.handleSubmit] answers:', answers);
       
-
-      // Se for admin, salvar as respostas como gabarito oficial na aula
-      if (isSavingGabarito && userProfile?.isStaff) {
-        const gabarito = questions.map((q, idx) => {
-          const qKey = q.id || idx;
-          const adminAns = answers[qKey];
-          const gabaritoQ = { ...q };
-
-          if (q.type === 'multiple_choice' || !q.type) {
-            gabaritoQ.correct = typeof adminAns === 'number' ? adminAns : (q.correct || 0);
-          } else if (q.type === 'true_false') {
-            gabaritoQ.isTrue = typeof adminAns === 'boolean' ? adminAns : (q.isTrue ?? true);
-          } else if (q.type === 'matching') {
-            gabaritoQ.matchingPairs = q.matchingPairs?.map((pair, mIdx) => {
-              const selectedIdx = adminAns?.[mIdx];
-              if (selectedIdx !== undefined && selectedIdx !== '') {
-                const selectedRight = q.matchingPairs?.[parseInt(selectedIdx)];
-                return { left: pair.left, right: selectedRight?.right || pair.right };
-              }
-              return pair;
-            });
-          } else if (q.type === 'discursive') {
-            gabaritoQ.expectedAnswer = adminAns || q.expectedAnswer || '';
-          }
-          return gabaritoQ;
-        });
-
-        const { error } = await supabase.from('aulas').update({ questionario: gabarito }).eq('id', targetId);
-        if (error) throw error;
-        alert('Gabarito Oficial salvo com sucesso!');
-        setSubmitting(false);
-        return;
-      }
 
        const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
       
@@ -1853,21 +1818,18 @@ const Lesson = () => {
             </div>
           )}
 
-           {lesson.is_bloco_final && !isExamStarted && !submitted && !reviewMode && !userProfile?.isStaff && !isModuleFinished ? (
+           {lesson.is_bloco_final && !isExamStarted && !submitted && !userProfile?.isStaff && !isModuleFinished ? (
             <div style={{ textAlign: 'center', padding: '3rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '20px' }}>
               <Award size={64} color="var(--primary)" style={{marginBottom:'1rem'}}/>
               <h3>Prova do Bloco {lesson.bloco_id}</h3>
-              <p>Duração: 40 minutos | Tentativa: {deadlineInfo?.stage || 1}</p>
-              <p>Prazo: {deadlineInfo?.deadline.toLocaleDateString()}</p>
-              {deadlineInfo?.expired && userProfile?.profile_tipo === 'aluno' && !userProfile?.isStaff ? <p style={{color:'var(--error)'}}>Prazo Expirado</p> : (
-                               <button 
-                                 className="btn btn-primary" 
-                                 onClick={() => setShowExamModal(true)} 
-                                 style={{width:'auto', marginTop:'1rem'}}
-                               >
-                                 {userProfile?.isStaff ? 'Visualizar Avaliação' : 'Começar Agora'}
-                               </button>
-              )}
+              <p>Duração: 40 minutos | Tentativa: 1</p>
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowExamModal(true)}
+                style={{width:'auto', marginTop:'1rem'}}
+              >
+                {userProfile?.isStaff ? 'Visualizar Avaliação' : 'Começar Agora'}
+              </button>
             </div>
           ) : (lesson.tipo === 'prova' && !lesson.is_bloco_final && !submitted && !examModalConfirmed && !userProfile?.isStaff && existingSubmission?.status !== 'liberado') ? null : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -1879,8 +1841,7 @@ const Lesson = () => {
                                   q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
                 
                   // Gabarito: staff sempre vê (exceto em modo teste antes de enviar) | aluno vê se submeter e atingir nota mínima ou módulo finalizado
-                  const showGabarito = reviewMode ||
-                                       (userProfile?.isStaff && !(staffExamMode && !submitted)) ||
+                  const showGabarito = (userProfile?.isStaff && !(staffExamMode && !submitted)) ||
                                        isModuleFinished ||
                                         (submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0));
 
@@ -1907,7 +1868,7 @@ const Lesson = () => {
                         border: showGabarito && submitted && q.correct === oIdx ? '1px solid var(--success)' : (showGabarito && submitted && answers[qKey] === oIdx && !isCorrect ? '1px solid var(--error)' : '1px solid var(--glass-border)'), 
                         cursor: 'pointer', marginBottom:'0.5rem' 
                       }}>
-                         <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={!userProfile?.isStaff && submitted && !reviewMode} /> 
+                         <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={!userProfile?.isStaff && submitted} />
                         <span style={{flex:1}}>{opt}</span>
                                  {showGabarito && (userProfile?.isStaff || submitted) && q.type === 'matching' ? null : (q.correct === oIdx && <div style={{color:'var(--success)', fontSize:'0.75rem', fontWeight:800, display:'flex', alignItems:'center', gap:'0.4rem'}}><CheckCircle size={14}/> GABARITO</div>)}
                                  {showGabarito && (userProfile?.isStaff || submitted) && answers[qKey] === oIdx && !isCorrect && <XCircle size={16} color="var(--error)"/>}
@@ -2243,20 +2204,7 @@ const Lesson = () => {
                     <button className="btn btn-outline" onClick={() => navigate('/dashboard')} style={{width:'auto', display:'flex', alignItems:'center', gap:'0.5rem'}}>
                       <LayoutDashboard size={18}/> Voltar ao Painel
                     </button>
-                    {result.canRetry && (
-                      <button 
-                        className="btn btn-primary" 
-                        onClick={() => {
-                          setSubmitted(false);
-                          setResult(null);
-                          setAnswers({});
-                        }} 
-                        style={{width:'auto', background:'var(--warning)', color:'#000', fontWeight:800}}
-                      >
-                        Iniciar Recuperação (V{deadlineInfo?.stage})
-                      </button>
-                    )}
-                    {!result.canRetry && nextLessonId && (
+                    {nextLessonId && (
                       <div style={{display:'flex', gap:'1rem', justifyContent:'center', marginTop:'2rem'}}>
                         <button 
                           className="btn btn-outline" 

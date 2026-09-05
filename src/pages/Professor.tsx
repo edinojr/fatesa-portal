@@ -88,8 +88,9 @@ const Professor = () => {
   } = useProfessorManagement();
 
   const location = useLocation()
-  const [dashboardView, setDashboardView] = React.useState<'main' | 'nucleos' | 'alunos' | 'conteudo'>(() => {
-    return (localStorage.getItem('fatesa_prof_dashboard_view') as any) || 'main'
+  const [dashboardView, setDashboardView] = React.useState<'main' | 'alunos' | 'conteudo'>(() => {
+    const saved = localStorage.getItem('fatesa_prof_dashboard_view');
+    return saved === 'alunos' || saved === 'conteudo' ? saved : 'main';
   });
 
   React.useEffect(() => {

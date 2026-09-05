@@ -1,8 +1,7 @@
-import { BookOpen, PlayCircle, ChevronRight, AlertCircle } from 'lucide-react'
+import { BookOpen, ChevronRight, AlertCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 import { getBookStats } from '../utils/courseUtils'
-import { useState } from 'react'
 import BaseCard from './cards/BaseCard'
 import ModalityBadge from '../../../components/ui/ModalityBadge'
 
@@ -11,7 +10,6 @@ interface CourseListProps {
   atividades: any[]
   progressoAulas: any[]
   showOnlyFinished?: boolean
-  showOnlyOngoing?: boolean
 }
 
 const CourseList: React.FC<CourseListProps> = ({ 
@@ -21,52 +19,10 @@ const CourseList: React.FC<CourseListProps> = ({
   showOnlyFinished = false,
 }) => {
   const navigate = useNavigate();
-  const [expandedBookId] = useState<string | null>(null);
   const getBookStatsWrapper = (l: any) => getBookStats(l, atividades, progressoAulas);
-
-  const renderLessonItem = (aula: any) => {
-    const isReader = (aula.tipo === 'material' || aula.pdf_url || aula.arquivo_url) && aula.tipo !== 'prova' && !aula.is_bloco_final;
-    return (
-      <div 
-        key={aula.id} 
-        onClick={() => {
-          if (isReader) navigate(`/book/${aula.id}?type=aula`);
-          else navigate(`/lesson/${aula.id}`);
-        }}
-        style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between', 
-          padding: '0.6rem 0.8rem', 
-          background: 'rgba(255,255,255,0.03)', 
-          borderRadius: '8px', 
-          cursor: 'pointer',
-          fontSize: '0.8rem',
-          transition: 'all 0.2s',
-          border: '1px solid rgba(255,255,255,0.05)',
-          marginBottom: '0.4rem'
-        }}
-        onMouseEnter={(e) => { 
-          e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; 
-          e.currentTarget.style.borderColor = 'var(--primary)'; 
-        }}
-        onMouseLeave={(e) => { 
-          e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; 
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; 
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <PlayCircle size={14} opacity={0.6} color="var(--primary)" />
-          <span>{aula.titulo}</span>
-        </div>
-        <ChevronRight size={12} opacity={0.4} />
-      </div>
-    );
-  };
 
   const renderBookCard = (currentBook: any) => {
     const stats = getBookStatsWrapper(currentBook);
-    const isExpanded = expandedBookId === currentBook.id;
     const isHistoricoSintetico = !currentBook.aulas || currentBook.aulas.length === 0;
     const isFinalizadoManual = isHistoricoSintetico && currentBook.isFinished && currentBook.nota != null;
 
@@ -161,23 +117,6 @@ const CourseList: React.FC<CourseListProps> = ({
             )}
           </div>
         </BaseCard>
-
-            {isExpanded && currentBook.aulas && currentBook.aulas.length > 0 && (
-              <div style={{ 
-                padding: '0.75rem', 
-                marginTop: '0.5rem',
-                background: 'rgba(0,0,0,0.15)', 
-                border: '1px solid var(--glass-border)',
-                borderRadius: '10px',
-              }}>
-                <h4 style={{ fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.6rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <BookOpen size={14} /> Lições do Módulo
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  {(currentBook.aulas || []).map(renderLessonItem)}
-                </div>
-              </div>
-            )}
       </div>
     );
   };

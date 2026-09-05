@@ -103,7 +103,6 @@ const Dashboard = () => {
   const [availableModules, setAvailableModules] = useState<any[]>([]);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [savingModules, setSavingModules] = useState(false);
-  const [, setHistoryGrades] = useState<any[]>([]);
 
   const isBlocked = profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
@@ -191,16 +190,6 @@ const Dashboard = () => {
       setSavingModules(false);
     }
   };
-
-  const fetchHistoryGrades = useCallback(async () => {
-    if (!profile?.id) return
-    const { data } = await supabase
-      .from('historico_notas')
-      .select('*')
-      .eq('aluno_id', profile.id)
-      .order('created_at', { ascending: false })
-    setHistoryGrades(data || [])
-  }, [profile?.id])
 
   // Logica de Provas Pendentes e Recuperação (Refinada para Aprovação/Reprovação)
   const pendingExams = useMemo(() => {
@@ -370,9 +359,8 @@ const Dashboard = () => {
     if (profile?.id) {
       fetchStudentDashboardData();
       fetchPayments();
-      fetchHistoryGrades();
     }
-  }, [profile?.id, fetchStudentDashboardData, fetchPayments, fetchHistoryGrades]);
+  }, [profile?.id, fetchStudentDashboardData, fetchPayments]);
 
   useEffect(() => {
     // Só mostrar o aviso se houver provas E se ainda não tiver sido mostrado nesta sessão para este usuário
