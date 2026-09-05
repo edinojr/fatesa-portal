@@ -43,41 +43,38 @@ function parseBibliaLocal(text: string): Record<string, string> {
 
   const objStr = text.substring(objStart, objEnd + 1)
 
-  try {
-    return new Function('return (' + objStr + ')')()
-  } catch {
-    // Fallback: manually parse key-value pairs from the object literal
-    const result: Record<string, string> = {}
-    let i = 1
+  // Parser seguro de pares "chave": "valor" — sem eval. O new Function anterior
+  // executava código arbitrário do HTML da lição antes de qualquer sanitização.
+  const result: Record<string, string> = {}
+  let i = 1
+  while (i < objStr.length) {
+    while (i < objStr.length && objStr[i] !== '"') i++
+    if (i >= objStr.length) break
+    const keyStart = i + 1
+    i++
     while (i < objStr.length) {
-      while (i < objStr.length && objStr[i] !== '"') i++
-      if (i >= objStr.length) break
-      const keyStart = i + 1
-      i++
-      while (i < objStr.length) {
-        if (objStr[i] === '\\') { i += 2; continue }
-        if (objStr[i] === '"') break
-        i++
-      }
-      const key = objStr.substring(keyStart, i)
-      i++
-      while (i < objStr.length && objStr[i] !== '"') i++
-      if (i >= objStr.length) break
-      const valStart = i + 1
-      i++
-      while (i < objStr.length) {
-        if (objStr[i] === '\\') { i += 2; continue }
-        if (objStr[i] === '"') break
-        i++
-      }
-      const val = objStr.substring(valStart, i)
-        .replace(/\\(["\\/bfnrt])/g, (_, c) => c === 'n' ? '\n' : c === 't' ? '\t' : c === 'r' ? '\r' : c === 'b' ? '\b' : c === 'f' ? '\f' : c)
-        .replace(/\\(u[0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
-      result[key] = val
+      if (objStr[i] === '\\') { i += 2; continue }
+      if (objStr[i] === '"') break
       i++
     }
-    return Object.keys(result).length > 0 ? result : {}
+    const key = objStr.substring(keyStart, i)
+    i++
+    while (i < objStr.length && objStr[i] !== '"') i++
+    if (i >= objStr.length) break
+    const valStart = i + 1
+    i++
+    while (i < objStr.length) {
+      if (objStr[i] === '\\') { i += 2; continue }
+      if (objStr[i] === '"') break
+      i++
+    }
+    const val = objStr.substring(valStart, i)
+      .replace(/\\(["\\/bfnrt])/g, (_, c) => c === 'n' ? '\n' : c === 't' ? '\t' : c === 'r' ? '\r' : c === 'b' ? '\b' : c === 'f' ? '\f' : c)
+      .replace(/\\(u[0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)))
+    result[key] = val
+    i++
   }
+  return Object.keys(result).length > 0 ? result : {}
 }
 
 const Lesson = () => {
