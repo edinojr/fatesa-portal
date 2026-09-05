@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { Submission } from '../../../types/professor'
+import { computeScore, ensureRecoveryExam, finalizeModuleOnApproval, unfinalizeModule } from '../../../services/examCorrection'
 
 export const useProfessorGrading = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -105,33 +106,11 @@ export const useProfessorGrading = () => {
     setQuestionComments(initialComments);
     
     const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
-    
-    if (validQuestions.length > 0) {
-      const scoreSum = validQuestions.reduce((acc: number, q: any, qIdx: number) => {
-        const qKey = q.id || qIdx;
-        
-        // Se houver avaliação manual (toggle), usamos o peso total da questão
-        if (questionEvaluations[qKey] !== undefined) {
-          const weight = q.type === 'matching' ? 3.0 : 0.5;
-          return acc + (questionEvaluations[qKey] === true ? weight : 0);
-        }
 
-        const studentAns = sub.respostas?.[qKey];
-        if (q.type === 'multiple_choice' || !q.type) {
-          return acc + (String(studentAns) === String(q.correct) ? 0.5 : 0);
-        } else if (q.type === 'true_false') {
-          return acc + (studentAns === q.isTrue ? 0.5 : 0);
-        } else if (q.type === 'matching' && q.matchingPairs) {
-          const answerMap = (studentAns || {}) as Record<string, string>;
-          const correctPairs = q.matchingPairs.filter((_: any, mIdx: number) => String(answerMap[mIdx]) === String(mIdx)).length;
-          return acc + Math.min(3.0, correctPairs * 0.5);
-        }
-        
-        return acc;
-      }, 0);
-      setGradeInput(Math.min(10, scoreSum).toFixed(1));
+    if (validQuestions.length > 0) {
+      setGradeInput(computeScore(validQuestions, sub.respostas).toFixed(1));
     } else {
-      setGradeInput('10.0'); 
+      setGradeInput('10.0');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -139,41 +118,16 @@ export const useProfessorGrading = () => {
   const toggleEvaluation = useCallback((questionId: string, isCorrect: boolean) => {
     setQuestionEvaluations(prev => {
       const newEvals = { ...prev, [questionId]: isCorrect };
-      
+
       const questionnaire = selectedSubmission?.questionario || selectedSubmission?.aulas?.questionario;
       const validQuestions = (Array.isArray(questionnaire) ? questionnaire : []).filter((q: any) => q && q.text);
-      
+
       if (validQuestions.length > 0) {
-        const scoreSum = validQuestions.reduce((acc: number, q: any, qIdx: number) => {
-          const qKey = q.id || qIdx;
-          
-          if (q.type === 'matching' && q.matchingPairs) {
-            // Soma os pares individuais avaliados ou autocorrigidos
-            const studentAns = selectedSubmission?.respostas?.[qKey] || {};
-            return acc + q.matchingPairs.reduce((pAcc: number, _: any, mIdx: number) => {
-              const pairKey = `${qKey}_${mIdx}`;
-              if (newEvals[pairKey] !== undefined) {
-                return pAcc + (newEvals[pairKey] === true ? 0.5 : 0);
-              }
-              // Se não avaliado manualmente, usa autocorreção
-              return pAcc + (String(studentAns[mIdx]) === String(mIdx) ? 0.5 : 0);
-            }, 0);
-          }
-
-          if (newEvals[qKey] !== undefined) {
-            return acc + (newEvals[qKey] === true ? 0.5 : 0);
-          }
-
-          const studentAns = selectedSubmission?.respostas?.[qKey];
-          if (q.type === 'multiple_choice' || !q.type) {
-            return acc + (String(studentAns) === String(q.correct) ? 0.5 : 0);
-          } else if (q.type === 'true_false') {
-            return acc + (studentAns === q.isTrue ? 0.5 : 0);
-          }
-          return acc;
-        }, 0);
-        
-        setGradeInput(Math.min(10, scoreSum).toFixed(1));
+        const mergedRespostas = { ...(selectedSubmission?.respostas || {}) };
+        Object.entries(newEvals).forEach(([qId, val]) => {
+          mergedRespostas[`${qId}_avaliacao`] = val;
+        });
+        setGradeInput(computeScore(validQuestions, mergedRespostas).toFixed(1));
       }
       return newEvals;
     });
@@ -229,62 +183,23 @@ export const useProfessorGrading = () => {
       
       if(error) throw error
 
-      // AUTO-CRIAÇÃO DE RECUPERAÇÃO: Se o aluno reprovou, criar a próxima versão (V2 ou V3)
+      // Efeitos pedagógicos via serviço único (examCorrection) — usa o row completo
+      // da aula, com livro_id como UUID real (o select aninhado livro_id(id,titulo)
+      // devolve objeto, o que quebrava recuperação/finalização neste fluxo)
       const nota = parseFloat(gradeInput);
       const minGrade = (selectedSubmission as any).aulas?.min_grade || (selectedSubmission as any).min_grade || 7;
-      const versaoAtual = (selectedSubmission as any).aulas?.versao || (selectedSubmission as any).versao || 1;
-      const livroId = (selectedSubmission as any).aulas?.livro_id || (selectedSubmission as any).livro_id;
       const aulaId = (selectedSubmission as any).lesson_id || (selectedSubmission as any).aula_id;
 
-      if (nota < minGrade && versaoAtual < 3 && livroId) {
-        // Buscar a prova atual para usar como template
-        const { data: currentExam } = await supabase.from('aulas').select('*').eq('id', aulaId).single();
-        if (currentExam) {
-          const nextVersion = versaoAtual + 1;
-          const nextTitle = nextVersion === 2 
-            ? `${currentExam.titulo.replace(/ - Recuperação.*$/, '')} - Recuperação`
-            : `${currentExam.titulo.replace(/ - Recuperação.*$/, '')} - Recuperação 2`;
-          
-          // Verificar se a versão já existe
-          const { data: existing } = await supabase.from('aulas')
-            .select('id')
-            .eq('livro_id', livroId)
-            .eq('versao', nextVersion)
-            .ilike('titulo', `%${currentExam.titulo.replace(/ - Recuperação.*$/, '')}%`)
-            .eq('tipo', 'prova')
-            .limit(1);
+      const { data: currentExam } = aulaId
+        ? await supabase.from('aulas').select('*').eq('id', aulaId).maybeSingle()
+        : { data: null as any };
 
-          if (!existing || existing.length === 0) {
-            await supabase.from('aulas').insert({
-              livro_id: livroId,
-              parent_aula_id: currentExam.parent_aula_id,
-              titulo: nextTitle,
-              tipo: 'prova',
-              min_grade: minGrade,
-              ordem: (currentExam.ordem || 0) + versaoAtual,
-              versao: nextVersion,
-              is_bloco_final: false,
-              questionario: currentExam.questionario || []
-            });
-          }
-        }
-      }
-      
-      // Se a nota for de aprovação (>= minGrade), finalizar o módulo automaticamente
-      if (nota >= minGrade && livroId) {
-        const { data: userData } = await supabase
-          .from('users')
-          .select('modulos_finalizados_manual')
-          .eq('id', (selectedSubmission as any).aluno_id)
-          .maybeSingle();
-
-        const currentManual = userData?.modulos_finalizados_manual || [];
-        if (!currentManual.includes(livroId)) {
-          const updatedManual = [...currentManual, livroId];
-          await supabase
-            .from('users')
-            .update({ modulos_finalizados_manual: updatedManual })
-            .eq('id', (selectedSubmission as any).aluno_id);
+      if (currentExam) {
+        if (nota >= minGrade) {
+          await finalizeModuleOnApproval((selectedSubmission as any).aluno_id, currentExam.livro_id);
+        } else {
+          await unfinalizeModule((selectedSubmission as any).aluno_id, currentExam.livro_id);
+          await ensureRecoveryExam(currentExam, nota, minGrade);
         }
       }
       
