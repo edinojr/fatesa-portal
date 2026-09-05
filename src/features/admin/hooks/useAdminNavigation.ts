@@ -8,7 +8,7 @@ export const useAdminNavigation = () => {
 
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'users', 'alumni', 'content', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports', 'docs_archive', 'academic', 'avisos', 'popups', 'progress'];
+    const validTabs: Tab[] = ['home', 'users', 'alumni', 'content', 'nucleos', 'settings', 'finance', 'forum', 'attendance', 'professors', 'analytics', 'reports', 'docs_archive', 'academic', 'grade_history', 'boletim', 'avisos', 'popups', 'progress'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
