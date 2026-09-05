@@ -68,6 +68,12 @@ const Dashboard = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
+
+  useEffect(() => {
+    if (activeTab === 'modulos-concluidos') {
+      navigate('/modulos-finalizados', { replace: true });
+    }
+  }, [activeTab, navigate]);
   
   // Custom Hooks para lógica de negócio
   const { 
