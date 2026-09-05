@@ -204,28 +204,30 @@ const ModuleDetails = () => {
     };
 
     // ── Grid Content Preparation ──
-    // We want exactly 11 rows: Row 0 (Panorama) + Rows 1-10 (Content)
-    const sortedOrdens = Array.from({ length: 11 }, (_, i) => i);
+    // Row 0 (Panorama) + Rows 1..N (Content) — piso de 10 linhas de conteúdo
+    // (padrão visual Fatesa); a grade cresce se o módulo tiver mais itens
+    const contentRows = Math.max(licoes.length, exercicios.length, videos.length, 10);
+    const totalRows = contentRows + 1;
+    const sortedOrdens = Array.from({ length: totalRows }, (_, i) => i);
     
     // Align by sequence rather than absolute ordem to ensure Lesson 1 aligns with Exercise 1
     const gridData = {
-      lessons: [panorama, ...licoes].slice(0, 11),
-      exercises: [null, ...exercicios].slice(0, 11),
-      videos: [null, ...videos].slice(0, 11),
-      avaliacoes: Array(11).fill(null),
+      lessons: [panorama, ...licoes].slice(0, totalRows),
+      exercises: [null, ...exercicios].slice(0, totalRows),
+      videos: [null, ...videos].slice(0, totalRows),
+      avaliacoes: Array(totalRows).fill(null),
     };
 
-    // Fill the lessons/exercises/videos arrays to exactly 11 elements if they are shorter
-    while (gridData.lessons.length < 11) gridData.lessons.push(null);
-    while (gridData.exercises.length < 11) gridData.exercises.push(null);
-    while (gridData.videos.length < 11) gridData.videos.push(null);
+    // Fill the lessons/exercises/videos arrays to exactly totalRows elements if they are shorter
+    while (gridData.lessons.length < totalRows) gridData.lessons.push(null);
+    while (gridData.exercises.length < totalRows) gridData.exercises.push(null);
+    while (gridData.videos.length < totalRows) gridData.videos.push(null);
 
-    // Evaluations must align with the last 3 rows (8, 9, 10)
-    // We fill from the bottom (row 10) up to 3 items
+    // Evaluations must align with the last rows, filled from the bottom up
     const evalCount = avaliacoes.length;
-    const evalLimit = Math.min(evalCount, 3);
+    const evalLimit = Math.min(evalCount, totalRows);
     for (let i = 0; i < evalLimit; i++) {
-      gridData.avaliacoes[10 - i] = avaliacoes[evalCount - 1 - i];
+      gridData.avaliacoes[totalRows - 1 - i] = avaliacoes[evalCount - 1 - i];
     }
 
     const hasAnyContent = 
