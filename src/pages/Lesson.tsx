@@ -893,12 +893,13 @@ const Lesson = () => {
             return;
           }
 
-          if (precisaRevisao) {
-            alert('Avaliação enviada! Aguarde a correção do professor.');
-          } else {
-            alert('Avaliação enviada e corrigida automaticamente com sucesso!');
-          }
-          navigate('/dashboard');
+          // Aluno real: permanece na página — painel de resultado (nota,
+          // acertos/erros, comparação com gabarito) renderiza imediatamente
+          setResult({ score: finalScore, passed: finalScore !== null && finalScore >= ((targetLesson?.min_grade as any) || 7), pendingReview: precisaRevisao });
+          setSubmitted(true);
+          setIsExamStarted(false);
+          setTimeLeft(null);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
 
