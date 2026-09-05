@@ -1,6 +1,7 @@
 import React from 'react'
 import { Award, Trash2, X, Plus, CheckCircle2, XCircle, ChevronRight, Loader2, ClipboardList } from 'lucide-react'
 import { QuizQuestion, QuestionType } from '../../../../types/admin'
+import { findDuplicateQuestions, regradeSubmissionsForAula } from '../../../../services/examCorrection'
 
 interface QuizEditorModalProps {
   editingQuiz: any
@@ -444,14 +445,14 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
             <button className="btn btn-outline" onClick={() => { setEditingQuiz(null); setPendingExamMeta?.(null); }}>Cancelar e Voltar</button>
 
             <button className="btn btn-primary" onClick={async () => {
-              // Validation for Final Assesment
+              // Validação para Avaliação Final
               if (editingQuiz.is_bloco_final) {
                 const tfCount = quizQuestions.filter(q => q.type === 'true_false').length;
                 const mcCount = quizQuestions.filter(q => q.type === 'multiple_choice' || !q.type).length;
                 const matchingQuestions = quizQuestions.filter(q => q.type === 'matching');
                 const matCount = matchingQuestions.length;
                 const matchingPairsCount = matchingQuestions[0]?.matchingPairs?.length || 0;
-                
+
                 if (tfCount !== 10 || mcCount !== 4 || matCount !== 1 || matchingPairsCount !== 6) {
                   if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O novo padrão Fatesa exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 04 Múltipla Escolha (Atuais: ${mcCount})\n- 01 Relacione Colunas com 6 pares (Atuais: ${matCount} questão com ${matchingPairsCount} pares)\n\nDeseja salvar assim mesmo?`)) {
                     return;
@@ -459,8 +460,23 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 }
               }
 
+              // Detecção de questões repetidas (mesmo enunciado)
+              const dupIdxs = findDuplicateQuestions(quizQuestions);
+              let questionsToSave = quizQuestions;
+              if (dupIdxs.length > 0) {
+                const remover = window.confirm(
+                  `⚠ QUESTÕES REPETIDAS DETECTADAS: ${dupIdxs.length} questão(ões) com enunciado duplicado ` +
+                  `(posições ${dupIdxs.map(i => i + 1).join(', ')}).\n\nOK = remover as duplicadas automaticamente (mantém a primeira de cada) ` +
+                  'e salvar | Cancelar = salvar assim mesmo'
+                );
+                if (remover) {
+                  questionsToSave = quizQuestions.filter((_, i) => !dupIdxs.includes(i));
+                  showToast(`${dupIdxs.length} questão(ões) duplicada(s) removida(s).`, 'success');
+                }
+              }
+
               setActionLoading('save-quiz');
-              
+
               let error;
               if (editingQuiz._isNew && pendingExamMeta) {
                 const result = await supabase.from('aulas').insert({
@@ -471,21 +487,48 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                   ordem: pendingExamMeta.ordem,
                   versao: 1,
                   is_bloco_final: false,
-                  questionario: quizQuestions,
+                  questionario: questionsToSave,
                   arquivo_url: pendingExamMeta.arquivoUrl
                 });
                 error = result.error;
               } else {
-                const result = await supabase.from('aulas').update({ 'questionario': quizQuestions }).eq('id', editingQuiz.id);
+                const result = await supabase.from('aulas').update({ 'questionario': questionsToSave }).eq('id', editingQuiz.id);
                 error = result.error;
               }
-              
+
               if (error) showToast(error.message, 'error');
               else {
+                // Gabarito alterado → oferecer recorreção retroativa das notas dos alunos
+                if (!editingQuiz._isNew) {
+                  const aulaId = editingQuiz.id;
+
+                  if (selectedBook?.id) fetchLessons(selectedBook.id);
+                  if (selectedLesson?.id) fetchLessonItems(selectedLesson.id);
+
+                  const shouldRegrade = window.confirm('Questionário salvo!\n\nDeseja RECORRIGIR as notas de todos os alunos que já fizeram esta avaliação com o novo gabarito?');
+                  setEditingQuiz(null);
+                  setPendingExamMeta?.(null);
+                  setActionLoading(null);
+
+                  if (shouldRegrade) {
+                    setActionLoading('regrade-quiz');
+                    try {
+                      const regraded = await regradeSubmissionsForAula(aulaId);
+                      if (regraded >= 0) showToast(`Recorreção concluída: ${regraded} nota(s) atualizada(s).`, 'success');
+                      else showToast('Gabarito incompleto (questões sem resposta definida): notas mantidas.', 'error');
+                    } catch (e: any) {
+                      showToast('Erro na recorreção: ' + (e?.message || e), 'error');
+                    } finally {
+                      setActionLoading(null);
+                    }
+                  }
+                  return;
+                }
+
                 showToast(editingQuiz._isNew ? `Avaliação criada com sucesso!` : `Questionário salvo! As respostas que você definiu são o gabarito oficial.`, 'success');
                 setEditingQuiz(null);
                 setPendingExamMeta?.(null);
-                
+
                 if (selectedBook?.id) fetchLessons(selectedBook.id);
                 if (selectedLesson?.id) fetchLessonItems(selectedLesson.id);
               }

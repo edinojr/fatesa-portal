@@ -272,7 +272,7 @@ export const useStudentCourses = (profile: any) => {
 
       const finishedBasicModules = new Set((resData || [])
         .filter((r: any) => {
-          const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.aulas?.tipo === 'prova';
+          const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.lesson_type === 'avaliacao' || r.aulas?.tipo === 'prova' || r.aulas?.tipo === 'avaliacao';
           const minGrade = r.aulas?.min_grade || 7.0;
           return isEx && r.status === 'corrigida' && (r.nota || 0) >= minGrade && (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
         })
@@ -287,7 +287,7 @@ export const useStudentCourses = (profile: any) => {
 
       const finishedMediumModules = new Set((resData || [])
         .filter((r: any) => {
-          const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.aulas?.tipo === 'prova';
+          const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.lesson_type === 'avaliacao' || r.aulas?.tipo === 'prova' || r.aulas?.tipo === 'avaliacao';
           const minGrade = r.aulas?.min_grade || 7.0;
           return isEx && r.status === 'corrigida' && (r.nota || 0) >= minGrade && (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('medio') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('médio'))
         })
@@ -426,7 +426,7 @@ const hasException = exceptionIds.includes(l.id);
                       professor_active: a.professor_active
                     };
                   }).map(a => {
-                    const isExamType = a.tipo === 'prova' || !!a.is_bloco_final;
+                    const isExamType = a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final;
                     const isMediaType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
                     // Provas seguem a liberação do módulo: quando o módulo tem
                     // exceção (liberacoes_excecao), as provas V1 também ficam visíveis.

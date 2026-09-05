@@ -7,6 +7,7 @@ import AudioReader from '../components/AudioReader'
 import PdfAudioReader from '../components/PdfAudioReader'
 import PdfViewer, { PdfViewerHandle } from '../components/PdfViewer'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
+import { finalizeModuleOnApproval, ensureRecoveryExam, regradeSubmissionsForAula } from '../services/examCorrection'
 import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
 import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
 import { QuizQuestion } from '../types/admin'
@@ -124,6 +125,7 @@ const Lesson = () => {
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [isExamStarted, setIsExamStarted] = useState(false)
+  const [staffExamMode, setStaffExamMode] = useState(false)
   const [deadlineInfo] = useState<{ deadline: Date, stage: number, expired: boolean } | null>(null)
   const [relatedExercise, setRelatedExercise] = useState<any>(null)
   const [prevLessonId, setPrevLessonId] = useState<string | null>(null)
@@ -793,6 +795,13 @@ const Lesson = () => {
 
       const { error } = await supabase.from('aulas').update({ questionario: gabarito }).eq('id', targetId);
       if (error) throw error;
+
+      // Recorreção retroativa: gabarito alterado → recalcular notas dos alunos
+      if (window.confirm('Gabarito Oficial salvo!\n\nDeseja RECORRIGIR agora as notas de todos os alunos que já fizeram esta avaliação com o novo gabarito?')) {
+        const regraded = await regradeSubmissionsForAula(targetId);
+        if (regraded >= 0) alert(`Recorreção concluída: ${regraded} nota(s) atualizada(s).`);
+        else alert('Este questionário não possui gabarito completo (há questões dissertativas ou sem resposta definida). As notas existentes foram mantidas.');
+      }
       alert('Gabarito Oficial salvo com sucesso!');
       setSubmitting(false);
       return;
@@ -909,6 +918,26 @@ const Lesson = () => {
       console.log('[Lesson.handleSubmit] Salvo com sucesso!');
 
         if (isFinal) {
+          // Efeitos pedagógicos apenas para alunos reais (modo teste do staff não altera módulos)
+          if (!userProfile?.isStaff && !precisaRevisao && finalScore !== null && targetLesson) {
+            const minGrade = targetLesson.min_grade || 7;
+            if (finalScore >= minGrade && targetLesson.livro_id) {
+              await finalizeModuleOnApproval(userProfile.id, targetLesson.livro_id);
+            } else if (finalScore < minGrade) {
+              await ensureRecoveryExam(targetLesson, finalScore, minGrade);
+            }
+          }
+
+          // Modo teste do staff: permanece na página e libera o gabarito + nota imediatamente
+          if (userProfile?.isStaff) {
+            setResult({ score: finalScore, passed: finalScore !== null && finalScore >= ((targetLesson?.min_grade as any) || 7), pendingReview: precisaRevisao });
+            setSubmitted(true);
+            setIsExamStarted(false);
+            setStaffExamMode(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+
           if (precisaRevisao) {
             alert('Avaliação enviada! Aguarde a correção do professor.');
           } else {
@@ -1866,11 +1895,11 @@ const Lesson = () => {
                                   q.type === 'true_false' ? studentAns === q.isTrue :
                                   q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
                 
-                 // Gabarito: staff sempre vê | aluno vê se submeter e atingir nota mínima ou módulo finalizado
-                 const showGabarito = reviewMode ||
-                                      userProfile?.isStaff ||
-                                      isModuleFinished ||
-                                       (submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0));
+                  // Gabarito: staff sempre vê (exceto em modo teste antes de enviar) | aluno vê se submeter e atingir nota mínima ou módulo finalizado
+                  const showGabarito = reviewMode ||
+                                       (userProfile?.isStaff && !(staffExamMode && !submitted)) ||
+                                       isModuleFinished ||
+                                        (submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0));
 
                 return (
                   <div 
@@ -1997,10 +2026,10 @@ const Lesson = () => {
               )}
               
               {/* Painel Staff: Gabarito Oficial */}
-              {userProfile?.isStaff && (lesson?.tipo === 'prova' || lesson?.tipo === 'atividade' || lesson?.tipo === 'exercicio' || lesson?.tipo === 'avaliacao' || lesson?.tipo === 'questionario') && questions.length > 0 && (
-                <div style={{ 
-                  background: 'rgba(34, 197, 94, 0.06)', border: '1px solid rgba(34, 197, 94, 0.25)', 
-                  borderRadius: '20px', padding: '2rem', marginTop: '1.5rem', marginBottom: '2rem' 
+              {userProfile?.isStaff && !staffExamMode && (lesson?.tipo === 'prova' || lesson?.tipo === 'atividade' || lesson?.tipo === 'exercicio' || lesson?.tipo === 'avaliacao' || lesson?.tipo === 'questionario') && questions.length > 0 && (
+                <div style={{
+                  background: 'rgba(34, 197, 94, 0.06)', border: '1px solid rgba(34, 197, 94, 0.25)',
+                  borderRadius: '20px', padding: '2rem', marginTop: '1.5rem', marginBottom: '2rem'
                 }}>
                   <h4 style={{ color: '#22c55e', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', fontWeight: 700 }}>
                     ✓ Gabarito Oficial {userProfile?.isStaff ? '(Salvar Gabarito)' : '(Visualização)'}
@@ -2029,7 +2058,7 @@ const Lesson = () => {
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0, textAlign: 'center' }}>
                         Selecione as respostas corretas nas questões acima e clique para salvar como gabarito oficial.
                       </p>
-                      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                         <button
                           onClick={() => handleSubmit(true)}
                           disabled={submitting}
@@ -2051,13 +2080,58 @@ const Lesson = () => {
                         >
                           <FileText size={18} /> Editar Questionário
                         </button>
+                        {(lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao' || lesson?.is_bloco_final) && (
+                          <button
+                            onClick={() => {
+                              if (!window.confirm('MODO TESTE: você fará esta prova como um aluno, sem ver o gabarito durante a resolução. Ao finalizar, o gabarito e sua nota serão exibidos para conferência da correção. Continuar?')) return;
+                              setStaffExamMode(true);
+                              setSubmitted(false);
+                              setResult(null);
+                              setAnswers({});
+                              setIsExamStarted(true);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            style={{
+                              background: 'rgba(59, 130, 246, 0.12)',
+                              color: '#93c5fd', border: '1px solid rgba(59, 130, 246, 0.4)', padding: '0.95rem 2.75rem', fontSize: '1rem', fontWeight: 800, borderRadius: '50px',
+                              display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer'
+                            }}
+                          >
+                            🧪 Fazer como Aluno (Teste)
+                          </button>
+                        )}
                       </div>
                     </div>
                   )}
                 </div>
               )}
 
-               {!submitted && !isModuleFinished && !userProfile?.isStaff && (
+              {/* Banner do Modo Teste (Staff) */}
+              {userProfile?.isStaff && staffExamMode && !submitted && (
+                <div style={{
+                  background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.35)',
+                  borderRadius: '20px', padding: '1.5rem', marginTop: '1.5rem', marginBottom: '2rem',
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap'
+                }}>
+                  <div>
+                    <h4 style={{ color: '#93c5fd', margin: '0 0 0.35rem 0', fontWeight: 800, fontSize: '0.95rem' }}>🧪 MODO TESTE — Você está fazendo a prova como aluno</h4>
+                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      O gabarito está oculto. Ao enviar, sua nota e o gabarito oficial serão exibidos para você conferir a correção.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => { setStaffExamMode(false); setIsExamStarted(false); setAnswers({}); }}
+                    style={{
+                      background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.15)',
+                      padding: '0.6rem 1.4rem', fontSize: '0.8rem', fontWeight: 700, borderRadius: '50px', cursor: 'pointer', width: 'auto'
+                    }}
+                  >
+                    Sair do Modo Teste
+                  </button>
+                </div>
+              )}
+
+               {!submitted && !isModuleFinished && (!userProfile?.isStaff || staffExamMode) && (
                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
                   <button 
                     className="btn btn-outline" 
@@ -2103,6 +2177,38 @@ const Lesson = () => {
 
               {submitted && result && (
                 <div style={{textAlign:'center', marginTop:'2rem', padding:'2rem', background:'var(--glass)', borderRadius:'16px', border: '1px solid var(--glass-border)'}}>
+                  {userProfile?.isStaff && staffExamMode && (
+                    <div style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.35)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1.5rem' }}>
+                      <h4 style={{ color: '#93c5fd', margin: '0 0 0.4rem 0', fontWeight: 800 }}>🧪 RESULTADO DO MODO TESTE</h4>
+                      <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Confira abaixo sua nota e o gabarito oficial questão a questão. Se houver erro de correção, use <strong>Editar Questionário</strong> ou <strong>Salvar Gabarito Oficial</strong> para corrigir e recorrigir as notas dos alunos.
+                      </p>
+                      <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', marginTop: '1rem', flexWrap: 'wrap' }}>
+                        <button
+                          onClick={async () => {
+                            if (!window.confirm('Excluir a sua submissão de teste desta avaliação?')) return;
+                            const targetId2 = (lesson as any).linkedActivity?.id || id;
+                            await supabase.from('respostas_aulas').delete().eq('aluno_id', userProfile.id).eq('aula_id', targetId2);
+                            setStaffExamMode(false);
+                            setSubmitted(false);
+                            setResult(null);
+                            setAnswers({});
+                            setIsExamStarted(false);
+                            alert('Teste excluído.');
+                          }}
+                          style={{ background: 'rgba(239, 68, 68, 0.12)', color: 'var(--error)', border: '1px solid rgba(239, 68, 68, 0.35)', padding: '0.55rem 1.4rem', fontSize: '0.8rem', fontWeight: 700, borderRadius: '50px', cursor: 'pointer', width: 'auto' }}
+                        >
+                          Excluir Meu Teste
+                        </button>
+                        <button
+                          onClick={() => { setStaffExamMode(false); setSubmitted(false); setResult(null); setAnswers({}); setIsExamStarted(false); }}
+                          style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.15)', padding: '0.55rem 1.4rem', fontSize: '0.8rem', fontWeight: 700, borderRadius: '50px', cursor: 'pointer', width: 'auto' }}
+                        >
+                          Refazer o Teste
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   {((lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao' || lesson?.is_bloco_final) && (existingSubmission?.status !== 'corrigida' && result.pendingReview)) ? (
                     <>
                       <Clock size={48} color="var(--warning)" style={{marginBottom:'1rem'}}/>

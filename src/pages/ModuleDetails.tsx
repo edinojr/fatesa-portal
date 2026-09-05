@@ -171,7 +171,7 @@ const ModuleDetails = () => {
       const hasIndividualExamRelease = examExceptions.includes(item.id);
 
       const moduleSubs = (atividades || []).filter((s: any) => s.book_id === currentBook?.book.id);
-      const examSubs = moduleSubs.filter((s: any) => s.lesson_type === 'prova' || s.is_bloco_final || (s.aulas?.tipo === 'prova'));
+      const examSubs = moduleSubs.filter((s: any) => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao' || s.is_bloco_final || (s.aulas?.tipo === 'prova') || (s.aulas?.tipo === 'avaliacao'));
 
       // V2: liberado se aluno reprovou na V1
       // V3: liberado se aluno reprovou na V2
