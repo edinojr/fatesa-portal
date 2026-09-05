@@ -103,12 +103,23 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
   };
 
   const handleResetAutoCorrectedExams = async () => {
-    if (!window.confirm('Resetar todas as notas automáticas?')) return;
+    if (!window.confirm('Resetar todas as provas auto-corrigidas?\n\nElas voltarão para status "pendente" (nota zerada) e aparecerão na fila de correção dos professores. Correções manuais já feitas NÃO serão afetadas.')) return;
     setActionLoading('reset-exams');
     try {
-      const { error } = await supabase.from('respostas_aulas').update({ nota: null, status: 'pendente' }).is('feedback', null);
+      const { data: examAulas } = await supabase.from('aulas').select('id').in('tipo', ['prova', 'avaliacao']);
+      const ids = (examAulas || []).map((a: any) => a.id);
+      if (!ids.length) {
+        showToast('Nenhuma prova/avaliação encontrada.');
+        return;
+      }
+      const { error } = await supabase
+        .from('respostas_aulas')
+        .update({ nota: null, status: 'pendente' })
+        .eq('status', 'corrigida')
+        .is('primeira_correcao_at', null)
+        .in('aula_id', ids);
       if (error) throw error;
-      showToast('Notas resetadas.');
+      showToast('Provas auto-corrigidas resetadas.');
       fetchData();
     } catch (err: any) {
       showToast(err.message, 'error');
