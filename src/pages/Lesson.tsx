@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import DOMPurify from 'dompurify'
+import toast from 'react-hot-toast'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Award, ChevronLeft, ArrowRight, Loader2, FileText, Lock, ChevronRight, CheckCircle, XCircle, Clock, LayoutDashboard, CheckCircle2, MessageSquare, ExternalLink, X, BookOpen, List, Menu, LayoutGrid } from 'lucide-react'
@@ -426,7 +427,7 @@ const Lesson = () => {
               setSubmitted(true);
             }
             if (isExam && subData.status !== 'corrigida' && !isStaff) {
-              alert('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor.');
+              toast('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor.', { icon: '⏳' });
               navigate('/dashboard');
               return;
             }
@@ -485,7 +486,7 @@ const Lesson = () => {
           });
 
           if (!hasIndividualRelease && !didPrevious) {
-            alert('Você precisa realizar a versão anterior desta prova antes de acessar a recuperação.');
+            toast('Você precisa realizar a versão anterior desta prova antes de acessar a recuperação.', { icon: '🔒' });
             navigate('/dashboard');
             return;
           }
@@ -694,9 +695,10 @@ const Lesson = () => {
     
     if (error) {
       console.error('Error starting exam:', error);
-      return alert('Não foi possível iniciar a prova: ' + error.message);
+      toast.error('Não foi possível iniciar a prova: ' + error.message);
+      return;
     }
-    setTimeLeft(2400); 
+    setTimeLeft(2400);
     setIsExamStarted(true);
     setExamModalConfirmed(true);
     setSubmitted(false);
@@ -727,7 +729,10 @@ const Lesson = () => {
     }
     if (existingSubmission?.id) payload.id = existingSubmission.id;
     const { error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
-    if (error) return alert('Não foi possível iniciar a prova: ' + error.message);
+    if (error) {
+      toast.error('Não foi possível iniciar a prova: ' + error.message);
+      return;
+    }
     const { data: sub } = await supabase.from('respostas_aulas').select('id').eq('aula_id', id as string).eq('aluno_id', userProfile.id).maybeSingle();
     if (sub) setExistingSubmission(sub);
     setExamModalConfirmed(true);
@@ -754,10 +759,10 @@ const Lesson = () => {
       const { error } = await supabase.from('respostas_aulas').upsert(payload, { onConflict: 'aluno_id,aula_id' });
       if (error) throw error;
 
-      alert('Respostas salvas com sucesso! Você pode continuar depois.');
-    } catch (err: any) { 
+      toast.success('Respostas salvas com sucesso! Você pode continuar depois.');
+    } catch (err: any) {
       console.error(err);
-      alert('Erro ao salvar respostas: ' + (err.message || 'Tente novamente.'));
+      toast.error('Erro ao salvar respostas: ' + (err.message || 'Tente novamente.'));
     }
     finally { setSubmitting(false); }
   };
@@ -805,10 +810,10 @@ const Lesson = () => {
       // Recorreção retroativa: gabarito alterado → recalcular notas dos alunos
       if (window.confirm('Gabarito Oficial salvo!\n\nDeseja RECORRIGIR agora as notas de todos os alunos que já fizeram esta avaliação com o novo gabarito?')) {
         const regraded = await regradeSubmissionsForAula(targetId);
-        if (regraded >= 0) alert(`Recorreção concluída: ${regraded} nota(s) atualizada(s).`);
-        else alert('Este questionário não possui gabarito completo (há questões dissertativas ou sem resposta definida). As notas existentes foram mantidas.');
+        if (regraded >= 0) toast.success(`Recorreção concluída: ${regraded} nota(s) atualizada(s).`);
+        else toast.error('Este questionário não possui gabarito completo (há questões dissertativas ou sem resposta definida). As notas existentes foram mantidas.');
       }
-      alert('Gabarito Oficial salvo com sucesso!');
+      toast.success('Gabarito Oficial salvo com sucesso!');
       setSubmitting(false);
       return;
     }
@@ -910,9 +915,9 @@ const Lesson = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       setComplete(true);
-    } catch (err: any) { 
+    } catch (err: any) {
       console.error(err);
-      alert('Erro ao enviar avaliação: ' + (err.message || 'Tente novamente.'));
+      toast.error('Erro ao enviar avaliação: ' + (err.message || 'Tente novamente.'));
     }
     finally { setSubmitting(false); }
   }
@@ -2146,7 +2151,7 @@ const Lesson = () => {
                             setResult(null);
                             setAnswers({});
                             setIsExamStarted(false);
-                            alert('Teste excluído.');
+                            toast.success('Teste excluído.');
                           }}
                           style={{ background: 'rgba(239, 68, 68, 0.12)', color: 'var(--error)', border: '1px solid rgba(239, 68, 68, 0.35)', padding: '0.55rem 1.4rem', fontSize: '0.8rem', fontWeight: 700, borderRadius: '50px', cursor: 'pointer', width: 'auto' }}
                         >
@@ -2413,7 +2418,7 @@ const Lesson = () => {
           editingQuiz={lesson} setEditingQuiz={() => setShowQuizEditor(false)}
           quizQuestions={questions} setQuizQuestions={setQuestions}
           actionLoading={actionLoading} setActionLoading={setActionLoading}
-          supabase={supabase} showToast={(m: string) => alert(m)}
+          supabase={supabase} showToast={(m: any, t: any) => (t === 'error' ? toast.error(m) : toast.success(m))}
           fetchLessons={async () => fetchLessonData()} 
           fetchLessonItems={async () => fetchLessonData()}
           selectedBook={book} selectedLesson={lesson}

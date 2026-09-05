@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import {
   CheckCircle,
   XCircle,
@@ -78,7 +79,10 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
   };
 
   const handleFinalizar = async () => {
-    if (!profile?.id) return alert('Usuário não autenticado.');
+    if (!profile?.id) {
+      toast.error('Usuário não autenticado.');
+      return;
+    }
     
     setSaving(true);
     try {
@@ -99,7 +103,7 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
       window.scrollTo({ top: 0, behavior: 'smooth' });
       onSaved?.();
     } catch (err: any) {
-      alert('Erro ao salvar progresso: ' + err.message);
+      toast.error('Erro ao salvar progresso: ' + err.message);
     } finally {
       setSaving(false);
     }

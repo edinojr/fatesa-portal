@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import {
   CheckCircle,
   RefreshCw,
@@ -87,7 +88,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     
     if (!profile?.id) {
       console.error('[AvaliacaoFixacao] ERRO: profile?.id é null/undefined');
-      return alert('Usuário não autenticado.');
+      toast.error('Usuário não autenticado.');
+      return;
     }
     
     setSaving(true);
@@ -120,7 +122,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
       onSaved?.();
     } catch (err: any) {
       console.error('[AvaliacaoFixacao] ERRO final:', err);
-      alert('Erro ao salvar avaliação: ' + err.message);
+      toast.error('Erro ao salvar avaliação: ' + err.message);
     } finally {
       setSaving(false);
     }

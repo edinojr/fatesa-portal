@@ -1,4 +1,5 @@
 import React from 'react';
+import { Toaster } from 'react-hot-toast';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import TopBar from './TopBar';
@@ -12,7 +13,12 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children, variant = 'public' }) => {
   if (variant === 'dashboard') {
-    return <div className="dashboard-root">{children}</div>;
+    return (
+      <div className="dashboard-root">
+        <Toaster position="top-center" />
+        {children}
+      </div>
+    );
   }
 
   if (variant === 'auth') {
