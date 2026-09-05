@@ -7,7 +7,7 @@ import AudioReader from '../components/AudioReader'
 import PdfAudioReader from '../components/PdfAudioReader'
 import PdfViewer, { PdfViewerHandle } from '../components/PdfViewer'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
-import { finalizeModuleOnApproval, ensureRecoveryExam, regradeSubmissionsForAula } from '../services/examCorrection'
+import { finalizeModuleOnApproval, ensureRecoveryExam, regradeSubmissionsForAula, computeScore } from '../services/examCorrection'
 import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
 import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
 import { QuizQuestion } from '../types/admin'
@@ -807,8 +807,6 @@ const Lesson = () => {
       return;
     }
     try {
-      let score = 0; 
-      
       const targetId = (lesson as any).linkedActivity?.id || id;
 
       const targetLesson = (lesson as any).linkedActivity || lesson;
@@ -854,25 +852,9 @@ const Lesson = () => {
       }
 
        const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
-       
-       // Calculamos a pontuação para todas as avaliações
-       questions.forEach((q, idx) => {
-         const qKey = q.id || idx;
-         const studentAns = answers[qKey];
-         
-         if (q.type === 'matching' && q.matchingPairs?.length) {
-           const uA = studentAns || {};
-           const correctPairs = q.matchingPairs.reduce((acc: number, _: any, mIdx: number) => {
-             return acc + (String(uA[mIdx]) === String(mIdx) ? 1 : 0);
-           }, 0);
-           score += Math.min(3.0, correctPairs * 0.5);
-         } else {
-           if (q.type === 'multiple_choice' || !q.type) {
-             if (studentAns !== undefined && studentAns !== null && String(studentAns) === String(q.correct)) score += 0.5;
-           }
-           else if (q.type === 'true_false' && studentAns === q.isTrue) score += 0.5;
-         }
-       });
+      
+       // Nota normalizada — fonte única em examCorrection.computeScore
+       const score = computeScore(questions, answers);
 
        // Verificar se o gabarito está completo para auto-correção
        const temQuestaoObjetiva = questions.some((q: any) =>

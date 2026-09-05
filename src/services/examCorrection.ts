@@ -6,11 +6,14 @@ import { supabase } from '../lib/supabase';
 // - useProfessorGrading (correção manual)
 // - QuizEditorModal / Salvar Gabarito (recorreção retroativa)
 // Pesos oficiais: 0,5 por questão objetiva; matching 0,5 por par (máx 3,0)
+// Nota normalizada: (pontos ganhos / pontos totais) × 10 — provas fora do
+// padrão 10-4-1 ficam proporcionais; no padrão Fatesa o total é exatamente 10.
 // ============================================================
 
 export const computeScore = (questions: any[], answers: Record<string, any> | null | undefined): number => {
   if (!Array.isArray(questions)) return 0;
-  let score = 0;
+  let earned = 0;
+  let total = 0;
   questions.forEach((q, idx) => {
     const qKey = q.id || idx;
     const ans = answers?.[qKey];
@@ -25,22 +28,27 @@ export const computeScore = (questions: any[], answers: Record<string, any> | nu
         if (pairManual !== undefined) return acc + (pairManual === true ? 0.5 : 0);
         return acc + (String(uA[mIdx]) === String(mIdx) ? 0.5 : 0);
       }, 0);
-      score += Math.min(3.0, pairScore);
+      earned += Math.min(3.0, pairScore);
+      total += Math.min(3.0, q.matchingPairs.length * 0.5);
       return;
     }
 
+    total += 0.5;
+
     if (manualEval !== undefined) {
-      score += manualEval === true ? 0.5 : 0;
+      earned += manualEval === true ? 0.5 : 0;
       return;
     }
 
     if (q.type === 'multiple_choice' || !q.type) {
-      if (ans !== undefined && ans !== null && String(ans) === String(q.correct)) score += 0.5;
+      if (ans !== undefined && ans !== null && String(ans) === String(q.correct)) earned += 0.5;
     } else if (q.type === 'true_false' && ans === q.isTrue) {
-      score += 0.5;
+      earned += 0.5;
     }
   });
-  return Math.min(10, Math.round(score * 10) / 10);
+  if (total <= 0) return 0;
+  const nota = (earned / total) * 10;
+  return Math.round(nota * 10) / 10;
 };
 
 export const hasCompleteGabarito = (questions: any[]): boolean => {
