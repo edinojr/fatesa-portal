@@ -1,6 +1,4 @@
 import React, { useRef } from 'react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 import { Loader2, Download } from 'lucide-react';
 
 interface CertificateProps {
@@ -20,6 +18,11 @@ const AlumniCertificate: React.FC<CertificateProps> = ({ aluno }) => {
     if (!certificateRef.current) return;
     setGenerating(true);
     try {
+      // Carregados sob demanda — não pesam no bundle inicial do portal
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf')
+      ]);
       const element = certificateRef.current;
       const canvas = await html2canvas(element, {
         scale: 2, // High resolution

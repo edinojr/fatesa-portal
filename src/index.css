@@ -1,6 +1,10 @@
 :root {
   --primary: #0056b3; /* Professional Fatesa Blue */
+  --primary-rgb: 0, 86, 179; /* RGB do --primary p/ rgba(var(--primary-rgb), a) */
   --primary-glow: rgba(0, 86, 179, 0.2);
+  --secondary: #93c5fd; /* Acento claro p/ superfícies escuras (footer) */
+  --bg-subtle: #f4f7fb; /* Fundo suave de páginas públicas */
+  --glass-bg: #ffffff; /* Fundo glass de cards (tema claro) */
   --bg-dark: #ffffff; /* White Background */
   --bg-card: #ffffff; /* White Card Background */
   --text-main: #0f172a; /* Dark Text */

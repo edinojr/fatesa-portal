@@ -12,6 +12,9 @@ export default defineConfig({
           if (id.includes('node_modules')) {
             if (id.includes('pdfjs-dist') || id.includes('react-pdf')) return 'vendor-pdf';
             if (id.includes('@supabase')) return 'vendor-supabase';
+            // Exportação/importação: só carregam sob demanda (import dinâmico)
+            if (id.includes('xlsx') || id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-export';
+            if (id.includes('lucide-react')) return 'vendor-icons';
             return 'vendor';
           }
         }

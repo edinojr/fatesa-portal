@@ -1,4 +1,3 @@
-import * as XLSX from 'xlsx'
 import { supabase } from '../lib/supabase'
 
 export interface AlumniRecord {
@@ -26,6 +25,7 @@ export const importAlumniFile = (file: File) => {
       reader.onload = async (e) => {
         try {
           const data = e.target?.result
+          const XLSX = await import('xlsx')
           const workbook = XLSX.read(data, { type: 'binary' })
           const sheetName = workbook.SheetNames[0]
           const worksheet = workbook.Sheets[sheetName]
