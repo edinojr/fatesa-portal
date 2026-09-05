@@ -83,6 +83,7 @@ const Dashboard = () => {
     fetchStudentDashboardData,
     finishedBasicCount,
     finishedMediumCount,
+    loading: coursesLoading,
   } = useStudentCourses(profile);
 
   const { 
@@ -611,7 +612,11 @@ const Dashboard = () => {
                   <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>
                     Bem-vindo(a), {profile?.nome || 'Aluno'}!
                   </h1>
-                  {currentModule ? (
+                  {coursesLoading ? (
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
+                      Carregando seus módulos…
+                    </p>
+                  ) : currentModule ? (
                     <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
                       Seu módulo atual: <strong style={{ color: 'var(--primary)' }}>{currentModule.courseName} — {currentModule.livro.titulo}</strong>
                     </p>
@@ -697,6 +702,13 @@ const Dashboard = () => {
           )}
 
           {activeTab === 'cursos' && (
+            coursesLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem', padding: '5rem 2rem' }}>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                <Loader2 size={40} color="var(--primary)" style={{ animation: 'spin 1s linear infinite' }} />
+                <p style={{ color: 'var(--text-muted)', margin: 0 }}>Carregando seus cursos…</p>
+              </div>
+            ) : (
             <>
               {/* Graduation Progress Tracker */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
@@ -772,12 +784,13 @@ const Dashboard = () => {
                   <Award size={20} /> <span className="hide-mobile">Módulos Finalizados</span>
                 </button>
               </div>
-               <CourseList 
+                <CourseList 
                   courses={currentCourses}
                   progressoAulas={progressoAulas}
                   atividades={atividades}
                 />
             </>
+            )
           )}
 
           {activeTab === 'documentos' && (
