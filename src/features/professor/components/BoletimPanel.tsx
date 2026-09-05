@@ -69,16 +69,25 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
   const handleSaveGrade = async (alunoId: string, aulaId: string, newGrade: number) => {
     setSaving(`${alunoId}_${aulaId}`)
     try {
-      const { error } = await supabase
-        .from('respostas_aulas')
-        .upsert({
-          aluno_id: alunoId,
-          aula_id: aulaId,
-          nota: newGrade,
-          status: 'corrigida',
-          respostas: {},
-          tentativas: 1
-        }, { onConflict: 'aluno_id,aula_id' })
+      const existing = (submissions || []).find(
+        (s: any) => (s.student_id || s.aluno_id) === alunoId && (s.lesson_id || s.aula_id) === aulaId
+      )
+      const existingId = existing?.submission_id || existing?.id
+      const { error } = existingId
+        ? await supabase
+            .from('respostas_aulas')
+            .update({ nota: newGrade, status: 'corrigida' })
+            .eq('id', existingId)
+        : await supabase
+            .from('respostas_aulas')
+            .upsert({
+              aluno_id: alunoId,
+              aula_id: aulaId,
+              nota: newGrade,
+              status: 'corrigida',
+              respostas: {},
+              tentativas: 1
+            }, { onConflict: 'aluno_id,aula_id' })
       if (error) throw error
       if (onRefresh) onRefresh()
     } catch (err: any) {
