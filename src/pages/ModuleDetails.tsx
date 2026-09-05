@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { handleSupabaseError } from '../lib/authUtils'
+import { collectExamAttempts, isRecoveryUnlocked } from '../lib/examRules'
 import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 
@@ -171,21 +172,13 @@ const ModuleDetails = () => {
       const hasIndividualExamRelease = examExceptions.includes(item.id);
 
       const moduleSubs = (atividades || []).filter((s: any) => s.book_id === currentBook?.book.id);
-      const examSubs = moduleSubs.filter((s: any) => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao' || s.is_bloco_final || (s.aulas?.tipo === 'prova') || (s.aulas?.tipo === 'avaliacao'));
 
       // V2: liberado se aluno reprovou na V1
       // V3: liberado se aluno reprovou na V2
       // Bloco final: usa regra padrão de liberação por núcleo
       if (isExam && versao > 1 && !hasIndividualExamRelease) {
-        const prevExam = examSubs.find((s: any) => {
-          const sv = s.aulas?.versao || 1;
-          return sv === versao - 1 && s.status === 'corrigida';
-        });
-        if (!prevExam) return true; // Versão anterior não feita → bloqueado
-        const prevMinGrade = prevExam.aulas?.min_grade || 7.0;
-        const failed = (prevExam.nota || 0) < prevMinGrade;
-        if (!failed) return true; // Passou na anterior → aprovado, bloqueado
-        return false; // Reprovou na anterior → V2/V3 liberado
+        const moduleAttempts = collectExamAttempts(allAulas, moduleSubs);
+        return !isRecoveryUnlocked(versao, moduleAttempts);
       }
 
       // Se o professor desativou a avaliação, fica bloqueada independente da liberação por núcleo

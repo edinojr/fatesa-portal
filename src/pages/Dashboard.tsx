@@ -27,6 +27,7 @@ import { GRADUATION_CONFIG } from '../config/graduation'
 // Hooks Feature-based
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import { useFinanceControl } from '../features/finance/hooks/useFinanceControl'
+import { collectExamAttempts, isModuleApproved, isModuleDP, getMinGrade } from '../lib/examRules'
 
 // Componentes Feature-based
 import CourseList from '../features/courses/components/CourseList'
@@ -201,35 +202,11 @@ const Dashboard = () => {
         if (!libro.isReleased) return;
         if (libro.isFinished) return;
 
-        // Verifica se o aluno já foi aprovado ou está em DP no módulo
+        // Verifica se o aluno já foi aprovado ou está em DP no módulo (regra única examRules)
         const bookSubmissions = atividades.filter(s => s.book_id === libro.id);
-        const examSubs = bookSubmissions.filter(s => {
-          const sa = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-          const isEx = sa?.is_bloco_final || sa?.tipo === 'prova' || sa?.tipo === 'avaliacao' || /V[1-3]|RECUPERAÇ/i.test(sa?.titulo || '');
-          return isEx && s.status === 'corrigida';
-        });
-
-        let isApproved = false;
-        if (examSubs.length > 0) {
-          const highestExam = examSubs.reduce((prev, current) => {
-            const prevAula = (libro.aulas || []).find((pa: any) => pa.id === prev.lesson_id);
-            const currAula = (libro.aulas || []).find((pa: any) => pa.id === current.lesson_id);
-            const prevV = (prevAula as any)?.versao || 1;
-            const currV = (currAula as any)?.versao || 1;
-            if (currV > prevV) return current;
-            if (currV < prevV) return prev;
-            return new Date(current.created_at || 0).getTime() > new Date(prev.created_at || 0).getTime() ? current : prev;
-          });
-          const highestAula = (libro.aulas || []).find((pa: any) => pa.id === highestExam.lesson_id);
-          const minGrade = (highestAula as any)?.min_grade || 7.0;
-          isApproved = (highestExam.nota || 0) >= minGrade;
-        }
-        const isDP = bookSubmissions.some(s => {
-          const aula = (libro.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-          const isEx = aula?.is_bloco_final || aula?.tipo === 'prova' || aula?.tipo === 'avaliacao';
-          const minGrade = (aula as any)?.min_grade || GRADUATION_CONFIG.defaultMinGrade;
-          return isEx && s.status === 'corrigida' && (aula as any)?.versao === GRADUATION_CONFIG.maxExamVersion && (s.nota || 0) < minGrade;
-        });
+        const examAttempts = collectExamAttempts(libro.aulas || [], bookSubmissions);
+        const isApproved = isModuleApproved(examAttempts);
+        const isDP = isModuleDP(examAttempts);
         const isRetido = isDP;
 
         // Se há alguma aula que foi explicitamente liberada individualmente, ignoramos o bloqueio de isApproved
@@ -273,7 +250,7 @@ const Dashboard = () => {
                 isRecovery: versao > 1 || /V[2-3]|RECUPERAÇ/i.test(title),
                 status: versao === 1 ? 'pendente' : 'recuperacao'
               });
-            } else if (sub.status === 'corrigida' && (sub.nota || 0) < 7.0) {
+            } else if (sub.status === 'corrigida' && (sub.nota || 0) < getMinGrade(aula)) {
               // Caso 2: Aluno reprovou na prova
               // Nota: Normalmente se ele reprova, a próxima versão (V2/V3) será liberada e cairá no "if (!sub)" acima.
               // Mas mostramos aqui caso ele ainda esteja olhando para a prova reprovada.

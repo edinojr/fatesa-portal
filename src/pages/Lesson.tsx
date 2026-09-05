@@ -14,6 +14,7 @@ import { QuizQuestion } from '../types/admin'
 import { processHtmlForNav, NavItem } from '../features/courses/utils/htmlNav'
 import { BibleReaderPopup } from '../components/BibleReaderPopup'
 import { processHtmlWithReferences } from '../lib/bibleParser'
+import { getExamVersion } from '../lib/examRules'
 
 function parseBibliaLocal(text: string): Record<string, string> {
   const match = text.match(/(?:const|let|var)\s+BIBLIA_LOCAL\s*=\s*({)/)
@@ -127,26 +128,26 @@ const Lesson = () => {
   const [nextLessonId, setNextLessonId] = useState<string | null>(null)
 
   const checarAcessoSeguroAvaliacao = async (alunoId: string, moduloId: string, aulaAtual: any, nucleoId?: string) => {
-    const NOTA_APROVACAO = 7.0;
-
     // Non-exam items are handled by module-level release, not individual exam control
     if (aulaAtual.tipo !== 'prova' && aulaAtual.tipo !== 'avaliacao' && !aulaAtual.is_bloco_final) {
       return true;
     }
 
-    // Get all exams in the module sorted by ordem to determine version position
+    // Get all exams in the module (com versao e min_grade reais)
     const { data: exames } = await supabase
       .from('aulas')
-      .select('id, titulo, versao, ordem, is_bloco_final')
+      .select('id, titulo, versao, ordem, min_grade, is_bloco_final')
       .eq('livro_id', moduloId)
       .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
       .order('ordem', { ascending: true });
 
-    const idx = (exames || []).findIndex((e: any) => e.id === aulaAtual.id);
-    if (idx === -1) return false;
+    const examRecord = (exames || []).find((e: any) => e.id === aulaAtual.id);
+    if (!examRecord) return false;
 
-    // First exam in module = V1: check professor_active + nucleo release + individual exception
-    if (idx === 0) {
+    const versaoAtual = getExamVersion(examRecord);
+
+    // V1 (qualquer prova de versão 1): regras de liberação (professor, exceções, núcleo)
+    if (versaoAtual === 1) {
       if (aulaAtual.professor_active === false) return false;
 
       // Check individual exception first (liberacoes_excecao_atividade)
@@ -180,16 +181,22 @@ const Lesson = () => {
       return !!rel?.liberado;
     }
 
-    // V2/V3+: check if the previous exam was attempted and failed
-    const prevExam = exames![idx - 1];
-    const { data: sub } = await supabase
-      .from('respostas_aulas')
-      .select('nota, status')
-      .eq('aula_id', prevExam.id)
-      .eq('aluno_id', alunoId)
-      .maybeSingle();
+    // V2/V3: liberada se a versão anterior foi corrigida e reprovada (min_grade real dela)
+    const prevExams = (exames || []).filter((e: any) => getExamVersion(e) === versaoAtual - 1);
+    if (prevExams.length === 0) return false;
 
-    return !!sub && sub.status === 'corrigida' && (sub.nota ?? 0) < NOTA_APROVACAO;
+    const { data: subs } = await supabase
+      .from('respostas_aulas')
+      .select('aula_id, nota, status')
+      .eq('aluno_id', alunoId)
+      .in('aula_id', prevExams.map((e: any) => e.id));
+
+    return (subs || []).some((s: any) => {
+      if (s.status !== 'corrigida' || s.nota === undefined || s.nota === null) return false;
+      const pe = prevExams.find((e: any) => e.id === s.aula_id);
+      const minGrade = pe?.min_grade || 7.0;
+      return (s.nota || 0) < minGrade;
+    });
   };
 
   useEffect(() => {

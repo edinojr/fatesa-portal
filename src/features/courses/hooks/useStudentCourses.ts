@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
 import { GRADUATION_CONFIG } from '../../../config/graduation';
+import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion } from '../../../lib/examRules';
 
 const MEDIA_APROVACAO = 7.0;
 
@@ -150,15 +151,6 @@ export const useStudentCourses = (profile: any) => {
           }
         }
       }
-
-      const getExamVersion = (item: any): number => {
-        const v = item?.versao;
-        if (v && v > 1) return v;
-        const t = (item?.titulo || '').toLowerCase();
-        if (t.includes('recuperação 2') || t.includes('recuperacao 2')) return 3;
-        if (t.includes('recuperação') || t.includes('recuperacao')) return 2;
-        return 1;
-      };
 
       const resData = (resDataRaw || []).map((r: any) => {
         const aula = aulasMap[r.aula_id]
@@ -317,25 +309,12 @@ export const useStudentCourses = (profile: any) => {
               const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
               const levelLocked = isMedium && !isBasicFinished && !isStaff;
 
-              // Recalcular aprovação/DP diretamente de resData (sem notas_avaliacoes)
+              // Aprovação/DP via regra única (lib/examRules)
               const moduleSubs = resData.filter((s: any) => s.book_id === l.id);
-              const examSubs = moduleSubs.filter((s: any) => {
-                const isEx = s.is_bloco_final || s.lesson_type === 'prova' || s.lesson_type === 'avaliacao';
-                return isEx && s.status === 'corrigida';
-              });
+              const moduleExamAttempts = collectExamAttempts(l.aulas || [], moduleSubs);
 
-              const isApproved = examSubs.some((s: any) => {
-                const minGrade = s.aulas?.min_grade || 7.0;
-                return (s.nota || 0) >= minGrade;
-              });
-
-              const fezV1 = examSubs.some((s: any) => getExamVersion(s.aulas) === 1);
-              const fezV2 = examSubs.some((s: any) => getExamVersion(s.aulas) === 2);
-              const fezV3 = examSubs.some((s: any) => getExamVersion(s.aulas) === 3);
-              const subV3 = examSubs.find((s: any) => getExamVersion(s.aulas) === 3);
-              const notaV3 = subV3?.nota || 0;
-
-              const isDP = !isStaff && fezV1 && fezV2 && fezV3 && notaV3 < 7.0;
+              const isApproved = isModuleApproved(moduleExamAttempts);
+              const isDP = !isStaff && isModuleDP(moduleExamAttempts);
 
               // Módulo em manutenção: sem aulas OU sem prova final configurada.
               // Deve ser calculado ANTES de moduleFinished porque um módulo em
@@ -356,14 +335,9 @@ export const useStudentCourses = (profile: any) => {
                 return prevBook && (prevBook.ordem === bookOrdem - 1) && (prevBook.curso_id === c.id);
               }) || sortedLivros.some((sl: any) => {
                 if (sl.ordem !== bookOrdem - 1) return false;
-                return resData.some((s: any) => {
-                  const isEx = s.is_bloco_final || s.lesson_type === 'prova' || s.lesson_type === 'avaliacao';
-                  const sa = (sl.aulas || []).find((pa: any) => pa.id === s.lesson_id);
-                  const minGrade = sa?.min_grade || 7.0;
-                  const passed = (s.nota || 0) >= minGrade;
-                  const failedV3 = (s.nota || 0) < minGrade && getExamVersion(sa) === 3;
-                  return s.book_id === sl.id && isEx && s.status === 'corrigida' && (passed || failedV3);
-                });
+                const prevSubs = resData.filter((s: any) => s.book_id === sl.id);
+                const prevAttempts = collectExamAttempts(sl.aulas || [], prevSubs);
+                return isModuleApproved(prevAttempts) || isModuleDP(prevAttempts);
               }) || manualCompleted.has(sortedLivros.find((sl: any) => sl.ordem === bookOrdem - 1)?.id || '');
 
 const hasException = exceptionIds.includes(l.id);
@@ -443,16 +417,8 @@ const hasException = exceptionIds.includes(l.id);
                     // Hierarquia V2/V3: oculta se a versão anterior não foi reprovada
                     if (isExamType && !isStaff) {
                       const versao = getExamVersion(a);
-                      if (versao > 1) {
-                        const prevSub = resData.find((s: any) => {
-                          if (s.book_id !== l.id) return false;
-                          const sVersao = s.aulas ? getExamVersion(s.aulas) : 1;
-                          const isPrevExam = s.lesson_type === 'prova' || s.lesson_type === 'avaliacao' || !!s.is_bloco_final;
-                          return isPrevExam && sVersao === versao - 1 && s.status === 'corrigida';
-                        });
-                        if (!prevSub) return { ...a, isHidden: true };
-                        const prevMinGrade = prevSub.aulas?.min_grade || GRADUATION_CONFIG.defaultMinGrade;
-                        if ((prevSub.nota || 0) >= prevMinGrade) return { ...a, isHidden: true };
+                      if (versao > 1 && !isRecoveryUnlocked(versao, moduleExamAttempts)) {
+                        return { ...a, isHidden: true };
                       }
                     }
                     return a;

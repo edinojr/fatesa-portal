@@ -1,4 +1,5 @@
 import { getRequiredModules } from '../../../config/graduation';
+import { getModuleExamStatus } from '../../../lib/examRules';
 
 export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any[] = []) => {
     const allAulas = l.aulas || [];
@@ -34,47 +35,13 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     let isFinished = false;
     
     if (finalExams.length > 0) {
-      // APENAS submissões corrigidas contam como tentativas válidas (não 'pendente')
-      const examSubmissions = (atividades || []).filter(at => 
-          finalExams.some((ex: any) => ex.id === getSubAulaId(at)) &&
-          at.status === 'corrigida'
-      );
-      attemptsCount = examSubmissions.length;
-
-      // Filtrar submissões para pegar apenas as que possuem nota válida
-      const gradedSubs = examSubmissions.filter(s => s.status === 'corrigida' && s.nota !== undefined && s.nota !== null);
-      
-      if (gradedSubs.length > 0) {
-        // Encontrar a submissão com a maior nota (não a maior versão)
-        const subsWithGrade = gradedSubs.map(sub => {
-          const exam = finalExams.find((ex: any) => ex.id === getSubAulaId(sub));
-          return {
-            sub,
-            exam,
-            nota: sub.nota || 0,
-            versao: exam?.versao || 1,
-            minGrade: exam?.min_grade || 7.0
-          };
-        });
-
-        // Usar a maior nota para determinar aprovação
-        const bestAttempt = subsWithGrade.reduce((best, curr) =>
-          curr.nota > best.nota ? curr : best
-        );
-        
-        if (bestAttempt) {
-          examGrade = bestAttempt.nota;
-          isApproved = examGrade >= bestAttempt.minGrade;
-        }
-      }
-
-      // DP (Dependência) = reprovou na V3 (consistente com useStudentCourses)
-      const hasFailedV3 = gradedSubs.some(s => {
-        const exam = finalExams.find((ex: any) => ex.id === getSubAulaId(s));
-        return exam?.versao === 3 && (s.nota || 0) < (exam?.min_grade || 7.0);
-      });
-
-      isFinished = isApproved || hasFailedV3;
+        // Regra única (lib/examRules): aprovado = qualquer tentativa >= min_grade;
+        // DP = V3 corrigida e reprovada
+        const status = getModuleExamStatus(allAulas, atividades);
+        attemptsCount = status.attemptsCount;
+        examGrade = status.examGrade;
+        isApproved = status.isApproved;
+        isFinished = isApproved || status.isDP;
     } else {
       isApproved = false;
       // Sem prova final = sem processo de aprovação concluído.
