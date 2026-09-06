@@ -119,6 +119,7 @@ const Lesson = () => {
   const [isPanorama, setIsPanorama] = useState(false)
   const [showBibleReader, setShowBibleReader] = useState(false)
   const [wikiPopup, setWikiPopup] = useState<{ titulo: string; texto: string; tipo: string } | null>(null)
+  const [blockReason, setBlockReason] = useState<string | null>(null)
 
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
@@ -130,7 +131,8 @@ const Lesson = () => {
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null)
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const checarAcessoSeguroAvaliacao = async (alunoId: string, moduloId: string, aulaAtual: any, nucleoId?: string) => {
+  const checarAcessoSeguroAvaliacao = async (alunoId: string, moduloId: string, aulaAtual: any, nucleoId?: string, userCreatedAt?: string) => {
+    setBlockReason(null);
     // Non-exam items are handled by module-level release, not individual exam control
     if (aulaAtual.tipo !== 'prova' && aulaAtual.tipo !== 'avaliacao' && !aulaAtual.is_bloco_final) {
       return true;
@@ -173,7 +175,7 @@ const Lesson = () => {
 
       let query = supabase
         .from('liberacoes_nucleo')
-        .select('liberado')
+        .select('liberado, created_at')
         .eq('item_id', aulaAtual.id);
       if (nucleoId) {
         query = query.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
@@ -181,7 +183,15 @@ const Lesson = () => {
         query = query.is('nucleo_id', null);
       }
       const { data: rel } = await query.maybeSingle();
-      return !!rel?.liberado;
+      if (!rel?.liberado) return false;
+
+      // Aluno tardio: cadastro posterior à liberação da prova → bloqueado
+      // (salvo exceção individual do professor, já verificada acima)
+      if (userCreatedAt && rel.created_at && new Date(userCreatedAt).getTime() > new Date(rel.created_at).getTime()) {
+        setBlockReason('late_exam');
+        return false;
+      }
+      return true;
     }
 
     // V2/V3: liberada se a versão anterior foi corrigida e reprovada (min_grade real dela)
@@ -337,7 +347,7 @@ const Lesson = () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         let profile: any = {};
-        const { data: profileData } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id, modulos_finalizados_manual').eq('id', user.id).maybeSingle();
+        const { data: profileData } = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id, modulos_finalizados_manual, created_at').eq('id', user.id).maybeSingle();
         if (profileData) {
           profile = profileData;
         } else {
@@ -403,7 +413,7 @@ const Lesson = () => {
         } else if (isStaff || modulePassed || hasModuleException) {
           setIsReleased(true);
         } else {
-          const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id);
+          const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id, profile?.created_at);
           setIsReleased(acesso);
         }
 
@@ -1209,10 +1219,17 @@ const Lesson = () => {
         <div className="auth-card text-center" style={{ textAlign: 'center', maxWidth: '500px', padding: '3rem' }}>
           <Lock size={64} color="var(--primary)" style={{ margin: '0 auto 1.5rem', opacity: 0.5 }} />
           <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Conteúdo Bloqueado</h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>
-            Esta aula ou atividade ainda não foi liberada para o seu núcleo. 
-            Por favor, entre em contato com seu professor ou coordenador do pólo para solicitar a liberação.
-          </p>
+          {blockReason === 'late_exam' ? (
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>
+              Esta prova foi liberada para o seu núcleo <strong>antes da sua entrada no portal</strong>.
+              Conclua os estudos do módulo e solicite ao professor a <strong>liberação individual</strong> para realizar a avaliação.
+            </p>
+          ) : (
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: '1.6' }}>
+              Esta aula ou atividade ainda não foi liberada para o seu núcleo.
+              Por favor, entre em contato com seu professor ou coordenador do pólo para solicitar a liberação.
+            </p>
+          )}
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button onClick={() => navigate(-1)} className="btn btn-outline">Voltar</button>
             <button onClick={() => navigate('/dashboard')} className="btn btn-primary">

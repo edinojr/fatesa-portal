@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BookOpen, Eye, ShieldCheck, Clock, Lock, Unlock, GraduationCap, CheckCircle, AlertCircle, ToggleLeft, ToggleRight } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { handleSupabaseError } from '../../../lib/authUtils'
+import { releaseExamAndNextModule } from '../../../services/releaseService'
 import { Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
 import ModuleCard from './cards/ModuleCard'
@@ -147,84 +148,19 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
   const handleReleaseExams = async (nucleoId: string, currentBook: any) => {
     try {
-      const { data: currentExams } = await supabase
-        .from('aulas')
-        .select('id')
-        .eq('livro_id', currentBook.id)
-        .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
-        .order('ordem', { ascending: true })
-        .limit(1);
-
-      const itemsToRelease: Array<{ nucleo_id: string; item_id: any; item_type: string; liberado: boolean }> = [];
-
-      if (currentExams) {
-        currentExams.forEach(exam => {
-          itemsToRelease.push({
-            nucleo_id: nucleoId,
-            item_id: exam.id,
-            item_type: 'atividade',
-            liberado: true
-          });
-        });
-      }
-
-      // Find next module by ordem
-      let nextBook: any = null;
-      if (typeof currentBook.ordem === 'number' && currentBook.curso_id) {
-        const { data: nb } = await supabase
-          .from('livros')
-          .select('id')
-          .eq('ordem', currentBook.ordem + 1)
-          .eq('curso_id', currentBook.curso_id)
-          .maybeSingle();
-        nextBook = nb;
-      }
-
-      if (nextBook) {
-        // Liberar conteúdo (lições + exercícios) do próximo módulo
-        const { data: nextContent } = await supabase
-          .from('aulas')
-          .select('id, tipo')
-          .eq('livro_id', nextBook.id)
-          .not('tipo', 'eq', 'prova')
-          .not('tipo', 'eq', 'avaliacao');
-
-        if (nextContent) {
-          nextContent.forEach(item => {
-            const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo';
-            itemsToRelease.push({
-              nucleo_id: nucleoId,
-              item_id: item.id,
-              item_type: isVideo ? 'video' : 'atividade',
-              liberado: true
-            });
-          });
-        }
-
-        // Ativar o próximo módulo (professor_active = true) para que alunos o vejam
-        await supabase.from('livros').update({ professor_active: true }).eq('id', nextBook.id);
-        setBooks(prev => prev.map(b => b.id === nextBook.id ? { ...b, professor_active: true } : b));
-        if (selectedBook && selectedBook.id === nextBook.id) {
+      const res = await releaseExamAndNextModule(currentBook, nucleoId);
+      if (res.nextBookId) {
+        setBooks(prev => prev.map(b => b.id === res.nextBookId ? { ...b, professor_active: true } : b));
+        if (selectedBook && selectedBook.id === res.nextBookId) {
           setSelectedBook({ ...selectedBook, professor_active: true });
         }
       }
-
-      if (itemsToRelease.length === 0) return;
-
-      const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, {
-        onConflict: 'nucleo_id, item_id, item_type'
-      });
-      if (error) throw error;
-
-      setReleases(prev => {
-        const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-        return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
-      })
-
+      await fetchReleases();
       alert("Avaliação V1 liberada! O módulo seguinte foi ativado automaticamente com seu conteúdo (lições e exercícios) liberado para o polo.");
     } catch (error: any) {
-      console.error("Erro na liberação circular:", error);
-      alert('Erro ao liberar provas: ' + (error?.message || error));
+      console.error("Erro na liberação:", error);
+      const handled = await handleSupabaseError(error);
+      if (!handled) alert('Erro ao liberar provas: ' + (error?.message || error));
     }
   }
 

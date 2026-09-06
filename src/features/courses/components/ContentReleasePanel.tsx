@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { handleSupabaseError } from '../../../lib/authUtils'
+import { releaseExamAndNextModule } from '../../../services/releaseService'
 import { BookOpen, Lock, Unlock, ShieldCheck, ToggleLeft, ToggleRight, GraduationCap, ChevronDown, ChevronRight, Zap } from 'lucide-react'
 import ModalityBadge from '../../../components/ui/ModalityBadge'
 
@@ -173,56 +174,17 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
   }
 
   const handleReleaseExams = async (nucleoId: string, currentBook: Book) => {
-    const { data: currentExams } = await supabase
-      .from('aulas')
-      .select('id')
-      .eq('livro_id', currentBook.id)
-      .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
-      .order('ordem', { ascending: true })
-      .limit(1)
-
-    const itemsToRelease: any[] = []
-    if (currentExams) {
-      currentExams.forEach(exam => itemsToRelease.push({ nucleo_id: nucleoId, item_id: exam.id, item_type: 'atividade', liberado: true }))
-    }
-
-    // Find next module by ordem
-    let nextBookId: string | null = null
-    if (typeof currentBook.ordem === 'number' && currentBook.curso_id) {
-      const { data: nb } = await supabase.from('livros').select('id').eq('ordem', currentBook.ordem + 1).eq('curso_id', currentBook.curso_id).maybeSingle()
-      if (nb) nextBookId = nb.id
-    }
-
-    if (nextBookId) {
-      // Liberar conteúdo (lições + exercícios, SEM provas) do próximo módulo
-      const { data: nextContent } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', nextBookId)
-      if (nextContent) {
-        nextContent
-          .filter(item => !(item.tipo === 'prova' || item.tipo === 'avaliacao' || item.is_bloco_final))
-          .forEach(item => {
-            const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo'
-            itemsToRelease.push({ nucleo_id: nucleoId, item_id: item.id, item_type: isVideo ? 'video' : 'atividade', liberado: true })
-          })
+    try {
+      const res = await releaseExamAndNextModule(currentBook, nucleoId);
+      if (res.nextBookId) {
+        setBooks(prev => prev.map(b => b.id === res.nextBookId ? { ...b, professor_active: true } : b))
       }
-
-      // Liberar o próximo módulo para o polo (item_type='modulo') — sem isso o
-      // módulo seguinte não aparece no painel dos alunos
-      itemsToRelease.push({ nucleo_id: nucleoId, item_id: nextBookId, item_type: 'modulo', liberado: true })
-
-      // Ativar o próximo módulo para que alunos o vejam
-      const { error: actErr } = await supabase.from('livros').update({ professor_active: true }).eq('id', nextBookId)
-      if (actErr) { alert('Erro ao ativar o módulo seguinte: ' + actErr.message); return }
-      setBooks(prev => prev.map(b => b.id === nextBookId ? { ...b, professor_active: true } : b))
+      await fetchReleases()
+      alert('Prova V1 liberada! O módulo seguinte foi liberado e ativado para o polo, com seu conteúdo (lições e exercícios).')
+    } catch (err: any) {
+      const handled = await handleSupabaseError(err)
+      if (!handled) alert('Erro ao liberar provas: ' + (err.message || 'verifique as permissões'))
     }
-
-    if (itemsToRelease.length === 0) return
-    const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id, item_id, item_type' })
-    if (error) { alert('Erro: ' + error.message); return }
-    setReleases(prev => {
-      const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-      return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
-    })
-    alert('Prova V1 liberada! O módulo seguinte foi liberado e ativado para o polo, com seu conteúdo (lições e exercícios).')
   }
 
   const isReleased = (itemId: string, itemType: string, nucleoId: string) =>

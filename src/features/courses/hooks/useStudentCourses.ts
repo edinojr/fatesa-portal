@@ -420,6 +420,16 @@ const hasException = exceptionIds.includes(l.id);
                       if (versao > 1 && !isRecoveryUnlocked(versao, moduleExamAttempts)) {
                         return { ...a, isHidden: true };
                       }
+                      // Aluno tardio: cadastro posterior à liberação da prova →
+                      // prova oculta até liberação individual do professor
+                      // (liberacoes_excecao_atividade). O conteúdo do módulo
+                      // (lições/exercícios/vídeos) permanece acessível para estudo.
+                      if (versao === 1 && !examExceptionIds.includes(a.id) && !hasException) {
+                        const examRelDate = examReleaseDates[l.id];
+                        if (examRelDate && userCreatedAt > new Date(examRelDate).getTime()) {
+                          return { ...a, isHidden: true };
+                        }
+                      }
                     }
                     return a;
                   }).filter((a: any) => !a.isHidden),
