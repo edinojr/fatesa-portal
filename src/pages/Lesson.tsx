@@ -405,12 +405,16 @@ const Lesson = () => {
           .maybeSingle();
         const hasModuleException = !!modException;
 
+        // Módulo finalizado manualmente → acesso de revisão liberado
+        const manualFinishedModules = (profile?.modulos_finalizados_manual || []) as string[];
+        const isModuleFinishedManually = manualFinishedModules.includes(lessonData.livro_id);
+
         // Se o módulo está bloqueado pelo professor, negar acesso
-        // A MENOS que o aluno tenha exceção individual
-        const isModuleBlocked = bookData && bookData.professor_active === false && !hasModuleException;
+        // A MENOS que o aluno tenha exceção individual ou o módulo esteja finalizado (revisão)
+        const isModuleBlocked = bookData && bookData.professor_active === false && !hasModuleException && !isModuleFinishedManually;
         if (!isStaff && isModuleBlocked) {
           setIsReleased(false);
-        } else if (isStaff || modulePassed || hasModuleException) {
+        } else if (isStaff || modulePassed || hasModuleException || isModuleFinishedManually) {
           setIsReleased(true);
         } else {
           const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id, profile?.created_at);
@@ -438,7 +442,7 @@ const Lesson = () => {
             if (!canRetake) {
               setSubmitted(true);
             }
-            if (isExam && subData.status !== 'corrigida' && !isStaff) {
+            if (isExam && subData.status !== 'corrigida' && !isStaff && !isModuleFinishedManually) {
               toast('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor.', { icon: '⏳' });
               navigate('/dashboard');
               return;
@@ -522,12 +526,13 @@ const Lesson = () => {
         }
         // 3. Check if module is finished
         if (lessonData.livro_id) {
-          const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id').eq('livro_id', lessonData.livro_id);
+          const { data: bookAulas } = await supabase.from('aulas').select('id, tipo, is_bloco_final, livro_id, min_grade').eq('livro_id', lessonData.livro_id);
           const bookSubs = allSubs.filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
-          
+
           const finishedByExam = bookSubs.some(s => {
-            const isEx = (bookAulas || []).some(ba => ba.id === s.aula_id && (ba.tipo === 'prova' || ba.tipo === 'avaliacao' || ba.is_bloco_final));
-            return isEx && s.status === 'corrigida' && ((s.nota || 0) >= 7.0);
+            const ba = (bookAulas || []).find(x => x.id === s.aula_id);
+            const isEx = ba && (ba.tipo === 'prova' || ba.tipo === 'avaliacao' || ba.is_bloco_final);
+            return !!isEx && s.status === 'corrigida' && ((s.nota || 0) >= (ba?.min_grade || 7.0));
           });
           const manualModules = (userProfile as any)?.modulos_finalizados_manual || [];
           const finishedByManual = manualModules.includes(lessonData.livro_id);
@@ -1826,6 +1831,7 @@ const Lesson = () => {
               lessonId={id!}
               questions={questions}
               lessonTitle={lesson.titulo}
+              isModuleFinished={isModuleFinished}
             />
           </div>
         )}
@@ -1838,6 +1844,7 @@ const Lesson = () => {
               questions={questions}
               lessonTitle={lesson.titulo}
               minGrade={lesson.min_grade || 7.0}
+              isModuleFinished={isModuleFinished}
             />
           </div>
         )}
@@ -1944,7 +1951,7 @@ const Lesson = () => {
                       }}>
                          <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={!userProfile?.isStaff && submitted} />
                         <span style={{flex:1}}>{opt}</span>
-                                 {showGabarito && (userProfile?.isStaff || submitted) && q.type === 'matching' ? null : (q.correct === oIdx && <div style={{color:'var(--success)', fontSize:'0.75rem', fontWeight:800, display:'flex', alignItems:'center', gap:'0.4rem'}}><CheckCircle size={14}/> GABARITO</div>)}
+                                  {showGabarito && (userProfile?.isStaff || submitted) && q.type !== 'matching' && q.correct === oIdx && (<div style={{color:'var(--success)', fontSize:'0.75rem', fontWeight:800, display:'flex', alignItems:'center', gap:'0.4rem'}}><CheckCircle size={14}/> GABARITO</div>)}
                                  {showGabarito && (userProfile?.isStaff || submitted) && answers[qKey] === oIdx && !isCorrect && <XCircle size={16} color="var(--error)"/>}
 
                       </label>
@@ -2307,7 +2314,7 @@ const Lesson = () => {
               )}
 
               {/* Gabarito Oficial e Desempenho Detalhado */}
-              {submitted && result && questions.length > 0 && (userProfile?.isStaff || isModuleFinished || (result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0))) && (
+              {questions.length > 0 && (userProfile?.isStaff || isModuleFinished || (submitted && result && (result?.score ?? 0) >= (lesson?.min_grade || 7.0))) && (
                 <div style={{marginTop:'2.5rem', padding:'2rem', background:'var(--glass)', borderRadius:'20px', border:'1px solid var(--glass-border)'}}>
                   <div style={{display:'flex', alignItems:'center', gap:'0.75rem', marginBottom:'1.5rem'}}>
                     <BookOpen size={24} color="var(--primary)"/>
@@ -2341,10 +2348,10 @@ const Lesson = () => {
                           <div style={{fontSize:'0.75rem', color:'var(--error)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'0.5rem', fontWeight:700}}>Erros</div>
                           <div style={{fontSize:'2rem', fontWeight:900, color:'var(--error)'}}>{stats.incorrect}</div>
                         </div>
-                        {lesson?.tipo === 'prova' && result.score !== null && (
+                        {lesson?.tipo === 'prova' && result?.score !== null && (
                           <div style={{padding:'1.25rem', background:'rgba(var(--primary-rgb), 0.08)', borderRadius:'14px', border:'1px solid rgba(var(--primary-rgb), 0.25)', textAlign:'center'}}>
                             <div style={{fontSize:'0.75rem', color:'var(--primary)', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'0.5rem', fontWeight:700}}>Nota</div>
-                            <div style={{fontSize:'2rem', fontWeight:900, color:'var(--primary)'}}>{result.score?.toFixed(1)}<span style={{fontSize:'1rem', color:'var(--text-muted)'}}> / 10</span></div>
+                            <div style={{fontSize:'2rem', fontWeight:900, color:'var(--primary)'}}>{result?.score?.toFixed(1) ?? '—'}<span style={{fontSize:'1rem', color:'var(--text-muted)'}}> / 10</span></div>
                           </div>
                         )}
                       </div>

@@ -25,12 +25,14 @@ interface ExercicioFixacaoProps {
   lessonId: string;
   questions: QuizQuestion[];
   lessonTitle?: string;
+  isModuleFinished?: boolean;
   onSaved?: () => void;
 }
 
 const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
   lessonId,
   questions: initialQuestions,
+  isModuleFinished = false,
   onSaved
 }) => {
   const { profile } = useProfile();
@@ -63,14 +65,30 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
     matching: true
   });
 
-  // Sync questions when prop changes
+  // Sync questions when prop changes + modo revisão (módulo finalizado)
   useEffect(() => {
     setQuestions(initialQuestions);
     setExercicioFinalizado(false);
     setRespostasAluno({});
     setEditingGabarito(false);
     setShowGabarito(false);
-  }, [lessonId, initialQuestions]);
+
+    if (isModuleFinished && mode === 'student' && profile?.id) {
+      // Módulo finalizado: modo revisão — carrega a submissão anterior e
+      // revela o gabarito para aprofundamento/revisão
+      supabase.from('respostas_aulas')
+        .select('respostas, status')
+        .eq('aula_id', lessonId)
+        .eq('aluno_id', profile.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data?.respostas) setRespostasAluno(data.respostas);
+          setShowGabarito(true);
+          setExercicioFinalizado(true);
+        });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonId, initialQuestions, isModuleFinished, mode, profile?.id]);
 
   // Handlers
   const setResposta = (qKey: string, valor: any) => {

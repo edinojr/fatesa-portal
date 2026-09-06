@@ -159,6 +159,9 @@ const ModuleDetails = () => {
     };
     const isActuallyLocked = (item: any) => {
       if (isStaff) return false;
+      // Módulo finalizado: grade 100% aberta para revisão
+      // (conteúdo, provas e exercícios com seus respectivos gabaritos)
+      if (currentBook?.book?.isFinished) return false;
 
       const versao = item.versao || 1;
       const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;

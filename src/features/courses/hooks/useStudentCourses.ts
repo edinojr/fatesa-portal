@@ -405,13 +405,14 @@ const hasException = exceptionIds.includes(l.id);
                     // Provas seguem a liberação do módulo: quando o módulo tem
                     // exceção (liberacoes_excecao), as provas V1 também ficam visíveis.
                     // V2/V3 continuam ocultas até reprovação na versão anterior.
-                    if (isExamType && !releasedAtividades.includes(a.id) && !examExceptionIds.includes(a.id) && !isStaff && !hasException) {
+                    // Módulo finalizado: tudo visível para revisão.
+                    if (isExamType && !releasedAtividades.includes(a.id) && !examExceptionIds.includes(a.id) && !isStaff && !hasException && !moduleFinished) {
                         return { ...a, isHidden: true };
-                     }
-                    if (!isStaff && l.professor_active === false && !hasException && !hasIndividualExamInModule) {
+                      }
+                    if (!isStaff && l.professor_active === false && !hasException && !hasIndividualExamInModule && !moduleFinished) {
                       return { ...a, isHidden: true };
                     }
-                    if ((isExamType || isMediaType) && a.professor_active === false && !isStaff && !hasException) {
+                    if ((isExamType || isMediaType) && a.professor_active === false && !isStaff && !hasException && !moduleFinished) {
                       return { ...a, isHidden: true };
                     }
                     // Hierarquia V2/V3: oculta se a versão anterior não foi reprovada
@@ -424,7 +425,7 @@ const hasException = exceptionIds.includes(l.id);
                       // prova oculta até liberação individual do professor
                       // (liberacoes_excecao_atividade). O conteúdo do módulo
                       // (lições/exercícios/vídeos) permanece acessível para estudo.
-                      if (versao === 1 && !examExceptionIds.includes(a.id) && !hasException) {
+                      if (versao === 1 && !examExceptionIds.includes(a.id) && !hasException && !moduleFinished) {
                         const examRelDate = examReleaseDates[l.id];
                         if (examRelDate && userCreatedAt > new Date(examRelDate).getTime()) {
                           return { ...a, isHidden: true };

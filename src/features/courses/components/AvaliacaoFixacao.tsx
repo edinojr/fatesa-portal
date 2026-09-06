@@ -26,6 +26,7 @@ interface AvaliacaoFixacaoProps {
   questions: QuizQuestion[];
   lessonTitle?: string;
   minGrade?: number;
+  isModuleFinished?: boolean;
   onSaved?: () => void;
 }
 
@@ -33,6 +34,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   lessonId,
   questions: initialQuestions,
   minGrade = 7.0,
+  isModuleFinished = false,
   onSaved
 }) => {
   const { profile } = useProfile();
@@ -64,14 +66,30 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     matching: true
   });
 
-  // Sync questions when prop changes
+  // Sync questions when prop changes + modo revisão (módulo finalizado)
   useEffect(() => {
     setQuestions(initialQuestions);
     setExercicioFinalizado(false);
     setRespostasAluno({});
     setEditingGabarito(false);
     setShowGabarito(false);
-  }, [lessonId, initialQuestions]);
+
+    if (isModuleFinished && mode === 'student' && profile?.id) {
+      // Módulo finalizado: modo revisão — carrega a submissão anterior e
+      // revela o gabarito para aprofundamento/revisão
+      supabase.from('respostas_aulas')
+        .select('respostas, status')
+        .eq('aula_id', lessonId)
+        .eq('aluno_id', profile.id)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data?.respostas) setRespostasAluno(data.respostas);
+          setShowGabarito(true);
+          setExercicioFinalizado(true);
+        });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lessonId, initialQuestions, isModuleFinished, mode, profile?.id]);
 
   // Handlers
   const setResposta = (qKey: string, valor: any) => {
@@ -328,7 +346,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             Falso
           </label>
         </div>
-        {exercicioFinalizado && mode === 'student' && (
+        {exercicioFinalizado && mode === 'student' && !showGabarito && (
           <div style={{
             marginTop: '1rem',
             padding: '0.75rem',
@@ -351,8 +369,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   const renderMultipleChoice = (q: QuizQuestion, idx: number) => {
     const qKey = q.id;
     const studentAns = respostasAluno[qKey];
-    const showResult = false;
-    const correct = null;
+    const showResult = showGabarito && exercicioFinalizado;
+    const correct = showResult ? String(studentAns) === String(q.correct) : null;
 
     return (
       <div
@@ -443,7 +461,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             );
           })}
         </div>
-        {exercicioFinalizado && mode === 'student' && (
+        {exercicioFinalizado && mode === 'student' && !showGabarito && (
           <div style={{
             marginTop: '1rem',
             padding: '0.75rem',
@@ -466,7 +484,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   const renderMatching = (q: QuizQuestion, idx: number) => {
     const qKey = q.id;
     const studentAns = respostasAluno[qKey] || {};
-    const showResult = false;
+    const showResult = showGabarito && exercicioFinalizado;
 
     if (!q.matchingPairs) return null;
 
@@ -587,7 +605,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             })}
           </div>
         </div>
-        {exercicioFinalizado && mode === 'student' && (
+        {exercicioFinalizado && mode === 'student' && !showGabarito && (
           <div style={{
             marginTop: '1rem',
             padding: '0.75rem',
@@ -910,8 +928,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         </div>
       )}
 
-      {/* Professor: View mode with gabarito */}
-      {mode === 'professor' && showGabarito && (
+      {/* Professor ou revisão (módulo finalizado): View mode with gabarito */}
+      {(mode === 'professor' || mode === 'admin' || (isModuleFinished && mode === 'student')) && showGabarito && (
         <div style={{
           padding: '1.5rem',
           marginBottom: '2rem',
