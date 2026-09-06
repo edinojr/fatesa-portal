@@ -208,7 +208,7 @@ const Admin = () => {
   }, [])
 
   useEffect(() => {
-    if (activeTab === 'boletim') fetchBoletimSubmissions()
+    if (activeTab === 'boletim' || activeTab === 'academic') fetchBoletimSubmissions()
   }, [activeTab, fetchBoletimSubmissions])
   const [pixKey, setPixKey] = useState('')
   const [pixQrUrl] = useState('')

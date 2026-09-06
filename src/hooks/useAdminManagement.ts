@@ -28,7 +28,7 @@ export const useAdminManagement = () => {
   // 3. Global Actions
   const fetchData = useCallback(async () => {
     if (nav.activeTab === 'home') stats.fetchStats();
-    if (nav.activeTab === 'users' || nav.activeTab === 'professors') users.fetchUsers();
+    if (nav.activeTab === 'users' || nav.activeTab === 'professors' || nav.activeTab === 'academic') users.fetchUsers();
     if (nav.activeTab === 'content') content.fetchCourses();
     if (nav.activeTab === 'finance') finance.fetchFinanceData();
     if (nav.activeTab === 'analytics' || nav.activeTab === 'academic') analytics.fetchAnalytics();
