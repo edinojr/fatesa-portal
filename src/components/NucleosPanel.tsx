@@ -163,24 +163,23 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
 
     setActionLoading(`release_${key}`)
     try {
-      if (newStatus) {
-        await supabase.from('liberacoes_nucleo').upsert({
-          nucleo_id: selectedNucleo.id,
-          item_id: itemId,
-          item_type: itemType,
-          liberado: true
-        }, { onConflict: 'nucleo_id, item_id, item_type' })
-      } else {
-        await supabase.from('liberacoes_nucleo').delete().match({
-          nucleo_id: selectedNucleo.id,
-          item_id: itemId,
-          item_type: itemType
-        })
-      }
-      setReleasedItems({ ...releasedItems, [key]: newStatus })
+      const { error } = newStatus
+        ? await supabase.from('liberacoes_nucleo').upsert({
+            nucleo_id: selectedNucleo.id,
+            item_id: itemId,
+            item_type: itemType,
+            liberado: true
+          }, { onConflict: 'nucleo_id, item_id, item_type' })
+        : await supabase.from('liberacoes_nucleo').delete().match({
+            nucleo_id: selectedNucleo.id,
+            item_id: itemId,
+            item_type: itemType
+          })
+      if (error) throw error
+      setReleasedItems(prev => ({ ...prev, [key]: newStatus }))
     } catch (err: any) {
       const handled = await handleSupabaseError(err)
-      if (!handled) alert('Erro ao alterar liberação: ' + err.message)
+      if (!handled) alert('Erro ao alterar liberação: ' + (err.message || 'verifique as permissões do seu usuário'))
     } finally {
       setActionLoading(null)
     }

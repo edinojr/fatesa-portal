@@ -44,13 +44,21 @@ export async function handleSupabaseError(err: any): Promise<boolean> {
   const status = err?.status || err?.code
   const message = err?.message || ''
 
+  // Violação de RLS / permissão NÃO é sessão expirada — não desloga o usuário.
+  // O chamador exibe o erro (ex.: professor sem permissão de liberar conteúdo).
+  const isPermissionError =
+    err?.code === '42501' ||
+    message?.toLowerCase().includes('row-level security') ||
+    message?.toLowerCase().includes('permission denied')
+  if (isPermissionError) return false
+
   if (
     status === 401 ||
-    status === 403 ||
     message?.toLowerCase().includes('invalid refresh token') ||
     message?.toLowerCase().includes('refresh token not found') ||
     message?.toLowerCase().includes('jwt expired') ||
-    message?.toLowerCase().includes('auth error')
+    message?.toLowerCase().includes('auth error') ||
+    (status === 403 && message?.toLowerCase().includes('jwt'))
   ) {
     await supabase.auth.signOut()
     window.location.href = '/login?expired=true'

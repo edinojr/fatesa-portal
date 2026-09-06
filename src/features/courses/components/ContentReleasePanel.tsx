@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { handleSupabaseError } from '../../../lib/authUtils'
 import { BookOpen, Lock, Unlock, ShieldCheck, ToggleLeft, ToggleRight, GraduationCap, ChevronDown, ChevronRight, Zap } from 'lucide-react'
 import ModalityBadge from '../../../components/ui/ModalityBadge'
 
@@ -107,18 +108,21 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
     })
     try {
       if (existing) {
-        await supabase.from('liberacoes_nucleo').delete().match({ nucleo_id: nucleoId, item_id: itemId, item_type: itemType })
+        const { error: delError } = await supabase.from('liberacoes_nucleo').delete().match({ nucleo_id: nucleoId, item_id: itemId, item_type: itemType })
+        if (delError) throw delError
         // Cascade: também remover liberações de aulas (video/atividade) deste módulo
         if (itemType === 'modulo') {
           const lessons = await fetchLessonsByBook(itemId)
           const aulaIds = lessons.map(l => l.id)
           if (aulaIds.length > 0) {
-            await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', nucleoId).in('item_id', aulaIds)
+            const { error: cascDelError } = await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', nucleoId).in('item_id', aulaIds)
+            if (cascDelError) throw cascDelError
             setReleases(prev => prev.filter(r => !(r.nucleo_id === nucleoId && aulaIds.includes(r.item_id) && r.item_type !== 'modulo')))
           }
         }
       } else {
-        await supabase.from('liberacoes_nucleo').upsert([{ nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true }], { onConflict: 'nucleo_id, item_id, item_type' })
+        const { error: upError } = await supabase.from('liberacoes_nucleo').upsert([{ nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true }], { onConflict: 'nucleo_id, item_id, item_type' })
+        if (upError) throw upError
         // Cascade: liberar todas as aulas não-prova (vídeos + exercícios) do módulo para o polo
         if (itemType === 'modulo') {
           // Garantir que o módulo esteja ativo globalmente — sem isso a
@@ -129,7 +133,8 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
           const lessons = await fetchLessonsByBook(itemId)
           const items = buildLessonReleases(nucleoId, lessons)
           if (items.length > 0) {
-            await supabase.from('liberacoes_nucleo').upsert(items, { onConflict: 'nucleo_id, item_id, item_type' })
+            const { error: cascUpError } = await supabase.from('liberacoes_nucleo').upsert(items, { onConflict: 'nucleo_id, item_id, item_type' })
+            if (cascUpError) throw cascUpError
             setReleases(prev => {
               const ids = new Set(items.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
               return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...items]
@@ -138,7 +143,8 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
         }
       }
     } catch (err: any) {
-      alert('Erro: ' + err.message)
+      const handled = await handleSupabaseError(err)
+      if (!handled) alert('Erro ao alterar liberação: ' + (err.message || 'verifique as permissões do seu usuário'))
       await fetchReleases()
     }
   }

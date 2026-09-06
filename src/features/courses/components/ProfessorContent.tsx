@@ -318,27 +318,39 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
             const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
             return { nucleo_id: nucleusToUse, item_id: l.id, item_type: isVideo ? 'video' : 'atividade', liberado: true }
           })
-        await supabase.from('liberacoes_nucleo').upsert([releaseModulo, ...itemsToRelease], { onConflict: 'nucleo_id, item_id, item_type' })
-        await supabase.from('livros').update({ professor_active: true }).eq('id', selectedBook.id)
+        const { error: relError } = await supabase.from('liberacoes_nucleo').upsert([releaseModulo, ...itemsToRelease], { onConflict: 'nucleo_id, item_id, item_type' })
+        if (relError) throw relError
+        const { error: actError } = await supabase.from('livros').update({ professor_active: true }).eq('id', selectedBook.id)
+        if (actError) throw actError
         setBooks(prev => prev.map(b => b.id === selectedBook.id ? { ...b, professor_active: true } : b))
         setSelectedBook({ ...selectedBook, professor_active: true })
         await fetchReleases()
         alert('Módulo liberado com sucesso!')
       } catch (err: any) {
-        alert('Erro ao liberar módulo: ' + err.message)
+        const handled = await handleSupabaseError(err)
+        if (!handled) alert('Erro ao liberar módulo: ' + (err.message || 'verifique as permissões'))
       }
     } else {
       if (!window.confirm(`Bloquear TODO o conteúdo do módulo "${selectedBook.titulo}"? Os alunos não podrán mais ver este módulo.`)) return
       try {
-        await supabase.from('livros').update({ professor_active: false }).eq('id', selectedBook.id)
-        await supabase.from('liberacoes_nucleo').delete().eq('item_id', selectedBook.id).eq('item_type', 'modulo')
+        const { error: deactError } = await supabase.from('livros').update({ professor_active: false }).eq('id', selectedBook.id)
+        if (deactError) throw deactError
+        // Bloqueia a liberação de módulo APENAS para o polo selecionado —
+        // antes o delete era sem filtro de nucleo_id e apagava todos os polos
+        const { error: delError } = await supabase.from('liberacoes_nucleo')
+          .delete()
+          .eq('item_id', selectedBook.id)
+          .eq('item_type', 'modulo')
+          .eq('nucleo_id', selectedNucleus)
+        if (delError) throw delError
         setBooks(prev => prev.map(b => b.id === selectedBook.id ? { ...b, professor_active: false } : b))
         setSelectedBook({ ...selectedBook, professor_active: false })
         await fetchReleases()
         setSelectedBook(null)
         alert('Módulo bloqueado! Alunos não verão mais este conteúdo.')
       } catch (err: any) {
-        alert('Erro ao bloquear módulo: ' + err.message)
+        const handled = await handleSupabaseError(err)
+        if (!handled) alert('Erro ao bloquear módulo: ' + (err.message || 'verifique as permissões'))
       }
     }
   }
