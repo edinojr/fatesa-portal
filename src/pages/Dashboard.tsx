@@ -32,6 +32,7 @@ import { collectExamAttempts, isModuleApproved, isModuleDP, getMinGrade } from '
 // Componentes Feature-based
 import CourseList from '../features/courses/components/CourseList'
 import ForumPanel from '../features/forum/components/ForumPanel'
+import PersonalDataCard from '../features/users/components/PersonalDataCard'
 import AlumniCertificate from '../components/documents/AlumniCertificate'
 import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
@@ -594,6 +595,14 @@ const Dashboard = () => {
               </div>
 
             <div className="admin-dashboard-grid transition-fade-in" style={{ marginTop: '1rem' }}>
+              <PersonalDataCard
+                profile={profile}
+                onRefresh={refreshProfile}
+                courses={courses}
+                atividades={atividades}
+                progressoAulas={progressoAulas}
+              />
+
               <div className="admin-action-card" onClick={() => setActiveTab('cursos')}>
                 <div className="icon-wrapper"><BookOpen size={32} /></div>
                 <h3>Meus Cursos</h3>

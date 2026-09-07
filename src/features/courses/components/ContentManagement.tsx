@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { BookOpen, Edit, Trash2, ChevronRight, Plus, ClipboardList, Award, PlayCircle, Eye, FileText, Upload, Loader2, ChevronUp, ChevronDown, Layers, GripVertical, Clock } from 'lucide-react'
+import { BookOpen, Edit, Trash2, ChevronRight, Plus, ClipboardList, Award, PlayCircle, Eye, FileText, Upload, Loader2, ChevronUp, ChevronDown, Layers, GripVertical, Clock, Video } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../../lib/supabase'
 import { extractAnswerKey, AnswerKey } from '../../../lib/answerKeyParser'
 import GabaritoUpload from './GabaritoUpload'
 import ModalityBadge from '../../../components/ui/ModalityBadge'
+import AddVideoLinkModal from './modals/AddVideoLinkModal'
 
 interface ContentManagementProps {
   courses: any[]
@@ -129,6 +130,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
   const [batchUploadTarget, setBatchUploadTarget] = useState<{ blocoId: number | null, order: number } | null>(null);
   const [localUploading, setLocalUploading] = useState<string | null>(null);
   const [expandedBookId, setExpandedBookId] = useState<string | null>(null);
+  const [videoLinkBook, setVideoLinkBook] = useState<any | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const isAdmin = userRole === 'admin' || userRole === 'suporte'
@@ -814,6 +816,11 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                         <input type="file" hidden accept="video/mp4,video/webm,video/ogg" onChange={(e) => handleVideoUpload(e, book.id)} />
                       </label>
                     )}
+                    <button className="btn btn-outline" style={{ width: 'auto', cursor: 'pointer', fontSize: '0.75rem', padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#a78bfa' }}
+                      onClick={() => setVideoLinkBook(book)}
+                      title="Adicionar videoaula por link (YouTube/Vimeo)">
+                      <Video size={14} /> Adicionar Vídeo (Link)
+                    </button>
                   </div>
                 </div>
               )}
@@ -1251,6 +1258,18 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
           )}
         </div>
       )}
+
+      {/* Modal: adicionar videoaula por link (YouTube/Vimeo) */}
+      <AddVideoLinkModal
+        open={!!videoLinkBook}
+        book={videoLinkBook}
+        onClose={() => setVideoLinkBook(null)}
+        onInserted={async () => {
+          if (selectedCourse) await fetchBooks(selectedCourse.id)
+          if (videoLinkBook?.id) await fetchLessons(videoLinkBook.id)
+        }}
+        showToast={(msg) => alert(msg)}
+      />
     </div>
   )
 }

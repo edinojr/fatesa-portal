@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { BookOpen, Eye, ShieldCheck, Clock, Lock, Unlock, GraduationCap, CheckCircle, AlertCircle, ToggleLeft, ToggleRight } from 'lucide-react'
+import { BookOpen, Eye, ShieldCheck, Clock, Lock, Unlock, GraduationCap, CheckCircle, AlertCircle, ToggleLeft, ToggleRight, Video } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { handleSupabaseError } from '../../../lib/authUtils'
 import { releaseExamAndNextModule } from '../../../services/releaseService'
 import { Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
 import ModuleCard from './cards/ModuleCard'
+import AddVideoLinkModal from './modals/AddVideoLinkModal'
 
 interface ProfessorContentProps {
   courses: ProfessorCourse[]
@@ -43,6 +44,19 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 }) => {
   const [releases, setReleases] = useState<any[]>([])
   const [selectedNucleus, setSelectedNucleus] = useState<string>('')
+  const [showAddVideo, setShowAddVideo] = useState(false)
+
+  const refreshBookLessons = async () => {
+    if (!selectedBook) return
+    const { data: freshAulas } = await supabase.from('aulas').select('*').eq('livro_id', selectedBook.id)
+    if (!freshAulas) return
+    const sorted = [...freshAulas].sort((a: any, b: any) =>
+      (a.ordem || 0) - (b.ordem || 0) || (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { numeric: true })
+    )
+    setLessons(sorted)
+    setSelectedBook({ ...selectedBook, aulas: freshAulas })
+    setBooks(prev => prev.map((b: any) => b.id === selectedBook.id ? { ...b, aulas: freshAulas } : b))
+  }
 
   useEffect(() => {
     fetchReleases()
@@ -136,6 +150,14 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
       const payload = [releaseModulo, ...itemsToRelease]
       const { error } = await supabase.from('liberacoes_nucleo').upsert(payload, { onConflict: 'nucleo_id, item_id, item_type' })
       if (error) throw error
+      // Liberar o conteúdo também ativa o módulo para que os alunos vejam as
+      // lições/exercícios — sem professor_active=true o painel dos alunos oculta o módulo.
+      const { error: actError } = await supabase.from('livros').update({ professor_active: true }).eq('id', book.id)
+      if (actError) throw actError
+      setBooks(prev => prev.map(b => b.id === book.id ? { ...b, professor_active: true } : b))
+      if (selectedBook && selectedBook.id === book.id) {
+        setSelectedBook({ ...selectedBook, professor_active: true })
+      }
       setReleases(prev => {
         const ids = new Set(payload.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
         return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...payload]
@@ -447,6 +469,18 @@ releaseControls={!hideReleaseControls && (
               </span>
             </div>
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                onClick={() => setShowAddVideo(true)}
+                title="Adicionar videoaula por link (YouTube/Vimeo)"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.4rem',
+                  padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                  background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)',
+                  color: '#60a5fa', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                }}
+              >
+                <Video size={14} /> Adicionar Vídeo
+              </button>
               {(() => {
                 const gab = getBookGabaritoStats(lessons)
                 return (
@@ -885,6 +919,15 @@ releaseControls={!hideReleaseControls && (
           })()}
         </div>
       )}
+
+      {/* Modal: adicionar videoaula por link (YouTube/Vimeo) */}
+      <AddVideoLinkModal
+        open={showAddVideo}
+        book={selectedBook}
+        onClose={() => setShowAddVideo(false)}
+        onInserted={refreshBookLessons}
+        showToast={(msg) => alert(msg)}
+      />
     </div>
   )
 }

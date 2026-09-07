@@ -9,6 +9,14 @@ const DashboardBridge = () => {
 
   useEffect(() => {
     if (!loading && profile) {
+      // Refresh (F5) mantém o usuário na mesma página — o redirecionamento
+      // por papel só vale para navegação interna, nunca para reload.
+      const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+      const isReload =
+        (performance as any).navigation?.type === 1 ||
+        navEntry?.type === 'reload'
+      if (isReload) return
+
       const roles = (profile.caminhos_acesso as string[]) || []
       const storedRole = localStorage.getItem('fatesa_active_role')
 

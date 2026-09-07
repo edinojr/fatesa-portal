@@ -51,7 +51,11 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
 
     // Módulo em manutenção: sem aulas OU sem prova final configurada.
     // Permanece em hiato até que o conteúdo seja introduzido e o aluno passe pelo processo.
-    const isMaintenance = finalExams.length === 0;
+    // Quando o hook de cursos informa o flag bruto (isMaintenanceModule), ele é a
+    // fonte de verdade: um módulo com prova V1 existente mas ainda NÃO liberada
+    // (oculta para o aluno) NÃO deve aparecer como "em manutenção" — o conteúdo já
+    // foi adicionado e a prova é liberada individualmente pelo professor.
+    const isMaintenance = typeof l.isMaintenanceModule === 'boolean' ? l.isMaintenanceModule : finalExams.length === 0;
     
     const result = {
       percent: Math.round((completedItems / totalItems) * 100),

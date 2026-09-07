@@ -39,6 +39,14 @@ export const releaseExamAndNextModule = async (currentBook: any, nucleoId: strin
     result.examTitulo = v1Exam.titulo;
   }
 
+  // Liberar a prova V1 também ativa o módulo atual: sem professor_active=true o
+  // painel dos alunos oculta a prova e o "em manutenção" mascara o conteúdo.
+  const { error: actCurrentErr } = await supabase
+    .from('livros')
+    .update({ professor_active: true })
+    .eq('id', currentBook.id);
+  if (actCurrentErr) throw actCurrentErr;
+
   // 2. Módulo seguinte do mesmo curso (por ordem)
   let nextBook: any = null;
   if (typeof currentBook.ordem === 'number' && currentBook.curso_id) {

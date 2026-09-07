@@ -362,7 +362,7 @@ const hasException = exceptionIds.includes(l.id);
                 const isPastAndNotLatest = isPastModule && bookOrdem < latestReleasedOrdem;
 
                 const isFirstModule = bookOrdem === 1;
-                const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isMaintenanceModule) || (!isStaff && isPastAndNotLatest && !hasException && !hasStarted && !hasIndividualExamInModule && !moduleFinished && !isMaintenanceModule);
+                const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isMaintenanceModule);
 
                  const isExcluded = studentExclusions.includes(l.id);
                  if (isExcluded) {
@@ -375,6 +375,9 @@ const hasException = exceptionIds.includes(l.id);
 
               return {
                 ...l,
+                isMaintenanceModule,
+                hasExamInModule,
+                hasAnyAulasInModule,
                 aulas: [...(l.aulas || [])]
                   .sort((a: any, b: any) => {
                     if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0);

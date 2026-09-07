@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { supabase } from '../../../lib/supabase'
 import { ProfessorCourse } from '../../../types/professor'
 
 export const useProfessorCourses = () => {
@@ -16,15 +17,17 @@ export const useProfessorCourses = () => {
   }, [])
 
   const fetchBooks = useCallback(async (courseId: string) => {
-    const course = courses.find((c: any) => c.id === courseId)
-    if (course) {
-      const sortedBooks = [...(course.livros || [])].sort((a: any, b: any) => {
-        if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0)
-        return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { sensitivity: 'base' })
-      })
-      setBooks(sortedBooks)
-    }
-  }, [courses]);
+    const { data: course } = await supabase.from('cursos')
+      .select('id, nome, livros(*, aulas(*))')
+      .eq('id', courseId)
+      .maybeSingle();
+    const sortedBooks = [...(course?.livros || [])].sort((a: any, b: any) => {
+      if (a.ordem !== b.ordem) return (a.ordem || 0) - (b.ordem || 0)
+      return (a.titulo || '').localeCompare(b.titulo || '', 'pt-BR', { sensitivity: 'base' })
+    })
+    setBooks(sortedBooks)
+    if (course) setSortedCourses([...(courses.filter((c: any) => c.id !== course.id)), course])
+  }, [courses, setSortedCourses]);
 
   const selectBookAndShowLessons = useCallback((book: any) => {
     setSelectedBook(book)

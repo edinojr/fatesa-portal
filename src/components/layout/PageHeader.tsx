@@ -34,6 +34,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     if (onBack) {
       onBack()
     } else if (showBackButton) {
+      // Volta sempre para a página anterior; sem histórico (link direto),
+      // cai para o painel do papel ativo.
+      if (window.history.length > 1) {
+        window.history.back()
+        return
+      }
       const activeRole = localStorage.getItem('fatesa_active_role')
       if (activeRole === 'admin') navigate('/admin')
       else if (activeRole === 'professor') navigate('/professor')
