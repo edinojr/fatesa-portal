@@ -154,6 +154,14 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
       // lições/exercícios — sem professor_active=true o painel dos alunos oculta o módulo.
       const { error: actError } = await supabase.from('livros').update({ professor_active: true }).eq('id', book.id)
       if (actError) throw actError
+      // Conteúdo liberado também precisa estar ativo em cada aula (lições/
+      // exercícios/vídeos): aulas com professor_active=false ficam ocultas no
+      // painel do aluno mesmo com a liberação por núcleo.
+      const contentIds = itemsToRelease.map((i: any) => i.item_id)
+      if (contentIds.length) {
+        const { error: aulasActError } = await supabase.from('aulas').update({ professor_active: true }).in('id', contentIds)
+        if (aulasActError) throw aulasActError
+      }
       setBooks(prev => prev.map(b => b.id === book.id ? { ...b, professor_active: true } : b))
       if (selectedBook && selectedBook.id === book.id) {
         setSelectedBook({ ...selectedBook, professor_active: true })

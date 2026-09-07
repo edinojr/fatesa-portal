@@ -232,6 +232,10 @@ const ModuleDetails = () => {
       gridData.avaliacoes.some(a => a !== null) ||
       gridData.videos.some(v => v !== null);
 
+    // Indica se o módulo possui prova cadastrada (independente da visibilidade
+    // para o perfil atual — o hook pode ocultar provas não liberadas).
+    const hasRawExam = (book as any).hasExamInModule === true || avaliacoes.length > 0;
+
     const renderGridItem = (item: any, label: string) => {
       if (!item) return <div style={{ height: '80px' }} />;
       
@@ -324,16 +328,24 @@ const ModuleDetails = () => {
                       Voltar para Meus Cursos
                     </button>
                   </div>
-                ) : !avaliacoes.length ? (
-                  <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--glass)', borderRadius: '32px', border: '1px dashed rgba(245, 158, 11, 0.4)', marginBottom: '2rem' }}>
-                    <AlertTriangle size={48} color="#f59e0b" style={{ opacity: 0.4, marginBottom: '1rem' }} />
-                    <h3 style={{ color: '#f59e0b', marginBottom: '0.5rem' }}>Avaliação em Manutenção</h3>
-                    <p style={{ color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto', lineHeight: 1.6 }}>
-                      As lições estão disponíveis para estudo, mas o módulo ainda não possui prova final configurada.
-                      O aluno não será aprovado automaticamente até que o processo de avaliação seja introduzido.
-                    </p>
-                  </div>
                 ) : (
+                  <React.Fragment>
+                    {!avaliacoes.length && (
+                      <div style={{ textAlign: 'center', padding: '1.25rem 2rem', background: 'rgba(245, 158, 11, 0.06)', borderRadius: '16px', border: '1px dashed rgba(245, 158, 11, 0.35)', marginBottom: '2rem' }}>
+                        {hasRawExam ? (
+                          <p style={{ color: 'var(--text-muted)', margin: 0, lineHeight: 1.6 }}>
+                            A prova final está configurada, mas ainda não foi liberada para este perfil.
+                            O professor liberará a avaliação em breve. As lições acima já estão disponíveis para estudo.
+                          </p>
+                        ) : (
+                          <p style={{ color: 'var(--text-muted)', margin: 0, lineHeight: 1.6 }}>
+                            <AlertTriangle size={16} color="#f59e0b" style={{ verticalAlign: 'middle', marginRight: '0.5rem' }} />
+                            As lições estão disponíveis para estudo, mas o módulo ainda não possui prova final configurada.
+                            O aluno não será aprovado automaticamente até que o processo de avaliação seja introduzido.
+                          </p>
+                        )}
+                      </div>
+                    )}
                    <div style={{ 
                      display: 'grid', 
                       gridTemplateColumns: 'repeat(4, 1fr)', 
@@ -371,6 +383,7 @@ const ModuleDetails = () => {
                           </React.Fragment>
                         ))}
                    </div>
+                  </React.Fragment>
                 )}
             </main>
         </div>

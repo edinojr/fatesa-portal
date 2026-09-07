@@ -37,6 +37,10 @@ export const releaseExamAndNextModule = async (currentBook: any, nucleoId: strin
     items.push({ nucleo_id: nucleoId, item_id: v1Exam.id, item_type: 'atividade', liberado: true });
     result.examId = v1Exam.id;
     result.examTitulo = v1Exam.titulo;
+    // A prova liberada precisa estar ativa: aulas com professor_active=false
+    // ficam ocultas no painel do aluno mesmo com liberação por núcleo.
+    const { error: examActErr } = await supabase.from('aulas').update({ professor_active: true }).eq('id', v1Exam.id);
+    if (examActErr) throw examActErr;
   }
 
   // Liberar a prova V1 também ativa o módulo atual: sem professor_active=true o
@@ -79,6 +83,14 @@ export const releaseExamAndNextModule = async (currentBook: any, nucleoId: strin
         const isVideo = item.tipo === 'video' || item.tipo === 'gravada' || item.tipo === 'ao_vivo';
         items.push({ nucleo_id: nucleoId, item_id: item.id, item_type: isVideo ? 'video' : 'atividade', liberado: true });
       });
+
+    const nextContentIds = (nextContent || [])
+      .filter((item: any) => !(item.tipo === 'prova' || item.tipo === 'avaliacao' || item.is_bloco_final))
+      .map((item: any) => item.id);
+    if (nextContentIds.length) {
+      const { error: contentActErr } = await supabase.from('aulas').update({ professor_active: true }).in('id', nextContentIds);
+      if (contentActErr) throw contentActErr;
+    }
 
     const { error: actErr } = await supabase.from('livros').update({ professor_active: true }).eq('id', nextBook.id);
     if (actErr) throw actErr;
