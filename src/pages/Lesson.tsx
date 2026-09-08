@@ -409,9 +409,46 @@ const Lesson = () => {
         const manualFinishedModules = (profile?.modulos_finalizados_manual || []) as string[];
         const isModuleFinishedManually = manualFinishedModules.includes(lessonData.livro_id);
 
+        // REGRA ÚNICA (igual ao hook do aluno): a liberação por polo prevalece
+        // sobre o status global do módulo. Se houver linha 'modulo' OU
+        // conteúdo/prova liberado para o polo, o módulo NÃO é bloqueado.
+        let hasNucleoRelease = false;
+        if (lessonData.livro_id) {
+          const nucleoId = profile?.nucleo_id || '00000000-0000-0000-0000-000000000000';
+          const { data: modRel } = await supabase
+            .from('liberacoes_nucleo')
+            .select('id')
+            .eq('item_id', lessonData.livro_id)
+            .eq('item_type', 'modulo')
+            .eq('liberado', true)
+            .or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`)
+            .limit(1);
+          if ((modRel || []).length > 0) {
+            hasNucleoRelease = true;
+          } else {
+            const { data: bookAulasRel } = await supabase
+              .from('aulas')
+              .select('id')
+              .eq('livro_id', lessonData.livro_id);
+            const aulaIds = (bookAulasRel || []).map((a: any) => a.id);
+            if (aulaIds.length > 0) {
+              const { data: itemRel } = await supabase
+                .from('liberacoes_nucleo')
+                .select('id')
+                .in('item_id', aulaIds)
+                .in('item_type', ['atividade', 'video', 'licao'])
+                .eq('liberado', true)
+                .or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`)
+                .limit(1);
+              hasNucleoRelease = (itemRel || []).length > 0;
+            }
+          }
+        }
+
         // Se o módulo está bloqueado pelo professor, negar acesso
-        // A MENOS que o aluno tenha exceção individual ou o módulo esteja finalizado (revisão)
-        const isModuleBlocked = bookData && bookData.professor_active === false && !hasModuleException && !isModuleFinishedManually;
+        // A MENOS que o aluno tenha exceção individual, o módulo esteja
+        // finalizado (revisão) ou o conteúdo tenha sido liberado para o polo.
+        const isModuleBlocked = bookData && bookData.professor_active === false && !hasNucleoRelease && !hasModuleException && !isModuleFinishedManually;
         if (!isStaff && isModuleBlocked) {
           setIsReleased(false);
         } else if (isStaff || modulePassed || hasModuleException || isModuleFinishedManually) {
