@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { Submission } from '../../../types/professor'
-import { computeScore, ensureRecoveryExam, finalizeModuleOnApproval, unfinalizeModule } from '../../../services/examCorrection'
+import { computeScore, ensureRecoveryExam, finalizeModuleOnApproval, unfinalizeModule, autoGradePendingSubmissions } from '../../../services/examCorrection'
 
 export const useProfessorGrading = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -12,6 +12,7 @@ export const useProfessorGrading = () => {
   const [questionComments, setQuestionComments] = useState<Record<string, string>>({})
   const [savingGrade, setSavingGrade] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [autoCorrecting, setAutoCorrecting] = useState(false)
 
   const setSortedSubmissions = useCallback((data: Submission[]) => {
     const sorted = [...data].sort((a, b) => {
@@ -90,6 +91,16 @@ export const useProfessorGrading = () => {
         if (savedEval !== undefined) {
           initialEvals[qKey] = savedEval === true;
         }
+        // Correção individual por par (relacione as colunas): carrega os
+        // toggles Certa/Errada salvos anteriormente pelo professor.
+        if (q.type === 'matching' && Array.isArray(q.matchingPairs)) {
+          q.matchingPairs.forEach((_: any, pIdx: number) => {
+            const pairEval = sub.respostas?.[`${qKey}_${pIdx}_avaliacao`];
+            if (pairEval !== undefined) {
+              initialEvals[`${qKey}_${pIdx}`] = pairEval === true;
+            }
+          });
+        }
       });
     }
     
@@ -149,6 +160,34 @@ export const useProfessorGrading = () => {
       setDeleting(null)
     }
   }, [submissions]);
+
+  /**
+   * Auto-correção da FILA: corrige automaticamente (sem intervenção manual)
+   * todas as submissões 'pendente' cujo gabarito esteja completo e possua
+   * questões objetivas. Recálculo de nota via computeScore (com o scoring
+   * de 'relacione as colunas' por texto — aceita posições invertidas) e
+   * aplica os efeitos pedagógicos do módulo. Retorna o resultado.
+   */
+  const autoCorrectPending = useCallback(async (pendingSubs?: any[], onSuccess?: () => void) => {
+    setAutoCorrecting(true);
+    try {
+      const subsList = (pendingSubs && pendingSubs.length > 0) ? pendingSubs : submissions;
+      const result = await autoGradePendingSubmissions(subsList);
+      if (result.corrected > 0) {
+        setSubmissions(prev => prev.map(s => {
+          const sid = (s as any).submission_id || s.id;
+          if (sid && result.notas[sid] !== undefined) {
+            return { ...s, status: 'corrigida', nota: result.notas[sid] } as Submission;
+          }
+          return s;
+        }));
+      }
+      if (onSuccess) onSuccess();
+      return result;
+    } finally {
+      setAutoCorrecting(false);
+    }
+  }, [setSubmissions, submissions]);
 
   const handleSaveGrade = useCallback(async (onSuccess?: () => void) => {
     if(!selectedSubmission || gradeInput === '' || !avaliacaoComentario.trim()) {
@@ -238,9 +277,11 @@ export const useProfessorGrading = () => {
     toggleEvaluation,
     savingGrade,
     deleting,
+    autoCorrecting,
     handleSelectSubmission,
     handleDeleteSubmission,
-    handleSaveGrade
+    handleSaveGrade,
+    autoCorrectPending
   }
 }
 

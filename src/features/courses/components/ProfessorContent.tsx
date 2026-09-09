@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BookOpen, Eye, ShieldCheck, Clock, Lock, Unlock, GraduationCap, CheckCircle, AlertCircle, ToggleLeft, ToggleRight, Video } from 'lucide-react'
+import { BookOpen, Eye, ShieldCheck, Clock, Lock, Unlock, GraduationCap, CheckCircle, AlertCircle, ToggleLeft, ToggleRight, Video, Edit, Trash2, Loader2 } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { handleSupabaseError } from '../../../lib/authUtils'
 import { releaseExamAndNextModule } from '../../../services/releaseService'
@@ -45,6 +45,28 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   const [releases, setReleases] = useState<any[]>([])
   const [selectedNucleus, setSelectedNucleus] = useState<string>('')
   const [showAddVideo, setShowAddVideo] = useState(false)
+  const [editingVideo, setEditingVideo] = useState<any | null>(null)
+  const [deletingVideoId, setDeletingVideoId] = useState<string | null>(null)
+
+  const handleDeleteVideo = async (video: any) => {
+    if (!window.confirm(`Excluir o vídeo "${video.titulo}"? Essa ação não pode ser desfeita.`)) return
+    setDeletingVideoId(video.id)
+    try {
+      const { error } = await supabase.from('aulas').delete().eq('id', video.id)
+      if (error) throw error
+      setLessons(prev => prev.filter(l => l.id !== video.id))
+      if (selectedBook) {
+        setSelectedBook({ ...selectedBook, aulas: (selectedBook.aulas || []).filter((a: any) => a.id !== video.id) })
+      }
+      setBooks(prev => prev.map(b => b.id === selectedBook?.id ? { ...b, aulas: (b.aulas || []).filter((a: any) => a.id !== video.id) } : b))
+      alert('Vídeo excluído com sucesso!')
+    } catch (err: any) {
+      const handled = await handleSupabaseError(err)
+      if (!handled) alert('Erro ao excluir vídeo: ' + (err?.message || 'verifique as permissões'))
+    } finally {
+      setDeletingVideoId(null)
+    }
+  }
 
   const refreshBookLessons = async () => {
     if (!selectedBook) return
@@ -347,6 +369,15 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     return v2Failed
   }
 
+  const allBookAulas = selectedBook?.aulas || lessons || []
+  const hasReleasedExamForBook = (nucleoId: string, book: any) =>
+    !!nucleoId &&
+    (book?.aulas || []).some((a: any) =>
+      (a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final) &&
+      releases.some(r => r.nucleo_id === nucleoId && r.item_id === a.id && r.item_type === 'atividade')
+    )
+  const nucleusHasReleasedExam = hasReleasedExamForBook(selectedNucleus || '', selectedBook)
+
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -400,6 +431,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
                 gabaritoStats={gab}
                 showReleaseControls={!hideReleaseControls}
                 onOpenLessons={() => selectBookAndShowLessons(book)}
+                hideCarousel={true}
                          showReleaseBadges={!hideReleaseControls ? (lesson) => {
                            const isVideo = (lesson.tipo === 'gravada' || lesson.tipo === 'ao_vivo' || lesson.tipo === 'video');
                            const itemType = isVideo ? 'video' : 'atividade';
@@ -515,6 +547,18 @@ releaseControls={!hideReleaseControls && (
             </div>
           </div>
 
+          {/* Polo selecionado já possui prova liberada neste módulo:
+              o conteúdo permanece liberado até todos concluírem as avaliações —
+              bloqueios de conteúdo ficam desabilitados para este polo */}
+          {nucleusHasReleasedExam && (
+            <div style={{ padding: '0.75rem 1.25rem', background: 'rgba(234,179,8,0.06)', borderRadius: '14px', border: '1px solid rgba(234,179,8,0.25)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <ShieldCheck size={14} color="#eab308" />
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#eab308' }}>
+                Avaliação já liberada para este polo — o conteúdo permanece desbloqueado até todos os alunos concluírem as avaliações. Bloqueios de conteúdo estão desabilitados.
+              </span>
+            </div>
+          )}
+
           {/* Controles de liberação do módulo */}
           {!hideReleaseControls && (
             <div style={{ padding: '1rem 1.5rem', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -553,7 +597,21 @@ releaseControls={!hideReleaseControls && (
                   {(selectedBook.professor_active ?? true) ? 'Módulo Ativo' : 'Módulo Inativo'}
                 </button>
 
-                {selectedNucleus ? (
+                {selectedNucleus && nucleusHasReleasedExam ? (
+                  <button
+                    type="button"
+                    disabled
+                    title="Prova liberada: o conteúdo fica desbloqueado até todos os alunos concluírem as avaliações"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                      padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'not-allowed',
+                      background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)',
+                      color: '#10b981', fontWeight: 700, fontSize: '0.75rem', opacity: 0.85
+                    }}
+                  >
+                    <Unlock size={14} color="#10b981" /> Conteúdo Liberado
+                  </button>
+                ) : selectedNucleus ? (
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); toggleRelease(selectedNucleus, selectedBook.id, 'modulo'); }}
@@ -586,18 +644,20 @@ releaseControls={!hideReleaseControls && (
 
                 {selectedNucleus && (
                   <>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); handleReleaseContent(selectedNucleus, selectedBook); }}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '0.5rem',
-                        padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
-                        background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)',
-                        color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
-                      }}
-                    >
-                      <BookOpen size={14} color="#3b82f6" /> Liberar Conteúdo
-                    </button>
+                    {!nucleusHasReleasedExam && (
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); handleReleaseContent(selectedNucleus, selectedBook); }}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '0.5rem',
+                          padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                          background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)',
+                          color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                        }}
+                      >
+                        <BookOpen size={14} color="#3b82f6" /> Liberar Conteúdo
+                      </button>
+                    )}
 
                     <button
                       type="button"
@@ -685,6 +745,7 @@ releaseControls={!hideReleaseControls && (
               if (!item) return <div style={{ height: '80px' }} />
 
               const hasGabarito = Array.isArray(item.questionario) && item.questionario.length > 0
+              const isVideo = isVideoType(item.tipo)
               const isAvaliacao = item.tipo === 'avaliacao' || item.tipo === 'prova' || item.is_bloco_final
               const isExercicio = item.tipo === 'exercicio' || item.tipo === 'atividade'
               const isReleased = isLessonReleased(item.id, item.tipo, item.is_bloco_final)
@@ -733,7 +794,46 @@ releaseControls={!hideReleaseControls && (
                       </div>
                     )}
                   </div>
-                  {!hideReleaseControls && selectedNucleus ? (
+                  {isVideo ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
+                      {!hideReleaseControls && selectedNucleus && !nucleusHasReleasedExam && (
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            handleToggleLessonRelease(item.id, item.tipo)
+                          }}
+                          style={{
+                            padding: '0.25rem 0.4rem', fontSize: '0.55rem', fontWeight: 700,
+                            display: 'flex', alignItems: 'center', gap: '0.2rem',
+                            background: isReleased ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.1)',
+                            border: `1px solid ${isReleased ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.2)'}`,
+                            borderRadius: '8px', color: isReleased ? '#10b981' : '#ef4444',
+                            cursor: 'pointer', transition: 'all 0.2s', flexShrink: 0,
+                            textTransform: 'uppercase', letterSpacing: '0.3px'
+                          }}
+                        >
+                          {isReleased ? <Unlock size={9} /> : <Lock size={9} />}
+                        </button>
+                      )}
+                      <button
+                        className="btn btn-outline"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditingVideo(item) }}
+                        title="Editar vídeo (título/link)"
+                        style={{ width: 'auto', padding: '0.25rem 0.35rem', background: 'rgba(0,0,0,0.35)', color: 'var(--primary)' }}
+                      >
+                        <Edit size={11} />
+                      </button>
+                      <button
+                        className="btn btn-outline"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDeleteVideo(item) }}
+                        title="Excluir vídeo"
+                        style={{ width: 'auto', padding: '0.25rem 0.35rem', background: 'rgba(0,0,0,0.35)', color: 'var(--error)' }}
+                      >
+                        {deletingVideoId === item.id ? <Loader2 size={11} className="spinner" /> : <Trash2 size={11} />}
+                      </button>
+                    </div>
+                  ) : !hideReleaseControls && selectedNucleus && !nucleusHasReleasedExam ? (
                     <button
                       onClick={(e) => {
                         e.preventDefault()
@@ -928,11 +1028,12 @@ releaseControls={!hideReleaseControls && (
         </div>
       )}
 
-      {/* Modal: adicionar videoaula por link (YouTube/Vimeo) */}
+      {/* Modal: adicionar/editar videoaula por link (YouTube/Vimeo) */}
       <AddVideoLinkModal
-        open={showAddVideo}
+        open={showAddVideo || !!editingVideo}
         book={selectedBook}
-        onClose={() => setShowAddVideo(false)}
+        video={editingVideo}
+        onClose={() => { setShowAddVideo(false); setEditingVideo(null) }}
         onInserted={refreshBookLessons}
         showToast={(msg) => alert(msg)}
       />

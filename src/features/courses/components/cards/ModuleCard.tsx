@@ -13,6 +13,7 @@ export interface ModuleCardProps {
   onOpenLessons?: () => void
   showReleaseBadges?: (lesson: any) => boolean
   headerExtra?: React.ReactNode
+  hideCarousel?: boolean
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
@@ -24,6 +25,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   onOpenLessons,
   showReleaseBadges,
   headerExtra,
+  hideCarousel = false,
 }) => {
   const lessons: any[] = book.aulas || []
   const totalLessons = lessons.length
@@ -86,8 +88,22 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
       {showReleaseControls && releaseControls}
 
-      {totalLessons > 0 ? (
+      {totalLessons > 0 && !hideCarousel ? (
         <ContentCarousel items={lessons} showReleaseBadges={showReleaseBadges} />
+      ) : hideCarousel ? (
+        <div
+          style={{
+            padding: '1rem',
+            textAlign: 'center',
+            background: 'var(--glass)',
+            border: '1px dashed var(--glass-border)',
+            borderRadius: '10px',
+            color: 'var(--text-muted)',
+            fontSize: '0.78rem',
+          }}
+        >
+          Conteúdo disponível ao abrir este módulo.
+        </div>
       ) : (
         <div
           style={{

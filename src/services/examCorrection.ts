@@ -10,6 +10,27 @@ import { supabase } from '../lib/supabase';
 // padrão 10-4-1 ficam proporcionais; no padrão Fatesa o total é exatamente 10.
 // ============================================================
 
+/**
+ * Verifica se um par específico de questão "relacione as colunas" está correto.
+ *
+ * Em vez de comparar POSIÇÃO (índice do gabarito === índice respondido),
+ * compara o TEXTO da coluna direita escolhida com o gabarito. Isso aceita
+ * respostas corretas mesmo quando o aluno inverte as posições das associações
+ * (ex.: questões duplicadas com pares em outra ordem, ou duas linhas com a
+ * mesma resposta correta), sem jamais aceitar correlações realmente erradas.
+ */
+export const matchingPairCorrect = (q: any, mIdx: number, ans: Record<string, any> | null | undefined): boolean => {
+  const uA = ans || {};
+  const selected = uA[mIdx];
+  if (selected === undefined || selected === null || selected === '') return false;
+  const selectedIdx = parseInt(String(selected), 10);
+  const pairs = q?.matchingPairs || [];
+  if (Number.isNaN(selectedIdx) || selectedIdx < 0 || selectedIdx >= pairs.length) return false;
+  const selectedRight = String(pairs[selectedIdx]?.right || '').trim();
+  const correctRight = String(pairs[mIdx]?.right || '').trim();
+  return !!selectedRight && selectedRight === correctRight;
+};
+
 export const computeScore = (questions: any[], answers: Record<string, any> | null | undefined): number => {
   if (!Array.isArray(questions)) return 0;
   let earned = 0;
@@ -26,7 +47,7 @@ export const computeScore = (questions: any[], answers: Record<string, any> | nu
       const pairScore = q.matchingPairs.reduce((acc: number, _: any, mIdx: number) => {
         const pairManual = answers?.[`${qKey}_${mIdx}_avaliacao`];
         if (pairManual !== undefined) return acc + (pairManual === true ? 0.5 : 0);
-        return acc + (String(uA[mIdx]) === String(mIdx) ? 0.5 : 0);
+        return acc + (matchingPairCorrect(q, mIdx, uA) ? 0.5 : 0);
       }, 0);
       earned += Math.min(3.0, pairScore);
       total += Math.min(3.0, q.matchingPairs.length * 0.5);
@@ -59,6 +80,84 @@ export const hasCompleteGabarito = (questions: any[]): boolean => {
     if (q.type === 'matching') return (q.matchingPairs || []).length > 0;
     return true; // dissertativa: sempre "ok" (correção manual)
   });
+};
+
+/** Indica se há pelo menos uma questão que pode ser corrigida automaticamente. */
+export const hasObjectiveQuestion = (questions: any[]): boolean => {
+  if (!Array.isArray(questions) || questions.length === 0) return false;
+  return questions.some((q: any) =>
+    q.type === 'multiple_choice' ||
+    q.type === 'true_false' ||
+    (q.type === 'matching' && (q.matchingPairs || []).length > 0) ||
+    !q.type
+  );
+};
+
+/**
+ * Auto-correção da FILA: processa submissões com status 'pendente' cujo
+ * gabarito está completo e possui questões objetivas (inclusive matching).
+ * Recalcula a nota via computeScore, marca como 'corrigida' e aplica os
+ * efeitos pedagógicos do módulo (finalização/recuperação).
+ * Retorna a quantidade corrigida, a pulada e os ids alterados.
+ */
+export const autoGradePendingSubmissions = async (pendingSubs: any[]): Promise<{ corrected: number; skipped: number; changed: string[]; notas: Record<string, number> }> => {
+  const list = (pendingSubs || []).filter((s: any) => s && s.status === 'pendente');
+  const changed: string[] = [];
+  const notas: Record<string, number> = {};
+  if (list.length === 0) return { corrected: 0, skipped: 0, changed, notas };
+
+  const scorableByAula: Record<string, any[]> = {};
+  for (const s of list) {
+    const qs = s.questionario || s.aulas?.questionario || [];
+    if (!hasObjectiveQuestion(qs) || !hasCompleteGabarito(qs)) continue;
+    const aid = s.aula_id || s.lesson_id || s.aulas?.id;
+    if (aid) (scorableByAula[aid] = scorableByAula[aid] || []).push(s);
+  }
+  const aulaIds = Object.keys(scorableByAula);
+  if (aulaIds.length === 0) return { corrected: 0, skipped: list.length, changed, notas };
+
+  const { data: aulas } = await supabase
+    .from('aulas')
+    .select('id, livro_id, min_grade, versao, tipo, titulo, questionario, ordem, parent_aula_id')
+    .in('id', aulaIds);
+  const aulasMap: Record<string, any> = {};
+  (aulas || []).forEach((a: any) => { aulasMap[a.id] = a; });
+
+  let corrected = 0;
+  for (const aid of aulaIds) {
+    const aula = aulasMap[aid];
+    if (!aula) continue;
+    const qs = aula.questionario || scorableByAula[aid][0]?.questionario || [];
+    const minGrade = aula.min_grade || 7;
+    for (const s of scorableByAula[aid]) {
+      if (!s.respostas || Object.keys(s.respostas).length === 0) continue;
+      const nota = computeScore(qs, s.respostas);
+      const targetId = s.submission_id || s.id;
+      const updateData: any = {
+        nota,
+        status: 'corrigida',
+        updated_at: new Date().toISOString()
+      };
+      if (!s.primeira_correcao_at) updateData.primeira_correcao_at = new Date().toISOString();
+      const { error } = await supabase.from('respostas_aulas').update(updateData).eq('id', targetId);
+      if (error) continue;
+      corrected++;
+      if (targetId) {
+        changed.push(targetId);
+        notas[targetId] = nota;
+      }
+      // Efeitos pedagógicos (finalização do módulo / criação de recuperação)
+      if (s.aluno_id && aula.livro_id) {
+        if (nota >= minGrade) {
+          await finalizeModuleOnApproval(s.aluno_id, aula.livro_id);
+        } else {
+          await unfinalizeModule(s.aluno_id, aula.livro_id);
+          await ensureRecoveryExam(aula, nota, minGrade);
+        }
+      }
+    }
+  }
+  return { corrected, skipped: list.length - corrected, changed, notas };
 };
 
 /** Marca o módulo como finalizado para o aluno (aprovação). */

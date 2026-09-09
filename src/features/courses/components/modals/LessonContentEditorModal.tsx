@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FileText, Trash2, Edit, Upload, Loader2, Plus, BookOpen, ExternalLink } from 'lucide-react'
+import { FileText, Trash2, Edit, Upload, Loader2, Plus, BookOpen, ExternalLink, Video } from 'lucide-react'
 
 interface LessonContentEditorModalProps {
   editingLessonContent: any
@@ -122,6 +122,36 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
                     }}
                   ></textarea>
                 </div>
+              ) : block.type === 'video' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--primary)', marginBottom: 0, display: 'block' }}>Bloco de Vídeo (Link)</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    value={block.content || ''}
+                    placeholder="https://www.youtube.com/watch?v=... ou https://vimeo.com/..."
+                    onChange={(e) => {
+                      const newBlocks = [...lessonBlocks];
+                      newBlocks[idx].content = e.target.value;
+                      setLessonBlocks(newBlocks);
+                    }}
+                  />
+                  {block.content && /^https?:\/\/.+/i.test(block.content.trim()) && (
+                    <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
+                      {(() => {
+                        const url = block.content as string;
+                        const vId = url.includes('v=') ? url.split('v=')[1]?.split('&')[0] : url.split('/').pop();
+                        const src = url.includes('vimeo')
+                          ? `https://player.vimeo.com/video/${vId}`
+                          : `https://www.youtube.com/embed/${vId}`;
+                        return <iframe src={src} width="100%" height="100%" allowFullScreen style={{ borderRadius: '12px' }} title={`video-block-${idx}`} />;
+                      })()}
+                    </div>
+                  )}
+                  {block.content && !/^https?:\/\/.+/i.test(block.content.trim()) && (
+                    <p style={{ color: 'var(--error)', fontSize: '0.8rem', margin: 0 }}>Informe um link válido (começando com http/https).</p>
+                  )}
+                </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <label style={{ fontSize: '0.8rem', color: 'var(--primary)', marginBottom: 0, display: 'block' }}>Bloco de Imagem</label>
@@ -206,6 +236,9 @@ const LessonContentEditorModal: React.FC<LessonContentEditorModalProps> = ({
           </button>
           <button className="btn btn-outline" style={{ width: 'auto', display: 'flex', gap: '0.75rem' }} onClick={() => setLessonBlocks([...lessonBlocks, { type: 'image', content: '' }])}>
             <Plus size={20} /> Adicionar Imagem
+          </button>
+          <button className="btn btn-outline" style={{ width: 'auto', display: 'flex', gap: '0.75rem' }} onClick={() => setLessonBlocks([...lessonBlocks, { type: 'video', content: '' }])}>
+            <Video size={20} /> Adicionar Vídeo (Link)
           </button>
         </div>
 

@@ -8,7 +8,7 @@ import AudioReader from '../components/AudioReader'
 import PdfAudioReader from '../components/PdfAudioReader'
 import PdfViewer, { PdfViewerHandle } from '../components/PdfViewer'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
-import { finalizeModuleOnApproval, ensureRecoveryExam, regradeSubmissionsForAula, computeScore } from '../services/examCorrection'
+import { finalizeModuleOnApproval, ensureRecoveryExam, regradeSubmissionsForAula, computeScore, matchingPairCorrect } from '../services/examCorrection'
 import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
 import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
 import { QuizQuestion } from '../types/admin'
@@ -1173,10 +1173,19 @@ const Lesson = () => {
         />
       );
     }
+    if (block.type === 'video') {
+      const url = block.content || '';
+      const valid = /^https?:\/\/.+/i.test(url);
+      return (
+        <div key={idx} style={{ marginBottom: '2rem', position: 'relative', width: '100%', aspectRatio: '16/9', borderRadius: '16px', overflow: 'hidden', background: '#000' }}>
+          {valid ? renderVideoPlayer(url) : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>Vídeo Indisponível</div>}
+        </div>
+      );
+    }
     return null;
   };
 
-  const hasContentBlocks = lesson?.conteudo && Array.isArray(lesson.conteudo) && lesson.conteudo.some((b: any) => b.type === 'text' || b.type === 'image');
+  const hasContentBlocks = lesson?.conteudo && Array.isArray(lesson.conteudo) && lesson.conteudo.some((b: any) => b.type === 'text' || b.type === 'image' || b.type === 'video');
   const hasHtmlFile = htmlContent !== null;
   // Detecção robusta de PDF: arquivo_url pode terminar com .pdf, ter query params, ou estar em pdf_url
   const hasPdfFile = !!(lesson?.arquivo_url && /\.pdf(\?|$)/i.test(lesson.arquivo_url)) || !!lesson?.pdf_url;
@@ -1956,7 +1965,7 @@ const Lesson = () => {
                 const studentAns = answers[qKey];
                 const isCorrect = q.type === 'multiple_choice' || !q.type ? String(studentAns) === String(q.correct) :
                                   q.type === 'true_false' ? studentAns === q.isTrue :
-                                  q.type === 'matching' ? q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) : true;
+                                  q.type === 'matching' ? (q.matchingPairs?.length ? q.matchingPairs.every((_: any, mIdx: number) => matchingPairCorrect(q, mIdx, studentAns)) : false) : true;
                 
                   // Gabarito: staff sempre vê (exceto em modo teste antes de enviar) | aluno vê se submeter e atingir nota mínima ou módulo finalizado
                   const showGabarito = (userProfile?.isStaff && !(staffExamMode && !submitted)) ||
@@ -2020,7 +2029,8 @@ const Lesson = () => {
                       const originalLeftIdx = q.matchingPairs?.findIndex(mp => mp.left === pair.left);
                       const currentAnswerIdxStr = answers[qKey]?.[originalLeftIdx !== -1 ? originalLeftIdx! : pIdx];
                       const currentAnswerIdx = currentAnswerIdxStr !== undefined && currentAnswerIdxStr !== '' ? parseInt(currentAnswerIdxStr) : undefined;
-                      const isRowCorrect = currentAnswerIdx === (originalLeftIdx !== -1 ? originalLeftIdx : pIdx);
+                      const rowIdx = originalLeftIdx !== -1 ? originalLeftIdx! : pIdx;
+                      const isRowCorrect = matchingPairCorrect(q, rowIdx, answers[qKey]);
                       
                       return (
                         <div key={pIdx} className="matching-grid-responsive">
@@ -2364,7 +2374,7 @@ const Lesson = () => {
                          const studentAns = answers[qKey];
                          const isCorrect = q.type === 'multiple_choice' || !q.type ? String(studentAns) === String(q.correct) :
                                            q.type === 'true_false' ? studentAns === q.isTrue :
-                                           q.type === 'matching' ? (q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) ?? false) : true;
+                                           q.type === 'matching' ? (q.matchingPairs?.length ? q.matchingPairs.every((_: any, mIdx: number) => matchingPairCorrect(q, mIdx, studentAns)) : false) : true;
                          acc.total += 1;
                          if (isCorrect) acc.correct += 1; else acc.incorrect += 1;
                          return acc;
@@ -2401,7 +2411,7 @@ const Lesson = () => {
                       const studentAns = answers[qKey];
                       const isCorrect = q.type === 'multiple_choice' || !q.type ? String(studentAns) === String(q.correct) :
                                          q.type === 'true_false' ? studentAns === q.isTrue :
-                                         q.type === 'matching' ? (q.matchingPairs?.every((_: any, mIdx: number) => String(studentAns?.[mIdx]) === String(mIdx)) ?? false) : true;
+                                         q.type === 'matching' ? (q.matchingPairs?.length ? q.matchingPairs.every((_: any, mIdx: number) => matchingPairCorrect(q, mIdx, studentAns)) : false) : true;
 
 
                       const renderCorrectAnswer = () => {

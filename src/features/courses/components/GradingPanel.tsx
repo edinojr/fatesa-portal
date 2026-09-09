@@ -23,6 +23,8 @@ interface GradingPanelProps {
   toggleEvaluation: (id: string, correct: boolean) => void
   savingGrade: boolean
   handleSaveGrade: () => void
+  autoCorrecting?: boolean
+  handleAutoCorrectQueue?: () => Promise<any>
   allStudents?: any[]
 }
 
@@ -45,6 +47,8 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
   toggleEvaluation,
   savingGrade,
   handleSaveGrade,
+  autoCorrecting = false,
+  handleAutoCorrectQueue = async () => ({ corrected: 0, skipped: 0 }),
   allStudents = []
 }) => {
   const [showGabaritosModal, setShowGabaritosModal] = React.useState(false);
@@ -161,6 +165,18 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
               onClick={() => setShowGabaritosModal(true)}
             >
               📖 Ver Gabaritos
+            </button>
+            <button 
+              className="btn btn-primary" 
+              style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+              onClick={async () => {
+                if (!confirm('Corrigir automaticamente toda a fila de provas pendentes com gabarito completo?')) return;
+                const result = await handleAutoCorrectQueue();
+                alert(`Fila processada: ${result.corrected} corrigida(s), ${result.skipped} sem gabarito completo (manual).`);
+              }}
+              disabled={autoCorrecting}
+            >
+              {autoCorrecting ? <Loader2 className="spinner" size={16} /> : '⚡ Auto-corrigir Fila'}
             </button>
           </div>
 

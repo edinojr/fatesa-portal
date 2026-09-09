@@ -46,6 +46,7 @@ interface ContentManagementProps {
   uploading: string | null
   cleanupExcessExams?: () => Promise<void>
   handleBatchUpload: (files: FileList, parentId: string, livroId: string, blocoId: number | null, startOrder: number) => Promise<void>
+  professorNucleos?: any[]
 }
 
 const groupByBloco = (items: any[]): Map<number, any[]> => {
@@ -121,7 +122,8 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
     setPendingExamMeta,
     uploading,
     cleanupExcessExams,
-    handleBatchUpload
+    handleBatchUpload,
+    professorNucleos = []
   } = props
 
   const [draggedId, setDraggedId] = useState<string | null>(null)
@@ -965,6 +967,16 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                       onClick={(e) => e.stopPropagation()}
                       style={{ position: 'absolute', top: '6px', right: '6px', display: 'flex', gap: '0.25rem' }}
                     >
+                      {isVideoType(item.tipo) && (
+                        <button
+                          className="btn btn-outline"
+                          style={{ width: 'auto', padding: '0.2rem 0.4rem', background: 'rgba(0,0,0,0.4)', color: 'var(--primary)', fontSize: '0.6rem' }}
+                          onClick={() => setEditingItem({ type: 'content', data: item })}
+                          title="Editar vídeo"
+                        >
+                          <Edit size={10} />
+                        </button>
+                      )}
                       <button
                         className="btn btn-outline"
                         style={{ width: 'auto', padding: '0.2rem 0.4rem', background: 'rgba(0,0,0,0.4)', color: 'var(--error)', fontSize: '0.6rem' }}

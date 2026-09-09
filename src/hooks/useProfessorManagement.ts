@@ -95,7 +95,12 @@ export const useProfessorManagement = () => {
             };
           }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
           
-          if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
+          if (subDataMapped) {
+            gradingHook.setSubmissions(subDataMapped);
+            // Auto-correção da fila: corrige na hora submissões 'pendente'
+            // com gabarito completo (inclui matching por texto).
+            gradingHook.autoCorrectPending(subDataMapped);
+          }
         }
         
         acad.fetchAcademicReport();
@@ -153,7 +158,10 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
                   };
                 }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
                 
-                if (subDataMapped) gradingHook.setSubmissions(subDataMapped);
+                if (subDataMapped) {
+                  gradingHook.setSubmissions(subDataMapped);
+                  gradingHook.autoCorrectPending(subDataMapped);
+                }
               }
             }
           }
@@ -202,6 +210,7 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
     handleUpdateUserNucleo: (id: string, nId: string, nNome: string) => studentHook.handleUpdateUserNucleo(id, nId, nNome, fetchData),
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),
     handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData),
+    handleAutoCorrectQueue: () => gradingHook.autoCorrectPending(undefined, fetchData),
     handleUpdateUserType: (id: string, type: string) => studentHook.handleUpdateUserType(id, type, fetchData),
     handleGrantModuleException: (uId: string, bId: string) => studentHook.handleGrantModuleException(uId, bId, fetchData),
     handleRevokeModuleException: (uId: string, bId: string) => studentHook.handleRevokeModuleException(uId, bId, fetchData),

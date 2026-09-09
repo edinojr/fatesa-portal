@@ -68,8 +68,10 @@ const Professor = () => {
     savingGrade,
     actionLoading,
     deleting,
+    autoCorrecting,
     handleSaveGrade,
     handleDeleteSubmission,
+    handleAutoCorrectQueue,
     handleSelectSubmission,
     handleApproveAccess,
     handleRejectAccess,
@@ -395,6 +397,8 @@ const Professor = () => {
                 toggleEvaluation={toggleEvaluation}
                 savingGrade={savingGrade}
                 handleSaveGrade={handleSaveGrade}
+                autoCorrecting={autoCorrecting}
+                handleAutoCorrectQueue={handleAutoCorrectQueue}
               />
             )}
 

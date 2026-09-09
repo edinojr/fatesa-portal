@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronLeft, ChevronRight, LogOut, ExternalLink, LayoutDashboard, Users, GraduationCap } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LogOut, ExternalLink, LayoutDashboard, Users, GraduationCap, Home } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
 import TopBanner from './TopBanner'
@@ -9,6 +9,8 @@ interface PageHeaderProps {
   subtitle?: string
   onBack?: () => void
   showBackButton?: boolean
+  showHomeButton?: boolean
+  homePath?: string
   actions?: React.ReactNode
   nav?: React.ReactNode
   variant?: 'admin' | 'professor' | 'coordinator' | 'student' | 'viewer'
@@ -21,6 +23,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   subtitle,
   onBack,
   showBackButton = true,
+  showHomeButton,
+  homePath,
   actions,
   nav,
   variant = 'student',
@@ -47,6 +51,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       else navigate('/dashboard')
     }
   }
+
+  // Botão "Voltar ao Painel Inicial": leva ao início do painel do papel ativo
+  const roleHome: Record<string, string> = {
+    admin: '/admin',
+    professor: '/professor',
+    coordinator: '/coordenador',
+    student: '/dashboard',
+    viewer: '/dashboard'
+  }
+  const showHome = showHomeButton ?? (variant === 'admin' || variant === 'professor' || variant === 'coordinator')
+  const effectiveHomePath = homePath || roleHome[variant] || '/dashboard'
 
   const handleRoleNavigate = (role: string, path: string) => {
     localStorage.setItem('fatesa_active_role', role)
@@ -161,6 +176,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             title="Voltar"
           >
             <ChevronLeft size={20} />
+          </button>
+        )}
+
+        {showHome && (
+          <button 
+            onClick={() => navigate(effectiveHomePath)} 
+            className="nav-btn-premium" 
+            style={{ width: 'auto', padding: '0.5rem 0.9rem', gap: '0.5rem' }}
+            title="Voltar ao Painel Inicial"
+          >
+            <Home size={20} /> <span className="mobile-hide">Painel Inicial</span>
           </button>
         )}
         

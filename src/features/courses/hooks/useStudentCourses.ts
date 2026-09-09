@@ -369,7 +369,13 @@ const hasException = exceptionIds.includes(l.id);
                 const isPastAndNotLatest = isPastModule && bookOrdem < latestReleasedOrdem;
 
                 const isFirstModule = bookOrdem === 1;
-                const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isMaintenanceModule);
+                // Aluno cadastrado APÓS a liberação da prova do módulo entra
+                // somente no módulo seguinte: módulos anteriores ("passados",
+                // já liberados antes do cadastro) ficam ocultos, a menos que o
+                // aluno tenha exceção individual de prova/módulo, já tenha
+                // iniciado o conteúdo ou o módulo tenha sido finalizado.
+                const isLateStudentPastModule = !isStaff && isPastAndNotLatest && !hasException && !hasIndividualExamInModule && !hasStarted && !moduleFinished;
+                const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || isLateStudentPastModule || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isMaintenanceModule);
 
                  const isExcluded = studentExclusions.includes(l.id);
                  if (isExcluded) {
@@ -412,13 +418,11 @@ const hasException = exceptionIds.includes(l.id);
                   }).map(a => {
                     const isExamType = a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final;
                     const isMediaType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
-                    // Provas seguem a liberação do módulo: quando o módulo tem
-                    // exceção (liberacoes_excecao), as provas V1 também ficam visíveis.
-                    // V2/V3 continuam ocultas até reprovação na versão anterior.
-                    // Módulo finalizado: tudo visível para revisão.
-                    if (isExamType && !releasedAtividades.includes(a.id) && !examExceptionIds.includes(a.id) && !isStaff && !hasException && !moduleFinished) {
-                        return { ...a, isHidden: true };
-                      }
+                    // As avaliações ficam SEMPRE visíveis no grid do módulo:
+                    // quando não liberadas para o polo, aparecem bloqueadas (não
+                    // clicáveis) via isActuallyLocked no ModuleDetails. Ocultar
+                    // as provas aqui fazia o grid da coluna "Avaliações" ficar
+                    // vazio mesmo com conteúdo liberado.
                     if (!isStaff && l.professor_active === false && !hasException && !hasIndividualExamInModule && !moduleFinished) {
                       return { ...a, isHidden: true };
                     }
@@ -426,7 +430,8 @@ const hasException = exceptionIds.includes(l.id);
                       return { ...a, isHidden: true };
                     }
                     // Hierarquia V2/V3: oculta se a versão anterior não foi reprovada
-                    if (isExamType && !isStaff) {
+                    // (módulo finalizado/aprovado tem acesso integral a todas as provas)
+                    if (isExamType && !isStaff && !moduleFinished) {
                       const versao = getExamVersion(a);
                       if (versao > 1 && !isRecoveryUnlocked(versao, moduleExamAttempts)) {
                         return { ...a, isHidden: true };
