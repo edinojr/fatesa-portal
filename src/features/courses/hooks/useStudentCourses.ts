@@ -302,14 +302,10 @@ export const useStudentCourses = (profile: any) => {
             nivel: c.nivel,
             livros: sortedLivros.map((l: any) => {
               const bookOrdem = l.ordem || 1;
-              // REGRA ÚNICA de liberação por polo: a liberação explícita de
-              // conteúdo/prova (linhas 'modulo', 'atividade', 'video', 'licao'
-              // em liberacoes_nucleo para o polo do aluno) prevalece sobre o
-              // status global do módulo. O professor pode desativar o módulo
-              // (professor_active=false) e ainda assim liberar para um polo
-              // específico — os alunos daquele polo enxergam o módulo liberado.
+              // REGRA ATUALIZADA: O módulo que não estiver ativo (professor_active=false)
+              // deve por padrão permanecer oculto dos alunos, ignorando liberações residuais de polo.
               const bookHasNucleoRelease = releasedModulos.includes(l.id) || (l.aulas || []).some((a: any) => releasedItems.includes(a.id));
-              const isBookBlockedByProfessor = l.professor_active === false && !bookHasNucleoRelease;
+              const isBookBlockedByProfessor = l.professor_active === false;
               // manualCompleted agora já inclui historyGrades também (mapeado pelo titulo).
               const isManualFinished = manualCompleted.has(l.id);
               const isManualModuleRelease = (releasedModulos.includes(l.id) || bookHasNucleoRelease || isManualFinished) && !isBookBlockedByProfessor;
