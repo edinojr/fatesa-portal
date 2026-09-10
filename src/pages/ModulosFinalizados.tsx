@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Award, BookOpen, ChevronLeft } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
@@ -90,85 +90,87 @@ const goToPanel = () => {
     }, [profileLoading, profile?.id]);
 
     // Filtrar apenas cursos que possuem pelo menos um livro finalizado (ou aprovado por histórico manual)
-    console.log('[ModulosFinalizados] cursos:', courses?.length, 'atividades:', atividades?.length, 'progresso:', progressoAulas?.length, 'historyGrades:', historyGrades?.length);
+    const { finishedCourses, orfaosAprovados } = useMemo(() => {
+        // Normalização de título simples
+        const normalizeTitle = (s: string) =>
+          (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[.,;:!?]+$/g, '').replace(/\s+/g, ' ');
 
-    // Normalização de título simples
-    const normalizeTitle = (s: string) =>
-      (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[.,;:!?]+$/g, '').replace(/\s+/g, ' ');
+        // Detectar nível (Básico/Médio) a partir de qualquer string
+        const detectNivel = (s: string) => {
+            const n = (s || '').toLowerCase();
+            if (n.includes('medio') || n.includes('médio')) return 'medio';
+            return 'basico';
+        };
 
-    // Detectar nível (Básico/Médio) a partir de qualquer string
-    const detectNivel = (s: string) => {
-        const n = (s || '').toLowerCase();
-        if (n.includes('medio') || n.includes('médio')) return 'medio';
-        return 'basico';
-    };
+        // 1) Históricos aprovados (nota >= 7)
+        const approvedHistory = (historyGrades || []).filter((h: any) => h && h.nota != null && Number(h.nota) >= 7);
+        const approvedByHistoryTitles = new Set(approvedHistory.map((h: any) => normalizeTitle(h.modulo_nome)));
 
-    // 1) Históricos aprovados (nota >= 7)
-    const approvedHistory = (historyGrades || []).filter((h: any) => h && h.nota != null && Number(h.nota) >= 7);
-    const approvedByHistoryTitles = new Set(approvedHistory.map((h: any) => normalizeTitle(h.modulo_nome)));
-
-    // 2) finishedCourses — marca books finalizados por prova OU por histórico manual
-    const finishedCourses = (courses || []).map(course => {
-        const finishedBooks = (course.livros || []).map(l => {
-            const stats = getBookStats(l, atividades, progressoAulas);
-            const approvedManual = approvedByHistoryTitles.has(normalizeTitle(l.titulo));
-            return { l, stats, approvedManual };
-        }).filter(({ l, stats, approvedManual }) =>
-            l.isFinished || stats.isFinished || approvedManual
-        ).map(({ l, stats, approvedManual }) => ({
-            ...l,
-            isFinished: true,
-            // Não forçar aprovação: só fica aprovado se passou na prova (stats/l.isApproved)
-            // ou se foi aprovado por histórico manual (approvedManual).
-            // Alunos em DP (reprovaram na V3) continuam isApproved=false para exibir "D.P.".
-            isApproved: !!(stats.isApproved || l.isApproved || approvedManual)
-        }));
-        return { ...course, livros: finishedBooks };
-    }).filter(course => course.livros.length > 0);
-
-    // 3) Construir lista única de títulos já exibidos (para evitar duplicação)
-    const displayedTitles = new Set<string>();
-    finishedCourses.forEach(c => c.livros.forEach((l: any) => displayedTitles.add(normalizeTitle(l.titulo))));
-
-    // 4) Módulos do histórico que ainda não foram exibidos como livros cadastrados
-    //    — criar "books" sintéticos e colocá-los no curso Básico ou Médio
-    const orfaosAprovados = approvedHistory.filter((h: any) =>
-        !displayedTitles.has(normalizeTitle(h.modulo_nome))
-    );
-
-    if (orfaosAprovados.length > 0) {
-        const orfaosByNivel: Record<string, any[]> = { basico: [], medio: [] };
-        orfaosAprovados.forEach((h: any) => {
-            const nivel = detectNivel(h.curso_nome || h.modulo_nome || '');
-            orfaosByNivel[nivel].push({
-                id: `historico-${h.id || h.modulo_nome}`,
-                titulo: h.modulo_nome,
-                aulas: [],
-                capa_url: undefined,
+        // 2) finishedCourses — marca books finalizados por prova OU por histórico manual
+        let localFinishedCourses = (courses || []).map(course => {
+            const finishedBooks = (course.livros || []).map(l => {
+                const stats = getBookStats(l, atividades, progressoAulas);
+                const approvedManual = approvedByHistoryTitles.has(normalizeTitle(l.titulo));
+                return { l, stats, approvedManual };
+            }).filter(({ l, stats, approvedManual }) =>
+                l.isFinished || stats.isFinished || approvedManual
+            ).map(({ l, stats, approvedManual }) => ({
+                ...l,
                 isFinished: true,
-                isApproved: true,
-                nota: h.nota,
-                data_conclusao: h.data_conclusao,
-                curso_nome: h.curso_nome,
-            });
-        });
+                // Não forçar aprovação: só fica aprovado se passou na prova (stats/l.isApproved)
+                // ou se foi aprovado por histórico manual (approvedManual).
+                // Alunos em DP (reprovaram na V3) continuam isApproved=false para exibir "D.P.".
+                isApproved: !!(stats.isApproved || l.isApproved || approvedManual)
+            }));
+            return { ...course, livros: finishedBooks };
+        }).filter(course => course.livros.length > 0);
 
-        ['basico', 'medio'].forEach((nivel) => {
-            if (orfaosByNivel[nivel].length === 0) return;
-            // Procurar um curso do mesmo nível para anexar; se não houver, criar sintético
-            const cursoAlvo = finishedCourses.find(c => detectNivel(c.nivel || c.nome || '') === nivel);
-            if (cursoAlvo) {
-                cursoAlvo.livros.push(...orfaosByNivel[nivel]);
-            } else {
-                finishedCourses.push({
-                    id: `sintetico-${nivel}`,
-                    nome: nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio',
-                    nivel: nivel as any,
-                    livros: orfaosByNivel[nivel],
+        // 3) Construir lista única de títulos já exibidos (para evitar duplicação)
+        const displayedTitles = new Set<string>();
+        localFinishedCourses.forEach(c => c.livros.forEach((l: any) => displayedTitles.add(normalizeTitle(l.titulo))));
+
+        // 4) Módulos do histórico que ainda não foram exibidos como livros cadastrados
+        //    — criar "books" sintéticos e colocá-los no curso Básico ou Médio
+        const localOrfaosAprovados = approvedHistory.filter((h: any) =>
+            !displayedTitles.has(normalizeTitle(h.modulo_nome))
+        );
+
+        if (localOrfaosAprovados.length > 0) {
+            const orfaosByNivel: Record<string, any[]> = { basico: [], medio: [] };
+            localOrfaosAprovados.forEach((h: any) => {
+                const nivel = detectNivel(h.curso_nome || h.modulo_nome || '');
+                orfaosByNivel[nivel].push({
+                    id: `historico-${h.id || h.modulo_nome}`,
+                    titulo: h.modulo_nome,
+                    aulas: [],
+                    capa_url: undefined,
+                    isFinished: true,
+                    isApproved: true,
+                    nota: h.nota,
+                    data_conclusao: h.data_conclusao,
+                    curso_nome: h.curso_nome,
                 });
-            }
-        });
-    }
+            });
+
+            ['basico', 'medio'].forEach((nivel) => {
+                if (orfaosByNivel[nivel].length === 0) return;
+                // Procurar um curso do mesmo nível para anexar; se não houver, criar sintético
+                const cursoAlvo = localFinishedCourses.find(c => detectNivel(c.nivel || c.nome || '') === nivel);
+                if (cursoAlvo) {
+                    cursoAlvo.livros.push(...orfaosByNivel[nivel]);
+                } else {
+                    localFinishedCourses.push({
+                        id: `sintetico-${nivel}`,
+                        nome: nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio',
+                        nivel: nivel as any,
+                        livros: orfaosByNivel[nivel],
+                    });
+                }
+            });
+        }
+
+        return { finishedCourses: localFinishedCourses, orfaosAprovados: localOrfaosAprovados };
+    }, [courses, historyGrades, atividades, progressoAulas]);
 
     if (profileLoading || coursesLoading) {
         return (

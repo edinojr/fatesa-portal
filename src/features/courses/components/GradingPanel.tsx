@@ -3,6 +3,7 @@ import { AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Loader2, Trash2, M
 import { Submission } from '../../../types/professor'
 import { QuizQuestion } from '../../../types/admin'
 import { supabase } from '../../../lib/supabase'
+import { regradeSubmissionsForAula } from '../../../services/examCorrection'
 
 interface GradingPanelProps {
   courses?: any[]
@@ -75,21 +76,33 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
         .update({ questionario: editableQuestions })
         .eq('id', lessonId);
       if (error) throw error;
-      alert('Gabarito atualizado com sucesso!');
       setEditingGabarito(false);
-      if (confirm('Recalcular a nota deste aluno com o novo gabarito?')) {
-        handleSelectSubmission({
-          ...selectedSubmission,
-          aulas: {
-            id: selectedSubmission.aulas?.id || selectedSubmission.lesson_id || '',
-            titulo: selectedSubmission.aulas?.titulo || selectedSubmission.lesson_title || '',
-            questionario: editableQuestions,
-            tipo: selectedSubmission.aulas?.tipo,
-            is_bloco_final: selectedSubmission.aulas?.is_bloco_final,
-          },
-          questionario: editableQuestions
-        });
+
+      // Recalcular retroativamente as notas de todos os alunos que responderam esta avaliação
+      let regradeMsg = '';
+      try {
+        const regraded = await regradeSubmissionsForAula(lessonId);
+        if (regraded >= 0) {
+          regradeMsg = `\n\nRecorreção automática: ${regraded} nota(s) de alunos recalculada(s) no banco de dados com o novo gabarito.`;
+        }
+      } catch (regradeErr) {
+        console.warn('Erro ao recorrigir alunos:', regradeErr);
       }
+
+      alert('Gabarito atualizado com sucesso!' + regradeMsg);
+
+      // Atualiza a visualização com o gabarito salvo
+      handleSelectSubmission({
+        ...selectedSubmission,
+        aulas: {
+          id: selectedSubmission.aulas?.id || selectedSubmission.lesson_id || '',
+          titulo: selectedSubmission.aulas?.titulo || selectedSubmission.lesson_title || '',
+          questionario: editableQuestions,
+          tipo: selectedSubmission.aulas?.tipo,
+          is_bloco_final: selectedSubmission.aulas?.is_bloco_final,
+        },
+        questionario: editableQuestions
+      });
     } catch (err: any) {
       alert('Erro ao salvar gabarito: ' + err.message);
     } finally {

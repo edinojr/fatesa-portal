@@ -184,17 +184,23 @@ const ModuleDetails = () => {
         return !isRecoveryUnlocked(versao, moduleAttempts);
       }
 
-      // Se o professor desativou a avaliação, fica bloqueada independente da liberação por núcleo
-      // A MENOS que haja exceção individual
-      if (item.professor_active === false && !hasIndividualExamRelease) return true;
-
-      // V1 ou conteúdo regular: verificar liberação por núcleo
-      const hasNucleusRelease = nucleusReleases.some(r => 
-        r.item_id === item.id && 
+      const hasNucleusRelease = nucleusReleases.some(r =>
+        r.item_id === item.id &&
         (r.item_type === 'atividade' || r.item_type === 'video' || r.item_type === 'modulo')
       );
       if (hasNucleusRelease || hasIndividualExamRelease) return false;
-  
+
+      // Se a avaliação/aula foi ativada explicitamente pelo professor
+      if (item.professor_active === true) return false;
+
+      // Se foi desativada explicitamente pelo professor
+      if (item.professor_active === false) return true;
+
+      const hasModuleRelease = nucleusReleases.some(r =>
+        r.item_id === currentBook?.book?.id && r.item_type === 'modulo'
+      );
+      if (hasModuleRelease) return false;
+
       if (item.lockedByProfessor) return true;
       return isLocked(item);
     };

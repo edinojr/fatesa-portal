@@ -18,6 +18,7 @@ import {
 import { QuizQuestion } from '../../../types/admin';
 import { useProfile } from '../../../hooks/useProfile';
 import { supabase } from '../../../lib/supabase';
+import { regradeSubmissionsForAula } from '../../../services/examCorrection';
 
 type UserMode = 'admin' | 'professor' | 'student';
 
@@ -156,7 +157,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  // Save gabarito (admin only)
+  // Save gabarito (admin or professor)
   const handleSalvarGabarito = async () => {
     setSaving(true);
     setSaveMessage(null);
@@ -167,8 +168,19 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         .eq('id', lessonId);
       if (error) throw error;
       setEditingGabarito(false);
-      setSaveMessage({ type: 'success', text: 'Gabarito salvo com sucesso!' });
-      setTimeout(() => setSaveMessage(null), 3500);
+
+      let textSuccess = 'Gabarito salvo com sucesso!';
+      try {
+        const regraded = await regradeSubmissionsForAula(lessonId);
+        if (regraded > 0) {
+          textSuccess += ` (${regraded} nota(s) de alunos recalculada(s))`;
+        }
+      } catch (e) {
+        console.warn('Erro ao recorrigir submissões:', e);
+      }
+
+      setSaveMessage({ type: 'success', text: textSuccess });
+      setTimeout(() => setSaveMessage(null), 4000);
       onSaved?.();
     } catch (err: any) {
       setSaveMessage({
@@ -769,9 +781,9 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
           </h2>
         </div>
 
-        {/* Admin controls */}
-        {mode === 'admin' && (
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {/* Admin & Professor controls */}
+        {(mode === 'admin' || mode === 'professor') && (
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
               onClick={() => setEditingGabarito(!editingGabarito)}
               style={{
@@ -811,29 +823,25 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                 Salvar
               </button>
             )}
+            <button
+              onClick={() => setShowGabarito(!showGabarito)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1.25rem',
+                borderRadius: '8px',
+                border: '1px solid var(--primary)',
+                background: showGabarito ? 'var(--primary)' : 'transparent',
+                color: showGabarito ? 'white' : 'var(--primary)',
+                cursor: 'pointer',
+                fontWeight: 600
+              }}
+            >
+              {showGabarito ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showGabarito ? 'Ocultar Gabarito' : 'Mostrar Gabarito'}
+            </button>
           </div>
-        )}
-
-        {/* Professor controls */}
-        {mode === 'professor' && (
-          <button
-            onClick={() => setShowGabarito(!showGabarito)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.75rem 1.25rem',
-              borderRadius: '8px',
-              border: '1px solid var(--primary)',
-              background: showGabarito ? 'var(--primary)' : 'transparent',
-              color: showGabarito ? 'white' : 'var(--primary)',
-              cursor: 'pointer',
-              fontWeight: 600
-            }}
-          >
-            {showGabarito ? <EyeOff size={16} /> : <Eye size={16} />}
-            {showGabarito ? 'Ocultar Gabarito' : 'Mostrar Gabarito'}
-          </button>
         )}
 
         {/* Stats for students */}
@@ -911,8 +919,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         </div>
       )}
 
-      {/* Admin: Edit mode */}
-      {mode === 'admin' && editingGabarito && (
+      {/* Admin & Professor: Edit mode */}
+      {(mode === 'admin' || mode === 'professor') && editingGabarito && (
         <div style={{
           padding: '1.5rem',
           marginBottom: '2rem',
@@ -925,6 +933,28 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             Edite as questões abaixo. As alterações serão salvas no banco de dados.
           </p>
           {questions.map(q => renderEditQuestion(q))}
+        </div>
+      )}
+
+      {/* Estado Vazio - Nenhuma questão cadastrada */}
+      {questions.length === 0 && (
+        <div style={{
+          padding: '2.5rem',
+          textAlign: 'center',
+          borderRadius: '16px',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid var(--glass-border)',
+          marginBottom: '2rem'
+        }}>
+          <AlertCircle size={48} color="var(--primary)" style={{ margin: '0 auto 1rem', opacity: 0.6 }} />
+          <h3 style={{ margin: '0 0 0.5rem', color: 'var(--text)' }}>
+            {mode === 'student' ? 'Avaliação em Preparação' : 'Nenhuma questão cadastrada'}
+          </h3>
+          <p style={{ color: 'var(--text-muted)', maxWidth: '520px', margin: '0 auto', fontSize: '0.9rem', lineHeight: '1.5' }}>
+            {mode === 'student'
+              ? 'Esta avaliação ainda não possui questões cadastradas pelo professor. Por favor, aguarde a publicação das questões.'
+              : 'Esta avaliação ainda não possui questionário cadastrado. Utilize o painel de Gerenciamento de Conteúdo do Professor ou Administrador para cadastrar as questões desta avaliação.'}
+          </p>
         </div>
       )}
 
@@ -1069,7 +1099,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
       )}
 
       {/* Action buttons for students */}
-      {mode === 'student' && (
+      {mode === 'student' && questions.length > 0 && (
         <div style={{
           display: 'flex',
           justifyContent: 'center',

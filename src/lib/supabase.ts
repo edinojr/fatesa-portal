@@ -52,8 +52,17 @@ export const onSupabaseAuthError = (listener: () => void) => {
     if (idx >= 0) authErrorListeners.splice(idx, 1)
   }
 }
+let authErrorNotifying = false
 const notifyAuthError = () => {
+  if (authErrorNotifying) return
+  authErrorNotifying = true
   authErrorListeners.forEach(fn => fn())
+  setTimeout(() => { authErrorNotifying = false }, 3000)
+}
+
+const isAnalyticsRequest = (input: RequestInfo | URL) => {
+  const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+  return url.includes('portal_access_logs')
 }
 
 // Configuração do Cliente Supabase
@@ -73,11 +82,12 @@ export const supabase = createClient(
       headers: { 'x-application-name': 'fatesa-portal' },
       fetch: (input, init) => {
         return fetch(input, init).then(async response => {
-          if (response.status === 401) {
+          if (response.status === 401 && !isAnalyticsRequest(input)) {
             notifyAuthError()
           }
           return response
         }).catch(err => {
+          if (isAnalyticsRequest(input)) throw err
           const msg = err?.message || ''
           if (msg.toLowerCase().includes('jwt') || msg.toLowerCase().includes('token') || msg.toLowerCase().includes('auth')) {
             notifyAuthError()

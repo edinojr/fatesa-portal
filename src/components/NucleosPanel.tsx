@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Users, Plus, Award, ChevronRight, Loader2, Save, Trash2, XCircle, Clock, MapPin } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { toast } from 'react-hot-toast'
 import { handleSupabaseError } from '../lib/authUtils'
 import StudentRow from '../features/nucleos/components/StudentRow'
 import NucleoSolicitacoes from '../features/nucleos/components/NucleoSolicitacoes'
@@ -179,7 +180,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       setReleasedItems(prev => ({ ...prev, [key]: newStatus }))
     } catch (err: any) {
       const handled = await handleSupabaseError(err)
-      if (!handled) alert('Erro ao alterar liberação: ' + (err.message || 'verifique as permissões do seu usuário'))
+      if (!handled) toast.error('Erro ao alterar liberação: ' + (err.message || 'verifique as permissões do seu usuário'))
     } finally {
       setActionLoading(null)
     }
@@ -236,10 +237,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         itemsToProcess.forEach(it => newReleased[`${it.item_type}:${it.item_id}`] = true)
       }
       setReleasedItems(newReleased)
-      alert(`Conteúdo ${release ? 'liberado' : 'bloqueado'} com sucesso!`)
+      toast.success(`Conteúdo ${release ? 'liberado' : 'bloqueado'} com sucesso!`)
     } catch (err: any) {
       const handled = await handleSupabaseError(err)
-      if (!handled) alert('Erro na ação em massa: ' + err.message)
+      if (!handled) toast.error('Erro na ação em massa: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -249,11 +250,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     setActionLoading('save_q')
     try {
       // Logic for saving questionnaire removed locally since atividades table is being dropped.
-      alert('Funcionalidade depreciada. Utilize a tabela aulas.');
+      toast.error('Funcionalidade depreciada. Utilize a tabela aulas.');
       
       setEditingQuestionnaire(null)
     } catch (err: any) {
-      alert('Erro ao salvar: ' + err.message)
+      toast.error('Erro ao salvar: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -265,7 +266,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     
     // Check if already linked
     if (myNucleos.some((mn: any) => mn.id === nucleoId)) {
-      alert('Você já está vinculado a este núcleo e já pode acessá-lo na sua tela inicial!')
+      toast.success('Você já está vinculado a este núcleo e já pode acessá-lo na sua tela inicial!')
       setShowAddModal(false)
       return
     }
@@ -280,12 +281,12 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         { onConflict: 'professor_id, nucleo_id' }
       )
       if (error) throw error
-      alert('Núcleo vinculado com sucesso!')
+      toast.success('Núcleo vinculado com sucesso!')
       setShowAddModal(false)
       fetchInitialData()
     } catch(err: any) {
       const handled = await handleSupabaseError(err)
-      if (!handled) alert('Erro: ' + err.message)
+      if (!handled) toast.error('Erro: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -307,7 +308,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        alert('Sessão expirada. Por favor, faça login novamente.');
+        toast.error('Sessão expirada. Por favor, faça login novamente.');
         return;
       }
 
@@ -320,16 +321,16 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       if (error) throw error;
 
       if (count === 0) {
-        alert('Vínculo não encontrado ou já removido.');
+        toast.error('Vínculo não encontrado ou já removido.');
       } else {
-        alert('Sucesso: Você saiu do núcleo.');
+        toast.success('Sucesso: Você saiu do núcleo.');
       }
 
       if (selectedNucleo?.id === nucleoId) setSelectedNucleo(null);
       await fetchInitialData();
     } catch (err: any) {
       const handled = await handleSupabaseError(err)
-      if (!handled) alert('Erro ao sair do núcleo: ' + (err.message || 'Erro de conexão'));
+      if (!handled) toast.error('Erro ao sair do núcleo: ' + (err.message || 'Erro de conexão'));
     } finally {
       setActionLoading(null);
     }
@@ -352,14 +353,14 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         { onConflict: 'professor_id, nucleo_id' }
       )
       if (error) throw error
-      alert('Professor vinculado ao núcleo com sucesso!')
+      toast.success('Professor vinculado ao núcleo com sucesso!')
       setShowAddModal(false)
       fetchInitialData()
       if (selectedNucleo?.id === nucleoId) {
         selectNucleo(selectedNucleo);
       }
     } catch (err: any) {
-      alert('Erro ao vincular: ' + err.message)
+      toast.error('Erro ao vincular: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -378,10 +379,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         .eq('nucleo_id', selectedNucleo.id);
       
       if (error) throw error;
-      alert('Vínculo removido com sucesso.');
+      toast.success('Vínculo removido com sucesso.');
       selectNucleo(selectedNucleo); // Refresh
     } catch (err: any) {
-      alert('Erro ao remover vínculo: ' + err.message);
+      toast.error('Erro ao remover vínculo: ' + err.message);
     } finally {
       setActionLoading(null);
     }
@@ -422,7 +423,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           .update(finalNucleoData)
           .eq('id', editingNucleo.id)
         if (error) throw error
-        alert('Núcleo atualizado com sucesso!')
+        toast.success('Núcleo atualizado com sucesso!')
       } else {
         const { data, error } = await supabase.from('nucleos').insert(finalNucleoData).select().maybeSingle()
         if (error) throw error
@@ -435,7 +436,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
             { onConflict: 'professor_id, nucleo_id' }
           )
         }
-        alert('Núcleo criado com sucesso!')
+        toast.success('Núcleo criado com sucesso!')
       }
       
       setShowAddModal(false)
@@ -445,7 +446,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         setSelectedNucleo({ ...selectedNucleo, ...finalNucleoData })
       }
     } catch(err: any) {
-      alert('Erro: ' + err.message)
+      toast.error('Erro: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -580,11 +581,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           .match({ aluno_id: subData.aluno_id, aula_id: subData.aula_id })
       }
 
-      alert('Atividade removida com sucesso. Progresso associado foi resetado.')
+      toast.success('Atividade removida com sucesso. Progresso associado foi resetado.')
       // Refresh current student modal data
       openStudent(showStudentModal)
     } catch (err: any) {
-      alert('Erro ao excluir: ' + err.message)
+      toast.error('Erro ao excluir: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -600,11 +601,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       const { error } = await supabase.from('nucleos').delete().eq('id', nucleoId)
       if (error) throw error
-      alert('Núcleo excluído.')
+      toast.success('Núcleo excluído.')
       if (selectedNucleo?.id === nucleoId) setSelectedNucleo(null)
       fetchInitialData()
     } catch(err: any) {
-      alert('Erro ao excluir: ' + err.message)
+      toast.error('Erro ao excluir: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -704,7 +705,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         }
 
         setStudentExceptions([...studentExceptions, livroId])
-        alert('Módulo liberado com sucesso! O aluno já pode acessar este módulo.')
+        toast.success('Módulo liberado com sucesso! O aluno já pode acessar este módulo.')
       } else {
         await supabase.from('liberacoes_excecao').delete().match({
           user_id: studentId,
@@ -736,10 +737,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         }
 
         setStudentExceptions(studentExceptions.filter(id => id !== livroId))
-        alert('Autorização removida. O aluno não terá mais acesso a este módulo.')
+        toast.success('Autorização removida. O aluno não terá mais acesso a este módulo.')
       }
     } catch (err: any) {
-      alert('Erro ao alterar autorização: ' + err.message)
+      toast.error('Erro ao alterar autorização: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -757,7 +758,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         }, { onConflict: 'user_id,aula_id' })
         if (insErr) throw insErr
         setStudentExamExceptions([...studentExamExceptions, aulaId])
-        alert('Prova liberada com sucesso para o aluno!')
+        toast.success('Prova liberada com sucesso para o aluno!')
       } else {
         const { error: delErr } = await supabase.from('liberacoes_excecao_atividade').delete().match({
           user_id: studentId,
@@ -767,7 +768,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         setStudentExamExceptions(studentExamExceptions.filter(id => id !== aulaId))
       }
     } catch (err: any) {
-      alert('Erro ao alterar liberação da prova: ' + err.message)
+      toast.error('Erro ao alterar liberação da prova: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -785,7 +786,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         }, { onConflict: 'user_id,livro_id' })
         if (insErr) throw insErr
         setStudentExclusions([...studentExclusions, livroId])
-        alert('Módulo excluído para este aluno. Ele não verá mais este módulo.')
+        toast.success('Módulo excluído para este aluno. Ele não verá mais este módulo.')
       } else {
         const { error: delErr } = await supabase.from('exclusoes_modulo_aluno').delete().match({
           user_id: studentId,
@@ -793,13 +794,13 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         })
         if (delErr) throw delErr
         setStudentExclusions(studentExclusions.filter(id => id !== livroId))
-        alert('Exclusão removida. O aluno voltará a ver este módulo.')
+        toast.success('Exclusão removida. O aluno voltará a ver este módulo.')
       }
     } catch (err: any) {
       if (err.code === '42P01' || /does not exist/i.test(err.message)) {
-        alert('Tabela de exclusões não existe. Execute a migration 20260708_module_exclusion.sql no banco.')
+        toast.error('Tabela de exclusões não existe. Execute a migration 20260708_module_exclusion.sql no banco.')
       } else {
-        alert('Erro ao excluir módulo: ' + err.message)
+        toast.error('Erro ao excluir módulo: ' + err.message)
       }
     } finally {
       setActionLoading(null)
@@ -852,14 +853,14 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         throw new Error("Formato de atividade inválido. Use atividades vinculadas ao curso.");
       }
       
-      alert('Nota contabilizada com sucesso!');
+      toast.success('Nota contabilizada com sucesso!');
 
       
       // refetch everything
       openStudent(showStudentModal);
       (e.target as HTMLFormElement).reset()
     } catch(err: any) {
-      alert('Erro: ' + err.message)
+      toast.error('Erro: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -870,10 +871,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       const { error } = await supabase.from('users').update({ status_nucleo: 'aprovado' }).eq('id', studentId)
       if (error) throw error
-      alert('Aluno aprovado com sucesso!')
+      toast.success('Aluno aprovado com sucesso!')
       selectNucleo(selectedNucleo) // Refresh
     } catch(err: any) {
-      alert('Erro ao aprovar: ' + err.message)
+      toast.error('Erro ao aprovar: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -885,10 +886,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       const { error } = await supabase.from('users').update({ nucleo_id: null, status_nucleo: 'aprovado' }).eq('id', studentId)
       if (error) throw error
-      alert('Aluno recusado.')
+      toast.success('Aluno recusado.')
       selectNucleo(selectedNucleo) // Refresh
     } catch(err: any) {
-      alert('Erro ao recusar: ' + err.message)
+      toast.error('Erro ao recusar: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -905,10 +906,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     try {
       const { error } = await supabase.from('nucleos').update({ isento: newIsento }).eq('id', nuc.id)
       if (error) throw error
-      alert(newIsento ? 'Núcleo marcado como isento com sucesso!' : 'Isenção removida.')
+      toast.success(newIsento ? 'Núcleo marcado como isento com sucesso!' : 'Isenção removida.')
       fetchInitialData()
     } catch (err: any) {
-      alert('Erro: ' + err.message)
+      toast.error('Erro: ' + err.message)
     } finally {
       setActionLoading(null)
     }
@@ -932,10 +933,10 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         { onConflict: 'user_id' }
       )
       if (error) throw error
-      alert('Pagamento registrado com sucesso!')
+      toast.success('Pagamento registrado com sucesso!')
       selectNucleo(selectedNucleo) // Refresh
     } catch (err: any) {
-      alert('Erro: ' + err.message)
+      toast.error('Erro: ' + err.message)
     } finally {
       setActionLoading(null)
     }

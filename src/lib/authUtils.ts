@@ -21,7 +21,18 @@ export function hasStudentScope(user: any): boolean {
 
 export function isStaff(user: any): boolean {
   if (!user) return false
-  return ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase())
+  const tipo = user.tipo?.toLowerCase()
+  if (['admin', 'suporte', 'professor', 'colaborador'].includes(tipo)) return true
+  const roles: string[] = (user.caminhos_acesso as string[]) || []
+  return roles.some(r => ['admin', 'suporte', 'professor', 'colaborador'].includes(r?.toLowerCase()))
+}
+
+export async function signOutLocal(): Promise<void> {
+  try {
+    await supabase.auth.signOut({ scope: 'local' })
+  } catch {
+    try { localStorage.removeItem('fatesa-auth-token') } catch { /* ignore */ }
+  }
 }
 
 export function isStaffStudentProxy(user: any): boolean {
@@ -31,7 +42,7 @@ export function isStaffStudentProxy(user: any): boolean {
 export async function checkSessionAndRedirect(): Promise<boolean> {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session || isTokenExpired(session.access_token)) {
-    await supabase.auth.signOut()
+    await signOutLocal()
     window.location.href = '/login?expired=true'
     return false
   }
@@ -60,7 +71,7 @@ export async function handleSupabaseError(err: any): Promise<boolean> {
     message?.toLowerCase().includes('auth error') ||
     (status === 403 && message?.toLowerCase().includes('jwt'))
   ) {
-    await supabase.auth.signOut()
+    await signOutLocal()
     window.location.href = '/login?expired=true'
     return true
   }

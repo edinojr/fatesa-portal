@@ -75,3 +75,4 @@ scripts/
 
 # Conteudo de licoes versionado para deploy
 
+SUPABASE_SERVICE_KEY

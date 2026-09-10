@@ -68,12 +68,12 @@ export const userService = {
    * Cria um novo usuário (Professor ou Admin) usando um cliente secundário
    */
   async createSpecialUser(email: string, password: string, nome: string, tipo: string, additionalData: any = {}) {
-    // 1. Autoriza o e-mail na tabela correspondente antes de criar no Auth
-    if (tipo === 'admin') {
-      await supabase.from('admins_autorizados').insert({ email });
-    } else if (tipo === 'professor') {
-      await supabase.from('professores_autorizados').insert({ email, nome });
-    }
+    const { error: authError } = await supabase.rpc('authorize_special_user', {
+      p_email: email,
+      p_nome: nome,
+      p_tipo: tipo
+    });
+    if (authError) throw authError;
 
     // 2. Cria o usuário usando cliente temporário
     const tempClient = createClient(supabaseUrl, supabaseAnonKey, {

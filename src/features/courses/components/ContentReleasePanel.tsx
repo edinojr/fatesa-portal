@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../../../lib/supabase'
 import { handleSupabaseError } from '../../../lib/authUtils'
-import { releaseExamAndNextModule } from '../../../services/releaseService'
+import { releaseExamAndNextModule, setItemsProfessorActive } from '../../../services/releaseService'
 import { BookOpen, Lock, Unlock, ShieldCheck, ToggleLeft, ToggleRight, GraduationCap, ChevronDown, ChevronRight, Zap } from 'lucide-react'
 import ModalityBadge from '../../../components/ui/ModalityBadge'
 
@@ -80,12 +80,12 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
   }
 
   const toggleModuleActive = async (bookId: string, currentStatus: boolean) => {
-    const { error } = await supabase
-      .from('livros')
-      .update({ professor_active: !currentStatus })
-      .eq('id', bookId)
-    if (error) { alert('Erro: ' + error.message); return }
-    setBooks(prev => prev.map(b => b.id === bookId ? { ...b, professor_active: !currentStatus } : b))
+    try {
+      await setItemsProfessorActive('livros', bookId, !currentStatus)
+      setBooks(prev => prev.map(b => b.id === bookId ? { ...b, professor_active: !currentStatus } : b))
+    } catch (err: any) {
+      alert('Erro: ' + (err.message || err))
+    }
   }
 
   const fetchLessonsByBook = async (bookId: string) => {
@@ -114,11 +114,13 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
         // Cascade: também remover liberações de aulas (video/atividade) deste módulo
         if (itemType === 'modulo') {
           const lessons = await fetchLessonsByBook(itemId)
-          const aulaIds = lessons.map(l => l.id)
-          if (aulaIds.length > 0) {
-            const { error: cascDelError } = await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', nucleoId).in('item_id', aulaIds)
+          const contentIds = lessons
+            .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
+            .map(l => l.id)
+          if (contentIds.length > 0) {
+            const { error: cascDelError } = await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', nucleoId).in('item_id', contentIds)
             if (cascDelError) throw cascDelError
-            setReleases(prev => prev.filter(r => !(r.nucleo_id === nucleoId && aulaIds.includes(r.item_id) && r.item_type !== 'modulo')))
+            setReleases(prev => prev.filter(r => !(r.nucleo_id === nucleoId && contentIds.includes(r.item_id) && r.item_type !== 'modulo')))
           }
         }
       } else {
@@ -128,14 +130,15 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
         if (itemType === 'modulo') {
           // Garantir que o módulo esteja ativo globalmente — sem isso a
           // liberação por polo não tem efeito para os alunos
-          const { error: actErr } = await supabase.from('livros').update({ professor_active: true }).eq('id', itemId)
-          if (actErr) throw actErr
+          await setItemsProfessorActive('livros', itemId, true)
           setBooks(prev => prev.map(b => b.id === itemId ? { ...b, professor_active: true } : b))
           const lessons = await fetchLessonsByBook(itemId)
           const items = buildLessonReleases(nucleoId, lessons)
           if (items.length > 0) {
             const { error: cascUpError } = await supabase.from('liberacoes_nucleo').upsert(items, { onConflict: 'nucleo_id, item_id, item_type' })
             if (cascUpError) throw cascUpError
+            const contentIds = items.map((i: any) => i.item_id)
+            await setItemsProfessorActive('aulas', contentIds, true)
             setReleases(prev => {
               const ids = new Set(items.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
               return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...items]
@@ -154,21 +157,27 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
     if (!window.confirm(`Liberar TODO o CONTEÚDO do módulo "${book.titulo}" para o polo selecionado?`)) return
     const { data: allLessons } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', book.id)
     if (!allLessons) return
+    const releaseModulo = { nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo' as const, liberado: true }
     const itemsToRelease = allLessons
       .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
       .map(l => {
         const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
         return { nucleo_id: nucleoId, item_id: l.id, item_type: isVideo ? 'video' : 'atividade' as const, liberado: true }
       })
-    const { error } = await supabase.from('liberacoes_nucleo').upsert(itemsToRelease, { onConflict: 'nucleo_id, item_id, item_type' })
+    const payload = [releaseModulo, ...itemsToRelease]
+    const { error } = await supabase.from('liberacoes_nucleo').upsert(payload, { onConflict: 'nucleo_id, item_id, item_type' })
     if (error) { alert('Erro: ' + error.message); return }
-    // Garantir que o módulo esteja ativo globalmente (liberação por polo não
-    // tem efeito se o módulo estiver inativo)
-    const { error: actErr } = await supabase.from('livros').update({ professor_active: true }).eq('id', book.id)
-    if (!actErr) setBooks(prev => prev.map(b => b.id === book.id ? { ...b, professor_active: true } : b))
+    try {
+      await setItemsProfessorActive('livros', book.id, true)
+      const contentIds = itemsToRelease.map((i: any) => i.item_id)
+      if (contentIds.length) await setItemsProfessorActive('aulas', contentIds, true)
+    } catch (err: any) {
+      alert('Erro ao ativar módulo: ' + (err.message || err)); return
+    }
+    setBooks(prev => prev.map(b => b.id === book.id ? { ...b, professor_active: true } : b))
     setReleases(prev => {
-      const ids = new Set(itemsToRelease.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
-      return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...itemsToRelease]
+      const ids = new Set(payload.map((u: any) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+      return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...payload]
     })
     alert('Conteúdo liberado com sucesso!')
   }
@@ -176,11 +185,14 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
   const handleReleaseExams = async (nucleoId: string, currentBook: Book) => {
     try {
       const res = await releaseExamAndNextModule(currentBook, nucleoId);
-      if (res.nextBookId) {
-        setBooks(prev => prev.map(b => b.id === res.nextBookId ? { ...b, professor_active: true } : b))
-      }
-      await fetchReleases()
-      alert('Prova V1 liberada! O módulo seguinte foi liberado e ativado para o polo, com seu conteúdo (lições e exercícios).')
+      setBooks(prev => prev.map(b => (
+        b.id === currentBook.id || b.id === res.nextBookId ? { ...b, professor_active: true } : b
+      )))
+      setReleases(prev => {
+        const ids = new Set(res.items.map((u) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+        return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...res.items]
+      })
+      alert('Prova V1 liberada! O conteúdo do módulo atual permanece liberado e o módulo seguinte foi ativado para o polo.')
     } catch (err: any) {
       const handled = await handleSupabaseError(err)
       if (!handled) alert('Erro ao liberar provas: ' + (err.message || 'verifique as permissões'))

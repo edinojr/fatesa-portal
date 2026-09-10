@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, onSupabaseAuthError } from '../lib/supabase';
 import { checkAccessStatus } from '../lib/paymentCycle';
-import { isTokenExpired } from '../lib/authUtils';
+import { isTokenExpired, signOutLocal } from '../lib/authUtils';
 
 // Global cache to prevent race conditions (5000ms Lock error) when multiple components mount
 let globalProfilePromise: Promise<any> | null = null;
@@ -19,6 +19,7 @@ export const useProfile = () => {
     navigatingRef.current = true
     setProfile(null)
     setLoading(false)
+    void signOutLocal()
     const path = message ? `/login?expired=true&message=${encodeURIComponent(message)}` : '/login?expired=true'
     navigate(path, { replace: true })
   }
@@ -119,8 +120,14 @@ export const useProfile = () => {
         return;
       }
 
+      const isJwtErr = (err: any) =>
+        !!err && (
+          err.code === 'PGRST301' ||
+          err.code === '401' ||
+          String(err.message || '').toLowerCase().includes('jwt')
+        )
+
       let data, error;
-      // Try with full joins first
       const result = await supabase
         .from('users')
         .select(`*, nucleos(nome), pagamentos (*)`)
@@ -128,10 +135,26 @@ export const useProfile = () => {
         .maybeSingle();
       data = result.data;
       error = result.error;
-      
-      // If full query fails (e.g., missing column or RLS issue), retry without joins
-      if (error) {
-        console.warn('Full profile query failed, retrying without joins:', error.message || error);
+
+      if (isJwtErr(error)) {
+        const { data: refreshed } = await supabase.auth.refreshSession()
+        if (!refreshed.session) {
+          goToLogin('Sua sessão expirou.')
+          return
+        }
+        session = refreshed.session
+        const retryJwt = await supabase
+          .from('users')
+          .select(`*, nucleos(nome), pagamentos (*)`)
+          .eq('id', session.user.id)
+          .maybeSingle();
+        data = retryJwt.data;
+        error = retryJwt.error;
+        if (isJwtErr(error)) {
+          goToLogin('Sua sessão expirou.')
+          return
+        }
+      } else if (error) {
         const retry = await supabase
           .from('users')
           .select('*')
@@ -144,8 +167,7 @@ export const useProfile = () => {
       }
       
       if (error) {
-        console.error('Database Profile Error:', error);
-        if (error.code === 'PGRST301' || error.code === '401' || error.message?.toLowerCase().includes('jwt')) {
+        if (isJwtErr(error)) {
           goToLogin('Sua sessão expirou.')
           return
         }
@@ -173,18 +195,12 @@ export const useProfile = () => {
       const finalProfile = await globalProfilePromise;
       if (finalProfile) setProfile(finalProfile);
     } catch (err: any) {
-      console.error('Error fetching profile:', err);
-      // Fallback: If we have a session but db failed, set a minimal profile to avoid loop
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setProfile({ 
-          id: session.user.id, 
-          email: session.user.email, 
-          tipo: 'aluno', 
-          accessStatus: 'active',
-          isTemporary: true 
-        });
+      const msg = String(err?.message || '').toLowerCase()
+      if (err?.code === 'PGRST301' || err?.code === '401' || msg.includes('jwt')) {
+        goToLogin('Sua sessão expirou.')
+        return
       }
+      goToLogin('Não foi possível carregar seu perfil. Faça login novamente.')
     } finally {
       setLoading(false);
     }

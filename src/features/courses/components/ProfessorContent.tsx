@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BookOpen, Eye, ShieldCheck, Clock, Lock, Unlock, GraduationCap, CheckCircle, AlertCircle, ToggleLeft, ToggleRight, Video, Edit, Trash2, Loader2 } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { handleSupabaseError } from '../../../lib/authUtils'
-import { releaseExamAndNextModule } from '../../../services/releaseService'
+import { releaseExamAndNextModule, setItemsProfessorActive } from '../../../services/releaseService'
 import { Link } from 'react-router-dom'
 import { ProfessorCourse } from '../../../types/professor'
 import ModuleCard from './cards/ModuleCard'
@@ -132,14 +132,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
         alert('Coluna professor_active não existe na tabela livros. Execute a migration pendente.')
         return
       }
-      const { error } = await supabase
-        .from('livros')
-        .update({ professor_active: !currentStatus })
-        .eq('id', bookId)
-      if (error) {
-        console.error('[toggleModuleActive] Supabase error:', error)
-        throw error
-      }
+      await setItemsProfessorActive('livros', bookId, !currentStatus)
       
       setBooks(prev => prev.map(b => b.id === bookId ? { ...b, professor_active: !currentStatus } : b))
       if (selectedBook && selectedBook.id === bookId) {
@@ -174,15 +167,11 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
       if (error) throw error
       // Liberar o conteúdo também ativa o módulo para que os alunos vejam as
       // lições/exercícios — sem professor_active=true o painel dos alunos oculta o módulo.
-      const { error: actError } = await supabase.from('livros').update({ professor_active: true }).eq('id', book.id)
-      if (actError) throw actError
-      // Conteúdo liberado também precisa estar ativo em cada aula (lições/
-      // exercícios/vídeos): aulas com professor_active=false ficam ocultas no
-      // painel do aluno mesmo com a liberação por núcleo.
+      await setItemsProfessorActive('livros', book.id, true)
       const contentIds = itemsToRelease.map((i: any) => i.item_id)
       if (contentIds.length) {
-        const { error: aulasActError } = await supabase.from('aulas').update({ professor_active: true }).in('id', contentIds)
-        if (aulasActError) throw aulasActError
+        await setItemsProfessorActive('aulas', contentIds, true)
+        setLessons(prev => prev.map(l => contentIds.includes(l.id) ? { ...l, professor_active: true } : l))
       }
       setBooks(prev => prev.map(b => b.id === book.id ? { ...b, professor_active: true } : b))
       if (selectedBook && selectedBook.id === book.id) {
@@ -201,14 +190,20 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
   const handleReleaseExams = async (nucleoId: string, currentBook: any) => {
     try {
       const res = await releaseExamAndNextModule(currentBook, nucleoId);
-      if (res.nextBookId) {
-        setBooks(prev => prev.map(b => b.id === res.nextBookId ? { ...b, professor_active: true } : b));
-        if (selectedBook && selectedBook.id === res.nextBookId) {
-          setSelectedBook({ ...selectedBook, professor_active: true });
-        }
+      setBooks(prev => prev.map(b => (
+        b.id === currentBook.id || b.id === res.nextBookId ? { ...b, professor_active: true } : b
+      )));
+      if (selectedBook && (selectedBook.id === currentBook.id || selectedBook.id === res.nextBookId)) {
+        setSelectedBook({ ...selectedBook, professor_active: true });
       }
-      await fetchReleases();
-      alert("Avaliação V1 liberada! O módulo seguinte foi ativado automaticamente com seu conteúdo (lições e exercícios) liberado para o polo.");
+      if (res.activatedAulaIds.length) {
+        setLessons(prev => prev.map(l => res.activatedAulaIds.includes(l.id) ? { ...l, professor_active: true } : l));
+      }
+      setReleases(prev => {
+        const ids = new Set(res.items.map((u) => `${u.nucleo_id}_${u.item_id}_${u.item_type}`))
+        return [...prev.filter(r => !ids.has(`${r.nucleo_id}_${r.item_id}_${r.item_type}`)), ...res.items]
+      })
+      alert("Avaliação V1 liberada! O conteúdo do módulo atual permanece liberado e o módulo seguinte foi ativado para o polo.");
     } catch (error: any) {
       console.error("Erro na liberação:", error);
       const handled = await handleSupabaseError(error);
@@ -274,12 +269,26 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
 
   const toggleLessonActive = async (lessonId: string, currentStatus: boolean) => {
     try {
-      const { error } = await supabase
-        .from('aulas')
-        .update({ professor_active: !currentStatus })
-        .eq('id', lessonId)
-      if (error) throw error
+      await setItemsProfessorActive('aulas', lessonId, !currentStatus)
       
+      if (selectedNucleus) {
+        if (!currentStatus) {
+          await supabase.from('liberacoes_nucleo').upsert([{
+            nucleo_id: selectedNucleus,
+            item_id: lessonId,
+            item_type: 'atividade',
+            liberado: true
+          }], { onConflict: 'nucleo_id, item_id, item_type' });
+        } else {
+          await supabase.from('liberacoes_nucleo').delete().match({
+            nucleo_id: selectedNucleus,
+            item_id: lessonId,
+            item_type: 'atividade'
+          });
+        }
+        await fetchReleases();
+      }
+
       setLessons(prev => prev.map(l => l.id === lessonId ? { ...l, professor_active: !currentStatus } : l))
     } catch (err: any) {
       alert('Erro ao ativar/desativar avaliação: ' + err.message)
@@ -308,8 +317,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
           })
         const { error: relError } = await supabase.from('liberacoes_nucleo').upsert([releaseModulo, ...itemsToRelease], { onConflict: 'nucleo_id, item_id, item_type' })
         if (relError) throw relError
-        const { error: actError } = await supabase.from('livros').update({ professor_active: true }).eq('id', selectedBook.id)
-        if (actError) throw actError
+        await setItemsProfessorActive('livros', selectedBook.id, true)
         setBooks(prev => prev.map(b => b.id === selectedBook.id ? { ...b, professor_active: true } : b))
         setSelectedBook({ ...selectedBook, professor_active: true })
         await fetchReleases()
@@ -321,8 +329,7 @@ const ProfessorContent: React.FC<ProfessorContentProps> = ({
     } else {
       if (!window.confirm(`Bloquear TODO o conteúdo do módulo "${selectedBook.titulo}"? Os alunos não podrán mais ver este módulo.`)) return
       try {
-        const { error: deactError } = await supabase.from('livros').update({ professor_active: false }).eq('id', selectedBook.id)
-        if (deactError) throw deactError
+        await setItemsProfessorActive('livros', selectedBook.id, false)
         // Bloqueia a liberação de módulo APENAS para o polo selecionado —
         // antes o delete era sem filtro de nucleo_id e apagava todos os polos
         const { error: delError } = await supabase.from('liberacoes_nucleo')
@@ -554,7 +561,7 @@ releaseControls={!hideReleaseControls && (
             <div style={{ padding: '0.75rem 1.25rem', background: 'rgba(234,179,8,0.06)', borderRadius: '14px', border: '1px solid rgba(234,179,8,0.25)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <ShieldCheck size={14} color="#eab308" />
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#eab308' }}>
-                Avaliação já liberada para este polo — o conteúdo permanece desbloqueado até todos os alunos concluírem as avaliações. Bloqueios de conteúdo estão desabilitados.
+                Avaliação já liberada para este polo. O módulo e o conteúdo continuam ativos; você pode ativar ou bloquear o módulo normalmente.
               </span>
             </div>
           )}
@@ -597,21 +604,7 @@ releaseControls={!hideReleaseControls && (
                   {(selectedBook.professor_active ?? true) ? 'Módulo Ativo' : 'Módulo Inativo'}
                 </button>
 
-                {selectedNucleus && nucleusHasReleasedExam ? (
-                  <button
-                    type="button"
-                    disabled
-                    title="Prova liberada: o conteúdo fica desbloqueado até todos os alunos concluírem as avaliações"
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '0.5rem',
-                      padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'not-allowed',
-                      background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)',
-                      color: '#10b981', fontWeight: 700, fontSize: '0.75rem', opacity: 0.85
-                    }}
-                  >
-                    <Unlock size={14} color="#10b981" /> Conteúdo Liberado
-                  </button>
-                ) : selectedNucleus ? (
+                {selectedNucleus ? (
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); toggleRelease(selectedNucleus, selectedBook.id, 'modulo'); }}
@@ -644,20 +637,18 @@ releaseControls={!hideReleaseControls && (
 
                 {selectedNucleus && (
                   <>
-                    {!nucleusHasReleasedExam && (
-                      <button
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); handleReleaseContent(selectedNucleus, selectedBook); }}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '0.5rem',
-                          padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
-                          background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)',
-                          color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
-                        }}
-                      >
-                        <BookOpen size={14} color="#3b82f6" /> Liberar Conteúdo
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); handleReleaseContent(selectedNucleus, selectedBook); }}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.5rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                        background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)',
+                        color: 'var(--text-main)', fontWeight: 700, fontSize: '0.75rem', transition: 'all 0.2s'
+                      }}
+                    >
+                      <BookOpen size={14} color="#3b82f6" /> Liberar Conteúdo
+                    </button>
 
                     <button
                       type="button"

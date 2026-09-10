@@ -423,10 +423,11 @@ const hasException = exceptionIds.includes(l.id);
                     // clicáveis) via isActuallyLocked no ModuleDetails. Ocultar
                     // as provas aqui fazia o grid da coluna "Avaliações" ficar
                     // vazio mesmo com conteúdo liberado.
-                    if (!isStaff && l.professor_active === false && !hasException && !hasIndividualExamInModule && !moduleFinished) {
+                    const aulaHasNucleoRelease = releasedItems.includes(a.id) || releasedModulos.includes(l.id);
+                    if (!isStaff && !isExamType && l.professor_active === false && !hasException && !hasIndividualExamInModule && !moduleFinished && !aulaHasNucleoRelease) {
                       return { ...a, isHidden: true };
                     }
-                    if ((isExamType || isMediaType) && a.professor_active === false && !isStaff && !hasException && !moduleFinished) {
+                    if (isMediaType && a.professor_active === false && !isStaff && !hasException && !moduleFinished && !aulaHasNucleoRelease) {
                       return { ...a, isHidden: true };
                     }
                     // Hierarquia V2/V3: oculta se a versão anterior não foi reprovada

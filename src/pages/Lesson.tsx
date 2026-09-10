@@ -123,6 +123,8 @@ const Lesson = () => {
 
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const handleSubmitRef = useRef<(() => void) | null>(null);
   const [isExamStarted, setIsExamStarted] = useState(false)
   const [staffExamMode, setStaffExamMode] = useState(false)
   const [relatedExercise, setRelatedExercise] = useState<any>(null)
@@ -183,15 +185,24 @@ const Lesson = () => {
         query = query.is('nucleo_id', null);
       }
       const { data: rel } = await query.maybeSingle();
-      if (!rel?.liberado) return false;
-
-      // Aluno tardio: cadastro posterior à liberação da prova → bloqueado
-      // (salvo exceção individual do professor, já verificada acima)
-      if (userCreatedAt && rel.created_at && new Date(userCreatedAt).getTime() > new Date(rel.created_at).getTime()) {
-        setBlockReason('late_exam');
-        return false;
+      if (rel?.liberado) {
+        // Aluno tardio: cadastro posterior à liberação da prova → bloqueado
+        // (salvo exceção individual do professor, já verificada acima)
+        if (userCreatedAt && rel.created_at && new Date(userCreatedAt).getTime() > new Date(rel.created_at).getTime()) {
+          setBlockReason('late_exam');
+          return false;
+        }
+        return true;
       }
-      return true;
+
+      // Se não há linha específica na liberacoes_nucleo, respeitar professor_active:
+      // Se professor desativou explicitamente (false), bloqueia
+      if (aulaAtual.professor_active === false) return false;
+
+      // Se professor ativou explicitamente (true), libera acesso
+      if (aulaAtual.professor_active === true) return true;
+
+      return false;
     }
 
     // V2/V3: liberada se a versão anterior foi corrigida e reprovada (min_grade real dela)
@@ -554,7 +565,7 @@ const Lesson = () => {
            if (blockItems?.length) {
               const linked = blockItems[0];
               const { data: linkedSub } = await supabase.from('respostas_aulas').select('*').eq('aula_id', linked.id).eq('aluno_id', user.id).maybeSingle();
-              (lessonData as any).linkedActivity = linked;
+               setLesson((prev: any) => prev ? { ...prev, linkedActivity: linked } : prev);
               if (linkedSub) {
                  if (linkedSub.nota !== null) setResult({ score: linkedSub.nota, passed: linkedSub.nota >= (linked.min_grade || 0), pendingReview: linkedSub.status === 'pendente' });
                  setSubmitted(true);
@@ -969,12 +980,15 @@ const Lesson = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       setComplete(true);
-    } catch (err: any) {
-      console.error(err);
-      toast.error('Erro ao enviar avaliação: ' + (err.message || 'Tente novamente.'));
+    } catch (e: any) {
+      console.error('[Lesson.handleSubmit] Falha ao enviar:', e);
+      setSubmitError(e?.message || 'Erro ao salvar respostas');
+      toast.error('Erro ao salvar. Tente novamente.');
     }
     finally { setSubmitting(false); }
   }
+
+  handleSubmitRef.current = handleSubmit as any;
 
   const checkBlockCompletion = async (aId: string, bId: number, lId: string) => {
     const { data: items } = await supabase.from('aulas').select('id').eq('bloco_id', bId).eq('livro_id', lId).not('tipo', 'in', '("gravada","ao_vivo")').eq('is_bloco_final', false);
@@ -1006,11 +1020,11 @@ const Lesson = () => {
   useEffect(() => {
     let int: any;
     if (!userProfile?.isStaff && isExamStarted && timeLeft && timeLeft > 0) {
-      int = setInterval(() => setTimeLeft(p => { if (p && p <= 1) { clearInterval(int); handleSubmit(); return 0; } return p?p-1:0; }), 1000);
+      int = setInterval(() => setTimeLeft(p => { if (p && p <= 1) { clearInterval(int); handleSubmitRef.current?.(); return 0; } return p?p-1:0; }), 1000);
     }
     return () => clearInterval(int);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isExamStarted, timeLeft, userProfile]);
+  }, [isExamStarted, userProfile?.isStaff]);
 
   // Auto-save debounced das respostas durante a prova (não envia, não muda status/tentativa)
   useEffect(() => {
@@ -1883,7 +1897,7 @@ const Lesson = () => {
         )}
 
         {/* Avaliação - Componente separado com efeito avaliativo */}
-        {lesson.tipo === 'avaliacao' && questions.length > 0 && (
+        {lesson.tipo === 'avaliacao' && (
           <div style={{ marginTop: '2rem' }}>
             <AvaliacaoFixacao
               lessonId={id!}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { isTokenExpired, signOutLocal } from '../lib/authUtils'
 import { LogIn, Loader2, Eye, EyeOff, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Logo from '../components/common/Logo'
 import { useSEO } from '../hooks/useSEO'
@@ -24,9 +25,17 @@ const Login = () => {
     // Verifica se já existe sessão no cache (ex.: refresh da página)
     const initCheck = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        await checkSessionRoles(session.user);
+      if (!session?.user) return
+      if (isTokenExpired(session.access_token)) {
+        const { data: refreshed } = await supabase.auth.refreshSession()
+        if (refreshed.session?.user) {
+          await checkSessionRoles(refreshed.session.user)
+          return
+        }
+        await signOutLocal()
+        return
       }
+      await checkSessionRoles(session.user);
     };
     initCheck();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +64,26 @@ const Login = () => {
     };
 
     let { data, error: fetchError } = await fetchProfile();
+
+    const isJwtError = (err: any) =>
+      !!err && (
+        err.code === 'PGRST301' ||
+        String(err.message || '').toLowerCase().includes('jwt')
+      )
+
+    if (isJwtError(fetchError)) {
+      const { data: refreshed } = await supabase.auth.refreshSession()
+      if (refreshed.session) {
+        const retry = await fetchProfile()
+        data = retry.data
+        fetchError = retry.error
+      } else {
+        await signOutLocal()
+        setError('Sua sessão expirou. Faça login novamente.')
+        setLoading(false)
+        return
+      }
+    }
 
     if (!data && !fetchError) {
       console.warn("Perfil não encontrado na 1ª tentativa. Aguardando sincronização de JWT e tentando novamente...");
@@ -109,7 +138,7 @@ const Login = () => {
         return;
       }
       console.error("Erro ao buscar perfil:", fetchError, "UserId:", user.id);
-      await supabase.auth.signOut();
+      await signOutLocal();
       setError('Falha ao carregar perfil. Por favor, tente novamente.');
       setLoading(false);
       return;

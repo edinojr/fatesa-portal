@@ -124,6 +124,8 @@ export const autoGradePendingSubmissions = async (pendingSubs: any[]): Promise<{
   (aulas || []).forEach((a: any) => { aulasMap[a.id] = a; });
 
   let corrected = 0;
+  const updates: Array<{targetId: string, updateData: any, alunoId: string, livroId: string, nota: number, minGrade: number, aula: any}> = [];
+
   for (const aid of aulaIds) {
     const aula = aulasMap[aid];
     if (!aula) continue;
@@ -139,23 +141,31 @@ export const autoGradePendingSubmissions = async (pendingSubs: any[]): Promise<{
         updated_at: new Date().toISOString()
       };
       if (!s.primeira_correcao_at) updateData.primeira_correcao_at = new Date().toISOString();
-      const { error } = await supabase.from('respostas_aulas').update(updateData).eq('id', targetId);
-      if (error) continue;
+      updates.push({ targetId, updateData, alunoId: s.aluno_id, livroId: aula.livro_id, nota, minGrade, aula });
+    }
+  }
+
+  // Batch DB updates (chunks of 10)
+  for (let i = 0; i < updates.length; i += 10) {
+    const chunk = updates.slice(i, i + 10);
+    await Promise.all(chunk.map(async (u) => {
+      const { error } = await supabase.from('respostas_aulas').update(u.updateData).eq('id', u.targetId);
+      if (error) return;
       corrected++;
-      if (targetId) {
-        changed.push(targetId);
-        notas[targetId] = nota;
+      if (u.targetId) {
+        changed.push(u.targetId);
+        notas[u.targetId] = u.nota;
       }
       // Efeitos pedagógicos (finalização do módulo / criação de recuperação)
-      if (s.aluno_id && aula.livro_id) {
-        if (nota >= minGrade) {
-          await finalizeModuleOnApproval(s.aluno_id, aula.livro_id);
+      if (u.alunoId && u.livroId) {
+        if (u.nota >= u.minGrade) {
+          await finalizeModuleOnApproval(u.alunoId, u.livroId);
         } else {
-          await unfinalizeModule(s.aluno_id, aula.livro_id);
-          await ensureRecoveryExam(aula, nota, minGrade);
+          await unfinalizeModule(u.alunoId, u.livroId);
+          await ensureRecoveryExam(u.aula, u.nota, u.minGrade);
         }
       }
-    }
+    }));
   }
   return { corrected, skipped: list.length - corrected, changed, notas };
 };

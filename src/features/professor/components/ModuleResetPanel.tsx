@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
+import { setItemsProfessorActive } from '../../../services/releaseService'
 import {
   BookOpen,
   Users,
@@ -340,8 +341,7 @@ const ModuleResetPanel: React.FC<ModuleResetPanelProps> = ({ professorNucleos, o
     if (!ok) return
     setResetLoading(`toggle_${bookId}`)
     try {
-      const { error } = await supabase.from('livros').update({ professor_active: !currentActive }).eq('id', bookId)
-      if (error) throw error
+      await setItemsProfessorActive('livros', bookId, !currentActive)
       showToast(`Módulo ${!currentActive ? 'desbloqueado' : 'bloqueado'}.`, 'success')
       await fetchAll()
     } catch (err: any) {

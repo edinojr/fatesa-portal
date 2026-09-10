@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { isTokenExpired } from '../lib/authUtils'
 
 const AnalyticsTracker = () => {
   const location = useLocation()
@@ -15,25 +16,13 @@ const AnalyticsTracker = () => {
           sessionStorage.setItem('portal_session_id', sessionId)
         }
 
-        // Try to get user. If it fails due to lock/timeout, we silent fail for analytics.
-        let user = null;
-        try {
-          const { data, error: authError } = await supabase.auth.getUser();
-          if (authError) {
-            if (!authError.message.includes('Auth session missing')) {
-              console.warn('Auth check skipped for analytics:', authError.message);
-            }
-          } else {
-            user = data.user;
-          }
-        } catch (authCatch) {
-          // Silent auth failure for analytics
-        }
-        
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session?.access_token || isTokenExpired(session.access_token)) return
+
         await supabase.from('portal_access_logs').insert({
-          user_id: user?.id || null,
+          user_id: session.user.id,
           session_id: sessionId,
-          user_type: user ? 'registrado' : 'visitante',
+          user_type: 'registrado',
           path: location.pathname + location.search
         })
       } catch (err: any) {
