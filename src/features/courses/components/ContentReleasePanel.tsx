@@ -114,9 +114,7 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
         // Cascade: também remover liberações de aulas (video/atividade) deste módulo
         if (itemType === 'modulo') {
           const lessons = await fetchLessonsByBook(itemId)
-          const contentIds = lessons
-            .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
-            .map(l => l.id)
+          const contentIds = lessons.map(l => l.id)
           if (contentIds.length > 0) {
             const { error: cascDelError } = await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', nucleoId).in('item_id', contentIds)
             if (cascDelError) throw cascDelError
@@ -207,7 +205,20 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
     if (action === 'ativar') {
       if (!isModReleased) await toggleRelease(nucleoId, book.id, 'modulo')
     } else {
-      if (isModReleased) await toggleRelease(nucleoId, book.id, 'modulo')
+      // Force cleanup of all items in this module for this nucleus, even if 'modulo' release is already missing
+      try {
+        await supabase.from('liberacoes_nucleo').delete().match({ nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo' })
+        const lessons = await fetchLessonsByBook(book.id)
+        const contentIds = lessons.map(l => l.id)
+        if (contentIds.length > 0) {
+          await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', nucleoId).in('item_id', contentIds)
+        }
+        setReleases(prev => prev.filter(r => 
+          !(r.nucleo_id === nucleoId && (r.item_id === book.id || contentIds.includes(r.item_id)))
+        ))
+      } catch (err: any) {
+        alert('Erro ao limpar liberações: ' + (err.message || err))
+      }
     }
   }
 
