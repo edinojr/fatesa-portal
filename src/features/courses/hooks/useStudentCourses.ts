@@ -461,7 +461,6 @@ const hasException = exceptionIds.includes(l.id);
           };
         }).filter(Boolean);
         setCourses(mappedCourses);
-        console.log('[useStudentCourses] mappedCourses set:', mappedCourses.length, 'courses');
       } else {
         console.warn('[useStudentCourses] allCourses is empty or null!', allCourses);
         setCourses([]);

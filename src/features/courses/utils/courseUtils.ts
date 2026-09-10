@@ -68,16 +68,6 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       hasExam: finalExams.length > 0,
       isMaintenance
     };
-    
-    console.log(`[getBookStats] "${l.titulo}":`, {
-      totalAulas: allAulas.length,
-      aulaTipos: allAulas.map((a: any) => a.tipo),
-      finalExams: finalExams.map((e: any) => e.titulo || e.tipo),
-      examSubmissionsCount: (atividades || []).filter(at => finalExams.some((ex: any) => ex.id === getSubAulaId(at))).length,
-      submittedIds,
-      result
-    });
-    
     return result;
 };
 

@@ -6,6 +6,7 @@ export interface NucleoReleaseItem {
   item_id: string;
   item_type: string;
   liberado: boolean;
+  created_at?: string;
 }
 
 export interface ReleaseExamsResult {
@@ -35,6 +36,7 @@ function pushContentReleases(
       item_id: item.id,
       item_type: isVideo ? 'video' : 'atividade',
       liberado: true,
+      created_at: new Date().toISOString(),
     });
     ids.push(item.id);
   }
@@ -88,14 +90,14 @@ export const releaseExamAndNextModule = async (currentBook: any, nucleoId: strin
   const v1Exams = (currentAulas || []).filter((e: any) => isExamAula(e) && getExamVersion(e) === 1);
 
   const items: NucleoReleaseItem[] = [];
-  items.push({ nucleo_id: nucleoId, item_id: currentBook.id, item_type: 'modulo', liberado: true });
+  items.push({ nucleo_id: nucleoId, item_id: currentBook.id, item_type: 'modulo', liberado: true, created_at: new Date().toISOString() });
 
   const currentContentIds = pushContentReleases(nucleoId, currentAulas || [], items);
   result.activatedAulaIds.push(...currentContentIds);
 
   const examIdsToActivate: string[] = [];
   for (const exam of v1Exams) {
-    items.push({ nucleo_id: nucleoId, item_id: exam.id, item_type: 'atividade', liberado: true });
+    items.push({ nucleo_id: nucleoId, item_id: exam.id, item_type: 'atividade', liberado: true, created_at: new Date().toISOString() });
     if (!result.examId) {
       result.examId = exam.id;
       result.examTitulo = exam.titulo;
@@ -126,7 +128,7 @@ export const releaseExamAndNextModule = async (currentBook: any, nucleoId: strin
   if (nextBook) {
     result.nextBookId = nextBook.id;
     result.nextBookTitulo = nextBook.titulo;
-    items.push({ nucleo_id: nucleoId, item_id: nextBook.id, item_type: 'modulo', liberado: true });
+    items.push({ nucleo_id: nucleoId, item_id: nextBook.id, item_type: 'modulo', liberado: true, created_at: new Date().toISOString() });
 
     const { data: nextContent, error: ncErr } = await supabase
       .from('aulas')

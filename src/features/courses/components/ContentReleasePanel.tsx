@@ -98,14 +98,14 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
       .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
       .map(l => {
         const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
-        return { nucleo_id: nucleoId, item_id: l.id, item_type: isVideo ? 'video' : 'atividade' as const, liberado: true }
+        return { nucleo_id: nucleoId, item_id: l.id, item_type: isVideo ? 'video' : 'atividade' as const, liberado: true, created_at: new Date().toISOString() }
       })
 
   const toggleRelease = async (nucleoId: string, itemId: string, itemType: string) => {
     const existing = releases.find(r => r.nucleo_id === nucleoId && r.item_id === itemId && r.item_type === itemType)
     setReleases(prev => {
       if (existing) return prev.filter(r => !(r.nucleo_id === nucleoId && r.item_id === itemId && r.item_type === itemType))
-      return [...prev, { nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true }]
+      return [...prev, { nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true, created_at: new Date().toISOString() }]
     })
     try {
       if (existing) {
@@ -124,7 +124,7 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
           }
         }
       } else {
-        const { error: upError } = await supabase.from('liberacoes_nucleo').upsert([{ nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true }], { onConflict: 'nucleo_id, item_id, item_type' })
+        const { error: upError } = await supabase.from('liberacoes_nucleo').upsert([{ nucleo_id: nucleoId, item_id: itemId, item_type: itemType, liberado: true, created_at: new Date().toISOString() }], { onConflict: 'nucleo_id, item_id, item_type' })
         if (upError) throw upError
         // Cascade: liberar todas as aulas não-prova (vídeos + exercícios) do módulo para o polo
         if (itemType === 'modulo') {
@@ -157,12 +157,12 @@ const ContentReleasePanel: React.FC<{ professorNucleos: Nucleus[]; profile?: any
     if (!window.confirm(`Liberar TODO o CONTEÚDO do módulo "${book.titulo}" para o polo selecionado?`)) return
     const { data: allLessons } = await supabase.from('aulas').select('id, tipo, is_bloco_final').eq('livro_id', book.id)
     if (!allLessons) return
-    const releaseModulo = { nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo' as const, liberado: true }
+    const releaseModulo = { nucleo_id: nucleoId, item_id: book.id, item_type: 'modulo' as const, liberado: true, created_at: new Date().toISOString() }
     const itemsToRelease = allLessons
       .filter(l => !(l.tipo === 'prova' || l.tipo === 'avaliacao' || !!l.is_bloco_final))
       .map(l => {
         const isVideo = l.tipo === 'gravada' || l.tipo === 'ao_vivo' || l.tipo === 'video'
-        return { nucleo_id: nucleoId, item_id: l.id, item_type: isVideo ? 'video' : 'atividade' as const, liberado: true }
+        return { nucleo_id: nucleoId, item_id: l.id, item_type: isVideo ? 'video' : 'atividade' as const, liberado: true, created_at: new Date().toISOString() }
       })
     const payload = [releaseModulo, ...itemsToRelease]
     const { error } = await supabase.from('liberacoes_nucleo').upsert(payload, { onConflict: 'nucleo_id, item_id, item_type' })
