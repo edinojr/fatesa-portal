@@ -101,17 +101,17 @@ const CourseList: React.FC<CourseListProps> = ({
             )}
             {isFinalizadoManual && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.6rem', background: 'rgba(16,185,129,0.05)', borderRadius: '6px' }}>
-                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota Final</span>
+                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota Final (Histórico)</span>
                 <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--success)' }}>
                   {Number(currentBook.nota).toFixed(1)}
                 </span>
               </div>
             )}
-            {stats.hasExam && !isHistoricoSintetico && !isMaintenance && (
+            {(stats.hasExam || currentBook.notaHistorico) && !isHistoricoSintetico && !isMaintenance && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', padding: '0.4rem 0.6rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota da Prova</span>
-                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: stats.isApproved ? 'var(--success)' : '#eab308' }}>
-                  {stats.examGrade != null ? stats.examGrade.toFixed(1) : '—'}
+                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>{currentBook.notaHistorico ? 'Nota Final (Histórico)' : 'Nota da Prova'}</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: stats.isApproved || currentBook.notaHistorico ? 'var(--success)' : '#eab308' }}>
+                  {currentBook.notaHistorico ? Number(currentBook.notaHistorico).toFixed(1) : stats.examGrade != null ? stats.examGrade.toFixed(1) : '—'}
                 </span>
               </div>
             )}

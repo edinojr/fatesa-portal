@@ -9,9 +9,10 @@ import { useSEO } from '../hooks/useSEO'
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showReturnButton, setShowReturnButton] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const expiredMessage = searchParams.get('expired') === 'true' ? (searchParams.get('message') || 'Sua sessão expirou. Faça login novamente.') : null
@@ -58,7 +59,7 @@ const Login = () => {
     const fetchProfile = async () => {
       return await supabase
         .from('users')
-        .select('tipo, bloqueado, caminhos_acesso')
+        .select('tipo, bloqueado, caminhos_acesso, status_nucleo')
         .eq('id', user.id)
         .maybeSingle();
     };
@@ -151,6 +152,14 @@ const Login = () => {
       return;
     }
 
+    if (data.status_nucleo === 'hiato') {
+      await supabase.auth.signOut();
+      setError('Você está cadastrado como desistente (hiato). Se deseja retornar ao curso, entre em contato com o suporte/financeiro para reativar sua matrícula.');
+      setShowReturnButton(true);
+      setLoading(false);
+      return;
+    }
+
     const roles = (data.caminhos_acesso as string[]) || [];
     const userType = (data.tipo || '') as string;
     
@@ -166,6 +175,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setShowReturnButton(false);
 
     try {
       // 1. Authenticate user
@@ -250,6 +260,18 @@ const Login = () => {
               </div>
             )}
             {error && <div className="error-msg" style={{ marginBottom: '1.5rem' }}>{error}</div>}
+            
+            {showReturnButton && (
+              <a 
+                href="https://wa.me/5516999999999?text=Ol%C3%A1%2C%20eu%20estava%20como%20desistente%20e%20gostaria%20de%20retornar%20ao%20curso!"
+                target="_blank"
+                rel="noreferrer"
+                className="btn"
+                style={{ background: '#25D366', color: '#fff', width: '100%', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none' }}
+              >
+                Sim, quero retornar (WhatsApp)
+              </a>
+            )}
 
             <button type="submit" className="btn btn-primary" disabled={loading}>
               {loading ? <Loader2 className="spinner" /> : <><LogIn size={20} /> Entrar</>}

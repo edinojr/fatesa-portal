@@ -214,6 +214,8 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
     handleUpdateUserType: (id: string, type: string) => studentHook.handleUpdateUserType(id, type, fetchData),
     handleGrantModuleException: (uId: string, bId: string) => studentHook.handleGrantModuleException(uId, bId, fetchData),
     handleRevokeModuleException: (uId: string, bId: string) => studentHook.handleRevokeModuleException(uId, bId, fetchData),
+    handleSetHiato: (id: string) => studentHook.handleSetHiato(id, fetchData),
+    handleSetTrancado: (id: string) => studentHook.handleSetTrancado(id, fetchData),
   }), [att, studentHook, gradingHook, fetchData]);
 
   return useMemo(() => ({

@@ -17,7 +17,8 @@ import {
   ChevronRight,
   LayoutGrid,
   Users,
-  Loader2
+  Loader2,
+  PauseCircle
 } from 'lucide-react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
@@ -474,6 +475,24 @@ const Dashboard = () => {
     }
   };
 
+  const handleSelfTrancar = async () => {
+    if (!profile) return;
+    if (!confirm('Deseja realmente pausar/trancar o seu curso? Você perderá o acesso aos próximos módulos até que solicite a reativação junto ao suporte.')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ status_nucleo: 'trancado' })
+        .eq('id', profile.id);
+      
+      if (error) throw error;
+      showToast('Curso pausado com sucesso.', 'success');
+      refreshProfile();
+    } catch (err: any) {
+      showToast('Erro ao pausar curso: ' + err.message, 'error');
+    }
+  };
+
   const handleStudentBack = () => {
     if (selectedBook) {
       setSelectedBook(null);
@@ -515,9 +534,6 @@ const Dashboard = () => {
               style={{ display: (activeTab === 'home') ? 'none' : 'inline-flex' }}
             >
               <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
-            </button>
-            <button onClick={() => navigate('/modulos-finalizados')} className="nav-btn-premium" title="Ver Concluídos" style={{ border: '1px solid var(--success-border)', background: 'rgba(16, 185, 129, 0.05)' }}>
-              <Award size={18} color="var(--success)" /> <span className="mobile-hide">Módulos Finalizados</span>
             </button>
           </div>
         </div>
@@ -634,17 +650,19 @@ const Dashboard = () => {
                 </div>
               )}
 
-              <div className="admin-action-card" onClick={() => { fetchAvailableModules(); setShowModuleCompletionModal(true); }}>
-                <div className="icon-wrapper"><Award size={32} /></div>
-                <h3>Módulos Concluídos</h3>
-                <p>Marque módulos que você já concluiu fora da plataforma.</p>
-              </div>
-
               <div className="admin-action-card" onClick={() => navigate('/modulos-finalizados')}>
                 <div className="icon-wrapper"><Award size={32} /></div>
                 <h3>Meu Boletim</h3>
                 <p>Consulte suas notas e desempenho acadêmico.</p>
               </div>
+
+              {profile?.status_nucleo !== 'trancado' && profile?.status_nucleo !== 'hiato' && (
+                <div className="admin-action-card" onClick={handleSelfTrancar} style={{ border: '1px solid rgba(245, 158, 11, 0.2)' }}>
+                  <div className="icon-wrapper"><PauseCircle size={32} color="#f59e0b" /></div>
+                  <h3>Pausar Curso</h3>
+                  <p>Tranque seu curso temporariamente se precisar de uma pausa.</p>
+                </div>
+              )}
             </div>
             </>
           )}

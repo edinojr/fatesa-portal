@@ -110,17 +110,20 @@ const goToPanel = () => {
         let localFinishedCourses = (courses || []).map(course => {
             const finishedBooks = (course.livros || []).map(l => {
                 const stats = getBookStats(l, atividades, progressoAulas);
-                const approvedManual = approvedByHistoryTitles.has(normalizeTitle(l.titulo));
-                return { l, stats, approvedManual };
+                const approvedHistoryEntry = approvedHistory.find((h: any) => {
+                    const histNorm = normalizeTitle(h.modulo_nome);
+                    const disp = normalizeTitle(l.titulo);
+                    return disp === histNorm || disp.includes(histNorm) || histNorm.includes(disp);
+                });
+                const approvedManual = !!approvedHistoryEntry;
+                return { l, stats, approvedManual, notaManual: approvedHistoryEntry?.nota };
             }).filter(({ l, stats, approvedManual }) =>
                 l.isFinished || stats.isFinished || approvedManual
-            ).map(({ l, stats, approvedManual }) => ({
+            ).map(({ l, stats, approvedManual, notaManual }) => ({
                 ...l,
                 isFinished: true,
-                // Não forçar aprovação: só fica aprovado se passou na prova (stats/l.isApproved)
-                // ou se foi aprovado por histórico manual (approvedManual).
-                // Alunos em DP (reprovaram na V3) continuam isApproved=false para exibir "D.P.".
-                isApproved: !!(stats.isApproved || l.isApproved || approvedManual)
+                isApproved: !!(stats.isApproved || l.isApproved || approvedManual),
+                notaHistorico: notaManual
             }));
             return { ...course, livros: finishedBooks };
         }).filter(course => course.livros.length > 0);
@@ -131,9 +134,15 @@ const goToPanel = () => {
 
         // 4) Módulos do histórico que ainda não foram exibidos como livros cadastrados
         //    — criar "books" sintéticos e colocá-los no curso Básico ou Médio
-        const localOrfaosAprovados = approvedHistory.filter((h: any) =>
-            !displayedTitles.has(normalizeTitle(h.modulo_nome))
-        );
+        const localOrfaosAprovados = approvedHistory.filter((h: any) => {
+            const histNorm = normalizeTitle(h.modulo_nome);
+            for (const disp of displayedTitles) {
+                if (disp === histNorm || disp.includes(histNorm) || histNorm.includes(disp)) {
+                    return false;
+                }
+            }
+            return true;
+        });
 
         if (localOrfaosAprovados.length > 0) {
             const orfaosByNivel: Record<string, any[]> = { basico: [], medio: [] };

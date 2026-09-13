@@ -124,6 +124,11 @@ const Lesson = () => {
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [quizStartTime, setQuizStartTime] = useState<Date | null>(null);
+
+  // MODO ESTUDO PARA MÓDULOS FINALIZADOS
+  const [studyMode, setStudyMode] = useState(false);
+  const [studyModeSubmitted, setStudyModeSubmitted] = useState(false);
   const handleSubmitRef = useRef<(() => void) | null>(null);
   const [isExamStarted, setIsExamStarted] = useState(false)
   const [staffExamMode, setStaffExamMode] = useState(false)
@@ -416,9 +421,32 @@ const Lesson = () => {
           .maybeSingle();
         const hasModuleException = !!modException;
 
-        // Módulo finalizado manualmente → acesso de revisão liberado
+        // Módulo finalizado manualmente ou por histórico → acesso de revisão liberado
         const manualFinishedModules = (profile?.modulos_finalizados_manual || []) as string[];
-        const isModuleFinishedManually = manualFinishedModules.includes(lessonData.livro_id);
+        let isModuleFinishedManually = manualFinishedModules.includes(lessonData.livro_id);
+
+        if (!isModuleFinishedManually && bookData?.titulo) {
+          const { data: historyGrades } = await supabase.from('historico_notas').select('modulo_nome, nota').eq('aluno_id', user.id).gte('nota', 7);
+          if (historyGrades && historyGrades.length > 0) {
+            const normalizeTitle = (s: string) =>
+              (s || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/[.,;:!?\s]+$/g, '')
+                .replace(/\s+/g, ' ');
+            
+            const bookNorm = normalizeTitle(bookData.titulo);
+            for (const h of historyGrades) {
+              const histNorm = normalizeTitle(h.modulo_nome);
+              if (bookNorm === histNorm || bookNorm.includes(histNorm) || histNorm.includes(bookNorm)) {
+                isModuleFinishedManually = true;
+                break;
+              }
+            }
+          }
+        }
 
         // REGRA ÚNICA (igual ao hook do aluno): a liberação por polo prevalece
         // sobre o status global do módulo. Se houver linha 'modulo' OU
@@ -582,9 +610,7 @@ const Lesson = () => {
             const isEx = ba && (ba.tipo === 'prova' || ba.tipo === 'avaliacao' || ba.is_bloco_final);
             return !!isEx && s.status === 'corrigida' && ((s.nota || 0) >= (ba?.min_grade || 7.0));
           });
-          const manualModules = (userProfile as any)?.modulos_finalizados_manual || [];
-          const finishedByManual = manualModules.includes(lessonData.livro_id);
-          setIsModuleFinished(finishedByExam || finishedByManual);
+          setIsModuleFinished(finishedByExam || isModuleFinishedManually);
         }
       }
       setLoading(false)
@@ -1981,20 +2007,23 @@ const Lesson = () => {
                                   q.type === 'true_false' ? studentAns === q.isTrue :
                                   q.type === 'matching' ? (q.matchingPairs?.length ? q.matchingPairs.every((_: any, mIdx: number) => matchingPairCorrect(q, mIdx, studentAns)) : false) : true;
                 
-                  // Gabarito: staff sempre vê (exceto em modo teste antes de enviar) | aluno vê se submeter e atingir nota mínima ou módulo finalizado
+                const isInputDisabled = (!userProfile?.isStaff && submitted && !studyMode) || (studyMode && studyModeSubmitted);
+                
+                  // Gabarito: staff sempre vê (exceto em modo teste antes de enviar) | aluno vê se submeter e atingir nota mínima ou módulo finalizado (exceto se em estudo não submetido)
                   const showGabarito = (userProfile?.isStaff && !(staffExamMode && !submitted)) ||
-                                       isModuleFinished ||
+                                       (isModuleFinished && !studyMode) ||
+                                       (isModuleFinished && studyMode && studyModeSubmitted) ||
                                         (submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0));
 
                 return (
                   <div 
                     key={qKey} 
                     className="question-card"
-                    style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: showGabarito && submitted ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)' }}
+                    style={{ padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: showGabarito && (submitted || studyModeSubmitted) ? `1px solid ${isCorrect ? 'var(--success)' : 'var(--error)'}` : '1px solid var(--glass-border)' }}
                   >
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                       <p style={{fontWeight:600, fontSize:'1.1rem', marginBottom:'1.5rem', flex: 1}}>{idx + 1}. {q.text}</p>
-                      {showGabarito && submitted && (
+                      {showGabarito && (submitted || studyModeSubmitted) && (
                         <div style={{color: isCorrect ? 'var(--success)' : 'var(--error)', display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.85rem', whiteSpace:'nowrap', background: isCorrect ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', padding:'0.4rem 0.8rem', borderRadius:'8px', marginLeft:'1rem'}}>
                           {isCorrect ? <CheckCircle size={16}/> : <XCircle size={16}/>}
                           {isCorrect ? 'Correto' : 'Resposta Incorreta'}
@@ -2009,7 +2038,7 @@ const Lesson = () => {
                         border: showGabarito && submitted && q.correct === oIdx ? '1px solid var(--success)' : (showGabarito && submitted && answers[qKey] === oIdx && !isCorrect ? '1px solid var(--error)' : '1px solid var(--glass-border)'), 
                         cursor: 'pointer', marginBottom:'0.5rem' 
                       }}>
-                         <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={!userProfile?.isStaff && submitted} />
+                         <input type="radio" checked={answers[qKey] === oIdx} onChange={() => setAnswers(p => ({...p, [qKey]: oIdx}))} disabled={isInputDisabled} />
                         <span style={{flex:1}}>{opt}</span>
                                   {showGabarito && (userProfile?.isStaff || submitted) && q.type !== 'matching' && q.correct === oIdx && (<div style={{color:'var(--success)', fontSize:'0.75rem', fontWeight:800, display:'flex', alignItems:'center', gap:'0.4rem'}}><CheckCircle size={14}/> GABARITO</div>)}
                                  {showGabarito && (userProfile?.isStaff || submitted) && answers[qKey] === oIdx && !isCorrect && <XCircle size={16} color="var(--error)"/>}
@@ -2028,7 +2057,7 @@ const Lesson = () => {
                                width:'auto',
                                 border: showGabarito && (userProfile?.isStaff || submitted) && q.isTrue === v ? '2px solid var(--success)' : (showGabarito && (userProfile?.isStaff || submitted) && answers[qKey] === v && !isCorrect ? '2px solid var(--error)' : '')
                              }}
-                             disabled={!userProfile?.isStaff && submitted}
+                             disabled={isInputDisabled}
                            >
                             {v ? 'Verdadeiro' : 'Falso'}
                                  {showGabarito && (userProfile?.isStaff || submitted) && q.type === 'matching' ? null : (q.isTrue === v && <CheckCircle size={14} style={{marginLeft:'0.5rem'}}/>)}
@@ -2067,7 +2096,7 @@ const Lesson = () => {
                                   }
                                 }));
                               }} 
-                              disabled={!userProfile?.isStaff && submitted}
+                              disabled={isInputDisabled}
                             >
                               <option value="">Selecione...</option>
                               {(shuffledOptions[qKey] || q.matchingPairs?.map(mp => mp.right) || []).map((rightOpt, roIdx) => (
@@ -2083,7 +2112,7 @@ const Lesson = () => {
 
                      {q.type === 'discursive' && (
                        <div style={{display:'flex', flexDirection:'column', gap:'0.5rem'}}>
-<textarea className="form-control" rows={4} value={answers[qKey] || ''} onChange={e => setAnswers(p => ({...p, [qKey]: e.target.value}))} placeholder="Sua resposta..." disabled={!userProfile?.isStaff && submitted}></textarea>
+<textarea className="form-control" rows={4} value={answers[qKey] || ''} onChange={e => setAnswers(p => ({...p, [qKey]: e.target.value}))} placeholder="Sua resposta..." disabled={isInputDisabled}></textarea>
                           { (userProfile?.isStaff || showGabarito) && q.expectedAnswer && (
                             <div style={{marginTop:'1rem', padding:'1rem', background:'rgba(var(--primary-rgb), 0.1)', borderRadius:'12px', fontSize:'0.9rem'}}>
                               <strong style={{color:'var(--primary)', display:'block', marginBottom:'0.5rem'}}>Gabarito sugerido:</strong>
@@ -2106,8 +2135,37 @@ const Lesson = () => {
               {isModuleFinished && (
                 <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--primary)', textAlign: 'center', marginBottom: '2rem' }}>
                   <Lock size={24} color="var(--primary)" style={{ marginBottom: '0.5rem' }} />
-                  <h4 style={{ margin: 0, color: 'var(--primary)', fontWeight: 800 }}>MODO SOMENTE LEITURA</h4>
-                  <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Este módulo já foi finalizado. Você pode revisar o conteúdo e o gabarito, mas não pode enviar novas respostas.</p>
+                  <h4 style={{ margin: 0, color: 'var(--primary)', fontWeight: 800 }}>MÓDULO FINALIZADO</h4>
+                  <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Este módulo já foi finalizado. O conteúdo e o gabarito oficial estão abertos para revisão.</p>
+                  
+                  {!studyMode ? (
+                    <button 
+                      onClick={() => { setStudyMode(true); setStudyModeSubmitted(false); setAnswers({}); }}
+                      className="btn btn-outline"
+                      style={{ marginTop: '1rem', width: 'auto', borderColor: 'var(--primary)', color: 'var(--primary)', marginInline: 'auto' }}
+                    >
+                      <BookOpen size={16} style={{ marginRight: '0.5rem' }} /> Resolver como Quiz (Modo de Estudo)
+                    </button>
+                  ) : (
+                    <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                      {!studyModeSubmitted && (
+                        <button 
+                          onClick={() => setStudyModeSubmitted(true)}
+                          className="btn btn-primary"
+                          style={{ width: 'auto', background: 'var(--success)', border: 'none' }}
+                        >
+                          <CheckCircle size={16} style={{ marginRight: '0.5rem' }} /> Corrigir Respostas
+                        </button>
+                      )}
+                      <button 
+                        onClick={() => { setStudyMode(false); setStudyModeSubmitted(false); setAnswers({}); }}
+                        className="btn btn-outline"
+                        style={{ width: 'auto' }}
+                      >
+                        Sair do Modo Estudo
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
               

@@ -73,22 +73,26 @@ const ExercicioFixacao: React.FC<ExercicioFixacaoProps> = ({
     setEditingGabarito(false);
     setShowGabarito(false);
 
-    if (isModuleFinished && mode === 'student' && profile?.id) {
-      // Módulo finalizado: modo revisão — carrega a submissão anterior e
-      // revela o gabarito para aprofundamento/revisão
+    if (mode === 'student' && profile?.id) {
       supabase.from('respostas_aulas')
         .select('respostas, status')
         .eq('aula_id', lessonId)
         .eq('aluno_id', profile.id)
         .maybeSingle()
         .then(({ data }) => {
-          if (data?.respostas) setRespostasAluno(data.respostas);
-          setShowGabarito(true);
-          setExercicioFinalizado(true);
+          if (data && data.status) {
+            if (data.respostas) setRespostasAluno(data.respostas);
+            setShowGabarito(true);
+            setExercicioFinalizado(true);
+          } else if (isModuleFinished) {
+            // Se o módulo já está finalizado (ex: por histórico) e não tem respostas,
+            // libera o gabarito mesmo assim para estudo
+            setShowGabarito(true);
+          }
         });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId, initialQuestions, isModuleFinished, mode, profile?.id]);
+  }, [lessonId, initialQuestions, mode, profile?.id]);
 
   // Handlers
   const setResposta = (qKey: string, valor: any) => {

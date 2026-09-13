@@ -1,5 +1,5 @@
 import React from 'react'
-import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock } from 'lucide-react'
+import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock, PauseCircle, UserMinus } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import { Student } from '../../../types/professor'
 import { hasStudentScope } from '../../../lib/authUtils'
@@ -17,6 +17,8 @@ interface StudentsManagementProps {
   handleUpdateUserType: (userId: string, type: string) => Promise<void>
   handleGrantModuleException?: (userId: string, bookId: string) => Promise<void>
   handleRevokeModuleException?: (userId: string, bookId: string) => Promise<void>
+  handleSetHiato?: (userId: string) => Promise<void>
+  handleSetTrancado?: (userId: string) => Promise<void>
   userRole?: string | null
   allNucleos?: any[]
   courses?: any[]
@@ -27,6 +29,7 @@ export default function StudentsManagement({
   handleApproveAccess, handleRejectAccess, handleDeleteUser,
   handleResetActivities, handleUpdateUserNucleo,
   handleGrantModuleException, handleRevokeModuleException,
+  handleSetHiato, handleSetTrancado,
   userRole, allNucleos = [], courses = []
 }: StudentsManagementProps) {
   const [selectedNucleoId, setSelectedNucleoId] = React.useState<string | null>(null);
@@ -301,6 +304,30 @@ export default function StudentsManagement({
                                 >
                                   <XCircle size={14} />
                                   <span style={{ marginLeft: '4px' }}>Recusar</span>
+                                </button>
+                              )}
+                              {student.status_nucleo !== 'hiato' && handleSetHiato && (
+                                <button 
+                                  className="btn"
+                                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', width: 'auto', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)' }}
+                                  onClick={() => handleSetHiato(student.id)}
+                                  disabled={actionLoading === student.id}
+                                  title="Marcar como Desistente (Hiato). Ele será bloqueado no módulo seguinte caso esteja cursando um módulo atual."
+                                >
+                                  {actionLoading === student.id ? <Loader2 className="spinner" size={14} /> : <UserMinus size={14} />}
+                                  <span style={{ marginLeft: '4px' }}>Hiato</span>
+                                </button>
+                              )}
+                              {student.status_nucleo !== 'trancado' && handleSetTrancado && (
+                                <button 
+                                  className="btn"
+                                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', width: 'auto', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)' }}
+                                  onClick={() => handleSetTrancado(student.id)}
+                                  disabled={actionLoading === student.id}
+                                  title="Trancar Curso. O aluno será bloqueado no módulo seguinte."
+                                >
+                                  {actionLoading === student.id ? <Loader2 className="spinner" size={14} /> : <PauseCircle size={14} />}
+                                  <span style={{ marginLeft: '4px' }}>Trancar</span>
                                 </button>
                               )}
                               {(userRole === 'admin' || userRole === 'suporte') && (

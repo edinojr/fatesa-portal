@@ -329,7 +329,9 @@ export const useStudentCourses = (profile: any) => {
               const hasExamInModule = (l.aulas || []).some((a: any) =>
                 a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final
               );
-              const isMaintenanceModule = !hasAnyAulasInModule || !hasExamInModule;
+              // Módulo não entra em manutenção se já foi finalizado manualmente (ex: histórico)
+              // pois o aluno já tem o direito de acessá-lo.
+              const isMaintenanceModule = (!hasAnyAulasInModule || !hasExamInModule) && !isManualFinished;
 
               const moduleFinished = (isApproved || isManualFinished) && !isMaintenanceModule;
 
@@ -371,7 +373,7 @@ const hasException = exceptionIds.includes(l.id);
                 // aluno tenha exceção individual de prova/módulo, já tenha
                 // iniciado o conteúdo ou o módulo tenha sido finalizado.
                 const isLateStudentPastModule = !isStaff && isPastAndNotLatest && !hasException && !hasIndividualExamInModule && !hasStarted && !moduleFinished;
-                const isHidden = (isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || isLateStudentPastModule || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !moduleFinished && !isMaintenanceModule);
+                const isHidden = ((isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || isLateStudentPastModule || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !isMaintenanceModule)) && !moduleFinished;
 
                  const isExcluded = studentExclusions.includes(l.id);
                  if (isExcluded) {

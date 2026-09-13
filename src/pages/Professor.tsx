@@ -86,6 +86,8 @@ const Professor = () => {
     handleUpdateUserType,
     handleGrantModuleException,
     handleRevokeModuleException,
+    handleSetHiato,
+    handleSetTrancado,
     fetchData
   } = useProfessorManagement();
 
@@ -294,6 +296,8 @@ const Professor = () => {
                 handleUpdateUserType={handleUpdateUserType}
                 handleGrantModuleException={handleGrantModuleException}
                 handleRevokeModuleException={handleRevokeModuleException}
+                handleSetHiato={handleSetHiato}
+                handleSetTrancado={handleSetTrancado}
                 userRole="professor"
                 allNucleos={professorNucleos}
                 courses={courses}

@@ -210,6 +210,44 @@ export const useProfessorStudents = () => {
     }
   }
 
+  const handleSetHiato = async (userId: string, onSuccess?: () => void) => {
+    if (!confirm('Deseja realmente marcar este aluno como Desistente (Hiato)?\n\nAviso: Caso o aluno esteja cursando um módulo atualmente, ele será bloqueado no módulo seguinte.')) return
+    setActionLoading(userId)
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ status_nucleo: 'hiato' })
+        .eq('id', userId)
+      
+      if (error) throw error
+      alert('Status atualizado para Hiato/Desistente.')
+      if (onSuccess) onSuccess()
+    } catch (err: any) {
+      alert('Erro: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleSetTrancado = async (userId: string, onSuccess?: () => void) => {
+    if (!confirm('Deseja realmente trancar o curso deste aluno?\n\nAviso: Caso o aluno esteja cursando um módulo atualmente, ele será bloqueado no módulo seguinte.')) return
+    setActionLoading(userId)
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ status_nucleo: 'trancado' })
+        .eq('id', userId)
+      
+      if (error) throw error
+      alert('Curso trancado com sucesso.')
+      if (onSuccess) onSuccess()
+    } catch (err: any) {
+      alert('Erro: ' + err.message)
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   return {
     allStudents,
     setAllStudents: setSortedStudents,
@@ -223,6 +261,8 @@ export const useProfessorStudents = () => {
     handleUpdateUserNucleo,
     handleUpdateUserType,
     handleGrantModuleException,
-    handleRevokeModuleException
+    handleRevokeModuleException,
+    handleSetHiato,
+    handleSetTrancado
   }
 }

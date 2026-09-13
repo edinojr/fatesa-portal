@@ -25,6 +25,7 @@ const Signup = () => {
   const [checkingEmail, setCheckingEmail] = useState(false)
   const [preRegistered, setPreRegistered] = useState<{nome: string, tipo: string, nucleo: string, nucleo_id?: string} | null>(null)
   const [availableNucleos, setAvailableNucleos] = useState<{id: string, nome: string}[]>([])
+  const [showReturnButton, setShowReturnButton] = useState(false)
 
   useEffect(() => {
     const checkSession = async () => {
@@ -151,6 +152,7 @@ const Signup = () => {
 
     setLoading(true)
     setError(null)
+    setShowReturnButton(false)
 
     try {
       // 1. Supabase Auth Signup
@@ -199,7 +201,13 @@ const Signup = () => {
 
     } catch (err: any) {
       if (err.status === 422 || err.message?.includes('already registered')) {
-        setError('Este e-mail já está ativado no portal. Tente fazer login ou recuperar sua senha.')
+        const { data: existingUser } = await supabase.from('users').select('status_nucleo').eq('email', email.toLowerCase().trim()).maybeSingle();
+        if (existingUser && existingUser.status_nucleo === 'hiato') {
+          setError('Você está cadastrado como desistente (hiato). Se deseja retornar ao curso, clique no botão abaixo para falar com o suporte/financeiro e reativar sua matrícula.');
+          setShowReturnButton(true);
+        } else {
+          setError('Este e-mail já está ativado no portal. Tente fazer login ou recuperar sua senha.')
+        }
       } else {
         setError(err.message)
       }
@@ -395,7 +403,19 @@ const Signup = () => {
             </div>
           </div>
 
-          {error && <div className="error-msg">{error}</div>}
+          {error && <div className="error-msg" style={{ marginBottom: '1.5rem' }}>{error}</div>}
+
+          {showReturnButton && (
+            <a 
+              href="https://wa.me/5516999999999?text=Ol%C3%A1%2C%20eu%20estava%20como%20desistente%20e%20gostaria%20de%20retornar%20ao%20curso!"
+              target="_blank"
+              rel="noreferrer"
+              className="btn"
+              style={{ background: '#25D366', color: '#fff', width: '100%', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none' }}
+            >
+              Sim, quero retornar (WhatsApp)
+            </a>
+          )}
 
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? <Loader2 className="animate-spin" /> : <UserPlus size={20} />}
