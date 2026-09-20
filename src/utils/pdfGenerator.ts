@@ -126,13 +126,13 @@ export const generateHistoricoPDF = async (
   if (tableData2.length === 0) tableData2.push(['', '', '']);
 
   const tableStyles = {
-    theme: 'grid',
-    headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', halign: 'center' as const, lineColor: [0, 0, 0], lineWidth: 0.5 },
-    bodyStyles: { textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
+    theme: 'grid' as const,
+    headStyles: { fillColor: [240, 240, 240] as [number, number, number], textColor: [0, 0, 0] as [number, number, number], fontStyle: 'bold' as const, halign: 'center' as const, lineColor: [0, 0, 0] as [number, number, number], lineWidth: 0.5 },
+    bodyStyles: { textColor: [0, 0, 0] as [number, number, number], lineColor: [0, 0, 0] as [number, number, number], lineWidth: 0.5 },
     columnStyles: {
       0: { halign: 'center' as const, cellWidth: 15 },
       1: { cellWidth: 50 },
-      2: { halign: 'center' as const, cellWidth: 15, textColor: [0, 0, 200], fontStyle: 'bold' } // Nota azul e em negrito como no modelo
+      2: { halign: 'center' as const, cellWidth: 15, textColor: [0, 0, 200] as [number, number, number], fontStyle: 'bold' as const } // Nota azul e em negrito como no modelo
     }
   };
 

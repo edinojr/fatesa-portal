@@ -36,6 +36,7 @@ import AcademicHistory from '../features/admin/components/AcademicHistory'
 import GradeHistoryInsertion from '../features/admin/components/GradeHistoryInsertion'
 import ManualHistoryPanel from '../features/admin/components/ManualHistoryPanel'
 import DocsArchive from '../features/admin/components/DocsArchive'
+import { DocumentGenerator } from '../features/admin/components/DocumentGenerator'
 import BoletimPanel from '../features/professor/components/BoletimPanel'
 import ModuleResetPanel from '../features/professor/components/ModuleResetPanel'
 
