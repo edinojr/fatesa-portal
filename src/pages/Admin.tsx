@@ -843,6 +843,8 @@ const Admin = () => {
 
         {activeTab === 'popups' && <PopupAlertsManagement />}
 
+          {activeTab === 'docs_generator' && <DocumentGenerator />}
+
         {/* Modals */}
         <AddTeacherModal 
           showAddTeacher={showAddTeacher}

@@ -56,8 +56,14 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
       // Filtrar a melhor nota da prova desse módulo
       let melhorNotaProva: number | null = null;
       content.provas.forEach((p: any) => {
-        if (p.nota !== null && (melhorNotaProva === null || p.nota > melhorNotaProva)) {
-          melhorNotaProva = p.nota;
+        if (p.nota !== null) {
+          const notaStr = String(p.nota).replace(',', '.');
+          const notaVal = parseFloat(notaStr);
+          if (!isNaN(notaVal)) {
+            if (melhorNotaProva === null || notaVal > melhorNotaProva) {
+              melhorNotaProva = notaVal;
+            }
+          }
         }
       });
       
@@ -82,24 +88,18 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     const basicCount = selectedStudentData.std.stats.finishedBasic.size;
     const mediumCount = selectedStudentData.std.stats.finishedMedium.size;
     
-    // Nivel a gerar
+    // Nivel a gerar - O administrador pode emitir a qualquer momento, independente dos limites.
     let nivel: 'basico' | 'medio' = 'basico';
 
-    if (mediumCount >= 8) {
-      const choice = window.prompt("Esse aluno possui os requisitos para o curso Médio e Básico.\nDigite 'M' para emitir o certificado do MÉDIO ou 'B' para o BÁSICO:");
-      if (!choice) return;
-      if (choice.trim().toUpperCase() === 'M') {
-        nivel = 'medio';
-      } else if (choice.trim().toUpperCase() === 'B') {
-        nivel = 'basico';
-      } else {
-        alert("Opção inválida.");
-        return;
-      }
-    } else if (basicCount >= 27) {
+    const choice = window.prompt(`Este aluno possui:\n- BÁSICO: ${basicCount}/27\n- MÉDIO: ${mediumCount}/8\n\nQual certificado deseja emitir? Digite 'M' para MÉDIO ou 'B' para BÁSICO:`);
+    if (!choice) return;
+    
+    if (choice.trim().toUpperCase() === 'M') {
+      nivel = 'medio';
+    } else if (choice.trim().toUpperCase() === 'B') {
       nivel = 'basico';
     } else {
-      alert(`Este aluno ainda não concluiu todos os módulos obrigatórios.\nConcluídos: ${basicCount}/27 (Básico) e ${mediumCount}/8 (Médio).`);
+      alert("Opção inválida.");
       return;
     }
 

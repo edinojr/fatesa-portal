@@ -99,8 +99,12 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
         const isExam = isManual || item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova';
         
         if (isExam && modName && item.nota !== null) {
-          if (!grouped[modName] || item.nota > grouped[modName].nota) {
-            grouped[modName] = { nota: item.nota };
+          const notaStr = String(item.nota).replace(',', '.');
+          const notaValue = parseFloat(notaStr);
+          if (!isNaN(notaValue)) {
+            if (!grouped[modName] || notaValue > grouped[modName].nota) {
+              grouped[modName] = { nota: notaValue };
+            }
           }
         }
       });
@@ -132,17 +136,16 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
       const isManual = item.is_manual;
       const modName = isManual ? item.modulo_nome : item.aulas?.livros?.titulo;
       const isExam = isManual || item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova';
-      if (isExam && modName && item.nota !== null && item.nota >= 7.0) {
-        finishedBooks.add(modName.trim().toUpperCase());
+      
+      if (isExam && modName && item.nota !== null) {
+        const notaStr = String(item.nota).replace(',', '.');
+        const notaValue = parseFloat(notaStr);
+        if (!isNaN(notaValue) && notaValue >= 7.0) {
+          finishedBooks.add(modName.trim().toUpperCase());
+        }
       }
     });
 
-    const basicCount = finishedBooks.size; // Aproximação grosseira para o painel do aluno (caso precisemos de lógica exata, precisaremos cruzar com os níveis dos livros)
-    // Para ser mais preciso e seguro, podemos liberar com 27 e 8
-    // Como a Fatesa possui níveis misturados, vamos assumir:
-    // Se tiver mais de 35 (27+8) ele tem os dois.
-    // Mas o ideal é que ele peça na secretaria, ou a gente libere baseado na quantidade total.
-    
     // Nivel a gerar
     let nivel: 'basico' | 'medio' = 'basico';
 
