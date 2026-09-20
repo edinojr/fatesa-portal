@@ -214,13 +214,14 @@ export const generateCertificadoPDF = async (
   doc.setTextColor(184, 134, 11); // Dourado
   doc.setFontSize(16);
   doc.setFont('times', 'bold');
-  doc.text(cursoTexto, centerX, 63, { align: 'center' });
+  doc.text(cursoTexto, centerX, 50, { align: 'center' });
 
-  // Nome do aluno preenchendo o espaço exato entre "CERTIFICADO DE CONCLUSÃO" e "PELO CONHECIMENTO..."
+  // Nome do aluno preenchendo o espaço exato
+  // Posição no eixo Y: 8.51cm (85.1mm) conforme especificado
   doc.setTextColor(40, 50, 100); // Azul escuro original
   doc.setFontSize(36); // Tamanho original
   doc.setFont('times', 'italic');
-  doc.text(`"${alunoNome}"`, centerX, 100, { align: 'center' });
+  doc.text(`"${alunoNome}"`, centerX, 85.1, { align: 'center' });
 
   // Baixar
   doc.save(`Certificado_${cursoNivel}_${alunoNome.replace(/\s+/g, '_')}.pdf`);
