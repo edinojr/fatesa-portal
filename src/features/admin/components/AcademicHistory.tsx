@@ -556,22 +556,32 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {Object.entries(
               studentList.reduce((acc, s) => {
-                const nuc = s.nucleos?.nome || 'Geral / Sem Núcleo';
+                const hist = hierarchicalData[s.nucleos?.nome || 'Geral / Sem Núcleo']?.[s.id];
+                const isFormado = s.tipo === 'ex_aluno' || (hist && hist.stats.finishedBasic.size >= 27);
+                const nuc = isFormado ? '🎓 Alunos Formados (Básico Concluído)' : (s.nucleos?.nome || 'Geral / Sem Núcleo');
+                
                 if (!acc[nuc]) acc[nuc] = [];
                 acc[nuc].push(s);
                 return acc;
               }, {} as Record<string, typeof studentList>)
             )
-            .sort((a, b) => a[0].localeCompare(b[0]))
+            .sort((a, b) => {
+              // Garante que a lista de formados apareça no topo
+              if (a[0].startsWith('🎓')) return -1;
+              if (b[0].startsWith('🎓')) return 1;
+              return a[0].localeCompare(b[0]);
+            })
             .map(([nucleoName, studentsGroup]) => {
               const students = studentsGroup as typeof studentList;
               const isSearching = searchTerm && searchTerm.length > 0;
+              const isFormadosCard = nucleoName.startsWith('🎓');
+              
               return (
-              <details key={nucleoName} open={isSearching || false} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px solid var(--glass-border)', padding: '1.25rem', transition: 'all 0.2s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-                <summary style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary)', cursor: 'pointer', outline: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none', margin: '-0.25rem' }}>
+              <details key={nucleoName} open={isSearching || isFormadosCard} style={{ background: isFormadosCard ? 'linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(217,119,6,0.1) 100%)' : 'rgba(255,255,255,0.02)', borderRadius: '20px', border: isFormadosCard ? '1px solid rgba(245,158,11,0.3)' : '1px solid var(--glass-border)', padding: '1.25rem', transition: 'all 0.2s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+                <summary style={{ fontSize: '1.2rem', fontWeight: 800, color: isFormadosCard ? '#f59e0b' : 'var(--primary)', cursor: 'pointer', outline: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none', margin: '-0.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <MapPin size={22} />
-                    {nucleoName} <span style={{ fontSize: '0.85rem', opacity: 0.7, background: 'rgba(var(--primary-rgb), 0.1)', padding: '4px 10px', borderRadius: '8px' }}>{students.length} alunos</span>
+                    {isFormadosCard ? <GraduationCap size={22} /> : <MapPin size={22} />}
+                    {nucleoName} <span style={{ fontSize: '0.85rem', opacity: 0.7, background: isFormadosCard ? 'rgba(245,158,11, 0.1)' : 'rgba(var(--primary-rgb), 0.1)', padding: '4px 10px', borderRadius: '8px' }}>{students.length} alunos</span>
                   </div>
                   <ChevronRight size={20} opacity={0.5} style={{ transform: 'rotate(90deg)' }} className="details-arrow" />
                 </summary>

@@ -583,6 +583,27 @@ const Dashboard = () => {
          <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
           {activeTab === 'home' && (
             <>
+              {finishedBasicCount >= 27 && finishedMediumCount === 0 && (
+                <div style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', borderRadius: '24px', padding: '3rem 2rem', color: '#fff', marginBottom: '2rem', textAlign: 'center', boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', zIndex: 2 }}>
+                    <GraduationCap size={56} style={{ margin: '0 auto 1rem', opacity: 0.9 }} />
+                    <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '1rem', letterSpacing: '-0.02em' }}>Você formou no Nível Básico!</h2>
+                    <p style={{ fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto 2rem', lineHeight: '1.6', opacity: 0.9 }}>
+                      Sua jornada até aqui foi incrível. <strong>Atenção:</strong> em breve será lançado o curso <strong>Médio online</strong> nos próximos dias! Prepare-se para refazer a sua matrícula e avançar de nível.
+                    </p>
+                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                      <button onClick={() => setActiveTab('certificados')} style={{ background: '#fff', color: '#6d28d9', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+                        <Award size={18} /> Ver meus Certificados
+                      </button>
+                      <button onClick={() => window.open('https://wa.me/5516999999999', '_blank')} style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', backdropFilter: 'blur(10px)' }}>
+                        Quero refazer a matrícula
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ position: 'absolute', top: '-50%', left: '-10%', width: '300px', height: '300px', background: 'rgba(255,255,255,0.1)', filter: 'blur(80px)', borderRadius: '50%', zIndex: 1 }}></div>
+                  <div style={{ position: 'absolute', bottom: '-50%', right: '-10%', width: '400px', height: '400px', background: 'rgba(0,0,0,0.2)', filter: 'blur(80px)', borderRadius: '50%', zIndex: 1 }}></div>
+                </div>
+              )}
               {/* Welcome Section */}
               <div style={{
                 marginBottom: '2rem',
