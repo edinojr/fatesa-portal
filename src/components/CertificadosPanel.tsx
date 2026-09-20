@@ -13,10 +13,12 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
       setLoading(true);
       try {
         // Fetch respostas_aulas
-        const { data: respData } = await supabase
+        const { data: respData, error: respErr } = await supabase
           .from('respostas_aulas')
-          .select('*, aulas:aula_id(id, tipo, is_bloco_final, livros:livro_id(titulo))')
+          .select('id, aula_id, nota, status')
           .eq('aluno_id', profile.id);
+
+        if (respErr) throw respErr;
 
         // Fetch historico_notas
         const { data: histData } = await supabase
@@ -24,8 +26,45 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
           .select('*')
           .eq('aluno_id', profile.id);
 
+        // Fetch aulas and livros for the respData
+        const aulaIds = Array.from(new Set((respData || []).map(r => r.aula_id).filter(Boolean)));
+        let aulasData: any[] = [];
+        let livrosData: any[] = [];
+
+        if (aulaIds.length > 0) {
+          const { data: aData } = await supabase
+            .from('aulas')
+            .select('id, tipo, is_bloco_final, livro_id')
+            .in('id', aulaIds);
+          
+          aulasData = aData || [];
+          const livroIds = Array.from(new Set(aulasData.map(a => a.livro_id).filter(Boolean)));
+          
+          if (livroIds.length > 0) {
+            const { data: lData } = await supabase
+              .from('livros')
+              .select('id, titulo')
+              .in('id', livroIds);
+            livrosData = lData || [];
+          }
+        }
+
+        // Map everything together
+        const mappedRespData = (respData || []).map(r => {
+          const aula = aulasData.find(a => a.id === r.aula_id);
+          const livro = aula ? livrosData.find(l => l.id === aula.livro_id) : null;
+          return {
+            ...r,
+            is_manual: false,
+            aulas: aula ? {
+              ...aula,
+              livros: livro ? { titulo: livro.titulo } : null
+            } : null
+          };
+        });
+
         const combined = [
-          ...(respData || []).map(r => ({ ...r, is_manual: false })),
+          ...mappedRespData,
           ...(histData || []).map(h => ({ ...h, is_manual: true }))
         ];
         setAcademicData(combined);
