@@ -172,9 +172,10 @@ export const generateHistoricoPDF = async (
   // Assinatura
   try {
     const assinaturaData = await getBase64ImageFromURL('/assinatura.png');
-    // Adiciona a assinatura centralizada acima da linha
-    // x, y, width, height. Calculando para ficar acima de finalY + 30
-    doc.addImage(assinaturaData, 'PNG', 85, finalY + 2, 40, 28);
+    // Adiciona a assinatura centralizada e com a proporção correta
+    // A imagem original tem proporção ~0.86 (mais alta do que larga)
+    // Largura: 24, Altura: 28. Posição X centralizada: 105 - (24/2) = 93
+    doc.addImage(assinaturaData, 'PNG', 93, finalY + 1, 24, 28);
   } catch (e) {
     console.warn("Imagem de assinatura não encontrada.");
   }
