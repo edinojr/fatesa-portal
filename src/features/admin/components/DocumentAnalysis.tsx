@@ -30,7 +30,7 @@ const DocumentAnalysis: React.FC = () => {
       // Busca todos os documentos
       const { data: docs, error: docsError } = await supabase
         .from('documentos')
-        .select('*, users:user_id(id, nome, email)')
+        .select('*, users:user_id(id, nome, email, tipo)')
         .order('created_at', { ascending: false });
 
       if (docsError) throw docsError;
@@ -40,6 +40,8 @@ const DocumentAnalysis: React.FC = () => {
 
       (docs || []).forEach((doc: any) => {
         if (!doc.users) return;
+        const isStaff = ['admin', 'suporte', 'professor', 'colaborador'].includes(doc.users.tipo?.toLowerCase());
+        if (isStaff) return;
         
         if (!studentsMap.has(doc.user_id)) {
           studentsMap.set(doc.user_id, {

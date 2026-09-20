@@ -26,8 +26,8 @@ export const matchingPairCorrect = (q: any, mIdx: number, ans: Record<string, an
   const selectedIdx = parseInt(String(selected), 10);
   const pairs = q?.matchingPairs || [];
   if (Number.isNaN(selectedIdx) || selectedIdx < 0 || selectedIdx >= pairs.length) return false;
-  const selectedRight = String(pairs[selectedIdx]?.right || '').trim();
-  const correctRight = String(pairs[mIdx]?.right || '').trim();
+  const selectedRight = String(pairs[selectedIdx]?.right || '').trim().toLowerCase();
+  const correctRight = String(pairs[mIdx]?.right || '').trim().toLowerCase();
   return !!selectedRight && selectedRight === correctRight;
 };
 

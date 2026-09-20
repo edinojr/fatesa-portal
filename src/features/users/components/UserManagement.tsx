@@ -278,7 +278,7 @@ const UserManagement: React.FC<UserManagementProps> = ({
     const groupedByNucleo = filteredUsers.reduce((acc: any, user: any) => {
       const nucName = user.nucleos?.nome || 'Sem Núcleo Definido'
       if (!acc[nucName]) acc[nucName] = { professors: [], students: [] }
-      if (STAFF_TYPES.includes(user.tipo) && !hasStudentScope(user)) {
+      if (STAFF_TYPES.includes(user.tipo)) {
         acc[nucName].professors.push(user)
       } else {
         acc[nucName].students.push(user)

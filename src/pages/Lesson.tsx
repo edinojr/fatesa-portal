@@ -120,6 +120,7 @@ const Lesson = () => {
   const [showBibleReader, setShowBibleReader] = useState(false)
   const [wikiPopup, setWikiPopup] = useState<{ titulo: string; texto: string; tipo: string } | null>(null)
   const [blockReason, setBlockReason] = useState<string | null>(null)
+  const [activeLessonTab, setActiveLessonTab] = useState<'conteudo' | 'forum' | 'referencias'>('conteudo')
 
   // Assessment System State
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
@@ -1405,8 +1406,8 @@ const Lesson = () => {
     }
 
     return (
-      <div className={`lesson-container reading-page${isPdfLesson ? ' pdf-immersive-mode' : ''}`}>
-
+      <div className={`theater-layout lesson-container reading-page${isPdfLesson ? ' pdf-immersive-mode' : ''}`}>
+        <div className="theater-main">
         {/* Header da Lição - fixo no topo */}
         {isPdfLesson ? (
           /* Header enxuto para modo imersivo de PDF — alto contraste */
@@ -1559,41 +1560,28 @@ const Lesson = () => {
            <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>Carregando conteúdo...</p>
          </div>
        )}
+
+       {!htmlLoading && !isPdfLesson && (
+         <div className="theater-content-tabs">
+           <div className="lesson-tabs">
+             <button className={`lesson-tab-btn ${activeLessonTab === 'conteudo' ? 'active' : ''}`} onClick={() => setActiveLessonTab('conteudo')}>Visão Geral</button>
+             <button className={`lesson-tab-btn ${activeLessonTab === 'forum' ? 'active' : ''}`} onClick={() => setActiveLessonTab('forum')}>Fórum de Dúvidas</button>
+             {lessonReferences.length > 0 && (
+               <button className={`lesson-tab-btn ${activeLessonTab === 'referencias' ? 'active' : ''}`} onClick={() => setActiveLessonTab('referencias')}>Materiais / Referências</button>
+             )}
+           </div>
+         </div>
+       )}
        
 {hasRichContent && !htmlLoading && (
-           <div style={{ display: 'flex', gap: isPdfLesson ? '0' : '2rem', alignItems: isPdfLesson ? 'stretch' : 'flex-start', position: 'relative', width: isPdfLesson ? '100%' : 'auto' }}>
+           <div style={{ display: activeLessonTab === 'conteudo' || isPdfLesson ? 'flex' : 'none', gap: isPdfLesson ? '0' : '2rem', alignItems: isPdfLesson ? 'stretch' : 'flex-start', position: 'relative', width: isPdfLesson ? '100%' : 'auto' }}>
              {isMenuOpen && !isPdfLesson && (
-              <div 
-                style={{ 
-                  position: 'fixed', 
-                  inset: 0, 
-                  zIndex: 1000, 
-                  display: 'flex', 
-                  justifyContent: 'flex-start' 
-                }}
-              >
+              <div className="theater-sidebar-container">
                 <div 
+                  className="theater-sidebar-overlay"
                   onClick={() => setIsMenuOpen(false)} 
-                  style={{ 
-                    position: 'absolute', 
-                    inset: 0, 
-                    background: 'rgba(0,0,0,0.5)', 
-                    backdropFilter: 'blur(4px)' 
-                  }} 
                 />
-                 <aside style={{ 
-                   position: 'relative', 
-                   width: '300px', 
-                   background: 'var(--bg-dark)', 
-                   padding: '2rem', 
-                   borderRadius: '0 24px 24px 0', 
-                   borderRight: '1px solid var(--glass-border)',
-                   height: '100vh',
-                   overflowY: 'auto',
-                   boxShadow: '10px 0 30px rgba(0,0,0,0.5)',
-                   zIndex: 1001,
-                   transition: 'transform 0.3s ease'
-                 }}>
+                 <aside className="theater-sidebar">
                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                      <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem', fontWeight: 800 }}>
                        <List size={20} color="var(--primary)" /> {isPanorama ? 'Lições do Módulo' : 'Tópicos da Lição'}
@@ -2545,7 +2533,7 @@ const Lesson = () => {
       )}
 
       {/* Forum Discussion Section */}
-      <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+      <div style={{ display: activeLessonTab === 'forum' ? 'block' : 'none', marginTop: '2rem', padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
         <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
           <MessageSquare size={24} color="var(--primary)" />
         </div>
@@ -2567,7 +2555,7 @@ const Lesson = () => {
 
       {/* References Section */}
       {lessonReferences.length > 0 && (
-        <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
+        <div style={{ display: activeLessonTab === 'referencias' ? 'block' : 'none', marginTop: '2rem', padding: '2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
           <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <FileText size={20} color="var(--primary)" /> Referências
           </h3>
@@ -2972,6 +2960,7 @@ const Lesson = () => {
         }
         /* Bíblia permanece acessível no canto direito durante PDF */
       `}</style>
+      </div>
     </div>
   )
 }

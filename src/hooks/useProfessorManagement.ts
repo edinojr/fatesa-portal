@@ -93,7 +93,12 @@ export const useProfessorManagement = () => {
               book_title: aula?.livro_id?.titulo || 'Módulo Geral',
               submitted_at: r.updated_at,
             };
-          }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
+          }).filter(s => {
+            const isExam = s.lesson_type === 'prova' || s.lesson_type === 'avaliacao';
+            const user = usersMap[s.student_id];
+            const isStaff = user && ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase());
+            return isExam && !isStaff;
+          });
           
           if (subDataMapped) {
             gradingHook.setSubmissions(subDataMapped);
@@ -156,7 +161,12 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
                     book_title: aula?.livro_id?.titulo || 'Módulo Geral',
                     submitted_at: r.updated_at,
                   };
-                }).filter(s => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao');
+                }).filter(s => {
+                  const isExam = s.lesson_type === 'prova' || s.lesson_type === 'avaliacao';
+                  const user = usersMap[s.student_id];
+                  const isStaff = user && ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase());
+                  return isExam && !isStaff;
+                });
                 
                 if (subDataMapped) {
                   gradingHook.setSubmissions(subDataMapped);

@@ -246,13 +246,14 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
     }
   };
 
-  const handleDeleteSubmission = async (submissionId: string) => {
-    if (!window.confirm('Excluir esta atividade permanentemente? O aluno poderá refazê-la.')) return;
+  const handleDeleteSubmission = async (submissionId: string, isManual?: boolean) => {
+    if (!window.confirm('Excluir este registro permanentemente?')) return;
     setActionLoading(submissionId);
     try {
-      const { error } = await supabase.from('respostas_aulas').delete().eq('id', submissionId);
+      const table = isManual ? 'historico_notas' : 'respostas_aulas';
+      const { error } = await supabase.from(table).delete().eq('id', submissionId);
       if (error) throw error;
-      showToast('Atividade excluída com sucesso.');
+      showToast('Registro excluído com sucesso.');
       fetchData();
     } catch (err: any) {
       showToast('Erro ao excluir: ' + err.message, 'error');

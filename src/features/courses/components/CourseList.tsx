@@ -165,7 +165,7 @@ const CourseList: React.FC<CourseListProps> = ({
                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>{course.nome}</h3>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {(course.livros || []).sort((a,b) => (a.ordem || 0) - (b.ordem || 0)).map(renderBookCard)}
+              {(course.livros || []).map(renderBookCard)}
             </div>
           </div>
         ))}

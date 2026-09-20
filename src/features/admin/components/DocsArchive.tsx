@@ -47,7 +47,7 @@ const DocsArchive: React.FC<DocsArchiveProps> = ({ allNucleos }) => {
         // Filtro no JS: não-staff sempre aparecem; staff só se também for aluno (escopo)
         const filteredUsers = (usersData || []).filter(u => {
           const isStaff = ['admin', 'suporte', 'professor', 'colaborador'].includes(u.tipo?.toLowerCase());
-          return !isStaff || isStaffStudentProxy(u);
+          return !isStaff;
         });
         setData(filteredUsers);
       } else {

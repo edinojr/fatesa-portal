@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -12,7 +12,9 @@ import {
   X,
   Calendar,
   FileText,
-  MapPin
+  MapPin,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 
@@ -20,19 +22,18 @@ interface GradeHistoryInsertionProps {
   onRefresh?: () => void;
 }
 
-const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
+const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh }) => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [students, setStudents] = useState<any[]>([]);
+  const [allStudents, setAllStudents] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [nucleos, setNucleos] = useState<any[]>([]);
-  const [selectedNucleo, setSelectedNucleo] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
-  const [showStudentDropdown, setShowStudentDropdown] = useState(false);
   const [historyData, setHistoryData] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [expandedNucleos, setExpandedNucleos] = useState<Record<string, boolean>>({});
 
   const [formData, setFormData] = useState({
     curso_nome: '',
@@ -44,78 +45,35 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
 
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const searchRef = useRef<HTMLDivElement>(null)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number } | null>(null)
-
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  const updateDropdownPos = useCallback(() => {
-    if (searchInputRef.current) {
-      const rect = searchInputRef.current.getBoundingClientRect()
-      setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width })
-    }
-  }, [])
-
-  const fetchCourses = async () => {
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('cursos')
-        .select('id, nome, nivel, livros(id, titulo, ordem)')
-        .order('nome');
-      if (error) throw error;
-      setCourses(data || []);
+      const [coursesRes, nucleosRes, usersRes] = await Promise.all([
+        supabase.from('cursos').select('id, nome, nivel, livros(id, titulo, ordem)').order('nome'),
+        supabase.from('nucleos').select('id, nome').order('nome'),
+        supabase.from('users').select('id, nome, email, cpf, curso_opcao, nucleos(nome)').not('tipo', 'in', '("admin","suporte","professor","colaborador")').order('nome').limit(5000)
+      ]);
+      setCourses(coursesRes.data || []);
+      setNucleos(nucleosRes.data || []);
+      setAllStudents(usersRes.data || []);
     } catch (err) {
-      console.error('Error fetching courses:', err);
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const fetchNucleos = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('nucleos')
-        .select('id, nome')
-        .order('nome');
-      if (error) throw error;
-      setNucleos(data || []);
-    } catch (err) {
-      console.error('Error fetching nuclei:', err);
-    }
-  };
-
-  const searchStudents = useCallback(async (term: string) => {
-    if (term.length < 2 && !selectedNucleo) {
-      setStudents([]);
-      return;
-    }
-    try {
-      let query = supabase
-        .from('users')
-        .select('id, nome, email, cpf, curso_opcao, nucleos(nome)')
-        .limit(20);
-
-      if (term.length >= 2) {
-        query = query.ilike('nome', `%${term}%`);
-      }
-
-      if (selectedNucleo) {
-        query = query.eq('nucleo_id', selectedNucleo);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      setStudents(data || []);
-    } catch (err) {
-      console.error('Error searching students:', err);
-    }
-  }, [selectedNucleo]);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const fetchHistory = async () => {
     if (!selectedStudent) return;
-    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('historico_notas')
@@ -126,41 +84,16 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
       setHistoryData(data || []);
     } catch (err: any) {
       showToast('Erro ao carregar histórico: ' + err.message, 'error');
-    } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowStudentDropdown(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  useEffect(() => {
-    fetchCourses();
-    fetchNucleos();
-  }, []);
-
-  useEffect(() => {
-    if (selectedNucleo) {
-      searchStudents('');
-      setShowStudentDropdown(true);
-      updateDropdownPos();
-    }
-  }, [selectedNucleo, searchStudents, updateDropdownPos]);
 
   useEffect(() => {
     if (selectedStudent) {
       fetchHistory();
     } else {
       setHistoryData([]);
+      setShowForm(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedStudent]);
 
   const handleSubmit = async () => {
@@ -169,14 +102,19 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
     if (!formData.modulo_nome) return alert('Informe o nome do módulo.');
     if (!formData.nota) return alert('Informe a nota.');
 
+    const numNota = parseFloat(formData.nota.replace(',', '.'));
+    if (isNaN(numNota) || numNota < 0 || numNota > 10 || (numNota % 0.5 !== 0)) {
+      alert('A nota deve ser entre 0 e 10, com decimais somente em meio ponto (ex: 0, 0.5, 1, 1.5, ..., 10).');
+      return;
+    }
+
     setSaving(true);
     try {
-      const nota = parseFloat(formData.nota);
       const payload = {
         aluno_id: selectedStudent.id,
         curso_nome: formData.curso_nome,
         modulo_nome: formData.modulo_nome,
-        nota,
+        nota: numNota,
         data_conclusao: formData.data_conclusao,
         observacao: formData.observacao || null,
       };
@@ -188,14 +126,14 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
           .eq('id', editingId);
         if (error) throw error;
       } else {
+        const { data: userRes } = await supabase.auth.getUser();
         const { error } = await supabase
           .from('historico_notas')
-          .insert({ ...payload, inserido_por: (await supabase.auth.getUser()).data.user?.id });
+          .insert({ ...payload, inserido_por: userRes?.user?.id });
         if (error) throw error;
       }
 
-      // Se a nota for de aprovação (>= 7), finalizar o módulo automaticamente
-      if (nota >= 7) {
+      if (numNota >= 7) {
         const modulo = availableModules.find((m: any) => m.titulo === formData.modulo_nome);
         if (modulo?.id) {
           const { data: userData } = await supabase
@@ -212,8 +150,6 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
               .update({ modulos_finalizados_manual: updatedManual })
               .eq('id', selectedStudent.id);
           }
-        } else {
-          console.warn(`Módulo "${formData.modulo_nome}" não encontrado nos cursos para finalização automática.`);
         }
       }
 
@@ -222,6 +158,7 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
       setEditingId(null);
       setShowForm(false);
       fetchHistory();
+      if (onRefresh) onRefresh();
     } catch (err: any) {
       showToast('Erro ao salvar: ' + err.message, 'error');
     } finally {
@@ -236,6 +173,7 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
       if (error) throw error;
       showToast('Registro excluído!');
       fetchHistory();
+      if (onRefresh) onRefresh();
     } catch (err: any) {
       showToast('Erro ao excluir: ' + err.message, 'error');
     }
@@ -253,7 +191,21 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
     setShowForm(true);
   };
 
-  const availableModules = courses.find(c => c.nome === formData.curso_nome)?.livros || [];
+  const availableModules = [...(courses.find(c => c.nome === formData.curso_nome)?.livros || [])].sort((a: any, b: any) => a.titulo.localeCompare(b.titulo));
+
+  const filteredStudents = allStudents.filter(s => {
+    if (!searchTerm) return true;
+    return s.nome?.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const groupedStudents = filteredStudents.reduce((acc, s) => {
+    const nucName = s.nucleos?.nome || 'Sem Núcleo / Online';
+    if (!acc[nucName]) acc[nucName] = [];
+    acc[nucName].push(s);
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  const nucleoNames = Object.keys(groupedStudents).sort((a, b) => a.localeCompare(b));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -268,321 +220,194 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = () => {
         </div>
       )}
 
-      {/* Header */}
-      <div style={{ padding: '1rem 1.5rem', background: 'rgba(168,85,247,0.08)', borderRadius: '14px', borderLeft: '4px solid var(--primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <GraduationCap size={20} color="var(--primary)" />
-          <div>
-            <h3 style={{ color: 'var(--primary)', margin: 0, fontWeight: 800, fontSize: '1.1rem' }}>Histórico de Notas</h3>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              Insira notas de módulos concluídos e histórico acadêmico
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Selection Flow */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-        {/* Nucleus Selection */}
-        <div style={{ position: 'relative' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem', opacity: 0.7 }}>
-            <MapPin size={14} /> Filtrar por Núcleo
-          </label>
-          <select
-            value={selectedNucleo}
-            onChange={(e) => {
-              setSelectedNucleo(e.target.value);
-              setSearchTerm('');
-              setStudents([]);
-              setSelectedStudent(null);
-            }}
-            style={{ 
-              width: '100%', padding: '0.75rem', borderRadius: '12px', 
-              background: '#fff', border: '1px solid var(--glass-border)', 
-              color: '#000', fontSize: '0.9rem', outline: 'none', transition: 'all 0.2s' 
-            }}
-            onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; }}
-            onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; }}
-          >
-            <option value="">Todos os Núcleos</option>
-            {nucleos.map(n => (
-              <option key={n.id} value={n.id}>{n.nome}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Student Search */}
-        <div ref={searchRef} style={{ position: 'relative' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem', opacity: 0.7 }}>
-            <User size={14} /> Buscar Aluno
-          </label>
-          <div style={{ position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
-             <input
-               ref={searchInputRef}
-               type="text"
-               placeholder={selectedNucleo ? "Buscar aluno neste núcleo..." : "Digite o nome do aluno..."}
-               value={searchTerm}
-onChange={(e) => {
-                  const val = e.target.value
-                  if (selectedStudent && val !== selectedStudent.nome) {
-                    setSelectedStudent(null);
-                    setHistoryData([]);
-                    setShowForm(false);
-                    setEditingId(null);
-                  }
-                  setSearchTerm(val);
-                  searchStudents(val);
-                  setShowStudentDropdown(true);
-                  updateDropdownPos()
-                }}
-               onFocus={(e) => { 
-                 setShowStudentDropdown(true); 
-                 updateDropdownPos();
-                 e.target.style.borderColor = 'var(--primary)';
-                 e.target.style.boxShadow = '0 0 0 3px rgba(var(--primary-rgb), 0.2)';
-               }}
-               style={{
-                 width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem',
-                 borderRadius: '12px', background: '#fff',
-                 border: selectedStudent ? '2px solid var(--primary)' : '1px solid var(--glass-border)',
-                 color: '#000', fontSize: '0.9rem',
-                 transition: 'all 0.2s ease',
-                 outline: 'none'
-               }}
-               onBlur={(e) => {
-                 if (!selectedStudent) {
-                   e.target.style.borderColor = 'var(--glass-border)';
-                   e.target.style.boxShadow = 'none';
-                 }
-               }}
-             />
-
-          </div>
-        </div>
-
-
-        {showStudentDropdown && dropdownPos && (
-          <div style={{
-            position: 'fixed', zIndex: 9999,
-            top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width,
-            background: 'var(--bg-card)', border: '1px solid var(--glass-border)',
-            borderRadius: '12px',
-            maxHeight: '250px', overflowY: 'auto',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
-          }}>
-            {students.length === 0 ? (
-              <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                {searchTerm.length < 2 ? 'Digite ao menos 2 caracteres' : 'Nenhum aluno encontrado'}
+      {selectedStudent ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <button onClick={() => setSelectedStudent(null)} className="btn btn-outline" style={{ width: 'auto', alignSelf: 'flex-start', padding: '0.5rem 1rem' }}>
+            Voltar à lista de alunos
+          </button>
+          
+          <div style={{ padding: '1rem 1.5rem', background: 'rgba(245,158,11,0.08)', borderRadius: '14px', borderLeft: '4px solid #f59e0b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User size={24} color="#f59e0b" />
               </div>
-            ) : (
-              students.map(s => (
-                <div
-                  key={s.id}
-                  onMouseDown={() => {
-                    setSelectedStudent(s);
-                    setSearchTerm(s.nome);
-                    setShowStudentDropdown(false);
-                    setStudents([]);
-                  }}
-                  style={{
-                    padding: '0.75rem 1rem', cursor: 'pointer',
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                >
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{s.nome}</div>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.5 }}>{s.email}{s.cpf ? ` • ${s.cpf}` : ''}</div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {selectedStudent && (
-          <div style={{ marginTop: '0.75rem', padding: '0.75rem 1rem', background: 'rgba(var(--primary-rgb), 0.08)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{selectedStudent.nome}</span>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: '0.75rem' }}>{selectedStudent.email}</span>
+              <div>
+                <h3 style={{ color: '#f59e0b', margin: 0, fontWeight: 800, fontSize: '1.2rem' }}>{selectedStudent.nome}</h3>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  {selectedStudent.nucleos?.nome || 'Sem Núcleo / Online'} • {selectedStudent.email}
+                </span>
+              </div>
             </div>
             <button
-              onClick={() => { setSelectedStudent(null); setSearchTerm(''); setHistoryData([]); setShowForm(false); setEditingId(null); }}
-              style={{ background: 'rgba(244, 63, 94, 0.1)', color: 'var(--error)', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '0.75rem', cursor: 'pointer' }}
+              onClick={() => { setShowForm(!showForm); setEditingId(null); setFormData({ curso_nome: '', modulo_nome: '', nota: '', data_conclusao: new Date().toISOString().split('T')[0], observacao: '' }); }}
+              className="btn btn-primary"
+              style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
-              Limpar
+              <Plus size={16} /> {showForm ? 'Fechar Formulário' : 'Inserir Nota'}
             </button>
           </div>
-        )}
-      </div>
 
-      {/* Add Button */}
-      {selectedStudent && (
-        <button
-          onClick={() => { setShowForm(!showForm); setEditingId(null); setFormData({ curso_nome: '', modulo_nome: '', nota: '', data_conclusao: new Date().toISOString().split('T')[0], observacao: '' }); }}
-          className="btn btn-primary"
-          style={{ width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-        >
-          <Plus size={16} /> {showForm ? 'Fechar Formulário' : 'Inserir Nota'}
-        </button>
-      )}
+          {showForm && (
+            <div style={{ padding: '1.5rem', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
+                {editingId ? 'Editar Nota' : 'Inserir Nova Nota'}
+              </h4>
 
-      {/* Form */}
-      {showForm && selectedStudent && (
-        <div style={{ padding: '1.5rem', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
-            {editingId ? 'Editar Nota' : 'Inserir Nova Nota'}
-          </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
+                    <BookOpen size={12} /> Curso
+                  </label>
+                  <select
+                    value={formData.curso_nome}
+                    onChange={(e) => setFormData({ ...formData, curso_nome: e.target.value, modulo_nome: '' })}
+                    style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none' }}
+                  >
+                    <option value="">Selecione...</option>
+                    {courses.map(c => (
+                      <option key={c.id} value={c.nome}>{c.nome} ({c.nivel})</option>
+                    ))}
+                  </select>
+                </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
-                <BookOpen size={12} /> Curso
-              </label>
-               <select
-                 value={formData.curso_nome}
-                 onChange={(e) => setFormData({ ...formData, curso_nome: e.target.value, modulo_nome: '' })}
-                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
-                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
-                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
-               >
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
+                    <FileText size={12} /> Módulo
+                  </label>
+                  <select
+                    value={formData.modulo_nome}
+                    onChange={(e) => setFormData({ ...formData, modulo_nome: e.target.value })}
+                    style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none' }}
+                    disabled={!formData.curso_nome}
+                  >
+                    <option value="">Selecione...</option>
+                    {availableModules.map((m: any) => (
+                      <option key={m.id} value={m.titulo}>{m.titulo}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-                <option value="">Selecione...</option>
-                {courses.map(c => (
-                  <option key={c.id} value={c.nome}>{c.nome} ({c.nivel})</option>
-                ))}
-              </select>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
+                    <GraduationCap size={12} /> Nota (0 a 10, décimos em ,0 ou ,5)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    max="10"
+                    value={formData.nota}
+                    onChange={(e) => setFormData({ ...formData, nota: e.target.value })}
+                    placeholder="0.0 ou 0.5"
+                    style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
+                    <Calendar size={12} /> Data de Conclusão
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.data_conclusao}
+                    onChange={(e) => setFormData({ ...formData, data_conclusao: e.target.value })}
+                    style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
+                  Observação
+                </label>
+                <textarea
+                  value={formData.observacao}
+                  onChange={(e) => setFormData({ ...formData, observacao: e.target.value })}
+                  rows={2}
+                  placeholder="Observação opcional..."
+                  style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', resize: 'none', outline: 'none' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button onClick={() => { setShowForm(false); setEditingId(null); }} className="btn btn-outline" style={{ flex: 1 }}>
+                  Cancelar
+                </button>
+                <button onClick={handleSubmit} className="btn btn-primary" style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} disabled={saving}>
+                  {saving ? <Loader2 size={16} className="spinner" /> : editingId ? 'Atualizar' : 'Salvar Nota'}
+                </button>
+              </div>
             </div>
-
-            <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
-                <FileText size={12} /> Módulo
-              </label>
-               <select
-                 value={formData.modulo_nome}
-                 onChange={(e) => setFormData({ ...formData, modulo_nome: e.target.value })}
-                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
-                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
-                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
-                 disabled={!formData.curso_nome}
-               >
-
-                <option value="">Selecione...</option>
-                {availableModules.map((m: any) => (
-                  <option key={m.id} value={m.titulo}>{m.titulo}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
-                <GraduationCap size={12} /> Nota
-              </label>
-               <input
-                 type="number"
-                 step="0.01"
-                 min="0"
-                 max="10"
-                 value={formData.nota}
-                 onChange={(e) => setFormData({ ...formData, nota: e.target.value })}
-                 placeholder="0.00"
-                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
-                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
-                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
-               />
-
-            </div>
-
-            <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
-                <Calendar size={12} /> Data de Conclusão
-              </label>
-               <input
-                 type="date"
-                 value={formData.data_conclusao}
-                 onChange={(e) => setFormData({ ...formData, data_conclusao: e.target.value })}
-                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', outline: 'none', transition: 'all 0.2s' }}
-                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
-                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
-               />
-
-            </div>
-          </div>
-
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem', opacity: 0.7 }}>
-              Observação
-            </label>
-               <textarea
-                 value={formData.observacao}
-                 onChange={(e) => setFormData({ ...formData, observacao: e.target.value })}
-                 rows={2}
-                 placeholder="Observação opcional..."
-                 style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#fff', border: '1px solid var(--glass-border)', color: '#000', fontSize: '0.85rem', resize: 'none', outline: 'none', transition: 'all 0.2s' }}
-                 onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 0 2px rgba(var(--primary-rgb), 0.2)'; }}
-                 onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.boxShadow = 'none'; }}
-               />
-
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button onClick={() => { setShowForm(false); setEditingId(null); }} className="btn btn-outline" style={{ flex: 1 }}>
-              Cancelar
-            </button>
-            <button onClick={handleSubmit} className="btn btn-primary" style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} disabled={saving}>
-              {saving ? <Loader2 size={16} className="spinner" /> : editingId ? 'Atualizar' : 'Salvar Nota'}
-            </button>
-          </div>
+          )}
         </div>
-      )}
-
-      {/* History List */}
-      {selectedStudent && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, opacity: 0.7 }}>
-            Registros ({historyData.length})
-          </h4>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ position: 'relative' }}>
+            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+            <input
+              type="text"
+              placeholder="Buscar aluno..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem',
+                borderRadius: '12px', background: 'var(--glass)',
+                border: '1px solid var(--glass-border)', color: 'var(--text-main)',
+                fontSize: '0.95rem', outline: 'none'
+              }}
+            />
+          </div>
 
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
-              <Loader2 className="spinner" size={24} />
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <Loader2 className="spinner" size={32} style={{ opacity: 0.5 }} />
             </div>
-          ) : historyData.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '2rem', background: 'var(--glass)', borderRadius: '12px', border: '1px dashed var(--glass-border)' }}>
-              <p style={{ color: 'var(--text-muted)' }}>Nenhum registro encontrado.</p>
-            </div>
+          ) : nucleoNames.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem', opacity: 0.5 }}>Nenhum aluno encontrado.</div>
           ) : (
-            historyData.map(record => (
-              <div key={record.id} style={{
-                padding: '1rem', background: 'var(--glass)', borderRadius: '12px',
-                border: '1px solid var(--glass-border)', display: 'flex',
-                justifyContent: 'space-between', alignItems: 'center'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <GraduationCap size={16} color="var(--primary)" />
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{record.modulo_nome}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      {record.curso_nome} • Nota: <strong style={{ color: record.nota >= 7 ? 'var(--success)' : 'var(--error)' }}>{record.nota}</strong> • {new Date(record.data_conclusao).toLocaleDateString('pt-BR')}
-                    </div>
-                    {record.observacao && (
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>{record.observacao}</div>
-                    )}
+            nucleoNames.map(nuc => (
+              <div key={nuc} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+                <div 
+                  onClick={() => setExpandedNucleos(prev => ({ ...prev, [nuc]: !prev[nuc] }))}
+                  style={{ padding: '1rem 1.5rem', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0,0,0,0.2)' }}
+                >
+                  <div style={{ fontWeight: 800 }}>{nuc}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700 }}>{groupedStudents[nuc].length} aluno(s)</span>
+                    {expandedNucleos[nuc] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '0.4rem' }}>
-                  <button onClick={() => handleEdit(record)} className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.5rem' }} title="Editar">
-                    <Edit size={14} />
-                  </button>
-                  <button onClick={() => handleDelete(record.id)} className="btn btn-outline" style={{ width: 'auto', padding: '0.3rem 0.5rem', color: 'var(--error)' }} title="Excluir">
-                    <Trash2 size={14} />
-                  </button>
-                </div>
+                {expandedNucleos[nuc] && (
+                  <div style={{ padding: '1rem', display: 'grid', gap: '0.5rem' }}>
+                    {groupedStudents[nuc].sort((a: any, b: any) => (a.nome || '').localeCompare(b.nome || '')).map((s: any) => (
+                      <div
+                        key={s.id}
+                        onClick={() => setSelectedStudent(s)}
+                        style={{
+                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          padding: '1rem 1.25rem', background: 'rgba(255,255,255,0.02)',
+                          border: '1px solid var(--glass-border)', borderRadius: '16px',
+                          cursor: 'pointer', transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#f59e0b'; e.currentTarget.style.background = 'rgba(245,158,11, 0.05)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--glass-border)'; e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)' }}>
+                            <User size={20} color="#f59e0b" />
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{s.nome}</div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{s.email}</div>
+                          </div>
+                        </div>
+                        <ChevronRight size={18} opacity={0.5} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))
           )}

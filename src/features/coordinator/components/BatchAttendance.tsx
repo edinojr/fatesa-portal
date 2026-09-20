@@ -62,7 +62,7 @@ const BatchAttendance: React.FC<BatchAttendanceProps> = ({ students, onSave }) =
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {students.map((student) => (
+        {[...students].sort((a, b) => (a.nome || '').localeCompare(b.nome || '')).map((student) => (
           <div 
             key={student.id}
             className="p-4 rounded-2xl bg-white/5 border border-white/10 flex justify-between items-center hover:bg-white/10 transition-all"

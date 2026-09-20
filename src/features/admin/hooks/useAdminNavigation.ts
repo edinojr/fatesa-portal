@@ -12,7 +12,7 @@ export const useAdminNavigation = () => {
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
-  const dashboardView = useMemo(() => (searchParams.get('view') || 'main') as 'main' | 'users' | 'admin_tools', [searchParams]);
+  const dashboardView = useMemo(() => (searchParams.get('view') || 'main') as 'main' | 'users' | 'admin_tools' | 'insert' | 'history' | 'boletim' | 'manual_history', [searchParams]);
   const userTypeFilter = useMemo(() => searchParams.get('filter'), [searchParams]);
 
   const updateParams = useCallback((newParams: Record<string, string | null>) => {

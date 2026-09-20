@@ -1,17 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ChevronRight, LogIn, Info, BookOpen, UserCheck, GraduationCap, ArrowRight, Mail, ClipboardSignature } from 'lucide-react'
+import { ChevronRight, LogIn, Info, BookOpen, UserCheck, GraduationCap, ArrowRight, Mail, ClipboardSignature, Eye } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useSEO } from '../hooks/useSEO'
 import PublicPageLayout from '../components/layout/PublicPageLayout'
+import { supabase } from '../lib/supabase'
 
 const Landing = () => {
     const navigate = useNavigate();
+    const [visitCount, setVisitCount] = useState<number | null>(null);
 
     useSEO({
       title: 'Fatesa Casa do Saber | Formação Teológica e Ministerial',
       description: 'Aprofunde seus conhecimentos bíblicos com nossos cursos de teologia. Acesso 100% online, material exclusivo e certificado.'
     });
+
+    useEffect(() => {
+      const fetchVisitCount = async () => {
+        try {
+          const { count } = await supabase
+            .from('portal_access_logs')
+            .select('*', { count: 'exact', head: true })
+          setVisitCount(count || 0)
+        } catch {
+          // silent fail
+        }
+      }
+      fetchVisitCount()
+    }, [])
 
     return (
     <PublicPageLayout>
@@ -32,6 +48,12 @@ const Landing = () => {
                CADASTRE-SE <ChevronRight size={18} />
             </button>
           </div>
+          {visitCount !== null && visitCount > 0 && (
+            <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', opacity: 0.7 }}>
+              <Eye size={16} />
+              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{visitCount.toLocaleString('pt-BR')} acessos ao portal</span>
+            </div>
+          )}
         </div>
       </section>
 

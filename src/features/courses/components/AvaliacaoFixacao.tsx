@@ -118,7 +118,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         aula_id: lessonId,
         respostas: respostasAluno,
         nota: stats.grade,
-        status: 'pendente',
+        status: 'corrigida',
         updated_at: new Date().toISOString()
       };
       console.log('[AvaliacaoFixacao] Dados para upsert:', upsertData);
@@ -206,12 +206,17 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         return r === q.isTrue;
       case 'multiple_choice':
         return String(r) === String(q.correct);
-       case 'matching':
-         if (!q.matchingPairs) return false;
-         return q.matchingPairs.every((pair, mIdx) => {
-           const selectedIndex = Number(r?.[mIdx]);
-           return !isNaN(selectedIndex) && selectedIndex === mIdx;
-         });
+      case 'matching':
+        if (!q.matchingPairs) return false;
+        return q.matchingPairs.every((pair, mIdx) => {
+          const selectedIndex = Number(r?.[mIdx]);
+          if (isNaN(selectedIndex)) return false;
+          if (selectedIndex === mIdx) return true;
+          // Accept if the text of the selected right item is identical to the expected right item
+          const expectedText = pair.right?.trim().toLowerCase() || '';
+          const selectedText = q.matchingPairs![selectedIndex]?.right?.trim().toLowerCase() || '';
+          return expectedText === selectedText && expectedText !== '';
+        });
 
       default:
         return false;

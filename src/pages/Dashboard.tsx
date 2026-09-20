@@ -18,7 +18,8 @@ import {
   LayoutGrid,
   Users,
   Loader2,
-  PauseCircle
+  PauseCircle,
+  Play
 } from 'lucide-react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
@@ -39,8 +40,9 @@ import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
 import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
 import PopupAlertsDisplay from '../features/communication/components/PopupAlertsDisplay'
+import { CertificadosPanel } from '../components/CertificadosPanel'
 
-type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'forum' | 'modulos-concluidos'
+type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'forum' | 'modulos-concluidos' | 'certificados'
 
 const Dashboard = () => {
   const { profile, signOut, refreshProfile } = useProfile();
@@ -57,7 +59,7 @@ const Dashboard = () => {
   
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'forum', 'modulos-concluidos'];
+    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'forum', 'modulos-concluidos', 'certificados'];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
@@ -599,12 +601,20 @@ const Dashboard = () => {
                       Carregando seus módulos…
                     </p>
                   ) : currentModule ? (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
-                      Seu módulo atual: <strong style={{ color: 'var(--primary)' }}>{currentModule.courseName} — {currentModule.livro.titulo}</strong>
-                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginTop: '1rem' }}>
+                      <div>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Continue de onde parou</p>
+                        <p style={{ color: 'var(--text-main)', fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>
+                          {currentModule.courseName} <span style={{ color: 'var(--primary)' }}>— {currentModule.livro.titulo}</span>
+                        </p>
+                      </div>
+                      <button className="btn btn-primary" onClick={() => navigate(`/module/${currentModule.livro.id}`)} style={{ width: 'auto', padding: '1rem 2.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        Retomar Estudos <Play size={20} />
+                      </button>
+                    </div>
                   ) : (
                     <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
-                      Você concluiu todos os módulos disponíveis.
+                      Você concluiu todos os cursos disponíveis.
                     </p>
                   )}
                 </div>
@@ -635,6 +645,12 @@ const Dashboard = () => {
                 <div className="icon-wrapper"><FileText size={32} /></div>
                 <h3>Documentação</h3>
                 <p>Envie e gerencie seus documentos de matrícula.</p>
+              </div>
+
+              <div className="admin-action-card" onClick={() => setActiveTab('certificados')}>
+                <div className="icon-wrapper" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#eab308' }}><GraduationCap size={32} /></div>
+                <h3 style={{ color: '#eab308' }}>Históricos e Certificados</h3>
+                <p>Baixe seus históricos escolares e certificados de conclusão em PDF.</p>
               </div>
 
               {!isStaff && (
@@ -808,6 +824,10 @@ const Dashboard = () => {
             />
           )}
 
+          {activeTab === 'certificados' && (
+            <CertificadosPanel profile={profile} />
+          )}
+
           {activeTab === 'forum' && (
             <ForumPanel userProfile={profile} />
           )}
@@ -897,6 +917,33 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+          {/* Mobile Bottom Navigation */}
+          <div className="mobile-bottom-nav">
+            <button className={`bottom-nav-btn ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}>
+               <HomeIcon size={20} />
+               <span>Início</span>
+            </button>
+            <button className={`bottom-nav-btn ${activeTab === 'cursos' ? 'active' : ''}`} onClick={() => setActiveTab('cursos')}>
+               <BookOpen size={20} />
+               <span>Cursos</span>
+            </button>
+            <button className={`bottom-nav-btn ${activeTab === 'forum' ? 'active' : ''}`} onClick={() => setActiveTab('forum')}>
+               <MessageSquare size={20} />
+               <span>Fórum</span>
+            </button>
+            <button className={`bottom-nav-btn ${activeTab === 'documentos' ? 'active' : ''}`} onClick={() => setActiveTab('documentos')}>
+               <FileText size={20} />
+               <span>Docs</span>
+            </button>
+            {!isStaff && (
+              <button className={`bottom-nav-btn ${activeTab === 'financeiro' ? 'active' : ''}`} onClick={() => setActiveTab('financeiro')} style={{ position: 'relative' }}>
+                 <CreditCard size={20} />
+                 <span>Caixa</span>
+                 {isPastDue && <div style={{ position: 'absolute', top: '0.2rem', right: '0.5rem', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--error)' }} />}
+              </button>
+            )}
+          </div>
 
     </div>
   )

@@ -9,15 +9,25 @@ export const useProfessorAcademic = () => {
     setLoading(true);
     try {
       // Step 1: Fetch submissions
-      const { data: subDataRaw } = await supabase
-        .from('respostas_aulas')
-        .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
-        .order('updated_at', { ascending: false });
+      const [{ data: subDataRaw }, { data: manualDataRaw }] = await Promise.all([
+        supabase
+          .from('respostas_aulas')
+          .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
+          .order('updated_at', { ascending: false })
+          .limit(100000),
+        supabase
+          .from('historico_notas')
+          .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+          .limit(100000)
+      ]);
 
       if (!subDataRaw) return;
 
       const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
-      const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
+      const alunoIds = Array.from(new Set([
+        ...subDataRaw.map(r => r.aluno_id),
+        ...(manualDataRaw || []).map(r => r.aluno_id)
+      ].filter(Boolean)));
 
       const [aulasRes, usersRes] = await Promise.all([
         aulaIds.length > 0 
@@ -37,7 +47,33 @@ export const useProfessorAcademic = () => {
         users: usersMap[r.aluno_id] || null
       }));
 
-      setAcademicReport(mapped);
+      const manualRecords = (manualDataRaw || []).map(r => ({
+        id: r.id,
+        is_manual: true,
+        nota: r.nota,
+        status: 'corrigida',
+        created_at: r.created_at,
+        updated_at: r.updated_at,
+        data_conclusao: r.data_conclusao,
+        observacao: r.observacao,
+        users: usersMap[r.aluno_id] || null,
+        aulas: {
+          id: null,
+          titulo: r.modulo_nome,
+          tipo: 'prova',
+          versao: 1,
+          min_grade: 7,
+          is_bloco_final: true,
+          livros: { id: null, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
+        }
+      }));
+
+      const allRecords = [...mapped, ...manualRecords].filter(item => {
+        const isStaff = item.users && ['admin', 'suporte', 'professor', 'colaborador'].includes(item.users.tipo?.toLowerCase());
+        return !isStaff;
+      });
+
+      setAcademicReport(allRecords);
     } catch (err) {
       console.error('Error fetching academic report:', err);
     } finally {
@@ -50,16 +86,27 @@ export const useProfessorAcademic = () => {
     setLoading(true);
     try {
       // Step 1: Fetch submissions for specific students
-      const { data: subDataRaw } = await supabase
-        .from('respostas_aulas')
-        .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
-        .in('aluno_id', studentIds)
-        .order('updated_at', { ascending: false });
+      const [{ data: subDataRaw }, { data: manualDataRaw }] = await Promise.all([
+        supabase
+          .from('respostas_aulas')
+          .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
+          .in('aluno_id', studentIds)
+          .order('updated_at', { ascending: false })
+          .limit(100000),
+        supabase
+          .from('historico_notas')
+          .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+          .in('aluno_id', studentIds)
+          .limit(100000)
+      ]);
 
       if (!subDataRaw) return;
 
       const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
-      const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
+      const alunoIds = Array.from(new Set([
+        ...subDataRaw.map(r => r.aluno_id),
+        ...(manualDataRaw || []).map(r => r.aluno_id)
+      ].filter(Boolean)));
 
       const [aulasRes, usersRes] = await Promise.all([
         aulaIds.length > 0 
@@ -79,7 +126,33 @@ export const useProfessorAcademic = () => {
         users: usersMap[r.aluno_id] || null
       }));
 
-      setAcademicReport(mapped);
+      const manualRecords = (manualDataRaw || []).map(r => ({
+        id: r.id,
+        is_manual: true,
+        nota: r.nota,
+        status: 'corrigida',
+        created_at: r.created_at,
+        updated_at: r.updated_at,
+        data_conclusao: r.data_conclusao,
+        observacao: r.observacao,
+        users: usersMap[r.aluno_id] || null,
+        aulas: {
+          id: null,
+          titulo: r.modulo_nome,
+          tipo: 'prova',
+          versao: 1,
+          min_grade: 7,
+          is_bloco_final: true,
+          livros: { id: null, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
+        }
+      }));
+
+      const allRecords = [...mapped, ...manualRecords].filter(item => {
+        const isStaff = item.users && ['admin', 'suporte', 'professor', 'colaborador'].includes(item.users.tipo?.toLowerCase());
+        return !isStaff;
+      });
+
+      setAcademicReport(allRecords);
     } catch (err) {
       console.error('Error fetching academic history:', err);
     } finally {

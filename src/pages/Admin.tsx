@@ -173,6 +173,7 @@ const Admin = () => {
     pendingDocs,
     pendingPaysValidation,
     academicReport,
+    fetchAnalytics,
     handleDeleteNucleo,
     handleResetAutoCorrectedExams,
     updateParams
@@ -247,6 +248,7 @@ const Admin = () => {
       case 'analytics': return 'Análise do Portal';
       case 'reports': return 'Relatório de Pagamentos';
       case 'grade_history': return 'Histórico de Notas';
+      case 'academic': return 'Controle Acadêmico';
       case 'docs_archive': return 'Arquivo de Documentação';
       case 'boletim': return 'Boletim de Notas';
       case 'popups': return 'Pop-ups de Alertas e Informes';
@@ -267,6 +269,7 @@ const Admin = () => {
       case 'analytics': return 'Monitore visualizações, acessos únicos e rotatividade de usuários.';
       case 'reports': return 'Lista de alunos que enviaram comprovantes pelo portal.';
       case 'grade_history': return 'Insira e gerencie notas de módulos concluídos pelos alunos.';
+      case 'academic': return 'Gerencie notas e acompanhe o progresso acadêmico dos alunos.';
       case 'docs_archive': return 'Central de arquivos organizada por polo e status.';
       case 'boletim': return 'Visualize e edite notas de provas e avaliações de todos os alunos.';
       case 'popups': return 'Crie pop-ups para avisar os usuários sobre manutenções, problemas e informes importantes.';
@@ -672,75 +675,126 @@ const Admin = () => {
 
           {activeTab === 'academic' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {/* Cabeçalho */}
-              <div style={{ padding: '1.5rem 2rem', background: 'linear-gradient(135deg, rgba(168,85,247,0.12) 0%, rgba(168,85,247,0.02) 100%)', borderRadius: '20px', border: '1px solid rgba(168,85,247,0.2)' }}>
-                <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.5rem' }}>
-                  <History size={28} color="var(--primary)" /> Controle Acadêmico
-                </h2>
-                <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                  Boletim completo e inserção manual de notas para alunos com progresso iniciado no formato analógico.
-                </p>
-              </div>
+              {/* VIEW: MAIN — 2 cards */}
+              {dashboardView === 'main' && (
+                <>
+                  <div style={{ padding: '1.5rem 2rem', background: 'linear-gradient(135deg, rgba(168,85,247,0.12) 0%, rgba(168,85,247,0.02) 100%)', borderRadius: '20px', border: '1px solid rgba(168,85,247,0.2)' }}>
+                    <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.5rem' }}>
+                      <History size={28} color="var(--primary)" /> Controle Acadêmico
+                    </h2>
+                    <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                      Gerencie notas e acompanhe o progresso acadêmico dos alunos.
+                    </p>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                    {/* Card 1: Inserir Notas Manuais */}
+                    <div
+                      className="admin-action-card"
+                      onClick={() => updateParams({ view: 'insert' })}
+                      style={{ cursor: 'pointer', border: '1px solid rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.03)', padding: '2rem', borderRadius: '20px', textAlign: 'center' }}
+                    >
+                      <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                        <FileText size={28} color="#f59e0b" />
+                      </div>
+                      <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: 800 }}>Inserir Notas Manualmente</h3>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' }}>Painel exclusivo para inserir as notas dos alunos.</p>
+                    </div>
 
-              {/* Seção 1: Visão Geral do Histórico */}
-              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', background: 'rgba(59,130,246,0.06)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <ClipboardList size={20} color="#3b82f6" />
-                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Histórico Acadêmico dos Alunos</span>
-                  <span style={{ fontSize: '0.7rem', color: '#3b82f6', background: 'rgba(59,130,246,0.1)', padding: '2px 10px', borderRadius: '6px' }}>VISÃO COMPLETA</span>
-                </div>
-                <div style={{ padding: '1rem' }}>
-                  <AcademicHistory
-                    data={academicReport}
-                    searchTerm={searchTerm}
-                    onDelete={handleDeleteSubmission}
-                    onUpdateStatus={handleTypeChange}
-                    allStudents={users}
-                  />
-                </div>
-              </div>
+                    {/* Card 2: Histórico Consolidado */}
+                    <div
+                      className="admin-action-card"
+                      onClick={() => updateParams({ view: 'history' })}
+                      style={{ cursor: 'pointer', border: '1px solid rgba(59,130,246,0.3)', background: 'rgba(59,130,246,0.03)', padding: '2rem', borderRadius: '20px', textAlign: 'center' }}
+                    >
+                      <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(59,130,246,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                        <ClipboardList size={28} color="#3b82f6" />
+                      </div>
+                      <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: 800 }}>Histórico Consolidado</h3>
+                      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' }}>Aparecer todas as notas dos alunos (processo online e inserção manual).</p>
+                    </div>
+                  </div>
+                </>
+              )}
 
-              {/* Seção 2: Boletim de Notas */}
-              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', background: 'rgba(var(--primary-rgb), 0.04)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <GraduationCap size={20} color="var(--primary)" />
-                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Boletim de Notas</span>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '2px 10px', borderRadius: '6px' }}>EDIÇÃO INLINE</span>
-                </div>
-                <div style={{ padding: '1rem' }}>
-                  <BoletimPanel
-                    courses={courses}
-                    submissions={boletimSubmissions}
-                    allStudents={users}
-                    professorNucleos={allNucleos}
-                    onRefresh={fetchBoletimSubmissions}
-                  />
-                </div>
-              </div>
+              {/* VIEW: INSERT — Grade insertion only */}
+              {dashboardView === 'insert' && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <button onClick={() => updateParams({ view: 'main' })} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <ChevronLeft size={16} /> Voltar
+                    </button>
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <FileText size={28} color="#f59e0b" /> Inserir Notas Manualmente
+                    </h2>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
+                    <GradeHistoryInsertion onRefresh={() => { fetchBoletimSubmissions(); fetchAnalytics(); }} />
+                  </div>
+                </>
+              )}
 
-              {/* Seção 3: Inserção Manual de Histórico */}
-              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', background: 'rgba(245,158,11,0.06)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <FileText size={20} color="#f59e0b" />
-                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Inserir Notas do Processo Manual (Analógico)</span>
-                  <span style={{ fontSize: '0.7rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', padding: '2px 10px', borderRadius: '6px' }}>HISTÓRICO</span>
-                </div>
-                <div style={{ padding: '1.5rem' }}>
-                  <GradeHistoryInsertion onRefresh={fetchBoletimSubmissions} />
-                </div>
-              </div>
+              {/* VIEW: HISTORY — Full student history (online + manual) */}
+              {dashboardView === 'history' && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <button onClick={() => updateParams({ view: 'main' })} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <ChevronLeft size={16} /> Voltar
+                    </button>
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <ClipboardList size={28} color="#3b82f6" /> Histórico Consolidado
+                    </h2>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '1rem' }}>
+                    <AcademicHistory
+                      data={academicReport}
+                      searchTerm={searchTerm}
+                      onDelete={handleDeleteSubmission}
+                      onUpdateStatus={handleTypeChange}
+                      allStudents={users}
+                    />
+                  </div>
+                </>
+              )}
 
-              {/* Seção 4: Histórico Manual Consolidado (todos os alunos alterados) */}
-              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
-                <div style={{ padding: '1rem 1.5rem', background: 'rgba(168,85,247,0.06)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <History size={20} color="#a855f7" />
-                  <span style={{ fontWeight: 800, fontSize: '1rem' }}>Histórico Alterado Manualmente (Todos os Alunos)</span>
-                  <span style={{ fontSize: '0.7rem', color: '#a855f7', background: 'rgba(168,85,247,0.1)', padding: '2px 10px', borderRadius: '6px' }}>CONSOLIDADO</span>
-                </div>
-                <div style={{ padding: '1.5rem' }}>
-                  <ManualHistoryPanel onRefresh={fetchBoletimSubmissions} />
-                </div>
-              </div>
+              {/* VIEW: BOLETIM */}
+              {dashboardView === 'boletim' && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <button onClick={() => updateParams({ view: 'main' })} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <ChevronLeft size={16} /> Voltar
+                    </button>
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <GraduationCap size={28} color="var(--primary)" /> Boletim de Notas
+                    </h2>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '1rem' }}>
+                    <BoletimPanel
+                      courses={courses}
+                      submissions={boletimSubmissions}
+                      allStudents={users}
+                      professorNucleos={allNucleos}
+                      onRefresh={fetchBoletimSubmissions}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* VIEW: MANUAL HISTORY */}
+              {dashboardView === 'manual_history' && (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <button onClick={() => updateParams({ view: 'main' })} className="btn btn-outline" style={{ width: 'auto', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <ChevronLeft size={16} /> Voltar
+                    </button>
+                    <h2 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <History size={28} color="#10b981" /> Histórico Manual Consolidado
+                    </h2>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>
+                    <ManualHistoryPanel onRefresh={() => { fetchBoletimSubmissions(); fetchAnalytics(); }} />
+                  </div>
+                </>
+              )}
             </div>
           )}
 

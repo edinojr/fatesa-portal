@@ -59,16 +59,16 @@ export default function StudentsManagement({
   }
 
   const filteredStudents = allStudents.filter(s => {
-    // Excluir professores da gestão de alunos, exceto se também forem alunos (escopo)
-    const isProfessor = s.tipo === 'professor';
-    if (isProfessor && !hasStudentScope(s)) return false;
+    // Excluir professores da gestão de alunos, independentemente do escopo
+    const isProfessor = s.tipo === 'professor' || s.tipo === 'admin' || s.tipo === 'suporte';
+    if (isProfessor) return false;
 
     // Filtro por Núcleo selecionado nos cards
     if (selectedNucleoId && s.nucleo_id !== selectedNucleoId) return false;
 
     return s.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
            s.email.toLowerCase().includes(searchTerm.toLowerCase())
-  })
+  }).sort((a, b) => (a.nome || '').localeCompare(b.nome || ''))
 
   const groupedStudents = filteredStudents.reduce((acc: any, student: any) => {
     const nucName = student.nucleos?.nome || 'Sem Núcleo Definido';

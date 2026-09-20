@@ -417,7 +417,11 @@ const GradingPanel: React.FC<GradingPanelProps> = ({
                                     <ShieldCheck size={14} /> Fila de Provas ({nucleos[nuc].provas.length})
                                   </div>
                                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1rem' }}>
-                                    {nucleos[nuc].provas.map((sub: any) => renderSubmissionCard(sub))}
+                                    {[...nucleos[nuc].provas].sort((a, b) => {
+                                      const nameA = a.student_name || a.users?.nome || '';
+                                      const nameB = b.student_name || b.users?.nome || '';
+                                      return nameA.localeCompare(nameB);
+                                    }).map((sub: any) => renderSubmissionCard(sub))}
                                   </div>
                                 </div>
                               )}

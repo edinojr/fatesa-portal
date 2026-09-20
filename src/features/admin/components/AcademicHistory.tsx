@@ -9,14 +9,16 @@ import {
   ClipboardList,
   ShieldCheck,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  FileText
 } from 'lucide-react';
 import { isStaffStudentProxy } from '../../../lib/authUtils';
+import { generateHistoricoPDF, generateCertificadoPDF } from '../../../utils/pdfGenerator';
 
 interface AcademicHistoryProps {
   data: any[];
   searchTerm: string;
-  onDelete?: (id: string) => Promise<void>;
+  onDelete?: (id: string, isManual?: boolean) => Promise<void>;
   onUpdateStatus?: (userId: string, newType: string) => Promise<void>;
   allStudents?: any[];
   onCorrect?: (id: string) => void;
@@ -28,11 +30,83 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
   const [selectedNucleus, setSelectedNucleus] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
 
-  const handleDelete = async (e: React.MouseEvent, id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string, isManual?: boolean) => {
     e.stopPropagation();
     if (window.confirm('Tem certeza que deseja excluir este registro permanentemente?')) {
-      if (onDelete) await onDelete(id);
+      if (onDelete) await onDelete(id, isManual);
     }
+  };
+
+  const handleDownloadHistorico = () => {
+    if (!selectedStudentData) return;
+    
+    // Preparar dados do aluno
+    const alunoData = {
+      nome: selectedStudentData.std.name,
+      nucleo: selectedStudentData.std.nucleo,
+      matricula: 'N/A', // Pode ser alterado depois caso haja ID de matrícula específico
+      dataMatricula: 'N/A',
+      status: selectedStudentData.std.tipo === 'ex_aluno' ? 'Formado' : 'Ativo'
+    };
+
+    // Extrair apenas as matérias finalizadas com sucesso (nota >= min_grade)
+    const materiasParaHistorico: { nome: string; media: string | number }[] = [];
+    
+    Object.entries(selectedStudentData.std.modulos).forEach(([modName, content]: [string, any]) => {
+      // Filtrar a melhor nota da prova desse módulo
+      let melhorNotaProva: number | null = null;
+      content.provas.forEach((p: any) => {
+        if (p.nota !== null && (melhorNotaProva === null || p.nota > melhorNotaProva)) {
+          melhorNotaProva = p.nota;
+        }
+      });
+      
+      // Assumindo min_grade de 7 se não houver no item
+      if (melhorNotaProva !== null && melhorNotaProva >= 7.0) {
+        materiasParaHistorico.push({
+          nome: modName,
+          media: Number(melhorNotaProva).toFixed(1)
+        });
+      }
+    });
+
+    // Ordenar matérias
+    materiasParaHistorico.sort((a, b) => a.nome.localeCompare(b.nome));
+
+    generateHistoricoPDF(alunoData, materiasParaHistorico);
+  };
+
+  const handleDownloadCertificado = () => {
+    if (!selectedStudentData) return;
+
+    const basicCount = selectedStudentData.std.stats.finishedBasic.size;
+    const mediumCount = selectedStudentData.std.stats.finishedMedium.size;
+    
+    // Nivel a gerar
+    let nivel: 'basico' | 'medio' = 'basico';
+
+    if (mediumCount >= 8) {
+      const choice = window.prompt("Esse aluno possui os requisitos para o curso Médio e Básico.\nDigite 'M' para emitir o certificado do MÉDIO ou 'B' para o BÁSICO:");
+      if (!choice) return;
+      if (choice.trim().toUpperCase() === 'M') {
+        nivel = 'medio';
+      } else if (choice.trim().toUpperCase() === 'B') {
+        nivel = 'basico';
+      } else {
+        alert("Opção inválida.");
+        return;
+      }
+    } else if (basicCount >= 27) {
+      nivel = 'basico';
+    } else {
+      alert(`Este aluno ainda não concluiu todos os módulos obrigatórios.\nConcluídos: ${basicCount}/27 (Básico) e ${mediumCount}/8 (Médio).`);
+      return;
+    }
+
+    const nomeImpresso = window.prompt("Digite o nome do aluno que sairá no certificado:", selectedStudentData.std.name);
+    if (!nomeImpresso) return; // Cancelou
+
+    generateCertificadoPDF(nomeImpresso.trim(), nivel);
   };
 
   // Deep Hierarchy Logic
@@ -361,6 +435,15 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                 return null;
               })()}
 
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginRight: '1rem' }}>
+                  <button onClick={handleDownloadHistorico} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                    <FileText size={14} /> Histórico PDF
+                  </button>
+                  <button onClick={handleDownloadCertificado} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                    <GraduationCap size={14} /> Certificado PDF
+                  </button>
+                </div>
+
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Módulos em curso</div>
                 <div style={{ fontSize: '1.3rem', fontWeight: 900 }}>{Object.keys(selectedStudentData.std.modulos).length}</div>
@@ -379,73 +462,13 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {Object.entries(selectedStudentData.std.modulos).map(([modName, content]: [string, any]) => (
+              {Object.entries(selectedStudentData.std.modulos).sort((a, b) => a[0].localeCompare(b[0])).map(([modName, content]: [string, any]) => (
                 <div key={modName} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '16px', padding: '1.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <h5 style={{ margin: '0 0 1.25rem 0', fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <BookOpen size={18} /> {modName}
                   </h5>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-                    {/* EXERCICIOS SECTION */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <ClipboardList size={14} /> Exercícios ({content.atividades.length})
-                      </div>
-                      {content.atividades.length === 0 ? (
-                        <div style={{ fontSize: '0.8rem', opacity: 0.3, fontStyle: 'italic', padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', border: '1px dashed var(--glass-border)' }}>Nenhum exercício registrado</div>
-                      ) : (
-                        content.atividades.map((item: any) => (
-                          <div key={item.id} style={{
-                            background: 'rgba(59, 130, 246, 0.05)',
-                            padding: '1rem',
-                            borderRadius: '14px',
-                            border: '1px solid rgba(59, 130, 246, 0.1)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '0.5rem',
-                            position: 'relative'
-                          }} className="activity-card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1.4, paddingRight: '2rem' }}>{item.aulas?.titulo}</div>
-                              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                <div style={{
-                                  fontSize: '0.8rem',
-                                  fontWeight: 900,
-                                  color: item.nota !== null ? (item.nota >= 7 ? 'var(--success)' : 'var(--error)') : '#eab308',
-                                  background: item.nota !== null ? (item.nota >= 7 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)') : 'rgba(234, 179, 8, 0.1)',
-                                  padding: '2px 8px',
-                                  borderRadius: '6px'
-                                }}>
-                                  {item.nota !== null ? item.nota.toFixed(1) : 'PENDENTE'}
-                                </div>
-                                {item.nota === null && onCorrect && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onCorrect(item.id);
-                                    }}
-                                    style={{ background: 'rgba(59, 130, 246, 0.15)', border: 'none', color: '#3b82f6', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 800 }}
-                                  >
-                                    Corrigir
-                                  </button>
-                                )}
-                                <button
-                                  onClick={(e) => handleDelete(e, item.id)}
-                                  style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: 'var(--error)', padding: '4px', borderRadius: '6px', cursor: 'pointer' }}
-                                  title="Excluir Atividade"
-                                >
-                                  <div style={{ width: '14px', height: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                  </div>
-                                </button>
-                              </div>
-                            </div>
-                            <div style={{ fontSize: '0.65rem', opacity: 0.5, fontWeight: 600 }}>Realizado em: {new Date(item.created_at).toLocaleDateString()}</div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-
                     {/* PROVAS SECTION */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                       <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -497,7 +520,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                                   </button>
                                 )}
                                 <button
-                                  onClick={(e) => handleDelete(e, item.id)}
+                                  onClick={(e) => handleDelete(e, item.id, item.is_manual)}
                                   style={{ background: 'rgba(239, 68, 68, 0.15)', border: 'none', color: '#ff4d4d', padding: '6px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}
                                   title="Excluir Prova"
                                 >

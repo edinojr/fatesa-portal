@@ -17,18 +17,32 @@ const AnalyticsTracker = () => {
         }
 
         const { data: { session } } = await supabase.auth.getSession()
-        if (!session?.access_token || isTokenExpired(session.access_token)) return
 
-        await supabase.from('portal_access_logs').insert({
-          user_id: session.user.id,
-          session_id: sessionId,
-          user_type: 'registrado',
-          path: location.pathname + location.search
-        })
+        if (session?.access_token && !isTokenExpired(session.access_token)) {
+          // Logged-in user
+          await supabase.from('portal_access_logs').insert({
+            user_id: session.user.id,
+            session_id: sessionId,
+            user_type: 'registrado',
+            path: location.pathname + location.search
+          })
+        } else {
+          // Visitor (not logged in) — track public pages
+          const publicPaths = ['/', '/sobre', '/metodologia', '/cursos', '/patrono', '/contato', '/matricula', '/login', '/signup']
+          const isPublic = publicPaths.some(p => location.pathname === p || location.pathname.startsWith('/cursos'))
+          if (isPublic) {
+            await supabase.from('portal_access_logs').insert({
+              user_id: null,
+              session_id: sessionId,
+              user_type: 'visitante',
+              path: location.pathname + location.search
+            })
+          }
+        }
       } catch (err: any) {
         // Silent fail for analytics. Most likely network or lock issue.
         if (err?.name === 'AbortError' || err?.message?.includes('Fetch')) return;
-        console.error('Analytics Error:', err)
+        // RLS may block visitor inserts — silently ignore
       }
     }, 500)
 

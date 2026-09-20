@@ -33,10 +33,10 @@ const AttendanceList: React.FC<AttendanceListProps> = ({
 
     // Excluir professores da lista de chamada, exceto se também forem alunos (escopo)
     const isProfessor = s.tipo === 'professor';
-    if (isProfessor && !hasStudentScope(s)) return false;
+    if (isProfessor) return false;
     
     return true;
-  })
+  }).sort((a, b) => (a.nome || '').localeCompare(b.nome || ''))
 
   useEffect(() => {
     // If we have history for this date and nucleo, load it
