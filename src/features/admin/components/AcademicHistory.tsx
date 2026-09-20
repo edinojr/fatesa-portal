@@ -553,48 +553,66 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             <p style={{ opacity: 0.3, maxWidth: '400px', margin: '0.5rem auto' }}>Tente ajustar os filtros de busca ou verifique se há alunos vinculados.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
-            {studentList.map(s => {
-              const hist = hierarchicalData[s.nucleos?.nome || 'Geral / Sem Núcleo']?.[s.id];
-              const modCount = hist ? Object.keys(hist.modulos).length : 0;
-              return (
-                <div
-                  key={s.id}
-                  onClick={() => setSelectedStudent(s.id)}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '1rem 1.25rem',
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid var(--glass-border)',
-                    borderRadius: '16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.05)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--glass-border)'; e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
-                    <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)', flexShrink: 0 }}>
-                      <User size={20} color={s.tipo === 'ex_aluno' ? '#EAB308' : 'var(--primary)'} />
-                    </div>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 800, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.nome}</div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {s.email} • {s.nucleos?.nome || 'Sem núcleo'}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {Object.entries(
+              studentList.reduce((acc, s) => {
+                const nuc = s.nucleos?.nome || 'Geral / Sem Núcleo';
+                if (!acc[nuc]) acc[nuc] = [];
+                acc[nuc].push(s);
+                return acc;
+              }, {} as Record<string, typeof studentList>)
+            )
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([nucleoName, students]) => (
+              <div key={nucleoName}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--primary)', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                  {nucleoName} <span style={{ fontSize: '0.8rem', opacity: 0.7, marginLeft: '0.5rem' }}>({students.length} alunos)</span>
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
+                  {students.map(s => {
+                    const hist = hierarchicalData[s.nucleos?.nome || 'Geral / Sem Núcleo']?.[s.id];
+                    const modCount = hist ? Object.keys(hist.modulos).length : 0;
+                    return (
+                      <div
+                        key={s.id}
+                        onClick={() => setSelectedStudent(s.id)}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '1rem 1.25rem',
+                          background: 'rgba(255,255,255,0.02)',
+                          border: '1px solid var(--glass-border)',
+                          borderRadius: '16px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.background = 'rgba(var(--primary-rgb), 0.05)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--glass-border)'; e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
+                          <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)', flexShrink: 0 }}>
+                            <User size={20} color={s.tipo === 'ex_aluno' ? '#EAB308' : 'var(--primary)'} />
+                          </div>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.nome}</div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {s.email}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: modCount > 0 ? 'var(--primary)' : 'var(--text-muted)', opacity: modCount > 0 ? 1 : 0.5 }}>
+                            {modCount > 0 ? `${modCount} módulo(s)` : 'sem registros'}
+                          </span>
+                          <ChevronRight size={18} opacity={0.5} />
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: modCount > 0 ? 'var(--primary)' : 'var(--text-muted)', opacity: modCount > 0 ? 1 : 0.5 }}>
-                      {modCount > 0 ? `${modCount} módulo(s)` : 'sem registros'}
-                    </span>
-                    <ChevronRight size={18} opacity={0.5} />
-                  </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )
       )}
