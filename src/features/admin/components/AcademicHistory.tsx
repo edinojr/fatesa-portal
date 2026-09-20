@@ -565,12 +565,17 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             .sort((a, b) => a[0].localeCompare(b[0]))
             .map(([nucleoName, studentsGroup]) => {
               const students = studentsGroup as typeof studentList;
+              const isSearching = searchTerm && searchTerm.length > 0;
               return (
-              <div key={nucleoName}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--primary)', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                  {nucleoName} <span style={{ fontSize: '0.8rem', opacity: 0.7, marginLeft: '0.5rem' }}>({students.length} alunos)</span>
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
+              <details key={nucleoName} open={isSearching || false} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px solid var(--glass-border)', padding: '1.25rem', transition: 'all 0.2s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+                <summary style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary)', cursor: 'pointer', outline: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none', margin: '-0.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <MapPin size={22} />
+                    {nucleoName} <span style={{ fontSize: '0.85rem', opacity: 0.7, background: 'rgba(var(--primary-rgb), 0.1)', padding: '4px 10px', borderRadius: '8px' }}>{students.length} alunos</span>
+                  </div>
+                  <ChevronRight size={20} opacity={0.5} style={{ transform: 'rotate(90deg)' }} className="details-arrow" />
+                </summary>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem', marginTop: '1.5rem' }}>
                   {students.map((s: any) => {
                     const hist = hierarchicalData[s.nucleos?.nome || 'Geral / Sem Núcleo']?.[s.id];
                     const modCount = hist ? Object.keys(hist.modulos).length : 0;
@@ -613,7 +618,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                     );
                   })}
                 </div>
-              </div>
+              </details>
             );
             })}
           </div>
