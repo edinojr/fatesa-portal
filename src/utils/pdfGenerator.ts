@@ -170,6 +170,15 @@ export const generateHistoricoPDF = async (
   doc.text(`TOTAL DE HORAS DO CURSO = ${totalHoras}`, 110, finalY);
 
   // Assinatura
+  try {
+    const assinaturaData = await getBase64ImageFromURL('/assinatura.png');
+    // Adiciona a assinatura centralizada acima da linha
+    // x, y, width, height. Calculando para ficar acima de finalY + 30
+    doc.addImage(assinaturaData, 'PNG', 85, finalY + 2, 40, 28);
+  } catch (e) {
+    console.warn("Imagem de assinatura não encontrada.");
+  }
+  
   doc.line(70, finalY + 30, 140, finalY + 30);
   doc.setFont('helvetica', 'normal');
   doc.text('Secretaria - Aparecida Panisso', 105, finalY + 35, { align: 'center' });
