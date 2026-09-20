@@ -213,8 +213,8 @@ export const generateCertificadoPDF = async (
   doc.setFontSize(36); // Tamanho grande para o nome
   doc.setFont('times', 'italic');
   
-  // Imprime o nome do aluno centralizado. Movido 20mm (2cm) para cima (de 115 para 95) para não sobrepor outras informações
-  doc.text(alunoNome, centerX, 95, { align: 'center' });
+  // Imprime o nome do aluno centralizado. Movido mais para cima (Y = 75) para encaixar no campo de nome
+  doc.text(alunoNome, centerX, 75, { align: 'center' });
 
   // Baixar
   doc.save(`Certificado_${cursoNivel}_${alunoNome.replace(/\s+/g, '_')}.pdf`);
