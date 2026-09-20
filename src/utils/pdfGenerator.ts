@@ -211,36 +211,36 @@ export const generateCertificadoPDF = async (
 
   // 1. Título "CERTIFICADO"
   doc.setTextColor(24, 38, 86); // Azul escuro
-  doc.setFontSize(40);
+  doc.setFontSize(42);
   doc.setFont('times', 'bold');
-  doc.text('C E R T I F I C A D O', centerX, 45, { align: 'center' });
+  doc.text('C E R T I F I C A D O', centerX, 55, { align: 'center' });
 
   // 2. Nível do Curso
   const cursoTexto = cursoNivel === 'medio' ? 'TEOLOGIA MÉDIO' : 'TEOLOGIA BÁSICO';
   doc.setTextColor(184, 134, 11); // Dourado
   doc.setFontSize(16);
   doc.setFont('times', 'bold');
-  doc.text(cursoTexto, centerX, 65, { align: 'center' });
+  doc.text(cursoTexto, centerX, 75, { align: 'center' });
 
   // 3. Subtítulo "CERTIFICADO DE CONCLUSÃO"
   doc.setTextColor(80, 80, 80); // Cinza escuro
   doc.setFontSize(16);
   doc.setFont('times', 'bold');
-  doc.text('CERTIFICADO DE CONCLUSÃO', centerX, 80, { align: 'center' });
+  doc.text('CERTIFICADO DE CONCLUSÃO', centerX, 90, { align: 'center' });
 
   // 4. Nome do Aluno
   doc.setTextColor(24, 38, 86); // Azul escuro
-  doc.setFontSize(36);
+  doc.setFontSize(38);
   doc.setFont('times', 'italic');
-  doc.text(`"${alunoNome}"`, centerX, 100, { align: 'center' });
+  doc.text(`"${alunoNome}"`, centerX, 115, { align: 'center' });
 
   // 5. Parágrafo de texto
   doc.setTextColor(80, 80, 80); // Cinza escuro
   doc.setFontSize(14);
-  doc.setFont('times', 'bold');
-  doc.text('PELO CONHECIMENTO ADQUIRIDO, CONSISTÊNCIA,', centerX, 120, { align: 'center' });
-  doc.text('DEDICAÇÃO, RESPEITO AOS PRECEITOS E', centerX, 128, { align: 'center' });
-  doc.text('DIRETRIZES DA PALAVRA DE DEUS.', centerX, 136, { align: 'center' });
+  doc.setFont('times', 'normal');
+  doc.text('PELO CONHECIMENTO ADQUIRIDO, CONSISTÊNCIA,', centerX, 135, { align: 'center' });
+  doc.text('DEDICAÇÃO, RESPEITO AOS PRECEITOS E', centerX, 142, { align: 'center' });
+  doc.text('DIRETRIZES DA PALAVRA DE DEUS.', centerX, 149, { align: 'center' });
 
   // Baixar
   doc.save(`Certificado_${cursoNivel}_${alunoNome.replace(/\s+/g, '_')}.pdf`);
