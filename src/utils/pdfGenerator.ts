@@ -210,18 +210,19 @@ export const generateCertificadoPDF = async (
   const centerX = width / 2 - 20; 
 
   // Imprime o nível do curso (dinâmico)
+  // Subido para Y=35 para não sobrepor o nome que agora está em Y=50
   const cursoTexto = cursoNivel === 'medio' ? 'TEOLOGIA MÉDIO' : 'TEOLOGIA BÁSICO';
   doc.setTextColor(184, 134, 11); // Dourado
   doc.setFontSize(16);
   doc.setFont('times', 'bold');
-  doc.text(cursoTexto, centerX, 50, { align: 'center' });
+  doc.text(cursoTexto, centerX, 35, { align: 'center' });
 
-  // Nome do aluno preenchendo o espaço exato
-  // Posição no eixo Y: 8.51cm (85.1mm) conforme especificado
+  // Nome do aluno
+  // Posição no eixo Y: 5cm (50mm) conforme nova especificação
   doc.setTextColor(40, 50, 100); // Azul escuro original
   doc.setFontSize(36); // Tamanho original
   doc.setFont('times', 'italic');
-  doc.text(`"${alunoNome}"`, centerX, 85.1, { align: 'center' });
+  doc.text(`"${alunoNome}"`, centerX, 50, { align: 'center' });
 
   // Baixar
   doc.save(`Certificado_${cursoNivel}_${alunoNome.replace(/\s+/g, '_')}.pdf`);
