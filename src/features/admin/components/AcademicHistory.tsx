@@ -563,13 +563,15 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
               }, {} as Record<string, typeof studentList>)
             )
             .sort((a, b) => a[0].localeCompare(b[0]))
-            .map(([nucleoName, students]) => (
+            .map(([nucleoName, studentsGroup]) => {
+              const students = studentsGroup as typeof studentList;
+              return (
               <div key={nucleoName}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--primary)', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
                   {nucleoName} <span style={{ fontSize: '0.8rem', opacity: 0.7, marginLeft: '0.5rem' }}>({students.length} alunos)</span>
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }}>
-                  {students.map(s => {
+                  {students.map((s: any) => {
                     const hist = hierarchicalData[s.nucleos?.nome || 'Geral / Sem Núcleo']?.[s.id];
                     const modCount = hist ? Object.keys(hist.modulos).length : 0;
                     return (
@@ -612,7 +614,8 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                   })}
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         )
       )}
