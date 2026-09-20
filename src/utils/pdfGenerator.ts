@@ -214,14 +214,13 @@ export const generateCertificadoPDF = async (
   doc.setTextColor(184, 134, 11); // Dourado
   doc.setFontSize(16);
   doc.setFont('times', 'bold');
-  doc.text(cursoTexto, centerX, 60, { align: 'center' });
+  doc.text(cursoTexto, centerX, 63, { align: 'center' });
 
-  // Apenas o nome do aluno é dinâmico, o resto já está na imagem de fundo.
-  // Subindo 3 centímetros (30mm) em relação à posição original (115) para evitar sobreposição:
+  // Nome do aluno preenchendo o espaço exato entre "CERTIFICADO DE CONCLUSÃO" e "PELO CONHECIMENTO..."
   doc.setTextColor(40, 50, 100); // Azul escuro original
   doc.setFontSize(36); // Tamanho original
   doc.setFont('times', 'italic');
-  doc.text(`"${alunoNome}"`, centerX, 85, { align: 'center' });
+  doc.text(`"${alunoNome}"`, centerX, 100, { align: 'center' });
 
   // Baixar
   doc.save(`Certificado_${cursoNivel}_${alunoNome.replace(/\s+/g, '_')}.pdf`);
