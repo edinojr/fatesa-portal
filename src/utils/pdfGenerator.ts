@@ -172,17 +172,17 @@ export const generateHistoricoPDF = async (
   // Assinatura
   try {
     const assinaturaData = await getBase64ImageFromURL('/assinatura.png');
-    // Adiciona a assinatura centralizada e com a proporção correta
-    // A imagem original tem proporção ~0.86 (mais alta do que larga)
-    // Largura: 24, Altura: 28. Posição X centralizada: 105 - (24/2) = 93
-    doc.addImage(assinaturaData, 'PNG', 93, finalY + 1, 24, 28);
+    // Adiciona a assinatura centralizada e com a proporção correta (+50% tamanho)
+    // Largura: 36, Altura: 42. Posição X centralizada: 105 - (36/2) = 87
+    // Descendo 20 unidades (2cm) -> finalY + 8
+    doc.addImage(assinaturaData, 'PNG', 87, finalY + 8, 36, 42);
   } catch (e) {
     console.warn("Imagem de assinatura não encontrada.");
   }
   
-  doc.line(70, finalY + 30, 140, finalY + 30);
+  doc.line(70, finalY + 50, 140, finalY + 50);
   doc.setFont('helvetica', 'normal');
-  doc.text('Secretaria - Aparecida Panisso', 105, finalY + 35, { align: 'center' });
+  doc.text('Secretaria - Aparecida Panisso', 105, finalY + 55, { align: 'center' });
 
   // Baixar o arquivo
   doc.save(`Historico_${alunoData.nome.replace(/\s+/g, '_')}.pdf`);
