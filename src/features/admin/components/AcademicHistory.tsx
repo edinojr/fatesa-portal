@@ -330,13 +330,37 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
           </div>
         </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <button className="btn btn-outline" onClick={handleEmitirCertificadoAvulso} style={{ gap: '0.6rem', width: 'auto', padding: '0.75rem 1.5rem', borderRadius: '12px' }}>
-            <GraduationCap size={18} /> Emitir Certificado Avulso
-          </button>
           <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.6rem', width: 'auto', padding: '0.75rem 1.5rem', borderRadius: '12px' }}>
             <Download size={18} /> Exportar Relatório
           </button>
         </div>
+      </div>
+
+      {/* CARD EMITIR CERTIFICADO */}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.02)',
+        border: '1px solid var(--glass-border)',
+        borderRadius: '16px',
+        padding: '1.5rem',
+        marginBottom: '2rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '1rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ background: 'rgba(234, 179, 8, 0.1)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+            <GraduationCap size={24} color="#eab308" />
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Emitir Certificado Avulso</h3>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Para eventuais alunos que não estejam cadastrados mas que já concluíram o curso.</p>
+          </div>
+        </div>
+        <button onClick={handleEmitirCertificadoAvulso} className="btn" style={{ background: '#eab308', color: '#000', fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '12px', border: 'none' }}>
+          Emitir Agora
+        </button>
       </div>
 
       {/* FILTRO POR NÚCLEO */}
