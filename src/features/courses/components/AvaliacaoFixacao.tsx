@@ -85,7 +85,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         .maybeSingle()
         .then(({ data }) => {
           if (data?.respostas) setRespostasAluno(data.respostas);
-          setShowGabarito(true);
+          setShowGabarito(profile?.tipo === 'ex_aluno');
           setExercicioFinalizado(true);
         });
     }
@@ -136,7 +136,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
       console.log('[AvaliacaoFixacao] Respostas salvas com sucesso!');
 
       setExercicioFinalizado(true);
-      setShowGabarito(true);
+      setShowGabarito(profile?.tipo === 'ex_aluno');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       onSaved?.();
     } catch (err: any) {
