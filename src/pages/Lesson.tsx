@@ -489,9 +489,9 @@ const Lesson = () => {
         // A MENOS que o aluno tenha exceção individual, o módulo esteja
         // finalizado (revisão) ou o conteúdo tenha sido liberado para o polo.
         const isModuleBlocked = bookData && bookData.professor_active === false && !hasNucleoRelease && !hasModuleException && !isModuleFinishedManually;
-        if (!isStaff && isModuleBlocked) {
+        if (!isStaff && profile?.tipo !== 'ex_aluno' && isModuleBlocked) {
           setIsReleased(false);
-        } else if (isStaff || modulePassed || hasModuleException || isModuleFinishedManually) {
+        } else if (isStaff || profile?.tipo === 'ex_aluno' || modulePassed || hasModuleException || isModuleFinishedManually) {
           setIsReleased(true);
         } else {
           const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id, profile?.created_at);
