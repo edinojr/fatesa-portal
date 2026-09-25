@@ -6,7 +6,6 @@ import {
   MapPin,
   GraduationCap,
   BookOpen,
-  ClipboardList,
   ShieldCheck,
   ChevronRight,
   ChevronLeft,
@@ -104,6 +103,27 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     }
 
     const nomeImpresso = window.prompt("Digite o nome do aluno que sairá no certificado:", selectedStudentData.std.name);
+    if (!nomeImpresso) return; // Cancelou
+
+    generateCertificadoPDF(nomeImpresso.trim(), nivel);
+  };
+
+  const handleEmitirCertificadoAvulso = () => {
+    let nivel: 'basico' | 'medio' = 'basico';
+
+    const choice = window.prompt(`Qual certificado deseja emitir para o aluno avulso? Digite 'M' para MÉDIO ou 'B' para BÁSICO:`);
+    if (!choice) return;
+    
+    if (choice.trim().toUpperCase() === 'M') {
+      nivel = 'medio';
+    } else if (choice.trim().toUpperCase() === 'B') {
+      nivel = 'basico';
+    } else {
+      alert("Opção inválida.");
+      return;
+    }
+
+    const nomeImpresso = window.prompt("Digite o nome do aluno avulso que sairá no certificado:");
     if (!nomeImpresso) return; // Cancelou
 
     generateCertificadoPDF(nomeImpresso.trim(), nivel);
@@ -233,7 +253,6 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     if (selectedNucleus) list = list.filter(s => (s.nucleos?.nome || 'Geral / Sem Núcleo') === selectedNucleus);
     if (term) list = list.filter(s => s.nome?.toLowerCase().includes(term) || s.email?.toLowerCase().includes(term));
     return list.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allStudents, hierarchicalData, selectedNucleus, searchTerm]);
 
   // Dados do aluno selecionado (do agrupamento, com fallback para o cadastro)
@@ -310,9 +329,14 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             </p>
           </div>
         </div>
-        <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.6rem', width: 'auto', padding: '0.75rem 1.5rem', borderRadius: '12px' }}>
-          <Download size={18} /> Exportar Relatório
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <button className="btn btn-outline" onClick={handleEmitirCertificadoAvulso} style={{ gap: '0.6rem', width: 'auto', padding: '0.75rem 1.5rem', borderRadius: '12px' }}>
+            <GraduationCap size={18} /> Emitir Certificado Avulso
+          </button>
+          <button className="btn btn-outline" onClick={exportToCSV} style={{ gap: '0.6rem', width: 'auto', padding: '0.75rem 1.5rem', borderRadius: '12px' }}>
+            <Download size={18} /> Exportar Relatório
+          </button>
+        </div>
       </div>
 
       {/* FILTRO POR NÚCLEO */}
