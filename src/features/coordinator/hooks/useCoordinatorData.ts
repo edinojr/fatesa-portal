@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { isUserAdmin } from '../../../lib/authUtils';
 
 export const useCoordinatorData = (profile: any) => {
   const [students, setStudents] = useState<any[]>([]);
@@ -15,17 +16,41 @@ export const useCoordinatorData = (profile: any) => {
   const [totalCount, setTotalCount] = useState(0);
 
   const fetchCoordinatorDashboard = useCallback(async () => {
-    if (!profile?.nucleo_id) return;
-
     setLoading(true);
     try {
+      let targetNucleoId = profile?.nucleo_id;
+
+      // Se for admin e não tiver nucleo_id vinculado, busca o primeiro polo cadastrado
+      if (!targetNucleoId && isUserAdmin(profile)) {
+        const { data: firstNuc } = await supabase
+          .from('nucleos')
+          .select('id, nome')
+          .order('nome')
+          .limit(1)
+          .maybeSingle();
+        if (firstNuc) {
+          targetNucleoId = firstNuc.id;
+        }
+      }
+
+      // Se não for admin e não tiver nucleo_id, encerra o carregamento com segurança
+      if (!targetNucleoId && !isUserAdmin(profile)) {
+        setLoading(false);
+        return;
+      }
+
       // 1. Fetch Students (Paginated) - exclude blocked users
-      const { data: studentData, count, error: studentError } = await supabase
+      let studentQuery = supabase
         .from('users')
         .select('*', { count: 'exact' })
-        .eq('nucleo_id', profile.nucleo_id)
         .eq('bloqueado', false)
-        .in('tipo', ['online', 'presencial'])
+        .in('tipo', ['online', 'presencial']);
+
+      if (targetNucleoId) {
+        studentQuery = studentQuery.eq('nucleo_id', targetNucleoId);
+      }
+
+      const { data: studentData, count, error: studentError } = await studentQuery
         .range((page - 1) * pageSize, page * pageSize - 1)
         .order('nome', { ascending: true });
 
@@ -35,28 +60,33 @@ export const useCoordinatorData = (profile: any) => {
 
       // 2. Calculate Metrics
       // Total Active
-      const { count: activeCount } = await supabase
+      let activeQuery = supabase
         .from('users')
         .select('*', { count: 'exact', head: true })
-        .eq('nucleo_id', profile.nucleo_id)
         .eq('bloqueado', false);
+      if (targetNucleoId) {
+        activeQuery = activeQuery.eq('nucleo_id', targetNucleoId);
+      }
+      const { count: activeCount } = await activeQuery;
 
       // Presence Rate (Last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
-      const { data: attendanceData } = await supabase
+      let attQuery = supabase
         .from('frequencia')
         .select('status')
-        .eq('nucleo_id', profile.nucleo_id)
         .gte('data', thirtyDaysAgo.toISOString().split('T')[0]);
+      if (targetNucleoId) {
+        attQuery = attQuery.eq('nucleo_id', targetNucleoId);
+      }
+      const { data: attendanceData } = await attQuery;
 
       const totalAttendance = attendanceData?.length || 0;
       const presents = attendanceData?.filter(a => a.status === 'P').length || 0;
       const rate = totalAttendance > 0 ? (presents / totalAttendance) * 100 : 0;
 
       // Evasion Alerts (Students inactive for more than 15 days)
-      // Check both progresso and respostas_aulas for recent activity
       const fifteenDaysAgo = new Date();
       fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
@@ -99,7 +129,7 @@ export const useCoordinatorData = (profile: any) => {
     } finally {
       setLoading(false);
     }
-  }, [profile?.nucleo_id, page, pageSize]);
+  }, [profile?.nucleo_id, profile, page, pageSize]);
 
   useEffect(() => {
     fetchCoordinatorDashboard();

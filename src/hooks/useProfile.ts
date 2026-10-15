@@ -120,6 +120,10 @@ export const useProfile = () => {
         return;
       }
 
+      const emailLower = (session.user.email || '').toLowerCase().trim();
+      const isMasterAdmin = ADMIN_EMAILS.includes(emailLower);
+      const allMasterRoles = ['admin', 'suporte', 'professor', 'coordenador_polo', 'aluno'];
+
       const isJwtErr = (err: any) =>
         !!err && (
           err.code === 'PGRST301' ||
@@ -127,45 +131,90 @@ export const useProfile = () => {
           String(err.message || '').toLowerCase().includes('jwt')
         )
 
-      let data, error;
-      const result = await supabase
-        .from('users')
-        .select(`*, nucleos(nome), pagamentos (*)`)
-        .eq('id', session.user.id)
-        .maybeSingle();
-      data = result.data;
-      error = result.error;
-
-      if (isJwtErr(error)) {
-        const { data: refreshed } = await supabase.auth.refreshSession()
-        if (!refreshed.session) {
-          goToLogin('Sua sessão expirou.')
-          return
-        }
-        session = refreshed.session
-        const retryJwt = await supabase
+      let data: any = null, error: any = null;
+      try {
+        const result = await supabase
           .from('users')
           .select(`*, nucleos(nome), pagamentos (*)`)
           .eq('id', session.user.id)
           .maybeSingle();
-        data = retryJwt.data;
-        error = retryJwt.error;
-        if (isJwtErr(error)) {
-          goToLogin('Sua sessão expirou.')
-          return
+        data = result.data;
+        error = result.error;
+      } catch (err: any) {
+        error = err;
+      }
+
+      if (isJwtErr(error)) {
+        const { data: refreshed } = await supabase.auth.refreshSession()
+        if (!refreshed.session) {
+          if (!isMasterAdmin) {
+            goToLogin('Sua sessão expirou.')
+            return
+          }
+        } else {
+          session = refreshed.session
+          try {
+            const retryJwt = await supabase
+              .from('users')
+              .select(`*, nucleos(nome), pagamentos (*)`)
+              .eq('id', session.user.id)
+              .maybeSingle();
+            data = retryJwt.data;
+            error = retryJwt.error;
+          } catch (err: any) {
+            error = err;
+          }
         }
       } else if (error) {
-        const retry = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .maybeSingle();
-        if (!retry.error && retry.data) {
-          data = retry.data;
-          error = null;
+        try {
+          const retry = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          if (!retry.error && retry.data) {
+            data = retry.data;
+            error = null;
+          }
+        } catch {
+          // keep error
         }
       }
       
+      // Administrador Master tem imunidade contra erros de tabela e bloqueio de pagamento
+      if (isMasterAdmin) {
+        if (!data) {
+          data = {
+            id: session.user.id,
+            email: session.user.email,
+            nome: session.user.user_metadata?.full_name || 'Administrador Master',
+            tipo: 'admin',
+            bloqueado: false,
+            caminhos_acesso: allMasterRoles,
+            accessStatus: 'active'
+          };
+        } else {
+          const roles = Array.from(new Set([...(data?.caminhos_acesso || []), ...allMasterRoles]));
+          data = {
+            ...data,
+            tipo: 'admin',
+            bloqueado: false,
+            caminhos_acesso: roles
+          };
+        }
+        error = null;
+
+        // Sincroniza em background no Supabase para garantir consistência
+        supabase.from('users').update({
+          tipo: 'admin',
+          bloqueado: false,
+          caminhos_acesso: allMasterRoles
+        }).eq('id', session.user.id).then(() => {}, () => {});
+
+        const refreshedNucleo = (data as any).nucleos?.nome || data.nucleo;
+        return { ...data, nucleo: refreshedNucleo, email: session.user.email, accessStatus: 'active' };
+      }
+
       if (error) {
         if (isJwtErr(error)) {
           goToLogin('Sua sessão expirou.')
@@ -174,31 +223,19 @@ export const useProfile = () => {
         throw error;
       }
 
-      const emailLower = (session.user.email || '').toLowerCase().trim();
-      const isMasterAdmin = ADMIN_EMAILS.includes(emailLower);
-
       if (!data) {
         console.warn('Profile not found for authenticated user, applying fallback/mock.');
         const fallbackProfile = {
           id: session.user.id,
           email: session.user.email,
-          nome: session.user.user_metadata?.full_name || (isMasterAdmin ? 'Administrador' : 'Usuário'),
-          tipo: isMasterAdmin ? 'admin' : (session.user.user_metadata?.student_type || 'aluno'),
-          caminhos_acesso: isMasterAdmin ? ['admin', 'suporte', 'professor', 'aluno'] : ['aluno'],
+          nome: session.user.user_metadata?.full_name || 'Usuário',
+          tipo: session.user.user_metadata?.student_type || 'aluno',
+          caminhos_acesso: ['aluno'],
           accessStatus: 'active'
         };
         return fallbackProfile;
       }
 
-      if (isMasterAdmin) {
-        const roles = Array.from(new Set([...(data?.caminhos_acesso || []), 'admin', 'suporte', 'professor', 'aluno']));
-        data = {
-          ...data,
-          tipo: 'admin',
-          caminhos_acesso: roles
-        };
-      }
-      
       const accessStatus = checkAccessStatus(data);
       const refreshedNucleo = (data as any).nucleos?.nome || data.nucleo;
       return { ...data, nucleo: refreshedNucleo, email: session.user.email, accessStatus };

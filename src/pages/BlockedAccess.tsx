@@ -14,6 +14,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { isUserAdmin } from '../lib/authUtils';
 
 const BlockedAccess: React.FC = () => {
   const { profile, loading } = useProfile();
@@ -23,9 +24,9 @@ const BlockedAccess: React.FC = () => {
   const navigate = useNavigate();
 
   const goToPanel = () => {
+    const isAdmin = isUserAdmin(profile);
     const role = profile?.tipo;
     const roles = (profile?.caminhos_acesso as string[]) || [];
-    const isAdmin = role === 'admin' || roles.includes('admin') || roles.includes('suporte');
     const isProfessor = role === 'professor' || roles.includes('professor');
     if (isAdmin) navigate('/admin');
     else if (isProfessor) navigate('/professor');
@@ -38,8 +39,10 @@ const BlockedAccess: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!loading && profile && !profile.status_bloqueio) {
-      goToPanel();
+    if (!loading && profile) {
+      if (isUserAdmin(profile) || !profile.status_bloqueio) {
+        goToPanel();
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, loading, navigate]);

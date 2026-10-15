@@ -42,7 +42,8 @@ import FinancePanel from '../features/finance/components/FinancePanel'
 import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
 import PopupAlertsDisplay from '../features/communication/components/PopupAlertsDisplay'
 import { CertificadosPanel } from '../components/CertificadosPanel'
-import { PanelSwitcher } from '../components/common/PanelSwitcher'
+import { PanelSwitcher, PanelNavIcons } from '../components/common/PanelSwitcher'
+
 
 type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'forum' | 'modulos-concluidos' | 'certificados'
 
@@ -593,7 +594,8 @@ const Dashboard = () => {
            )}
         </nav>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <PanelNavIcons currentPanel="aluno" />
             <PanelSwitcher currentPanel="aluno" />
             <button className="nav-btn-premium danger" onClick={() => signOut()}>
               <LogOut size={18} /> <span className="mobile-hide">Sair</span>

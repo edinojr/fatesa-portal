@@ -40,9 +40,9 @@ export function isStaff(user: any): boolean {
   if (!user) return false
   if (isUserAdmin(user)) return true
   const tipo = user.tipo?.toLowerCase()
-  if (['admin', 'suporte', 'professor', 'colaborador'].includes(tipo)) return true
+  if (['admin', 'suporte', 'professor', 'colaborador', 'coordenador_polo'].includes(tipo)) return true
   const roles: string[] = (user.caminhos_acesso as string[]) || []
-  return roles.some(r => ['admin', 'suporte', 'professor', 'colaborador'].includes(r?.toLowerCase()))
+  return roles.some(r => ['admin', 'suporte', 'professor', 'colaborador', 'coordenador_polo'].includes(r?.toLowerCase()))
 }
 
 export async function signOutLocal(): Promise<void> {

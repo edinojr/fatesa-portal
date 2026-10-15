@@ -1,3 +1,5 @@
+import { isUserAdmin } from './authUtils';
+
 /**
  * Lógica do Ciclo de Pagamento Fatesa:
  * - Ciclo: Do dia 25 de um mês ao dia 12 do mês seguinte.
@@ -14,7 +16,16 @@ export const getTargetDueDate = (date: Date = new Date()): string => {
   return `${year}-${String(month).padStart(2, '0')}-12`;
 };
 
+
 export const checkAccessStatus = (profile: any): 'active' | 'blocked_payment' | 'blocked_admin' => {
+  // Administradores e equipe nunca são bloqueados
+  if (isUserAdmin(profile)) return 'active';
+  const roles = (profile?.caminhos_acesso as string[]) || [];
+  if (['admin', 'suporte', 'professor', 'colaborador', 'coordenador_polo'].includes(profile?.tipo) || 
+      roles.some((r: string) => ['admin', 'suporte', 'professor', 'colaborador', 'coordenador_polo'].includes(r))) {
+    return 'active';
+  }
+
   // Bloqueio administrativo tem prioridade
   if (profile?.bloqueado) return 'blocked_admin';
 

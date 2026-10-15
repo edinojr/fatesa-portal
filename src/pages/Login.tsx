@@ -101,20 +101,27 @@ const Login = () => {
 
     // Auto-repair missing profile or handle errors for Admin
     if (isAdminEmail) {
+      const allRoles = ['admin', 'suporte', 'professor', 'coordenador_polo', 'aluno'];
       if (!data) {
         data = {
           tipo: 'admin',
-          caminhos_acesso: ['admin', 'suporte', 'professor', 'aluno'],
+          caminhos_acesso: allRoles,
           bloqueado: false,
           status_nucleo: 'ativo'
         };
         fetchError = null;
       } else {
         data.tipo = 'admin';
-        const caminhos = Array.isArray(data.caminhos_acesso) ? [...data.caminhos_acesso] : [];
-        if (!caminhos.includes('admin')) caminhos.push('admin');
-        data.caminhos_acesso = caminhos;
+        data.bloqueado = false;
+        data.caminhos_acesso = Array.from(new Set([...(data.caminhos_acesso || []), ...allRoles]));
       }
+
+      // Sincroniza no Supabase em background
+      supabase.from('users').update({
+        tipo: 'admin',
+        bloqueado: false,
+        caminhos_acesso: allRoles
+      }).eq('id', user.id).then(() => {}, () => {});
     } else if (!data && !fetchError) {
       console.warn("Perfil não encontrado. Tentando auto-reparo...", user.id);
       const metadata = user.user_metadata || {};

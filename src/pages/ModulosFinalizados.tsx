@@ -12,7 +12,8 @@ import GraduationFormModal from '../features/users/components/GraduationFormModa
 import LevelCertificate from '../features/users/components/LevelCertificate'
 import { graduationService } from '../services/graduationService'
 import { generateCertificadoPDF, generateHistoricoPDF } from '../utils/pdfGenerator'
-import { PanelSwitcher } from '../components/common/PanelSwitcher'
+import { PanelSwitcher, PanelNavIcons } from '../components/common/PanelSwitcher'
+
 
 const ModulosFinalizados = () => {
     const { profile, loading: profileLoading } = useProfile();
@@ -281,7 +282,8 @@ const goToPanel = () => {
                      <h1 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>Meu Boletim & Módulos Finalizados</h1>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <PanelNavIcons currentPanel="aluno" />
                     <PanelSwitcher currentPanel="aluno" />
                     <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '0.4rem 1rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.75rem', border: '1px solid var(--glass-border)' }}>
                         <Award size={18} color="var(--primary)" />

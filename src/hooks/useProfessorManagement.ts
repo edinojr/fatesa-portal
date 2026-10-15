@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useProfile } from './useProfile'
+import { isUserAdmin } from '../lib/authUtils'
+
+
 
 // Modular Feature Hooks (Existing)
 import { useProfessorCourses } from '../features/courses/hooks/useProfessorCourses'
@@ -38,7 +41,8 @@ export const useProfessorManagement = () => {
   const fetchData = useCallback(async () => {
     if (!profile) return;
     
-    const isAdmin = ['admin', 'suporte'].includes(profile.tipo || '') || (profile.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r));
+    const isMaster = isUserAdmin(profile);
+    const isAdmin = isMaster || ['admin', 'suporte'].includes(profile.tipo || '') || (profile.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r));
     
     try {
       // Fetch Nucleos based on role
@@ -195,10 +199,14 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
     if (!profileLoading) {
       if (!profile) { navigate('/login'); return; }
       
-      const isProfessor = profile.tipo === 'professor' || profile.caminhos_acesso?.includes('professor') || (profile.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r));
+      const isMaster = isUserAdmin(profile);
+      const isAdmin = isMaster || ['admin', 'suporte'].includes(profile.tipo || '') || (profile.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r));
+      const isProfessor = isMaster || isAdmin || profile.tipo === 'professor' || profile.caminhos_acesso?.includes('professor');
       if (!isProfessor) { navigate('/dashboard'); return; }
 
-      const roles = [...(profile.caminhos_acesso || [])];
+      const roles = isMaster 
+        ? Array.from(new Set([...(profile.caminhos_acesso || []), 'admin', 'suporte', 'professor', 'coordenador_polo', 'aluno']))
+        : [...(profile.caminhos_acesso || [])];
       setAvailableRoles(roles);
       
       fetchData().finally(() => setLoading(false));

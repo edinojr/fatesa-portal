@@ -3,7 +3,8 @@ import { ChevronLeft, ChevronRight, LogOut, ExternalLink, LayoutDashboard, Users
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
 import TopBanner from './TopBanner'
-import { PanelSwitcher } from '../common/PanelSwitcher'
+import { PanelSwitcher, PanelNavIcons } from '../common/PanelSwitcher'
+import { isUserAdmin } from '../../lib/authUtils'
 
 interface PageHeaderProps {
   title: string
@@ -71,15 +72,19 @@ const PageHeader: React.FC<PageHeaderProps> = ({
 
   const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo || '') || 
                   (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r))
-  const isAdmin = profile?.tipo === 'admin' || (profile?.caminhos_acesso || []).includes('admin')
-  const isProfessor = profile?.tipo === 'professor' || (profile?.caminhos_acesso || []).includes('professor')
-  const isCoordinator = profile?.tipo === 'coordenador_polo' || (profile?.caminhos_acesso || []).includes('coordenador_polo')
+  const isAdmin = isUserAdmin(profile)
+  const isProfessor = isAdmin || profile?.tipo === 'professor' || (profile?.caminhos_acesso || []).includes('professor')
+  const isCoordinator = isAdmin || profile?.tipo === 'coordenador_polo' || (profile?.caminhos_acesso || []).includes('coordenador_polo')
 
   const getDefaultActions = () => {
     if (variant === 'viewer') return null
     
     const actionButtons: React.ReactNode[] = []
     const currentPanel = variant === 'admin' ? 'admin' : variant === 'professor' ? 'professor' : variant === 'coordinator' ? 'coordenador' : 'aluno'
+
+    actionButtons.push(
+      <PanelNavIcons key="panel-nav-icons" currentPanel={currentPanel} />
+    )
 
     actionButtons.push(
       <PanelSwitcher key="panel-switcher" currentPanel={currentPanel} />
@@ -96,7 +101,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       </button>
     )
 
-    return <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>{actionButtons}</div>
+    return <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>{actionButtons}</div>
   }
 
   const headerStyles: Record<string, React.CSSProperties> = {

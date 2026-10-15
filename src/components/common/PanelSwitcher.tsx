@@ -61,11 +61,11 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
 
   const isAdmin = isUserAdmin(profile)
   const roles = (profile.caminhos_acesso as string[]) || []
-  const isProfessor = profile.tipo === 'professor' || roles.includes('professor')
-  const isCoordinator = profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo')
+  const isProfessor = isAdmin || profile.tipo === 'professor' || roles.includes('professor')
+  const isCoordinator = isAdmin || profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo')
 
   // Se o usuário não for admin e tiver apenas 1 papel, não exibe o seletor
-  const totalRoles = (isAdmin ? 2 : 1) + (isProfessor ? 1 : 0) + (isCoordinator ? 1 : 0)
+  const totalRoles = (isAdmin ? 4 : 1) + (isProfessor ? 1 : 0) + (isCoordinator ? 1 : 0)
   if (!isAdmin && totalRoles <= 1) {
     return null
   }
@@ -85,18 +85,6 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
       icon: <LayoutDashboard size={18} />
     })
   }
-
-  // Todo administrador pode acessar o Painel do Aluno (especialmente os que são alunos)
-  options.push({
-    id: 'aluno',
-    name: 'Painel do Aluno',
-    shortName: 'Aluno',
-    badge: 'Estudante',
-    badgeColor: '#3b82f6',
-    description: 'Meus cursos, aulas, provas, boletim e certificados',
-    path: '/dashboard?view=student',
-    icon: <BookOpen size={18} />
-  })
 
   if (isProfessor) {
     options.push({
@@ -123,6 +111,18 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
       icon: <Users size={18} />
     })
   }
+
+  // Todo usuário/administrador pode acessar o Painel do Aluno
+  options.push({
+    id: 'aluno',
+    name: 'Painel do Aluno',
+    shortName: 'Aluno',
+    badge: 'Estudante',
+    badgeColor: '#3b82f6',
+    description: 'Meus cursos, aulas, provas, boletim e certificados',
+    path: '/dashboard?view=student',
+    icon: <BookOpen size={18} />
+  })
 
   const currentOption = options.find(o => o.id === currentPanel) || options[0]
 
@@ -354,3 +354,4 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
 }
 
 export default PanelSwitcher
+export { PanelNavIcons } from './PanelNavIcons'
