@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from '../../../components/common/Logo';
+import { generateCertificadoPDF } from '../../../utils/pdfGenerator';
 
 interface LevelCertificateProps {
   studentName: string;
@@ -183,6 +184,13 @@ const LevelCertificate: React.FC<LevelCertificateProps> = ({
         display: 'flex', 
         gap: '1rem' 
       }}>
+        <button 
+          className="btn btn-primary" 
+          onClick={() => generateCertificadoPDF(studentName, levelName.toLowerCase().includes('méd') ? 'medio' : 'basico')} 
+          style={{ width: 'auto', padding: '0.75rem 2rem', background: '#eab308', color: '#000', fontWeight: 800 }}
+        >
+          Baixar PDF Oficial Padrão
+        </button>
         <button 
           className="btn btn-primary" 
           onClick={() => window.print()} 

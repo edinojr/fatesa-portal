@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { LogIn, Menu, X, Users, ArrowLeft } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { isUserAdmin } from '../../lib/authUtils'
 import Logo from '../common/Logo'
 
 const Navbar = () => {
@@ -44,6 +45,47 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const handleNavClick = () => setMobileMenuOpen(false);
+
+  const handleGoToPanel = async () => {
+    setMobileMenuOpen(false);
+    if (!sessionUser) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const { data } = await supabase
+        .from('users')
+        .select('tipo, caminhos_acesso')
+        .eq('id', sessionUser.id)
+        .maybeSingle();
+
+      const roles = (data?.caminhos_acesso as string[]) || [];
+      const userType = data?.tipo || '';
+      const isAdmin = isUserAdmin({ ...data, email: sessionUser.email }) || roles.some((r: string) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType);
+      const isProfessor = !isAdmin && (roles.some((r: string) => r === 'professor') || userType === 'professor');
+      const isCoordinator = !isAdmin && !isProfessor && (roles.some((r: string) => r === 'coordenador_polo') || userType === 'coordenador_polo');
+
+      if (isAdmin) {
+        localStorage.setItem('fatesa_active_role', 'admin');
+        navigate('/admin');
+      } else if (isProfessor) {
+        localStorage.setItem('fatesa_active_role', 'professor');
+        navigate('/professor');
+      } else if (isCoordinator) {
+        localStorage.setItem('fatesa_active_role', 'coordenador');
+        navigate('/coordenador');
+      } else {
+        localStorage.setItem('fatesa_active_role', 'aluno');
+        navigate('/dashboard');
+      }
+    } catch {
+      const activeRole = localStorage.getItem('fatesa_active_role');
+      if (activeRole === 'admin') navigate('/admin');
+      else if (activeRole === 'professor') navigate('/professor');
+      else navigate('/dashboard');
+    }
+  };
 
   return (
     <>
@@ -178,20 +220,7 @@ const Navbar = () => {
               <button 
                 className="btn btn-primary" 
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', background: 'var(--primary)', color: '#fff', border: 'none' }}
-                onClick={async () => {
-                  if (sessionUser) {
-                    const activeRole = localStorage.getItem('fatesa_active_role');
-                    if (activeRole === 'admin') {
-                      navigate('/admin');
-                    } else if (activeRole === 'professor') {
-                      navigate('/professor');
-                    } else {
-                      navigate('/dashboard');
-                    }
-                  } else {
-                    navigate('/login');
-                  }
-                }}
+                onClick={handleGoToPanel}
               >
                 {sessionUser ? <><Users size={18} /> MEU PAINEL</> : <><LogIn size={18} /> ENTRAR</>}
               </button>
@@ -245,17 +274,7 @@ const Navbar = () => {
             )}
             <button 
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.85rem 1rem', borderRadius: '12px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', background: 'var(--primary)', color: '#fff', border: 'none', width: '100%' }}
-              onClick={async () => {
-                setMobileMenuOpen(false);
-                if (sessionUser) {
-                  const activeRole = localStorage.getItem('fatesa_active_role');
-                  if (activeRole === 'admin') navigate('/admin');
-                  else if (activeRole === 'professor') navigate('/professor');
-                  else navigate('/dashboard');
-                } else {
-                  navigate('/login');
-                }
-              }}
+              onClick={handleGoToPanel}
             >
               {sessionUser ? <><Users size={18} /> MEU PAINEL</> : <><LogIn size={18} /> ENTRAR</>}
             </button>

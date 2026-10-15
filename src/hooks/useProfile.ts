@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, onSupabaseAuthError } from '../lib/supabase';
 import { checkAccessStatus } from '../lib/paymentCycle';
-import { isTokenExpired, signOutLocal } from '../lib/authUtils';
+import { isTokenExpired, signOutLocal, isUserAdmin, ADMIN_EMAILS } from '../lib/authUtils';
 
 // Global cache to prevent race conditions (5000ms Lock error) when multiple components mount
 let globalProfilePromise: Promise<any> | null = null;
@@ -174,13 +174,29 @@ export const useProfile = () => {
         throw error;
       }
 
+      const emailLower = (session.user.email || '').toLowerCase().trim();
+      const isMasterAdmin = ADMIN_EMAILS.includes(emailLower);
+
       if (!data) {
         console.warn('Profile not found for authenticated user, applying fallback/mock.');
-        // Special case: User authenticated in Auth but no record in Public.users
-        // Bypass de Segurança: O usuário solicitou entrada administrativa forçada.
-        // Aviso: Qualquer nova conta sem registro no banco público assumirá privilégios de Admin.
-        setProfile({ id: session.user.id, email: session.user.email, tipo: 'admin', caminhos_acesso: ['admin'], accessStatus: 'active' });
-        return;
+        const fallbackProfile = {
+          id: session.user.id,
+          email: session.user.email,
+          nome: session.user.user_metadata?.full_name || (isMasterAdmin ? 'Administrador' : 'Usuário'),
+          tipo: isMasterAdmin ? 'admin' : (session.user.user_metadata?.student_type || 'aluno'),
+          caminhos_acesso: isMasterAdmin ? ['admin', 'suporte', 'professor', 'aluno'] : ['aluno'],
+          accessStatus: 'active'
+        };
+        return fallbackProfile;
+      }
+
+      if (isMasterAdmin) {
+        const roles = Array.from(new Set([...(data?.caminhos_acesso || []), 'admin', 'suporte', 'professor', 'aluno']));
+        data = {
+          ...data,
+          tipo: 'admin',
+          caminhos_acesso: roles
+        };
       }
       
       const accessStatus = checkAccessStatus(data);

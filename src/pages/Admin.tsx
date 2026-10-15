@@ -68,6 +68,7 @@ import { useAdminManagement } from '../hooks/useAdminManagement'
 import { supabase } from '../lib/supabase'
 import { hasStudentScope } from '../lib/authUtils'
 import PageHeader from '../components/layout/PageHeader'
+import { PanelSwitcher } from '../components/common/PanelSwitcher'
 
 const Admin = () => {
   const navigate = useNavigate()
@@ -280,49 +281,7 @@ const Admin = () => {
 
   const adminActions = (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-      <div style={{ position: 'relative' }}>
-        <button
-          onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
-          className="nav-btn-premium"
-          style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem' }}
-        >
-          PAINEL ADMINISTRATIVO <ChevronDown size={14} />
-        </button>
-        {availableRoles.length > 1 && showRoleSwitcher && (
-          <div style={{ 
-            position: 'absolute', 
-            top: '100%', 
-            left: 0, 
-            background: 'var(--bg-card)', 
-            border: '1px solid var(--glass-border)', 
-            borderRadius: '14px', 
-            padding: '0.5rem', 
-            zIndex: 1100, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '0.25rem', 
-            minWidth: '200px', 
-            marginTop: '0.5rem', 
-            boxShadow: '0 10px 30px rgba(0,0,0,0.5)' 
-          }}>
-            <div style={{ padding: '0.5rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '0.25rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Painel Atual:</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', display: 'block' }}>Administração</span>
-            </div>
-            {availableRoles.filter((r: string) => ['aluno', 'professor', 'admin', 'coordenador_polo'].includes(r) && r !== userRole).map((r: string) => (
-              <Link 
-                key={r} 
-                to={r === 'aluno' ? '/dashboard' : r === 'professor' ? '/professor' : r === 'coordenador_polo' ? '/coordenador' : '/admin'}
-                className="nav-btn-premium" 
-                style={{ width: '100%', justifyContent: 'flex-start', border: 'none', background: 'transparent', textDecoration: 'none', color: 'inherit', padding: '0.5rem' }}
-                onClick={() => { localStorage.setItem('fatesa_active_role', r); setShowRoleSwitcher(false); }}
-              >
-                {r === 'aluno' ? '👁 Área do Aluno' : r === 'professor' ? '🎓 Painel do Professor' : r === 'coordenador_polo' ? '👥 Painel do Coordenador' : '🔧 Administração'}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+      <PanelSwitcher currentPanel="admin" />
       <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
         <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>
         <div style={{ position: 'relative' }}>

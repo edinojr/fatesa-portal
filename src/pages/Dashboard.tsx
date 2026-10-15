@@ -19,7 +19,8 @@ import {
   Users,
   Loader2,
   PauseCircle,
-  Play
+  Play,
+  Clock
 } from 'lucide-react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
@@ -41,6 +42,7 @@ import FinancePanel from '../features/finance/components/FinancePanel'
 import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
 import PopupAlertsDisplay from '../features/communication/components/PopupAlertsDisplay'
 import { CertificadosPanel } from '../components/CertificadosPanel'
+import { PanelSwitcher } from '../components/common/PanelSwitcher'
 
 type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'forum' | 'modulos-concluidos' | 'certificados'
 
@@ -111,6 +113,42 @@ const Dashboard = () => {
 
   const isBlocked = profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
+
+  // Status de aprovação para alunos formados
+  const [alumniPendingApproval, setAlumniPendingApproval] = useState<boolean>(false);
+  const [checkingAlumniStatus, setCheckingAlumniStatus] = useState<boolean>(true);
+
+  const checkPendingStatus = useCallback(async () => {
+    if (!profile?.id || profile?.tipo !== 'ex_aluno') {
+      setAlumniPendingApproval(false);
+      setCheckingAlumniStatus(false);
+      return;
+    }
+
+    try {
+      setCheckingAlumniStatus(true);
+      const { data } = await supabase
+        .from('registros_alumni')
+        .select('id, status_aprovacao, observacoes')
+        .eq('user_id', profile.id)
+        .maybeSingle();
+
+      if (data) {
+        const isPending = data.status_aprovacao === 'pendente' || data.observacoes?.includes('[PENDENTE_APROVACAO]');
+        setAlumniPendingApproval(!!isPending);
+      } else {
+        setAlumniPendingApproval(true);
+      }
+    } catch (err) {
+      console.error('Erro ao verificar status do formando:', err);
+    } finally {
+      setCheckingAlumniStatus(false);
+    }
+  }, [profile?.id, profile?.tipo]);
+
+  useEffect(() => {
+    checkPendingStatus();
+  }, [checkPendingStatus]);
 
   // Exam notification state
   const [showExamNotice, setShowExamNotice] = useState(false);
@@ -556,23 +594,7 @@ const Dashboard = () => {
         </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            {((profile?.tipo === 'admin' || profile?.caminhos_acesso?.includes('admin'))) && (
-              <div style={{ display: 'flex', gap: '0.5rem', marginRight: '0.5rem' }}>
-                {profile?.caminhos_acesso?.includes('coordenador_polo') ? (
-                  <button onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
-                    <Users size={18} /> <span className="mobile-hide">Painel Coordenador</span>
-                  </button>
-                ) : null}
-                {profile?.caminhos_acesso?.includes('professor') ? (
-                  <button onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
-                    <GraduationCap size={18} /> <span className="mobile-hide">Painel Professor</span>
-                  </button>
-                ) : null}
-                <button onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }} className="nav-btn-premium" style={{ width: 'auto' }}>
-                  <LayoutGrid size={18} /> <span className="mobile-hide">Painel Admin</span>
-                </button>
-              </div>
-            )}
+            <PanelSwitcher currentPanel="aluno" />
             <button className="nav-btn-premium danger" onClick={() => signOut()}>
               <LogOut size={18} /> <span className="mobile-hide">Sair</span>
             </button>
@@ -580,6 +602,76 @@ const Dashboard = () => {
       </header>
 
       <main className="admin-main">
+        {alumniPendingApproval ? (
+          <div style={{ maxWidth: '850px', margin: '2rem auto 4rem', padding: '0 1rem' }}>
+            <div style={{
+              background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '28px',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
+              padding: '3.5rem 2.5rem',
+              textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ position: 'absolute', top: '-100px', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '300px', background: 'rgba(245, 158, 11, 0.15)', filter: 'blur(90px)', borderRadius: '50%', pointerEvents: 'none' }}></div>
+
+              <div style={{ display: 'inline-flex', padding: '1.25rem', borderRadius: '50%', background: 'rgba(245, 158, 11, 0.1)', border: '2px solid rgba(245, 158, 11, 0.3)', marginBottom: '1.5rem', color: '#f59e0b' }}>
+                <Clock size={48} className="animate-pulse" />
+              </div>
+
+              <div>
+                <span style={{ display: 'inline-block', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', padding: '6px 16px', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                  Aguardando Validação da Administração
+                </span>
+              </div>
+
+              <h1 style={{ fontSize: '2.2rem', fontWeight: 900, margin: '0 0 1rem 0', letterSpacing: '-0.02em', color: 'var(--text-main, #fff)' }}>
+                Área de Espera — Alunos Formados
+              </h1>
+
+              <p style={{ fontSize: '1.15rem', color: 'var(--text-muted, #aaa)', maxWidth: '650px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+                Olá, <strong style={{ color: 'var(--text-main, #fff)' }}>{profile?.nome || 'Aluno'}</strong>! Recebemos seu cadastro como aluno formado da FATESA.
+              </p>
+
+              <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: '18px', padding: '1.75rem', textAlign: 'left', maxWidth: '650px', margin: '0 auto 2.5rem', border: '1px solid var(--glass-border)' }}>
+                <h4 style={{ margin: '0 0 1rem 0', color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.05rem', fontWeight: 700 }}>
+                  <GraduationCap size={22} /> Como funciona o processo de liberação:
+                </h4>
+                <ul style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
+                  <li><strong>Conferência Histórica:</strong> Como seu nome não constava na listagem preliminar automática, a secretaria acadêmica está conferindo seus dados nos arquivos e livros de atas da instituição.</li>
+                  <li><strong>Aprovação Administrativa:</strong> Assim que os administradores validarem seu cadastro no painel, esta sala de espera será desbloqueada automaticamente.</li>
+                  <li><strong>Certificados e Histórico:</strong> Com a aprovação concluída, você terá acesso imediato aos certificados oficiais e ao histórico escolar completo.</li>
+                </ul>
+              </div>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
+                <button 
+                  onClick={() => { refreshProfile(); checkPendingStatus(); }}
+                  className="btn btn-primary"
+                  style={{ width: 'auto', padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}
+                >
+                  <CheckCircle2 size={18} /> Verificar se Já Fui Aprovado
+                </button>
+                <button 
+                  onClick={() => window.open('https://wa.me/5516999999999?text=Ol%C3%A1%2C+sou+aluno+formado+da+FATESA+e+estou+na+sala+de+espera+aguardando+aprova%C3%A7%C3%A3o.', '_blank')}
+                  className="btn btn-outline"
+                  style={{ width: 'auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}
+                >
+                  <MessageSquare size={18} /> Falar com a Secretaria
+                </button>
+                <button 
+                  onClick={() => signOut()}
+                  className="btn btn-outline"
+                  style={{ width: 'auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--error, #ef4444)' }}
+                >
+                  <LogOut size={18} /> Sair da Conta
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
          <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
           {activeTab === 'home' && (
             <>
@@ -714,7 +806,10 @@ const Dashboard = () => {
                   nome: profile?.nome || isAlumniData.nome,
                   email: profile?.email || isAlumniData.email,
                   ano_formacao: isAlumniData.ano_formacao,
-                  matricula: isAlumniData.matricula
+                  matricula: isAlumniData.matricula,
+                  nucleo: profile?.nucleos?.nome || isAlumniData.nucleo,
+                  nivel_curso: isAlumniData.nivel_curso,
+                  historico: isAlumniData.historico
                 }} />
               </div>
             </div>
@@ -853,6 +948,7 @@ const Dashboard = () => {
             <ForumPanel userProfile={profile} />
           )}
         </div>
+        )}
       </main>
 
       {/* POP-UP DE ALERTAS E INFORMES DO ADMIN */}

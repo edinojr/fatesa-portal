@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { isTokenExpired, signOutLocal } from '../lib/authUtils'
+import { isTokenExpired, signOutLocal, isUserAdmin, ADMIN_EMAILS } from '../lib/authUtils'
 import { LogIn, Loader2, Eye, EyeOff, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Logo from '../components/common/Logo'
 import { useSEO } from '../hooks/useSEO'
@@ -43,18 +43,23 @@ const Login = () => {
   }, [navigate]);
 
   const checkSessionRoles = async (user: any) => {
-    await new Promise<void>((resolve) => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' && session?.user?.id === user.id) {
-          subscription.unsubscribe();
-          resolve();
+    const emailLower = (user?.email || '').toLowerCase().trim();
+    let isAdminEmail = ADMIN_EMAILS.includes(emailLower);
+
+    if (!isAdminEmail && user.email) {
+      try {
+        const { data: authorized } = await supabase
+          .from('admins_autorizados')
+          .select('email')
+          .eq('email', emailLower)
+          .maybeSingle();
+        if (authorized) {
+          isAdminEmail = true;
         }
-      });
-      setTimeout(() => {
-        subscription.unsubscribe();
-        resolve();
-      }, 2000);
-    });
+      } catch (err) {
+        console.warn('Erro ao verificar admins_autorizados:', err);
+      }
+    }
 
     const fetchProfile = async () => {
       return await supabase
@@ -70,54 +75,59 @@ const Login = () => {
       !!err && (
         err.code === 'PGRST301' ||
         String(err.message || '').toLowerCase().includes('jwt')
-      )
+      );
 
     if (isJwtError(fetchError)) {
-      const { data: refreshed } = await supabase.auth.refreshSession()
+      const { data: refreshed } = await supabase.auth.refreshSession();
       if (refreshed.session) {
-        const retry = await fetchProfile()
-        data = retry.data
-        fetchError = retry.error
+        const retry = await fetchProfile();
+        data = retry.data;
+        fetchError = retry.error;
       } else {
-        await signOutLocal()
-        setError('Sua sessão expirou. Faça login novamente.')
-        setLoading(false)
-        return
+        await signOutLocal();
+        setError('Sua sessão expirou. Faça login novamente.');
+        setLoading(false);
+        return;
       }
     }
 
     if (!data && !fetchError) {
       console.warn("Perfil não encontrado na 1ª tentativa. Aguardando sincronização de JWT e tentando novamente...");
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 800));
       const retryFetch = await fetchProfile();
       data = retryFetch.data;
       fetchError = retryFetch.error;
     }
-    
-    // Auto-repair missing profile or handle errors for Admin (DB-driven via admins_autorizados)
-    let isAdminEmail = false;
-    if (user.email) {
-      const { data: authorized } = await supabase
-        .from('admins_autorizados')
-        .select('email')
-        .eq('email', user.email.toLowerCase().trim())
-        .maybeSingle();
-      isAdminEmail = !!authorized;
-    }
-    
-    if ((!data && !fetchError) || (fetchError && isAdminEmail)) {
-      console.warn("Perfil não encontrado ou erro de RLS para Admin. Tentando auto-reparo...", user.id);
+
+    // Auto-repair missing profile or handle errors for Admin
+    if (isAdminEmail) {
+      if (!data) {
+        data = {
+          tipo: 'admin',
+          caminhos_acesso: ['admin', 'suporte', 'professor', 'aluno'],
+          bloqueado: false,
+          status_nucleo: 'ativo'
+        };
+        fetchError = null;
+      } else {
+        data.tipo = 'admin';
+        const caminhos = Array.isArray(data.caminhos_acesso) ? [...data.caminhos_acesso] : [];
+        if (!caminhos.includes('admin')) caminhos.push('admin');
+        data.caminhos_acesso = caminhos;
+      }
+    } else if (!data && !fetchError) {
+      console.warn("Perfil não encontrado. Tentando auto-reparo...", user.id);
       const metadata = user.user_metadata || {};
-      const defaultTipo = isAdminEmail ? 'admin' : (metadata.student_type || 'online');
+      const defaultTipo = metadata.student_type || 'online';
       
       try {
         const { data: createdProfile, error: insertError } = await supabase.rpc('create_profile_if_missing', {
           p_user_id: user.id,
           p_email: user.email,
-          p_nome: metadata.full_name || (isAdminEmail ? 'Administrador' : 'Usuário'),
+          p_nome: metadata.full_name || 'Usuário',
           p_tipo: defaultTipo,
           p_nucleo_id: metadata.nucleo_id || null,
-          p_caminhos_acesso: isAdminEmail ? ['admin', 'suporte', 'professor', 'aluno'] : [defaultTipo]
+          p_caminhos_acesso: [defaultTipo]
         });
 
         if (!insertError && createdProfile) {
@@ -134,6 +144,7 @@ const Login = () => {
     if (fetchError || !data) {
       if (isAdminEmail) {
         console.warn("Admin profile missing but allowing bypass for persistence.");
+        localStorage.setItem('fatesa_active_role', 'admin');
         navigate('/admin', { replace: true });
         setLoading(false);
         return;
@@ -145,14 +156,14 @@ const Login = () => {
       return;
     }
 
-    if (data.bloqueado) {
+    if (data.bloqueado && !isAdminEmail) {
       await supabase.auth.signOut();
       setError('Sua conta está bloqueada. Entre em contato com a administração.');
       setLoading(false);
       return;
     }
 
-    if (data.status_nucleo === 'hiato') {
+    if (data.status_nucleo === 'hiato' && !isAdminEmail) {
       await supabase.auth.signOut();
       setError('Você está cadastrado como desistente (hiato). Se deseja retornar ao curso, entre em contato com o suporte/financeiro para reativar sua matrícula.');
       setShowReturnButton(true);
@@ -160,15 +171,26 @@ const Login = () => {
       return;
     }
 
+    const isAdmin = isAdminEmail || isUserAdmin({ ...data, email: user.email });
     const roles = (data.caminhos_acesso as string[]) || [];
     const userType = (data.tipo || '') as string;
     
-    const isAdmin = roles.some((r: string) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType);
-    const isProfessor = roles.some((r: string) => r === 'professor') || userType === 'professor' || isAdmin;
+    const isProfessor = !isAdmin && (roles.some((r: string) => r === 'professor') || userType === 'professor');
+    const isCoordinator = !isAdmin && !isProfessor && (roles.some((r: string) => r === 'coordenador_polo') || userType === 'coordenador_polo');
 
-    if (isAdmin) navigate('/admin', { replace: true });
-    else if (isProfessor) navigate('/professor', { replace: true });
-    else navigate('/dashboard', { replace: true });
+    if (isAdmin) {
+      localStorage.setItem('fatesa_active_role', 'admin');
+      navigate('/admin', { replace: true });
+    } else if (isProfessor) {
+      localStorage.setItem('fatesa_active_role', 'professor');
+      navigate('/professor', { replace: true });
+    } else if (isCoordinator) {
+      localStorage.setItem('fatesa_active_role', 'coordenador');
+      navigate('/coordenador', { replace: true });
+    } else {
+      localStorage.setItem('fatesa_active_role', 'aluno');
+      navigate('/dashboard', { replace: true });
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {

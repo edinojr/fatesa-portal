@@ -10,6 +10,8 @@ export interface AlumniRecord {
   ano_formacao: string
   matricula?: string
   observacoes: string
+  status_aprovacao?: string
+  user_id?: string | null
   historico?: { modulo: string; nota: string; data: string }[]
 }
 
@@ -129,51 +131,68 @@ export const importAlumniFile = (file: File) => {
               nucleo,
               ano_formacao: ano,
               historico: historico.length > 0 ? historico : undefined,
+              status_aprovacao: 'aprovado',
               observacoes: `Importado: Whitelist de Confirmação (${new Date().toLocaleDateString()})`
             })
           }
 
-          // 3. DEDUPLICAR E SALVAR
-          const uniqueRecords = Array.from(
-            records.reduce((map, item) => {
-              if (item.email) map.set(item.email, item);
-              return map;
-            }, new Map<string, Partial<AlumniRecord>>()).values()
-          );
+          // 3. DEDUPLICAR E SALVAR EM LOTES DE 100
+          const emailCounts = new Map<string, number>();
+          const sanitizedRecords = records.map(r => {
+            let email = r.email || '';
+            if (emailCounts.has(email)) {
+              const count = emailCounts.get(email)! + 1;
+              emailCounts.set(email, count);
+              email = email.replace('@', `${count}@`);
+            } else {
+              emailCounts.set(email, 1);
+            }
+            return {
+              ...r,
+              email,
+              status_aprovacao: 'aprovado'
+            };
+          });
 
-          if (uniqueRecords.length === 0) {
+          if (sanitizedRecords.length === 0) {
             throw new Error('Nenhum dado válido encontrado para importação.')
           }
 
-          const { data: insertedData, error } = await supabase
-            .from('registros_alumni')
-            .upsert(uniqueRecords, { onConflict: 'email' })
-            .select()
+          // Executar em lotes de 100 para evitar timeout do PostgREST
+          const CHUNK_SIZE = 100;
+          let totalSuccess = 0;
+          let totalErrors = 0;
 
-          if (error) {
-            console.error('Supabase Upsert Error:', error);
-            throw error;
+          for (let i = 0; i < sanitizedRecords.length; i += CHUNK_SIZE) {
+            const chunk = sanitizedRecords.slice(i, i + CHUNK_SIZE);
+            const { data: chunkInserted, error: chunkError } = await supabase
+              .from('registros_alumni')
+              .upsert(chunk, { onConflict: 'email' })
+              .select('id');
+
+            if (chunkError) {
+              console.error(`Erro no lote ${Math.floor(i / CHUNK_SIZE) + 1}:`, chunkError);
+              totalErrors += chunk.length;
+            } else {
+              totalSuccess += chunkInserted?.length || chunk.length;
+            }
           }
 
-          // 4. BACKUP STORAGE (Auditoria)
+          // 4. BACKUP STORAGE (Auditoria não bloqueante)
           try {
             const dateDir = new Date().toISOString().split('T')[0];
             const fileName = `imports/${dateDir}/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
             
-            const { error: storageError } = await supabase.storage
+            await supabase.storage
               .from('alumni_formados')
               .upload(fileName, file);
-
-            if (storageError) {
-              console.warn('Alerta Backup:', storageError);
-            }
           } catch (storageErr) {
-            console.error('Storage communication error:', storageErr);
+            console.warn('Storage backup opcional não concluído:', storageErr);
           }
 
           resolve({
-            success: insertedData?.length || 0,
-            errors: uniqueRecords.length - (insertedData?.length || 0),
+            success: totalSuccess,
+            errors: totalErrors,
             total: rows.length - startAt
           })
         } catch (err: any) {

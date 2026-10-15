@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Award, BookOpen, ChevronLeft } from 'lucide-react'
+import { Award, BookOpen, ChevronLeft, GraduationCap, FileText } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import { supabase } from '../lib/supabase'
@@ -11,6 +11,8 @@ import { GRADUATION_CONFIG, isNivelBasico, isNivelMedio } from '../config/gradua
 import GraduationFormModal from '../features/users/components/GraduationFormModal'
 import LevelCertificate from '../features/users/components/LevelCertificate'
 import { graduationService } from '../services/graduationService'
+import { generateCertificadoPDF, generateHistoricoPDF } from '../utils/pdfGenerator'
+import { PanelSwitcher } from '../components/common/PanelSwitcher'
 
 const ModulosFinalizados = () => {
     const { profile, loading: profileLoading } = useProfile();
@@ -79,15 +81,53 @@ const goToPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [profileLoading, profile]);
 
+    const [viewMode, setViewMode] = useState<'cards' | 'tabela'>('cards');
+
     useEffect(() => {
         if (!profileLoading && profile?.id) {
-            supabase.from('historico_notas').select('*').eq('aluno_id', profile.id).order('created_at', { ascending: false }).then(({ data, error }) => {
-                if (error) console.error('[ModulosFinalizados] Erro ao buscar histórico:', error.message);
-                console.log('[ModulosFinalizados] historyGrades carregados:', data?.length || 0, data);
-                setHistoryGrades(data || []);
+            const userEmail = (profile.email || '').toLowerCase().trim();
+            Promise.all([
+                supabase.from('historico_notas').select('*').eq('aluno_id', profile.id).order('created_at', { ascending: false }),
+                supabase.from('registros_alumni').select('*').or(`user_id.eq.${profile.id}${userEmail ? `,email.eq.${userEmail}` : ''}`)
+            ]).then(([histRes, alumniRes]) => {
+                if (histRes.error) console.error('[ModulosFinalizados] Erro ao buscar histórico:', histRes.error.message);
+                const combined = [...(histRes.data || [])];
+                const alumniList = alumniRes.data || [];
+                
+                // Salvar registro de aluno formado se existir
+                if (alumniList.length > 0 && !alumniRecord) {
+                    setAlumniRecord(alumniList[0]);
+                }
+
+                alumniList.forEach((al: any) => {
+                    if (Array.isArray(al.historico)) {
+                        al.historico.forEach((item: any, idx: number) => {
+                            if (item && item.modulo) {
+                                const numNota = parseFloat(String(item.nota || '10').replace(',', '.'));
+                                const itemNorm = (item.modulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+                                const exists = combined.some(h => 
+                                    (h.modulo_nome || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() === itemNorm
+                                );
+                                if (!exists) {
+                                    combined.push({
+                                        id: `alumni-${al.id}-${idx}`,
+                                        aluno_id: profile.id,
+                                        curso_nome: al.curso || 'Teologia Básico',
+                                        modulo_nome: item.modulo,
+                                        nota: isNaN(numNota) ? 10 : numNota,
+                                        data_conclusao: item.data || new Date().toLocaleDateString('pt-BR'),
+                                        observacao: 'Histórico oficial de notas (Formados)'
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+                console.log('[ModulosFinalizados] total de notas carregadas:', combined.length);
+                setHistoryGrades(combined);
             });
         }
-    }, [profileLoading, profile?.id]);
+    }, [profileLoading, profile?.id, profile?.email]);
 
     // Filtrar apenas cursos que possuem pelo menos um livro finalizado (ou aprovado por histórico manual)
     const { finishedCourses, orfaosAprovados } = useMemo(() => {
@@ -102,12 +142,14 @@ const goToPanel = () => {
             return 'basico';
         };
 
+        const isAlumniApproved = profile?.tipo === 'ex_aluno' || alumniRecord?.status_aprovacao === 'aprovado';
+
         // 1) Históricos aprovados (nota >= 7)
         const approvedHistory = (historyGrades || []).filter((h: any) => h && h.nota != null && Number(h.nota) >= 7);
-        const approvedByHistoryTitles = new Set(approvedHistory.map((h: any) => normalizeTitle(h.modulo_nome)));
 
         // 2) finishedCourses — marca books finalizados por prova OU por histórico manual
         let localFinishedCourses = (courses || []).map(course => {
+            const isBasicCourse = detectNivel(course.nivel || course.nome || '') === 'basico';
             const finishedBooks = (course.livros || []).map(l => {
                 const stats = getBookStats(l, atividades, progressoAulas);
                 const approvedHistoryEntry = approvedHistory.find((h: any) => {
@@ -115,15 +157,20 @@ const goToPanel = () => {
                     const disp = normalizeTitle(l.titulo);
                     return disp === histNorm || disp.includes(histNorm) || histNorm.includes(disp);
                 });
-                const approvedManual = !!approvedHistoryEntry;
-                return { l, stats, approvedManual, notaManual: approvedHistoryEntry?.nota };
+                const approvedManual = !!approvedHistoryEntry || (isAlumniApproved && isBasicCourse);
+                const notaVal = approvedHistoryEntry?.nota != null 
+                    ? approvedHistoryEntry.nota 
+                    : ((l as any).notaHistorico ?? (l as any).nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : (isAlumniApproved && isBasicCourse ? 10 : null)));
+
+                return { l, stats, approvedManual, notaManual: notaVal };
             }).filter(({ l, stats, approvedManual }) =>
-                l.isFinished || stats.isFinished || approvedManual
+                l.isFinished || stats.isFinished || approvedManual || (isAlumniApproved && isBasicCourse)
             ).map(({ l, stats, approvedManual, notaManual }) => ({
                 ...l,
                 isFinished: true,
-                isApproved: !!(stats.isApproved || l.isApproved || approvedManual),
-                notaHistorico: notaManual
+                isApproved: true,
+                notaHistorico: notaManual,
+                nota: notaManual
             }));
             return { ...course, livros: finishedBooks };
         }).filter(course => course.livros.length > 0);
@@ -156,6 +203,7 @@ const goToPanel = () => {
                     isFinished: true,
                     isApproved: true,
                     nota: h.nota,
+                    notaHistorico: h.nota,
                     data_conclusao: h.data_conclusao,
                     curso_nome: h.curso_nome,
                 });
@@ -163,7 +211,6 @@ const goToPanel = () => {
 
             ['basico', 'medio'].forEach((nivel) => {
                 if (orfaosByNivel[nivel].length === 0) return;
-                // Procurar um curso do mesmo nível para anexar; se não houver, criar sintético
                 const cursoAlvo = localFinishedCourses.find(c => detectNivel(c.nivel || c.nome || '') === nivel);
                 if (cursoAlvo) {
                     cursoAlvo.livros.push(...orfaosByNivel[nivel]);
@@ -179,16 +226,44 @@ const goToPanel = () => {
         }
 
         return { finishedCourses: localFinishedCourses, orfaosAprovados: localOrfaosAprovados };
-    }, [courses, historyGrades, atividades, progressoAulas]);
+    }, [courses, historyGrades, atividades, progressoAulas, profile?.tipo, alumniRecord?.status_aprovacao]);
+
+    // Extrair lista plana de todos os módulos com notas para a tabela de boletim
+    const allCompletedBooksFlat = useMemo(() => {
+        const list: Array<{ id: string; titulo: string; curso: string; nota: number | null; data: string }> = [];
+        finishedCourses.forEach(c => {
+            (c.livros || []).forEach((l: any) => {
+                const rawN = l.notaHistorico ?? l.nota;
+                const n = rawN != null && !isNaN(Number(rawN)) ? Number(rawN) : null;
+                list.push({
+                    id: l.id,
+                    titulo: l.titulo,
+                    curso: c.nome || (c.nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio'),
+                    nota: n,
+                    data: l.data_conclusao || 'Concluído'
+                });
+            });
+        });
+        return list;
+    }, [finishedCourses]);
+
+    const mediaGeral = useMemo(() => {
+        const notasValidas = allCompletedBooksFlat.map(b => b.nota).filter((n): n is number => n !== null);
+        if (notasValidas.length === 0) return null;
+        const sum = notasValidas.reduce((a, b) => a + b, 0);
+        return (sum / notasValidas.length).toFixed(1);
+    }, [allCompletedBooksFlat]);
 
     if (profileLoading || coursesLoading) {
         return (
             <div className="auth-container">
                 <div className="spinner"></div>
-                <p>Carregando seus módulos finalizados...</p>
+                <p>Carregando seus módulos finalizados e notas...</p>
             </div>
         );
     }
+
+    const totalModulosConcluidos = finishedCourses.reduce((acc, c) => acc + c.livros.length, 0);
 
     return (
         <div className="admin-layout">
@@ -203,53 +278,172 @@ const goToPanel = () => {
                 </div>
 
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                     <h1 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>Módulos Finalizados</h1>
+                     <h1 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>Meu Boletim & Módulos Finalizados</h1>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <PanelSwitcher currentPanel="aluno" />
                     <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '0.4rem 1rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.75rem', border: '1px solid var(--glass-border)' }}>
                         <Award size={18} color="var(--primary)" />
-                        <span style={{ fontWeight: 800 }}>{finishedCourses.reduce((acc, c) => acc + c.livros.length, 0)}</span>
+                        <span style={{ fontWeight: 800 }}>{totalModulosConcluidos}</span>
                         <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Módulos</span>
                     </div>
                 </div>
             </header>
 
             <main className="admin-main" style={{ padding: '2rem 4rem' }}>
-                <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
-                    <div style={{ flex: 1 }}>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Aqui você encontra o histórico de todos os módulos que você já finalizou com sucesso.</p>
-                    </div>
-                    
-                    {alumniRecord && (
-                        <div style={{ 
-                            background: 'rgba(var(--primary-rgb), 0.05)', 
-                            border: '1px solid var(--primary)', 
-                            borderRadius: '16px', 
-                            padding: '1.5rem',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '1rem',
-                            maxWidth: '400px',
-                            animation: 'slideInRight 0.5s ease'
-                        }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <Award size={24} color="var(--primary)" />
-                                <div>
-                                    <h3 style={{ margin: 0, fontSize: '1rem' }}>Parabéns, Formado!</h3>
-                                    <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.7 }}>Seu certificado de nível está disponível.</p>
-                                </div>
-                            </div>
-                            <button 
-                                className="btn btn-primary" 
-                                style={{ width: '100%', gap: '0.5rem' }}
-                                onClick={() => setShowCertificate(true)}
-                            >
-                                <Award size={18} /> Imprimir Meu Certificado
-                            </button>
+                {/* Header de Resumo com Estatísticas e Certificado */}
+                <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                    gap: '1.5rem', 
+                    marginBottom: '2.5rem' 
+                }}>
+                    {/* Card 1: Status Geral */}
+                    <div style={{ background: 'var(--glass)', padding: '1.5rem 2rem', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                            <Award size={22} color="var(--primary)" />
+                            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                Total de Módulos Concluídos
+                            </span>
                         </div>
-                    )}
-                </header>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--primary)' }}>{totalModulosConcluidos}</span>
+                            <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>de 27 matérias</span>
+                        </div>
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--success)', fontWeight: 700 }}>
+                            ✓ Histórico escolar e notas integradas
+                        </div>
+                    </div>
+
+                    {/* Card 2: Média Geral */}
+                    <div style={{ background: 'var(--glass)', padding: '1.5rem 2rem', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                            <GraduationCap size={22} color="#10b981" />
+                            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                Média Geral de Notas
+                            </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10b981' }}>{mediaGeral ?? '10.0'}</span>
+                            <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/ 10.0</span>
+                        </div>
+                        <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            Aproveitamento escolar excelente
+                        </div>
+                    </div>
+
+                    {/* Card 3: Formatura e Certificado */}
+                    <div style={{ 
+                        background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.12) 0%, rgba(147, 51, 234, 0.08) 100%)', 
+                        padding: '1.5rem 2rem', 
+                        borderRadius: '20px', 
+                        border: '1px solid rgba(var(--primary-rgb), 0.3)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between'
+                    }}>
+                        <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+                                <Award size={20} color="var(--primary)" />
+                                <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', textTransform: 'uppercase' }}>
+                                    {totalModulosConcluidos >= 27 ? 'Formado no Curso Básico' : 'Em Formação'}
+                                </span>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                {totalModulosConcluidos >= 27 
+                                    ? 'Seu curso básico está 100% concluído com certificado disponível.'
+                                    : 'Acompanhe as notas de cada módulo finalizado.'}
+                            </p>
+                        </div>
+                        {(alumniRecord || totalModulosConcluidos >= 27) && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+                                <button 
+                                    className="btn btn-primary" 
+                                    style={{ width: '100%', gap: '0.5rem', padding: '0.65rem 1rem', background: '#eab308', color: '#000', borderColor: '#eab308', fontWeight: 800 }}
+                                    onClick={async () => {
+                                        const nivel = (alumniRecord?.nivel_curso || '').toLowerCase().includes('méd') || totalModulosConcluidos >= 35 ? 'medio' : 'basico';
+                                        await generateCertificadoPDF(alumniRecord?.nome || profile?.nome || 'Aluno', nivel);
+                                    }}
+                                >
+                                    <Award size={18} /> Baixar Certificado Oficial (PDF)
+                                </button>
+                                <button 
+                                    className="btn btn-outline" 
+                                    style={{ width: '100%', gap: '0.5rem', padding: '0.65rem 1rem' }}
+                                    onClick={async () => {
+                                        const alunoData = {
+                                            nome: alumniRecord?.nome || profile?.nome || 'Aluno',
+                                            nucleo: profile?.nucleos?.nome || alumniRecord?.nucleo || 'SEDE',
+                                            matricula: alumniRecord?.matricula || 'N/A',
+                                            dataMatricula: alumniRecord?.ano_formacao || 'N/A',
+                                            status: 'Formado'
+                                        };
+                                        const materiasParaHistorico = allCompletedBooksFlat.map(b => ({
+                                            nome: b.titulo,
+                                            media: b.nota ?? 10
+                                        }));
+                                        await generateHistoricoPDF(alunoData, materiasParaHistorico, totalModulosConcluidos >= 35 ? 'Médio' : 'Básico');
+                                    }}
+                                >
+                                    <FileText size={18} /> Baixar Histórico Escolar Oficial (PDF)
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Barra de Seleção de Visualização: Cards vs Tabela */}
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '1.5rem',
+                    flexWrap: 'wrap',
+                    gap: '1rem'
+                }}>
+                    <div>
+                        <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800 }}>Histórico de Matérias e Notas</h2>
+                        <p style={{ margin: '0.2rem 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                            Visualize os módulos concluídos em cards detalhados ou em formato de boletim oficial.
+                        </p>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.04)', padding: '4px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                        <button
+                            onClick={() => setViewMode('cards')}
+                            style={{
+                                padding: '6px 14px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                background: viewMode === 'cards' ? 'var(--primary)' : 'transparent',
+                                color: viewMode === 'cards' ? '#fff' : 'var(--text-muted)',
+                                fontWeight: 700,
+                                fontSize: '0.85rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            Visualização em Cards
+                        </button>
+                        <button
+                            onClick={() => setViewMode('tabela')}
+                            style={{
+                                padding: '6px 14px',
+                                borderRadius: '8px',
+                                border: 'none',
+                                background: viewMode === 'tabela' ? 'var(--primary)' : 'transparent',
+                                color: viewMode === 'tabela' ? '#fff' : 'var(--text-muted)',
+                                fontWeight: 700,
+                                fontSize: '0.85rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            Boletim Escolar (Tabela)
+                        </button>
+                    </div>
+                </div>
 
                 {finishedCourses.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'var(--glass)', borderRadius: '24px', border: '1px dashed var(--glass-border)' }}>
@@ -260,7 +454,87 @@ const goToPanel = () => {
                         </p>
                         <button onClick={() => navigate('/dashboard?tab=cursos')} className="btn btn-primary" style={{ width: 'auto' }}>Ir para Meus Cursos</button>
                     </div>
+                ) : viewMode === 'tabela' ? (
+                    /* Visualização em Tabela de Boletim */
+                    <div style={{ 
+                        background: 'var(--glass)', 
+                        borderRadius: '20px', 
+                        border: '1px solid var(--glass-border)',
+                        overflow: 'hidden',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                    }}>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '650px' }}>
+                                <thead>
+                                    <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--glass-border)' }}>
+                                        <th style={{ padding: '1.2rem 1.5rem', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', width: '60px' }}>#</th>
+                                        <th style={{ padding: '1.2rem 1.5rem', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Disciplina / Módulo</th>
+                                        <th style={{ padding: '1.2rem 1.5rem', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Curso</th>
+                                        <th style={{ padding: '1.2rem 1.5rem', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Conclusão</th>
+                                        <th style={{ padding: '1.2rem 1.5rem', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'center' }}>Nota Oficial</th>
+                                        <th style={{ padding: '1.2rem 1.5rem', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'center' }}>Situação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {allCompletedBooksFlat.map((item, idx) => (
+                                        <tr key={item.id + idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.2s' }}>
+                                            <td style={{ padding: '1rem 1.5rem', fontWeight: 700, color: 'var(--text-muted)', fontSize: '0.85rem' }}>{idx + 1}</td>
+                                            <td style={{ padding: '1rem 1.5rem' }}>
+                                                <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{item.titulo}</div>
+                                            </td>
+                                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                                                {item.curso}
+                                            </td>
+                                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                                                {item.data}
+                                            </td>
+                                            <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
+                                                <span style={{ 
+                                                    display: 'inline-block',
+                                                    padding: '4px 12px', 
+                                                    borderRadius: '8px', 
+                                                    fontWeight: 900, 
+                                                    fontSize: '0.95rem',
+                                                    background: 'rgba(16, 185, 129, 0.12)', 
+                                                    color: 'var(--success)'
+                                                }}>
+                                                    {item.nota != null ? item.nota.toFixed(1) : '10.0'}
+                                                </span>
+                                            </td>
+                                            <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
+                                                <span style={{ 
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '4px',
+                                                    padding: '3px 10px',
+                                                    borderRadius: '50px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 800,
+                                                    background: 'rgba(16, 185, 129, 0.1)',
+                                                    color: 'var(--success)',
+                                                    border: '1px solid rgba(16, 185, 129, 0.3)'
+                                                }}>
+                                                    ✓ Aprovado
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style={{ padding: '1.2rem 1.5rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                Total de disciplinas listadas: <strong>{allCompletedBooksFlat.length}</strong>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--success)' }}>
+                                    Média Final Consolidada: {mediaGeral ?? '10.0'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 ) : (
+                    /* Visualização em Cards */
                     <>
                         <CourseList 
                             courses={finishedCourses}

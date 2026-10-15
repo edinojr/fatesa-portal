@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { UserPlus, Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft } from 'lucide-react'
+import { UserPlus, Loader2, Eye, EyeOff, ShieldCheck, ArrowLeft, Clock, Search } from 'lucide-react'
 import Logo from '../components/common/Logo'
 
 const Signup = () => {
@@ -89,27 +89,56 @@ const Signup = () => {
     return () => clearTimeout(timer);
   }, [email]);
 
-  const verifyAlumniStatus = async (emailToVerify?: string) => {
-    const searchEmail = emailToVerify || email;
-    if (!searchEmail || !searchEmail.includes('@')) return;
+  const [alumniCheckStatus, setAlumniCheckStatus] = useState<'idle' | 'found' | 'not_found'>('idle')
+
+  const verifyAlumniStatus = async (manualCheck = false) => {
+    if (!nome.trim() && !email.trim()) return;
 
     setLoading(true);
     setError(null);
     try {
-      const { data, error: err } = await supabase
-        .from('registros_alumni')
-        .select('*')
-        .eq('email', searchEmail.toLowerCase().trim())
-        .maybeSingle();
+      let found = null;
+      // 1. Tentar buscar por e-mail se informado
+      if (email && email.includes('@')) {
+        const { data: byEmail } = await supabase
+          .from('registros_alumni')
+          .select('*')
+          .eq('email', email.toLowerCase().trim())
+          .maybeSingle();
+        if (byEmail) found = byEmail;
+      }
 
-      if (err) throw err;
-      if (data) {
-        setAlumniVerified(data);
+      // 2. Tentar buscar por nome exato
+      if (!found && nome.trim().length >= 3) {
+        const { data: byName } = await supabase
+          .from('registros_alumni')
+          .select('*')
+          .ilike('nome', nome.trim())
+          .limit(1)
+          .maybeSingle();
+        if (byName) found = byName;
+      }
+
+      // 3. Fallback: buscar por aproximação se clicou no botão manual
+      if (!found && manualCheck && nome.trim().length >= 4) {
+        const { data: byNamePartial } = await supabase
+          .from('registros_alumni')
+          .select('*')
+          .ilike('nome', `%${nome.trim()}%`)
+          .limit(1)
+          .maybeSingle();
+        if (byNamePartial) found = byNamePartial;
+      }
+
+      if (found) {
+        setAlumniVerified(found);
+        setAlumniCheckStatus('found');
         setTipo('ex_aluno');
-        setError(null);
-      } else if (!emailToVerify) {
-        // Se foi um clique manual no botão de verificar, e não achou
-        setError('Não encontramos um registro de Formado com este e-mail. Verifique se é o mesmo e-mail usado anteriormente ou contate o suporte.');
+      } else {
+        setAlumniVerified(null);
+        if (manualCheck || (nome.trim().length >= 4 && email.includes('@'))) {
+          setAlumniCheckStatus('not_found');
+        }
       }
     } catch (err: any) {
       console.error('Erro na verificação de alumni:', err);
@@ -118,14 +147,14 @@ const Signup = () => {
     }
   };
 
-  // Autoverificar Alumni quando o e-mail for digitado
+  // Autoverificar quando nome ou email mudar no modo ex_aluno
   useEffect(() => {
-    if (email && email.includes('@') && email.length > 5) {
-      const timer = setTimeout(() => verifyAlumniStatus(email), 1000);
+    if (tipo === 'ex_aluno' && ((nome && nome.length >= 4) || (email && email.includes('@')))) {
+      const timer = setTimeout(() => verifyAlumniStatus(false), 1200);
       return () => clearTimeout(timer);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email]);
+  }, [nome, email, tipo]);
 
   useEffect(() => {
     const fetchNucleos = async () => {
@@ -173,19 +202,49 @@ const Signup = () => {
 
       if (authError) throw authError
 
-      // 2. Vincular se for Alumni
-      if (authData.user && alumniVerified) {
-        await supabase
-          .from('registros_alumni')
-          .update({ user_id: authData.user.id, email: email.toLowerCase() })
-          .eq('id', alumniVerified.id);
+      // 2. Vincular ou Criar Registro de Formado
+      if (authData.user && tipo === 'ex_aluno') {
+        if (alumniVerified) {
+          // Constava na lista: vincula conta
+          const { error: rpcErr } = await supabase.rpc('vincular_alumni_cadastro', {
+            p_alumni_id: alumniVerified.id,
+            p_user_id: authData.user.id,
+            p_email: email.toLowerCase().trim()
+          });
+          if (rpcErr) {
+            await supabase
+              .from('registros_alumni')
+              .update({ user_id: authData.user.id, email: email.toLowerCase().trim(), status_aprovacao: 'aprovado' })
+              .eq('id', alumniVerified.id);
+          }
+        } else {
+          // NÃO constava na lista: cria registro pendente de aprovação
+          const nucleoName = availableNucleos.find(n => n.id === nucleo)?.nome || nucleo || 'Geral';
+          const { error: rpcErr } = await supabase.rpc('solicitar_cadastro_alumni', {
+            p_nome: nome.toUpperCase().trim(),
+            p_email: email.toLowerCase().trim(),
+            p_user_id: authData.user.id,
+            p_nucleo: nucleoName
+          });
+          if (rpcErr) {
+            await supabase.from('registros_alumni').insert({
+              nome: nome.toUpperCase().trim(),
+              email: email.toLowerCase().trim(),
+              curso: 'Teologia',
+              nivel_curso: 'Básico',
+              nucleo: nucleoName,
+              ano_formacao: 'Pendente',
+              user_id: authData.user.id,
+              status_aprovacao: 'pendente',
+              observacoes: '[PENDENTE_APROVACAO] Cadastro realizado no portal - Aguardando aprovação administrativa.'
+            });
+          }
+        }
       }
 
-      // 4. Roteamento pós-cadastro respeitando confirmação de e-mail
-      // Alumni verificado e staff autorizado (professor/admin pré-cadastrado) já
-      // tiveram seu e-mail validado por outro canal e podem acessar imediatamente.
-      // Demais alunos precisam confirmar o e-mail (toggle "Confirm email" no Supabase).
-      const trustedImmediate = !!alumniVerified || isProfessor || isAdmin
+      // 4. Roteamento pós-cadastro
+      // Alumni e staff autorizado têm acesso imediato ao portal (alumni não aprovado entra na sala de espera)
+      const trustedImmediate = tipo === 'ex_aluno' || !!alumniVerified || isProfessor || isAdmin
 
       if (authData.user && authData.session && (authData.user.email_confirmed_at || trustedImmediate)) {
         navigate('/dashboard', { replace: true })
@@ -274,28 +333,43 @@ const Signup = () => {
             </div>
           )}
 
-          {tipo === 'ex_aluno' && !alumniVerified && (
-            <div style={{ marginBottom: '1.5rem', padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '12px', border: '1px solid rgba(var(--primary-rgb), 0.1)', textAlign: 'center' }}>
-              <p style={{ fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--text-muted)' }}>
-                Clique no botão abaixo para confirmar se seu nome consta na nossa lista oficial de Formados.
-              </p>
-              <button 
-                type="button" 
-                className="btn btn-primary" 
-                style={{ width: '100%' }}
-                onClick={() => verifyAlumniStatus()}
-                disabled={loading}
-              >
-                {loading ? <Loader2 className="spinner" /> : <ShieldCheck size={18} />} Verificar Meu Nome na Lista
-              </button>
-            </div>
-          )}
-
-          {alumniVerified && (
-            <div style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', borderRadius: '12px', color: 'var(--success)', fontSize: '0.9rem', textAlign: 'center' }}>
-              <ShieldCheck size={24} style={{ marginBottom: '0.5rem' }} />
-              <p><strong>Identidade Confirmada!</strong></p>
-              <p>Olá, {alumniVerified.nome}. Sua conta será vinculada ao registro de formado.</p>
+          {tipo === 'ex_aluno' && (
+            <div style={{ marginBottom: '1.5rem' }}>
+              {alumniCheckStatus === 'found' && alumniVerified ? (
+                <div style={{ padding: '1rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', borderRadius: '12px', color: 'var(--success)', fontSize: '0.9rem', textAlign: 'center' }}>
+                  <ShieldCheck size={28} style={{ margin: '0 auto 0.5rem', display: 'block' }} />
+                  <p style={{ margin: '0 0 0.25rem 0', fontWeight: 800 }}>Nome Localizado na Lista Oficial!</p>
+                  <p style={{ margin: 0 }}>Olá, <strong>{alumniVerified.nome}</strong>. Sua conta será vinculada imediatamente como Aluno Formado.</p>
+                </div>
+              ) : alumniCheckStatus === 'not_found' ? (
+                <div style={{ padding: '1.25rem', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid #f59e0b', borderRadius: '12px', color: '#b45309', fontSize: '0.9rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 800 }}>
+                    <Clock size={20} color="#d97706" /> Nome não localizado na lista preliminar
+                  </div>
+                  <p style={{ margin: '0 0 0.5rem 0', lineHeight: 1.5, color: 'var(--text-main, #333)' }}>
+                    Não se preocupe! Você pode concluir seu cadastro agora. Sua solicitação entrará na <strong>Área de Espera para Aprovação da Administração</strong> e será liberada pela secretaria após a conferência.
+                  </p>
+                  <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.8 }}>
+                    Preencha seus dados de senha abaixo e clique em Ativar Meu Acesso.
+                  </p>
+                </div>
+              ) : (
+                <div style={{ padding: '1.25rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '12px', border: '1px solid rgba(var(--primary-rgb), 0.1)', textAlign: 'center' }}>
+                  <p style={{ fontSize: '0.88rem', marginBottom: '0.75rem', color: 'var(--text-muted)' }}>
+                    Digite seu Nome Completo acima e clique abaixo para conferir se seu nome já consta na lista de Formados.
+                  </p>
+                  <button 
+                    type="button" 
+                    className="btn btn-outline" 
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                    onClick={() => verifyAlumniStatus(true)}
+                    disabled={loading || !nome.trim()}
+                  >
+                    {loading ? <Loader2 className="spinner" size={18} /> : <Search size={18} />} 
+                    Verificar Meu Nome na Lista Oficial
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

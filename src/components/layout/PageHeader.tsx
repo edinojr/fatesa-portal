@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, LogOut, ExternalLink, LayoutDashboard, Users
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
 import TopBanner from './TopBanner'
+import { PanelSwitcher } from '../common/PanelSwitcher'
 
 interface PageHeaderProps {
   title: string
@@ -78,57 +79,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     if (variant === 'viewer') return null
     
     const actionButtons: React.ReactNode[] = []
+    const currentPanel = variant === 'admin' ? 'admin' : variant === 'professor' ? 'professor' : variant === 'coordinator' ? 'coordenador' : 'aluno'
 
-    if (variant === 'admin' || variant === 'professor' || variant === 'coordinator' || isStaff) {
-      if (isAdmin || variant === 'admin') {
-        actionButtons.push(
-          <button
-            key="admin"
-            onClick={() => handleRoleNavigate('admin', '/admin')}
-            className="nav-btn-premium"
-            style={{ width: 'auto' }}
-          >
-            <LayoutDashboard size={18} /> <span className="mobile-hide">Painel Admin</span>
-          </button>
-        )
-      }
-      if (isProfessor || variant === 'professor') {
-        actionButtons.push(
-          <button
-            key="professor"
-            onClick={() => handleRoleNavigate('professor', '/professor')}
-            className="nav-btn-premium"
-            style={{ width: 'auto' }}
-          >
-            <GraduationCap size={18} /> <span className="mobile-hide">Painel Professor</span>
-          </button>
-        )
-      }
-      if (isCoordinator || variant === 'coordinator') {
-        actionButtons.push(
-          <button
-            key="coordinator"
-            onClick={() => handleRoleNavigate('coordenador_polo', '/coordenador')}
-            className="nav-btn-premium"
-            style={{ width: 'auto' }}
-          >
-            <Users size={18} /> <span className="mobile-hide">Painel Coordenador</span>
-          </button>
-        )
-      }
-      if (variant === 'student' && isStaff) {
-        actionButtons.push(
-          <button
-            key="student"
-            onClick={() => navigate('/dashboard')}
-            className="nav-btn-premium"
-            style={{ width: 'auto' }}
-          >
-            <ExternalLink size={18} /> <span className="mobile-hide">Painel Aluno</span>
-          </button>
-        )
-      }
-    }
+    actionButtons.push(
+      <PanelSwitcher key="panel-switcher" currentPanel={currentPanel} />
+    )
 
     actionButtons.push(
       <button

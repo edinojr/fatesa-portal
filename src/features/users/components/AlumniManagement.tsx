@@ -1,9 +1,30 @@
-import React, { useState, useEffect } from 'react'
-import { GraduationCap, Search, Plus, Edit, Trash2, Loader2, X, FileText, History as HistoryIcon, Award } from 'lucide-react'
+import React, { useState, useEffect, useMemo } from 'react'
+import { 
+  GraduationCap, 
+  Search, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Loader2, 
+  X, 
+  FileText, 
+  History as HistoryIcon, 
+  Award, 
+  Download,
+  CheckCircle2,
+  Clock,
+  UserCheck,
+  UserX,
+  ChevronLeft,
+  ChevronRight,
+  AlertCircle,
+  Check
+} from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import Logo from '../../../components/common/Logo'
 import LevelCertificate from './LevelCertificate'
 import TranscriptDocument from './TranscriptDocument'
+import { generateCertificadoPDF, generateHistoricoPDF } from '../../../utils/pdfGenerator'
 
 interface AlumniRecord {
   id: string
@@ -25,13 +46,20 @@ interface AlumniRecord {
   cidade?: string
   uf?: string
   codigo_verificacao?: string
+  user_id?: string | null
+  status_aprovacao?: string
   created_at: string
 }
+
+type AlumniTab = 'cadastrados_na_lista' | 'na_lista_sem_cadastro' | 'fora_da_lista_pendentes';
 
 const AlumniManagement = () => {
   const [records, setRecords] = useState<AlumniRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentTab, setCurrentTab] = useState<AlumniTab>('cadastrados_na_lista')
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const ITEMS_PER_PAGE = 50
   const [showModal, setShowModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<AlumniRecord | null>(null)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -96,14 +124,46 @@ const AlumniManagement = () => {
     try {
       setLoading(true)
       setFetchError(null)
-      const { data, error } = await supabase
-        .from('registros_alumni')
-        .select('*')
-        .order('ano_formacao', { ascending: false })
-        .order('nome', { ascending: true })
+      const [alumniRes, usersRes] = await Promise.all([
+        supabase
+          .from('registros_alumni')
+          .select('*')
+          .order('nome', { ascending: true }),
+        supabase
+          .from('users')
+          .select('id, nome, email, tipo, nucleo, created_at')
+          .eq('tipo', 'ex_aluno')
+      ])
       
-      if (error) throw error
-      setRecords(data || [])
+      if (alumniRes.error) throw alumniRes.error
+
+      const alumniData: AlumniRecord[] = [...(alumniRes.data || [])]
+
+      // Detectar usuários cadastrados como ex_aluno que ainda não possuem linha em registros_alumni
+      const linkedUserIds = new Set(alumniData.map(a => a.user_id).filter(Boolean))
+      const registeredEmails = new Set(alumniData.map(a => (a.email || '').toLowerCase().trim()).filter(Boolean))
+
+      if (usersRes.data) {
+        usersRes.data.forEach((u: any) => {
+          if (!linkedUserIds.has(u.id) && !registeredEmails.has((u.email || '').toLowerCase().trim())) {
+            alumniData.push({
+              id: `user-${u.id}`,
+              user_id: u.id,
+              nome: u.nome || 'Aluno Sem Nome',
+              email: u.email || '',
+              curso: 'Teologia',
+              nivel_curso: 'Básico',
+              nucleo: u.nucleo || 'Geral',
+              ano_formacao: 'Pendente',
+              observacoes: '[PENDENTE_APROVACAO] Cadastro realizado no portal - Aguardando aprovação administrativa.',
+              status_aprovacao: 'pendente',
+              created_at: u.created_at || new Date().toISOString()
+            })
+          }
+        })
+      }
+
+      setRecords(alumniData)
     } catch (err: any) {
       console.error('Error fetching alumni records:', err)
       setFetchError(err?.message || String(err))
@@ -286,49 +346,209 @@ const AlumniManagement = () => {
     setShowModal(true)
   }
 
-  const filteredRecords = records.filter((r: AlumniRecord) => 
-    r.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.curso?.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // 1. Alunos formados com o nome na lista que fizeram o cadastro
+  const cadastradosNaLista = useMemo(() => {
+    return records
+      .filter(r => !!r.user_id && r.status_aprovacao !== 'pendente' && !r.observacoes?.includes('[PENDENTE_APROVACAO]'))
+      .sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' }))
+  }, [records]);
 
-  // Agrupar registros por Ano e Nível
-  const grouped = filteredRecords.reduce((acc: any, r: AlumniRecord) => {
-    const year = r.ano_formacao || 'Sem Ano'
-    const level = r.nivel_curso || 'Graduação'
-    if (!acc[year]) acc[year] = {}
-    if (!acc[year][level]) acc[year][level] = []
-    acc[year][level].push(r)
-    return acc
-  }, {} as Record<string, Record<string, AlumniRecord[]>>)
+  // 2. Alunos que estão nessa lista que NÃO fizeram cadastro
+  const naListaSemCadastro = useMemo(() => {
+    return records
+      .filter(r => !r.user_id && r.status_aprovacao !== 'pendente' && !r.observacoes?.includes('[PENDENTE_APROVACAO]'))
+      .sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' }))
+  }, [records]);
 
-  // Ordenar anos (descendente)
-  const years = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
+  // 3. Alunos que NÃO estão nessa lista e fizeram cadastro (aguardando aprovação)
+  const foraDaListaPendentes = useMemo(() => {
+    return records
+      .filter(r => r.status_aprovacao === 'pendente' || r.observacoes?.includes('[PENDENTE_APROVACAO]'))
+      .sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' }))
+  }, [records]);
+
+  // Lista da aba ativa filtrada por nome (ordem alfabética estrita)
+  const activeList = useMemo(() => {
+    let baseList: AlumniRecord[] = [];
+    if (currentTab === 'cadastrados_na_lista') baseList = cadastradosNaLista;
+    else if (currentTab === 'na_lista_sem_cadastro') baseList = naListaSemCadastro;
+    else baseList = foraDaListaPendentes;
+
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase().trim();
+      baseList = baseList.filter(r => 
+        (r.nome || '').toLowerCase().includes(term) ||
+        (r.email || '').toLowerCase().includes(term) ||
+        (r.nucleo || '').toLowerCase().includes(term) ||
+        (r.matricula || '').toLowerCase().includes(term)
+      );
+    }
+
+    return baseList.sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' }));
+  }, [currentTab, cadastradosNaLista, naListaSemCadastro, foraDaListaPendentes, searchTerm]);
+
+  // Paginação
+  const totalPages = Math.ceil(activeList.length / ITEMS_PER_PAGE) || 1;
+  const paginatedList = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return activeList.slice(start, start + ITEMS_PER_PAGE);
+  }, [activeList, currentPage]);
+
+  const handleEmitirCertificado = async (record: AlumniRecord) => {
+    let nivel: 'basico' | 'medio' = (record.nivel_curso || '').toLowerCase().includes('méd') ? 'medio' : 'basico';
+    const defaultChoice = nivel === 'medio' ? 'M' : 'B';
+
+    const choice = window.prompt(
+      `Emitir Certificado Oficial Padrão (Histórico Consolidado)\nAluno: ${record.nome}\n\nQual certificado deseja emitir? Digite 'M' para MÉDIO ou 'B' para BÁSICO:`,
+      defaultChoice
+    );
+    if (!choice) return;
+
+    if (choice.trim().toUpperCase() === 'M') {
+      nivel = 'medio';
+    } else if (choice.trim().toUpperCase() === 'B') {
+      nivel = 'basico';
+    } else {
+      alert("Opção inválida. Digite 'B' para BÁSICO ou 'M' para MÉDIO.");
+      return;
+    }
+
+    const nomeImpresso = window.prompt(
+      "Digite ou confirme o nome do aluno que sairá no certificado:",
+      record.nome
+    );
+    if (!nomeImpresso || !nomeImpresso.trim()) return;
+
+    try {
+      await generateCertificadoPDF(nomeImpresso.trim(), nivel);
+    } catch (err: any) {
+      alert('Erro ao gerar certificado: ' + err.message);
+    }
+  };
+
+  const handleEmitirCertificadoAvulso = async () => {
+    let nivel: 'basico' | 'medio' = 'basico';
+
+    const choice = window.prompt(
+      `Emitir Certificado Avulso (Padrão Histórico Consolidado)\n\nQual certificado deseja emitir? Digite 'M' para MÉDIO ou 'B' para BÁSICO:`,
+      'B'
+    );
+    if (!choice) return;
+
+    if (choice.trim().toUpperCase() === 'M') {
+      nivel = 'medio';
+    } else if (choice.trim().toUpperCase() === 'B') {
+      nivel = 'basico';
+    } else {
+      alert("Opção inválida. Digite 'B' para BÁSICO ou 'M' para MÉDIO.");
+      return;
+    }
+
+    const nomeImpresso = window.prompt("Digite o nome completo do aluno que sairá no certificado:");
+    if (!nomeImpresso || !nomeImpresso.trim()) return;
+
+    try {
+      await generateCertificadoPDF(nomeImpresso.trim(), nivel);
+    } catch (err: any) {
+      alert('Erro ao gerar certificado: ' + err.message);
+    }
+  };
+
+  const handleDownloadHistoricoAlumni = async (record: AlumniRecord) => {
+    const alunoData = {
+      nome: record.nome,
+      nucleo: record.nucleo || 'Geral',
+      matricula: record.matricula || 'N/A',
+      dataMatricula: record.ano_formacao || 'N/A',
+      status: 'Formado'
+    };
+
+    const materiasParaHistorico = (record.historico || [])
+      .filter(h => h.modulo && h.nota)
+      .map(h => ({
+        nome: h.modulo,
+        media: h.nota
+      }));
+
+    if (materiasParaHistorico.length === 0) {
+      alert("Nenhuma matéria com nota registrada para este aluno.");
+      return;
+    }
+
+    try {
+      await generateHistoricoPDF(alunoData, materiasParaHistorico, record.nivel_curso || 'Básico');
+    } catch (err: any) {
+      alert('Erro ao gerar histórico escolar: ' + err.message);
+    }
+  };
+
+  const handleApproveAlumni = async (record: AlumniRecord) => {
+    if (!window.confirm(`Deseja aprovar o cadastro de formado para "${record.nome}"?`)) return;
+
+    setActionLoading(`approve-${record.id}`);
+    try {
+      if (record.id.startsWith('user-')) {
+        const userId = record.user_id!;
+        const { error: insErr } = await supabase.from('registros_alumni').insert({
+          nome: record.nome.toUpperCase(),
+          email: record.email.toLowerCase(),
+          curso: record.curso || 'Teologia',
+          nivel_curso: record.nivel_curso || 'Básico',
+          nucleo: record.nucleo || 'Geral',
+          ano_formacao: new Date().getFullYear().toString(),
+          user_id: userId,
+          status_aprovacao: 'aprovado',
+          observacoes: `Aprovado pela administração em ${new Date().toLocaleDateString('pt-BR')}`
+        });
+        if (insErr) throw insErr;
+        await supabase.from('users').update({ acesso_definitivo: true, tipo: 'ex_aluno' }).eq('id', userId);
+      } else {
+        const { error: rpcErr } = await supabase.rpc('aprovar_alumni', {
+          p_alumni_id: record.id,
+          p_observacao: `Aprovado pela administração em ${new Date().toLocaleDateString('pt-BR')}`
+        });
+
+        if (rpcErr) {
+          const cleanObs = (record.observacoes || '').replace('[PENDENTE_APROVACAO]', '').trim();
+          const { error: updErr } = await supabase
+            .from('registros_alumni')
+            .update({
+              status_aprovacao: 'aprovado',
+              observacoes: cleanObs ? `${cleanObs} (Aprovado em ${new Date().toLocaleDateString('pt-BR')})` : `Aprovado pela administração em ${new Date().toLocaleDateString('pt-BR')}`
+            })
+            .eq('id', record.id);
+          if (updErr) throw updErr;
+
+          if (record.user_id) {
+            await supabase.from('users').update({ acesso_definitivo: true, tipo: 'ex_aluno' }).eq('id', record.user_id);
+          }
+        }
+      }
+
+      alert(`Aluno "${record.nome}" aprovado com sucesso! Agora consta na lista oficial com acesso liberado.`);
+      await fetchRecords();
+    } catch (err: any) {
+      alert('Erro ao aprovar aluno: ' + err.message);
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
   // Modal de histórico: lista única com todos os módulos do curso
-  const historyFilledCount = historyDrafts.filter(d => d.modulo.trim() !== '' && d.nota.trim() !== '').length
+  const historyFilledCount = historyDrafts.filter(d => d.modulo.trim() !== '' && d.nota.trim() !== '').length;
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '4rem' }}><Loader2 className="spinner" /> Carregando base de Formados...</div>
+  if (loading) return <div style={{ textAlign: 'center', padding: '4rem' }}><Loader2 className="spinner" /> Carregando base de Formados...</div>;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ margin: 0 }}>Base de Formados</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Gestão de Formados e históricos de conclusão.</p>
+          <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800 }}>Base de Formados</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: '4px 0 0 0' }}>
+            Gestão completa de alunos formados, aprovação de cadastros e emissão de certificados oficiais.
+          </p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <div style={{ position: 'relative', width: '300px' }}>
-            <Search style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
-            <input 
-              type="text" 
-              className="form-control" 
-              style={{ paddingLeft: '3rem' }} 
-              placeholder="Pesquisar por nome ou curso..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button 
             className="btn btn-outline" 
             style={{ 
@@ -340,26 +560,20 @@ const AlumniManagement = () => {
             }} 
             onClick={() => document.getElementById('import-alumni-file-input')?.click()}
             disabled={!!actionLoading}
-            title="Clique para selecionar uma planilha Excel ou CSV"
+            title="Importar lista de formados via Excel ou CSV"
           >
             {actionLoading === 'importing-file' ? (
-              <Loader2 className="spinner" />
+              <Loader2 className="spinner" size={18} />
             ) : (
               <FileText size={18} />
             )}
-            <span>Importar Planilha de Identificação</span>
+            <span>Importar Planilha</span>
           </button>
           <input 
             id="import-alumni-file-input"
             type="file" 
             accept=".xlsx,.xls,.cvs,.csv" 
-            style={{ 
-              position: 'absolute',
-              width: 0,
-              height: 0,
-              opacity: 0,
-              overflow: 'hidden'
-            }} 
+            style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} 
             onChange={async (e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -377,93 +591,410 @@ const AlumniManagement = () => {
               }
             }}
           />
+          <button 
+            className="btn btn-outline" 
+            style={{ 
+              width: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              borderColor: 'rgba(234, 179, 8, 0.5)',
+              color: '#eab308',
+              fontWeight: 700
+            }} 
+            onClick={handleEmitirCertificadoAvulso}
+            title="Emitir Certificado Oficial Padrão (Histórico Consolidado)"
+          >
+            <GraduationCap size={18} />
+            <span>Emitir Certificado</span>
+          </button>
           <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setEditingRecord(null); setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Básico', observacoes: '', rg: '', telefone: '', cep: '', endereco: '', bairro: '', cidade: '', uf: '' }); setShowModal(true); }}>
-            <Plus size={18} /> Adicionar Registro
+            <Plus size={18} /> Adicionar Formado
           </button>
         </div>
       </header>
 
+      {/* BANNER CERTIFICADO PADRÃO HISTÓRICO CONSOLIDADO */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        background: 'rgba(234, 179, 8, 0.06)',
+        border: '1px solid rgba(234, 179, 8, 0.25)',
+        borderRadius: '16px',
+        padding: '1.25rem 1.5rem',
+        flexWrap: 'wrap',
+        gap: '1rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(234, 179, 8, 0.15)', color: '#eab308' }}>
+            <Award size={26} />
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Certificado Oficial Padrão (Histórico Consolidado)</h3>
+            <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Emita o certificado oficial em PDF (Básico ou Médio) com o mesmo modelo de Histórico Consolidado.
+            </p>
+          </div>
+        </div>
+        <button 
+          onClick={handleEmitirCertificadoAvulso} 
+          className="btn" 
+          style={{ background: '#eab308', color: '#000', fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '12px', border: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
+        >
+          <GraduationCap size={18} /> Emitir Certificado
+        </button>
+      </div>
+
       {fetchError && (
         <div className="admin-card" style={{ border: '1px solid #dc2626', background: 'rgba(220,38,38,0.06)', padding: '1rem 1.5rem', color: '#dc2626' }}>
-          <strong>Erro ao carregar a Base de Formados.</strong>{' '}
-          {fetchError.includes('does not exist') || fetchError.includes('42703')
-            ? 'O schema da tabela registros_alumni está desatualizado no banco. Aplique a migração supabase/migrations/20260903_alumni_full_schema.sql no SQL Editor do Supabase.'
-            : fetchError}
+          <strong>Aviso:</strong> {fetchError}
         </div>
       )}
 
-      {years.length === 0 ? (
-        <div className="admin-card" style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-          Nenhum registro de formado encontrado.
-        </div>
-      ) : (
-        years.map(year => (
-          <div key={year} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ background: 'var(--primary)', color: '#fff', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 800 }}>{year}</div>
-              <div style={{ flex: 1, height: '1px', background: 'var(--glass-border)' }}></div>
-            </div>
-
-            {Object.keys(grouped[year]).map(level => (
-              <div key={level} className="admin-card" style={{ padding: 0, overflow: 'hidden', border: '1px solid rgba(var(--primary-rgb), 0.2)' }}>
-                <div style={{ padding: '1rem 1.5rem', background: 'rgba(var(--primary-rgb), 0.05)', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <GraduationCap size={18} className="text-primary" />
-                  <span style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>{level}</span>
-                  <span style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.1)', padding: '0.2rem 0.6rem', borderRadius: '50px', fontSize: '0.7rem' }}>{grouped[year][level].length} Formados</span>
-                </div>
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Nome / E-mail</th>
-                      <th>RG / Contato</th>
-                      <th>Matrícula / Código</th>
-                      <th>Curso Especialidade</th>
-                      <th style={{ textAlign: 'center' }}>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {grouped[year][level].map((record: AlumniRecord) => (
-                      <tr key={record.id}>
-                        <td>
-                          <div style={{ fontWeight: 700 }}>{record.nome}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{record.email}</div>
-                        </td>
-                        <td>
-                          <div style={{ fontWeight: 600 }}>{record.rg || 'RG NI'}</div>
-                          <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>{record.telefone || 'Sem Tel'}</div>
-                        </td>
-                        <td>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                            <code style={{ fontSize: '0.8rem', background: 'rgba(0,0,0,0.05)', padding: '2px 5px', borderRadius: '4px' }}>M: {record.matricula || '---'}</code>
-                            <code style={{ fontSize: '0.7rem', color: 'var(--primary)', opacity: 0.8 }}>V: {record.codigo_verificacao?.substring(0, 8)}...</code>
-                          </div>
-                        </td>
-                        <td>
-                          <div style={{ fontWeight: 600 }}>{record.curso || '---'}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{record.nucleo || 'Sem Polo'}</div>
-                        </td>
-                        <td>
-                           <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                            <button className="btn btn-icon" onClick={() => { setSelectedAlumni(record); setShowDossie(true); }} title="Ver Dossiê / Histórico">
-                              <FileText size={16} color="var(--primary)" />
-                            </button>
-                            <button className="btn btn-icon" onClick={() => handleEdit(record)} title="Editar">
-                              <Edit size={16} />
-                            </button>
-                            <button className="btn btn-icon text-error" onClick={() => handleDelete(record.id)} title="Excluir">
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+      {/* 3 CARDS DE ALUNOS FORMADOS */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+        {/* CARD 1: NA LISTA COM CADASTRO */}
+        <div 
+          onClick={() => { setCurrentTab('cadastrados_na_lista'); setCurrentPage(1); }}
+          style={{
+            background: currentTab === 'cadastrados_na_lista' ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)' : 'var(--glass)',
+            border: currentTab === 'cadastrados_na_lista' ? '2px solid #22c55e' : '1px solid var(--glass-border)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            boxShadow: currentTab === 'cadastrados_na_lista' ? '0 8px 24px rgba(34, 197, 94, 0.2)' : '0 4px 12px rgba(0,0,0,0.05)',
+            position: 'relative'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e' }}>
+                <CheckCircle2 size={24} />
               </div>
-            ))}
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800 }}>Na Lista com Cadastro</h3>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Conta ativa no portal</span>
+              </div>
+            </div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#22c55e' }}>
+              {cadastradosNaLista.length}
+            </div>
           </div>
-        ))
-      )}
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+            Alunos formados da lista oficial que já ativaram sua conta e têm acesso completo aos certificados.
+          </p>
+        </div>
+
+        {/* CARD 2: NA LISTA SEM CADASTRO */}
+        <div 
+          onClick={() => { setCurrentTab('na_lista_sem_cadastro'); setCurrentPage(1); }}
+          style={{
+            background: currentTab === 'na_lista_sem_cadastro' ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%)' : 'var(--glass)',
+            border: currentTab === 'na_lista_sem_cadastro' ? '2px solid #3b82f6' : '1px solid var(--glass-border)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            boxShadow: currentTab === 'na_lista_sem_cadastro' ? '0 8px 24px rgba(59, 130, 246, 0.2)' : '0 4px 12px rgba(0,0,0,0.05)',
+            position: 'relative'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6' }}>
+                <GraduationCap size={24} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800 }}>Na Lista sem Cadastro</h3>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Aguardando ativação</span>
+              </div>
+            </div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#3b82f6' }}>
+              {naListaSemCadastro.length}
+            </div>
+          </div>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+            Registros históricos que ainda não criaram login. Você pode emitir certificados para eles a qualquer momento.
+          </p>
+        </div>
+
+        {/* CARD 3: FORA DA LISTA (AGUARDANDO APROVAÇÃO) */}
+        <div 
+          onClick={() => { setCurrentTab('fora_da_lista_pendentes'); setCurrentPage(1); }}
+          style={{
+            background: currentTab === 'fora_da_lista_pendentes' ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%)' : 'var(--glass)',
+            border: currentTab === 'fora_da_lista_pendentes' ? '2px solid #f59e0b' : foraDaListaPendentes.length > 0 ? '1px solid #f59e0b' : '1px solid var(--glass-border)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            boxShadow: currentTab === 'fora_da_lista_pendentes' ? '0 8px 24px rgba(245, 158, 11, 0.2)' : '0 4px 12px rgba(0,0,0,0.05)',
+            position: 'relative'
+          }}
+        >
+          {foraDaListaPendentes.length > 0 && (
+            <div style={{ position: 'absolute', top: '-10px', right: '15px', background: '#ef4444', color: '#fff', fontSize: '0.75rem', fontWeight: 900, padding: '2px 10px', borderRadius: '50px', boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)' }}>
+              {foraDaListaPendentes.length} PENDENTE{foraDaListaPendentes.length > 1 ? 'S' : ''}
+            </div>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}>
+                <Clock size={24} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800 }}>Cadastrados Fora da Lista</h3>
+                <span style={{ fontSize: '0.8rem', color: '#f59e0b', fontWeight: 700 }}>Aguardam Aprovação</span>
+              </div>
+            </div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#f59e0b' }}>
+              {foraDaListaPendentes.length}
+            </div>
+          </div>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+            Fizeram cadastro no portal mas não estavam na lista. Aprove para liberar o acesso e emitir o certificado.
+          </p>
+        </div>
+      </div>
+
+      {/* SEÇÃO DA ABA SELECIONADA COM BARRA DE BUSCA EM TEMPO REAL */}
+      <div className="admin-card" style={{ padding: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1.25rem' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {currentTab === 'cadastrados_na_lista' && (
+                <>
+                  <CheckCircle2 size={22} color="#22c55e" />
+                  Alunos na Lista com Cadastro
+                </>
+              )}
+              {currentTab === 'na_lista_sem_cadastro' && (
+                <>
+                  <GraduationCap size={22} color="#3b82f6" />
+                  Alunos na Lista sem Cadastro no Portal
+                </>
+              )}
+              {currentTab === 'fora_da_lista_pendentes' && (
+                <>
+                  <Clock size={22} color="#f59e0b" />
+                  Cadastrados Fora da Lista (Aguardando Aprovação)
+                </>
+              )}
+            </h3>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Total: {activeList.length} aluno(s) listados em <strong>ordem alfabética (A-Z)</strong>
+            </span>
+          </div>
+
+          {/* CAMPO DE BUSCA POR NOME */}
+          <div style={{ position: 'relative', width: '320px' }}>
+            <Search style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
+            <input 
+              type="text" 
+              className="form-control" 
+              style={{ paddingLeft: '3rem' }} 
+              placeholder="Buscar por nome do aluno..."
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            />
+          </div>
+        </div>
+
+        {/* TABELA DE ALUNOS EM ORDEM ALFABÉTICA */}
+        {activeList.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+            {searchTerm ? `Nenhum aluno encontrado com o termo "${searchTerm}".` : 'Nenhum registro encontrado nesta categoria.'}
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '40px' }}>#</th>
+                  <th>Nome Completo</th>
+                  <th>E-mail</th>
+                  <th>Polo / Núcleo</th>
+                  <th>Situação / Ano</th>
+                  <th style={{ textAlign: 'center', minWidth: '220px' }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedList.map((record, index) => {
+                  const globalIdx = (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
+                  const isPending = record.status_aprovacao === 'pendente' || record.observacoes?.includes('[PENDENTE_APROVACAO]');
+
+                  return (
+                    <tr key={record.id} style={{ background: isPending ? 'rgba(245, 158, 11, 0.03)' : undefined }}>
+                      <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{globalIdx}</td>
+                      <td>
+                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{record.nome}</div>
+                        {record.matricula && (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Matrícula: {record.matricula}</span>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ fontSize: '0.85rem' }}>{record.email || '—'}</div>
+                        {record.telefone && (
+                          <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>{record.telefone}</div>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{record.nucleo || 'Geral / Sem Polo'}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{record.curso || 'Teologia'} ({record.nivel_curso || 'Básico'})</div>
+                      </td>
+                      <td>
+                        {isPending ? (
+                          <span style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', padding: '4px 10px', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <Clock size={12} /> Aguarda Aprovação
+                          </span>
+                        ) : record.user_id ? (
+                          <span style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#16a34a', padding: '4px 10px', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <CheckCircle2 size={12} /> Cadastrado no Portal
+                          </span>
+                        ) : (
+                          <span style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#2563eb', padding: '4px 10px', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 700 }}>
+                            Lista Oficial ({record.ano_formacao || 'Histórico'})
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {/* BOTÃO DE APROVAÇÃO RÁPIDA (PARA A CATEGORIA 3) */}
+                          {isPending && (
+                            <button 
+                              className="btn btn-primary"
+                              onClick={() => handleApproveAlumni(record)}
+                              disabled={actionLoading === `approve-${record.id}`}
+                              style={{ 
+                                padding: '6px 14px', 
+                                fontSize: '0.8rem', 
+                                background: '#16a34a', 
+                                borderColor: '#16a34a',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                fontWeight: 700
+                              }}
+                              title="Aprovar aluno e liberar acesso aos certificados"
+                            >
+                              {actionLoading === `approve-${record.id}` ? <Loader2 size={14} className="spinner" /> : <Check size={14} />}
+                              Aprovar Aluno
+                            </button>
+                          )}
+
+                          {/* BOTÃO EMITIR CERTIFICADO OFICIAL */}
+                          <button 
+                            className="btn" 
+                            onClick={() => handleEmitirCertificado(record)} 
+                            title="Emitir Certificado PDF Oficial (Padrão Histórico Consolidado)" 
+                            style={{ 
+                              padding: '0.4rem 0.75rem', 
+                              fontSize: '0.8rem', 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              gap: '0.35rem', 
+                              background: 'rgba(234, 179, 8, 0.15)', 
+                              color: '#eab308', 
+                              border: '1px solid rgba(234, 179, 8, 0.35)', 
+                              borderRadius: '8px', 
+                              fontWeight: 700,
+                              cursor: 'pointer' 
+                            }}
+                          >
+                            <Award size={15} />
+                            <span>Emitir Certificado</span>
+                          </button>
+
+                          {/* BOTÃO BAIXAR HISTÓRICO OFICIAL */}
+                          {record.historico && record.historico.length > 0 && (
+                            <button 
+                              className="btn" 
+                              onClick={() => handleDownloadHistoricoAlumni(record)} 
+                              title="Baixar Histórico Escolar Oficial em PDF (Padrão Consolidado)" 
+                              style={{ 
+                                padding: '0.4rem 0.75rem', 
+                                fontSize: '0.8rem', 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '0.35rem', 
+                                background: 'rgba(59, 130, 246, 0.15)', 
+                                color: '#60a5fa', 
+                                border: '1px solid rgba(59, 130, 246, 0.35)', 
+                                borderRadius: '8px', 
+                                fontWeight: 700,
+                                cursor: 'pointer' 
+                              }}
+                            >
+                              <FileText size={15} />
+                              <span>Histórico PDF</span>
+                            </button>
+                          )}
+
+                          {/* VER DOSSIÊ / HISTÓRICO */}
+                          <button 
+                            className="btn btn-icon" 
+                            onClick={() => { setSelectedAlumni(record); setShowDossie(true); }} 
+                            title="Ver Dossiê / Histórico Completo"
+                          >
+                            <FileText size={16} color="var(--primary)" />
+                          </button>
+
+                          {/* EDITAR */}
+                          <button 
+                            className="btn btn-icon" 
+                            onClick={() => handleEdit(record)} 
+                            title="Editar Dados"
+                          >
+                            <Edit size={16} />
+                          </button>
+
+                          {/* EXCLUIR */}
+                          <button 
+                            className="btn btn-icon text-error" 
+                            onClick={() => handleDelete(record.id)} 
+                            title="Excluir Registro"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* CONTROLES DE PAGINAÇÃO */}
+        {totalPages > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)', flexWrap: 'wrap', gap: '1rem' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Página <strong>{currentPage}</strong> de <strong>{totalPages}</strong> ({activeList.length} registros no total)
+            </span>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button 
+                className="btn btn-outline" 
+                style={{ width: 'auto', padding: '6px 14px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft size={16} /> Anterior
+              </button>
+              <button 
+                className="btn btn-outline" 
+                style={{ width: 'auto', padding: '6px 14px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Próxima <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
@@ -616,19 +1147,19 @@ const AlumniManagement = () => {
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
                 <button 
                   className="btn btn-primary" 
-                  style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem' }}
-                  onClick={() => setShowLevelCertificate(true)}
+                  style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem', background: '#eab308', color: '#000', borderColor: '#eab308', fontWeight: 800 }}
+                  onClick={() => handleEmitirCertificado(selectedAlumni)}
                 >
-                  <Award size={20} /> EMITIR CERTIFICADO DE NÍVEL ({selectedAlumni.nivel_curso})
+                  <Award size={20} /> EMITIR CERTIFICADO PADRÃO ({selectedAlumni.nivel_curso || 'BÁSICO'})
                 </button>
                 <button
                   className="btn btn-outline"
                   style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem' }}
-                  onClick={() => setShowTranscript(true)}
+                  onClick={() => handleDownloadHistoricoAlumni(selectedAlumni)}
                   disabled={!selectedAlumni.historico || selectedAlumni.historico.length === 0}
-                  title={(!selectedAlumni.historico || selectedAlumni.historico.length === 0) ? 'Insira as notas no histórico primeiro' : 'Documento A4 pronto para impressão / PDF'}
+                  title={(!selectedAlumni.historico || selectedAlumni.historico.length === 0) ? 'Insira as notas no histórico primeiro' : 'Gerar Histórico Consolidado em PDF'}
                 >
-                  <HistoryIcon size={20} /> EMITIR HISTÓRICO ESCOLAR (PDF)
+                  <FileText size={20} /> EMITIR HISTÓRICO ESCOLAR (PDF)
                 </button>
             </div>
 

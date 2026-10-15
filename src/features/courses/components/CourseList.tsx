@@ -24,22 +24,31 @@ const CourseList: React.FC<CourseListProps> = ({
   const renderBookCard = (currentBook: any) => {
     const stats = getBookStatsWrapper(currentBook);
     const isHistoricoSintetico = !currentBook.aulas || currentBook.aulas.length === 0;
-    const isFinalizadoManual = isHistoricoSintetico && currentBook.isFinished && currentBook.nota != null;
 
-    if (showOnlyFinished && !stats.isFinished && !currentBook.isFinished) return null;
-    if (!showOnlyFinished && (stats.isFinished || currentBook.isFinished)) return null;
+    const rawNota = currentBook.notaHistorico ?? currentBook.nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : null);
+    const numNota = rawNota != null && !isNaN(Number(rawNota)) ? Number(rawNota) : null;
+    const isApprovedManual = currentBook.notaHistorico != null || currentBook.nota != null;
+    const isFinished = currentBook.isFinished || stats.isFinished || isApprovedManual;
+
+    if (showOnlyFinished && !isFinished) return null;
+    if (!showOnlyFinished && isFinished) return null;
 
     // Módulo em manutenção: sem conteúdo ou sem prova final configurada.
     // Só exibe o aviso se o aluno não foi finalizado manualmente nem por histórico.
-    const isMaintenance = stats.isMaintenance && !currentBook.isFinished && !isFinalizadoManual;
+    const isMaintenance = stats.isMaintenance && !isFinished && !isApprovedManual;
 
-    const subtitulo = isFinalizadoManual
-      ? `Nota ${Number(currentBook.nota).toFixed(1)} • Aprovado por Histórico`
-      : isMaintenance
-        ? 'Módulo em manutenção — conteúdo indisponível'
-        : isHistoricoSintetico
-          ? 'Finalizado por Histórico Manual'
-          : `${stats.total} aulas • ${stats.percent}% concluído`;
+    let subtitulo = '';
+    if (numNota != null) {
+      subtitulo = `Nota ${numNota.toFixed(1)} • ${isApprovedManual ? 'Aprovado por Histórico' : 'Aprovado em Avaliação'}`;
+    } else if (isMaintenance) {
+      subtitulo = 'Módulo em manutenção — conteúdo indisponível';
+    } else if (isFinished) {
+      subtitulo = isHistoricoSintetico ? 'Finalizado por Histórico Manual' : `${stats.total > 0 ? `${stats.total} aulas • ` : ''}100% Concluído`;
+    } else {
+      subtitulo = `${stats.total} aulas • ${stats.percent}% concluído`;
+    }
+
+    const displayPercent = isFinished ? 100 : stats.percent;
 
     return (
       <div key={currentBook.id} style={{ marginBottom: '0.75rem' }}>
@@ -55,16 +64,16 @@ const CourseList: React.FC<CourseListProps> = ({
                   color: '#f59e0b',
                   bg: 'rgba(245, 158, 11, 0.1)',
                 }
-              : (stats.isFinished || currentBook.isFinished)
+              : isFinished
                 ? {
-                    label: (stats.isApproved || currentBook.isApproved) ? 'FINALIZADO' : 'D.P.',
-                    color: (stats.isApproved || currentBook.isApproved) ? 'var(--success)' : '#eab308',
-                    bg: (stats.isApproved || currentBook.isApproved) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
+                    label: (stats.isApproved || currentBook.isApproved || isApprovedManual) ? 'FINALIZADO' : 'D.P.',
+                    color: (stats.isApproved || currentBook.isApproved || isApprovedManual) ? 'var(--success)' : '#eab308',
+                    bg: (stats.isApproved || currentBook.isApproved || isApprovedManual) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
                   }
                 : undefined
           }
-          status={!currentBook.isUnlocked ? 'locked' : isMaintenance ? 'locked' : (stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'completed' : 'default'}
-          accentColor={isMaintenance ? '#f59e0b' : (stats.isFinished && stats.isApproved || currentBook.isFinished) ? 'var(--success)' : 'var(--primary)'}
+          status={!currentBook.isUnlocked ? 'locked' : isMaintenance ? 'locked' : (isFinished && (stats.isApproved || currentBook.isApproved || isApprovedManual)) ? 'completed' : 'default'}
+          accentColor={isMaintenance ? '#f59e0b' : (isFinished && (stats.isApproved || currentBook.isApproved || isApprovedManual)) ? 'var(--success)' : 'var(--primary)'}
         >
           <div style={{ marginTop: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <ModalityBadge ensinoTipo={currentBook.ensino_tipo} />
@@ -86,32 +95,24 @@ const CourseList: React.FC<CourseListProps> = ({
                 </span>
               </div>
             )}
-            {!isHistoricoSintetico && !isMaintenance && (
+            {!isMaintenance && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ flex: 1, height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
                 <div style={{ 
                   height: '100%', 
-                  width: `${stats.percent}%`, 
-                  background: 'linear-gradient(90deg, var(--primary) 0%, #3b82f6 100%)', 
+                  width: `${displayPercent}%`, 
+                  background: isFinished ? 'linear-gradient(90deg, #10b981 0%, #059669 100%)' : 'linear-gradient(90deg, var(--primary) 0%, #3b82f6 100%)', 
                   transition: 'width 1s ease-out' 
                 }}></div>
               </div>
-              <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--primary)', minWidth: '35px' }}>{stats.percent}%</span>
+              <span style={{ fontSize: '0.7rem', fontWeight: 700, color: isFinished ? 'var(--success)' : 'var(--primary)', minWidth: '35px' }}>{displayPercent}%</span>
             </div>
             )}
-            {isFinalizadoManual && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.6rem', background: 'rgba(16,185,129,0.05)', borderRadius: '6px' }}>
-                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Nota Final (Histórico)</span>
-                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--success)' }}>
-                  {Number(currentBook.nota).toFixed(1)}
-                </span>
-              </div>
-            )}
-            {(stats.hasExam || currentBook.notaHistorico) && !isHistoricoSintetico && !isMaintenance && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', padding: '0.4rem 0.6rem', background: 'rgba(255,255,255,0.03)', borderRadius: '6px' }}>
-                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>{currentBook.notaHistorico ? 'Nota Final (Histórico)' : 'Nota da Prova'}</span>
-                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: stats.isApproved || currentBook.notaHistorico ? 'var(--success)' : '#eab308' }}>
-                  {currentBook.notaHistorico ? Number(currentBook.notaHistorico).toFixed(1) : stats.examGrade != null ? stats.examGrade.toFixed(1) : '—'}
+            {numNota != null && !isMaintenance && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.5rem', padding: '0.4rem 0.6rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '8px' }}>
+                <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{isApprovedManual ? 'Nota Oficial (Histórico)' : 'Nota da Prova'}</span>
+                <span style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--success)' }}>
+                  {numNota.toFixed(1)}
                 </span>
               </div>
             )}

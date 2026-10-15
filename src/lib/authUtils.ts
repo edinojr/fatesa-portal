@@ -19,8 +19,26 @@ export function hasStudentScope(user: any): boolean {
   return scopes.some(s => STUDENT_SCOPES.includes(s))
 }
 
+export const ADMIN_EMAILS = [
+  'edi.ben.jr@gmail.com',
+  'ap.panisso@gmail.com',
+  'admin@fatesa.edu.br',
+  'fatesacasadosaber@gmail.com'
+];
+
+export function isUserAdmin(user: any): boolean {
+  if (!user) return false;
+  const email = (user.email || '').toLowerCase().trim();
+  if (ADMIN_EMAILS.includes(email)) return true;
+  const tipo = user.tipo?.toLowerCase();
+  if (['admin', 'suporte'].includes(tipo)) return true;
+  const roles: string[] = (user.caminhos_acesso as string[]) || [];
+  return roles.some(r => ['admin', 'suporte'].includes(r?.toLowerCase()));
+}
+
 export function isStaff(user: any): boolean {
   if (!user) return false
+  if (isUserAdmin(user)) return true
   const tipo = user.tipo?.toLowerCase()
   if (['admin', 'suporte', 'professor', 'colaborador'].includes(tipo)) return true
   const roles: string[] = (user.caminhos_acesso as string[]) || []

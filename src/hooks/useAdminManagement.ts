@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from './useProfile'
+import { isUserAdmin } from '../lib/authUtils'
 import { useAdminNavigation } from '../features/admin/hooks/useAdminNavigation'
 import { useAdminDashboardStats } from '../features/admin/hooks/useAdminDashboardStats'
 import { useAdminUsers } from '../features/admin/hooks/useAdminUsers'
@@ -54,9 +55,7 @@ export const useAdminManagement = () => {
         return;
       }
 
-      const roles = (profile.caminhos_acesso as string[]) || [];
-      const isAdmin = ['admin', 'suporte'].includes(profile.tipo || '') || 
-                      roles.some(r => ['admin', 'suporte'].includes(r));
+      const isAdmin = isUserAdmin(profile);
 
       if (!isAdmin) {
         navigate('/dashboard');

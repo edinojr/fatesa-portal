@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
+import { isUserAdmin } from '../lib/authUtils'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -27,8 +28,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
   const roles = (profile.caminhos_acesso as string[]) || []
   const userType = profile.tipo
   
-  // Is admin if tipo is admin/suporte OR if caminhos_acesso contains them
-  const isAdmin = ['admin', 'suporte'].includes(userType) || roles.some(r => ['admin', 'suporte'].includes(r))
+  // Is admin if isUserAdmin(profile) returns true
+  const isAdmin = isUserAdmin(profile)
   
   // Is professor if tipo is professor OR if caminhos_acesso contains professor OR if is Admin
   const isProfessor = userType === 'professor' || roles.includes('professor') || isAdmin

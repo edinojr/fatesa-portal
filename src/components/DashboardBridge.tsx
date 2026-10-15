@@ -1,56 +1,56 @@
 import React, { useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
+import { isUserAdmin } from '../lib/authUtils'
 import Dashboard from '../pages/Dashboard'
 
 const DashboardBridge = () => {
   const { profile, loading } = useProfile()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     if (!loading && profile) {
-      // Refresh (F5) mantém o usuário na mesma página — o redirecionamento
-      // por papel só vale para navegação interna, nunca para reload.
-      const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
-      const isReload =
-        (performance as any).navigation?.type === 1 ||
-        navEntry?.type === 'reload'
-      if (isReload) return
-
       const roles = (profile.caminhos_acesso as string[]) || []
-      const storedRole = localStorage.getItem('fatesa_active_role')
-
-      const isAdminUser = profile.tipo === 'admin' || roles.includes('admin') || roles.includes('suporte')
+      const isAdminUser = isUserAdmin(profile)
       const isProfessorUser = profile.tipo === 'professor' || roles.includes('professor')
       const isCoordinatorUser = profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo')
 
-      // Se o usuário escolheu um papel específico, redirecionar para ele
-      if (storedRole === 'aluno') {
-        // Admin/professor/coordenador escolheu ver como aluno - fica no dashboard
+      const storedRole = localStorage.getItem('fatesa_active_role')
+      const isExplicitStudentView = searchParams.get('view') === 'student' || searchParams.get('preview') === 'aluno'
+
+      // REGRA OBRIGATÓRIA: Para administradores, o painel inicial padrão é a página de administradores (/admin).
+      // Se o administrador explicitamente escolher ou estiver com a role 'aluno' (ou ?view=student), permanece no Painel do Aluno.
+      if (isAdminUser) {
+        if (isExplicitStudentView || storedRole === 'aluno') {
+          return // Permanece no dashboard exibindo o painel do aluno
+        }
+        localStorage.setItem('fatesa_active_role', 'admin')
+        navigate('/admin', { replace: true })
         return
       }
-      
-      if (storedRole === 'professor' && (isAdminUser || isProfessorUser)) {
+
+      if (storedRole === 'aluno') {
+        return
+      }
+
+      if (storedRole === 'professor' && isProfessorUser) {
         navigate('/professor', { replace: true })
         return
       }
 
-      if (storedRole === 'coordenador' && (isAdminUser || isCoordinatorUser)) {
+      if (storedRole === 'coordenador' && isCoordinatorUser) {
         navigate('/coordenador', { replace: true })
         return
       }
 
-      // Admin vai para admin por padrão
-      if (isAdminUser) {
-        navigate('/admin', { replace: true })
-      } else if (isProfessorUser) {
+      if (isProfessorUser) {
         navigate('/professor', { replace: true })
       } else if (isCoordinatorUser) {
         navigate('/coordenador', { replace: true })
       }
-      // Aluno fica no Dashboard
     }
-  }, [profile, loading, navigate])
+  }, [profile, loading, navigate, searchParams])
 
   if (loading) {
     return (

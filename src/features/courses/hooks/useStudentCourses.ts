@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
 import { GRADUATION_CONFIG } from '../../../config/graduation';
-import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion } from '../../../lib/examRules';
+import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion, getModuleExamStatus } from '../../../lib/examRules';
 
 const MEDIA_APROVACAO = 7.0;
 
@@ -175,7 +175,40 @@ export const useStudentCourses = (profile: any) => {
       const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id));
       const { data: examExceptions } = await safeSelect(supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id));
       const { data: exclusions } = await safeSelect(supabase.from('exclusoes_modulo_aluno').select('livro_id').eq('user_id', profile.id));
-      const { data: historyGrades } = await safeSelect(supabase.from('historico_notas').select('modulo_nome, nota').eq('aluno_id', profile.id));
+      const { data: historyGradesRaw } = await safeSelect(supabase.from('historico_notas').select('modulo_nome, nota').eq('aluno_id', profile.id));
+      const userEmail = (profile.email || '').toLowerCase().trim();
+      const { data: alumniData } = await safeSelect(
+        supabase
+          .from('registros_alumni')
+          .select('id, nome, curso, nivel_curso, status_aprovacao, historico, user_id')
+          .or(`user_id.eq.${profile.id}${userEmail ? `,email.eq.${userEmail}` : ''}`)
+      );
+
+      const historyGrades: Array<{ modulo_nome: string; nota: number }> = [
+        ...(historyGradesRaw || []).map((h: any) => ({ modulo_nome: h.modulo_nome, nota: Number(h.nota) }))
+      ];
+
+      // Mesclar notas manuais de registros_alumni.historico se existirem
+      (alumniData || []).forEach((a: any) => {
+        if (Array.isArray(a.historico)) {
+          a.historico.forEach((item: any) => {
+            if (item && item.modulo && item.nota != null) {
+              const numNota = parseFloat(String(item.nota).replace(',', '.'));
+              if (!isNaN(numNota)) {
+                const normM = (item.modulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+                const exists = historyGrades.some(h => 
+                  (h.modulo_nome || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() === normM
+                );
+                if (!exists) {
+                  historyGrades.push({ modulo_nome: item.modulo, nota: numNota });
+                }
+              }
+            }
+          });
+        }
+      });
+
+      const isAlumniApproved = profile?.tipo === 'ex_aluno' || (alumniData || []).some((a: any) => a.status_aprovacao === 'aprovado');
 
       const exceptionIds = (exceptions || []).map((e: any) => e.livro_id);
       const examExceptionIds = (examExceptions || []).map((e: any) => e.aula_id);
@@ -231,9 +264,15 @@ export const useStudentCourses = (profile: any) => {
           .replace(/\s+/g, ' ');
       if (allCourses) {
         allCourses.forEach((c: any) => {
+          const isBasicNivel = (c.nivel || '').toLowerCase().includes('basico') || (c.nivel || '').toLowerCase().includes('básico') || (c.nome || '').toLowerCase().includes('básico');
           (c.livros || []).forEach((l: any) => {
             titleToBook[l.titulo] = { ...l, curso_nivel: c.nivel };
             normalizedTitleToBook[normalizeTitle(l.titulo)] = { ...l, curso_nivel: c.nivel };
+            // Se o aluno for ex_aluno/formado aprovado, todos os livros do básico são marcados como concluídos
+            if (isAlumniApproved && isBasicNivel) {
+              manualCompleted.add(l.id);
+              manualBasicModules.add(l.id);
+            }
           });
         });
       }
@@ -274,7 +313,7 @@ export const useStudentCourses = (profile: any) => {
       // Merge manual completions with actual completions
       manualBasicModules.forEach(id => finishedBasicModules.add(id));
 
-      const fBasicCount = finishedBasicModules.size;
+      const fBasicCount = Math.max(finishedBasicModules.size, isAlumniApproved ? GRADUATION_CONFIG.basico.requiredModules : 0);
       setFinishedBasicCount(fBasicCount);
 
       const finishedMediumModules = new Set((resData || [])
@@ -384,6 +423,18 @@ const hasException = exceptionIds.includes(l.id);
 
               if (isHidden) return null;
 
+              const histMatch = historyGrades.find((h: any) => {
+                const hn = normalizeTitle(h.modulo_nome);
+                const ln = normalizeTitle(l.titulo);
+                return ln === hn || ln.includes(hn) || hn.includes(ln);
+              });
+              const isBasicCourse = (c.nivel || '').toLowerCase().includes('basico') || (c.nivel || '').toLowerCase().includes('básico') || (c.nome || '').toLowerCase().includes('básico');
+              const isAlumniConcludedBasic = isAlumniApproved && isBasicCourse;
+              const finalFinished = moduleFinished || isAlumniConcludedBasic;
+              const finalApproved = isApproved || isAlumniConcludedBasic;
+              const finalUnlocked = isUnlocked || isAlumniConcludedBasic;
+              const finalReleased = isReleased || isAlumniConcludedBasic;
+
               return {
                 ...l,
                 isMaintenanceModule,
@@ -401,7 +452,6 @@ const hasException = exceptionIds.includes(l.id);
 
                     const lockedByProfessor = false;
                     const displayTitle = a.titulo || '';
-
                     const isHiddenItem = false;
 
                     return { 
@@ -416,30 +466,19 @@ const hasException = exceptionIds.includes(l.id);
                   }).map(a => {
                     const isExamType = a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final;
                     const isMediaType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
-                    // As avaliações ficam SEMPRE visíveis no grid do módulo:
-                    // quando não liberadas para o polo, aparecem bloqueadas (não
-                    // clicáveis) via isActuallyLocked no ModuleDetails. Ocultar
-                    // as provas aqui fazia o grid da coluna "Avaliações" ficar
-                    // vazio mesmo com conteúdo liberado.
                     const aulaHasNucleoRelease = releasedItems.includes(a.id) || releasedModulos.includes(l.id);
-                    if (!isStaff && !isExamType && l.professor_active === false && !hasException && !hasIndividualExamInModule && !moduleFinished && !aulaHasNucleoRelease) {
+                    if (!isStaff && !isExamType && l.professor_active === false && !hasException && !hasIndividualExamInModule && !finalFinished && !aulaHasNucleoRelease) {
                       return { ...a, isHidden: true };
                     }
-                    if (isMediaType && a.professor_active === false && !isStaff && !hasException && !moduleFinished && !aulaHasNucleoRelease) {
+                    if (isMediaType && a.professor_active === false && !isStaff && !hasException && !finalFinished && !aulaHasNucleoRelease) {
                       return { ...a, isHidden: true };
                     }
-                    // Hierarquia V2/V3: oculta se a versão anterior não foi reprovada
-                    // (módulo finalizado/aprovado tem acesso integral a todas as provas)
-                    if (isExamType && !isStaff && !moduleFinished) {
+                    if (isExamType && !isStaff && !finalFinished) {
                       const versao = getExamVersion(a);
                       if (versao > 1 && !isRecoveryUnlocked(versao, moduleExamAttempts)) {
                         return { ...a, isHidden: true };
                       }
-                      // Aluno tardio: cadastro posterior à liberação da prova →
-                      // prova oculta até liberação individual do professor
-                      // (liberacoes_excecao_atividade). O conteúdo do módulo
-                      // (lições/exercícios/vídeos) permanece acessível para estudo.
-                      if (versao === 1 && !examExceptionIds.includes(a.id) && !hasException && !moduleFinished) {
+                      if (versao === 1 && !examExceptionIds.includes(a.id) && !hasException && !finalFinished) {
                         const examRelDate = examReleaseDates[l.id];
                         if (examRelDate && userCreatedAt > new Date(examRelDate).getTime()) {
                           return { ...a, isHidden: true };
@@ -448,12 +487,14 @@ const hasException = exceptionIds.includes(l.id);
                     }
                     return a;
                   }).filter((a: any) => !a.isHidden),
-                isReleased,
-                isCurrent: isCurrent && isReleased,
-                isUnlocked: isUnlocked && isReleased,
-                isFinished: moduleFinished,
-                isApproved,
-                isDP: isDP
+                isReleased: finalReleased,
+                isCurrent: isCurrent && finalReleased && !finalFinished,
+                isUnlocked: finalUnlocked,
+                isFinished: finalFinished,
+                isApproved: finalApproved,
+                isDP: isDP,
+                notaHistorico: histMatch ? histMatch.nota : undefined,
+                nota: histMatch ? histMatch.nota : (isApproved && moduleExamAttempts.length > 0 ? getModuleExamStatus(l.aulas || [], moduleSubs).examGrade : undefined)
               };
             }).filter(Boolean)
           };

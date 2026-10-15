@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from '../../../components/common/Logo';
+import { generateHistoricoPDF } from '../../../utils/pdfGenerator';
 
 interface TranscriptAlumni {
   nome: string;
@@ -181,6 +182,26 @@ const TranscriptDocument: React.FC<TranscriptDocumentProps> = ({ alumni, onClose
 
       {/* Botões (não saem na impressão) */}
       <div className="no-print" style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            const alunoData = {
+              nome: alumni.nome,
+              nucleo: alumni.nucleo || 'SEDE',
+              matricula: alumni.matricula || 'N/A',
+              dataMatricula: alumni.ano_formacao || 'N/A',
+              status: 'Formado'
+            };
+            const materias = (alumni.historico || []).map(h => ({
+              nome: h.modulo,
+              media: h.nota
+            }));
+            generateHistoricoPDF(alunoData, materias, alumni.nivel_curso || 'Básico');
+          }}
+          style={{ width: 'auto', padding: '0.75rem 2rem', background: 'var(--primary)', color: '#fff', fontWeight: 800 }}
+        >
+          Baixar PDF Oficial Padrão
+        </button>
         <button
           className="btn btn-primary"
           onClick={() => window.print()}
