@@ -135,9 +135,12 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
 
     // 1. Initial Filtering
     const filtered = data.filter(item => {
+      const u = item.users || (allStudents || []).find((s: any) => s.id === item.aluno_id);
       return (
-        item.users?.nome?.toLowerCase().includes(term) ||
-        (item.users?.nucleos?.nome || 'N/A').toLowerCase().includes(term) ||
+        !term ||
+        u?.nome?.toLowerCase().includes(term) ||
+        u?.email?.toLowerCase().includes(term) ||
+        (u?.nucleos?.nome || 'N/A').toLowerCase().includes(term) ||
         item.aulas?.livros?.titulo?.toLowerCase().includes(term) ||
         item.aulas?.titulo?.toLowerCase().includes(term)
       );
@@ -169,18 +172,19 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     });
 
     filtered.forEach(item => {
-      const nucName = item.users?.nucleos?.nome || 'Geral / Sem Núcleo';
-      const studentId = item.users?.id || 'unknown';
-      const studentName = item.users?.nome || 'Aluno Desconhecido';
-      const modName = item.aulas?.livros?.titulo || 'Módulo Geral';
-      const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova';
+      const u = item.users || (allStudents || []).find((s: any) => s.id === item.aluno_id);
+      const nucName = u?.nucleos?.nome || 'Geral / Sem Núcleo';
+      const studentId = u?.id || item.aluno_id || 'unknown';
+      const studentName = u?.nome || 'Aluno Desconhecido';
+      const modName = item.aulas?.livros?.titulo || item.aulas?.titulo || 'Módulo Geral';
+      const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova' || item.is_manual;
 
       if (!groups[nucName]) groups[nucName] = {};
       if (!groups[nucName][studentId]) {
         groups[nucName][studentId] = {
           name: studentName,
-          email: item.users?.email,
-          tipo: item.users?.tipo,
+          email: u?.email,
+          tipo: u?.tipo,
           nucleo: nucName,
           modulos: {},
           stats: {
@@ -205,7 +209,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
         const minGrade = item.aulas?.min_grade || 7.0;
         if (item.status === 'corrigida' && (item.nota || 0) >= minGrade) {
           const nivel = (item.aulas?.livros?.cursos?.nivel || '').toLowerCase();
-          const bookId = item.aulas?.livros?.id;
+          const bookId = item.aulas?.livros?.id || modName;
           if (bookId) {
             if (nivel.includes('basico') || nivel.includes('básico') || nivel === '') {
               groups[nucName][studentId].stats.finishedBasic.add(bookId);

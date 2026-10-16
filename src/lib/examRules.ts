@@ -44,16 +44,44 @@ export interface ExamAttempt {
  */
 export const collectExamAttempts = (aulas: any[], submissions: any[]): ExamAttempt[] => {
   const examAulas = (aulas || []).filter(isExamAula);
+  const normalize = (str: string) =>
+    (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
   return (submissions || [])
     .filter((s: any) => s.status === 'corrigida' && s.nota !== undefined && s.nota !== null)
     .map((s: any) => {
       const subAulaId = s.lesson_id || s.aula_id || s.aulas?.id;
-      const aula = examAulas.find((a: any) => a.id === subAulaId);
+      // 1. Tentar encontrar por ID exato
+      let aula = examAulas.find((a: any) => a.id === subAulaId);
+
+      // 2. Fallback: tentar encontrar por título correspondente
+      if (!aula && (s.lesson_title || s.modulo_nome)) {
+        const subTitle = normalize(s.lesson_title || s.modulo_nome);
+        aula = examAulas.find((a: any) => {
+          const atNorm = normalize(a.titulo);
+          return atNorm === subTitle || atNorm.includes(subTitle) || subTitle.includes(atNorm);
+        });
+      }
+
+      // 3. Fallback: se é uma submissão de prova ou nota manual do módulo
+      if (!aula && (s.is_manual || s.is_bloco_final || s.lesson_type === 'prova' || s.lesson_type === 'avaliacao')) {
+        if (examAulas.length > 0) {
+          aula = examAulas[0];
+        } else {
+          return {
+            aulaId: subAulaId || 'manual-attempt',
+            versao: 1,
+            nota: Number(s.nota) || 0,
+            minGrade: 7
+          };
+        }
+      }
+
       if (!aula) return null;
       return {
         aulaId: aula.id,
         versao: getExamVersion(aula),
-        nota: s.nota || 0,
+        nota: Number(s.nota) || 0,
         minGrade: getMinGrade(aula)
       };
     })

@@ -116,66 +116,100 @@ export const useStudentCourses = (profile: any) => {
         }
       });
 
+      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, professor_active, aulas(id, titulo, tipo, versao, min_grade, ordem, nucleo_id, status_liberacao, data_liberacao, professor_active, is_bloco_final))';
+      const { data: allCourses } = await safeSelect(
+        supabase.from('cursos').select(courseSelect)
+      );
+
+      const normalizeTitle = (s: string) =>
+        (s || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .trim()
+          .replace(/[.,;:!?\s]+$/g, '')
+          .replace(/\s+/g, ' ');
+
+      const aulasMap: Record<string, any> = {};
+      const livrosMap: Record<string, any> = {};
+      const cursosNivelMap: Record<string, string> = {};
+      const titleToBook: Record<string, any> = {};
+      const normalizedTitleToBook: Record<string, any> = {};
+
+      if (allCourses) {
+        allCourses.forEach((c: any) => {
+          cursosNivelMap[c.id] = c.nivel;
+          (c.livros || []).forEach((l: any) => {
+            livrosMap[l.id] = { ...l, curso_id: c.id };
+            titleToBook[l.titulo] = { ...l, curso_nivel: c.nivel };
+            normalizedTitleToBook[normalizeTitle(l.titulo)] = { ...l, curso_nivel: c.nivel };
+            (l.aulas || []).forEach((a: any) => {
+              aulasMap[a.id] = { ...a, livro_id: l.id };
+            });
+          });
+        });
+      }
+
       const { data: resDataRaw } = await safeSelect(supabase
         .from('respostas_aulas')
         .select('id, aula_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
         .eq('aluno_id', profile.id));
 
-      const aulaIds = Array.from(new Set((resDataRaw || []).map((r: any) => r.aula_id).filter(Boolean)))
-      const aulasMap: Record<string, any> = {}
-      const livrosMap: Record<string, any> = {}
-      const cursosNivelMap: Record<string, string> = {}
+      const aulaIds = Array.from(new Set<string>((resDataRaw || []).map((r: any) => r.aula_id).filter(Boolean)));
+      const missingAulaIds = aulaIds.filter((id: string) => !aulasMap[id]);
 
-      if (aulaIds.length > 0) {
-        const { data: aulasData } = await safeSelect(supabase
+      if (missingAulaIds.length > 0) {
+        const { data: missingAulasData } = await safeSelect(supabase
           .from('aulas')
           .select('id, titulo, tipo, versao, min_grade, status_liberacao, data_liberacao, professor_active, questionario, livro_id, is_bloco_final')
-          .in('id', aulaIds))
-        ;(aulasData || []).forEach((a: any) => { aulasMap[a.id] = a })
-
-        const livroIds = Array.from(new Set((aulasData || []).map((a: any) => a.livro_id).filter(Boolean)))
-        if (livroIds.length > 0) {
-          const { data: livrosData } = await safeSelect(supabase
-            .from('livros')
-            .select('id, titulo, curso_id, professor_active, ensino_tipo')
-            .in('id', livroIds))
-          ;(livrosData || []).forEach((l: any) => { livrosMap[l.id] = l })
-
-          const cursoIds = Array.from(new Set((livrosData || []).map((l: any) => l.curso_id).filter(Boolean)))
-          if (cursoIds.length > 0) {
-            const { data: cursosData } = await safeSelect(supabase
-              .from('cursos')
-              .select('id, nivel')
-              .in('id', cursoIds))
-            ;(cursosData || []).forEach((c: any) => { cursosNivelMap[c.id] = c.nivel })
+          .in('id', missingAulaIds));
+        (missingAulasData || []).forEach((a: any) => {
+          aulasMap[a.id] = a;
+          if (a.livro_id && !livrosMap[a.livro_id]) {
+            livrosMap[a.livro_id] = { id: a.livro_id, titulo: a.titulo };
           }
-        }
+        });
       }
 
       const resData = (resDataRaw || []).map((r: any) => {
-        const aula = aulasMap[r.aula_id]
-        const livro = aula ? livrosMap[aula.livro_id] : null
-        const nivel = livro ? cursosNivelMap[livro.curso_id] : null
+        let aula = aulasMap[r.aula_id];
+        let livro = aula ? livrosMap[aula.livro_id] : null;
+        let nivel = livro ? cursosNivelMap[livro.curso_id] : null;
+
+        // Se aula não foi encontrada diretamente pelo ID, busca por título
+        if (!aula && r.aula_id) {
+          for (const a of Object.values(aulasMap)) {
+            if (a.id === r.aula_id) {
+              aula = a;
+              livro = livrosMap[a.livro_id];
+              nivel = livro ? cursosNivelMap[livro.curso_id] : null;
+              break;
+            }
+          }
+        }
+
         return {
           ...r,
           submission_id: r.id,
           lesson_id: r.aula_id,
           lesson_title: aula?.titulo,
-          lesson_type: aula?.tipo,
+          lesson_type: aula?.tipo || 'prova',
           is_bloco_final: aula?.is_bloco_final,
           book_id: livro?.id,
           book_title: livro?.titulo,
           curso_nivel: nivel,
           submitted_at: r.created_at,
           aulas: aula ? { ...aula, livros: livro ? { ...livro, cursos: { nivel } } : null } : null
-        }
+        };
       });
 
       const { data: progData } = await safeSelect(supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id));
       const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id));
       const { data: examExceptions } = await safeSelect(supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id));
       const { data: exclusions } = await safeSelect(supabase.from('exclusoes_modulo_aluno').select('livro_id').eq('user_id', profile.id));
-      const { data: historyGradesRaw } = await safeSelect(supabase.from('historico_notas').select('modulo_nome, nota').eq('aluno_id', profile.id));
+      const { data: historyGradesRaw } = await safeSelect(
+        supabase.from('historico_notas').select('id, modulo_nome, curso_nome, nota, data_conclusao').eq('aluno_id', profile.id)
+      );
       const userEmail = (profile.email || '').toLowerCase().trim();
       const { data: alumniData } = await safeSelect(
         supabase
@@ -184,23 +218,33 @@ export const useStudentCourses = (profile: any) => {
           .or(`user_id.eq.${profile.id}${userEmail ? `,email.eq.${userEmail}` : ''}`)
       );
 
-      const historyGrades: Array<{ modulo_nome: string; nota: number }> = [
-        ...(historyGradesRaw || []).map((h: any) => ({ modulo_nome: h.modulo_nome, nota: Number(h.nota) }))
+      const historyGrades: Array<{ id?: string; modulo_nome: string; curso_nome?: string; nota: number; data_conclusao?: string }> = [
+        ...(historyGradesRaw || []).map((h: any) => ({
+          id: h.id,
+          modulo_nome: h.modulo_nome,
+          curso_nome: h.curso_nome,
+          nota: Number(h.nota),
+          data_conclusao: h.data_conclusao
+        }))
       ];
 
       // Mesclar notas manuais de registros_alumni.historico se existirem
       (alumniData || []).forEach((a: any) => {
         if (Array.isArray(a.historico)) {
-          a.historico.forEach((item: any) => {
+          a.historico.forEach((item: any, idx: number) => {
             if (item && item.modulo && item.nota != null) {
               const numNota = parseFloat(String(item.nota).replace(',', '.'));
               if (!isNaN(numNota)) {
-                const normM = (item.modulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-                const exists = historyGrades.some(h => 
-                  (h.modulo_nome || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() === normM
-                );
+                const normM = normalizeTitle(item.modulo);
+                const exists = historyGrades.some(h => normalizeTitle(h.modulo_nome) === normM);
                 if (!exists) {
-                  historyGrades.push({ modulo_nome: item.modulo, nota: numNota });
+                  historyGrades.push({
+                    id: `alumni-${a.id}-${idx}`,
+                    modulo_nome: item.modulo,
+                    curso_nome: a.curso,
+                    nota: numNota,
+                    data_conclusao: item.data
+                  });
                 }
               }
             }
@@ -216,24 +260,10 @@ export const useStudentCourses = (profile: any) => {
       
       // Get manually completed modules from user profile
       const manualCompletedModuleIds = (profile?.modulos_finalizados_manual || []) as string[];
-      // Helper: verifica se o aluno já começou o módulo (submissões OU aulas assistidas).
-      // Antes considerava apenas respostas_aulas, escondendo módulos onde o aluno
-      // só assistiu vídeos. Agora inclui progresso para refletir a realidade.
-      const userHasActivityInModule = (livroId: string, aulaIds: string[] = []) => {
-        return resData.some((res: any) => res.book_id === livroId)
-          || (progData || []).some((p: any) => aulaIds.includes(p.aula_id));
-      };
-
-      setAtividades(resData);
-      setProgressoAulas(progData || []);
-
-      // Get all manually completed module IDs
       const manualCompleted = new Set(manualCompletedModuleIds);
-      
-      // Determine which manually completed modules are basic vs medium
       const manualBasicModules = new Set<string>();
       const manualMediumModules = new Set<string>();
-      
+
       manualCompletedModuleIds.forEach(manualId => {
         const book = livrosMap[manualId];
         if (book) {
@@ -246,29 +276,10 @@ export const useStudentCourses = (profile: any) => {
         }
       });
 
-      const courseSelect = 'id, nome, nivel, livros(id, titulo, capa_url, ordem, curso_id, professor_active, aulas(id, titulo, tipo, versao, min_grade, ordem, nucleo_id, status_liberacao, data_liberacao, professor_active, is_bloco_final))';
-      const { data: allCourses } = await safeSelect(
-        supabase.from('cursos').select(courseSelect)
-      );
-
-      // Build a title to book mapping from allCourses to resolve historyGrades
-      const titleToBook: Record<string, any> = {};
-      const normalizedTitleToBook: Record<string, any> = {};
-      const normalizeTitle = (s: string) =>
-        (s || '')
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .toLowerCase()
-          .trim()
-          .replace(/[.,;:!?\s]+$/g, '')
-          .replace(/\s+/g, ' ');
       if (allCourses) {
         allCourses.forEach((c: any) => {
           const isBasicNivel = (c.nivel || '').toLowerCase().includes('basico') || (c.nivel || '').toLowerCase().includes('básico') || (c.nome || '').toLowerCase().includes('básico');
           (c.livros || []).forEach((l: any) => {
-            titleToBook[l.titulo] = { ...l, curso_nivel: c.nivel };
-            normalizedTitleToBook[normalizeTitle(l.titulo)] = { ...l, curso_nivel: c.nivel };
-            // Se o aluno for ex_aluno/formado aprovado, todos os livros do básico são marcados como concluídos
             if (isAlumniApproved && isBasicNivel) {
               manualCompleted.add(l.id);
               manualBasicModules.add(l.id);
@@ -277,13 +288,14 @@ export const useStudentCourses = (profile: any) => {
         });
       }
 
-      // Match history grades to books (try exact, normalized, then contains)
-      (historyGrades || []).forEach((h: any) => {
-        if (!h || h.nota == null || h.nota < 7) return;
+      // Mapear e adicionar historyGrades aos conjuntos de finalização manual E injetar em resData
+      (historyGrades || []).forEach((h: any, idx: number) => {
+        if (!h || h.nota == null) return;
+        const numNota = Number(h.nota);
         let book = titleToBook[h.modulo_nome] || normalizedTitleToBook[normalizeTitle(h.modulo_nome)];
         if (!book) {
           const histNorm = normalizeTitle(h.modulo_nome);
-          for (const b of Object.values(normalizedTitleToBook)) {
+          for (const b of Object.values(normalizedTitleToBook) as any[]) {
             const bookNorm = normalizeTitle(b.titulo);
             if (bookNorm === histNorm || bookNorm.includes(histNorm) || histNorm.includes(bookNorm)) {
               book = b;
@@ -291,7 +303,7 @@ export const useStudentCourses = (profile: any) => {
             }
           }
         }
-        if (book) {
+        if (book && numNota >= 7) {
           manualCompleted.add(book.id);
           if (book.curso_nivel?.toLowerCase().includes('basico') || book.curso_nivel?.toLowerCase().includes('básico')) {
             manualBasicModules.add(book.id);
@@ -299,7 +311,63 @@ export const useStudentCourses = (profile: any) => {
             manualMediumModules.add(book.id);
           }
         }
+
+        // Injetar em resData para que conste em atividades em todos os painéis e boletins
+        const existingIdx = resData.findIndex((r: any) => 
+          (book && r.book_id === book.id) || 
+          normalizeTitle(r.lesson_title || r.book_title || '') === normalizeTitle(h.modulo_nome)
+        );
+
+        const syntheticAula = book?.aulas?.find((a: any) => a.tipo === 'prova' || a.is_bloco_final) || book?.aulas?.[0];
+        const syntheticSubmission = {
+          id: `manual-${idx}-${h.modulo_nome}`,
+          submission_id: `manual-${idx}-${h.modulo_nome}`,
+          aluno_id: profile.id,
+          aula_id: syntheticAula?.id || `manual-aula-${idx}`,
+          lesson_id: syntheticAula?.id || `manual-aula-${idx}`,
+          lesson_title: h.modulo_nome,
+          lesson_type: 'prova',
+          is_bloco_final: true,
+          status: 'corrigida',
+          nota: numNota,
+          min_grade: 7,
+          book_id: book?.id || null,
+          book_title: book?.titulo || h.modulo_nome,
+          curso_nivel: book?.curso_nivel || 'basico',
+          created_at: h.data_conclusao || new Date().toISOString(),
+          submitted_at: h.data_conclusao || new Date().toISOString(),
+          is_manual: true,
+          modulo_nome: h.modulo_nome,
+          aulas: {
+            id: syntheticAula?.id || `manual-aula-${idx}`,
+            titulo: h.modulo_nome,
+            tipo: 'prova',
+            min_grade: 7,
+            is_bloco_final: true,
+            livros: book ? { ...book, cursos: { nivel: book.curso_nivel } } : null
+          }
+        };
+
+        if (existingIdx === -1) {
+          resData.push(syntheticSubmission);
+        } else if (resData[existingIdx].nota === null || resData[existingIdx].nota === undefined || Number(resData[existingIdx].nota) < numNota) {
+          resData[existingIdx] = {
+            ...resData[existingIdx],
+            nota: numNota,
+            status: 'corrigida',
+            is_manual: true
+          };
+        }
       });
+
+      // Helper: verifica se o aluno já começou o módulo (submissões OU aulas assistidas).
+      const userHasActivityInModule = (livroId: string, aulaIdsList: string[] = []) => {
+        return resData.some((res: any) => res.book_id === livroId)
+          || (progData || []).some((p: any) => aulaIdsList.includes(p.aula_id));
+      };
+
+      setAtividades(resData);
+      setProgressoAulas(progData || []);
 
       const finishedBasicModules = new Set((resData || [])
         .filter((r: any) => {
@@ -345,8 +413,13 @@ export const useStudentCourses = (profile: any) => {
               // deve por padrão permanecer oculto dos alunos, ignorando liberações residuais de polo.
               const bookHasNucleoRelease = releasedModulos.includes(l.id) || (l.aulas || []).some((a: any) => releasedItems.includes(a.id));
               const isBookBlockedByProfessor = l.professor_active === false;
-              // manualCompleted agora já inclui historyGrades também (mapeado pelo titulo).
-              const isManualFinished = manualCompleted.has(l.id);
+              const histMatch = historyGrades.find((h: any) => {
+                const hn = normalizeTitle(h.modulo_nome);
+                const ln = normalizeTitle(l.titulo);
+                return ln === hn || ln.includes(hn) || hn.includes(ln);
+              });
+              const hasValidHistoryGrade = !!histMatch && Number(histMatch.nota) >= 7;
+              const isManualFinished = manualCompleted.has(l.id) || hasValidHistoryGrade;
               const isManualModuleRelease = (releasedModulos.includes(l.id) || bookHasNucleoRelease || isManualFinished) && !isBookBlockedByProfessor;
               const isMedium = (c.nivel || '').toLowerCase().includes('medio') || (c.nivel || '').toLowerCase().includes('médio');
               const levelLocked = isMedium && !isBasicFinished && !isStaff;
@@ -355,22 +428,16 @@ export const useStudentCourses = (profile: any) => {
               const moduleSubs = resData.filter((s: any) => s.book_id === l.id);
               const moduleExamAttempts = collectExamAttempts(l.aulas || [], moduleSubs);
 
-              const isApproved = isModuleApproved(moduleExamAttempts);
+              const isApproved = isModuleApproved(moduleExamAttempts) || hasValidHistoryGrade;
               const isDP = !isStaff && isModuleDP(moduleExamAttempts);
 
               // Módulo em manutenção: sem aulas OU sem prova final configurada.
-              // Deve ser calculado ANTES de moduleFinished porque um módulo em
-              // manutenção NUNCA pode ser considerado finalizado — não há
-              // conteúdo/prova para concluir. Previne finalização manual indevida
-              // (modulos_finalizados_manual ou historico_notas) de esconder o
-              // módulo do painel do aluno quando ainda não há conteúdo.
+              // Módulo aprovado ou com nota manual válida NUNCA entra em manutenção.
               const hasAnyAulasInModule = (l.aulas || []).length > 0;
               const hasExamInModule = (l.aulas || []).some((a: any) =>
                 a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final
               );
-              // Módulo não entra em manutenção se já foi finalizado manualmente (ex: histórico)
-              // pois o aluno já tem o direito de acessá-lo.
-              const isMaintenanceModule = (!hasAnyAulasInModule || !hasExamInModule) && !isManualFinished;
+              const isMaintenanceModule = (!hasAnyAulasInModule || !hasExamInModule) && !isManualFinished && !isApproved;
 
               const moduleFinished = (isApproved || isManualFinished) && !isMaintenanceModule;
 
@@ -384,7 +451,7 @@ export const useStudentCourses = (profile: any) => {
                 return isModuleApproved(prevAttempts) || isModuleDP(prevAttempts);
               }) || manualCompleted.has(sortedLivros.find((sl: any) => sl.ordem === bookOrdem - 1)?.id || '');
 
-const hasException = exceptionIds.includes(l.id);
+              const hasException = exceptionIds.includes(l.id);
               const isModuleReleased = isManualModuleRelease || moduleFinished || isPreviousFinishedOrReleased || hasException;
               const effectivelyLevelLocked = levelLocked && !isManualModuleRelease && !moduleFinished && !hasException;
               const isReleased = isModuleReleased && !effectivelyLevelLocked;
@@ -406,11 +473,6 @@ const hasException = exceptionIds.includes(l.id);
                 const isPastAndNotLatest = isPastModule && bookOrdem < latestReleasedOrdem;
 
                 const isFirstModule = bookOrdem === 1;
-                // Aluno cadastrado APÓS a liberação da prova do módulo entra
-                // somente no módulo seguinte: módulos anteriores ("passados",
-                // já liberados antes do cadastro) ficam ocultos, a menos que o
-                // aluno tenha exceção individual de prova/módulo, já tenha
-                // iniciado o conteúdo ou o módulo tenha sido finalizado.
                 const isLateStudentPastModule = !isStaff && isPastAndNotLatest && !hasException && !hasIndividualExamInModule && !hasStarted && !moduleFinished;
                 const isHidden = ((isBookBlockedByProfessor && !hasException && !hasIndividualExamInModule) || isLateStudentPastModule || (!isStaff && !isFirstModule && !hasException && !hasStarted && !hasIndividualExamInModule && !isModuleReleased && profile.accessStatus !== 'blocked_payment' && !isMaintenanceModule)) && !moduleFinished;
 
@@ -423,11 +485,6 @@ const hasException = exceptionIds.includes(l.id);
 
               if (isHidden) return null;
 
-              const histMatch = historyGrades.find((h: any) => {
-                const hn = normalizeTitle(h.modulo_nome);
-                const ln = normalizeTitle(l.titulo);
-                return ln === hn || ln.includes(hn) || hn.includes(ln);
-              });
               const isBasicCourse = (c.nivel || '').toLowerCase().includes('basico') || (c.nivel || '').toLowerCase().includes('básico') || (c.nome || '').toLowerCase().includes('básico');
               const isAlumniConcludedBasic = isAlumniApproved && isBasicCourse;
               const finalFinished = moduleFinished || isAlumniConcludedBasic;
@@ -447,7 +504,15 @@ const hasException = exceptionIds.includes(l.id);
                   })
                   .map((a: any) => {
                     if (isStaff) return { ...a, lockedByProfessor: false };
-                    const matchesNucleo = isStaff || !a.nucleo_id || !profile?.nucleo_id || a.nucleo_id === profile?.nucleo_id || a.tipo === 'licao';
+                    const isExamType = a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final;
+                    const hasStudentSubmission = (resData || []).some((r: any) => r.aula_id === a.id || r.lesson_id === a.id);
+                    const matchesNucleo = isStaff || 
+                      !a.nucleo_id || 
+                      !profile?.nucleo_id || 
+                      a.nucleo_id === profile?.nucleo_id || 
+                      a.tipo === 'licao' || 
+                      isExamType || 
+                      hasStudentSubmission;
                     if (!matchesNucleo) return { ...a, isHidden: true };
 
                     const lockedByProfessor = false;
@@ -466,6 +531,7 @@ const hasException = exceptionIds.includes(l.id);
                   }).map(a => {
                     const isExamType = a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final;
                     const isMediaType = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video';
+                    const hasStudentSubmission = (resData || []).some((r: any) => r.aula_id === a.id || r.lesson_id === a.id);
                     const aulaHasNucleoRelease = releasedItems.includes(a.id) || releasedModulos.includes(l.id);
                     if (!isStaff && !isExamType && l.professor_active === false && !hasException && !hasIndividualExamInModule && !finalFinished && !aulaHasNucleoRelease) {
                       return { ...a, isHidden: true };
@@ -473,7 +539,7 @@ const hasException = exceptionIds.includes(l.id);
                     if (isMediaType && a.professor_active === false && !isStaff && !hasException && !finalFinished && !aulaHasNucleoRelease) {
                       return { ...a, isHidden: true };
                     }
-                    if (isExamType && !isStaff && !finalFinished) {
+                    if (isExamType && !isStaff && !finalFinished && !hasStudentSubmission) {
                       const versao = getExamVersion(a);
                       if (versao > 1 && !isRecoveryUnlocked(versao, moduleExamAttempts)) {
                         return { ...a, isHidden: true };
@@ -493,8 +559,8 @@ const hasException = exceptionIds.includes(l.id);
                 isFinished: finalFinished,
                 isApproved: finalApproved,
                 isDP: isDP,
-                notaHistorico: histMatch ? histMatch.nota : undefined,
-                nota: histMatch ? histMatch.nota : (isApproved && moduleExamAttempts.length > 0 ? getModuleExamStatus(l.aulas || [], moduleSubs).examGrade : undefined)
+                notaHistorico: histMatch ? Number(histMatch.nota) : undefined,
+                nota: histMatch ? Number(histMatch.nota) : (isApproved && moduleExamAttempts.length > 0 ? getModuleExamStatus(l.aulas || [], moduleSubs).examGrade : (isAlumniConcludedBasic ? 10 : undefined))
               };
             }).filter(Boolean)
           };

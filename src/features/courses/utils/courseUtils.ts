@@ -33,6 +33,19 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     let examGrade = 0;
     let attemptsCount = 0;
     let isFinished = false;
+
+    const normalizeTitle = (s: string) =>
+      (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+    // Identificação de notas manuais ou submissões vinculadas diretamente ao livro
+    const manualGrade = l.nota != null && !isNaN(Number(l.nota)) 
+      ? Number(l.nota) 
+      : (l.notaHistorico != null && !isNaN(Number(l.notaHistorico)) ? Number(l.notaHistorico) : null);
+    
+    const bookSubmissions = (atividades || []).filter((at: any) => 
+      at.status === 'corrigida' && at.nota !== undefined && at.nota !== null &&
+      (at.book_id === l.id || normalizeTitle(at.book_title || at.modulo_nome || '') === normalizeTitle(l.titulo))
+    );
     
     if (finalExams.length > 0) {
         // Regra única (lib/examRules): aprovado = qualquer tentativa >= min_grade;
@@ -42,30 +55,40 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
         examGrade = status.examGrade;
         isApproved = status.isApproved;
         isFinished = isApproved || status.isDP;
-    } else {
-      isApproved = false;
-      // Sem prova final = sem processo de aprovação concluído.
-      // O módulo só é finalizado mediante aprovação em prova OU liberação manual do administrador.
-      isFinished = false;
+    }
+
+    // Se ainda não aprovado mas há nota manual ou submissão direta do livro
+    if (!isApproved && (manualGrade !== null || bookSubmissions.length > 0)) {
+        const bestSubGrade = bookSubmissions.length > 0 
+          ? Math.max(...bookSubmissions.map((s: any) => Number(s.nota) || 0)) 
+          : 0;
+        const candidateGrade = manualGrade !== null ? manualGrade : bestSubGrade;
+        if (candidateGrade >= 7.0) {
+            isApproved = true;
+            isFinished = true;
+            examGrade = Math.max(examGrade, candidateGrade);
+            attemptsCount = Math.max(attemptsCount, bookSubmissions.length || 1);
+        } else if (candidateGrade > 0) {
+            examGrade = Math.max(examGrade, candidateGrade);
+        }
     }
 
     // Módulo em manutenção: sem aulas OU sem prova final configurada.
-    // Permanece em hiato até que o conteúdo seja introduzido e o aluno passe pelo processo.
-    // Quando o hook de cursos informa o flag bruto (isMaintenanceModule), ele é a
-    // fonte de verdade: um módulo com prova V1 existente mas ainda NÃO liberada
-    // (oculta para o aluno) NÃO deve aparecer como "em manutenção" — o conteúdo já
-    // foi adicionado e a prova é liberada individualmente pelo professor.
-    const isMaintenance = typeof l.isMaintenanceModule === 'boolean' ? l.isMaintenanceModule : finalExams.length === 0;
+    // Módulo aprovado ou com nota manual válida NUNCA entra em manutenção.
+    const hasAnyValidExam = finalExams.length > 0 || isApproved || manualGrade !== null;
+    const isMaintenance = typeof l.isMaintenanceModule === 'boolean' 
+      ? (l.isMaintenanceModule && !isApproved) 
+      : (!hasAnyValidExam && !isApproved);
     
     const result = {
-      percent: Math.round((completedItems / totalItems) * 100),
-      completed: completedItems,
+      percent: isApproved ? 100 : Math.round((completedItems / totalItems) * 100),
+      completed: isApproved ? totalItems : completedItems,
       total: totalItems,
       examGrade: examGrade,
       isApproved: isApproved,
       isFinished: isFinished,
       attemptsCount,
-      hasExam: finalExams.length > 0,
+      hasExam: hasAnyValidExam,
       isMaintenance
     };
     return result;

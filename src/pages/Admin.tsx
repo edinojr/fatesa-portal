@@ -189,25 +189,85 @@ const Admin = () => {
   const [lessonMaterials, setLessonMaterials] = useState<any[]>([])
 
   const fetchBoletimSubmissions = useCallback(async () => {
-    const { data: subDataRaw } = await supabase
-      .from('respostas_aulas')
-      .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
-      .order('created_at', { ascending: false })
-    if (!subDataRaw) return
-    const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)))
-    const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)))
-    const [aulasRes, usersRes] = await Promise.all([
-      aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
-      alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
-    ])
-    const aulasMap = (aulasRes.data || []).reduce((acc: any, a: any) => { acc[a.id] = a; return acc }, {} as any)
-    const usersMap = (usersRes.data || []).reduce((acc: any, u: any) => { acc[u.id] = u; return acc }, {} as any)
-    const mapped = (subDataRaw || []).map((r: any) => {
-      const aula = aulasMap[r.aula_id]
-      const user = usersMap[r.aluno_id]
-      return { ...r, submission_id: r.id, student_id: r.aluno_id, lesson_id: r.aula_id, lesson_title: aula?.titulo, lesson_type: aula?.tipo, questionario: aula?.questionario, min_grade: aula?.min_grade, versao: aula?.versao, aulas: aula, student_name: user?.nome, student_email: user?.email, nucleus_id: user?.nucleos?.id, nucleus_name: user?.nucleos?.nome || 'Sem Polo', book_id: aula?.livro_id?.id, book_title: aula?.livro_id?.titulo || 'Módulo Geral', submitted_at: r.created_at }
-    }).filter((s: any) => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao')
-    setBoletimSubmissions(mapped)
+    const [subRes, manualRes, aulasRes, usersRes] = await Promise.all([
+      supabase
+        .from('respostas_aulas')
+        .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('historico_notas')
+        .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('aulas')
+        .select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)')
+        .limit(5000),
+      supabase
+        .from('users')
+        .select('id, nome, email, nucleo_id, nucleos(id, nome)')
+        .limit(5000)
+    ]);
+
+    const subDataRaw = subRes.data || [];
+    const manualDataRaw = manualRes.data || [];
+    const aulasData = aulasRes.data || [];
+    const usersData = usersRes.data || [];
+
+    const aulasMap = (aulasData || []).reduce((acc: any, a: any) => { acc[a.id] = a; return acc }, {} as any);
+    const usersMap = (usersData || []).reduce((acc: any, u: any) => { acc[u.id] = u; return acc }, {} as any);
+
+    const onlineMapped = (subDataRaw || []).map((r: any) => {
+      const aula = aulasMap[r.aula_id];
+      const user = usersMap[r.aluno_id];
+      const book = aula?.livro_id ? (Array.isArray(aula.livro_id) ? aula.livro_id[0] : aula.livro_id) : null;
+      return {
+        ...r,
+        submission_id: r.id,
+        student_id: r.aluno_id,
+        lesson_id: r.aula_id,
+        lesson_title: aula?.titulo || 'Avaliação Online',
+        lesson_type: aula?.tipo || 'prova',
+        questionario: aula?.questionario,
+        min_grade: aula?.min_grade || 7,
+        versao: aula?.versao || 1,
+        aulas: aula,
+        student_name: user?.nome || 'Aluno Desconhecido',
+        student_email: user?.email || '',
+        nucleus_id: user?.nucleos?.id,
+        nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+        book_id: book?.id || null,
+        book_title: book?.titulo || 'Módulo Geral',
+        submitted_at: r.created_at
+      };
+    }).filter((s: any) => s.lesson_type === 'prova' || s.lesson_type === 'avaliacao' || s.nota !== null);
+
+    const manualMapped = (manualDataRaw || []).map((m: any) => {
+      const user = usersMap[m.aluno_id];
+      return {
+        id: `manual-${m.id}`,
+        submission_id: m.id,
+        student_id: m.aluno_id,
+        lesson_id: null,
+        lesson_title: m.modulo_nome,
+        lesson_type: 'prova',
+        questionario: [],
+        min_grade: 7,
+        versao: 1,
+        nota: m.nota,
+        status: 'corrigida',
+        is_manual: true,
+        student_name: user?.nome || 'Aluno Desconhecido',
+        student_email: user?.email || '',
+        nucleus_id: user?.nucleos?.id,
+        nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+        book_id: null,
+        book_title: m.modulo_nome,
+        submitted_at: m.data_conclusao || m.created_at,
+        created_at: m.data_conclusao || m.created_at
+      };
+    });
+
+    setBoletimSubmissions([...onlineMapped, ...manualMapped]);
   }, [])
 
   useEffect(() => {

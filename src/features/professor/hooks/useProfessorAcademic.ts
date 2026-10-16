@@ -30,22 +30,26 @@ export const useProfessorAcademic = () => {
       ].filter(Boolean)));
 
       const [aulasRes, usersRes] = await Promise.all([
-        aulaIds.length > 0 
-          ? supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').in('id', aulaIds) 
-          : Promise.resolve({ data: [] }),
-        alunoIds.length > 0 
-          ? supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').in('id', alunoIds) 
-          : Promise.resolve({ data: [] })
+        supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').limit(5000),
+        supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').limit(5000)
       ]);
 
       const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
       const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
 
-      const mapped = subDataRaw.map(r => ({
-        ...r,
-        aulas: aulasMap[r.aula_id] ? { ...aulasMap[r.aula_id], livros: aulasMap[r.aula_id].livro_id } : null,
-        users: usersMap[r.aluno_id] || null
-      }));
+      const mapped = subDataRaw.map(r => {
+        const aula = aulasMap[r.aula_id] || {
+          id: r.aula_id,
+          titulo: 'Avaliação Online',
+          tipo: 'prova',
+          livro_id: { id: r.aula_id, titulo: 'Módulo Geral' }
+        };
+        return {
+          ...r,
+          aulas: { ...aula, livros: aula.livro_id },
+          users: usersMap[r.aluno_id] || null
+        };
+      });
 
       const manualRecords = (manualDataRaw || []).map(r => ({
         id: r.id,
@@ -64,7 +68,7 @@ export const useProfessorAcademic = () => {
           versao: 1,
           min_grade: 7,
           is_bloco_final: true,
-          livros: { id: null, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
+          livros: { id: r.modulo_nome, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
         }
       }));
 
@@ -86,7 +90,7 @@ export const useProfessorAcademic = () => {
     setLoading(true);
     try {
       // Step 1: Fetch submissions for specific students
-      const [{ data: subDataRaw }, { data: manualDataRaw }] = await Promise.all([
+      const [{ data: subDataRaw }, { data: manualDataRaw }, aulasRes, usersRes] = await Promise.all([
         supabase
           .from('respostas_aulas')
           .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
@@ -97,34 +101,29 @@ export const useProfessorAcademic = () => {
           .from('historico_notas')
           .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
           .in('aluno_id', studentIds)
-          .limit(100000)
+          .limit(100000),
+        supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').limit(5000),
+        supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').limit(5000)
       ]);
 
       if (!subDataRaw) return;
 
-      const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
-      const alunoIds = Array.from(new Set([
-        ...subDataRaw.map(r => r.aluno_id),
-        ...(manualDataRaw || []).map(r => r.aluno_id)
-      ].filter(Boolean)));
-
-      const [aulasRes, usersRes] = await Promise.all([
-        aulaIds.length > 0 
-          ? supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').in('id', aulaIds) 
-          : Promise.resolve({ data: [] }),
-        alunoIds.length > 0 
-          ? supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').in('id', alunoIds) 
-          : Promise.resolve({ data: [] })
-      ]);
-
       const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
       const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
 
-      const mapped = subDataRaw.map(r => ({
-        ...r,
-        aulas: aulasMap[r.aula_id] ? { ...aulasMap[r.aula_id], livros: aulasMap[r.aula_id].livro_id } : null,
-        users: usersMap[r.aluno_id] || null
-      }));
+      const mapped = subDataRaw.map(r => {
+        const aula = aulasMap[r.aula_id] || {
+          id: r.aula_id,
+          titulo: 'Avaliação Online',
+          tipo: 'prova',
+          livro_id: { id: r.aula_id, titulo: 'Módulo Geral' }
+        };
+        return {
+          ...r,
+          aulas: { ...aula, livros: aula.livro_id },
+          users: usersMap[r.aluno_id] || null
+        };
+      });
 
       const manualRecords = (manualDataRaw || []).map(r => ({
         id: r.id,
@@ -143,7 +142,7 @@ export const useProfessorAcademic = () => {
           versao: 1,
           min_grade: 7,
           is_bloco_final: true,
-          livros: { id: null, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
+          livros: { id: r.modulo_nome, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
         }
       }));
 

@@ -57,29 +57,15 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
       setAnalyticsData({ totalViews, uniqueSessions, registeredViews, visitorViews, dau, activeLast7, logs: recentData.slice(0, 100) });
 
       // Step 1: Fetch base data without joins (joins can fail due to RLS)
-      const [subDataRaw, manualDataRaw] = await Promise.all([
+      const [subDataRaw, manualDataRaw, alumniDataRaw, aulasData, usersData] = await Promise.all([
         fetchAllPages('respostas_aulas', 'id, nota, status, updated_at, created_at, aula_id, aluno_id'),
-        fetchAllPages('historico_notas', 'id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+        fetchAllPages('historico_notas', 'id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at'),
+        fetchAllPages('registros_alumni', 'id, user_id, nome, email, curso, historico'),
+        fetchAllPages('aulas', 'id, titulo, is_bloco_final, tipo, min_grade, livro_id(id, titulo, curso_id(id, nivel))'),
+        fetchAllPages('users', 'id, nome, email, tipo, nucleo_id, nucleos:nucleo_id(id, nome)')
       ]);
 
-      // Step 2: Build unique ID lists
-      const aulaIds = Array.from(new Set(subDataRaw.map((r: any) => r.aula_id).filter(Boolean)));
-      const alunoIds = Array.from(new Set([
-        ...subDataRaw.map((r: any) => r.aluno_id),
-        ...manualDataRaw.map((r: any) => r.aluno_id)
-      ].filter(Boolean)));
-
-      // Step 3: Fetch lookup tables
-      const [aulasData, usersData] = await Promise.all([
-        aulaIds.length > 0
-          ? fetchAllPages('aulas', 'id, titulo, is_bloco_final, tipo, min_grade, livro_id(id, titulo, curso_id(id, nivel))', q => q.in('id', aulaIds))
-          : Promise.resolve([]),
-        alunoIds.length > 0
-          ? fetchAllPages('users', 'id, nome, email, tipo, nucleo_id, nucleos:nucleo_id(id, nome)', q => q.in('id', alunoIds))
-          : Promise.resolve([])
-      ]);
-
-      // Step 4: Build maps
+      // Step 2: Build lookup maps
       const aulasMap: Record<string, any> = aulasData.reduce((acc: any, a: any) => {
         const livro = Array.isArray(a.livro_id) ? a.livro_id[0] : a.livro_id;
         const curso = livro ? (Array.isArray(livro.curso_id) ? livro.curso_id[0] : livro.curso_id) : null;
@@ -93,37 +79,103 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
         return acc;
       }, {});
 
-      // Step 5: Map online records
-      const onlineRecords = subDataRaw.map((r: any) => ({
-        ...r,
-        aulas: aulasMap[r.aula_id] || null,
-        users: usersMap[r.aluno_id] || null
-      }));
-
-      // Step 6: Map manual records
-      const manualRecords = manualDataRaw.map((r: any) => ({
-        id: r.id,
-        aluno_id: r.aluno_id,
-        is_manual: true,
-        nota: r.nota,
-        status: 'corrigida',
-        created_at: r.created_at,
-        updated_at: r.updated_at,
-        data_conclusao: r.data_conclusao,
-        observacao: r.observacao,
-        users: usersMap[r.aluno_id] || null,
-        aulas: {
-          id: null,
-          titulo: r.modulo_nome,
-          tipo: 'prova',
-          versao: 1,
-          min_grade: 7,
-          is_bloco_final: true,
-          livros: { id: null, titulo: r.modulo_nome, cursos: { id: null, nivel: r.curso_nome } }
+      // Mapear também por email para fallback
+      const usersByEmailMap: Record<string, any> = {};
+      usersData.forEach((u: any) => {
+        if (u.email) {
+          usersByEmailMap[u.email.toLowerCase().trim()] = u;
         }
-      }));
+      });
 
-      // Step 7: Merge and filter out staff records
+      // Mesclar notas de registros_alumni que não estejam em manualDataRaw
+      const mergedManualData = [...manualDataRaw];
+      (alumniDataRaw || []).forEach((al: any) => {
+        const u = (al.user_id && usersMap[al.user_id]) || (al.email && usersByEmailMap[al.email.toLowerCase().trim()]);
+        const targetUserId = u?.id || al.user_id;
+        if (targetUserId && Array.isArray(al.historico)) {
+          al.historico.forEach((item: any, idx: number) => {
+            if (item && item.modulo) {
+              const numNota = parseFloat(String(item.nota || '10').replace(',', '.'));
+              const normM = (item.modulo || '').toLowerCase().trim();
+              const alreadyExists = mergedManualData.some((m: any) => 
+                m.aluno_id === targetUserId && (m.modulo_nome || '').toLowerCase().trim() === normM
+              );
+              if (!alreadyExists) {
+                mergedManualData.push({
+                  id: `alumni-${al.id}-${idx}`,
+                  aluno_id: targetUserId,
+                  curso_nome: al.curso || 'Teologia Básico',
+                  modulo_nome: item.modulo,
+                  nota: isNaN(numNota) ? 10 : numNota,
+                  data_conclusao: item.data || new Date().toISOString(),
+                  observacao: 'Histórico de formados',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                });
+              }
+            }
+          });
+        }
+      });
+
+      // Step 3: Map online records com fallback de aula
+      const onlineRecords = subDataRaw.map((r: any) => {
+        let aula = aulasMap[r.aula_id];
+        if (!aula) {
+          aula = {
+            id: r.aula_id,
+            titulo: 'Avaliação Online',
+            tipo: 'prova',
+            min_grade: 7,
+            is_bloco_final: true,
+            livros: { id: r.aula_id, titulo: 'Módulo Geral', cursos: { id: null, nivel: 'Teologia Básico' } }
+          };
+        }
+        return {
+          ...r,
+          aulas: aula,
+          users: usersMap[r.aluno_id] || null
+        };
+      });
+
+      // Step 4: Map manual records vinculando livros reais quando possível
+      const manualRecords = mergedManualData.map((r: any) => {
+        const modNorm = (r.modulo_nome || '').toLowerCase().trim();
+        const matchedAula = aulasData.find((a: any) => {
+          const l = Array.isArray(a.livro_id) ? a.livro_id[0] : a.livro_id;
+          return l && (l.titulo || '').toLowerCase().trim() === modNorm;
+        });
+        const matchedLivro = matchedAula ? (Array.isArray(matchedAula.livro_id) ? matchedAula.livro_id[0] : matchedAula.livro_id) : null;
+        const bookId = matchedLivro?.id || r.modulo_nome;
+
+        return {
+          id: r.id,
+          aluno_id: r.aluno_id,
+          is_manual: true,
+          nota: r.nota,
+          status: 'corrigida',
+          created_at: r.created_at,
+          updated_at: r.updated_at,
+          data_conclusao: r.data_conclusao,
+          observacao: r.observacao,
+          users: usersMap[r.aluno_id] || null,
+          aulas: {
+            id: matchedAula?.id || null,
+            titulo: r.modulo_nome,
+            tipo: 'prova',
+            versao: 1,
+            min_grade: 7,
+            is_bloco_final: true,
+            livros: { 
+              id: bookId, 
+              titulo: r.modulo_nome, 
+              cursos: { id: null, nivel: r.curso_nome || 'Teologia Básico' } 
+            }
+          }
+        };
+      });
+
+      // Step 5: Merge and filter out staff records
       const allRecords = [...onlineRecords, ...manualRecords].filter((item: any) => {
         const isStaff = item.users && ['admin', 'suporte', 'professor', 'colaborador'].includes(item.users?.tipo?.toLowerCase());
         return !isStaff;

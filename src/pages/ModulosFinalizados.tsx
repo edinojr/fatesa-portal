@@ -192,6 +192,31 @@ const goToPanel = () => {
             return true;
         });
 
+        // Incluir também submissões online aprovadas que não estão na lista de livros exibidos
+        (atividades || []).forEach((at: any) => {
+            if (at.status === 'corrigida' && at.nota != null && Number(at.nota) >= 7) {
+                const title = at.book_title || at.lesson_title || at.modulo_nome;
+                if (!title) return;
+                const norm = normalizeTitle(title);
+                let alreadyDisplayed = false;
+                for (const disp of displayedTitles) {
+                    if (disp === norm || disp.includes(norm) || norm.includes(disp)) {
+                        alreadyDisplayed = true;
+                        break;
+                    }
+                }
+                if (!alreadyDisplayed && !localOrfaosAprovados.some((h: any) => normalizeTitle(h.modulo_nome) === norm)) {
+                    localOrfaosAprovados.push({
+                        id: at.book_id || at.lesson_id || at.id,
+                        modulo_nome: title,
+                        nota: Number(at.nota),
+                        data_conclusao: at.submitted_at || at.created_at || new Date().toISOString(),
+                        curso_nome: at.curso_nivel || 'Teologia Básico'
+                    });
+                }
+            }
+        });
+
         if (localOrfaosAprovados.length > 0) {
             const orfaosByNivel: Record<string, any[]> = { basico: [], medio: [] };
             localOrfaosAprovados.forEach((h: any) => {
