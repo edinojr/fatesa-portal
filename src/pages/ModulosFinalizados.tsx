@@ -103,22 +103,24 @@ const goToPanel = () => {
                 alumniList.forEach((al: any) => {
                     if (Array.isArray(al.historico)) {
                         al.historico.forEach((item: any, idx: number) => {
-                            if (item && item.modulo) {
-                                const numNota = parseFloat(String(item.nota || '10').replace(',', '.'));
-                                const itemNorm = (item.modulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-                                const exists = combined.some(h => 
-                                    (h.modulo_nome || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() === itemNorm
-                                );
-                                if (!exists) {
-                                    combined.push({
-                                        id: `alumni-${al.id}-${idx}`,
-                                        aluno_id: profile.id,
-                                        curso_nome: al.curso || 'Teologia Básico',
-                                        modulo_nome: item.modulo,
-                                        nota: isNaN(numNota) ? 10 : numNota,
-                                        data_conclusao: item.data || new Date().toLocaleDateString('pt-BR'),
-                                        observacao: 'Histórico oficial de notas (Formados)'
-                                    });
+                            if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
+                                const numNota = parseFloat(String(item.nota).replace(',', '.'));
+                                if (!isNaN(numNota)) {
+                                    const itemNorm = (item.modulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+                                    const exists = combined.some(h => 
+                                        (h.modulo_nome || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() === itemNorm
+                                    );
+                                    if (!exists) {
+                                        combined.push({
+                                            id: `alumni-${al.id}-${idx}`,
+                                            aluno_id: profile.id,
+                                            curso_nome: al.curso || 'Teologia Básico',
+                                            modulo_nome: item.modulo,
+                                            nota: numNota,
+                                            data_conclusao: item.data || new Date().toLocaleDateString('pt-BR'),
+                                            observacao: 'Histórico oficial de notas (Formados)'
+                                        });
+                                    }
                                 }
                             }
                         });
@@ -143,14 +145,11 @@ const goToPanel = () => {
             return 'basico';
         };
 
-        const isAlumniApproved = profile?.tipo === 'ex_aluno' || alumniRecord?.status_aprovacao === 'aprovado';
-
         // 1) Históricos aprovados (nota >= 7)
         const approvedHistory = (historyGrades || []).filter((h: any) => h && h.nota != null && Number(h.nota) >= 7);
 
         // 2) finishedCourses — marca books finalizados por prova OU por histórico manual
         let localFinishedCourses = (courses || []).map(course => {
-            const isBasicCourse = detectNivel(course.nivel || course.nome || '') === 'basico';
             const finishedBooks = (course.livros || []).map(l => {
                 const stats = getBookStats(l, atividades, progressoAulas);
                 const approvedHistoryEntry = approvedHistory.find((h: any) => {
@@ -158,15 +157,16 @@ const goToPanel = () => {
                     const disp = normalizeTitle(l.titulo);
                     return disp === histNorm || disp.includes(histNorm) || histNorm.includes(disp);
                 });
-                const approvedManual = !!approvedHistoryEntry || (isAlumniApproved && isBasicCourse);
+                const approvedManual = !!approvedHistoryEntry;
                 const notaVal = approvedHistoryEntry?.nota != null 
                     ? approvedHistoryEntry.nota 
-                    : ((l as any).notaHistorico ?? (l as any).nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : (isAlumniApproved && isBasicCourse ? 10 : null)));
+                    : ((l as any).notaHistorico ?? (l as any).nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : null));
 
-                return { l, stats, approvedManual, notaManual: notaVal };
-            }).filter(({ l, stats, approvedManual }) =>
-                l.isFinished || stats.isFinished || approvedManual || (isAlumniApproved && isBasicCourse)
-            ).map(({ l, stats, approvedManual, notaManual }) => ({
+                const isFin = (l.isFinished || stats.isFinished || approvedManual) && notaVal != null;
+
+                return { l, stats, approvedManual, notaManual: notaVal, isFin };
+            }).filter(({ isFin }) => isFin)
+            .map(({ l, stats, approvedManual, notaManual }) => ({
                 ...l,
                 isFinished: true,
                 isApproved: true,

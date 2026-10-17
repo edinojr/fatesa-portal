@@ -94,8 +94,9 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
         const targetUserId = u?.id || al.user_id;
         if (targetUserId && Array.isArray(al.historico)) {
           al.historico.forEach((item: any, idx: number) => {
-            if (item && item.modulo) {
-              const numNota = parseFloat(String(item.nota || '10').replace(',', '.'));
+            if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
+              const numNota = parseFloat(String(item.nota).replace(',', '.'));
+              if (isNaN(numNota)) return;
               const normM = (item.modulo || '').toLowerCase().trim();
               const alreadyExists = mergedManualData.some((m: any) => 
                 m.aluno_id === targetUserId && (m.modulo_nome || '').toLowerCase().trim() === normM
@@ -106,7 +107,7 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
                   aluno_id: targetUserId,
                   curso_nome: al.curso || 'Teologia Básico',
                   modulo_nome: item.modulo,
-                  nota: isNaN(numNota) ? 10 : numNota,
+                  nota: numNota,
                   data_conclusao: item.data || new Date().toISOString(),
                   observacao: 'Histórico de formados',
                   created_at: new Date().toISOString(),
