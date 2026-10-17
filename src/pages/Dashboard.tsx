@@ -899,8 +899,8 @@ const Dashboard = () => {
 
               <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--glass)', padding: '1.5rem 2rem', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Meus Módulos Ativos</h3>
-                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Acompanhe seu progresso atual e continue seus estudos.</p>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Módulos em Aberto para Estudo</h3>
+                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Módulos liberados para suas aulas e avaliações atuais.</p>
                 </div>
                 <button 
                   onClick={() => navigate('/modulos-finalizados')} 

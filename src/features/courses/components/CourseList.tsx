@@ -1,4 +1,5 @@
-import { BookOpen, ChevronRight, AlertCircle } from 'lucide-react'
+import React from 'react'
+import { BookOpen, AlertCircle, Award, CheckCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 import { getBookStats } from '../utils/courseUtils'
@@ -21,6 +22,20 @@ const CourseList: React.FC<CourseListProps> = ({
   const navigate = useNavigate();
   const getBookStatsWrapper = (l: any) => getBookStats(l, atividades, progressoAulas);
 
+  const isBookVisible = (currentBook: any) => {
+    const stats = getBookStatsWrapper(currentBook);
+    const isApprovedManual = (currentBook.notaHistorico != null && Number(currentBook.notaHistorico) >= 7) || (currentBook.nota != null && Number(currentBook.nota) >= 7);
+    const isFinished = currentBook.isFinished || stats.isFinished || isApprovedManual;
+    const isUnlocked = !!currentBook.isUnlocked;
+
+    if (showOnlyFinished) {
+      return isFinished;
+    }
+
+    // No painel de estudo: módulos finalizados e módulos fechados NÃO devem aparecer
+    return isUnlocked && !isFinished;
+  };
+
   const renderBookCard = (currentBook: any) => {
     const stats = getBookStatsWrapper(currentBook);
     const isHistoricoSintetico = !currentBook.aulas || currentBook.aulas.length === 0;
@@ -30,10 +45,7 @@ const CourseList: React.FC<CourseListProps> = ({
     const isApprovedManual = (currentBook.notaHistorico != null && Number(currentBook.notaHistorico) >= 7) || (currentBook.nota != null && Number(currentBook.nota) >= 7);
     const isFinished = currentBook.isFinished || stats.isFinished || isApprovedManual;
 
-    if (showOnlyFinished && !isFinished) return null;
-
     // Módulo em manutenção: sem conteúdo ou sem prova final configurada.
-    // Só exibe o aviso se o aluno não foi finalizado manualmente nem por histórico.
     const isMaintenance = stats.isMaintenance && !isFinished && !isApprovedManual;
 
     let subtitulo = '';
@@ -130,6 +142,79 @@ const CourseList: React.FC<CourseListProps> = ({
     return nivel === 'medio' || nivel === 'médio';
   });
 
+  const filterCourses = (courseList: Course[]) => {
+    return (courseList || [])
+      .map(course => ({
+        ...course,
+        livros: (course.livros || []).filter(isBookVisible)
+      }))
+      .filter(course => course.livros.length > 0);
+  };
+
+  const visibleBasicCourses = filterCourses(basicCourses);
+  const visibleMedioCourses = filterCourses(medioCourses);
+  const totalVisibleBooks = visibleBasicCourses.reduce((acc, c) => acc + c.livros.length, 0) +
+                            visibleMedioCourses.reduce((acc, c) => acc + c.livros.length, 0);
+
+  if (totalVisibleBooks === 0) {
+    if (showOnlyFinished) {
+      return (
+        <div style={{
+          padding: '3rem 2rem',
+          textAlign: 'center',
+          background: 'var(--glass)',
+          border: '1px dashed var(--glass-border)',
+          borderRadius: '20px',
+          opacity: 0.8,
+          maxWidth: '560px',
+          margin: '2rem auto'
+        }}>
+          <Award size={40} color="var(--primary)" style={{ opacity: 0.5, margin: '0 auto 1rem' }} />
+          <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 700 }}>Nenhum módulo finalizado encontrado</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            Conforme você concluir os módulos e avaliações, suas notas e certificações aparecerão aqui.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div style={{
+        padding: '3.5rem 2rem',
+        textAlign: 'center',
+        background: 'var(--glass)',
+        border: '1px solid var(--glass-border)',
+        borderRadius: '24px',
+        maxWidth: '600px',
+        margin: '2rem auto'
+      }}>
+        <div style={{
+          width: '64px',
+          height: '64px',
+          borderRadius: '50%',
+          background: 'rgba(var(--primary-rgb), 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 1.25rem'
+        }}>
+          <CheckCircle size={32} color="var(--primary)" />
+        </div>
+        <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.3rem', fontWeight: 800 }}>Nenhum módulo pendente para estudo</h3>
+        <p style={{ margin: '0 0 1.5rem', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+          Você não possui módulos em andamento no momento. Todos os seus módulos já concluídos podem ser consultados no seu boletim oficial.
+        </p>
+        <button 
+          onClick={() => navigate('/modulos-finalizados')} 
+          className="btn btn-primary"
+          style={{ width: 'auto', padding: '0.75rem 1.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.6rem', margin: '0 auto' }}
+        >
+          <Award size={18} /> Ver Módulos Finalizados e Notas
+        </button>
+      </div>
+    );
+  }
+
   const renderNivelSection = (label: string, coursesList: Course[]) => {
     return (
       <div key={label} style={{ marginBottom: '3rem' }}>
@@ -145,20 +230,7 @@ const CourseList: React.FC<CourseListProps> = ({
           <h2 style={{ fontSize: '1.4rem', fontWeight: 900, margin: 0, color: 'var(--primary)' }}>{label}</h2>
         </div>
 
-        {coursesList.length === 0 ? (
-          <div style={{
-            padding: '2rem',
-            textAlign: 'center',
-            background: 'var(--glass)',
-            border: '1px dashed var(--glass-border)',
-            borderRadius: '16px',
-            opacity: 0.6
-          }}>
-            <BookOpen size={32} style={{ opacity: 0.2, margin: '0 auto 0.75rem' }} />
-            <h3 style={{ opacity: 0.5, fontWeight: 600, marginBottom: '0.4rem', fontSize: '1rem' }}>Nenhum curso disponível</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Novos módulos serão disponibilizados em breve.</p>
-          </div>
-        ) : coursesList.map(course => (
+        {coursesList.map(course => (
           <div key={course.id} style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem', opacity: 0.8 }}>
                <BookOpen size={18} color="var(--primary)" />
@@ -175,8 +247,8 @@ const CourseList: React.FC<CourseListProps> = ({
 
   return (
     <div className="courses-container" style={{ animation: 'fadeIn 0.5s ease-out' }}>
-      {renderNivelSection('Teologia Básica', basicCourses)}
-      {renderNivelSection('Teologia Média', medioCourses)}
+      {visibleBasicCourses.length > 0 && renderNivelSection('Teologia Básica', visibleBasicCourses)}
+      {visibleMedioCourses.length > 0 && renderNivelSection('Teologia Média', visibleMedioCourses)}
     </div>
   );
 };
