@@ -187,17 +187,9 @@ const Lesson = () => {
         .eq('item_id', aulaAtual.id);
       if (nucleoId) {
         query = query.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
-      } else {
-        query = query.is('nucleo_id', null);
       }
       const { data: rel } = await query.maybeSingle();
       if (rel?.liberado) {
-        // Aluno tardio: cadastro posterior à liberação da prova → bloqueado
-        // (salvo exceção individual do professor, já verificada acima)
-        if (userCreatedAt && rel.created_at && new Date(userCreatedAt).getTime() > new Date(rel.created_at).getTime()) {
-          setBlockReason('late_exam');
-          return false;
-        }
         return true;
       }
 
@@ -454,15 +446,17 @@ const Lesson = () => {
         // conteúdo/prova liberado para o polo, o módulo NÃO é bloqueado.
         let hasNucleoRelease = false;
         if (lessonData.livro_id) {
-          const nucleoId = profile?.nucleo_id || '00000000-0000-0000-0000-000000000000';
-          const { data: modRel } = await supabase
+          const nucleoId = profile?.nucleo_id;
+          let modQuery = supabase
             .from('liberacoes_nucleo')
             .select('id')
             .eq('item_id', lessonData.livro_id)
             .eq('item_type', 'modulo')
-            .eq('liberado', true)
-            .or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`)
-            .limit(1);
+            .eq('liberado', true);
+          if (nucleoId) {
+            modQuery = modQuery.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
+          }
+          const { data: modRel } = await modQuery.limit(1);
           if ((modRel || []).length > 0) {
             hasNucleoRelease = true;
           } else {
@@ -472,14 +466,16 @@ const Lesson = () => {
               .eq('livro_id', lessonData.livro_id);
             const aulaIds = (bookAulasRel || []).map((a: any) => a.id);
             if (aulaIds.length > 0) {
-              const { data: itemRel } = await supabase
+              let itemQuery = supabase
                 .from('liberacoes_nucleo')
                 .select('id')
                 .in('item_id', aulaIds)
-                .in('item_type', ['atividade', 'video', 'licao'])
-                .eq('liberado', true)
-                .or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`)
-                .limit(1);
+                .in('item_type', ['atividade', 'video', 'licao', 'prova', 'avaliacao'])
+                .eq('liberado', true);
+              if (nucleoId) {
+                itemQuery = itemQuery.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
+              }
+              const { data: itemRel } = await itemQuery.limit(1);
               hasNucleoRelease = (itemRel || []).length > 0;
             }
           }

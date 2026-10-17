@@ -73,12 +73,12 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
         }
     }
 
-    // Módulo em manutenção: sem aulas OU sem prova final configurada.
-    // Módulo aprovado ou com nota manual válida NUNCA entra em manutenção.
+    // Módulo em manutenção: apenas se não houver aulas cadastradas no módulo.
+    // Havendo aulas para estudo, o módulo não fica em manutenção.
     const hasAnyValidExam = finalExams.length > 0 || isApproved || manualGrade !== null;
     const isMaintenance = typeof l.isMaintenanceModule === 'boolean' 
       ? (l.isMaintenanceModule && !isApproved) 
-      : (!hasAnyValidExam && !isApproved);
+      : (totalItems === 0 && !isApproved && manualGrade === null);
     
     const result = {
       percent: isApproved ? 100 : Math.round((completedItems / totalItems) * 100),

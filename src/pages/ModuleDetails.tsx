@@ -47,8 +47,11 @@ const ModuleDetails = () => {
     }, [profileLoading, profile, fetchStudentDashboardData, id]);
 
     const fetchNucleusReleases = async () => {
-      if (!profile?.nucleo_id) return;
-      const { data, error } = await supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('nucleo_id', profile.nucleo_id).eq('liberado', true);
+      let query = supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('liberado', true);
+      if (profile?.nucleo_id) {
+        query = query.or(`nucleo_id.eq.${profile.nucleo_id},nucleo_id.is.null`);
+      }
+      const { data, error } = await query;
       if (error) {
         await handleSupabaseError(error)
         return
@@ -173,34 +176,47 @@ const ModuleDetails = () => {
 
       // Exceção individual de prova específica desbloqueia aquela prova
       const hasIndividualExamRelease = examExceptions.includes(item.id);
+      if (hasIndividualExamRelease) return false;
 
       const moduleSubs = (atividades || []).filter((s: any) => s.book_id === currentBook?.book.id);
 
-      // V2: liberado se aluno reprovou na V1
-      // V3: liberado se aluno reprovou na V2
-      // Bloco final: usa regra padrão de liberação por núcleo
-      if (isExam && versao > 1 && !hasIndividualExamRelease) {
-        const moduleAttempts = collectExamAttempts(allAulas, moduleSubs);
-        return !isRecoveryUnlocked(versao, moduleAttempts);
+      // Regra de Provas e Avaliações Finais
+      if (isExam) {
+        // V2/V3 (Recuperação): liberado apenas se a versão anterior foi reprovada
+        if (versao > 1) {
+          const moduleAttempts = collectExamAttempts(allAulas, moduleSubs);
+          return !isRecoveryUnlocked(versao, moduleAttempts);
+        }
+
+        // V1: liberada se houver liberação por núcleo, professor_active, ou se o módulo foi liberado
+        const hasNucleusRelease = nucleusReleases.some(r =>
+          r.item_id === item.id &&
+          (r.item_type === 'atividade' || r.item_type === 'prova' || r.item_type === 'avaliacao')
+        );
+        if (hasNucleusRelease || item.professor_active === true) return false;
+        if (item.professor_active === false) return true;
+        if (item.lockedByProfessor) return true;
+        return isLocked(item);
       }
 
+      // Conteúdo de Estudo (Panorama, Lições, Vídeos, Exercícios):
+      // Se o módulo está desbloqueado para o aluno, o conteúdo está aberto para estudos!
+      if (currentBook?.book?.isUnlocked) {
+        if (item.professor_active === false) return true;
+        if (item.lockedByProfessor) return true;
+        if (item.status_liberacao === false) return true;
+        if (item.data_liberacao && new Date(item.data_liberacao) > new Date()) return true;
+        return false;
+      }
+
+      // Fallback: caso o módulo não esteja com flag isUnlocked (mas tenha liberação avulsa)
       const hasNucleusRelease = nucleusReleases.some(r =>
         r.item_id === item.id &&
         (r.item_type === 'atividade' || r.item_type === 'video' || r.item_type === 'modulo')
       );
-      if (hasNucleusRelease || hasIndividualExamRelease) return false;
-
-      // Se a avaliação/aula foi ativada explicitamente pelo professor
+      if (hasNucleusRelease) return false;
       if (item.professor_active === true) return false;
-
-      // Se foi desativada explicitamente pelo professor
       if (item.professor_active === false) return true;
-
-      const hasModuleRelease = nucleusReleases.some(r =>
-        r.item_id === currentBook?.book?.id && r.item_type === 'modulo'
-      );
-      if (hasModuleRelease) return false;
-
       if (item.lockedByProfessor) return true;
       return isLocked(item);
     };
