@@ -344,21 +344,21 @@ const Dashboard = () => {
   }, [atividades, profile?.id]);
 
 
-  // Filtra cursos para mostrar apenas o vigente no Dashboard (Home e Cursos)
+  // Filtra cursos para mostrar módulos vigentes e desbloqueados no Dashboard
   const currentCourses = useMemo(() => {
     if (isStaff || !courses.length) return courses;
     
     return courses.map(course => ({
       ...course,
-      livros: (course.livros || []).filter((livro: any) => !livro.isFinished)
+      livros: (course.livros || []).filter((livro: any) => livro.isUnlocked || !livro.isFinished)
     })).filter(course => course.livros.length > 0);
   }, [courses, isStaff]);
 
-  // Módulos em andamento (não finalizados)
+  // Módulos em andamento (desbloqueados para estudo e não finalizados)
   const modulosAtivos = useMemo(() => {
     return courses.map(course => ({
       ...course,
-      livros: (course.livros || []).filter((livro: any) => !livro.isFinished)
+      livros: (course.livros || []).filter((livro: any) => livro.isUnlocked && !livro.isFinished)
     })).filter(course => course.livros.length > 0);
   }, [courses]);
 
@@ -911,7 +911,7 @@ const Dashboard = () => {
                 </button>
               </div>
                 <CourseList 
-                  courses={currentCourses}
+                  courses={courses}
                   progressoAulas={progressoAulas}
                   atividades={atividades}
                 />

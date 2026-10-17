@@ -27,11 +27,10 @@ const CourseList: React.FC<CourseListProps> = ({
 
     const rawNota = currentBook.notaHistorico ?? currentBook.nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : null);
     const numNota = rawNota != null && !isNaN(Number(rawNota)) ? Number(rawNota) : null;
-    const isApprovedManual = currentBook.notaHistorico != null || currentBook.nota != null;
+    const isApprovedManual = (currentBook.notaHistorico != null && Number(currentBook.notaHistorico) >= 7) || (currentBook.nota != null && Number(currentBook.nota) >= 7);
     const isFinished = currentBook.isFinished || stats.isFinished || isApprovedManual;
 
     if (showOnlyFinished && !isFinished) return null;
-    if (!showOnlyFinished && isFinished) return null;
 
     // Módulo em manutenção: sem conteúdo ou sem prova final configurada.
     // Só exibe o aviso se o aluno não foi finalizado manualmente nem por histórico.

@@ -183,13 +183,14 @@ const Lesson = () => {
 
       let query = supabase
         .from('liberacoes_nucleo')
-        .select('liberado, created_at')
-        .eq('item_id', aulaAtual.id);
-      if (nucleoId) {
-        query = query.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
-      }
-      const { data: rel } = await query.maybeSingle();
-      if (rel?.liberado) {
+        .select('liberado, created_at, nucleo_id')
+        .eq('item_id', aulaAtual.id)
+        .eq('liberado', true);
+      const { data: rels } = await query;
+      const hasMatchingRel = (rels || []).some((r: any) =>
+        !r.nucleo_id || !nucleoId || r.nucleo_id === nucleoId || (rels || []).every((x: any) => x.nucleo_id !== nucleoId)
+      );
+      if (hasMatchingRel && (rels || []).length > 0) {
         return true;
       }
 

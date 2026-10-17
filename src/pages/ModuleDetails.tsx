@@ -47,16 +47,25 @@ const ModuleDetails = () => {
     }, [profileLoading, profile, fetchStudentDashboardData, id]);
 
     const fetchNucleusReleases = async () => {
-      let query = supabase.from('liberacoes_nucleo').select('item_id, item_type').eq('liberado', true);
-      if (profile?.nucleo_id) {
-        query = query.or(`nucleo_id.eq.${profile.nucleo_id},nucleo_id.is.null`);
-      }
-      const { data, error } = await query;
+      const { data, error } = await supabase
+        .from('liberacoes_nucleo')
+        .select('item_id, item_type, nucleo_id')
+        .eq('liberado', true);
       if (error) {
-        await handleSupabaseError(error)
-        return
+        await handleSupabaseError(error);
+        return;
       }
-      if (data) setNucleusReleases(data);
+      if (data) {
+        const studentNucleoId = profile?.nucleo_id;
+        const releasesForStudent = studentNucleoId
+          ? data.filter((r: any) => r.nucleo_id === studentNucleoId)
+          : [];
+        const filtered = data.filter((r: any) => {
+          if (!r.nucleo_id || !studentNucleoId || r.nucleo_id === studentNucleoId) return true;
+          return releasesForStudent.length === 0;
+        });
+        setNucleusReleases(filtered);
+      }
     };
 
     const fetchIndividualExceptions = async () => {

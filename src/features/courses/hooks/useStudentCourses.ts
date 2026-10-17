@@ -67,9 +67,14 @@ export const useStudentCourses = (profile: any) => {
       );
 
       const studentNucleoId = profile?.nucleo_id;
+      const releasesForStudentNucleo = studentNucleoId 
+        ? (releases || []).filter((r: any) => r.nucleo_id === studentNucleoId)
+        : [];
+
       const applicableReleases = (releases || []).filter((r: any) => {
-        if (!studentNucleoId) return true;
-        return !r.nucleo_id || r.nucleo_id === studentNucleoId;
+        if (!r.nucleo_id || !studentNucleoId || r.nucleo_id === studentNucleoId) return true;
+        // Se o polo do aluno não tem liberações cadastradas, herda as liberações existentes (ex: SEDE ou gerais)
+        return releasesForStudentNucleo.length === 0;
       });
 
       const { data: exams } = await safeSelect(supabase
@@ -587,8 +592,10 @@ export const useStudentCourses = (profile: any) => {
                       !profile?.nucleo_id || 
                       a.nucleo_id === profile?.nucleo_id || 
                       a.tipo === 'licao' || 
+                      a.tipo === 'material' ||
                       isExamType || 
-                      hasStudentSubmission;
+                      hasStudentSubmission ||
+                      releasesForStudentNucleo.length === 0;
                     if (!matchesNucleo) return { ...a, isHidden: true };
 
                     return { 
