@@ -1,10 +1,9 @@
 import React from 'react'
-import { ChevronLeft, ChevronRight, LogOut, ExternalLink, LayoutDashboard, Users, GraduationCap, Home } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LogOut, Home } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
 import TopBanner from './TopBanner'
 import { PanelSwitcher, PanelNavIcons } from '../common/PanelSwitcher'
-import { isUserAdmin } from '../../lib/authUtils'
 
 interface PageHeaderProps {
   title: string
@@ -64,17 +63,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   }
   const showHome = showHomeButton ?? (variant === 'admin' || variant === 'professor' || variant === 'coordinator')
   const effectiveHomePath = homePath || roleHome[variant] || '/dashboard'
-
-  const handleRoleNavigate = (role: string, path: string) => {
-    localStorage.setItem('fatesa_active_role', role)
-    navigate(path)
-  }
-
-  const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo || '') || 
-                  (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r))
-  const isAdmin = isUserAdmin(profile)
-  const isProfessor = isAdmin || profile?.tipo === 'professor' || (profile?.caminhos_acesso || []).includes('professor')
-  const isCoordinator = isAdmin || profile?.tipo === 'coordenador_polo' || (profile?.caminhos_acesso || []).includes('coordenador_polo')
 
   const getDefaultActions = () => {
     if (variant === 'viewer') return null

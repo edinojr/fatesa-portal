@@ -657,7 +657,7 @@ const Dashboard = () => {
                   <CheckCircle2 size={18} /> Verificar se Já Fui Aprovado
                 </button>
                 <button 
-                  onClick={() => window.open('https://wa.me/5516999999999?text=Ol%C3%A1%2C+sou+aluno+formado+da+FATESA+e+estou+na+sala+de+espera+aguardando+aprova%C3%A7%C3%A3o.', '_blank')}
+                  onClick={() => window.open('https://wa.me/5511999720904?text=Ol%C3%A1%2C+sou+aluno+formado+da+FATESA+e+estou+na+sala+de+espera+aguardando+aprova%C3%A7%C3%A3o.', '_blank')}
                   className="btn btn-outline"
                   style={{ width: 'auto', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}
                 >
@@ -689,7 +689,7 @@ const Dashboard = () => {
                       <button onClick={() => setActiveTab('certificados')} style={{ background: '#fff', color: '#6d28d9', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
                         <Award size={18} /> Ver meus Certificados
                       </button>
-                      <button onClick={() => window.open('https://wa.me/5516999999999', '_blank')} style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', backdropFilter: 'blur(10px)' }}>
+                      <button onClick={() => window.open('https://wa.me/5511999720904?text=Ol%C3%A1%2C%20conclu%C3%AD%20o%20n%C3%ADvel%20B%C3%A1sico%20e%20gostaria%20de%20informa%C3%A7%C3%B5es%20para%20o%20n%C3%ADvel%20M%C3%A9dio.', '_blank')} style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', backdropFilter: 'blur(10px)' }}>
                         Quero refazer a matrícula
                       </button>
                     </div>

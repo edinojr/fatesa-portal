@@ -239,7 +239,7 @@ const BlockedAccess: React.FC = () => {
               </div>
 
               <a 
-                href="https://wa.me/5516999999999" 
+                href="https://wa.me/5511999720904?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20com%20meu%20acesso%20financeiro%20na%20Fatesa." 
                 target="_blank" 
                 rel="noreferrer"
                 style={{ 

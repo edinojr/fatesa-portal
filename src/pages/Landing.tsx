@@ -144,13 +144,18 @@ const Landing = () => {
           <h2 style={{ fontSize: '1.75rem', marginBottom: '0.75rem', fontWeight: 700 }}>Acesse por Aplicativo</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontSize: '0.9rem' }}>Leve a Fatesa com você. Estude de qualquer lugar.</p>
           
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+            <button onClick={() => navigate('/app-mobile')} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }} title="Fatesa Mobile para iOS (Em desenvolvimento)">
               <img src="/app-store-badge.svg" alt="Baixar aplicativo teológico Fatesa na Apple Store" style={{ height: '40px' }} />
             </button>
-            <button onClick={() => toast('Aplicativo em desenvolvimento. Em breve na sua loja de apps!', { icon: '🚧', duration: 4000, style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } })} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
+            <button onClick={() => navigate('/app-mobile')} className="app-store-btn" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }} title="Fatesa Mobile para Android (Em desenvolvimento)">
               <img src="/google-play-badge.svg" alt="Baixar aplicativo teológico Fatesa no Google Play" style={{ height: '40px' }} />
             </button>
+          </div>
+          <div style={{ marginTop: '1.25rem' }}>
+            <Link to="/app-mobile" style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+              Conheça as novidades e recursos do Fatesa Mobile &rarr;
+            </Link>
           </div>
         </div>
       </section>

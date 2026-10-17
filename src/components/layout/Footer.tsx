@@ -23,10 +23,12 @@ const Footer = () => {
           <div className="footer-links">
             <h4 style={{ color: 'var(--secondary)', fontSize: '1.1rem', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Navegação</h4>
             <ul style={{ listStyle: 'none', padding: 0 }}>
-                <li style={{ marginBottom: '0.8rem' }}><Link to="/dashboard" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Início</Link></li>
+              <li style={{ marginBottom: '0.8rem' }}><Link to="/" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Início</Link></li>
               <li style={{ marginBottom: '0.8rem' }}><Link to="/sobre" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Instituição</Link></li>
-              <li style={{ marginBottom: '0.8rem' }}><Link to="/patrono" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Patrono</Link></li>
+              <li style={{ marginBottom: '0.8rem' }}><Link to="/metodologia" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Metodologia</Link></li>
+              <li style={{ marginBottom: '0.8rem' }}><Link to="/patrono" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Patrono & Docentes</Link></li>
               <li style={{ marginBottom: '0.8rem' }}><Link to="/cursos" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Nossos Cursos</Link></li>
+              <li style={{ marginBottom: '0.8rem' }}><Link to="/contato" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Contato</Link></li>
               <li style={{ marginBottom: '0.8rem' }}><Link to="/login" style={{ color: '#fff', opacity: 0.9, textDecoration: 'none' }}>Acesso ao Portal</Link></li>
             </ul>
           </div>
@@ -36,7 +38,7 @@ const Footer = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.9rem' }}>
               <div style={{ display: 'flex', gap: '0.8rem', opacity: 0.8 }}>
                 <MapPin size={18} color="var(--secondary)" />
-                <span>Rua da Sapiência, 123 - Centro</span>
+                <span>Av. Dom Pedro I, 3145 - Vila Pires, Santo André - SP</span>
               </div>
               <div style={{ display: 'flex', gap: '0.8rem', opacity: 0.8 }}>
                 <Phone size={18} color="var(--secondary)" />
