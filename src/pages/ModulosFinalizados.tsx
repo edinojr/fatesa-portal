@@ -6,7 +6,7 @@ import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/common/Logo'
 import CourseList from '../features/courses/components/CourseList'
-import { getBookStats } from '../features/courses/utils/courseUtils'
+import { getBookStats, areModuleTitlesEqual } from '../features/courses/utils/courseUtils'
 import { GRADUATION_CONFIG, isNivelBasico, isNivelMedio } from '../config/graduation'
 import GraduationFormModal from '../features/users/components/GraduationFormModal'
 import LevelCertificate from '../features/users/components/LevelCertificate'
@@ -152,11 +152,7 @@ const goToPanel = () => {
         let localFinishedCourses = (courses || []).map(course => {
             const finishedBooks = (course.livros || []).map(l => {
                 const stats = getBookStats(l, atividades, progressoAulas);
-                const approvedHistoryEntry = approvedHistory.find((h: any) => {
-                    const histNorm = normalizeTitle(h.modulo_nome);
-                    const disp = normalizeTitle(l.titulo);
-                    return disp === histNorm || disp.includes(histNorm) || histNorm.includes(disp);
-                });
+                const approvedHistoryEntry = approvedHistory.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
                 const approvedManual = !!approvedHistoryEntry;
                 const notaVal = approvedHistoryEntry?.nota != null 
                     ? approvedHistoryEntry.nota 
@@ -178,14 +174,13 @@ const goToPanel = () => {
 
         // 3) Construir lista única de títulos já exibidos (para evitar duplicação)
         const displayedTitles = new Set<string>();
-        localFinishedCourses.forEach(c => c.livros.forEach((l: any) => displayedTitles.add(normalizeTitle(l.titulo))));
+        localFinishedCourses.forEach(c => c.livros.forEach((l: any) => displayedTitles.add(l.titulo)));
 
         // 4) Módulos do histórico que ainda não foram exibidos como livros cadastrados
         //    — criar "books" sintéticos e colocá-los no curso Básico ou Médio
         const localOrfaosAprovados = approvedHistory.filter((h: any) => {
-            const histNorm = normalizeTitle(h.modulo_nome);
             for (const disp of displayedTitles) {
-                if (disp === histNorm || disp.includes(histNorm) || histNorm.includes(disp)) {
+                if (areModuleTitlesEqual(disp, h.modulo_nome)) {
                     return false;
                 }
             }
@@ -195,17 +190,18 @@ const goToPanel = () => {
         // Incluir também submissões online aprovadas que não estão na lista de livros exibidos
         (atividades || []).forEach((at: any) => {
             if (at.status === 'corrigida' && at.nota != null && Number(at.nota) >= 7) {
-                const title = at.book_title || at.lesson_title || at.modulo_nome;
+                const isExamOrManual = at.is_bloco_final || at.lesson_type === 'prova' || at.lesson_type === 'avaliacao' || at.aulas?.tipo === 'prova' || at.aulas?.tipo === 'avaliacao' || at.is_manual;
+                if (!isExamOrManual) return;
+                const title = at.book_title || at.modulo_nome || at.lesson_title;
                 if (!title) return;
-                const norm = normalizeTitle(title);
                 let alreadyDisplayed = false;
                 for (const disp of displayedTitles) {
-                    if (disp === norm || disp.includes(norm) || norm.includes(disp)) {
+                    if (areModuleTitlesEqual(disp, title)) {
                         alreadyDisplayed = true;
                         break;
                     }
                 }
-                if (!alreadyDisplayed && !localOrfaosAprovados.some((h: any) => normalizeTitle(h.modulo_nome) === norm)) {
+                if (!alreadyDisplayed && !localOrfaosAprovados.some((h: any) => areModuleTitlesEqual(h.modulo_nome, title))) {
                     localOrfaosAprovados.push({
                         id: at.book_id || at.lesson_id || at.id,
                         modulo_nome: title,

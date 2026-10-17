@@ -1,5 +1,7 @@
 import { getRequiredModules } from '../../../config/graduation';
 import { getModuleExamStatus } from '../../../lib/examRules';
+export { normalizeModuleTitle, areModuleTitlesEqual } from '../../../lib/courseTitles';
+import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 
 export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any[] = []) => {
     const allAulas = l.aulas || [];
@@ -34,9 +36,6 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     let attemptsCount = 0;
     let isFinished = false;
 
-    const normalizeTitle = (s: string) =>
-      (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-
     // Identificação de notas manuais ou submissões vinculadas diretamente ao livro
     const manualGrade = l.nota != null && !isNaN(Number(l.nota)) 
       ? Number(l.nota) 
@@ -44,7 +43,7 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     
     const bookSubmissions = (atividades || []).filter((at: any) => 
       at.status === 'corrigida' && at.nota !== undefined && at.nota !== null &&
-      (at.book_id === l.id || normalizeTitle(at.book_title || at.modulo_nome || '') === normalizeTitle(l.titulo))
+      (at.book_id === l.id || areModuleTitlesEqual(at.book_title || at.modulo_nome || '', l.titulo))
     );
     
     if (finalExams.length > 0) {

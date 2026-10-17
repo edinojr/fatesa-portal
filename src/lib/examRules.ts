@@ -13,6 +13,8 @@
 // - V2/V3 liberada = versão anterior corrigida e reprovada (nota < min_grade dela)
 // ============================================================
 
+import { areModuleTitlesEqual } from './courseTitles';
+
 export const DEFAULT_MIN_GRADE = 7.0;
 export const MAX_EXAM_VERSION = 3;
 
@@ -56,11 +58,8 @@ export const collectExamAttempts = (aulas: any[], submissions: any[]): ExamAttem
 
       // 2. Fallback: tentar encontrar por título correspondente
       if (!aula && (s.lesson_title || s.modulo_nome)) {
-        const subTitle = normalize(s.lesson_title || s.modulo_nome);
-        aula = examAulas.find((a: any) => {
-          const atNorm = normalize(a.titulo);
-          return atNorm === subTitle || atNorm.includes(subTitle) || subTitle.includes(atNorm);
-        });
+        const subTitle = s.lesson_title || s.modulo_nome;
+        aula = examAulas.find((a: any) => areModuleTitlesEqual(a.titulo, subTitle));
       }
 
       // 3. Fallback: se é uma submissão de prova ou nota manual do módulo

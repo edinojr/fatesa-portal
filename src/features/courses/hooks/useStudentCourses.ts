@@ -3,6 +3,7 @@ import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
 import { GRADUATION_CONFIG } from '../../../config/graduation';
 import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion, getModuleExamStatus } from '../../../lib/examRules';
+import { areModuleTitlesEqual, normalizeModuleTitle } from '../utils/courseUtils';
 
 const MEDIA_APROVACAO = 7.0;
 
@@ -72,9 +73,11 @@ export const useStudentCourses = (profile: any) => {
         : [];
 
       const applicableReleases = (releases || []).filter((r: any) => {
-        if (!r.nucleo_id || !studentNucleoId || r.nucleo_id === studentNucleoId) return true;
-        // Se o polo do aluno não tem liberações cadastradas, herda as liberações existentes (ex: SEDE ou gerais)
-        return releasesForStudentNucleo.length === 0;
+        // Liberação global sem núcleo específico é válida para todos os alunos
+        if (!r.nucleo_id) return true;
+        // Liberação com núcleo específico só é válida para alunos daquele polo
+        if (studentNucleoId && r.nucleo_id === studentNucleoId) return true;
+        return false;
       });
 
       const { data: exams } = await safeSelect(supabase
@@ -119,11 +122,11 @@ export const useStudentCourses = (profile: any) => {
       }
 
       const examReleaseDates: Record<string, string> = {};
-      if (exams && releases) {
+      if (exams && applicableReleases) {
         exams.forEach((exam: any) => {
           const isEx = exam.is_bloco_final || exam.tipo === 'prova' || exam.tipo === 'avaliacao' || (exam.titulo && /V[1-3]|RECUPERA|AVALIA/i.test(exam.titulo));
           if (isEx) {
-            const rel = (releases as any[]).find((r: any) => r.item_id === exam.id && r.item_type === 'atividade');
+            const rel = (applicableReleases as any[]).find((r: any) => r.item_id === exam.id && r.item_type === 'atividade');
             if (rel) {
               if (!examReleaseDates[exam.livro_id]) {
                 examReleaseDates[exam.livro_id] = rel.created_at;
@@ -134,7 +137,7 @@ export const useStudentCourses = (profile: any) => {
       }
 
       const moduleReleaseDates: Record<string, string> = {};
-      (releases || []).forEach((r: any) => {
+      (applicableReleases || []).forEach((r: any) => {
         if (r.item_type === 'modulo' && !moduleReleaseDates[r.item_id]) {
           moduleReleaseDates[r.item_id] = r.created_at;
         }
@@ -256,24 +259,8 @@ export const useStudentCourses = (profile: any) => {
       const matchBookByTitle = (title: string) => {
         if (!title) return null;
         if (titleToBook[title]) return titleToBook[title];
-        const norm = normalizeTitle(title);
-        if (normalizedTitleToBook[norm]) return normalizedTitleToBook[norm];
-
-        const allBooks = Object.values(normalizedTitleToBook) as any[];
-        const exactNorm = allBooks.find(b => normalizeTitle(b.titulo) === norm);
-        if (exactNorm) return exactNorm;
-
-        const candidates = allBooks.filter(b => {
-          const bn = normalizeTitle(b.titulo);
-          return bn.includes(norm) || norm.includes(bn);
-        });
-
-        if (candidates.length > 0) {
-          candidates.sort((a, b) => Math.abs(a.titulo.length - title.length) - Math.abs(b.titulo.length - title.length));
-          return candidates[0];
-        }
-
-        return null;
+        const allBooks = Object.values(livrosMap) as any[];
+        return allBooks.find(b => areModuleTitlesEqual(b.titulo, title)) || null;
       };
 
       const { data: resDataRaw } = await safeSelect(supabase
@@ -464,7 +451,7 @@ export const useStudentCourses = (profile: any) => {
         // Injetar em resData para que conste em atividades em todos os painéis e boletins
         const existingIdx = resData.findIndex((r: any) => 
           (book && r.book_id === book.id) || 
-          normalizeTitle(r.lesson_title || r.book_title || '') === normalizeTitle(h.modulo_nome)
+          areModuleTitlesEqual(r.lesson_title || r.book_title || '', h.modulo_nome)
         );
 
         const syntheticAula = book?.aulas?.find((a: any) => a.tipo === 'prova' || a.is_bloco_final) || book?.aulas?.[0];
@@ -581,11 +568,7 @@ export const useStudentCourses = (profile: any) => {
             const isProfActive = l.professor_active === true;
             const hasExcep = exceptionIds.includes(l.id);
 
-            const histMatch = historyGrades.find((h: any) => {
-              const hn = normalizeTitle(h.modulo_nome);
-              const ln = normalizeTitle(l.titulo);
-              return ln === hn || ln.includes(hn) || hn.includes(ln);
-            });
+            const histMatch = historyGrades.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
             const hasValidHistoryGrade = !!histMatch && Number(histMatch.nota) >= 7;
             const isManualFinished = manualCompleted.has(l.id) || hasValidHistoryGrade;
 
@@ -607,7 +590,7 @@ export const useStudentCourses = (profile: any) => {
 
             // Submissão de avaliação (passou ou reprovou)
             const studentAttempted = moduleExamAttempts.length > 0 || moduleSubs.length > 0;
-            const isDirectlyReleased = hasNucleoRelease || isProfActive || hasExcep || isManualFinished;
+            const isDirectlyReleased = hasNucleoRelease || isProfActive || hasExcep;
 
             bookStatusMap.set(l.id, {
               examReleased,
@@ -622,11 +605,12 @@ export const useStudentCourses = (profile: any) => {
           const unlockedBookIds = new Set<string>();
 
           // O 1º módulo está sempre liberado para estudo (se o nível estiver liberado)
-          let maxUnlockedIndex = 0;
+          let maxSequentialIndex = 0;
 
-          // Propagação em loop: regra institucional FATESA
+          // Propagação sequencial respeitando o progresso individual de cada aluno:
+          // Regra Institucional FATESA:
           // Professor libera prova = módulo seguinte liberado para estudos.
-          // Curso modular: reprovação (DP) ou tentativa não tranca o fluxo acadêmico.
+          // Curso modular: tentativa ou reprovação (DP) não tranca o fluxo acadêmico do aluno.
           let progressChanged = true;
           while (progressChanged) {
             progressChanged = false;
@@ -634,41 +618,41 @@ export const useStudentCourses = (profile: any) => {
               const st = bookStatusMap.get(l.id);
               if (!st) return;
 
-              if (idx <= maxUnlockedIndex) {
+              if (idx <= maxSequentialIndex) {
+                // Se a prova foi liberada pelo professor, OU o aluno tentou a avaliação (passou ou DP),
+                // OU o módulo foi aprovado/concluído: o módulo SEGUINTE (idx + 1) é liberado para estudo!
                 if (st.examReleased || st.studentAttempted || st.isApproved || st.isDP || st.isManualFinished) {
-                  if (idx + 1 > maxUnlockedIndex && idx + 1 < sortedLivros.length) {
-                    maxUnlockedIndex = idx + 1;
+                  if (idx + 1 > maxSequentialIndex && idx + 1 < sortedLivros.length) {
+                    maxSequentialIndex = idx + 1;
                     progressChanged = true;
                   }
-                }
-              }
-
-              if (st.isDirectlyReleased) {
-                if (idx > maxUnlockedIndex) {
-                  maxUnlockedIndex = idx;
-                  progressChanged = true;
                 }
               }
             });
           }
 
-          // Propagar desbloqueio até maxUnlockedIndex
+          // Propagar desbloqueio sequencial até maxSequentialIndex
           if (!levelLocked) {
-            for (let i = 0; i <= Math.min(maxUnlockedIndex, sortedLivros.length - 1); i++) {
+            for (let i = 0; i <= Math.min(maxSequentialIndex, sortedLivros.length - 1); i++) {
               unlockedBookIds.add(sortedLivros[i].id);
             }
           }
+
+          // Módulos com liberação direta (núcleo, professor_active, exceção individual) OU já concluídos pelo aluno
+          // permanecem desbloqueados para acesso aos estudos e revisão, sem corromper a progressão sequencial geral.
+          sortedLivros.forEach((l: any) => {
+            const st = bookStatusMap.get(l.id);
+            if (!levelLocked && st && (st.isDirectlyReleased || st.isApproved || st.isManualFinished)) {
+              unlockedBookIds.add(l.id);
+            }
+          });
 
           return {
             id: c.id,
             nome: c.nome,
             nivel: c.nivel,
             livros: sortedLivros.map((l: any) => {
-              const histMatch = historyGrades.find((h: any) => {
-                const hn = normalizeTitle(h.modulo_nome);
-                const ln = normalizeTitle(l.titulo);
-                return ln === hn || ln.includes(hn) || hn.includes(ln);
-              });
+              const histMatch = historyGrades.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
               const hasValidHistoryGrade = !!histMatch && Number(histMatch.nota) >= 7;
               const isManualFinished = manualCompleted.has(l.id) || hasValidHistoryGrade;
 

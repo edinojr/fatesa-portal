@@ -16,6 +16,7 @@ import { processHtmlForNav, NavItem } from '../features/courses/utils/htmlNav'
 import { BibleReaderPopup } from '../components/BibleReaderPopup'
 import { processHtmlWithReferences } from '../lib/bibleParser'
 import { getExamVersion } from '../lib/examRules'
+import { areModuleTitlesEqual } from '../lib/courseTitles'
 
 function parseBibliaLocal(text: string): Record<string, string> {
   const match = text.match(/(?:const|let|var)\s+BIBLIA_LOCAL\s*=\s*({)/)
@@ -422,19 +423,8 @@ const Lesson = () => {
         if (!isModuleFinishedManually && bookData?.titulo) {
           const { data: historyGrades } = await supabase.from('historico_notas').select('modulo_nome, nota').eq('aluno_id', user.id).gte('nota', 7);
           if (historyGrades && historyGrades.length > 0) {
-            const normalizeTitle = (s: string) =>
-              (s || '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase()
-                .trim()
-                .replace(/[.,;:!?\s]+$/g, '')
-                .replace(/\s+/g, ' ');
-            
-            const bookNorm = normalizeTitle(bookData.titulo);
             for (const h of historyGrades) {
-              const histNorm = normalizeTitle(h.modulo_nome);
-              if (bookNorm === histNorm || bookNorm.includes(histNorm) || histNorm.includes(bookNorm)) {
+              if (areModuleTitlesEqual(bookData.titulo, h.modulo_nome)) {
                 isModuleFinishedManually = true;
                 break;
               }
