@@ -255,18 +255,25 @@ export const useStudentCourses = (profile: any) => {
 
       const matchBookByTitle = (title: string) => {
         if (!title) return null;
-        let book = titleToBook[title] || normalizedTitleToBook[normalizeTitle(title)];
-        if (!book) {
-          const norm = normalizeTitle(title);
-          for (const b of Object.values(normalizedTitleToBook) as any[]) {
-            const bookNorm = normalizeTitle(b.titulo);
-            if (bookNorm === norm || bookNorm.includes(norm) || norm.includes(bookNorm)) {
-              book = b;
-              break;
-            }
-          }
+        if (titleToBook[title]) return titleToBook[title];
+        const norm = normalizeTitle(title);
+        if (normalizedTitleToBook[norm]) return normalizedTitleToBook[norm];
+
+        const allBooks = Object.values(normalizedTitleToBook) as any[];
+        const exactNorm = allBooks.find(b => normalizeTitle(b.titulo) === norm);
+        if (exactNorm) return exactNorm;
+
+        const candidates = allBooks.filter(b => {
+          const bn = normalizeTitle(b.titulo);
+          return bn.includes(norm) || norm.includes(bn);
+        });
+
+        if (candidates.length > 0) {
+          candidates.sort((a, b) => Math.abs(a.titulo.length - title.length) - Math.abs(b.titulo.length - title.length));
+          return candidates[0];
         }
-        return book;
+
+        return null;
       };
 
       const { data: resDataRaw } = await safeSelect(supabase
@@ -406,8 +413,8 @@ export const useStudentCourses = (profile: any) => {
       }
       
       // Mapear módulos finalizados manualmente no perfil
-      // NOTA: Os 6 módulos do curso online NÃO podem ser finalizados apenas por auto-declaração no perfil;
-      // requerem realização da prova online ou inserção de nota por administrador em historico_notas.
+      // NOTA: Apenas módulos com nota oficial comprovada (em historico_notas, registros_alumni ou respostas_aulas)
+      // são considerados finalizados. IDs sem notas lançadas por administrador não são computados.
       const manualCompletedModuleIds = (profile?.modulos_finalizados_manual || []) as string[];
       const manualCompleted = new Set<string>();
       const manualBasicModules = new Set<string>();
@@ -415,12 +422,22 @@ export const useStudentCourses = (profile: any) => {
 
       manualCompletedModuleIds.forEach(manualId => {
         const book = livrosMap[manualId];
-        if (book) {
-          if (isOnlineCourseModule(book.titulo)) {
-            return;
-          }
+        if (!book) return;
+        // Não permite auto-conclusão sem nota
+        const hasHistoryNote = historyGrades.some(h => {
+          const num = Number(h.nota);
+          if (isNaN(num) || num < 7) return false;
+          const b = matchBookByTitle(h.modulo_nome);
+          return b && b.id === manualId;
+        });
+        const hasOnlinePass = (resDataRaw || []).some((r: any) => {
+          return r.status === 'corrigida' && (r.nota || 0) >= 7 && (
+            r.aula_id && aulasMap[r.aula_id]?.livro_id === manualId
+          );
+        });
+        if (hasHistoryNote || hasOnlinePass) {
           manualCompleted.add(manualId);
-          const nivel = cursosNivelMap[book.curso_id];
+          const nivel = cursosNivelMap[book.curso_id] || book.curso_nivel;
           if (nivel?.toLowerCase().includes('basico') || nivel?.toLowerCase().includes('básico')) {
             manualBasicModules.add(manualId);
           } else if (nivel?.toLowerCase().includes('medio') || nivel?.toLowerCase().includes('médio')) {

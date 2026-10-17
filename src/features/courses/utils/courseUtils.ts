@@ -50,7 +50,7 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     if (finalExams.length > 0) {
         // Regra única (lib/examRules): aprovado = qualquer tentativa >= min_grade;
         // DP = V3 corrigida e reprovada
-        const status = getModuleExamStatus(allAulas, atividades);
+        const status = getModuleExamStatus(allAulas, bookSubmissions);
         attemptsCount = status.attemptsCount;
         examGrade = status.examGrade;
         isApproved = status.isApproved;

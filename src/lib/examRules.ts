@@ -65,15 +65,19 @@ export const collectExamAttempts = (aulas: any[], submissions: any[]): ExamAttem
 
       // 3. Fallback: se é uma submissão de prova ou nota manual do módulo
       if (!aula && (s.is_manual || s.is_bloco_final || s.lesson_type === 'prova' || s.lesson_type === 'avaliacao')) {
-        if (examAulas.length > 0) {
-          aula = examAulas[0];
-        } else {
-          return {
-            aulaId: subAulaId || 'manual-attempt',
-            versao: 1,
-            nota: Number(s.nota) || 0,
-            minGrade: 7
-          };
+        const targetBookId = examAulas[0]?.livro_id || (aulas || [])[0]?.livro_id;
+        const matchesBook = !targetBookId || !s.book_id || s.book_id === targetBookId;
+        if (matchesBook) {
+          if (examAulas.length > 0) {
+            aula = examAulas[0];
+          } else {
+            return {
+              aulaId: subAulaId || 'manual-attempt',
+              versao: 1,
+              nota: Number(s.nota) || 0,
+              minGrade: 7
+            };
+          }
         }
       }
 
