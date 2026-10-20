@@ -25,6 +25,7 @@ import Logo from '../../../components/common/Logo'
 import LevelCertificate from './LevelCertificate'
 import TranscriptDocument from './TranscriptDocument'
 import { generateCertificadoPDF, generateHistoricoPDF } from '../../../utils/pdfGenerator'
+import { fetchStudentAcademicSummary } from '../../../services/academicService'
 
 interface AlumniRecord {
   id: string
@@ -420,9 +421,15 @@ const AlumniManagement = () => {
     if (!nomeImpresso || !nomeImpresso.trim()) return;
 
     try {
-      await generateCertificadoPDF(nomeImpresso.trim(), nivel);
+      const summary = await fetchStudentAcademicSummary(record);
+      await generateCertificadoPDF(nomeImpresso.trim(), nivel, summary.dataConclusao);
     } catch (err: any) {
-      alert('Erro ao gerar certificado: ' + err.message);
+      console.warn('Erro ao obter data da última prova, emitindo com data do pedido:', err);
+      try {
+        await generateCertificadoPDF(nomeImpresso.trim(), nivel, new Date());
+      } catch (e: any) {
+        alert('Erro ao gerar certificado: ' + e.message);
+      }
     }
   };
 
@@ -448,7 +455,7 @@ const AlumniManagement = () => {
     if (!nomeImpresso || !nomeImpresso.trim()) return;
 
     try {
-      await generateCertificadoPDF(nomeImpresso.trim(), nivel);
+      await generateCertificadoPDF(nomeImpresso.trim(), nivel, new Date());
     } catch (err: any) {
       alert('Erro ao gerar certificado: ' + err.message);
     }
@@ -463,12 +470,27 @@ const AlumniManagement = () => {
       status: 'Formado'
     };
 
-    const materiasParaHistorico = (record.historico || [])
+    let materiasParaHistorico: { nome: string; media: string | number }[] = (record.historico || [])
       .filter(h => h.modulo && h.nota)
       .map(h => ({
         nome: h.modulo,
         media: h.nota
       }));
+
+    if (materiasParaHistorico.length === 0 && (record.user_id || record.email)) {
+      try {
+        const summary = await fetchStudentAcademicSummary({
+          id: record.user_id,
+          email: record.email,
+          nome: record.nome,
+          nucleo: record.nucleo,
+          tipo: 'ex_aluno'
+        });
+        materiasParaHistorico = summary.materias.map(m => ({ nome: m.nome, media: m.media }));
+      } catch (e) {
+        console.warn('Erro ao consolidar matérias para alumni:', e);
+      }
+    }
 
     if (materiasParaHistorico.length === 0) {
       alert("Nenhuma matéria com nota registrada para este aluno.");
@@ -1398,7 +1420,17 @@ const AlumniManagement = () => {
               <p style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
                 Certificamos para os devidos fins que o(a) aluno(a)
               </p>
-              <h2 style={{ fontSize: '3rem', fontWeight: 800, margin: '2rem 0', color: '#1a1a1a' }}>{selectedAlumni.nome.toUpperCase()}</h2>
+              <h2 style={{ 
+                fontSize: (selectedAlumni.nome || '').trim().length >= 24 ? '2.25rem' : '3rem', 
+                fontWeight: 800, 
+                margin: '1.5rem 0', 
+                color: '#1a1a1a',
+                textAlign: 'center',
+                wordBreak: 'break-word',
+                lineHeight: 1.2
+              }}>
+                {selectedAlumni.nome.toUpperCase()}
+              </h2>
               <p style={{ fontSize: '1.4rem' }}>
                 Concluiu com êxito o módulo/bloco de <br/>
                 <strong style={{ fontSize: '1.8rem', color: 'var(--primary)' }}>{activeHistoryItem.modulo}</strong> <br/>

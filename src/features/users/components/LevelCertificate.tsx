@@ -119,15 +119,29 @@ const LevelCertificate: React.FC<LevelCertificateProps> = ({
             Certificamos que para os devidos fins de direito, o(a) aluno(a)
           </p>
 
-          <h2 style={{ 
-            fontFamily: "'Pinyon Script', cursive", 
-            fontSize: '5rem', 
-            fontWeight: 400, 
-            margin: '1rem 0 2rem 0', 
-            color: '#1a1a1a' 
-          }}>
-            {studentName}
-          </h2>
+          {(() => {
+            const cleanStudentName = (studentName || '').trim();
+            const isExtenso = cleanStudentName.length >= 24;
+            const isMuitoExtenso = cleanStudentName.length >= 35;
+            // 5rem padrão, diminuindo 25% para extensos (3.75rem) e 40% para muito extensos (3rem)
+            const studentFontSize = isMuitoExtenso ? '3rem' : isExtenso ? '3.75rem' : '5rem';
+
+            return (
+              <h2 style={{ 
+                fontFamily: "'Cormorant Garamond', serif", 
+                fontSize: studentFontSize, 
+                fontWeight: 700, 
+                margin: '1rem 0 2rem 0', 
+                color: '#1a1a1a',
+                textAlign: 'center',
+                lineHeight: 1.2,
+                wordBreak: 'break-word',
+                maxWidth: '100%'
+              }}>
+                "{cleanStudentName}"
+              </h2>
+            );
+          })()}
 
           <p style={{ fontSize: '1.3rem', lineHeight: '1.8', maxWidth: '90%', margin: '0 auto' }}>
             Concluiu com êxito todas as exigências acadêmicas do curso de <br />
@@ -186,7 +200,7 @@ const LevelCertificate: React.FC<LevelCertificateProps> = ({
       }}>
         <button 
           className="btn btn-primary" 
-          onClick={() => generateCertificadoPDF(studentName, levelName.toLowerCase().includes('méd') ? 'medio' : 'basico')} 
+          onClick={() => generateCertificadoPDF(studentName, levelName.toLowerCase().includes('méd') ? 'medio' : 'basico', date)} 
           style={{ width: 'auto', padding: '0.75rem 2rem', background: '#eab308', color: '#000', fontWeight: 800 }}
         >
           Baixar PDF Oficial Padrão

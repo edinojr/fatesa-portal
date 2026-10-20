@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { isStaffStudentProxy } from '../../../lib/authUtils';
 import { generateHistoricoPDF, generateCertificadoPDF } from '../../../utils/pdfGenerator';
+import { areModuleTitlesEqual } from '../../../lib/courseTitles';
+import { fetchStudentAcademicSummary, detectNivelModulo } from '../../../services/academicService';
 
 interface AcademicHistoryProps {
   data: any[];
@@ -36,76 +38,133 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     }
   };
 
-  const handleDownloadHistorico = () => {
+  const handleDownloadHistorico = async () => {
     if (!selectedStudentData) return;
     
-    // Preparar dados do aluno
-    const alunoData = {
-      nome: selectedStudentData.std.name,
-      nucleo: selectedStudentData.std.nucleo,
-      matricula: 'N/A', // Pode ser alterado depois caso haja ID de matrícula específico
-      dataMatricula: 'N/A',
-      status: selectedStudentData.std.tipo === 'ex_aluno' ? 'Formado' : 'Ativo'
-    };
+    try {
+      const summary = await fetchStudentAcademicSummary({
+        id: selectedStudent,
+        nome: selectedStudentData.std.name,
+        email: selectedStudentData.std.email,
+        nucleo: selectedStudentData.std.nucleo,
+        tipo: selectedStudentData.std.tipo
+      });
 
-    // Extrair apenas as matérias finalizadas com sucesso (nota >= min_grade)
-    const materiasParaHistorico: { nome: string; media: string | number }[] = [];
-    
-    Object.entries(selectedStudentData.std.modulos).forEach(([modName, content]: [string, any]) => {
-      // Filtrar a melhor nota da prova desse módulo
-      let melhorNotaProva: number | null = null;
-      content.provas.forEach((p: any) => {
-        if (p.nota !== null) {
-          const notaStr = String(p.nota).replace(',', '.');
-          const notaVal = parseFloat(notaStr);
-          if (!isNaN(notaVal)) {
-            if (melhorNotaProva === null || notaVal > melhorNotaProva) {
-              melhorNotaProva = notaVal;
+      const alunoData = {
+        nome: summary.alunoData.nome,
+        nucleo: summary.alunoData.nucleo,
+        matricula: summary.alunoData.matricula,
+        dataMatricula: summary.alunoData.dataMatricula,
+        status: summary.alunoData.status
+      };
+
+      const materiasParaHistorico = summary.materias.map(m => ({
+        nome: m.nome,
+        media: m.media
+      }));
+
+      const nivelStr = summary.nivelCertificado === 'medio' ? 'Médio' : 'Básico';
+      await generateHistoricoPDF(alunoData, materiasParaHistorico, nivelStr);
+    } catch (err) {
+      console.error('Erro ao gerar histórico oficial consolidado, usando fallback:', err);
+      // Preparar dados do aluno (fallback)
+      const alunoData = {
+        nome: selectedStudentData.std.name,
+        nucleo: selectedStudentData.std.nucleo,
+        matricula: 'N/A',
+        dataMatricula: 'N/A',
+        status: selectedStudentData.std.tipo === 'ex_aluno' ? 'Formado' : 'Ativo'
+      };
+
+      // Extrair apenas as matérias finalizadas com sucesso (nota >= min_grade)
+      const materiasParaHistorico: { nome: string; media: string | number }[] = [];
+      
+      Object.entries(selectedStudentData.std.modulos).forEach(([modName, content]: [string, any]) => {
+        let melhorNotaProva: number | null = null;
+        content.provas.forEach((p: any) => {
+          if (p.nota !== null) {
+            const notaStr = String(p.nota).replace(',', '.');
+            const notaVal = parseFloat(notaStr);
+            if (!isNaN(notaVal)) {
+              if (melhorNotaProva === null || notaVal > melhorNotaProva) {
+                melhorNotaProva = notaVal;
+              }
             }
           }
+        });
+        
+        if (melhorNotaProva !== null && melhorNotaProva >= 7.0) {
+          materiasParaHistorico.push({
+            nome: modName,
+            media: Number(melhorNotaProva).toFixed(1)
+          });
         }
       });
-      
-      // Assumindo min_grade de 7 se não houver no item
-      if (melhorNotaProva !== null && melhorNotaProva >= 7.0) {
-        materiasParaHistorico.push({
-          nome: modName,
-          media: Number(melhorNotaProva).toFixed(1)
-        });
-      }
-    });
 
-    // Ordenar matérias
-    materiasParaHistorico.sort((a, b) => a.nome.localeCompare(b.nome));
-
-    generateHistoricoPDF(alunoData, materiasParaHistorico);
+      materiasParaHistorico.sort((a, b) => a.nome.localeCompare(b.nome));
+      await generateHistoricoPDF(alunoData, materiasParaHistorico);
+    }
   };
 
-  const handleDownloadCertificado = () => {
+  const handleDownloadCertificado = async () => {
     if (!selectedStudentData) return;
 
-    const basicCount = selectedStudentData.std.stats.finishedBasic.size;
-    const mediumCount = selectedStudentData.std.stats.finishedMedium.size;
-    
-    // Nivel a gerar - O administrador pode emitir a qualquer momento, independente dos limites.
-    let nivel: 'basico' | 'medio' = 'basico';
+    try {
+      const summary = await fetchStudentAcademicSummary({
+        id: selectedStudent,
+        nome: selectedStudentData.std.name,
+        email: selectedStudentData.std.email,
+        nucleo: selectedStudentData.std.nucleo,
+        tipo: selectedStudentData.std.tipo
+      });
 
-    const choice = window.prompt(`Este aluno possui:\n- BÁSICO: ${basicCount}/27\n- MÉDIO: ${mediumCount}/8\n\nQual certificado deseja emitir? Digite 'M' para MÉDIO ou 'B' para BÁSICO:`);
-    if (!choice) return;
-    
-    if (choice.trim().toUpperCase() === 'M') {
-      nivel = 'medio';
-    } else if (choice.trim().toUpperCase() === 'B') {
-      nivel = 'basico';
-    } else {
-      alert("Opção inválida.");
-      return;
+      const basicCount = summary.finishedBasicCount;
+      const mediumCount = summary.finishedMediumCount;
+      const defaultOption = summary.nivelCertificado === 'medio' ? 'M' : 'B';
+
+      const choice = window.prompt(
+        `Este aluno possui:\n- BÁSICO: ${basicCount}/27\n- MÉDIO: ${mediumCount}/8\n\nQual certificado deseja emitir? Digite 'M' para MÉDIO ou 'B' para BÁSICO:`,
+        defaultOption
+      );
+      if (!choice) return;
+      
+      let nivel: 'basico' | 'medio' = 'basico';
+      if (choice.trim().toUpperCase() === 'M') {
+        nivel = 'medio';
+      } else if (choice.trim().toUpperCase() === 'B') {
+        nivel = 'basico';
+      } else {
+        alert("Opção inválida.");
+        return;
+      }
+
+      const nomeImpresso = window.prompt("Digite o nome do aluno que sairá no certificado:", summary.alunoData.nome);
+      if (!nomeImpresso) return;
+
+      await generateCertificadoPDF(nomeImpresso.trim(), nivel, summary.dataConclusao);
+    } catch (err) {
+      console.error('Erro ao emitir certificado pelo academicService, usando fallback:', err);
+      const basicCount = selectedStudentData.std.stats.finishedBasic.size;
+      const mediumCount = selectedStudentData.std.stats.finishedMedium.size;
+      
+      let nivel: 'basico' | 'medio' = 'basico';
+      const choice = window.prompt(`Este aluno possui:\n- BÁSICO: ${basicCount}/27\n- MÉDIO: ${mediumCount}/8\n\nQual certificado deseja emitir? Digite 'M' para MÉDIO ou 'B' para BÁSICO:`);
+      if (!choice) return;
+      
+      if (choice.trim().toUpperCase() === 'M') {
+        nivel = 'medio';
+      } else if (choice.trim().toUpperCase() === 'B') {
+        nivel = 'basico';
+      } else {
+        alert("Opção inválida.");
+        return;
+      }
+
+      const nomeImpresso = window.prompt("Digite o nome do aluno que sairá no certificado:", selectedStudentData.std.name);
+      if (!nomeImpresso) return;
+
+      await generateCertificadoPDF(nomeImpresso.trim(), nivel, new Date());
     }
-
-    const nomeImpresso = window.prompt("Digite o nome do aluno que sairá no certificado:", selectedStudentData.std.name);
-    if (!nomeImpresso) return; // Cancelou
-
-    generateCertificadoPDF(nomeImpresso.trim(), nivel);
   };
 
   const handleEmitirCertificadoAvulso = () => {
@@ -126,7 +185,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
     const nomeImpresso = window.prompt("Digite o nome do aluno avulso que sairá no certificado:");
     if (!nomeImpresso) return; // Cancelou
 
-    generateCertificadoPDF(nomeImpresso.trim(), nivel);
+    generateCertificadoPDF(nomeImpresso.trim(), nivel, new Date());
   };
 
   // Deep Hierarchy Logic
@@ -176,7 +235,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
       const nucName = u?.nucleos?.nome || 'Geral / Sem Núcleo';
       const studentId = u?.id || item.aluno_id || 'unknown';
       const studentName = u?.nome || 'Aluno Desconhecido';
-      const modName = item.aulas?.livros?.titulo || item.aulas?.titulo || 'Módulo Geral';
+      const rawModName = item.aulas?.livros?.titulo || item.aulas?.titulo || 'Módulo Geral';
       const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova' || item.is_manual;
 
       if (!groups[nucName]) groups[nucName] = {};
@@ -198,7 +257,13 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
       if (item.is_manual) {
         groups[nucName][studentId].stats.hasManual = true;
       }
-      if (!groups[nucName][studentId].modulos[modName]) {
+
+      // Evita duplicação de módulos com pequenas variações de nome (ex: "01 - Bibliologia" vs "Bibliologia")
+      let modName = rawModName;
+      const existingModKey = Object.keys(groups[nucName][studentId].modulos).find(k => areModuleTitlesEqual(k, rawModName));
+      if (existingModKey) {
+        modName = existingModKey;
+      } else {
         groups[nucName][studentId].modulos[modName] = { atividades: [], provas: [] };
       }
 
@@ -208,13 +273,16 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
         // Contabilizar para requisitos de formatura
         const minGrade = item.aulas?.min_grade || 7.0;
         if (item.status === 'corrigida' && (item.nota || 0) >= minGrade) {
-          const nivel = (item.aulas?.livros?.cursos?.nivel || '').toLowerCase();
-          const bookId = item.aulas?.livros?.id || modName;
-          if (bookId) {
-            if (nivel.includes('basico') || nivel.includes('básico') || nivel === '') {
-              groups[nucName][studentId].stats.finishedBasic.add(bookId);
-            } else if (nivel.includes('medio') || nivel.includes('médio')) {
-              groups[nucName][studentId].stats.finishedMedium.add(bookId);
+          const nivel = detectNivelModulo(modName, item.aulas?.livros?.cursos?.nivel);
+          if (nivel === 'medio') {
+            const alreadyInMedium = Array.from(groups[nucName][studentId].stats.finishedMedium as Set<string>).some(m => areModuleTitlesEqual(m, modName));
+            if (!alreadyInMedium) {
+              groups[nucName][studentId].stats.finishedMedium.add(modName);
+            }
+          } else {
+            const alreadyInBasic = Array.from(groups[nucName][studentId].stats.finishedBasic as Set<string>).some(m => areModuleTitlesEqual(m, modName));
+            if (!alreadyInBasic) {
+              groups[nucName][studentId].stats.finishedBasic.add(modName);
             }
           }
         }

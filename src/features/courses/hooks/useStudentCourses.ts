@@ -3,7 +3,7 @@ import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
 import { GRADUATION_CONFIG } from '../../../config/graduation';
 import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion, getModuleExamStatus } from '../../../lib/examRules';
-import { areModuleTitlesEqual, normalizeModuleTitle } from '../utils/courseUtils';
+import { areModuleTitlesEqual, normalizeModuleTitle, cleanModuleTitle } from '../utils/courseUtils';
 
 const MEDIA_APROVACAO = 7.0;
 
@@ -368,8 +368,7 @@ export const useStudentCourses = (profile: any) => {
             if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
               const numNota = parseFloat(String(item.nota).replace(',', '.'));
               if (!isNaN(numNota)) {
-                const normM = normalizeTitle(item.modulo);
-                const exists = historyGrades.some(h => normalizeTitle(h.modulo_nome) === normM);
+                const exists = historyGrades.some(h => areModuleTitlesEqual(h.modulo_nome, item.modulo));
                 if (!exists) {
                   historyGrades.push({
                     id: `alumni-${a.id}-${idx}`,
@@ -518,9 +517,6 @@ export const useStudentCourses = (profile: any) => {
       // Merge manual completions with actual completions
       manualBasicModules.forEach(id => finishedBasicModules.add(id));
 
-      const fBasicCount = finishedBasicModules.size;
-      setFinishedBasicCount(fBasicCount);
-
       const finishedMediumModules = new Set((resData || [])
         .filter((r: any) => {
           const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.lesson_type === 'avaliacao' || r.aulas?.tipo === 'prova' || r.aulas?.tipo === 'avaliacao';
@@ -530,11 +526,42 @@ export const useStudentCourses = (profile: any) => {
         .map((r: any) => r.book_id)
         .filter(Boolean)
       );
-      
+
+      // Merge com todas as notas de histórico aprovadas (secretaria + alumni)
+      (historyGrades || []).forEach(h => {
+        const numNota = Number(h.nota);
+        if (!isNaN(numNota) && numNota >= 7.0) {
+          const matchedBook = matchBookByTitle(h.modulo_nome);
+          const bookId = matchedBook ? matchedBook.id : `history-${cleanModuleTitle(h.modulo_nome)}`;
+          const nivel = matchedBook ? (cursosNivelMap[matchedBook.curso_id] || matchedBook.curso_nivel) : (h.curso_nome || h.modulo_nome);
+          const normNivel = (nivel || '').toLowerCase();
+          
+          if (normNivel.includes('medio') || normNivel.includes('médio')) {
+            finishedMediumModules.add(bookId);
+          } else {
+            finishedBasicModules.add(bookId);
+          }
+        }
+      });
+
       // Merge manual completions with actual completions
       manualMediumModules.forEach(id => finishedMediumModules.add(id));
 
-      setFinishedMediumCount(finishedMediumModules.size);
+      let fBasicCount = finishedBasicModules.size;
+      let fMediumCount = finishedMediumModules.size;
+
+      // Se o aluno é formado oficial (registros_alumni aprovado ou perfil ex_aluno),
+      // garante o cômputo dos módulos correspondentes para evitar divergência nos painéis
+      if (isAlumniApproved) {
+        const isAlumniMedio = (alumniData || []).some((a: any) => (a.nivel_curso || '').toLowerCase().includes('méd'));
+        fBasicCount = Math.max(fBasicCount, GRADUATION_CONFIG.basico.requiredModules);
+        if (isAlumniMedio) {
+          fMediumCount = Math.max(fMediumCount, GRADUATION_CONFIG.medio.requiredModules);
+        }
+      }
+
+      setFinishedBasicCount(fBasicCount);
+      setFinishedMediumCount(fMediumCount);
       const isFinished = fBasicCount >= GRADUATION_CONFIG.basico.requiredModules;
       setIsBasicFinished(isFinished);
 

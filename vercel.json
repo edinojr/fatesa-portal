@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!assets/|capas/|licoes/|gabaritos/|logo\\.png|app-store-badge\\.svg|google-play-badge\\.svg|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)",
+      "source": "/((?!assets/|capas/|licoes/|gabaritos/|certificado_basico\\.png|certificado_medio\\.png|assinatura\\.png|logo\\.png|app-store-badge\\.svg|google-play-badge\\.svg|favicon\\.ico|robots\\.txt|sitemap\\.xml|.*\\.(?:png|jpg|jpeg|svg|ico|webp|pdf|json|txt|xml)$).*)",
       "destination": "/index.html"
     }
   ],

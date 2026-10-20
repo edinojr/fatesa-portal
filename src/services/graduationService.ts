@@ -89,6 +89,7 @@ export const graduationService = {
    * Verifica se um aluno já é formado (tem registro de alumni).
    */
   async checkAlumniStatus(userId: string) {
+    if (!userId || userId === 'undefined' || userId === 'null') return null;
     const { data, error } = await supabase
       .from('registros_alumni')
       .select('*, codigo_verificacao')
@@ -103,8 +104,9 @@ export const graduationService = {
    * Verifica um certificado pelo código de autenticidade (público).
    */
   async verifyCertificate(code: string) {
+    if (!code || code === 'undefined' || code.trim() === '') return null;
     const { data, error } = await supabase.rpc('verificar_certificado', {
-      p_codigo: code
+      p_codigo: code.trim()
     });
 
     if (error) throw error;

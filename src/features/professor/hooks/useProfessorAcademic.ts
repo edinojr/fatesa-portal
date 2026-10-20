@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 
 export const useProfessorAcademic = () => {
   const [academicReport, setAcademicReport] = useState<any[]>([]);
@@ -8,8 +9,8 @@ export const useProfessorAcademic = () => {
   const fetchAcademicReport = useCallback(async () => {
     setLoading(true);
     try {
-      // Step 1: Fetch submissions
-      const [{ data: subDataRaw }, { data: manualDataRaw }] = await Promise.all([
+      // Step 1: Fetch submissions, manual history and alumni official records
+      const [{ data: subDataRaw }, { data: manualDataRaw }, { data: alumniDataRaw }] = await Promise.all([
         supabase
           .from('respostas_aulas')
           .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
@@ -18,16 +19,14 @@ export const useProfessorAcademic = () => {
         supabase
           .from('historico_notas')
           .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+          .limit(100000),
+        supabase
+          .from('registros_alumni')
+          .select('id, user_id, email, nome, curso, nivel_curso, historico')
           .limit(100000)
       ]);
 
       if (!subDataRaw) return;
-
-      const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
-      const alunoIds = Array.from(new Set([
-        ...subDataRaw.map(r => r.aluno_id),
-        ...(manualDataRaw || []).map(r => r.aluno_id)
-      ].filter(Boolean)));
 
       const [aulasRes, usersRes] = await Promise.all([
         supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').limit(5000),
@@ -36,6 +35,52 @@ export const useProfessorAcademic = () => {
 
       const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
       const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
+      const usersByEmailMap: Record<string, any> = {};
+      (usersRes.data || []).forEach((u: any) => {
+        if (u.email) {
+          usersByEmailMap[u.email.toLowerCase().trim()] = u;
+        }
+      });
+
+      // Mesclar notas de registros_alumni com histórico manual
+      const mergedManualData = [...(manualDataRaw || [])];
+      (alumniDataRaw || []).forEach((al: any) => {
+        const u = (al.user_id && usersMap[al.user_id]) || (al.email && usersByEmailMap[al.email.toLowerCase().trim()]);
+        const targetUserId = u?.id || al.user_id || `alumni-${al.id}`;
+        if (!usersMap[targetUserId]) {
+          usersMap[targetUserId] = {
+            id: targetUserId,
+            nome: al.nome || 'Aluno Formado',
+            email: al.email || '',
+            tipo: 'ex_aluno',
+            nucleos: { id: null, nome: al.nucleo || 'SEDE' }
+          };
+        }
+        if (targetUserId && Array.isArray(al.historico)) {
+          al.historico.forEach((item: any, idx: number) => {
+            if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
+              const numNota = parseFloat(String(item.nota).replace(',', '.'));
+              if (isNaN(numNota)) return;
+              const alreadyExists = mergedManualData.some((m: any) => 
+                m.aluno_id === targetUserId && areModuleTitlesEqual(m.modulo_nome, item.modulo)
+              );
+              if (!alreadyExists) {
+                mergedManualData.push({
+                  id: `alumni-${al.id}-${idx}`,
+                  aluno_id: targetUserId,
+                  curso_nome: al.curso || 'Teologia Básico',
+                  modulo_nome: item.modulo,
+                  nota: numNota,
+                  data_conclusao: item.data || new Date().toISOString(),
+                  observacao: 'Histórico oficial de formados',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                });
+              }
+            }
+          });
+        }
+      });
 
       const mapped = subDataRaw.map(r => {
         const aula = aulasMap[r.aula_id] || {
@@ -51,7 +96,7 @@ export const useProfessorAcademic = () => {
         };
       });
 
-      const manualRecords = (manualDataRaw || []).map(r => ({
+      const manualRecords = mergedManualData.map(r => ({
         id: r.id,
         is_manual: true,
         nota: r.nota,
@@ -89,8 +134,8 @@ export const useProfessorAcademic = () => {
     if (studentIds.length === 0) return;
     setLoading(true);
     try {
-      // Step 1: Fetch submissions for specific students
-      const [{ data: subDataRaw }, { data: manualDataRaw }, aulasRes, usersRes] = await Promise.all([
+      // Step 1: Fetch submissions, manual history and alumni for specific students
+      const [{ data: subDataRaw }, { data: manualDataRaw }, { data: alumniDataRaw }, aulasRes, usersRes] = await Promise.all([
         supabase
           .from('respostas_aulas')
           .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
@@ -102,6 +147,10 @@ export const useProfessorAcademic = () => {
           .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
           .in('aluno_id', studentIds)
           .limit(100000),
+        supabase
+          .from('registros_alumni')
+          .select('id, user_id, email, nome, curso, nivel_curso, historico')
+          .limit(100000),
         supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').limit(5000),
         supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').limit(5000)
       ]);
@@ -110,6 +159,52 @@ export const useProfessorAcademic = () => {
 
       const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
       const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
+      const usersByEmailMap: Record<string, any> = {};
+      (usersRes.data || []).forEach((u: any) => {
+        if (u.email) {
+          usersByEmailMap[u.email.toLowerCase().trim()] = u;
+        }
+      });
+
+      // Mesclar notas de registros_alumni
+      const mergedManualData = [...(manualDataRaw || [])];
+      (alumniDataRaw || []).forEach((al: any) => {
+        const u = (al.user_id && usersMap[al.user_id]) || (al.email && usersByEmailMap[al.email.toLowerCase().trim()]);
+        const targetUserId = u?.id || al.user_id || `alumni-${al.id}`;
+        if (!usersMap[targetUserId]) {
+          usersMap[targetUserId] = {
+            id: targetUserId,
+            nome: al.nome || 'Aluno Formado',
+            email: al.email || '',
+            tipo: 'ex_aluno',
+            nucleos: { id: null, nome: al.nucleo || 'SEDE' }
+          };
+        }
+        if (targetUserId && studentIds.includes(targetUserId) && Array.isArray(al.historico)) {
+          al.historico.forEach((item: any, idx: number) => {
+            if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
+              const numNota = parseFloat(String(item.nota).replace(',', '.'));
+              if (isNaN(numNota)) return;
+              const alreadyExists = mergedManualData.some((m: any) => 
+                m.aluno_id === targetUserId && areModuleTitlesEqual(m.modulo_nome, item.modulo)
+              );
+              if (!alreadyExists) {
+                mergedManualData.push({
+                  id: `alumni-${al.id}-${idx}`,
+                  aluno_id: targetUserId,
+                  curso_nome: al.curso || 'Teologia Básico',
+                  modulo_nome: item.modulo,
+                  nota: numNota,
+                  data_conclusao: item.data || new Date().toISOString(),
+                  observacao: 'Histórico oficial de formados',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                });
+              }
+            }
+          });
+        }
+      });
 
       const mapped = subDataRaw.map(r => {
         const aula = aulasMap[r.aula_id] || {
@@ -125,7 +220,7 @@ export const useProfessorAcademic = () => {
         };
       });
 
-      const manualRecords = (manualDataRaw || []).map(r => ({
+      const manualRecords = mergedManualData.map(r => ({
         id: r.id,
         is_manual: true,
         nota: r.nota,
@@ -159,5 +254,10 @@ export const useProfessorAcademic = () => {
     }
   }, []);
 
-  return { academicReport, loading, fetchAcademicHistory, fetchAcademicReport };
+  return {
+    academicReport,
+    loading,
+    fetchAcademicReport,
+    fetchAcademicHistory
+  };
 };

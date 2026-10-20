@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { parseFlexibleDate } from '../services/academicService';
 
 // Definição da interface autoTable no jsPDF para evitar erros de typescript
 interface jsPDFWithAutoTable extends jsPDF {
@@ -8,22 +9,58 @@ interface jsPDFWithAutoTable extends jsPDF {
 
 /**
  * Função utilitária para converter uma imagem local (na pasta public) em Data URL (base64)
+ * Usa fetch direto + FileReader primariamente para evitar problemas de CORS/Tainted Canvas,
+ * com fallback para Image + Canvas caso necessário.
  */
-const getBase64ImageFromURL = (url: string): Promise<string> => {
+const getBase64ImageFromURL = async (url: string): Promise<string> => {
+  const targetUrl = (typeof window !== 'undefined' && url.startsWith('/') && !url.startsWith('//'))
+    ? `${window.location.origin}${url}`
+    : url;
+
+  // 1. Tenta carregar o arquivo diretamente como Blob e converter via FileReader
+  try {
+    const response = await fetch(targetUrl);
+    if (response.ok) {
+      const blob = await response.blob();
+      return await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (typeof reader.result === 'string') {
+            resolve(reader.result);
+          } else {
+            reject(new Error('Falha ao converter imagem para base64'));
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+  } catch (err) {
+    console.warn(`Fetch da imagem (${targetUrl}) falhou, tentando fallback:`, err);
+  }
+
+  // 2. Fallback via Image / Canvas
   return new Promise((resolve, reject) => {
-    var img = new Image();
-    img.setAttribute("crossOrigin", "anonymous");
+    const img = new Image();
+    // Só usa crossOrigin para URLs externas de outros domínios
+    if (typeof window !== 'undefined' && targetUrl.startsWith('http') && !targetUrl.startsWith(window.location.origin)) {
+      img.setAttribute("crossOrigin", "anonymous");
+    }
     img.onload = () => {
-      var canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      var ctx = canvas.getContext("2d");
-      ctx?.drawImage(img, 0, 0);
-      var dataURL = canvas.toDataURL("image/png");
-      resolve(dataURL);
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL("image/png");
+        resolve(dataURL);
+      } catch (e) {
+        reject(e);
+      }
     };
     img.onerror = error => reject(error);
-    img.src = url;
+    img.src = targetUrl;
   });
 };
 
@@ -188,12 +225,111 @@ export const generateHistoricoPDF = async (
   doc.save(`Historico_${alunoData.nome.replace(/\s+/g, '_')}.pdf`);
 };
 
+let cachedCormorantRegularBase64: string | null = null;
+let cachedCormorantBoldBase64: string | null = null;
+let cachedCormorantItalicBase64: string | null = null;
+
 /**
- * Gera o Certificado em PDF usando a imagem de fundo enviada pelo usuário
+ * Utilitário para converter arquivos binários (ex: fontes TrueType) em base64 puro
+ */
+const getBinaryBase64FromURL = async (url: string): Promise<string> => {
+  const targetUrl = (typeof window !== 'undefined' && url.startsWith('/') && !url.startsWith('//'))
+    ? `${window.location.origin}${url}`
+    : url;
+
+  const response = await fetch(targetUrl);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} ao carregar ${targetUrl}`);
+  }
+  const blob = await response.blob();
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        const base64 = reader.result.includes(',') ? reader.result.split(',')[1] : reader.result;
+        resolve(base64);
+      } else {
+        reject(new Error('Falha ao converter binário para base64'));
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
+/**
+ * Registra e assegura o carregamento da família Cormorant Garamond no jsPDF
+ */
+const ensureCormorantFonts = async (doc: jsPDF): Promise<boolean> => {
+  try {
+    if (!cachedCormorantRegularBase64) {
+      cachedCormorantRegularBase64 = await getBinaryBase64FromURL('/fonts/CormorantGaramond-Regular.ttf');
+    }
+    if (cachedCormorantRegularBase64) {
+      doc.addFileToVFS('CormorantGaramond-Regular.ttf', cachedCormorantRegularBase64);
+      doc.addFont('CormorantGaramond-Regular.ttf', 'CormorantGaramond', 'normal');
+    }
+
+    if (!cachedCormorantBoldBase64) {
+      try {
+        cachedCormorantBoldBase64 = await getBinaryBase64FromURL('/fonts/CormorantGaramond-Bold.ttf');
+      } catch {}
+    }
+    if (cachedCormorantBoldBase64) {
+      doc.addFileToVFS('CormorantGaramond-Bold.ttf', cachedCormorantBoldBase64);
+      doc.addFont('CormorantGaramond-Bold.ttf', 'CormorantGaramond', 'bold');
+    }
+
+    if (!cachedCormorantItalicBase64) {
+      try {
+        cachedCormorantItalicBase64 = await getBinaryBase64FromURL('/fonts/CormorantGaramond-Italic.ttf');
+      } catch {}
+    }
+    if (cachedCormorantItalicBase64) {
+      doc.addFileToVFS('CormorantGaramond-Italic.ttf', cachedCormorantItalicBase64);
+      doc.addFont('CormorantGaramond-Italic.ttf', 'CormorantGaramond', 'italic');
+    }
+
+    return !!cachedCormorantRegularBase64;
+  } catch (err) {
+    console.warn('[pdfGenerator] Falha ao registrar fonte Cormorant Garamond no jsPDF:', err);
+    return false;
+  }
+};
+
+/**
+ * Formata a data de conclusão para o rodapé do certificado no padrão oficial de Santo André
+ */
+export const formatDataConclusaoCertificado = (dateInput?: string | Date | null): string => {
+  if (!dateInput) {
+    const today = new Date();
+    const str = today.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+    return `Santo André, ${str}`;
+  }
+
+  if (typeof dateInput === 'string') {
+    const trimmed = dateInput.trim();
+    if (trimmed.toLowerCase().startsWith('santo andré') || trimmed.toLowerCase().startsWith('santo andre')) {
+      return trimmed;
+    }
+  }
+
+  const parsed = parseFlexibleDate(dateInput);
+  if (parsed && !isNaN(parsed.getTime())) {
+    const str = parsed.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+    return `Santo André, ${str}`;
+  }
+
+  return `Santo André, ${String(dateInput)}`;
+};
+
+/**
+ * Gera o Certificado em PDF usando a imagem de fundo oficial e fontes tipográficas clássicas
  */
 export const generateCertificadoPDF = async (
   alunoNome: string,
-  cursoNivel: 'basico' | 'medio' = 'basico'
+  cursoNivel: 'basico' | 'medio' = 'basico',
+  dataConclusao?: string | Date | null
 ) => {
   // A4 Landscape
   const doc = new jsPDF({
@@ -204,6 +340,10 @@ export const generateCertificadoPDF = async (
 
   const width = doc.internal.pageSize.getWidth();
   const height = doc.internal.pageSize.getHeight();
+
+  // Carrega a fonte oficial Cormorant Garamond
+  const hasCormorant = await ensureCormorantFonts(doc);
+  const fontName = hasCormorant ? 'CormorantGaramond' : 'times';
 
   try {
     // Carrega a imagem de fundo correta baseada no nível do curso
@@ -216,7 +356,7 @@ export const generateCertificadoPDF = async (
     console.warn("Background image not found. The certificate might be blank.");
   }
 
-  // Ajuste fino para alinhar ao centro da área visual (considerando a faixa lateral direita)
+  // Ajuste fino para alinhar ao centro da área visual útil (considerando a faixa lateral direita)
   const centerX = width / 2 - 20; 
 
   // 1. Título "CERTIFICADO"
@@ -239,10 +379,27 @@ export const generateCertificadoPDF = async (
   doc.text('CERTIFICADO DE CONCLUSÃO', centerX, 80, { align: 'center' });
 
   // 4. Nome do Aluno
+  // Especificação: Deve estar entre aspas e utilizar a fonte Cormorant Garamond 25 como padrão Sempre.
+  const nomeLimpo = (alunoNome || '').replace(/^["']|["']$/g, '').trim();
+  const nomeTexto = `"${nomeLimpo}"`;
+
+  // Fonte Cormorant Garamond em negrito/bold com tamanho 25 padrão Sempre
+  const baseFontSize = 25;
+  let fontSize = baseFontSize;
+  doc.setFont(fontName, 'bold');
+  doc.setFontSize(fontSize);
+
+  // Margem de segurança para nomes excepcionalmente longos, garantindo que nunca
+  // ultrapassem a largura central útil (~160mm) e se mantenham perfeitamente centralizados
+  const maxLarguraPermitida = 160;
+  const larguraAtual = doc.getTextWidth(nomeTexto);
+  if (larguraAtual > maxLarguraPermitida) {
+    fontSize = Math.floor((fontSize * maxLarguraPermitida) / larguraAtual);
+    doc.setFontSize(fontSize);
+  }
+
   doc.setTextColor(24, 38, 86); // Azul escuro
-  doc.setFontSize(36);
-  doc.setFont('times', 'italic');
-  doc.text(`"${alunoNome}"`, centerX, 100, { align: 'center' });
+  doc.text(nomeTexto, centerX, 100, { align: 'center' });
 
   // 5. Parágrafo de texto
   doc.setTextColor(80, 80, 80); // Cinza escuro
@@ -252,6 +409,19 @@ export const generateCertificadoPDF = async (
   doc.text('DEDICAÇÃO, RESPEITO AOS PRECEITOS E', centerX, 128, { align: 'center' });
   doc.text('DIRETRIZES DA PALAVRA DE DEUS.', centerX, 136, { align: 'center' });
 
-  // Baixar
-  doc.save(`Certificado_${cursoNivel}_${alunoNome.replace(/\s+/g, '_')}.pdf`);
+  // 6. Data de Conclusão ao centro próximo ao rodapé
+  // Emite com a data da última prova realizada pelo aluno ou data do pedido
+  const textoData = formatDataConclusaoCertificado(dataConclusao);
+  doc.setTextColor(80, 80, 80); // Cinza escuro elegante
+  doc.setFont(fontName, 'normal');
+  doc.setFontSize(26); // Aumentado em 2x (13pt -> 26pt) conforme especificação
+  doc.text(textoData, centerX, 194, { align: 'center' });
+
+  // Baixar com nome de arquivo sanitizado
+  const safeFileName = (alunoNome || 'Aluno')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9_\-]/g, '_')
+    .replace(/_+/g, '_');
+  doc.save(`Certificado_${cursoNivel}_${safeFileName}.pdf`);
 };

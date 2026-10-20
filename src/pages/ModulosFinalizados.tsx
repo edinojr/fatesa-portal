@@ -13,6 +13,7 @@ import LevelCertificate from '../features/users/components/LevelCertificate'
 import { graduationService } from '../services/graduationService'
 import { generateCertificadoPDF, generateHistoricoPDF } from '../utils/pdfGenerator'
 import { PanelSwitcher, PanelNavIcons } from '../components/common/PanelSwitcher'
+import { fetchStudentAcademicSummary } from '../services/academicService'
 
 
 const ModulosFinalizados = () => {
@@ -86,10 +87,22 @@ const goToPanel = () => {
 
     useEffect(() => {
         if (!profileLoading && profile?.id) {
+            const isUUID = (str?: string) => Boolean(str && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str));
+            const hasValidId = isUUID(profile.id);
             const userEmail = (profile.email || '').toLowerCase().trim();
+
+            let alumniQuery = supabase.from('registros_alumni').select('*');
+            if (hasValidId && userEmail) {
+                alumniQuery = alumniQuery.or(`user_id.eq.${profile.id},email.eq.${userEmail}`);
+            } else if (hasValidId) {
+                alumniQuery = alumniQuery.eq('user_id', profile.id);
+            } else if (userEmail) {
+                alumniQuery = alumniQuery.eq('email', userEmail);
+            }
+
             Promise.all([
                 supabase.from('historico_notas').select('*').eq('aluno_id', profile.id).order('created_at', { ascending: false }),
-                supabase.from('registros_alumni').select('*').or(`user_id.eq.${profile.id}${userEmail ? `,email.eq.${userEmail}` : ''}`)
+                alumniQuery
             ]).then(([histRes, alumniRes]) => {
                 if (histRes.error) console.error('[ModulosFinalizados] Erro ao buscar histórico:', histRes.error.message);
                 const combined = [...(histRes.data || [])];
@@ -106,10 +119,7 @@ const goToPanel = () => {
                             if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
                                 const numNota = parseFloat(String(item.nota).replace(',', '.'));
                                 if (!isNaN(numNota)) {
-                                    const itemNorm = (item.modulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-                                    const exists = combined.some(h => 
-                                        (h.modulo_nome || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() === itemNorm
-                                    );
+                                    const exists = combined.some(h => areModuleTitlesEqual(h.modulo_nome, item.modulo));
                                     if (!exists) {
                                         combined.push({
                                             id: `alumni-${al.id}-${idx}`,
@@ -370,23 +380,30 @@ const goToPanel = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
                                 <Award size={20} color="var(--primary)" />
                                 <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', textTransform: 'uppercase' }}>
-                                    {totalModulosConcluidos >= 27 ? 'Formado no Curso Básico' : 'Em Formação'}
+                                    {totalModulosConcluidos >= 27 || profile?.tipo === 'ex_aluno' || alumniRecord ? 'Formado no Curso Básico' : 'Em Formação'}
                                 </span>
                             </div>
                             <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                                {totalModulosConcluidos >= 27 
-                                    ? 'Seu curso básico está 100% concluído com certificado disponível.'
+                                {totalModulosConcluidos >= 27 || profile?.tipo === 'ex_aluno' || alumniRecord
+                                    ? 'Seu curso está concluído com certificado e histórico oficial disponíveis.'
                                     : 'Acompanhe as notas de cada módulo finalizado.'}
                             </p>
                         </div>
-                        {(alumniRecord || totalModulosConcluidos >= 27) && (
+                        {(alumniRecord || totalModulosConcluidos >= 27 || profile?.tipo === 'ex_aluno') && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
                                 <button 
                                     className="btn btn-primary" 
                                     style={{ width: '100%', gap: '0.5rem', padding: '0.65rem 1rem', background: '#eab308', color: '#000', borderColor: '#eab308', fontWeight: 800 }}
                                     onClick={async () => {
-                                        const nivel = (alumniRecord?.nivel_curso || '').toLowerCase().includes('méd') || totalModulosConcluidos >= 35 ? 'medio' : 'basico';
-                                        await generateCertificadoPDF(alumniRecord?.nome || profile?.nome || 'Aluno', nivel);
+                                        try {
+                                            const summary = await fetchStudentAcademicSummary(profile);
+                                            const nivel = summary.nivelCertificado;
+                                            await generateCertificadoPDF(summary.alunoData.nome, nivel, summary.dataConclusao);
+                                        } catch (e) {
+                                            console.error('Erro ao gerar certificado:', e);
+                                            const nivel = (alumniRecord?.nivel_curso || '').toLowerCase().includes('méd') || totalModulosConcluidos >= 35 ? 'medio' : 'basico';
+                                            await generateCertificadoPDF(alumniRecord?.nome || profile?.nome || 'Aluno', nivel, alumniRecord?.ano_formacao || new Date());
+                                        }
                                     }}
                                 >
                                     <Award size={18} /> Baixar Certificado Oficial (PDF)
@@ -395,18 +412,36 @@ const goToPanel = () => {
                                     className="btn btn-outline" 
                                     style={{ width: '100%', gap: '0.5rem', padding: '0.65rem 1rem' }}
                                     onClick={async () => {
-                                        const alunoData = {
-                                            nome: alumniRecord?.nome || profile?.nome || 'Aluno',
-                                            nucleo: profile?.nucleos?.nome || alumniRecord?.nucleo || 'SEDE',
-                                            matricula: alumniRecord?.matricula || 'N/A',
-                                            dataMatricula: alumniRecord?.ano_formacao || 'N/A',
-                                            status: 'Formado'
-                                        };
-                                        const materiasParaHistorico = allCompletedBooksFlat.map(b => ({
-                                            nome: b.titulo,
-                                            media: b.nota ?? 10
-                                        }));
-                                        await generateHistoricoPDF(alunoData, materiasParaHistorico, totalModulosConcluidos >= 35 ? 'Médio' : 'Básico');
+                                        try {
+                                            const summary = await fetchStudentAcademicSummary(profile);
+                                            const alunoData = {
+                                                nome: summary.alunoData.nome,
+                                                nucleo: summary.alunoData.nucleo,
+                                                matricula: summary.alunoData.matricula,
+                                                dataMatricula: summary.alunoData.dataMatricula,
+                                                status: summary.alunoData.status
+                                            };
+                                            const materiasParaHistorico = summary.materias.map(m => ({
+                                                nome: m.nome,
+                                                media: m.media
+                                            }));
+                                            const nivelStr = summary.nivelCertificado === 'medio' ? 'Médio' : 'Básico';
+                                            await generateHistoricoPDF(alunoData, materiasParaHistorico, nivelStr);
+                                        } catch (e) {
+                                            console.error('Erro ao gerar histórico pelo academicService:', e);
+                                            const alunoData = {
+                                                nome: alumniRecord?.nome || profile?.nome || 'Aluno',
+                                                nucleo: profile?.nucleos?.nome || alumniRecord?.nucleo || 'SEDE',
+                                                matricula: alumniRecord?.matricula || 'N/A',
+                                                dataMatricula: alumniRecord?.ano_formacao || 'N/A',
+                                                status: 'Formado'
+                                            };
+                                            const materiasParaHistorico = allCompletedBooksFlat.map(b => ({
+                                                nome: b.titulo,
+                                                media: b.nota ?? 10
+                                            }));
+                                            await generateHistoricoPDF(alunoData, materiasParaHistorico, totalModulosConcluidos >= 35 ? 'Médio' : 'Básico');
+                                        }
                                     }}
                                 >
                                     <FileText size={18} /> Baixar Histórico Escolar Oficial (PDF)

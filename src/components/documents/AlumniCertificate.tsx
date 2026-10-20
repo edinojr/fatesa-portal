@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Loader2, Download, Award, FileText, CheckCircle2 } from 'lucide-react';
 import { generateCertificadoPDF, generateHistoricoPDF } from '../../utils/pdfGenerator';
 import { supabase } from '../../lib/supabase';
+import { fetchStudentAcademicSummary, ConsolidateMateria } from '../../services/academicService';
 
 interface CertificateProps {
   aluno: {
@@ -24,7 +25,9 @@ const AlumniCertificate: React.FC<CertificateProps> = ({ aluno }) => {
   const handleDownloadCertificado = async () => {
     setGeneratingCert(true);
     try {
-      await generateCertificadoPDF(aluno.nome.trim(), nivel);
+      const summary = await fetchStudentAcademicSummary(aluno);
+      const nivelCert = summary.isMedioConcluido || nivel === 'medio' ? 'medio' : 'basico';
+      await generateCertificadoPDF(summary.alunoData.nome || aluno.nome.trim(), nivelCert, summary.dataConclusao);
     } catch (error: any) {
       console.error('Erro ao gerar certificado:', error);
       alert('Falha ao gerar o certificado: ' + (error?.message || error));
@@ -36,49 +39,18 @@ const AlumniCertificate: React.FC<CertificateProps> = ({ aluno }) => {
   const handleDownloadHistorico = async () => {
     setGeneratingHist(true);
     try {
-      const alunoData = {
-        nome: aluno.nome,
-        nucleo: aluno.nucleo || 'SEDE',
-        matricula: aluno.matricula || 'N/A',
-        dataMatricula: aluno.ano_formacao || 'N/A',
-        status: 'Formado'
-      };
+      const summary = await fetchStudentAcademicSummary(aluno);
 
-      let materias: { nome: string; media: string | number }[] = [];
-
-      if (aluno.historico && aluno.historico.length > 0) {
-        materias = aluno.historico
-          .filter(h => h.modulo && h.nota !== undefined && h.nota !== null)
-          .map(h => ({
-            nome: h.modulo,
-            media: h.nota
-          }));
-      }
-
-      // Se não houver histórico injetado diretamente nas props, tenta buscar do banco
-      if (materias.length === 0) {
-        const { data: alumniRow } = await supabase
-          .from('registros_alumni')
-          .select('historico')
-          .ilike('email', aluno.email.trim())
-          .maybeSingle();
-
-        if (alumniRow?.historico && Array.isArray(alumniRow.historico) && alumniRow.historico.length > 0) {
-          materias = alumniRow.historico
-            .filter((h: any) => h.modulo && h.nota)
-            .map((h: any) => ({
-              nome: h.modulo,
-              media: h.nota
-            }));
-        }
-      }
-
-      if (materias.length === 0) {
+      if (summary.materias.length === 0) {
         alert('Nenhum módulo com nota encontrado no histórico do aluno.');
         return;
       }
 
-      await generateHistoricoPDF(alunoData, materias, nivel === 'medio' ? 'Médio' : 'Básico');
+      await generateHistoricoPDF(
+        summary.alunoData,
+        summary.materias.map((m: ConsolidateMateria) => ({ nome: m.nome, media: m.media })),
+        summary.isMedioConcluido || nivel === 'medio' ? 'Médio' : 'Básico'
+      );
     } catch (error: any) {
       console.error('Erro ao gerar histórico:', error);
       alert('Falha ao gerar histórico escolar: ' + (error?.message || error));

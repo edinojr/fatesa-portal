@@ -36,7 +36,7 @@ export const DocumentGenerator = () => {
 
   const handleDownloadCertificado = () => {
     if (!nome) return alert('Preencha o nome do aluno.');
-    generateCertificadoPDF(nome, nivel);
+    generateCertificadoPDF(nome, nivel, dataMatricula || new Date());
   };
 
   return (

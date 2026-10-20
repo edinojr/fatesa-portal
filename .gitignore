@@ -73,6 +73,10 @@ scripts/
 /lost_*.txt
 /Novo(a) Documento de Texto.txt
 
-# Conteudo de licoes versionado para deploy
+# Conteudo de rascunho de licoes e testes locais
+/lições/
+/public/licoes/
+/test_cert_*.pdf
+test_*.pdf
 
 SUPABASE_SERVICE_KEY

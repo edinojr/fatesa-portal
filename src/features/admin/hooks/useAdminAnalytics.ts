@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
+import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 
 export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
   const [analyticsData, setAnalyticsData] = useState<any>(null);
@@ -91,15 +92,23 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
       const mergedManualData = [...manualDataRaw];
       (alumniDataRaw || []).forEach((al: any) => {
         const u = (al.user_id && usersMap[al.user_id]) || (al.email && usersByEmailMap[al.email.toLowerCase().trim()]);
-        const targetUserId = u?.id || al.user_id;
+        const targetUserId = u?.id || al.user_id || `alumni-${al.id}`;
+        if (!usersMap[targetUserId]) {
+          usersMap[targetUserId] = {
+            id: targetUserId,
+            nome: al.nome || 'Aluno Formado',
+            email: al.email || '',
+            tipo: 'ex_aluno',
+            nucleos: { id: null, nome: al.nucleo || 'SEDE' }
+          };
+        }
         if (targetUserId && Array.isArray(al.historico)) {
           al.historico.forEach((item: any, idx: number) => {
             if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
               const numNota = parseFloat(String(item.nota).replace(',', '.'));
               if (isNaN(numNota)) return;
-              const normM = (item.modulo || '').toLowerCase().trim();
               const alreadyExists = mergedManualData.some((m: any) => 
-                m.aluno_id === targetUserId && (m.modulo_nome || '').toLowerCase().trim() === normM
+                m.aluno_id === targetUserId && areModuleTitlesEqual(m.modulo_nome, item.modulo)
               );
               if (!alreadyExists) {
                 mergedManualData.push({
@@ -141,10 +150,9 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
 
       // Step 4: Map manual records vinculando livros reais quando possível
       const manualRecords = mergedManualData.map((r: any) => {
-        const modNorm = (r.modulo_nome || '').toLowerCase().trim();
         const matchedAula = aulasData.find((a: any) => {
           const l = Array.isArray(a.livro_id) ? a.livro_id[0] : a.livro_id;
-          return l && (l.titulo || '').toLowerCase().trim() === modNorm;
+          return l && areModuleTitlesEqual(l.titulo, r.modulo_nome);
         });
         const matchedLivro = matchedAula ? (Array.isArray(matchedAula.livro_id) ? matchedAula.livro_id[0] : matchedAula.livro_id) : null;
         const bookId = matchedLivro?.id || r.modulo_nome;
