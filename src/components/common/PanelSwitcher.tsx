@@ -4,7 +4,6 @@ import {
   LayoutDashboard, 
   BookOpen, 
   GraduationCap, 
-  Users, 
   ChevronDown, 
   Check, 
   Sparkles,
@@ -20,7 +19,7 @@ export interface PanelSwitcherProps {
 }
 
 interface PanelOption {
-  id: 'admin' | 'aluno' | 'professor' | 'coordenador'
+  id: 'admin' | 'aluno' | 'professor'
   name: string
   shortName: string
   badge: string
@@ -62,22 +61,21 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
   const isAdmin = isUserAdmin(profile)
   const roles = (profile.caminhos_acesso as string[]) || []
   const isProfessor = isAdmin || profile.tipo === 'professor' || roles.includes('professor')
-  const isCoordinator = isAdmin || profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo')
 
   // Se o usuário não for admin e tiver apenas 1 papel, não exibe o seletor
-  const totalRoles = (isAdmin ? 4 : 1) + (isProfessor ? 1 : 0) + (isCoordinator ? 1 : 0)
+  const totalRoles = (isAdmin ? 3 : 1) + (isProfessor && !isAdmin ? 1 : 0)
   if (!isAdmin && totalRoles <= 1) {
     return null
   }
 
-  // Lista de painéis disponíveis para o usuário
+  // Lista de painéis disponíveis para o usuário (excluído coordenador/polo conforme solicitado)
   const options: PanelOption[] = []
 
   if (isAdmin) {
     options.push({
       id: 'admin',
-      name: 'Painel do Administrador',
-      shortName: 'Admin',
+      name: 'Painel Administrativo',
+      shortName: 'Administrativo',
       badge: 'Gestão',
       badgeColor: '#ef4444',
       description: 'Controle de alunos, cursos, notas e financeiro',
@@ -99,20 +97,7 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
     })
   }
 
-  if (isCoordinator) {
-    options.push({
-      id: 'coordenador',
-      name: 'Painel do Coordenador',
-      shortName: 'Coordenador',
-      badge: 'Polo',
-      badgeColor: '#8b5cf6',
-      description: 'Gestão de alunos do núcleo e relatórios de polo',
-      path: '/coordenador',
-      icon: <Users size={18} />
-    })
-  }
-
-  // Todo usuário/administrador pode acessar o Painel do Aluno
+  // Todo usuário com acesso a múltiplos painéis pode acessar o Painel do Aluno
   options.push({
     id: 'aluno',
     name: 'Painel do Aluno',
@@ -124,7 +109,8 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
     icon: <BookOpen size={18} />
   })
 
-  const currentOption = options.find(o => o.id === currentPanel) || options[0]
+  const normalizedPanel = currentPanel === 'coordenador' ? 'admin' : currentPanel
+  const currentOption = options.find(o => o.id === normalizedPanel) || options[0]
 
   const handleSelectPanel = (opt: PanelOption) => {
     localStorage.setItem('fatesa_active_role', opt.id)

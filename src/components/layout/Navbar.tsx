@@ -64,7 +64,7 @@ const Navbar = () => {
       const userType = data?.tipo || '';
       const isAdmin = isUserAdmin({ ...data, email: sessionUser.email }) || roles.some((r: string) => ['admin', 'suporte'].includes(r)) || ['admin', 'suporte'].includes(userType);
       const isProfessor = !isAdmin && (roles.some((r: string) => r === 'professor') || userType === 'professor');
-      const isCoordinator = !isAdmin && !isProfessor && (roles.some((r: string) => r === 'coordenador_polo') || userType === 'coordenador_polo');
+
 
       if (isAdmin) {
         localStorage.setItem('fatesa_active_role', 'admin');
@@ -72,9 +72,9 @@ const Navbar = () => {
       } else if (isProfessor) {
         localStorage.setItem('fatesa_active_role', 'professor');
         navigate('/professor');
-      } else if (isCoordinator) {
-        localStorage.setItem('fatesa_active_role', 'coordenador');
-        navigate('/coordenador');
+
+
+
       } else {
         localStorage.setItem('fatesa_active_role', 'aluno');
         navigate('/dashboard');

@@ -122,7 +122,7 @@ export const useProfile = () => {
 
       const emailLower = (session.user.email || '').toLowerCase().trim();
       const isMasterAdmin = ADMIN_EMAILS.includes(emailLower);
-      const allMasterRoles = ['admin', 'suporte', 'professor', 'coordenador_polo', 'aluno'];
+      const allMasterRoles = ['admin', 'suporte', 'professor', 'aluno'];
 
       const isJwtErr = (err: any) =>
         !!err && (

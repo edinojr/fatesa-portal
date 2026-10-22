@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, LogOut, Home } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
 import TopBanner from './TopBanner'
-import { PanelSwitcher, PanelNavIcons } from '../common/PanelSwitcher'
+import { PanelSwitcher } from '../common/PanelSwitcher'
 
 interface PageHeaderProps {
   title: string
@@ -68,11 +68,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     if (variant === 'viewer') return null
     
     const actionButtons: React.ReactNode[] = []
-    const currentPanel = variant === 'admin' ? 'admin' : variant === 'professor' ? 'professor' : variant === 'coordinator' ? 'coordenador' : 'aluno'
-
-    actionButtons.push(
-      <PanelNavIcons key="panel-nav-icons" currentPanel={currentPanel} />
-    )
+    const currentPanel: 'admin' | 'professor' | 'aluno' = 
+      variant === 'admin' ? 'admin' : 
+      variant === 'professor' ? 'professor' : 'aluno'
 
     actionButtons.push(
       <PanelSwitcher key="panel-switcher" currentPanel={currentPanel} />

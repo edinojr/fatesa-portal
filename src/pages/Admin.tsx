@@ -68,7 +68,7 @@ import { useAdminManagement } from '../hooks/useAdminManagement'
 import { supabase } from '../lib/supabase'
 import { hasStudentScope } from '../lib/authUtils'
 import PageHeader from '../components/layout/PageHeader'
-import { PanelSwitcher, PanelNavIcons } from '../components/common/PanelSwitcher'
+import { PanelSwitcher } from '../components/common/PanelSwitcher'
 
 const Admin = () => {
   const navigate = useNavigate()
@@ -341,7 +341,6 @@ const Admin = () => {
 
   const adminActions = (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-      <PanelNavIcons currentPanel="admin" />
       <PanelSwitcher currentPanel="admin" />
       <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
         <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>

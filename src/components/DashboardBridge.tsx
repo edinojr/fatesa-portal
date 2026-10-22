@@ -14,7 +14,6 @@ const DashboardBridge = () => {
       const roles = (profile.caminhos_acesso as string[]) || []
       const isAdminUser = isUserAdmin(profile)
       const isProfessorUser = profile.tipo === 'professor' || roles.includes('professor')
-      const isCoordinatorUser = profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo')
 
       const storedRole = localStorage.getItem('fatesa_active_role')
       const isExplicitStudentView = searchParams.get('view') === 'student' || searchParams.get('preview') === 'aluno'
@@ -39,15 +38,9 @@ const DashboardBridge = () => {
         return
       }
 
-      if (storedRole === 'coordenador' && isCoordinatorUser) {
-        navigate('/coordenador', { replace: true })
-        return
-      }
-
       if (isProfessorUser) {
         navigate('/professor', { replace: true })
-      } else if (isCoordinatorUser) {
-        navigate('/coordenador', { replace: true })
+        return
       }
     }
   }, [profile, loading, navigate, searchParams])

@@ -101,7 +101,7 @@ const Login = () => {
 
     // Auto-repair missing profile or handle errors for Admin
     if (isAdminEmail) {
-      const allRoles = ['admin', 'suporte', 'professor', 'coordenador_polo', 'aluno'];
+      const allRoles = ['admin', 'suporte', 'professor', 'aluno'];
       if (!data) {
         data = {
           tipo: 'admin',
@@ -183,7 +183,7 @@ const Login = () => {
     const userType = (data.tipo || '') as string;
     
     const isProfessor = !isAdmin && (roles.some((r: string) => r === 'professor') || userType === 'professor');
-    const isCoordinator = !isAdmin && !isProfessor && (roles.some((r: string) => r === 'coordenador_polo') || userType === 'coordenador_polo');
+
 
     if (isAdmin) {
       localStorage.setItem('fatesa_active_role', 'admin');
@@ -191,9 +191,9 @@ const Login = () => {
     } else if (isProfessor) {
       localStorage.setItem('fatesa_active_role', 'professor');
       navigate('/professor', { replace: true });
-    } else if (isCoordinator) {
-      localStorage.setItem('fatesa_active_role', 'coordenador');
-      navigate('/coordenador', { replace: true });
+
+
+
     } else {
       localStorage.setItem('fatesa_active_role', 'aluno');
       navigate('/dashboard', { replace: true });

@@ -205,7 +205,7 @@ const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => {
       if (!isProfessor) { navigate('/dashboard'); return; }
 
       const roles = isMaster 
-        ? Array.from(new Set([...(profile.caminhos_acesso || []), 'admin', 'suporte', 'professor', 'coordenador_polo', 'aluno']))
+        ? Array.from(new Set([...(profile.caminhos_acesso || []), 'admin', 'suporte', 'professor', 'aluno']))
         : [...(profile.caminhos_acesso || [])];
       setAvailableRoles(roles);
       
