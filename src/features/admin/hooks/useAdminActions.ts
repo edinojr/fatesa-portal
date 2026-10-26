@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { supabase, toPublicUrl } from '../../../lib/supabase';
+import { unfinalizeModule } from '../../../services/examCorrection';
+import { auditAndDeduplicateAllExams } from '../../../services/examQuestionsService';
 
 export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'error') => void, fetchData: () => void) => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -128,6 +130,24 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
     }
   };
 
+  const handleAuditAndDeduplicateExams = async () => {
+    if (!window.confirm('Auditar e deduplicar todas as avaliações do sistema?\n\nO sistema analisará todas as provas, removerá questões com enunciados repetidos e usará exercícios do módulo para preencher onde necessário.')) return;
+    setActionLoading('audit-exams');
+    try {
+      const res = await auditAndDeduplicateAllExams();
+      if (res.examsWithDuplicates === 0) {
+        showToast(`Auditoria concluída! Nenhuma duplicata encontrada nas ${res.totalExams} avaliações.`, 'success');
+      } else {
+        showToast(`Auditoria concluída: ${res.totalDuplicatesRemoved} questão(ões) duplicada(s) eliminada(s) em ${res.examsWithDuplicates} avaliação(ões)!`, 'success');
+      }
+      fetchData();
+    } catch (err: any) {
+      showToast('Erro na auditoria: ' + (err.message || err), 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, table: 'livros' | 'aulas', id: string, column: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -247,16 +267,71 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
   };
 
   const handleDeleteSubmission = async (submissionId: string, isManual?: boolean) => {
-    if (!window.confirm('Excluir este registro permanentemente?')) return;
+    if (!window.confirm('Excluir este registro permanentemente? Isso permitirá que a prova retorne à base para o aluno refazer.')) return;
+    if (!submissionId) {
+      showToast('ID da submissão não fornecido.', 'error');
+      return;
+    }
     setActionLoading(submissionId);
     try {
-      const table = isManual ? 'historico_notas' : 'respostas_aulas';
-      const { error } = await supabase.from(table).delete().eq('id', submissionId);
+      const subStr = String(submissionId).trim();
+
+      // 1. Registro sintético de ex-aluno (alumni-UUID-idx)
+      if (subStr.startsWith('alumni-')) {
+        const parts = subStr.split('-');
+        const alumniId = parts[1];
+        const itemIdx = parseInt(parts[2], 10);
+        if (alumniId) {
+          const { data: alumniRow } = await supabase.from('registros_alumni').select('id, historico').eq('id', alumniId).maybeSingle();
+          if (alumniRow && Array.isArray(alumniRow.historico)) {
+            const updatedHist = alumniRow.historico.filter((_: any, idx: number) => idx !== itemIdx);
+            await supabase.from('registros_alumni').update({ historico: updatedHist }).eq('id', alumniId);
+          }
+        }
+        showToast('Registro de formado excluído com sucesso.');
+        fetchData();
+        return;
+      }
+
+      // 2. Registro manual em historico_notas
+      const isHist = isManual || subStr.startsWith('hist-');
+      const cleanId = subStr.replace('hist-', '');
+
+      if (isHist) {
+        const { error } = await supabase.from('historico_notas').delete().eq('id', cleanId);
+        if (error) throw error;
+        showToast('Registro do histórico excluído com sucesso.');
+        fetchData();
+        return;
+      }
+
+      // 3. Submissão de respostas_aulas: obter aluno_id e aula_id para resetar base
+      const { data: subData } = await supabase
+        .from('respostas_aulas')
+        .select('id, aula_id, aluno_id, aulas:aula_id(id, livro_id)')
+        .eq('id', cleanId)
+        .maybeSingle();
+
+      const { error } = await supabase.from('respostas_aulas').delete().eq('id', cleanId);
       if (error) throw error;
-      showToast('Registro excluído com sucesso.');
+
+      // 4. Retornar prova para base (remover da tabela progresso e desfinalizar módulo)
+      if (subData?.aluno_id && subData?.aula_id) {
+        await supabase
+          .from('progresso')
+          .delete()
+          .match({ aluno_id: subData.aluno_id, aula_id: subData.aula_id });
+
+        const livroId = (subData.aulas as any)?.livro_id;
+        if (livroId) {
+          await unfinalizeModule(subData.aluno_id, livroId);
+        }
+      }
+
+      showToast('Registro excluído com sucesso. A prova retornou à base para o aluno.');
       fetchData();
     } catch (err: any) {
-      showToast('Erro ao excluir: ' + err.message, 'error');
+      showToast('Erro ao excluir: ' + (err.message || err), 'error');
     } finally {
       setActionLoading(null);
     }
@@ -276,6 +351,7 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
     handleAddTeacher,
     handleAddAdmin,
     handleResetAutoCorrectedExams,
+    handleAuditAndDeduplicateExams,
     handleFileUpload,
     handleBatchUpload,
     handleRemoveFileFinal,

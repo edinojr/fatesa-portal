@@ -21,7 +21,8 @@ import {
   Search,
   ChevronDown,
   ClipboardList,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from 'lucide-react'
 
 // Features Components
@@ -178,6 +179,7 @@ const Admin = () => {
     fetchAnalytics,
     handleDeleteNucleo,
     handleResetAutoCorrectedExams,
+    handleAuditAndDeduplicateExams,
     updateParams
   } = useAdminManagement()
 
@@ -508,6 +510,12 @@ const Admin = () => {
                     <div className="icon-wrapper" style={{ background: 'var(--error)' }}><History size={32} /></div>
                     <h3 style={{ color: 'var(--error)' }}>Manutenção de Provas</h3>
                     <p>Resetar e devolver provas auto-corrigidas para os professores.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={handleAuditAndDeduplicateExams} style={{ border: '1px solid #10b981', background: 'rgba(16, 185, 129, 0.05)' }}>
+                    <div className="icon-wrapper" style={{ background: '#10b981' }}><Sparkles size={32} color="#fff" /></div>
+                    <h3 style={{ color: '#10b981' }}>Auditar & Deduplicar Provas</h3>
+                    <p>Elimina questões repetidas e complementa com exercícios do módulo.</p>
                   </div>
 
                   <div className="admin-action-card" onClick={() => setActiveTab('docs_archive')}>

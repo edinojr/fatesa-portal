@@ -371,7 +371,7 @@ export const useProfessorManagement = () => {
     handleResetProgress: (id: string) => studentHook.handleResetProgress(id, fetchData),
     handleUpdateUserNucleo: (id: string, nId: string, nNome: string) => studentHook.handleUpdateUserNucleo(id, nId, nNome, fetchData),
     handleSaveGrade: () => gradingHook.handleSaveGrade(fetchData),
-    handleDeleteSubmission: (id: string) => gradingHook.handleDeleteSubmission(id, fetchData),
+    handleDeleteSubmission: (id: string, isManual?: boolean) => gradingHook.handleDeleteSubmission(id, fetchData, isManual),
     handleAutoCorrectQueue: () => gradingHook.autoCorrectPending(undefined, fetchData),
     handleUpdateUserType: (id: string, type: string) => studentHook.handleUpdateUserType(id, type, fetchData),
     handleGrantModuleException: (uId: string, bId: string) => studentHook.handleGrantModuleException(uId, bId, fetchData),

@@ -1,9 +1,10 @@
 import { supabase } from '../lib/supabase';
+import { generateQuestionsFromExercises, deduplicateQuestions } from './examQuestionsService';
 
 // ============================================================
 // Correção de avaliações — lógica compartilhada entre:
 // - Lesson.tsx (auto-correção no envio do aluno)
-// - useProfessorGrading (correção manual)
+// - useProfessorGrading (correção manual e auto-correção da fila)
 // - QuizEditorModal / Salvar Gabarito (recorreção retroativa)
 // Pesos oficiais: 0,5 por questão objetiva; matching 0,5 por par (máx 3,0)
 // Nota normalizada: (pontos ganhos / pontos totais) × 10 — provas fora do
@@ -32,7 +33,7 @@ export const matchingPairCorrect = (q: any, mIdx: number, ans: Record<string, an
 };
 
 export const computeScore = (questions: any[], answers: Record<string, any> | null | undefined): number => {
-  if (!Array.isArray(questions)) return 0;
+  if (!Array.isArray(questions) || questions.length === 0) return 0;
   let earned = 0;
   let total = 0;
   questions.forEach((q, idx) => {
@@ -62,9 +63,24 @@ export const computeScore = (questions: any[], answers: Record<string, any> | nu
     }
 
     if (q.type === 'multiple_choice' || !q.type) {
-      if (ans !== undefined && ans !== null && String(ans) === String(q.correct)) earned += 0.5;
-    } else if (q.type === 'true_false' && ans === q.isTrue) {
-      earned += 0.5;
+      const targetCorrect = q.correct !== undefined && q.correct !== null ? q.correct : q.correctOption;
+      if (ans !== undefined && ans !== null && targetCorrect !== undefined && targetCorrect !== null) {
+        if (String(ans).trim().toLowerCase() === String(targetCorrect).trim().toLowerCase()) {
+          earned += 0.5;
+        }
+      }
+    } else if (q.type === 'true_false') {
+      const expectedBool = typeof q.isTrue === 'boolean'
+        ? q.isTrue
+        : (q.correctAnswer === true || q.correct === true || String(q.correctAnswer).trim().toUpperCase() === 'V' || String(q.correctAnswer).trim().toLowerCase() === 'verdadeiro');
+
+      const studentBool = typeof ans === 'boolean'
+        ? ans
+        : (ans === 'true' || ans === 'V' || ans === 'VERDADEIRO' || ans === 1 || ans === '1');
+
+      if (ans !== undefined && ans !== null && studentBool === expectedBool) {
+        earned += 0.5;
+      }
     }
   });
   if (total <= 0) return 0;
@@ -75,10 +91,15 @@ export const computeScore = (questions: any[], answers: Record<string, any> | nu
 export const hasCompleteGabarito = (questions: any[]): boolean => {
   if (!Array.isArray(questions) || questions.length === 0) return false;
   return questions.every(q => {
-    if (q.type === 'multiple_choice' || !q.type) return typeof q.correct === 'number';
-    if (q.type === 'true_false') return typeof q.isTrue === 'boolean';
+    if (q.type === 'multiple_choice' || !q.type) {
+      const c = q.correct !== undefined && q.correct !== null ? q.correct : q.correctOption;
+      return c !== undefined && c !== null && String(c).trim() !== '';
+    }
+    if (q.type === 'true_false') {
+      return typeof q.isTrue === 'boolean' || typeof q.correctAnswer === 'boolean' || ['v', 'f', 'true', 'false', '1', '0'].includes(String(q.correctAnswer || q.isTrue).trim().toLowerCase());
+    }
     if (q.type === 'matching') return (q.matchingPairs || []).length > 0;
-    return true; // dissertativa: sempre "ok" (correção manual)
+    return true; // dissertativa: sempre "ok"
   });
 };
 
@@ -204,7 +225,7 @@ export const unfinalizeModule = async (alunoId: string, livroId: string) => {
   }
 };
 
-/** Cria a próxima versão da prova (V2/V3 — Recuperação) se o aluno reprovou. */
+/** Cria a próxima versão da prova (V2/V3 — Recuperação) se o aluno reprovou, gerando questões novas dos exercícios sem duplicidade. */
 export const ensureRecoveryExam = async (aula: any, nota: number, minGrade: number) => {
   const versaoAtual = aula?.versao || 1;
   const livroId = aula?.livro_id;
@@ -223,6 +244,28 @@ export const ensureRecoveryExam = async (aula: any, nota: number, minGrade: numb
     .limit(1);
 
   if (!existing || existing.length === 0) {
+    // Gera novas questões a partir dos exercícios pedagógicos do módulo, evitando duplicidade com a V1/V2
+    let recoveryQuestions = aula.questionario || [];
+    try {
+      const generated = await generateQuestionsFromExercises({
+        livroId,
+        excludeQuestions: aula.questionario || [],
+        targetTF: 10,
+        targetMC: 4,
+        targetMatching: 1
+      });
+      if (generated && generated.length > 0) {
+        recoveryQuestions = generated;
+      } else {
+        const { deduplicated } = deduplicateQuestions(aula.questionario || []);
+        recoveryQuestions = deduplicated;
+      }
+    } catch (err) {
+      console.warn('Fallback ao gerar questões de recuperação com exercícios:', err);
+      const { deduplicated } = deduplicateQuestions(aula.questionario || []);
+      recoveryQuestions = deduplicated;
+    }
+
     await supabase.from('aulas').insert({
       livro_id: livroId,
       parent_aula_id: aula.parent_aula_id,
@@ -232,7 +275,7 @@ export const ensureRecoveryExam = async (aula: any, nota: number, minGrade: numb
       ordem: (aula.ordem || 0) + versaoAtual,
       versao: nextVersion,
       is_bloco_final: false,
-      questionario: aula.questionario || []
+      questionario: recoveryQuestions
     });
   }
 };

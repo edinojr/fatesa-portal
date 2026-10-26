@@ -1,7 +1,8 @@
 import React from 'react'
-import { Award, Trash2, X, Plus, CheckCircle2, XCircle, ChevronRight, Loader2, ClipboardList } from 'lucide-react'
+import { Award, Trash2, X, Plus, CheckCircle2, XCircle, ChevronRight, Loader2, ClipboardList, BookOpen, Sparkles } from 'lucide-react'
 import { QuizQuestion, QuestionType } from '../../../../types/admin'
 import { findDuplicateQuestions, regradeSubmissionsForAula } from '../../../../services/examCorrection'
+import { deduplicateQuestions, generateQuestionsFromExercises } from '../../../../services/examQuestionsService'
 
 interface QuizEditorModalProps {
   editingQuiz: any
@@ -38,6 +39,59 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
 }) => {
   const [showImporter, setShowImporter] = React.useState(false);
   const [importRawText, setImportRawText] = React.useState('');
+  const [loadingExercises, setLoadingExercises] = React.useState(false);
+
+  const handleDeduplicateInEditor = () => {
+    const { deduplicated, removedCount } = deduplicateQuestions(quizQuestions);
+    if (removedCount === 0) {
+      showToast('Nenhuma questão duplicada encontrada.', 'success');
+    } else {
+      setQuizQuestions(deduplicated);
+      showToast(`${removedCount} questão(ões) duplicada(s) removida(s) com sucesso!`, 'success');
+    }
+  };
+
+  const handleFillFromExercises = async () => {
+    const livroId = editingQuiz?.livro_id || pendingExamMeta?.livroId || selectedBook?.id;
+    if (!livroId) {
+      showToast('Módulo não identificado.', 'error');
+      return;
+    }
+    setLoadingExercises(true);
+    try {
+      const newQuestions = await generateQuestionsFromExercises({
+        livroId,
+        excludeQuestions: quizQuestions,
+        targetTF: 10,
+        targetMC: 4,
+        targetMatching: 1
+      });
+
+      if (newQuestions.length === 0) {
+        showToast('Não foram encontradas questões novas nos exercícios deste módulo.', 'error');
+        return;
+      }
+
+      const shouldReplace = quizQuestions.length > 0
+        ? window.confirm(`Foram encontradas ${newQuestions.length} questões nos exercícios do módulo sem duplicidade.\n\nOK = Substituir todas as questões atuais\nCancelar = Adicionar apenas as que não são repetidas`)
+        : true;
+
+      if (shouldReplace) {
+        setQuizQuestions(newQuestions);
+        showToast(`Avaliação preenchida com ${newQuestions.length} questões dos exercícios!`, 'success');
+      } else {
+        const combined = [...quizQuestions, ...newQuestions];
+        const { deduplicated, removedCount } = deduplicateQuestions(combined);
+        setQuizQuestions(deduplicated);
+        const added = combined.length - quizQuestions.length - removedCount;
+        showToast(`${Math.max(0, added)} nova(s) questão(ões) adicionada(s) dos exercícios sem duplicidade!`, 'success');
+      }
+    } catch (err: any) {
+      showToast('Erro ao carregar exercícios: ' + (err.message || err), 'error');
+    } finally {
+      setLoadingExercises(false);
+    }
+  };
 
   const handleSmartImport = () => {
     if (!importRawText.trim()) return;
@@ -173,13 +227,33 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
         </h2>
         
         {true && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', background: 'rgba(var(--primary-rgb), 0.05)', padding: '1rem', borderRadius: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '0.75rem', background: 'rgba(var(--primary-rgb), 0.05)', padding: '1rem', borderRadius: '12px', flexWrap: 'wrap' }}>
             <button 
               className="btn btn-primary" 
-              style={{ width: 'auto', background: '#38bdf8', borderColor: '#38bdf8', color: '#000', fontWeight: 700, paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
+              style={{ width: 'auto', background: '#38bdf8', borderColor: '#38bdf8', color: '#000', fontWeight: 700, paddingLeft: '1.2rem', paddingRight: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
               onClick={() => setShowImporter(true)}
             >
-              <ClipboardList size={18} /> IMPORTAR DO PUBLISHER (TEXTO)
+              <ClipboardList size={18} /> IMPORTAR DO PUBLISHER
+            </button>
+
+            <button 
+              className="btn btn-primary" 
+              style={{ width: 'auto', background: 'var(--primary)', borderColor: 'var(--primary)', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              onClick={handleFillFromExercises}
+              disabled={loadingExercises}
+              title="Preenche ou complementa esta avaliação com questões dos exercícios do módulo, sem duplicidades"
+            >
+              {loadingExercises ? <Loader2 className="spinner" size={18} /> : <BookOpen size={18} />}
+              USAR EXERCÍCIOS DO MÓDULO
+            </button>
+
+            <button 
+              className="btn btn-outline" 
+              style={{ width: 'auto', border: '1px solid #10b981', color: '#10b981', background: 'rgba(16, 185, 129, 0.08)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              onClick={handleDeduplicateInEditor}
+              title="Analisa e elimina questões com enunciados duplicados"
+            >
+              <Sparkles size={16} /> DEDUPLICAR QUESTÕES
             </button>
 
             <button 
@@ -207,7 +281,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 }
               }}
             >
-              Carregar Padrão Fatesa (15 Itens)
+              Padrão Fatesa (15 Itens)
             </button>
           </div>
         )}
@@ -460,19 +534,11 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                 }
               }
 
-              // Detecção de questões repetidas (mesmo enunciado)
-              const dupIdxs = findDuplicateQuestions(quizQuestions);
-              let questionsToSave = quizQuestions;
-              if (dupIdxs.length > 0) {
-                const remover = window.confirm(
-                  `⚠ QUESTÕES REPETIDAS DETECTADAS: ${dupIdxs.length} questão(ões) com enunciado duplicado ` +
-                  `(posições ${dupIdxs.map(i => i + 1).join(', ')}).\n\nOK = remover as duplicadas automaticamente (mantém a primeira de cada) ` +
-                  'e salvar | Cancelar = salvar assim mesmo'
-                );
-                if (remover) {
-                  questionsToSave = quizQuestions.filter((_, i) => !dupIdxs.includes(i));
-                  showToast(`${dupIdxs.length} questão(ões) duplicada(s) removida(s).`, 'success');
-                }
+              // Deduplicação automática obrigatória (evita questões duplicadas)
+              const { deduplicated, removedCount } = deduplicateQuestions(quizQuestions);
+              const questionsToSave = deduplicated;
+              if (removedCount > 0) {
+                showToast(`${removedCount} questão(ões) com enunciado repetido foram eliminadas automaticamente.`, 'success');
               }
 
               setActionLoading('save-quiz');

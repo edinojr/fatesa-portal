@@ -5,6 +5,7 @@ import {
   Users, GraduationCap, AlertCircle, Search, Award, TrendingUp, CheckCircle2, XCircle
 } from 'lucide-react'
 import { areModuleTitlesEqual, cleanModuleTitle, LEGACY_AULA_TO_BOOK_TITLE } from '../../../lib/courseTitles'
+import { autoGradePendingSubmissions } from '../../../services/examCorrection'
 
 interface BoletimPanelProps {
   courses: any[]
@@ -31,6 +32,25 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
   const [expandedModulos, setExpandedModulos] = useState<Set<string>>(new Set())
   const [directHistoryGrades, setDirectHistoryGrades] = useState<any[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
+  const [autoCorrecting, setAutoCorrecting] = useState(false)
+
+  const handleAutoCorrect = async () => {
+    setAutoCorrecting(true)
+    try {
+      const result = await autoGradePendingSubmissions(submissions)
+      if (result.corrected > 0) {
+        alert(`Sucesso: ${result.corrected} avaliação(ões) pendente(s) foram corrigidas automaticamente pelo sistema!`)
+        await fetchComplementaryHistory()
+        if (onRefresh) onRefresh()
+      } else {
+        alert('Nenhuma avaliação pendente precisava de correção no momento.')
+      }
+    } catch (err: any) {
+      alert('Erro na auto-correção: ' + (err.message || err))
+    } finally {
+      setAutoCorrecting(false)
+    }
+  }
 
   // Busca histórico de notas complementar para garantir 100% dos dados dos alunos
   const fetchComplementaryHistory = useCallback(async () => {
@@ -400,11 +420,23 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
             Consulte notas oficiais, edite pontuações e acompanhe as taxas de aprovação e reprovação por módulo.
           </p>
         </div>
-        {loadingHistory && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--primary)' }}>
-            <Loader2 size={16} className="spinner" /> Sincronizando notas...
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          {loadingHistory && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--primary)' }}>
+              <Loader2 size={16} className="spinner" /> Sincronizando notas...
+            </div>
+          )}
+          <button
+            className="btn btn-primary"
+            style={{ width: 'auto', padding: '0.45rem 1rem', fontSize: '0.82rem', background: '#2563eb', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '8px', fontWeight: 700 }}
+            onClick={handleAutoCorrect}
+            disabled={autoCorrecting}
+            title="Corrige automaticamente pelo sistema todas as avaliações pendentes dos alunos"
+          >
+            {autoCorrecting ? <Loader2 size={16} className="spinner" /> : <Award size={16} />}
+            Auto-Corrigir Avaliações Pendentes
+          </button>
+        </div>
       </div>
 
       {/* Barra de Filtros */}

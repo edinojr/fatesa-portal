@@ -5,6 +5,7 @@ import { financeService } from '../services/financeService'
 import { CreditCard } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { handleSupabaseError } from '../lib/authUtils'
+import { unfinalizeModule } from '../services/examCorrection'
 import StudentRow from '../features/nucleos/components/StudentRow'
 import NucleoSolicitacoes from '../features/nucleos/components/NucleoSolicitacoes'
 import NucleoReleaseManager from '../features/nucleos/components/NucleoReleaseManager'
@@ -567,34 +568,42 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   }
 
   const handleDeleteSubmission = async (subId: string) => {
-    if (!confirm('Deseja realmente excluir esta atividade do fichário do aluno? Esta ação removerá a resposta e a nota associada.')) return
+    if (!confirm('Deseja realmente excluir esta atividade do fichário do aluno? Esta ação removerá a resposta e retornará a prova para a base para o aluno refazer.')) return
+    if (!subId) return;
     
     setActionLoading(`delete_sub_${subId}`)
     try {
+      const cleanId = String(subId).replace('hist-', '').trim();
+
       // Buscar informações da submissão antes de deletar
       const { data: subData } = await supabase
         .from('respostas_aulas')
-        .select('aula_id, aluno_id')
-        .eq('id', subId)
-        .single()
+        .select('aula_id, aluno_id, aulas:aula_id(id, livro_id)')
+        .eq('id', cleanId)
+        .maybeSingle()
 
       // Deletar a submissão
-      const { error } = await supabase.from('respostas_aulas').delete().eq('id', subId)
+      const { error } = await supabase.from('respostas_aulas').delete().eq('id', cleanId)
       if (error) throw error
 
-      // Se era uma prova, também resetar o progresso associado
+      // Resetar o progresso associado (retornar para a base)
       if (subData?.aula_id && subData?.aluno_id) {
         await supabase
           .from('progresso')
-          .update({ concluida: false, updated_at: new Date().toISOString() })
+          .delete()
           .match({ aluno_id: subData.aluno_id, aula_id: subData.aula_id })
+
+        const livroId = (subData.aulas as any)?.livro_id;
+        if (livroId) {
+          await unfinalizeModule(subData.aluno_id, livroId);
+        }
       }
 
-      toast.success('Atividade removida com sucesso. Progresso associado foi resetado.')
+      toast.success('Atividade removida com sucesso. A prova retornou à base para o aluno.')
       // Refresh current student modal data
       openStudent(showStudentModal)
     } catch (err: any) {
-      toast.error('Erro ao excluir: ' + err.message)
+      toast.error('Erro ao excluir: ' + (err.message || err))
     } finally {
       setActionLoading(null)
     }

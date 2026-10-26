@@ -144,20 +144,90 @@ export const useProfessorGrading = () => {
     });
   }, [selectedSubmission]);
 
-  const handleDeleteSubmission = useCallback(async (subId: string, onSuccess?: () => void) => {
-    if (!confirm('Deseja realmente excluir esta atividade do aluno? Isso permitirá que ele refaça a atividade novamente do zero.')) return
+  const handleDeleteSubmission = useCallback(async (subId: string, onSuccess?: () => void, isManual?: boolean) => {
+    if (!confirm('Deseja realmente excluir esta atividade do aluno? Isso permitirá que ele refaça a atividade novamente do zero.')) return;
     
-    setDeleting(subId)
-    const subIdToDelete = subId || (submissions.find(s => (s as any).submission_id === subId) as any)?.submission_id;
+    if (!subId) {
+      alert('ID da submissão não fornecido.');
+      return;
+    }
+    
+    setDeleting(subId);
     try {
-      const { error } = await supabase.from('respostas_aulas').delete().eq('id', subIdToDelete)
-      if (error) throw error
-      alert('Atividade excluída com sucesso. O aluno já pode refazer.')
-      if (onSuccess) onSuccess()
+      const subStr = String(subId).trim();
+
+      // 1. Registro sintético de ex-aluno (alumni-UUID-idx)
+      if (subStr.startsWith('alumni-')) {
+        const parts = subStr.split('-');
+        const alumniId = parts[1];
+        const itemIdx = parseInt(parts[2], 10);
+        if (alumniId) {
+          const { data: alumniRow } = await supabase.from('registros_alumni').select('id, historico').eq('id', alumniId).maybeSingle();
+          if (alumniRow && Array.isArray(alumniRow.historico)) {
+            const updatedHist = alumniRow.historico.filter((_: any, idx: number) => idx !== itemIdx);
+            await supabase.from('registros_alumni').update({ historico: updatedHist }).eq('id', alumniId);
+          }
+        }
+        alert('Registro excluído com sucesso.');
+        if (onSuccess) onSuccess();
+        return;
+      }
+
+      // 2. Registro manual de historico_notas (prefixado por hist- ou com flag isManual)
+      const isHist = isManual || subStr.startsWith('hist-');
+      const cleanId = subStr.replace('hist-', '');
+
+      if (isHist) {
+        const { error } = await supabase.from('historico_notas').delete().eq('id', cleanId);
+        if (error) throw error;
+        alert('Histórico de nota excluído com sucesso.');
+        if (onSuccess) onSuccess();
+        return;
+      }
+
+      // 3. Submissão de respostas_aulas: obter aluno_id e aula_id para resetar base
+      const targetSub = submissions.find(s => (s as any).submission_id === cleanId || s.id === cleanId);
+      let alunoId = targetSub?.aluno_id || (targetSub as any)?.student_id;
+      let aulaId = targetSub?.aula_id || (targetSub as any)?.lesson_id;
+      let livroId = (targetSub as any)?.aulas?.livro_id?.id || (targetSub as any)?.aulas?.livro_id || (targetSub as any)?.livro_id;
+
+      if (!alunoId || !aulaId) {
+        const { data: subData } = await supabase
+          .from('respostas_aulas')
+          .select('id, aula_id, aluno_id, aulas:aula_id(id, livro_id)')
+          .eq('id', cleanId)
+          .maybeSingle();
+
+        if (subData) {
+          alunoId = subData.aluno_id;
+          aulaId = subData.aula_id;
+          livroId = (subData.aulas as any)?.livro_id;
+        }
+      }
+
+      const { error: delError } = await supabase.from('respostas_aulas').delete().eq('id', cleanId);
+      if (delError) throw delError;
+
+      // 4. Retornar a prova para base: remover progresso da aula
+      if (alunoId && aulaId) {
+        await supabase
+          .from('progresso')
+          .delete()
+          .match({ aluno_id: alunoId, aula_id: aulaId });
+
+        // Se o módulo havia sido finalizado, desmarcar para o aluno poder refazer
+        if (livroId) {
+          await unfinalizeModule(alunoId, livroId);
+        }
+      }
+
+      alert('Atividade excluída com sucesso. A prova retornou para a base e o aluno já pode refazer.');
+      if (onSuccess) onSuccess();
     } catch(err: any) {
-      alert('Erro ao excluir: ' + err.message)
+      console.error('Erro ao excluir submissão:', err);
+      alert('Erro ao excluir: ' + (err.message || err));
     } finally {
-      setDeleting(null)
+      setDeleting(null);
     }
   }, [submissions]);
 

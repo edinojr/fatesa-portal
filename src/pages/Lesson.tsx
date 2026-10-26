@@ -8,7 +8,7 @@ import AudioReader from '../components/AudioReader'
 import PdfAudioReader from '../components/PdfAudioReader'
 import PdfViewer, { PdfViewerHandle } from '../components/PdfViewer'
 import QuizEditorModal from '../features/courses/components/modals/QuizEditorModal'
-import { finalizeModuleOnApproval, ensureRecoveryExam, regradeSubmissionsForAula, computeScore, matchingPairCorrect } from '../services/examCorrection'
+import { finalizeModuleOnApproval, unfinalizeModule, ensureRecoveryExam, regradeSubmissionsForAula, computeScore, matchingPairCorrect } from '../services/examCorrection'
 import ExercicioFixacao from '../features/courses/components/ExercicioFixacao'
 import AvaliacaoFixacao from '../features/courses/components/AvaliacaoFixacao'
 import { QuizQuestion } from '../types/admin'
@@ -910,24 +910,10 @@ const Lesson = () => {
 
        const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
       
-       // Nota normalizada — fonte única em examCorrection.computeScore
+       // Auto-correção oficial pelo sistema — nota calculada via computeScore
        const score = computeScore(questions, answers);
-
-       // Verificar se o gabarito está completo para auto-correção
-       const temQuestaoObjetiva = questions.some((q: any) =>
-         q.type === 'multiple_choice' || q.type === 'true_false' || q.type === 'matching'
-       );
-       const temGabarito = questions.every((q: any) => {
-         if (q.type === 'multiple_choice' || !q.type) return typeof q.correct === 'number';
-         if (q.type === 'true_false') return typeof q.isTrue === 'boolean';
-         if (q.type === 'matching') return q.matchingPairs?.length > 0;
-         return true;
-       });
-
-       // Sem questões objetivas ou sem gabarito → correção manual do professor
-       const precisaRevisao = isFinal && (!temQuestaoObjetiva || !temGabarito);
        const finalScore = isFinal ? score : null; 
-       const status = precisaRevisao ? 'pendente' : 'corrigida';
+       const status = isFinal ? 'corrigida' : 'concluido';
 
        console.log('[Lesson.handleSubmit] isFinal:', isFinal);
        console.log('[Lesson.handleSubmit] score:', score);
@@ -942,6 +928,9 @@ const Lesson = () => {
         tentativas: (currentSub?.tentativas || 0) + 1, 
         updated_at: new Date().toISOString()
       };
+      if (isFinal) {
+        payload.primeira_correcao_at = currentSub?.primeira_correcao_at || new Date().toISOString();
+      }
       if (currentSub?.id) payload.id = currentSub.id;
 
       console.log('[Lesson.handleSubmit] Payload:', payload);
@@ -958,18 +947,19 @@ const Lesson = () => {
 
         if (isFinal) {
           // Efeitos pedagógicos apenas para alunos reais (modo teste do staff não altera módulos)
-          if (!userProfile?.isStaff && !precisaRevisao && finalScore !== null && targetLesson) {
+          if (!userProfile?.isStaff && finalScore !== null && targetLesson) {
             const minGrade = targetLesson.min_grade || 7;
             if (finalScore >= minGrade && targetLesson.livro_id) {
               await finalizeModuleOnApproval(userProfile.id, targetLesson.livro_id);
             } else if (finalScore < minGrade) {
+              await unfinalizeModule(userProfile.id, targetLesson.livro_id);
               await ensureRecoveryExam(targetLesson, finalScore, minGrade);
             }
           }
 
           // Modo teste do staff: permanece na página e libera o gabarito + nota imediatamente
           if (userProfile?.isStaff) {
-            setResult({ score: finalScore, passed: finalScore !== null && finalScore >= ((targetLesson?.min_grade as any) || 7), pendingReview: precisaRevisao });
+            setResult({ score: finalScore, passed: finalScore !== null && finalScore >= ((targetLesson?.min_grade as any) || 7), pendingReview: false });
             setSubmitted(true);
             setIsExamStarted(false);
             setStaffExamMode(true);
@@ -979,7 +969,7 @@ const Lesson = () => {
 
           // Aluno real: permanece na página — painel de resultado (nota,
           // acertos/erros, comparação com gabarito) renderiza imediatamente
-          setResult({ score: finalScore, passed: finalScore !== null && finalScore >= ((targetLesson?.min_grade as any) || 7), pendingReview: precisaRevisao });
+          setResult({ score: finalScore, passed: finalScore !== null && finalScore >= ((targetLesson?.min_grade as any) || 7), pendingReview: false });
           setSubmitted(true);
           setIsExamStarted(false);
           setTimeLeft(null);
