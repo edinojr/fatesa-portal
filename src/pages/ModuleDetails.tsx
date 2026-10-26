@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { handleSupabaseError } from '../lib/authUtils'
-import { collectExamAttempts, isRecoveryUnlocked } from '../lib/examRules'
+import { collectExamAttempts, isRecoveryUnlocked, getExamVersion, getExamLabel, isModuleApproved } from '../lib/examRules'
 import { useProfile } from '../hooks/useProfile'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 
@@ -147,9 +147,16 @@ const ModuleDetails = () => {
       .filter((a: any) => (a.tipo === 'atividade' || a.tipo === 'exercicio') && a.tipo !== 'prova' && !a.is_bloco_final)
       .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
 
-    const avaliacoes = sortedAulas
-      .filter((a: any) => a.tipo === 'avaliacao' || a.tipo === 'prova' || !!a.is_bloco_final)
-      .sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0));
+    const rawAvaliacoes = sortedAulas
+      .filter((a: any) => a.tipo === 'avaliacao' || a.tipo === 'prova' || !!a.is_bloco_final);
+
+    const avaliacoes = rawAvaliacoes
+      .map((a: any, idx: number) => {
+        const v = getExamVersion(a);
+        const resolvedVersao = v > 1 ? v : (rawAvaliacoes.length > 1 && idx < 3 ? idx + 1 : 1);
+        return { ...a, versao: resolvedVersao };
+      })
+      .sort((a: any, b: any) => (a.versao || 1) - (b.versao || 1));
 
     const videos = sortedAulas
       .filter((a: any) => isVideoType(a.tipo) || !!a.video_url || !!a.url_video)
@@ -175,7 +182,7 @@ const ModuleDetails = () => {
       // (conteúdo, provas e exercícios com seus respectivos gabaritos)
       if (currentBook?.book?.isFinished) return false;
 
-      const versao = item.versao || 1;
+      const versao = getExamVersion(item);
       const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;
 
       // Exceção individual de módulo desbloqueia conteúdo e V1, mas NÃO V2/V3
@@ -191,9 +198,16 @@ const ModuleDetails = () => {
 
       // Regra de Provas e Avaliações Finais
       if (isExam) {
+        const moduleAttempts = collectExamAttempts(allAulas, moduleSubs);
+        const approved = isModuleApproved(moduleAttempts) || !!currentBook?.book?.isApproved;
+
+        // Se o aluno já foi aprovado na 1ª tentativa (V1) ou versão anterior, não precisa de recuperação
+        if (approved && versao > 1) {
+          return true; // Bloqueia V2/V3 pois já está aprovado
+        }
+
         // V2/V3 (Recuperação): liberado apenas se a versão anterior foi reprovada
         if (versao > 1) {
-          const moduleAttempts = collectExamAttempts(allAulas, moduleSubs);
           return !isRecoveryUnlocked(versao, moduleAttempts);
         }
 
@@ -407,8 +421,7 @@ const ModuleDetails = () => {
                               {(() => {
                                 const av = gridData.avaliacoes[idx];
                                 if (!av) return <div style={{ height: '80px' }} />;
-                                const versao = av.versao || 1;
-                                const label = versao === 1 ? 'Avaliação 01' : versao === 2 ? 'Avaliação 02 (Recuperação)' : 'Avaliação 03 (2ª Recuperação)';
+                                const label = getExamLabel(av);
                                 return renderGridItem(av, label);
                               })()}
                           </React.Fragment>

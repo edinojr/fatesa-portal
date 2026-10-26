@@ -232,8 +232,11 @@ export const ensureRecoveryExam = async (aula: any, nota: number, minGrade: numb
   if (nota >= minGrade || versaoAtual >= 3 || !livroId || !aula?.id) return;
 
   const nextVersion = versaoAtual + 1;
-  const baseTitle = (aula.titulo || '').replace(/ - Recuperação.*$/, '');
-  const nextTitle = nextVersion === 2 ? `${baseTitle} - Recuperação` : `${baseTitle} - Recuperação 2`;
+  const baseTitle = (aula.titulo || '')
+    .replace(/\s*-\s*V[1-3]:?\s*Avaliação(?:\s*Recuperação(?:\s*2)?)?/gi, '')
+    .replace(/\s*-\s*Recuperação(?:\s*2)?/gi, '')
+    .trim();
+  const nextTitle = nextVersion === 2 ? `${baseTitle} - V2: Avaliação Recuperação` : `${baseTitle} - V3: Avaliação Recuperação 2`;
 
   const { data: existing } = await supabase
     .from('aulas')

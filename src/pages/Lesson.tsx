@@ -15,7 +15,7 @@ import { QuizQuestion } from '../types/admin'
 import { processHtmlForNav, NavItem } from '../features/courses/utils/htmlNav'
 import { BibleReaderPopup } from '../components/BibleReaderPopup'
 import { processHtmlWithReferences } from '../lib/bibleParser'
-import { getExamVersion } from '../lib/examRules'
+import { getExamVersion, getExamLabel } from '../lib/examRules'
 import { areModuleTitlesEqual } from '../lib/courseTitles'
 
 function parseBibliaLocal(text: string): Record<string, string> {
@@ -264,7 +264,7 @@ const Lesson = () => {
             
         if (lessonError) throw lessonError;
         if (!lessonData) return;
-        const versao = lessonData.versao || 1;
+        const versao = getExamVersion(lessonData);
         
         // Fetch book separately to avoid join issues with RLS
         const { data: bookData } = await supabase
@@ -501,15 +501,9 @@ const Lesson = () => {
 
           if (subData.status !== 'liberado') {
             const isExam = lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' || lessonData.is_bloco_final;
-            const canRetake = isExam && subData.status === 'corrigida' && subData.nota !== null && subData.nota < (lessonData.min_grade || (lessonData.tipo === 'prova' || lessonData.tipo === 'avaliacao' ? 7 : 0)) && (subData.tentativas || 0) < 3;
-            
-            if (!canRetake) {
+            if (isExam) {
+              // REGRA FATESA: Somente 1 tentativa por avaliação/versão! Não há repetição da mesma versão.
               setSubmitted(true);
-            }
-            if (isExam && subData.status !== 'corrigida' && !isStaff && !isModuleFinishedManually) {
-              toast('Você já enviou esta avaliação. Por favor, aguarde o feedback do professor.', { icon: '⏳' });
-              navigate('/dashboard');
-              return;
             }
           }
         }
@@ -909,6 +903,12 @@ const Lesson = () => {
       
 
        const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
+
+       // REGRA FATESA: Somente 1 tentativa por versão de avaliação
+       if (isFinal && currentSub && (currentSub.status === 'corrigida' || (currentSub.tentativas || 0) >= 1) && !userProfile?.isStaff) {
+         toast('Você já realizou esta tentativa de avaliação. Cada versão permite apenas 1 tentativa.', { icon: '🔒' });
+         return;
+       }
       
        // Auto-correção oficial pelo sistema — nota calculada via computeScore
        const score = computeScore(questions, answers);
@@ -1905,7 +1905,7 @@ const Lesson = () => {
 
          <div className="quiz-section quiz-section-modern" style={{ background: 'var(--glass)', borderRadius: '24px', border: '1px solid var(--glass-border)' }}>
           <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'2rem'}}>
-            <h2>{lesson.is_bloco_final ? 'Avaliação Final' : lesson.tipo === 'prova' ? 'Avaliação' : 'Questionário'}</h2>
+            <h2>{lesson.is_bloco_final || lesson.tipo === 'prova' || lesson.tipo === 'avaliacao' ? getExamLabel(lesson) : 'Questionário'}</h2>
             {isExamStarted && timeLeft ? (
               <>
                 <style>{`@keyframes examTimerPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.65; transform: scale(1.05); } }`}</style>
@@ -2353,10 +2353,10 @@ const Lesson = () => {
                                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
                                  {result.passed ? 'Parabéns! Você foi aprovado.' : 'Nota Insuficiente'}
                                </h3>
-                               <p>{result.passed ? 'Você atingiu a nota mínima e o gabarito oficial foi liberado.' : 
-                                 (lesson.versao === 1 ? 'Você não atingiu a nota mínima. Por favor, realize a V2 (Recuperação) para prosseguir.' : 
-                                  lesson.versao === 2 ? 'Você não atingiu a nota mínima. Por favor, realize a V3 (Recuperação 2) para prosseguir.' : 
-                                  'Você não atingiu a nota mínima na V3. De acordo com a regra, você deverá refazer o módulo completo.')}
+                               <p>{result.passed ? 'Parabéns! Você atingiu a nota mínima na avaliação e o módulo foi aprovado com sucesso! Não é necessário refazer a avaliação.' : 
+                                 (getExamVersion(lesson) === 1 ? 'Você não atingiu a nota mínima na V1 (1ª tentativa). Por favor, realize a V2: Avaliação Recuperação para prosseguir.' : 
+                                  getExamVersion(lesson) === 2 ? 'Você não atingiu a nota mínima na V2. Por favor, realize a V3: Avaliação Recuperação 2 para prosseguir.' : 
+                                  'Você não atingiu a nota mínima na V3 (tentativas de recuperação esgotadas). De acordo com a regra acadêmica, entre em contato com seu professor.')}
                                </p>
                             </>
                           ) : (

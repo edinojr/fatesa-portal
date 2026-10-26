@@ -1015,7 +1015,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                     {renderGridItem(gridData.videos[rowIndex], rowIndex === 0 ? '' : `Vídeo ${String(rowIndex).padStart(2, '0')}`)}
                     {(() => {
                       const evalIdx = rowIndex - (maxRows - avaliacoes.length)
-                      const label = evalIdx === 0 ? 'Avaliação' : evalIdx === 1 ? 'Recuperação' : evalIdx === 2 ? '2ª Recuperação' : ''
+                      const label = evalIdx === 0 ? 'V1: Avaliação' : evalIdx === 1 ? 'V2: Avaliação Recuperação' : evalIdx === 2 ? 'V3: Avaliação Recuperação 2' : 'Avaliação'
                       return renderGridItem(gridData.avaliacoes[rowIndex], label)
                     })()}
                   </React.Fragment>

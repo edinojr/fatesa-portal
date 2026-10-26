@@ -23,12 +23,28 @@ export const isExamAula = (aula: any): boolean =>
 
 /** Versão da prova: campo `versao`, com fallback de título para provas legadas. */
 export const getExamVersion = (aula: any): number => {
-  const v = aula?.versao;
-  if (v && v > 1) return v;
+  if (!aula) return 1;
+  const v = Number(aula?.versao);
+  if (!isNaN(v) && v > 1) return v;
   const t = (aula?.titulo || '').toLowerCase();
-  if (t.includes('recuperação 2') || t.includes('recuperacao 2')) return 3;
-  if (t.includes('recuperação') || t.includes('recuperacao')) return 2;
+  if (t.includes('recuperação 2') || t.includes('recuperacao 2') || t.includes('v3') || t.includes('2ª recuperação') || t.includes('2a recuperacao')) return 3;
+  if (t.includes('recuperação') || t.includes('recuperacao') || t.includes('v2')) return 2;
+  if (t.includes('v1')) return 1;
   return 1;
+};
+
+/**
+ * Nomenclatura oficial das avaliações Fatesa:
+ * V1: Avaliação
+ * V2: Avaliação Recuperação
+ * V3: Avaliação Recuperação 2
+ */
+export const getExamLabel = (aula: any): string => {
+  const v = getExamVersion(aula);
+  if (v === 1) return 'V1: Avaliação';
+  if (v === 2) return 'V2: Avaliação Recuperação';
+  if (v === 3) return 'V3: Avaliação Recuperação 2';
+  return `V${v}: Avaliação`;
 };
 
 export const getMinGrade = (aula: any): number => aula?.min_grade || DEFAULT_MIN_GRADE;

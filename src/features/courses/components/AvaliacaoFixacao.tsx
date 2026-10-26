@@ -1136,27 +1136,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                {saving ? <Loader2 size={20} className="animate-spin" /> : <CheckCircle size={20} />}
                {saving ? 'Salvando...' : 'Enviar Avaliação'}
              </button>
-          ) : (
-            <button
-              onClick={handleRefazer}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: '1rem 2rem',
-                borderRadius: '8px',
-                border: 'none',
-                background: 'var(--primary)',
-                color: 'white',
-                fontSize: '1rem',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              <RefreshCw size={20} />
-              Refazer Avaliação
-            </button>
-          )}
+          ) : null}
         </div>
       )}
     </div>

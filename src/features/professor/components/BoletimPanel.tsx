@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { areModuleTitlesEqual, cleanModuleTitle, LEGACY_AULA_TO_BOOK_TITLE } from '../../../lib/courseTitles'
 import { autoGradePendingSubmissions } from '../../../services/examCorrection'
+import { getExamVersion, getExamLabel } from '../../../lib/examRules'
 
 interface BoletimPanelProps {
   courses: any[]
@@ -115,12 +116,18 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
     const map: Record<string, any[]> = {}
     for (const c of courses || []) {
       for (const l of c.livros || []) {
-        const exams = (l.aulas || []).filter((a: any) =>
+        const rawExams = (l.aulas || []).filter((a: any) =>
           a.tipo === 'prova' ||
           a.tipo === 'avaliacao' ||
           !!a.is_bloco_final ||
           (a.titulo && /V[1-3]|RECUPERA|AVALIA|PROVA/i.test(a.titulo))
-        ).sort((a: any, b: any) => (a.versao || a.ordem || 1) - (b.versao || b.ordem || 1))
+        );
+
+        const exams = rawExams.map((a: any, idx: number) => {
+          const v = getExamVersion(a);
+          const resolvedVersao = v > 1 ? v : (rawExams.length > 1 && idx < 3 ? idx + 1 : 1);
+          return { ...a, versao: resolvedVersao };
+        }).sort((a: any, b: any) => (a.versao || 1) - (b.versao || 1));
 
         if (exams.length > 0) {
           map[l.id] = exams
@@ -757,10 +764,10 @@ const ModuloBoletimContainer: React.FC<ModuloBoletimContainerProps> = ({
                 Núcleo / Polo
               </th>
               {aulas.map((aula: any) => (
-                <th key={aula.id} style={{ textAlign: 'center', padding: '0.85rem 0.75rem', fontWeight: 800, color: 'var(--text-main, #fff)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '90px' }}>
-                  {aula.titulo ? (aula.titulo.length > 22 ? `${aula.titulo.substring(0, 20)}...` : aula.titulo) : `V${aula.versao || 1}`}
+                <th key={aula.id} style={{ textAlign: 'center', padding: '0.85rem 0.75rem', fontWeight: 800, color: 'var(--text-main, #fff)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '95px' }}>
+                  <div style={{ color: '#60a5fa', fontWeight: 900 }}>{getExamLabel(aula)}</div>
                   <div style={{ fontSize: '0.62rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', marginTop: '2px' }}>
-                    {aula.versao ? `Versão ${aula.versao}` : 'Avaliação'}
+                    {aula.titulo ? (aula.titulo.length > 20 ? `${aula.titulo.substring(0, 18)}...` : aula.titulo) : 'Oficial'}
                   </div>
                 </th>
               ))}
