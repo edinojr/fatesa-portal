@@ -7,6 +7,7 @@ import {
 import { areModuleTitlesEqual, cleanModuleTitle, LEGACY_AULA_TO_BOOK_TITLE } from '../../../lib/courseTitles'
 import { autoGradePendingSubmissions } from '../../../services/examCorrection'
 import { getExamVersion, getExamLabel } from '../../../lib/examRules'
+import StudentDetailsModal from '../../nucleos/components/StudentDetailsModal'
 
 interface BoletimPanelProps {
   courses: any[]
@@ -34,6 +35,79 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
   const [directHistoryGrades, setDirectHistoryGrades] = useState<any[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
   const [autoCorrecting, setAutoCorrecting] = useState(false)
+  const [selectedStudentForModal, setSelectedStudentForModal] = useState<any | null>(null)
+  const [studentModalLivros, setStudentModalLivros] = useState<any[]>([])
+  const [studentModalAulas, setStudentModalAulas] = useState<any[]>([])
+  const [studentModalProgresso, setStudentModalProgresso] = useState<Set<string>>(new Set())
+  const [studentModalSubmissions, setStudentModalSubmissions] = useState<any[]>([])
+  const [studentModalExceptions, setStudentModalExceptions] = useState<string[]>([])
+  const [modalLoading, setModalLoading] = useState(false)
+
+  const openStudentModal = async (aluno: any) => {
+    setSelectedStudentForModal(aluno)
+    setModalLoading(true)
+    try {
+      // 1. Submissões do aluno com questionario
+      const { data: sData } = await supabase
+        .from('respostas_aulas')
+        .select('*, aulas(id, titulo, questionario, tipo, is_bloco_final, versao, livro_id, min_grade)')
+        .eq('aluno_id', aluno.id)
+        .order('created_at', { ascending: false })
+      if (sData) setStudentModalSubmissions(sData)
+
+      // 2. Livros do curso
+      let bQuery = supabase.from('livros').select('id, titulo, capa_url, ordem, curso_id').order('ordem')
+      if (aluno.curso_id || selectedCourseId) {
+        bQuery = bQuery.eq('curso_id', aluno.curso_id || selectedCourseId)
+      }
+      const { data: bData } = await bQuery
+      if (bData && bData.length > 0) {
+        setStudentModalLivros(bData)
+        // 3. Aulas dos livros
+        const { data: aData } = await supabase
+          .from('aulas')
+          .select('id, titulo, tipo, is_bloco_final, versao, livro_id, min_grade, ordem, questionario, livros(titulo)')
+          .in('livro_id', bData.map((l: any) => l.id))
+          .order('ordem')
+        if (aData) setStudentModalAulas(aData)
+      }
+
+      // 4. Progresso de exercícios
+      const { data: pData } = await supabase
+        .from('progresso')
+        .select('aula_id, concluida')
+        .eq('aluno_id', aluno.id)
+        .eq('concluida', true)
+      if (pData) {
+        setStudentModalProgresso(new Set(pData.map((p: any) => p.aula_id)))
+      } else {
+        setStudentModalProgresso(new Set())
+      }
+
+      // 5. Exceções
+      const { data: exData } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', aluno.id)
+      if (exData) setStudentModalExceptions(exData.map((e: any) => e.livro_id))
+    } catch (err) {
+      console.error('Erro ao carregar dados do aluno:', err)
+    } finally {
+      setModalLoading(false)
+    }
+  }
+
+  const handleDeleteSubmissionModal = async (subId: string) => {
+    if (!subId) return
+    try {
+      const cleanId = String(subId).replace('hist-', '').trim()
+      const { error } = await supabase.from('respostas_aulas').delete().eq('id', cleanId)
+      if (error) throw error
+      if (selectedStudentForModal) {
+        openStudentModal(selectedStudentForModal)
+      }
+      if (onRefresh) onRefresh()
+    } catch (err: any) {
+      alert('Erro ao excluir submissão: ' + (err.message || err))
+    }
+  }
 
   const handleAutoCorrect = async () => {
     setAutoCorrecting(true)
@@ -541,6 +615,7 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
               startEdit={startEdit}
               confirmEdit={confirmEdit}
               saving={saving}
+              onOpenStudentModal={openStudentModal}
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -592,6 +667,7 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
                           startEdit={startEdit}
                           confirmEdit={confirmEdit}
                           saving={saving}
+                          onOpenStudentModal={openStudentModal}
                         />
                       </div>
                     )}
@@ -601,6 +677,31 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
             </div>
           )}
         </>
+      )}
+
+      {selectedStudentForModal && (
+        <StudentDetailsModal
+          student={selectedStudentForModal}
+          onClose={() => setSelectedStudentForModal(null)}
+          courseSubmissions={studentModalSubmissions}
+          studentCourseLivros={studentModalLivros}
+          allAulas={studentModalAulas}
+          progressoIds={studentModalProgresso}
+          studentExceptions={studentModalExceptions}
+          handleToggleException={async (sId, lId, current) => {
+            if (!current) {
+              await supabase.from('liberacoes_excecao').upsert({ user_id: sId, livro_id: lId }, { onConflict: 'user_id,livro_id' })
+              setStudentModalExceptions([...studentModalExceptions, lId])
+            } else {
+              await supabase.from('liberacoes_excecao').delete().match({ user_id: sId, livro_id: lId })
+              setStudentModalExceptions(studentModalExceptions.filter(id => id !== lId))
+            }
+          }}
+          handleDeleteSubmission={handleDeleteSubmissionModal}
+          actionLoading={null}
+          isProfessor={true}
+          historicoNotas={directHistoryGrades.filter(h => h.aluno_id === selectedStudentForModal.id)}
+        />
       )}
     </div>
   )
@@ -619,6 +720,7 @@ interface ModuloBoletimContainerProps {
   startEdit: (alunoId: string, aulaId: string, livroId: string, grade: number | null) => void
   confirmEdit: (alunoId: string, aulaId: string, livroId: string) => void
   saving: string | null
+  onOpenStudentModal?: (aluno: any) => void
 }
 
 const ModuloBoletimContainer: React.FC<ModuloBoletimContainerProps> = ({
@@ -634,6 +736,7 @@ const ModuloBoletimContainer: React.FC<ModuloBoletimContainerProps> = ({
   startEdit,
   confirmEdit,
   saving,
+  onOpenStudentModal,
 }) => {
   // Cálculo de Progresso de Aprovação e Reprovação do Módulo
   const stats = useMemo(() => {
@@ -792,7 +895,18 @@ const ModuloBoletimContainer: React.FC<ModuloBoletimContainerProps> = ({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Users size={14} color="var(--primary)" style={{ flexShrink: 0 }} />
                       <div>
-                        <div style={{ color: 'var(--text-main, #fff)' }}>{aluno.nome || 'Sem Nome'}</div>
+                        <div
+                          onClick={() => onOpenStudentModal && onOpenStudentModal(aluno)}
+                          style={{
+                            color: onOpenStudentModal ? '#60a5fa' : 'var(--text-main, #fff)',
+                            cursor: onOpenStudentModal ? 'pointer' : 'default',
+                            textDecoration: onOpenStudentModal ? 'underline' : 'none',
+                            fontWeight: 700
+                          }}
+                          title="Clique para ver o progresso do aluno por módulo"
+                        >
+                          {aluno.nome || 'Sem Nome'}
+                        </div>
                         {aluno.email && <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 400 }}>{aluno.email}</div>}
                       </div>
                     </div>

@@ -62,6 +62,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const [studentExamExceptions, setStudentExamExceptions] = useState<string[]>([])
   const [studentExams, setStudentExams] = useState<any[]>([])
   const [studentExclusions, setStudentExclusions] = useState<string[]>([])
+  const [studentAllAulas, setStudentAllAulas] = useState<any[]>([])
+  const [studentProgressoIds, setStudentProgressoIds] = useState<Set<string>>(new Set())
+  const [studentHistoricoNotas, setStudentHistoricoNotas] = useState<any[]>([])
 
   const isAdmin = userRole === 'admin'
   const isProfessor = userRole === 'professor'
@@ -636,29 +639,54 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       // Fetch course submissions (Fichário)
       const { data: sData } = await supabase
         .from('respostas_aulas')
-        .select('*, aulas(id, titulo, questionario, tipo, is_bloco_final)')
+        .select('*, aulas(id, titulo, questionario, tipo, is_bloco_final, versao, livro_id, min_grade)')
         .eq('aluno_id', student.id)
         .order('created_at', { ascending: false })
       
       if (sData) setCourseSubmissions(sData)
 
-      // Fetch student's course modules and exceptions
+      // Fetch student's course modules (livros)
+      let bQuery = supabase.from('livros').select('id, titulo, capa_url, ordem, curso_id').order('ordem')
       if (student.curso_id) {
-        const { data: bData } = await supabase.from('livros').select('*').eq('curso_id', student.curso_id).order('ordem')
-        if (bData) {
-          setStudentCourseLivros(bData)
-          
-          // Fetch all exams (provas) from student's modules
-          const { data: aulasData } = await supabase
-            .from('aulas')
-            .select('id, titulo, tipo, is_bloco_final, versao, livro_id, livros(titulo)')
-            .in('livro_id', bData.map((l: any) => l.id))
-            .or('tipo.eq.prova,tipo.eq.avaliacao,is_bloco_final.eq.true')
-            .order('livro_id')
-          
-          if (aulasData) setStudentExams(aulasData)
+        bQuery = bQuery.eq('curso_id', student.curso_id)
+      }
+      const { data: bData } = await bQuery
+      if (bData && bData.length > 0) {
+        setStudentCourseLivros(bData)
+        
+        // Fetch all lessons (exercises + exams) for student's modules
+        const { data: aulasData } = await supabase
+          .from('aulas')
+          .select('id, titulo, tipo, is_bloco_final, versao, livro_id, min_grade, ordem, questionario, livros(titulo)')
+          .in('livro_id', bData.map((l: any) => l.id))
+          .order('ordem')
+        
+        if (aulasData) {
+          setStudentAllAulas(aulasData)
+          setStudentExams(aulasData.filter((a: any) => a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final))
         }
       }
+
+      // Fetch student's exercise completions (progresso)
+      const { data: progData } = await supabase
+        .from('progresso')
+        .select('aula_id, concluida')
+        .eq('aluno_id', student.id)
+        .eq('concluida', true)
+
+      if (progData) {
+        setStudentProgressoIds(new Set(progData.map((p: any) => p.aula_id)))
+      } else {
+        setStudentProgressoIds(new Set())
+      }
+
+      // Fetch historical grades
+      const { data: histData } = await supabase
+        .from('historico_notas')
+        .select('id, aluno_id, modulo_nome, curso_nome, nota, data_conclusao')
+        .eq('aluno_id', student.id)
+
+      if (histData) setStudentHistoricoNotas(histData)
       
       const { data: exData } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', student.id)
       if (exData) setStudentExceptions(exData.map(e => e.livro_id))
@@ -1244,6 +1272,9 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           handleToggleExamException={handleToggleExamException}
           studentExclusions={studentExclusions}
           handleToggleExclusion={handleToggleExclusion}
+          allAulas={studentAllAulas}
+          progressoIds={studentProgressoIds}
+          historicoNotas={studentHistoricoNotas}
         />
       )}
 

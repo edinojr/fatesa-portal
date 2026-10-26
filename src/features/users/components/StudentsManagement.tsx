@@ -3,6 +3,7 @@ import { Users, Trash2, Loader2, CheckCircle, XCircle, RotateCcw, Unlock, Lock, 
 import { supabase } from '../../../lib/supabase'
 import { Student } from '../../../types/professor'
 import { hasStudentScope } from '../../../lib/authUtils'
+import StudentDetailsModal from '../../nucleos/components/StudentDetailsModal'
 
 interface StudentsManagementProps {
   allStudents: Student[]
@@ -37,6 +38,74 @@ export default function StudentsManagement({
   const [expandedBlock, setExpandedBlock] = React.useState<string | null>(null);
   const [releasesData, setReleasesData] = React.useState<Record<string, any[]>>({});
   const [loadingReleases, setLoadingReleases] = React.useState<string | null>(null);
+  const [selectedStudentForModal, setSelectedStudentForModal] = React.useState<any | null>(null);
+  const [studentModalLivros, setStudentModalLivros] = React.useState<any[]>([]);
+  const [studentModalAulas, setStudentModalAulas] = React.useState<any[]>([]);
+  const [studentModalProgresso, setStudentModalProgresso] = React.useState<Set<string>>(new Set());
+  const [studentModalSubmissions, setStudentModalSubmissions] = React.useState<any[]>([]);
+  const [studentModalExceptions, setStudentModalExceptions] = React.useState<string[]>([]);
+
+  const openStudentModal = async (student: any) => {
+    setSelectedStudentForModal(student);
+    try {
+      // 1. Submissões do aluno
+      const { data: sData } = await supabase
+        .from('respostas_aulas')
+        .select('*, aulas(id, titulo, questionario, tipo, is_bloco_final, versao, livro_id, min_grade)')
+        .eq('aluno_id', student.id)
+        .order('created_at', { ascending: false });
+      if (sData) setStudentModalSubmissions(sData);
+
+      // 2. Livros
+      let bQuery = supabase.from('livros').select('id, titulo, capa_url, ordem, curso_id').order('ordem');
+      if (student.curso_id) {
+        bQuery = bQuery.eq('curso_id', student.curso_id);
+      }
+      const { data: bData } = await bQuery;
+      if (bData && bData.length > 0) {
+        setStudentModalLivros(bData);
+        // 3. Aulas
+        const { data: aData } = await supabase
+          .from('aulas')
+          .select('id, titulo, tipo, is_bloco_final, versao, livro_id, min_grade, ordem, questionario, livros(titulo)')
+          .in('livro_id', bData.map((l: any) => l.id))
+          .order('ordem');
+        if (aData) setStudentModalAulas(aData);
+      }
+
+      // 4. Progresso
+      const { data: pData } = await supabase
+        .from('progresso')
+        .select('aula_id, concluida')
+        .eq('aluno_id', student.id)
+        .eq('concluida', true);
+      if (pData) {
+        setStudentModalProgresso(new Set(pData.map((p: any) => p.aula_id)));
+      } else {
+        setStudentModalProgresso(new Set());
+      }
+
+      // 5. Exceções
+      const { data: exData } = await supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', student.id);
+      if (exData) setStudentModalExceptions(exData.map(e => e.livro_id));
+    } catch (err) {
+      console.error('Erro ao abrir ficha do aluno:', err);
+    }
+  };
+
+  const handleDeleteSubmissionModal = async (subId: string) => {
+    if (!subId) return;
+    try {
+      const cleanId = String(subId).replace('hist-', '').trim();
+      const { error } = await supabase.from('respostas_aulas').delete().eq('id', cleanId);
+      if (error) throw error;
+      if (selectedStudentForModal) {
+        openStudentModal(selectedStudentForModal);
+      }
+    } catch (err: any) {
+      alert('Erro ao excluir submissão: ' + (err.message || err));
+    }
+  };
 
   const fetchStudentReleases = async (studentId: string) => {
     if (releasesData[studentId]) {
@@ -195,7 +264,20 @@ export default function StudentsManagement({
                       .sort((a: any, b: any) => a.nome.localeCompare(b.nome))
                       .map((student: any) => (
                         <tr key={student.id}>
-                          <td style={{ fontWeight: 600 }}>{student.nome}</td>
+                          <td style={{ fontWeight: 600 }}>
+                            <div
+                              onClick={() => openStudentModal(student)}
+                              style={{
+                                color: '#60a5fa',
+                                cursor: 'pointer',
+                                textDecoration: 'underline',
+                                display: 'inline-block',
+                              }}
+                              title="Clique para ver o progresso do aluno por módulo"
+                            >
+                              {student.nome}
+                            </div>
+                          </td>
                           <td>{student.email}</td>
                           <td>
                             <span className={`admin-badge status-${student.status_nucleo || 'pendente'}`}>
@@ -508,6 +590,30 @@ export default function StudentsManagement({
           </div>
         )}
       </div>
+
+      {selectedStudentForModal && (
+        <StudentDetailsModal
+          student={selectedStudentForModal}
+          onClose={() => setSelectedStudentForModal(null)}
+          courseSubmissions={studentModalSubmissions}
+          studentCourseLivros={studentModalLivros}
+          allAulas={studentModalAulas}
+          progressoIds={studentModalProgresso}
+          studentExceptions={studentModalExceptions}
+          handleToggleException={async (sId, lId, current) => {
+            if (!current) {
+              await supabase.from('liberacoes_excecao').upsert({ user_id: sId, livro_id: lId }, { onConflict: 'user_id,livro_id' });
+              setStudentModalExceptions([...studentModalExceptions, lId]);
+            } else {
+              await supabase.from('liberacoes_excecao').delete().match({ user_id: sId, livro_id: lId });
+              setStudentModalExceptions(studentModalExceptions.filter(id => id !== lId));
+            }
+          }}
+          handleDeleteSubmission={handleDeleteSubmissionModal}
+          actionLoading={null}
+          isProfessor={true}
+        />
+      )}
     </div>
   )
 }

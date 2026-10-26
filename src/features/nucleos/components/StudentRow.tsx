@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2, Award } from 'lucide-react';
+import { Loader2, BookOpen, Award } from 'lucide-react';
 
 interface StudentRowProps {
   aluno: any;
@@ -19,7 +19,15 @@ const StudentRow: React.FC<StudentRowProps> = ({
   return (
     <tr key={aluno.id}>
       <td>
-        {aluno.nome}
+        <div
+          onClick={() => openStudent(aluno)}
+          style={{ cursor: 'pointer', display: 'inline-block' }}
+          title="Clique para ver o progresso do aluno por módulo"
+        >
+          <span style={{ fontWeight: 700, color: '#60a5fa', textDecoration: 'underline' }}>
+            {aluno.nome}
+          </span>
+        </div>
         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div>
       </td>
       <td>
@@ -59,8 +67,21 @@ const StudentRow: React.FC<StudentRowProps> = ({
               {actionLoading === `pago_${aluno.id}` ? <Loader2 className="spinner" size={14} /> : '✔ Pago'}
             </button>
           )}
-          <button className="btn btn-outline" style={{ padding: '0.4rem 1rem', width: 'auto' }} onClick={() => openStudent(aluno)}>
-            Ver Boletim <Award size={16} style={{ marginLeft: '0.5rem' }} />
+          <button
+            className="btn btn-outline"
+            style={{
+              padding: '0.4rem 1rem',
+              width: 'auto',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontSize: '0.8rem',
+              fontWeight: 700
+            }}
+            onClick={() => openStudent(aluno)}
+            title="Ver progresso por módulo"
+          >
+            <BookOpen size={15} /> Ver Progresso
           </button>
         </div>
       </td>
