@@ -25,15 +25,17 @@ const CourseList: React.FC<CourseListProps> = ({
   const isBookVisible = (currentBook: any) => {
     const stats = getBookStatsWrapper(currentBook);
     const isApprovedManual = (currentBook.notaHistorico != null && Number(currentBook.notaHistorico) >= 7) || (currentBook.nota != null && Number(currentBook.nota) >= 7);
-    const isFinished = currentBook.isFinished || stats.isFinished || isApprovedManual;
+    const isApproved = currentBook.isApproved || stats.isApproved || isApprovedManual;
+    const isDP = currentBook.isDP || (!isApproved && stats.isFinished);
     const isUnlocked = !!currentBook.isUnlocked;
 
     if (showOnlyFinished) {
-      return isFinished;
+      // No Meu Boletim / Histórico: exibe os módulos concluídos/aprovados e também os que estão em dependência (DP)
+      return isApproved || isDP;
     }
 
-    // No painel de estudo: módulos finalizados e módulos fechados NÃO devem aparecer
-    return isUnlocked && !isFinished;
+    // No painel de estudo (Meus Cursos): módulos desbloqueados que ainda não foram aprovados (incluindo módulos em DP para recuperação)
+    return isUnlocked && !isApproved;
   };
 
   const renderBookCard = (currentBook: any) => {
@@ -43,23 +45,27 @@ const CourseList: React.FC<CourseListProps> = ({
     const rawNota = currentBook.notaHistorico ?? currentBook.nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : null);
     const numNota = rawNota != null && !isNaN(Number(rawNota)) ? Number(rawNota) : null;
     const isApprovedManual = (currentBook.notaHistorico != null && Number(currentBook.notaHistorico) >= 7) || (currentBook.nota != null && Number(currentBook.nota) >= 7);
-    const isFinished = currentBook.isFinished || stats.isFinished || isApprovedManual;
+    const isApproved = currentBook.isApproved || stats.isApproved || isApprovedManual;
+    const isDP = currentBook.isDP || (!isApproved && stats.isFinished);
+    const isFinished = isApproved;
 
     // Módulo em manutenção: sem conteúdo ou sem prova final configurada.
-    const isMaintenance = stats.isMaintenance && !isFinished && !isApprovedManual;
+    const isMaintenance = stats.isMaintenance && !isApproved;
 
     let subtitulo = '';
     if (numNota != null) {
-      subtitulo = `Nota ${numNota.toFixed(1)} • ${isApprovedManual ? 'Aprovado por Histórico' : 'Aprovado em Avaliação'}`;
+      subtitulo = `Nota ${numNota.toFixed(1)} • ${isApprovedManual ? 'Aprovado por Histórico' : isDP ? 'Dependência (Recuperação Pendente)' : 'Aprovado em Avaliação'}`;
     } else if (isMaintenance) {
       subtitulo = 'Módulo em manutenção — conteúdo indisponível';
-    } else if (isFinished) {
+    } else if (isDP) {
+      subtitulo = 'Módulo em dependência — realize a prova de recuperação';
+    } else if (isApproved) {
       subtitulo = isHistoricoSintetico ? 'Finalizado por Histórico Manual' : `${stats.total > 0 ? `${stats.total} aulas • ` : ''}100% Concluído`;
     } else {
       subtitulo = `${stats.total} aulas • ${stats.percent}% concluído`;
     }
 
-    const displayPercent = isFinished ? 100 : stats.percent;
+    const displayPercent = isApproved ? 100 : stats.percent;
 
     return (
       <div key={currentBook.id} style={{ marginBottom: '0.75rem' }}>
@@ -72,19 +78,25 @@ const CourseList: React.FC<CourseListProps> = ({
             isMaintenance
               ? {
                   label: 'EM MANUTENÇÃO',
-                  color: '#f59e0b',
-                  bg: 'rgba(245, 158, 11, 0.1)',
+                  color: '#ffffff',
+                  bg: 'var(--primary, #0056b3)',
                 }
-              : isFinished
+              : isDP
                 ? {
-                    label: (stats.isApproved || currentBook.isApproved || isApprovedManual) ? 'FINALIZADO' : 'D.P.',
-                    color: (stats.isApproved || currentBook.isApproved || isApprovedManual) ? 'var(--success)' : '#eab308',
-                    bg: (stats.isApproved || currentBook.isApproved || isApprovedManual) ? 'rgba(16, 185, 129, 0.1)' : 'rgba(234, 179, 8, 0.1)',
+                    label: 'D.P. (RECUPERAÇÃO)',
+                    color: '#ffffff',
+                    bg: 'var(--primary, #0056b3)',
+                  }
+              : isApproved
+                ? {
+                    label: 'FINALIZADO',
+                    color: '#ffffff',
+                    bg: 'var(--success, #10b981)',
                   }
                 : undefined
           }
-          status={!currentBook.isUnlocked ? 'locked' : isMaintenance ? 'locked' : (isFinished && (stats.isApproved || currentBook.isApproved || isApprovedManual)) ? 'completed' : 'default'}
-          accentColor={isMaintenance ? '#f59e0b' : (isFinished && (stats.isApproved || currentBook.isApproved || isApprovedManual)) ? 'var(--success)' : 'var(--primary)'}
+          status={!currentBook.isUnlocked ? 'locked' : isMaintenance ? 'locked' : isApproved ? 'completed' : 'default'}
+          accentColor={isMaintenance ? 'var(--primary, #0056b3)' : isApproved ? 'var(--success)' : 'var(--primary)'}
         >
           <div style={{ marginTop: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <ModalityBadge ensinoTipo={currentBook.ensino_tipo} />

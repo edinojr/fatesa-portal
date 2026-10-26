@@ -345,7 +345,7 @@ const Admin = () => {
       <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
         <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>
         <div style={{ position: 'relative' }}>
-          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
+          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.85, color: '#ffffff' }} />
           <input 
             id="admin-global-search"
             name="admin-search"
@@ -354,7 +354,13 @@ const Admin = () => {
             className="form-control" 
             value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} 
-            style={{ paddingLeft: '2.5rem' }}
+            style={{ 
+              paddingLeft: '2.5rem',
+              background: 'rgba(255, 255, 255, 0.15)',
+              border: '1px solid rgba(255, 255, 255, 0.35)',
+              color: '#ffffff',
+              borderRadius: '12px'
+            }}
           />
         </div>
       </div>
@@ -434,8 +440,8 @@ const Admin = () => {
                       <p>Modere discussões e dúvidas da comunidade.</p>
                     </div>
 
-                    <div className="admin-action-card" onClick={() => setActiveTab('popups')} style={{ border: '1px solid rgba(245, 158, 11, 0.3)', background: 'rgba(245, 158, 11, 0.02)' }}>
-                      <div className="icon-wrapper" style={{ background: '#f59e0b' }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+                    <div className="admin-action-card" onClick={() => setActiveTab('popups')} style={{ border: '1px solid rgba(0, 86, 179, 0.3)', background: 'rgba(0, 86, 179, 0.02)' }}>
+                      <div className="icon-wrapper" style={{ background: 'var(--primary, #0056b3)' }}><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
                       <h3>Pop-ups de Alertas</h3>
                       <p>Crie pop-ups para avisar os usuários sobre manutenções, problemas e informes importantes.</p>
                     </div>
@@ -711,10 +717,10 @@ const Admin = () => {
                     <div
                       className="admin-action-card"
                       onClick={() => updateParams({ view: 'insert' })}
-                      style={{ cursor: 'pointer', border: '1px solid rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.03)', padding: '2rem', borderRadius: '20px', textAlign: 'center' }}
+                      style={{ cursor: 'pointer', border: '1px solid rgba(0,86,179,0.3)', background: 'rgba(0,86,179,0.03)', padding: '2rem', borderRadius: '20px', textAlign: 'center' }}
                     >
-                      <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(245,158,11,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-                        <FileText size={28} color="#f59e0b" />
+                      <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(0,86,179,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                        <FileText size={28} color="var(--primary, #0056b3)" />
                       </div>
                       <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: 800 }}>Inserir Notas Manualmente</h3>
                       <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' }}>Painel exclusivo para inserir as notas dos alunos.</p>
@@ -744,7 +750,7 @@ const Admin = () => {
                       <ChevronLeft size={16} /> Voltar
                     </button>
                     <h2 style={{ margin: 0, fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <FileText size={28} color="#f59e0b" /> Inserir Notas Manualmente
+                      <FileText size={28} color="var(--primary, #0056b3)" /> Inserir Notas Manualmente
                     </h2>
                   </div>
                   <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', padding: '1.5rem' }}>

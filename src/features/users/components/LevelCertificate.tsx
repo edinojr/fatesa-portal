@@ -201,7 +201,7 @@ const LevelCertificate: React.FC<LevelCertificateProps> = ({
         <button 
           className="btn btn-primary" 
           onClick={() => generateCertificadoPDF(studentName, levelName.toLowerCase().includes('méd') ? 'medio' : 'basico', date)} 
-          style={{ width: 'auto', padding: '0.75rem 2rem', background: '#eab308', color: '#000', fontWeight: 800 }}
+          style={{ width: 'auto', padding: '0.75rem 2rem', background: 'var(--primary, #0056b3)', color: '#ffffff', fontWeight: 800 }}
         >
           Baixar PDF Oficial Padrão
         </button>

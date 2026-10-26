@@ -16,6 +16,7 @@ import { useProfessorNavigation } from '../features/professor/hooks/useProfessor
 import { useProfessorNucleos } from '../features/professor/hooks/useProfessorNucleos'
 import { useProfessorAttendance } from '../features/professor/hooks/useProfessorAttendance'
 import { useProfessorAcademic } from '../features/professor/hooks/useProfessorAcademic'
+import { LEGACY_AULA_TO_BOOK_TITLE, cleanModuleTitle } from '../lib/courseTitles'
 
 export const useProfessorManagement = () => {
   const { profile, loading: profileLoading } = useProfile();
@@ -52,65 +53,140 @@ export const useProfessorManagement = () => {
       const { data: cData } = await supabase.from('cursos').select('id, nome, livros(*, aulas(*))').order('nome');
       if (cData) courseHook.setCourses(cData);
 
+      const titleToBook: Record<string, any> = {};
+      (cData || []).forEach((c: any) => {
+        (c.livros || []).forEach((l: any) => {
+          if (l.titulo) {
+            titleToBook[cleanModuleTitle(l.titulo)] = l;
+          }
+        });
+      });
+
       if (isAdmin) {
         // Admin: See all students and submissions
         const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').order('nome');
         if (sData) studentHook.setAllStudents(sData);
 
-        // Refactored: Fetch submissions in stages to avoid 400 errors
-        const { data: subDataRaw } = await supabase
-          .from('respostas_aulas')
-          .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
-          .order('created_at', { ascending: false });
+        // Fetch submissions and historic grades in stages to avoid 400 errors
+        const [{ data: subDataRaw }, { data: histDataRaw }] = await Promise.all([
+          supabase
+            .from('respostas_aulas')
+            .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('historico_notas')
+            .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+            .order('created_at', { ascending: false })
+        ]);
 
-        if (subDataRaw) {
-          const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
-          const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
+        const aulaIds = Array.from(new Set((subDataRaw || []).map(r => r.aula_id).filter(Boolean)));
+        const alunoIds = Array.from(new Set([
+          ...(subDataRaw || []).map(r => r.aluno_id),
+          ...(histDataRaw || []).map(h => h.aluno_id)
+        ].filter(Boolean)));
 
-          const [aulasRes, usersRes] = await Promise.all([
-            aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
-            alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
-          ]);
+        const [aulasRes, usersRes] = await Promise.all([
+          aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id, is_bloco_final').in('id', aulaIds) : Promise.resolve({ data: [] }),
+          alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
+        ]);
 
-          const aulasMap = (aulasRes.data || []).reduce((acc: Record<string, any>, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
-          const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
+        const aulasMap = (aulasRes.data || []).reduce((acc: Record<string, any>, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
+        const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
 
-          const subDataMapped = subDataRaw.map((r: any) => {
-            const aula = aulasMap[r.aula_id];
-            const user = usersMap[r.aluno_id];
-            return {
-              ...r,
-              submission_id: r.id,
-              student_id: r.aluno_id,
-              lesson_id: r.aula_id,
-              lesson_title: aula?.titulo,
-              lesson_type: aula?.tipo,
-              questionario: aula?.questionario,
-              min_grade: aula?.min_grade,
-              versao: aula?.versao,
-              aulas: aula,
-              student_name: user?.nome,
-              student_email: user?.email,
-              nucleus_id: user?.nucleos?.id,
-              nucleus_name: user?.nucleos?.nome || 'Sem Polo',
-              book_id: aula?.livro_id?.id,
-              book_title: aula?.livro_id?.titulo || 'Módulo Geral',
-              submitted_at: r.updated_at,
-            };
-          }).filter(s => {
-            const isExam = s.lesson_type === 'prova' || s.lesson_type === 'avaliacao';
-            const user = usersMap[s.student_id];
-            const isStaff = user && ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase());
-            return isExam && !isStaff;
-          });
-          
-          if (subDataMapped) {
-            gradingHook.setSubmissions(subDataMapped);
-            // Auto-correção da fila: corrige na hora submissões 'pendente'
-            // com gabarito completo (inclui matching por texto).
-            gradingHook.autoCorrectPending(subDataMapped);
+        const subDataMapped = (subDataRaw || []).map((r: any) => {
+          const aula = aulasMap[r.aula_id];
+          const user = usersMap[r.aluno_id];
+
+          let bookId: string | null = null;
+          let bookTitle: string | null = null;
+          const rawBook = aula?.livro_id;
+
+          if (rawBook) {
+            if (typeof rawBook === 'string') {
+              bookId = rawBook;
+            } else if (Array.isArray(rawBook) && rawBook[0]) {
+              bookId = rawBook[0].id || rawBook[0];
+              bookTitle = rawBook[0].titulo;
+            } else if (typeof rawBook === 'object') {
+              bookId = rawBook.id || null;
+              bookTitle = rawBook.titulo || null;
+            }
           }
-        }
+
+          if (!bookId && r.aula_id && LEGACY_AULA_TO_BOOK_TITLE[r.aula_id]) {
+            const legacyTitle = LEGACY_AULA_TO_BOOK_TITLE[r.aula_id];
+            const matchedBook = titleToBook[cleanModuleTitle(legacyTitle)];
+            if (matchedBook) {
+              bookId = matchedBook.id;
+              bookTitle = matchedBook.titulo;
+            } else {
+              bookTitle = legacyTitle;
+            }
+          }
+
+          return {
+            ...r,
+            submission_id: r.id,
+            student_id: r.aluno_id,
+            lesson_id: r.aula_id,
+            lesson_title: aula?.titulo,
+            lesson_type: aula?.tipo,
+            is_bloco_final: aula?.is_bloco_final,
+            questionario: aula?.questionario,
+            min_grade: aula?.min_grade,
+            versao: aula?.versao,
+            aulas: aula,
+            student_name: user?.nome,
+            student_email: user?.email,
+            nucleus_id: user?.nucleos?.id,
+            nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+            book_id: bookId,
+            book_title: bookTitle || 'Módulo Geral',
+            submitted_at: r.updated_at || r.created_at,
+          };
+        }).filter(s => {
+          const isExam = s.lesson_type === 'prova' || 
+                         s.lesson_type === 'avaliacao' || 
+                         s.is_bloco_final === true || 
+                         (s.nota !== null && s.nota !== undefined) ||
+                         (s.lesson_title && /V[1-3]|RECUPERA|AVALIA|PROVA/i.test(s.lesson_title));
+          const user = usersMap[s.student_id];
+          const isStaff = user && ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase());
+          return isExam && !isStaff;
+        });
+
+        // Mapear histórico de notas oficial para que também apareça em Boletins e relatórios
+        const histMapped = (histDataRaw || []).map((m: any, idx: number) => {
+          const user = usersMap[m.aluno_id];
+          const matchedBook = titleToBook[cleanModuleTitle(m.modulo_nome || '')];
+          return {
+            id: `hist-${m.id || idx}`,
+            submission_id: `hist-${m.id || idx}`,
+            student_id: m.aluno_id,
+            aluno_id: m.aluno_id,
+            lesson_id: null,
+            aula_id: null,
+            lesson_title: m.modulo_nome,
+            lesson_type: 'prova',
+            is_bloco_final: true,
+            min_grade: 7,
+            versao: 1,
+            nota: Number(m.nota),
+            status: 'corrigida',
+            student_name: user?.nome || 'Aluno',
+            student_email: user?.email || '',
+            nucleus_id: user?.nucleos?.id,
+            nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+            book_id: matchedBook?.id || null,
+            book_title: matchedBook?.titulo || m.modulo_nome,
+            submitted_at: m.data_conclusao || m.created_at,
+            is_manual: true
+          };
+        });
+
+        const allMappedSubs = [...subDataMapped, ...histMapped];
+        gradingHook.setSubmissions(allMappedSubs);
+        gradingHook.autoCorrectPending(subDataMapped);
         
         acad.fetchAcademicReport();
       } else {
@@ -125,58 +201,126 @@ export const useProfessorManagement = () => {
             const studentIds = sData.map(s => s.id);
             if (studentIds.length > 0) {
               acad.fetchAcademicHistory(studentIds);
-              const { data: subDataRaw } = await supabase
-                .from('respostas_aulas')
-                .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
-                .in('aluno_id', studentIds)
-                .order('created_at', { ascending: false });
+              const [{ data: subDataRaw }, { data: histDataRaw }] = await Promise.all([
+                supabase
+                  .from('respostas_aulas')
+                  .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+                  .in('aluno_id', studentIds)
+                  .order('created_at', { ascending: false }),
+                supabase
+                  .from('historico_notas')
+                  .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+                  .in('aluno_id', studentIds)
+                  .order('created_at', { ascending: false })
+              ]);
 
-              if (subDataRaw) {
-                const aulaIds = Array.from(new Set(subDataRaw.map(r => r.aula_id).filter(Boolean)));
-                const alunoIds = Array.from(new Set(subDataRaw.map(r => r.aluno_id).filter(Boolean)));
+              const aulaIds = Array.from(new Set((subDataRaw || []).map(r => r.aula_id).filter(Boolean)));
+              const alunoIds = Array.from(new Set([
+                ...(subDataRaw || []).map(r => r.aluno_id),
+                ...(histDataRaw || []).map(h => h.aluno_id)
+              ].filter(Boolean)));
 
-                const [aulasRes, usersRes] = await Promise.all([
-                  aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)').in('id', aulaIds) : Promise.resolve({ data: [] }),
-                  alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
-                ]);
+              const [aulasRes, usersRes] = await Promise.all([
+                aulaIds.length > 0 ? supabase.from('aulas').select('id, titulo, tipo, questionario, min_grade, versao, livro_id, is_bloco_final').in('id', aulaIds) : Promise.resolve({ data: [] }),
+                alunoIds.length > 0 ? supabase.from('users').select('id, nome, email, nucleo_id, nucleos(id, nome)').in('id', alunoIds) : Promise.resolve({ data: [] })
+              ]);
 
-const aulasMap = (aulasRes.data || []).reduce((acc: Record<string, any>, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
-const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
+              const aulasMap = (aulasRes.data || []).reduce((acc: Record<string, any>, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
+              const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
 
-                const subDataMapped = subDataRaw.map((r: any) => {
-                  const aula = aulasMap[r.aula_id];
-                  const user = usersMap[r.aluno_id];
-                  return {
-                    ...r,
-                    submission_id: r.id,
-                    student_id: r.aluno_id,
-                    lesson_id: r.aula_id,
-                    lesson_title: aula?.titulo,
-                    lesson_type: aula?.tipo,
-                    questionario: aula?.questionario,
-                    min_grade: aula?.min_grade,
-                    versao: aula?.versao,
-                    aulas: aula,
-                    student_name: user?.nome,
-                    student_email: user?.email,
-                    nucleus_id: user?.nucleos?.id,
-                    nucleus_name: user?.nucleos?.nome || 'Sem Polo',
-                    book_id: aula?.livro_id?.id,
-                    book_title: aula?.livro_id?.titulo || 'Módulo Geral',
-                    submitted_at: r.updated_at,
-                  };
-                }).filter(s => {
-                  const isExam = s.lesson_type === 'prova' || s.lesson_type === 'avaliacao';
-                  const user = usersMap[s.student_id];
-                  const isStaff = user && ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase());
-                  return isExam && !isStaff;
-                });
-                
-                if (subDataMapped) {
-                  gradingHook.setSubmissions(subDataMapped);
-                  gradingHook.autoCorrectPending(subDataMapped);
+              const subDataMapped = (subDataRaw || []).map((r: any) => {
+                const aula = aulasMap[r.aula_id];
+                const user = usersMap[r.aluno_id];
+
+                let bookId: string | null = null;
+                let bookTitle: string | null = null;
+                const rawBook = aula?.livro_id;
+
+                if (rawBook) {
+                  if (typeof rawBook === 'string') {
+                    bookId = rawBook;
+                  } else if (Array.isArray(rawBook) && rawBook[0]) {
+                    bookId = rawBook[0].id || rawBook[0];
+                    bookTitle = rawBook[0].titulo;
+                  } else if (typeof rawBook === 'object') {
+                    bookId = rawBook.id || null;
+                    bookTitle = rawBook.titulo || null;
+                  }
                 }
-              }
+
+                if (!bookId && r.aula_id && LEGACY_AULA_TO_BOOK_TITLE[r.aula_id]) {
+                  const legacyTitle = LEGACY_AULA_TO_BOOK_TITLE[r.aula_id];
+                  const matchedBook = titleToBook[cleanModuleTitle(legacyTitle)];
+                  if (matchedBook) {
+                    bookId = matchedBook.id;
+                    bookTitle = matchedBook.titulo;
+                  } else {
+                    bookTitle = legacyTitle;
+                  }
+                }
+
+                return {
+                  ...r,
+                  submission_id: r.id,
+                  student_id: r.aluno_id,
+                  lesson_id: r.aula_id,
+                  lesson_title: aula?.titulo,
+                  lesson_type: aula?.tipo,
+                  is_bloco_final: aula?.is_bloco_final,
+                  questionario: aula?.questionario,
+                  min_grade: aula?.min_grade,
+                  versao: aula?.versao,
+                  aulas: aula,
+                  student_name: user?.nome,
+                  student_email: user?.email,
+                  nucleus_id: user?.nucleos?.id,
+                  nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+                  book_id: bookId,
+                  book_title: bookTitle || 'Módulo Geral',
+                  submitted_at: r.updated_at || r.created_at,
+                };
+              }).filter(s => {
+                const isExam = s.lesson_type === 'prova' || 
+                               s.lesson_type === 'avaliacao' || 
+                               s.is_bloco_final === true || 
+                               (s.nota !== null && s.nota !== undefined) ||
+                               (s.lesson_title && /V[1-3]|RECUPERA|AVALIA|PROVA/i.test(s.lesson_title));
+                const user = usersMap[s.student_id];
+                const isStaff = user && ['admin', 'suporte', 'professor', 'colaborador'].includes(user.tipo?.toLowerCase());
+                return isExam && !isStaff;
+              });
+
+              const histMapped = (histDataRaw || []).map((m: any, idx: number) => {
+                const user = usersMap[m.aluno_id];
+                const matchedBook = titleToBook[cleanModuleTitle(m.modulo_nome || '')];
+                return {
+                  id: `hist-${m.id || idx}`,
+                  submission_id: `hist-${m.id || idx}`,
+                  student_id: m.aluno_id,
+                  aluno_id: m.aluno_id,
+                  lesson_id: null,
+                  aula_id: null,
+                  lesson_title: m.modulo_nome,
+                  lesson_type: 'prova',
+                  is_bloco_final: true,
+                  min_grade: 7,
+                  versao: 1,
+                  nota: Number(m.nota),
+                  status: 'corrigida',
+                  student_name: user?.nome || 'Aluno',
+                  student_email: user?.email || '',
+                  nucleus_id: user?.nucleos?.id,
+                  nucleus_name: user?.nucleos?.nome || 'Sem Polo',
+                  book_id: matchedBook?.id || null,
+                  book_title: matchedBook?.titulo || m.modulo_nome,
+                  submitted_at: m.data_conclusao || m.created_at,
+                  is_manual: true
+                };
+              });
+
+              const allMappedSubs = [...subDataMapped, ...histMapped];
+              gradingHook.setSubmissions(allMappedSubs);
+              gradingHook.autoCorrectPending(subDataMapped);
             }
           }
         } else {

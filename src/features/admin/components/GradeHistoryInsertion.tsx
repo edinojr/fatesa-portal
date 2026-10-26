@@ -226,13 +226,13 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
             Voltar à lista de alunos
           </button>
           
-          <div style={{ padding: '1rem 1.5rem', background: 'rgba(245,158,11,0.08)', borderRadius: '14px', borderLeft: '4px solid #f59e0b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '1rem 1.5rem', background: 'rgba(0,86,179,0.06)', borderRadius: '14px', borderLeft: '4px solid var(--primary, #0056b3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <User size={24} color="#f59e0b" />
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0,86,179,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User size={24} color="var(--primary, #0056b3)" />
               </div>
               <div>
-                <h3 style={{ color: '#f59e0b', margin: 0, fontWeight: 800, fontSize: '1.2rem' }}>{selectedStudent.nome}</h3>
+                <h3 style={{ color: 'var(--primary, #0056b3)', margin: 0, fontWeight: 800, fontSize: '1.2rem' }}>{selectedStudent.nome}</h3>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   {selectedStudent.nucleos?.nome || 'Sem Núcleo / Online'} • {selectedStudent.email}
                 </span>

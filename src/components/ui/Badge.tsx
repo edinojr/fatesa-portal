@@ -15,11 +15,11 @@ const Badge: React.FC<BadgeProps> = ({ children, variant = 'primary', className 
       case 'error':
         return { background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)', border: '1px solid rgba(239, 68, 68, 0.2)' };
       case 'warning':
-        return { background: 'rgba(234, 179, 8, 0.1)', color: 'var(--warning)', border: '1px solid rgba(234, 179, 8, 0.2)' };
+        return { background: 'var(--primary, #0056b3)', color: '#ffffff', border: '1px solid #004494' };
       case 'muted':
         return { background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-muted)', border: '1px solid rgba(255, 255, 255, 0.1)' };
       default:
-        return { background: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary)', border: '1px solid rgba(var(--primary-rgb), 0.2)' };
+        return { background: 'var(--primary, #0056b3)', color: '#ffffff', border: '1px solid #004494' };
     }
   };
 
@@ -32,7 +32,7 @@ const Badge: React.FC<BadgeProps> = ({ children, variant = 'primary', className 
         padding: '2px 8px', 
         borderRadius: '10px', 
         fontSize: '0.75rem', 
-        fontWeight: 600,
+        fontWeight: 700,
         ...getStyles(),
         ...style 
       }}

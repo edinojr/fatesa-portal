@@ -392,7 +392,7 @@ const goToPanel = () => {
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
                                 <button 
                                     className="btn btn-primary" 
-                                    style={{ width: '100%', gap: '0.5rem', padding: '0.65rem 1rem', background: '#eab308', color: '#000', borderColor: '#eab308', fontWeight: 800 }}
+                                    style={{ width: 'auto', gap: '0.5rem', padding: '0.65rem 1.4rem', background: 'var(--primary, #0056b3)', color: '#ffffff', borderColor: '#004494', fontWeight: 800, display: 'inline-flex' }}
                                     onClick={async () => {
                                         try {
                                             const summary = await fetchStudentAcademicSummary(profile);

@@ -641,15 +641,15 @@ const AlumniManagement = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        background: 'rgba(234, 179, 8, 0.06)',
-        border: '1px solid rgba(234, 179, 8, 0.25)',
+        background: 'rgba(0, 86, 179, 0.06)',
+        border: '1px solid rgba(0, 86, 179, 0.25)',
         borderRadius: '16px',
         padding: '1.25rem 1.5rem',
         flexWrap: 'wrap',
         gap: '1rem'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(234, 179, 8, 0.15)', color: '#eab308' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(0, 86, 179, 0.12)', color: 'var(--primary, #0056b3)' }}>
             <Award size={26} />
           </div>
           <div>
@@ -661,8 +661,8 @@ const AlumniManagement = () => {
         </div>
         <button 
           onClick={handleEmitirCertificadoAvulso} 
-          className="btn" 
-          style={{ background: '#eab308', color: '#000', fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '12px', border: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
+          className="btn btn-primary" 
+          style={{ background: 'var(--primary, #0056b3)', color: '#ffffff', fontWeight: 800, padding: '0.65rem 1.4rem', borderRadius: '12px', border: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', width: 'auto' }}
         >
           <GraduationCap size={18} /> Emitir Certificado
         </button>
@@ -746,13 +746,13 @@ const AlumniManagement = () => {
         <div 
           onClick={() => { setCurrentTab('fora_da_lista_pendentes'); setCurrentPage(1); }}
           style={{
-            background: currentTab === 'fora_da_lista_pendentes' ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%)' : 'var(--glass)',
-            border: currentTab === 'fora_da_lista_pendentes' ? '2px solid #f59e0b' : foraDaListaPendentes.length > 0 ? '1px solid #f59e0b' : '1px solid var(--glass-border)',
+            background: currentTab === 'fora_da_lista_pendentes' ? 'linear-gradient(135deg, rgba(0, 86, 179, 0.15) 0%, rgba(59, 130, 246, 0.08) 100%)' : 'var(--glass)',
+            border: currentTab === 'fora_da_lista_pendentes' ? '2px solid var(--primary, #0056b3)' : foraDaListaPendentes.length > 0 ? '1px solid var(--primary, #0056b3)' : '1px solid var(--glass-border)',
             borderRadius: '16px',
             padding: '1.5rem',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
-            boxShadow: currentTab === 'fora_da_lista_pendentes' ? '0 8px 24px rgba(245, 158, 11, 0.2)' : '0 4px 12px rgba(0,0,0,0.05)',
+            boxShadow: currentTab === 'fora_da_lista_pendentes' ? '0 8px 24px rgba(0, 86, 179, 0.2)' : '0 4px 12px rgba(0,0,0,0.05)',
             position: 'relative'
           }}
         >
@@ -763,15 +763,15 @@ const AlumniManagement = () => {
           )}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}>
+              <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(0, 86, 179, 0.12)', color: 'var(--primary, #0056b3)' }}>
                 <Clock size={24} />
               </div>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800 }}>Cadastrados Fora da Lista</h3>
-                <span style={{ fontSize: '0.8rem', color: '#f59e0b', fontWeight: 700 }}>Aguardam Aprovação</span>
+                <span style={{ fontSize: '0.8rem', background: 'var(--primary, #0056b3)', color: '#ffffff', fontWeight: 800, padding: '2px 8px', borderRadius: '12px' }}>Aguardam Aprovação</span>
               </div>
             </div>
-            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#f59e0b' }}>
+            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--primary, #0056b3)' }}>
               {foraDaListaPendentes.length}
             </div>
           </div>
@@ -868,7 +868,7 @@ const AlumniManagement = () => {
                       </td>
                       <td>
                         {isPending ? (
-                          <span style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', padding: '4px 10px', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ background: 'var(--primary, #0056b3)', color: '#ffffff', padding: '4px 10px', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                             <Clock size={12} /> Aguarda Aprovação
                           </span>
                         ) : record.user_id ? (
@@ -917,9 +917,9 @@ const AlumniManagement = () => {
                               display: 'inline-flex', 
                               alignItems: 'center', 
                               gap: '0.35rem', 
-                              background: 'rgba(234, 179, 8, 0.15)', 
-                              color: '#eab308', 
-                              border: '1px solid rgba(234, 179, 8, 0.35)', 
+                              background: 'var(--primary, #0056b3)', 
+                              color: '#ffffff', 
+                              border: '1px solid #004494', 
                               borderRadius: '8px', 
                               fontWeight: 700,
                               cursor: 'pointer' 
@@ -1169,7 +1169,7 @@ const AlumniManagement = () => {
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
                 <button 
                   className="btn btn-primary" 
-                  style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem', background: '#eab308', color: '#000', borderColor: '#eab308', fontWeight: 800 }}
+                  style={{ width: 'auto', gap: '0.75rem', padding: '0.75rem 1.5rem', background: 'var(--primary, #0056b3)', color: '#ffffff', borderColor: '#004494', fontWeight: 800 }}
                   onClick={() => handleEmitirCertificado(selectedAlumni)}
                 >
                   <Award size={20} /> EMITIR CERTIFICADO PADRÃO ({selectedAlumni.nivel_curso || 'BÁSICO'})

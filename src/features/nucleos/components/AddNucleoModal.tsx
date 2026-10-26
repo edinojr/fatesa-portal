@@ -1,4 +1,4 @@
-import { Plus, Users, Loader2, Trash2, MapPin } from 'lucide-react';
+import { Plus, Users, Loader2, Trash2, MapPin, DollarSign } from 'lucide-react';
 import React from 'react';
 
 interface AddNucleoModalProps {
@@ -142,6 +142,25 @@ const AddNucleoModal: React.FC<AddNucleoModalProps> = ({
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'block' }}>Professor Responsável (Opcional)</label>
                 <input type="text" name="professor_responsavel" defaultValue={initialData?.professor_responsavel} placeholder="Ex: Pr. João" className="form-control" style={{ padding: '0.8rem' }} />
+              </div>
+
+              {/* VALOR DA MENSALIDADE POR NÚCLEO */}
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <DollarSign size={16} color="var(--primary)" /> Valor da Mensalidade (R$)
+                </label>
+                <input 
+                  type="number" 
+                  step="0.01" 
+                  name="valor_mensalidade" 
+                  defaultValue={initialData?.valor_mensalidade || ''} 
+                  placeholder="Ex: 120.00" 
+                  className="form-control" 
+                  style={{ padding: '0.8rem', maxWidth: '220px' }} 
+                />
+                <span style={{ fontSize: '0.78rem', opacity: 0.6, display: 'block', marginTop: '0.3rem' }}>
+                  Valor individual cobrado por mensalidade para alunos deste núcleo (PIX Santander).
+                </span>
               </div>
 
               {/* LINHA 3: CRONOGRAMA DE AULAS */}

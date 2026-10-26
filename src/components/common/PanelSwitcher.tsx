@@ -135,9 +135,9 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
           gap: '0.6rem',
           padding: '0.45rem 0.9rem',
           borderRadius: '12px',
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
-          border: '1px solid rgba(255,255,255,0.18)',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.25)',
+          background: 'rgba(255, 255, 255, 0.15)',
+          border: '1px solid rgba(255, 255, 255, 0.35)',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
           cursor: 'pointer',
           color: '#fff',
           fontWeight: 700,
@@ -151,7 +151,7 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
           alignItems: 'center', 
           justifyContent: 'center',
           color: currentOption.badgeColor,
-          background: 'rgba(255,255,255,0.05)',
+          background: 'rgba(255,255,255,0.15)',
           padding: '4px',
           borderRadius: '8px'
         }}>
@@ -159,7 +159,7 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
         </span>
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', lineHeight: 1.15 }}>
-          <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', opacity: 0.65, fontWeight: 800 }}>
+          <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'rgba(255,255,255,0.85)', fontWeight: 800 }}>
             Painel Atual
           </span>
           <span style={{ fontWeight: 800, color: '#fff' }}>
@@ -171,9 +171,9 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
           fontSize: '0.65rem',
           padding: '2px 7px',
           borderRadius: '20px',
-          background: `${currentOption.badgeColor}22`,
-          color: currentOption.badgeColor,
-          border: `1px solid ${currentOption.badgeColor}55`,
+          background: 'rgba(255,255,255,0.2)',
+          color: '#ffffff',
+          border: '1px solid rgba(255,255,255,0.3)',
           fontWeight: 800,
           marginLeft: '2px'
         }}>
@@ -183,7 +183,8 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
         <ChevronDown 
           size={15} 
           style={{ 
-            opacity: 0.7, 
+            color: '#ffffff',
+            opacity: 0.9, 
             transition: 'transform 0.2s ease', 
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' 
           }} 

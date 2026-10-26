@@ -1006,7 +1006,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                 <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Lições</div>
                 <div style={{ textAlign: 'center', fontWeight: 800, color: '#10b981', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Exercícios</div>
                 <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Vídeos</div>
-                <div style={{ textAlign: 'center', fontWeight: 800, color: '#eab308', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
+                <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary, #0056b3)', fontSize: '0.9rem', padding: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
 
                 {Array.from({ length: maxRows }).map((_, rowIndex) => (
                   <React.Fragment key={rowIndex}>
@@ -1141,7 +1141,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600 }}>{item.titulo}</h4>
                                 {item.is_bloco_final && (
-                                  <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: '#EAB308', color: '#000', borderRadius: '4px', fontWeight: 900, textTransform: 'uppercase' }}>
+                                  <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: 'var(--primary, #0056b3)', color: '#ffffff', borderRadius: '4px', fontWeight: 900, textTransform: 'uppercase' }}>
                                     Avaliação Final
                                   </span>
                                 )}
@@ -1258,7 +1258,7 @@ const ContentManagement: React.FC<ContentManagementProps> = (props) => {
                         ))}
                       </div>
                     ) : (
-                      <button className="btn btn-primary" style={{ width: 'auto', background: '#EAB308', color: '#000', marginTop: '1rem' }}
+                      <button className="btn btn-primary" style={{ width: 'auto', background: 'var(--primary, #0056b3)', color: '#ffffff', marginTop: '1rem' }}
                         onClick={() => { setAddingBloco(nextBloco); setAddingLessonType('prova'); setShowAddContent(true); }}>
                         <Plus size={20} /> Criar Prova Final
                       </button>

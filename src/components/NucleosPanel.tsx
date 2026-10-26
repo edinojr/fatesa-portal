@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Users, Plus, Award, ChevronRight, Loader2, Save, Trash2, XCircle, Clock, MapPin } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { financeService } from '../services/financeService'
+import { CreditCard } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { handleSupabaseError } from '../lib/authUtils'
 import StudentRow from '../features/nucleos/components/StudentRow'
@@ -23,6 +25,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
   const [nucleos, setNucleos] = useState<any[]>([]) // All available
   const [myNucleos, setMyNucleos] = useState<any[]>([]) // Tied to teacher
   const [selectedNucleo, setSelectedNucleo] = useState<any | null>(null)
+  const [nucleoTuitions, setNucleoTuitions] = useState<Record<string, number>>({})
   const [students, setStudents] = useState<any[]>([])
   const [professors, setProfessors] = useState<any[]>([])
   const [linkedProfessors, setLinkedProfessors] = useState<any[]>([])
@@ -89,6 +92,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     if (!isAdmin) nucQuery.filter('is_hidden', 'eq', false)
     const resNuc = await nucQuery
     if (resNuc.data) setNucleos(resNuc.data)
+    try { const cfg = await financeService.getPixFullConfig(); setNucleoTuitions(cfg.nucleoValores || {}); } catch(e){}
 
     // My nucleos
     const resMy = await supabase.from('professor_nucleo')
@@ -409,8 +413,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       .map((s: any) => `${s.day} (${s.start} - ${s.end})`)
       .join(', ')
 
+    const rawValor = formData.get('valor_mensalidade');
+    const valorMensalidade = rawValor ? parseFloat(rawValor as string) : 0;
     const finalNucleoData = {
       ...nucleoData,
+      valor_mensalidade: valorMensalidade,
       horario_aulas: horarioStr || (formData.get('horario_aulas') as string),
       is_hidden: formData.get('is_hidden') === 'on',
       is_active: formData.get('is_active') !== 'off'
@@ -424,6 +431,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           .eq('id', editingNucleo.id)
         if (error) throw error
         toast.success('Núcleo atualizado com sucesso!')
+        await financeService.saveNucleoTuition(editingNucleo.id, valorMensalidade);
       } else {
         const { data, error } = await supabase.from('nucleos').insert(finalNucleoData).select().maybeSingle()
         if (error) throw error
@@ -437,6 +445,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           )
         }
         toast.success('Núcleo criado com sucesso!')
+        if (data?.id) await financeService.saveNucleoTuition(data.id, valorMensalidade);
       }
       
       setShowAddModal(false)
@@ -1049,7 +1058,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
                   </span>
                 )}
                 {nuc.is_hidden && (
-                  <span style={{ marginLeft: '0.3rem', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(245,158,11,0.2)', color: '#f59e0b', fontWeight: 700, verticalAlign: 'middle' }}>
+                  <span style={{ marginLeft: '0.3rem', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'var(--primary, #0056b3)', color: '#ffffff', fontWeight: 800, verticalAlign: 'middle' }}>
                     OCULTO
                   </span>
                 )}
@@ -1059,6 +1068,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
                 {nuc.professor_responsavel && <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Award size={14} color="var(--primary)"/> {nuc.professor_responsavel}</span>}
                 {nuc.horario_aulas && <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Clock size={14} /> {nuc.horario_aulas}</span>}
                 {nuc.cidade && <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><MapPin size={14} /> {nuc.cidade} - {nuc.estado}</span>}
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#10b981', fontWeight: 700 }}><CreditCard size={14} /> Mensalidade PIX: R$ {(nuc.valor_mensalidade || nucleoTuitions[nuc.id] || 0).toFixed(2)}</span>
               </div>
 
               <p style={{ fontSize: '0.85rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>

@@ -1,9 +1,10 @@
 import React from 'react'
 import { ChevronLeft, ChevronRight, LogOut, Home } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
 import TopBanner from './TopBanner'
 import { PanelSwitcher } from '../common/PanelSwitcher'
+import Logo from '../common/Logo'
 
 interface PageHeaderProps {
   title: string
@@ -33,14 +34,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   showTopBanner = true
 }) => {
   const navigate = useNavigate()
-  const { profile, signOut } = useProfile()
+  const { signOut } = useProfile()
 
   const handleBack = () => {
     if (onBack) {
       onBack()
     } else if (showBackButton) {
-      // Volta sempre para a página anterior; sem histórico (link direto),
-      // cai para o painel do papel ativo.
       if (window.history.length > 1) {
         window.history.back()
         return
@@ -53,7 +52,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     }
   }
 
-  // Botão "Voltar ao Painel Inicial": leva ao início do painel do papel ativo
   const roleHome: Record<string, string> = {
     admin: '/admin',
     professor: '/professor',
@@ -61,7 +59,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     student: '/dashboard',
     viewer: '/dashboard'
   }
-  const showHome = showHomeButton ?? (variant === 'admin' || variant === 'professor' || variant === 'coordinator')
+  const showHome = showHomeButton ?? true
   const effectiveHomePath = homePath || roleHome[variant] || '/dashboard'
 
   const getDefaultActions = () => {
@@ -82,6 +80,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         onClick={() => signOut()}
         className="nav-btn-premium danger"
         style={{ width: 'auto' }}
+        title="Encerrar sessão"
       >
         <LogOut size={18} /> <span className="mobile-hide">Sair</span>
       </button>
@@ -90,93 +89,104 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     return <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>{actionButtons}</div>
   }
 
-  const headerStyles: Record<string, React.CSSProperties> = {
-    admin: { background: 'var(--primary)', color: '#fff' },
-    professor: { background: 'var(--primary)', color: '#fff' },
-    coordinator: { background: 'var(--primary)', color: '#fff' },
-    student: { background: 'var(--primary)', color: '#fff' },
-    viewer: { background: 'var(--primary)', color: '#fff' }
-  }
-
-  const currentStyle = headerStyles[variant] || headerStyles.student
-
   return (
     <div>
       {showTopBanner && <TopBanner />}
       <header 
         className="dashboard-header-modern"
         style={{ 
-          ...currentStyle, 
+          background: 'var(--primary, #0056b3)',
+          color: '#ffffff',
           justifyContent: 'space-between',
-          padding: '1rem 2.5rem',
+          padding: '0.85rem 2rem',
           height: 'auto',
-          minHeight: '70px'
+          minHeight: '70px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.2)'
         }}
       >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        {showBackButton && (
-          <button 
-            onClick={handleBack} 
-            className="nav-btn-premium" 
-            style={{ width: 'auto', padding: '0.5rem' }}
-            title="Voltar"
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+          {/* Logo Oficial Fatesa Padronizado */}
+          <Link 
+            to="/" 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              textDecoration: 'none',
+              transition: 'transform 0.2s ease'
+            }} 
+            title="Ir para a página inicial"
           >
-            <ChevronLeft size={20} />
-          </button>
-        )}
+            <Logo size={115} />
+          </Link>
 
-        {showHome && (
-          <button 
-            onClick={() => navigate(effectiveHomePath)} 
-            className="nav-btn-premium" 
-            style={{ width: 'auto', padding: '0.5rem 0.9rem', gap: '0.5rem' }}
-            title="Voltar ao Painel Inicial"
-          >
-            <Home size={20} /> <span className="mobile-hide">Painel Inicial</span>
-          </button>
-        )}
-        
-        <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>{title}</h1>
-          {subtitle && (
-            <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>{subtitle}</p>
+          {/* Menus e botões de navegação brancos */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1.25rem' }}>
+            {showHome && (
+              <button 
+                onClick={() => navigate(effectiveHomePath)} 
+                className="nav-btn-premium" 
+                style={{ width: 'auto', padding: '0.5rem 0.9rem', gap: '0.5rem' }}
+                title="Voltar ao Painel Inicial"
+              >
+                <Home size={18} /> <span className="mobile-hide">Painel Inicial</span>
+              </button>
+            )}
+
+            {showBackButton && (
+              <button 
+                onClick={handleBack} 
+                className="nav-btn-premium" 
+                style={{ width: 'auto', padding: '0.5rem 0.8rem', gap: '0.4rem' }}
+                title="Voltar"
+              >
+                <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
+              </button>
+            )}
+          </div>
+          
+          <div style={{ marginLeft: '0.25rem' }}>
+            <h1 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em' }}>{title}</h1>
+            {subtitle && (
+              <p style={{ margin: 0, opacity: 0.85, fontSize: '0.82rem', color: '#ffffff' }}>{subtitle}</p>
+            )}
+          </div>
+
+          {breadcrumb && breadcrumb.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '0.5rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1.25rem' }}>
+              {breadcrumb.map((item, idx) => (
+                <React.Fragment key={idx}>
+                  {idx > 0 && <ChevronRight size={14} style={{ opacity: 0.6, color: '#ffffff' }} />}
+                  <span 
+                    onClick={item.onClick}
+                    style={{ 
+                      color: '#ffffff',
+                      opacity: item.isActive ? 1 : 0.75,
+                      fontWeight: item.isActive ? 800 : 500,
+                      cursor: item.onClick ? 'pointer' : 'default',
+                      textDecoration: item.onClick ? 'underline' : 'none',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </React.Fragment>
+              ))}
+            </div>
+          )}
+
+          {nav && (
+            <div style={{ marginLeft: '0.5rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1.25rem' }}>
+              {nav}
+            </div>
           )}
         </div>
 
-        {breadcrumb && breadcrumb.length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '2rem', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
-            {breadcrumb.map((item, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 && <ChevronRight size={14} style={{ opacity: 0.3 }} />}
-                <span 
-                  onClick={item.onClick}
-                  style={{ 
-                    color: item.isActive ? 'var(--primary)' : 'inherit',
-                    opacity: item.isActive ? 1 : 0.7,
-                    fontWeight: item.isActive ? 700 : 400,
-                    cursor: item.onClick ? 'pointer' : 'default',
-                    textDecoration: item.onClick ? 'underline' : 'none'
-                  }}
-                >
-                  {item.label}
-                </span>
-              </React.Fragment>
-            ))}
-          </div>
-        )}
-
-        {nav && (
-          <div style={{ marginLeft: '2rem', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '1.5rem' }}>
-            {nav}
-          </div>
-        )}
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        {actions || getDefaultActions()}
-      </div>
-    </header>
-  </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          {actions || getDefaultActions()}
+        </div>
+      </header>
+    </div>
   )
 }
 

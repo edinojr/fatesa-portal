@@ -170,13 +170,7 @@ const Login = () => {
       return;
     }
 
-    if (data.status_nucleo === 'hiato' && !isAdminEmail) {
-      await supabase.auth.signOut();
-      setError('Você está cadastrado como desistente (hiato). Se deseja retornar ao curso, entre em contato com o suporte/financeiro para reativar sua matrícula.');
-      setShowReturnButton(true);
-      setLoading(false);
-      return;
-    }
+    // Nota: Usuários em hiato/trancado acessam o painel em modo restrito (com banner e avanço de novos módulos pausado)
 
     const isAdmin = isAdminEmail || isUserAdmin({ ...data, email: user.email });
     const roles = (data.caminhos_acesso as string[]) || [];

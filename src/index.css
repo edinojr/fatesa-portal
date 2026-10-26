@@ -490,18 +490,26 @@ body {
 }
 
 .btn {
-  width: 100%;
-  padding: 1rem;
+  width: auto;
+  max-width: 100%;
+  padding: 0.65rem 1.4rem;
   border: none;
-  border-radius: 14px;
-  font-size: 1rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.btn-block,
+.auth-form-container .btn {
+  width: 100%;
 }
 
 .btn-primary {
@@ -1344,9 +1352,9 @@ body {
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 700;
-  background: rgba(255, 215, 0, 0.1);
-  color: var(--primary);
-  border: 1px solid rgba(255, 215, 0, 0.2);
+  background: var(--primary);
+  color: #ffffff;
+  border: 1px solid #004494;
 }
 
 .status-aprovado {
@@ -1362,9 +1370,10 @@ body {
 }
 
 .status-pendente {
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.2);
+  background: var(--primary);
+  color: #ffffff;
+  border: 1px solid #004494;
+  font-weight: 700;
 }
 
 .status-hiato {
@@ -2453,9 +2462,9 @@ body {
 }
 
 .status-badge.status-aberto { 
-  background: rgba(255, 152, 0, 0.1); 
-  color: #FF9800; 
-  border-color: rgba(255, 152, 0, 0.3); 
+  background: var(--primary); 
+  color: #ffffff; 
+  border-color: #004494; 
 }
 
 /* Responsive Dashboard */
@@ -3313,76 +3322,84 @@ select.form-control option {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 2rem;
-  background: rgba(8, 9, 10, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
+  padding: 0.85rem 2rem;
+  background: var(--primary, #0056b3) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
   position: sticky;
   top: 0;
   z-index: 1000;
   gap: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  color: #ffffff !important;
 }
 
 .nav-btn-premium {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 1.25rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 14px;
-  color: #fff;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: #ffffff;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
 }
 
 .nav-btn-premium:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .nav-btn-premium.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  box-shadow: 0 0 20px var(--primary-glow);
+  background: #ffffff;
+  color: var(--primary, #0056b3);
+  border-color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
 }
 
 .nav-btn-premium.danger {
-  background: rgba(244, 63, 94, 0.1);
-  color: var(--error);
-  border-color: rgba(244, 63, 94, 0.2);
+  background: rgba(239, 68, 68, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .nav-btn-premium.danger:hover {
-  background: var(--error);
-  color: #fff;
-  box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
+  background: var(--error, #ef4444);
+  color: #ffffff;
+  border-color: var(--error, #ef4444);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
 .nav-breadcrumb-modern {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  color: var(--primary);
+  gap: 0.6rem;
+  color: #ffffff !important;
   font-weight: 700;
   font-size: 0.95rem;
 }
 
+.nav-breadcrumb-modern span,
+.nav-breadcrumb-modern strong {
+  color: #ffffff !important;
+}
+
 .nav-breadcrumb-modern .divider {
-  opacity: 0.3;
-  color: var(--text-muted);
+  opacity: 0.6;
+  color: #ffffff !important;
 }
 
 .nav-breadcrumb-modern .current {
-  color: #fff;
-  font-weight: 600;
+  color: #ffffff !important;
+  font-weight: 800;
 }
 
 @media (max-width: 768px) {

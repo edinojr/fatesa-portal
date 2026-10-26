@@ -339,7 +339,7 @@ export const useStudentCourses = (profile: any) => {
       const { data: progData } = await safeSelect(supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id));
       const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id').eq('user_id', profile.id));
       const { data: examExceptions } = await safeSelect(supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id));
-      const { data: exclusions } = await safeSelect(supabase.from('exclusoes_modulo_aluno').select('livro_id').eq('user_id', profile.id));
+      const { data: exclusions } = await safeSelect(supabase.from('exclusoes_modulo_aluno').select('livro_id, motivo').eq('user_id', profile.id));
       const { data: historyGradesRaw } = await safeSelect(
         supabase.from('historico_notas').select('id, modulo_nome, curso_nome, nota, data_conclusao').eq('aluno_id', profile.id)
       );
@@ -389,6 +389,8 @@ export const useStudentCourses = (profile: any) => {
       const exceptionIds = (exceptions || []).map((e: any) => e.livro_id);
       const examExceptionIds = (examExceptions || []).map((e: any) => e.aula_id);
       const studentExclusions = (exclusions || []).map((e: any) => e.livro_id);
+      const hasHiatoExclusion = (exclusions || []).some((e: any) => e.motivo === 'hiato');
+      const isHiatoStudent = profile?.status_nucleo === 'hiato' || profile?.status_nucleo === 'trancado' || hasHiatoExclusion;
 
       if (exams && examExceptionIds.length > 0) {
         exams.forEach((exam: any) => {
@@ -575,11 +577,17 @@ export const useStudentCourses = (profile: any) => {
           // =========================================================================
           // HIERARQUIA MODULAR INSTITUCIONAL FATESA:
           // Regra Mestra:
-          // 1. O 1º módulo do curso está sempre liberado para estudos.
-          // 2. Professor libera prova = módulo seguinte liberado para estudos.
-          // 3. O curso é modular: mesmo com reprovação ou sem realizar a avaliação,
-          //    o aluno pode e deve continuar para o módulo seguinte normalmente.
+          // 1. Liberação individual de módulos (liberacoes_excecao) tem prioridade total.
+          // 2. Módulos em Dependência (DP) permanecem abertos para recuperação e estudo.
+          // 3. Bibliologia DEVE PERMANECER FECHADO até que os professores o liberem.
+          // 4. Alunos em HIATO/Trancados: mantêm o módulo em andamento, mas são bloqueados no seguinte.
           // =========================================================================
+
+          const isBibliologiaBook = (book: any) => {
+            if (!book) return false;
+            const norm = cleanModuleTitle(book.titulo || '');
+            return norm === 'bibliologia' || norm.includes('bibliologia') || book.id === 'cd525251-b438-4e21-aaea-bd5578017698';
+          };
 
           const bookStatusMap = new Map<string, {
             examReleased: boolean;
@@ -588,6 +596,8 @@ export const useStudentCourses = (profile: any) => {
             isDP: boolean;
             isManualFinished: boolean;
             isDirectlyReleased: boolean;
+            hasExcep: boolean;
+            isBibliologia: boolean;
           }>();
 
           sortedLivros.forEach((l: any) => {
@@ -597,12 +607,13 @@ export const useStudentCourses = (profile: any) => {
 
             const histMatch = historyGrades.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
             const hasValidHistoryGrade = !!histMatch && Number(histMatch.nota) >= 7;
+            const hasHistoryDP = !!histMatch && Number(histMatch.nota) > 0 && Number(histMatch.nota) < 7;
             const isManualFinished = manualCompleted.has(l.id) || hasValidHistoryGrade;
 
             const moduleSubs = resData.filter((s: any) => s.book_id === l.id);
             const moduleExamAttempts = collectExamAttempts(l.aulas || [], moduleSubs);
             const isApproved = isModuleApproved(moduleExamAttempts) || hasValidHistoryGrade;
-            const isDP = isModuleDP(moduleExamAttempts);
+            const isDP = !isStaff && (isModuleDP(moduleExamAttempts) || hasHistoryDP);
 
             const examReleased = releasedExamBookIds.has(l.id) || (l.aulas || []).some((a: any) => {
               const isEx = a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final || (a.titulo && /V[1-3]|RECUPERA|AVALIA/i.test(a.titulo));
@@ -615,8 +626,9 @@ export const useStudentCourses = (profile: any) => {
               );
             });
 
-            // Submissão de avaliação (passou ou reprovou)
-            const studentAttempted = moduleExamAttempts.length > 0 || moduleSubs.length > 0;
+            // Submissão de avaliação (passou ou reprovou) OU aulas assistidas
+            const userActivity = userHasActivityInModule(l.id, (l.aulas || []).map((a: any) => a.id));
+            const studentAttempted = moduleExamAttempts.length > 0 || moduleSubs.length > 0 || userActivity;
             const isDirectlyReleased = hasNucleoRelease || isProfActive || hasExcep;
 
             bookStatusMap.set(l.id, {
@@ -625,54 +637,106 @@ export const useStudentCourses = (profile: any) => {
               isApproved,
               isDP,
               isManualFinished,
-              isDirectlyReleased
+              isDirectlyReleased,
+              hasExcep,
+              isBibliologia: isBibliologiaBook(l)
             });
           });
 
           const unlockedBookIds = new Set<string>();
 
-          // O 1º módulo está sempre liberado para estudo (se o nível estiver liberado)
-          let maxSequentialIndex = 0;
-
-          // Propagação sequencial respeitando o progresso individual de cada aluno:
-          // Regra Institucional FATESA:
-          // Professor libera prova = módulo seguinte liberado para estudos.
-          // Curso modular: tentativa ou reprovação (DP) não tranca o fluxo acadêmico do aluno.
-          let progressChanged = true;
-          while (progressChanged) {
-            progressChanged = false;
-            sortedLivros.forEach((l: any, idx: number) => {
-              const st = bookStatusMap.get(l.id);
-              if (!st) return;
-
-              if (idx <= maxSequentialIndex) {
-                // Se a prova foi liberada pelo professor, OU o aluno tentou a avaliação (passou ou DP),
-                // OU o módulo foi aprovado/concluído: o módulo SEGUINTE (idx + 1) é liberado para estudo!
-                if (st.examReleased || st.studentAttempted || st.isApproved || st.isDP || st.isManualFinished) {
-                  if (idx + 1 > maxSequentialIndex && idx + 1 < sortedLivros.length) {
-                    maxSequentialIndex = idx + 1;
-                    progressChanged = true;
-                  }
-                }
-              }
-            });
-          }
-
-          // Propagar desbloqueio sequencial até maxSequentialIndex
-          if (!levelLocked) {
-            for (let i = 0; i <= Math.min(maxSequentialIndex, sortedLivros.length - 1); i++) {
-              unlockedBookIds.add(sortedLivros[i].id);
-            }
-          }
-
-          // Módulos com liberação direta (núcleo, professor_active, exceção individual) OU já concluídos pelo aluno
-          // permanecem desbloqueados para acesso aos estudos e revisão, sem corromper a progressão sequencial geral.
+          // 1. Liberação individual de módulos (liberacoes_excecao):
+          // SEMPRE desbloqueia o módulo diretamente para o aluno (sobrepõe qualquer nível ou restrição)
           sortedLivros.forEach((l: any) => {
             const st = bookStatusMap.get(l.id);
-            if (!levelLocked && st && (st.isDirectlyReleased || st.isApproved || st.isManualFinished)) {
+            if (st?.hasExcep) {
               unlockedBookIds.add(l.id);
             }
           });
+
+          // 2. Módulos já concluídos / aprovados (histórico ou online):
+          // SEMPRE desbloqueados para permitir consulta, revisão de aulas e visualização no boletim
+          sortedLivros.forEach((l: any) => {
+            const st = bookStatusMap.get(l.id);
+            if (st && (st.isApproved || st.isManualFinished)) {
+              unlockedBookIds.add(l.id);
+            }
+          });
+
+          // 3. Módulos em Dependência (DP):
+          // Alunos com módulos em dependência precisam ter acesso às lições para estudar e realizar a recuperação (V2/V3)
+          sortedLivros.forEach((l: any) => {
+            const st = bookStatusMap.get(l.id);
+            if (st?.isDP) {
+              unlockedBookIds.add(l.id);
+            }
+          });
+
+          // 4. Módulos com liberação direta (núcleo, professor_active ou admin):
+          // REGRA INSTITUCIONAL CRÍTICA:
+          // O livro "Bibliologia" DEVE PERMANECER FECHADO para todos os alunos até que os professores o liberem.
+          // Bibliologia NUNCA é liberado automaticamente por índice 0 ou padrão.
+          sortedLivros.forEach((l: any) => {
+            const st = bookStatusMap.get(l.id);
+            if (!levelLocked && st && st.isDirectlyReleased) {
+              if (st.isBibliologia) {
+                // Bibliologia só desbloqueia se houver liberação expressa do professor/núcleo (ou staff)
+                if (st.isDirectlyReleased || isStaff) {
+                  unlockedBookIds.add(l.id);
+                }
+              } else {
+                unlockedBookIds.add(l.id);
+              }
+            }
+          });
+
+          // 5. Alunos em HIATO / Trancados:
+          // "Caso o aluno esteja cursando um módulo atualmente, ele será bloqueado no módulo seguinte."
+          // Alunos em hiato mantêm acesso aos módulos concluídos e ao módulo que estiverem cursando atualmente,
+          // porém são BLOQUEADOS de avançar para os módulos seguintes (sem propagação sequencial).
+          if (isHiatoStudent) {
+            sortedLivros.forEach((l: any) => {
+              const st = bookStatusMap.get(l.id);
+              if (st && st.studentAttempted && !st.isApproved) {
+                if (!studentExclusions.includes(l.id) || st.hasExcep) {
+                  unlockedBookIds.add(l.id);
+                }
+              }
+            });
+            // Nenhuma propagação em cadeia para alunos em hiato.
+          } else {
+            // 6. Propagação sequencial para alunos regulares ativos (não em hiato e nível liberado):
+            // Quando a prova de um módulo liberado for liberada pelo professor, ou o aluno tentar/concluir a avaliação (passou ou DP),
+            // o módulo SEGUINTE da grade é desbloqueado para estudo.
+            // NOTA: Bibliologia NUNCA é desbloqueada por propagação sequencial a menos que o professor a tenha liberado diretamente!
+            if (!levelLocked) {
+              let progressChanged = true;
+              while (progressChanged) {
+                progressChanged = false;
+                sortedLivros.forEach((l: any, idx: number) => {
+                  if (!unlockedBookIds.has(l.id)) return;
+                  const st = bookStatusMap.get(l.id);
+                  if (!st) return;
+
+                  if (st.examReleased || st.studentAttempted || st.isApproved || st.isDP || st.isManualFinished) {
+                    const nextBook = sortedLivros[idx + 1];
+                    if (nextBook && !unlockedBookIds.has(nextBook.id)) {
+                      const nextSt = bookStatusMap.get(nextBook.id);
+                      if (nextSt?.isBibliologia) {
+                        if (nextSt.isDirectlyReleased || isStaff) {
+                          unlockedBookIds.add(nextBook.id);
+                          progressChanged = true;
+                        }
+                      } else {
+                        unlockedBookIds.add(nextBook.id);
+                        progressChanged = true;
+                      }
+                    }
+                  }
+                });
+              }
+            }
+          }
 
           return {
             id: c.id,
@@ -798,7 +862,8 @@ export const useStudentCourses = (profile: any) => {
     profile?.acesso_definitivo,
     profile?.caminhos_acesso, 
     profile?.created_at,
-    profile?.modulos_finalizados_manual
+    profile?.modulos_finalizados_manual,
+    profile?.status_nucleo
   ]);
 
   return {

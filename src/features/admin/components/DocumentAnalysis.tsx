@@ -160,7 +160,7 @@ const DocumentAnalysis: React.FC = () => {
                       <div style={{ fontSize: '0.8rem', display: 'flex', gap: '0.5rem' }}>
                         <span style={{ padding: '2px 8px', background: 'rgba(255,255,255,0.1)', borderRadius: '6px' }}>{student.documentos.length} docs</span>
                         {pendentes > 0 && (
-                          <span style={{ padding: '2px 8px', background: 'rgba(234, 179, 8, 0.2)', color: '#eab308', borderRadius: '6px', fontWeight: 700 }}>{pendentes} pends</span>
+                          <span style={{ padding: '2px 8px', background: 'var(--primary, #0056b3)', color: '#ffffff', borderRadius: '6px', fontWeight: 800 }}>{pendentes} pends</span>
                         )}
                       </div>
                     </div>
@@ -198,8 +198,8 @@ const DocumentAnalysis: React.FC = () => {
                         fontSize: '0.8rem', 
                         fontWeight: 800,
                         textTransform: 'uppercase',
-                        background: doc.status === 'aprovado' ? 'rgba(16, 185, 129, 0.2)' : doc.status === 'recusado' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(234, 179, 8, 0.2)',
-                        color: doc.status === 'aprovado' ? '#10b981' : doc.status === 'recusado' ? '#ef4444' : '#eab308'
+                        background: doc.status === 'aprovado' ? 'rgba(16, 185, 129, 0.2)' : doc.status === 'recusado' ? 'rgba(239, 68, 68, 0.2)' : 'var(--primary, #0056b3)',
+                        color: doc.status === 'aprovado' ? '#10b981' : doc.status === 'recusado' ? '#ef4444' : '#ffffff'
                       }}>
                         {doc.status}
                       </div>

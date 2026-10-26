@@ -34,8 +34,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({ documents, handleFileUp
                   fontWeight: 800,
                   padding: '4px 12px',
                   borderRadius: '20px',
-                  background: d.status === 'aprovado' ? 'rgba(34, 197, 94, 0.1)' : d.status === 'rejeitado' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(234, 179, 8, 0.1)',
-                  color: d.status === 'aprovado' ? '#22c55e' : d.status === 'rejeitado' ? '#ef4444' : '#eab308' 
+                  background: d.status === 'aprovado' ? 'rgba(34, 197, 94, 0.1)' : d.status === 'rejeitado' ? 'rgba(239, 68, 68, 0.1)' : 'var(--primary, #0056b3)',
+                  color: d.status === 'aprovado' ? '#22c55e' : d.status === 'rejeitado' ? '#ef4444' : '#ffffff' 
                 }}>
                   {d.status.toUpperCase()}
                 </span>

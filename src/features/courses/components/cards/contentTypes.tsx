@@ -19,9 +19,9 @@ export const ROOT_CONFIG: Record<
 > = {
   panorama: {
     label: 'Panorama',
-    color: '#f59e0b',
-    bg: 'rgba(245, 158, 11, 0.10)',
-    border: 'rgba(245, 158, 11, 0.30)',
+    color: '#ffffff',
+    bg: '#0056b3',
+    border: '#004494',
     icon: <Compass size={16} />,
   },
   licoes: {
@@ -40,9 +40,9 @@ export const ROOT_CONFIG: Record<
   },
   avaliacoes: {
     label: 'Avaliações',
-    color: '#eab308',
-    bg: 'rgba(234, 179, 8, 0.10)',
-    border: 'rgba(234, 179, 8, 0.30)',
+    color: '#ffffff',
+    bg: '#0056b3',
+    border: '#004494',
     icon: <GraduationCap size={16} />,
   },
   videos: {
@@ -73,12 +73,12 @@ export const TIPO_CONFIG: Record<
   { label: string; color: string; bg: string; root: ContentRoot; icon: React.ReactNode }
 > = {
   gravada:   { label: 'Vídeo Aula', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  root: 'videos',      icon: <PlayCircle size={18} /> },
-  ao_vivo:   { label: 'Ao Vivo',    color: '#f59e0b', bg: 'rgba(245,158,11,0.12)',   root: 'videos',      icon: <Radio size={18} /> },
+  ao_vivo:   { label: 'Ao Vivo',    color: '#ffffff', bg: '#0056b3',               root: 'videos',      icon: <Radio size={18} /> },
   video:     { label: 'Vídeo',      color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  root: 'videos',      icon: <Video size={18} /> },
   atividade: { label: 'Exercício',  color: '#10b981', bg: 'rgba(16,185,129,0.12)',   root: 'exercicios',  icon: <ClipboardList size={18} /> },
   exercicio: { label: 'Exercício',  color: '#10b981', bg: 'rgba(16,185,129,0.12)',   root: 'exercicios',  icon: <ClipboardList size={18} /> },
-  prova:     { label: 'Prova',      color: '#eab308', bg: 'rgba(234,179,8,0.12)',    root: 'avaliacoes',  icon: <GraduationCap size={18} /> },
-  avaliacao: { label: 'Avaliação',  color: '#eab308', bg: 'rgba(234,179,8,0.12)',    root: 'avaliacoes',  icon: <GraduationCap size={18} /> },
+  prova:     { label: 'Prova',      color: '#ffffff', bg: '#0056b3',               root: 'avaliacoes',  icon: <GraduationCap size={18} /> },
+  avaliacao: { label: 'Avaliação',  color: '#ffffff', bg: '#0056b3',               root: 'avaliacoes',  icon: <GraduationCap size={18} /> },
   licao:     { label: 'Lição',      color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',   root: 'licoes',      icon: <FileText size={18} /> },
   aula:      { label: 'Aula',       color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',   root: 'licoes',      icon: <BookOpen size={18} /> },
   material:  { label: 'Material',   color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',   root: 'licoes',      icon: <FileText size={18} /> },

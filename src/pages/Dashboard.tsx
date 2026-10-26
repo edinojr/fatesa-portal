@@ -25,6 +25,7 @@ import {
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
 import Logo from '../components/common/Logo'
+import PageHeader from '../components/layout/PageHeader'
 import { GRADUATION_CONFIG } from '../config/graduation'
 
 // Hooks Feature-based
@@ -41,6 +42,7 @@ import DocumentUpload from '../features/finance/components/DocumentUpload'
 import FinancePanel from '../features/finance/components/FinancePanel'
 import ExamNotificationModal from '../features/courses/components/ExamNotificationModal'
 import PopupAlertsDisplay from '../features/communication/components/PopupAlertsDisplay'
+import PixPaymentPopup from '../features/finance/components/PixPaymentPopup'
 import { CertificadosPanel } from '../components/CertificadosPanel'
 import { PanelSwitcher } from '../components/common/PanelSwitcher'
 
@@ -560,47 +562,42 @@ const Dashboard = () => {
       )}
 
       {/* Standardized Dashboard Navigation Header */}
-      <header className="dashboard-header-modern">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <Logo size={120} />
-          
-          <div style={{ display: 'flex', gap: '0.75rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.5rem' }}>
-            <button onClick={() => navigate('/')} className="nav-btn-premium" title="Ir para Home do Site">
-              <HomeIcon size={18} />
-            </button>
-            <button 
-              onClick={handleStudentBack} 
-              className="nav-btn-premium" 
-              title="Voltar"
-              style={{ display: (activeTab === 'home') ? 'none' : 'inline-flex' }}
-            >
-              <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
-            </button>
-          </div>
-        </div>
-
-        <nav style={{ display: 'flex', gap: '0.5rem', flex: 1, overflowX: 'auto', scrollbarWidth: 'none' }}>
-           {activeTab !== 'home' && (
-             <div className="nav-breadcrumb-modern">
-               <LayoutGrid size={16} /> <span>Painel do Aluno</span>
-               <ChevronRight size={14} className="divider" />
-               <span className="current">
-                 {activeTab === 'cursos' ? 'Meus Cursos' :
-                  activeTab === 'documentos' ? 'Documentos' :
-                  activeTab === 'financeiro' ? 'Pagamentos' :
-                  activeTab === 'modulos-concluidos' ? 'Boletim' : 'Fórum'}
-               </span>
-             </div>
-           )}
-        </nav>
-
+      <PageHeader
+        title="Painel do Aluno"
+        subtitle={
+          activeTab === 'home' ? 'Ambiente Virtual de Aprendizagem' :
+          activeTab === 'cursos' ? 'Meus Cursos e Aulas' :
+          activeTab === 'documentos' ? 'Meus Documentos' :
+          activeTab === 'financeiro' ? 'Pagamentos e Mensalidades' :
+          activeTab === 'modulos-concluidos' ? 'Histórico e Boletim de Notas' : 'Fórum de Dúvidas'
+        }
+        variant="student"
+        showBackButton={activeTab !== 'home'}
+        onBack={handleStudentBack}
+        showHomeButton={true}
+        homePath="/dashboard"
+        showTopBanner={false}
+        breadcrumb={
+          activeTab !== 'home' ? [
+            { label: 'Início', onClick: handleStudentBack },
+            { 
+              label: activeTab === 'cursos' ? 'Meus Cursos' :
+                     activeTab === 'documentos' ? 'Documentos' :
+                     activeTab === 'financeiro' ? 'Pagamentos' :
+                     activeTab === 'modulos-concluidos' ? 'Boletim' : 'Fórum',
+              isActive: true 
+            }
+          ] : undefined
+        }
+        actions={
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <PanelSwitcher currentPanel="aluno" />
-            <button className="nav-btn-premium danger" onClick={() => signOut()}>
+            <button className="nav-btn-premium danger" onClick={() => signOut()} style={{ width: 'auto' }} title="Sair da conta">
               <LogOut size={18} /> <span className="mobile-hide">Sair</span>
             </button>
           </div>
-      </header>
+        }
+      />
 
       <main className="admin-main">
         {alumniPendingApproval ? (
@@ -609,21 +606,21 @@ const Dashboard = () => {
               background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)',
               backdropFilter: 'blur(20px)',
               borderRadius: '28px',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
+              border: '1px solid rgba(0, 86, 179, 0.4)',
               boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
               padding: '3.5rem 2.5rem',
               textAlign: 'center',
               position: 'relative',
               overflow: 'hidden'
             }}>
-              <div style={{ position: 'absolute', top: '-100px', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '300px', background: 'rgba(245, 158, 11, 0.15)', filter: 'blur(90px)', borderRadius: '50%', pointerEvents: 'none' }}></div>
+              <div style={{ position: 'absolute', top: '-100px', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '300px', background: 'rgba(0, 86, 179, 0.15)', filter: 'blur(90px)', borderRadius: '50%', pointerEvents: 'none' }}></div>
 
-              <div style={{ display: 'inline-flex', padding: '1.25rem', borderRadius: '50%', background: 'rgba(245, 158, 11, 0.1)', border: '2px solid rgba(245, 158, 11, 0.3)', marginBottom: '1.5rem', color: '#f59e0b' }}>
+              <div style={{ display: 'inline-flex', padding: '1.25rem', borderRadius: '50%', background: 'rgba(0, 86, 179, 0.12)', border: '2px solid rgba(0, 86, 179, 0.3)', marginBottom: '1.5rem', color: '#0056b3' }}>
                 <Clock size={48} className="animate-pulse" />
               </div>
 
               <div>
-                <span style={{ display: 'inline-block', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', padding: '6px 16px', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                <span style={{ display: 'inline-block', background: 'var(--primary, #0056b3)', color: '#ffffff', padding: '6px 16px', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem', border: '1px solid #004494' }}>
                   Aguardando Validação da Administração
                 </span>
               </div>
@@ -637,7 +634,7 @@ const Dashboard = () => {
               </p>
 
               <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: '18px', padding: '1.75rem', textAlign: 'left', maxWidth: '650px', margin: '0 auto 2.5rem', border: '1px solid var(--glass-border)' }}>
-                <h4 style={{ margin: '0 0 1rem 0', color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.05rem', fontWeight: 700 }}>
+                <h4 style={{ margin: '0 0 1rem 0', color: 'var(--primary, #0056b3)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.05rem', fontWeight: 700 }}>
                   <GraduationCap size={22} /> Como funciona o processo de liberação:
                 </h4>
                 <ul style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
@@ -762,8 +759,8 @@ const Dashboard = () => {
               </div>
 
               <div className="admin-action-card" onClick={() => setActiveTab('certificados')}>
-                <div className="icon-wrapper" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#eab308' }}><GraduationCap size={32} /></div>
-                <h3 style={{ color: '#eab308' }}>Históricos e Certificados</h3>
+                <div className="icon-wrapper" style={{ background: 'rgba(0, 86, 179, 0.1)', color: 'var(--primary, #0056b3)' }}><GraduationCap size={32} /></div>
+                <h3 style={{ color: 'var(--primary, #0056b3)' }}>Históricos e Certificados</h3>
                 <p>Baixe seus históricos escolares e certificados de conclusão em PDF.</p>
               </div>
 
@@ -787,8 +784,8 @@ const Dashboard = () => {
               </div>
 
               {profile?.status_nucleo !== 'trancado' && profile?.status_nucleo !== 'hiato' && (
-                <div className="admin-action-card" onClick={handleSelfTrancar} style={{ border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-                  <div className="icon-wrapper"><PauseCircle size={32} color="#f59e0b" /></div>
+                <div className="admin-action-card" onClick={handleSelfTrancar} style={{ border: '1px solid rgba(0, 86, 179, 0.2)' }}>
+                  <div className="icon-wrapper"><PauseCircle size={32} color="var(--primary, #0056b3)" /></div>
                   <h3>Pausar Curso</h3>
                   <p>Tranque seu curso temporariamente se precisar de uma pausa.</p>
                 </div>
@@ -822,6 +819,29 @@ const Dashboard = () => {
               <div>
                 <strong style={{ color: 'var(--error)' }}>Acesso suspenso pelo administrador.</strong>
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>Seu acesso aos cursos e materiais está restrito. Regularize seu pagamento abaixo para reativar todos os recursos.</p>
+              </div>
+            </div>
+          )}
+
+          {(profile?.status_nucleo === 'hiato' || profile?.status_nucleo === 'trancado') && (
+            <div style={{ marginBottom: '1.5rem', padding: '1rem 1.5rem', background: 'rgba(0, 86, 179, 0.08)', border: '1px solid var(--primary, #0056b3)', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.85rem' }}>
+              <PauseCircle size={22} color="var(--primary, #0056b3)" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+              <div style={{ flex: 1 }}>
+                <strong style={{ color: 'var(--primary, #0056b3)', fontSize: '0.95rem' }}>
+                  {profile?.status_nucleo === 'hiato' ? 'Matrícula em Hiato' : 'Curso Temporariamente Pausado'}
+                </strong>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '0.25rem 0 0.5rem', lineHeight: 1.5 }}>
+                  O avanço para novos módulos está suspenso temporariamente. Você mantém acesso aos seus módulos concluídos e ao módulo que estiver cursando. Para reativar seu plano e avançar nos estudos, fale com a secretaria.
+                </p>
+                <a
+                  href="https://wa.me/5516999999999?text=Ol%C3%A1%2C%20gostaria%20de%20reativar%20minha%20matr%C3%ADcula%20na%20FATESA!"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-primary"
+                  style={{ fontSize: '0.8rem', padding: '0.4rem 0.9rem', width: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  Falar com Secretaria / Reativar
+                </a>
               </div>
             </div>
           )}
@@ -954,6 +974,9 @@ const Dashboard = () => {
 
       {/* POP-UP DE ALERTAS E INFORMES DO ADMIN */}
       <PopupAlertsDisplay />
+
+      {/* POP-UP PIX DE MENSALIDADE E VALIDAÇÃO DE COMPROVANTE */}
+      <PixPaymentPopup profile={profile} onPaymentSuccess={() => { fetchPayments(); refreshProfile(); }} forceOpen={searchParams.get('preview_pix') === 'true'} />
 
       {/* POP-UP DE PROVAS PENDENTES OU RECUPERAÇÃO */}
       {showExamNotice && pendingExams.length > 0 && (

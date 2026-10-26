@@ -1,6 +1,10 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase'
-import { BookOpen, MapPin, ChevronDown, ChevronUp, Loader2, Check, X, Users, GraduationCap, AlertCircle } from 'lucide-react'
+import {
+  BookOpen, MapPin, ChevronDown, ChevronUp, Loader2, Check, X,
+  Users, GraduationCap, AlertCircle, Search, Award, TrendingUp, CheckCircle2, XCircle
+} from 'lucide-react'
+import { areModuleTitlesEqual, cleanModuleTitle, LEGACY_AULA_TO_BOOK_TITLE } from '../../../lib/courseTitles'
 
 interface BoletimPanelProps {
   courses: any[]
@@ -20,143 +24,351 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
   const [selectedCourseId, setSelectedCourseId] = useState<string>('')
   const [selectedModuloId, setSelectedModuloId] = useState<string>('')
   const [selectedNucleo, setSelectedNucleo] = useState<string>('todos')
-  const [editCell, setEditCell] = useState<{ alunoId: string; aulaId: string } | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [editCell, setEditCell] = useState<{ alunoId: string; aulaId: string; livroId: string } | null>(null)
   const [editValue, setEditValue] = useState('')
   const [saving, setSaving] = useState<string | null>(null)
   const [expandedModulos, setExpandedModulos] = useState<Set<string>>(new Set())
+  const [directHistoryGrades, setDirectHistoryGrades] = useState<any[]>([])
+  const [loadingHistory, setLoadingHistory] = useState(false)
 
-  const cursosComModulos = useMemo(() => {
-    return (courses || []).filter((c: any) =>
-      c.livros?.some((l: any) =>
-        l.aulas?.some((a: any) => a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final)
-      )
-    )
+  // Busca histórico de notas complementar para garantir 100% dos dados dos alunos
+  const fetchComplementaryHistory = useCallback(async () => {
+    try {
+      setLoadingHistory(true)
+      const { data } = await supabase
+        .from('historico_notas')
+        .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao')
+        .order('created_at', { ascending: false })
+      if (data) {
+        setDirectHistoryGrades(data)
+      }
+    } catch (err) {
+      console.warn('[BoletimPanel] Erro ao carregar historico_notas complementar:', err)
+    } finally {
+      setLoadingHistory(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchComplementaryHistory()
+  }, [fetchComplementaryHistory])
+
+  // Cursos disponíveis que possuem livros
+  const cursosDisponiveis = useMemo(() => {
+    return (courses || []).filter((c: any) => (c.livros || []).length > 0)
   }, [courses])
 
-  const aulasPorModulo = useMemo(() => {
-    const map: Record<string, any[]> = {}
+  // Seleciona automaticamente o primeiro curso caso não haja seleção
+  useEffect(() => {
+    if (!selectedCourseId && cursosDisponiveis.length > 0) {
+      setSelectedCourseId(cursosDisponiveis[0].id)
+    }
+  }, [cursosDisponiveis, selectedCourseId])
+
+  // Dicionário de títulos para livros
+  const titleToBook = useMemo(() => {
+    const map: Record<string, any> = {}
     for (const c of courses || []) {
       for (const l of c.livros || []) {
-        if (l.aulas) {
-          map[l.id] = l.aulas.filter((a: any) => a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final)
+        if (l.titulo) {
+          map[cleanModuleTitle(l.titulo)] = l
         }
       }
     }
     return map
   }, [courses])
 
-  const alunosFiltrados = useMemo(() => {
-    let alunos = allStudents || []
-    if (selectedNucleo !== 'todos') {
-      alunos = alunos.filter((s: any) => (s.nucleos?.nome || 'Sem Polo') === selectedNucleo)
-    }
-    return alunos.sort((a: any, b: any) => a.nome?.localeCompare(b.nome || '') || 0)
-  }, [allStudents, selectedNucleo])
-
-  const submissionsPorAlunoModulo = useMemo(() => {
-    const map: Record<string, Record<string, any[]>> = {}
-    for (const sub of submissions || []) {
-      const alunoId = sub.student_id || sub.aluno_id
-      const livroId = sub.book_id
-      if (!alunoId || !livroId) continue
-      if (!map[alunoId]) map[alunoId] = {}
-      if (!map[alunoId][livroId]) map[alunoId][livroId] = []
-      map[alunoId][livroId].push(sub)
+  // Dicionário de livros por ID
+  const bookById = useMemo(() => {
+    const map: Record<string, any> = {}
+    for (const c of courses || []) {
+      for (const l of c.livros || []) {
+        map[l.id] = l
+      }
     }
     return map
-  }, [submissions])
+  }, [courses])
 
-  const handleSaveGrade = async (alunoId: string, aulaId: string, newGrade: number) => {
+  // Avaliações de cada módulo (reconhece provas, avaliações, bloco final e V1/V2/V3)
+  const aulasPorModulo = useMemo(() => {
+    const map: Record<string, any[]> = {}
+    for (const c of courses || []) {
+      for (const l of c.livros || []) {
+        const exams = (l.aulas || []).filter((a: any) =>
+          a.tipo === 'prova' ||
+          a.tipo === 'avaliacao' ||
+          !!a.is_bloco_final ||
+          (a.titulo && /V[1-3]|RECUPERA|AVALIA|PROVA/i.test(a.titulo))
+        ).sort((a: any, b: any) => (a.versao || a.ordem || 1) - (b.versao || b.ordem || 1))
+
+        if (exams.length > 0) {
+          map[l.id] = exams
+        } else {
+          // Se o módulo não tiver aula específica de prova, cria coluna virtual para exibir notas históricas
+          map[l.id] = [{
+            id: `virtual-${l.id}`,
+            titulo: 'Avaliação Oficial',
+            tipo: 'prova',
+            versao: 1,
+            min_grade: 7,
+            livro_id: l.id,
+            is_virtual: true
+          }]
+        }
+      }
+    }
+    return map
+  }, [courses])
+
+  // Módulos do curso selecionado
+  const modulosDisponiveis = useMemo(() => {
+    if (!selectedCourseId) return []
+    const curso = cursosDisponiveis.find((c: any) => c.id === selectedCourseId)
+    return (curso?.livros || []).sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0))
+  }, [cursosDisponiveis, selectedCourseId])
+
+  // Dicionário consolidado de submissões por Aluno e Módulo
+  const submissionsPorAlunoModulo = useMemo(() => {
+    const map: Record<string, Record<string, any[]>> = {}
+
+    const addSub = (alunoId: string, livroId: string, item: any) => {
+      if (!alunoId || !livroId) return
+      if (!map[alunoId]) map[alunoId] = {}
+      if (!map[alunoId][livroId]) map[alunoId][livroId] = []
+      map[alunoId][livroId].push(item)
+    }
+
+    // 1. Processa submissões recebidas por prop
+    for (const sub of submissions || []) {
+      const alunoId = sub.student_id || sub.aluno_id
+      let livroId = sub.book_id
+
+      if (!livroId && sub.lesson_id && LEGACY_AULA_TO_BOOK_TITLE[sub.lesson_id]) {
+        const targetTitle = LEGACY_AULA_TO_BOOK_TITLE[sub.lesson_id]
+        const matched = titleToBook[cleanModuleTitle(targetTitle)]
+        if (matched) livroId = matched.id
+      }
+
+      if (!livroId && sub.book_title) {
+        const matched = titleToBook[cleanModuleTitle(sub.book_title)]
+        if (matched) livroId = matched.id
+      }
+
+      if (alunoId && livroId) {
+        addSub(alunoId, livroId, sub)
+      }
+    }
+
+    // 2. Mescla notas do histórico direto (historico_notas)
+    for (const h of directHistoryGrades || []) {
+      if (!h.aluno_id || !h.modulo_nome) continue
+      const matched = titleToBook[cleanModuleTitle(h.modulo_nome)]
+      if (matched) {
+        addSub(h.aluno_id, matched.id, {
+          id: `hist-${h.id}`,
+          submission_id: `hist-${h.id}`,
+          student_id: h.aluno_id,
+          aluno_id: h.aluno_id,
+          lesson_id: null,
+          aula_id: null,
+          lesson_title: h.modulo_nome,
+          book_id: matched.id,
+          book_title: matched.titulo,
+          nota: Number(h.nota),
+          status: 'corrigida',
+          versao: 1,
+          is_manual: true
+        })
+      }
+    }
+
+    return map
+  }, [submissions, directHistoryGrades, titleToBook])
+
+  // Obtém a nota de um aluno para uma aula específica do módulo
+  const getStudentGrade = useCallback((alunoId: string, livroId: string, aulaId: string): { sub: any; nota: number | null } => {
+    const subs = submissionsPorAlunoModulo[alunoId]?.[livroId] || []
+    const currentBook = bookById[livroId]
+    const currentAulas = aulasPorModulo[livroId] || []
+    const targetAula = currentAulas.find((a: any) => a.id === aulaId)
+
+    // 1. Busca direta por lesson_id / aula_id
+    let found = subs.find((s: any) => (s.lesson_id === aulaId || s.aula_id === aulaId) && s.nota != null)
+
+    // 2. Busca por versão (ex: V1, V2, V3) se especificada na aula
+    if (!found && targetAula?.versao) {
+      found = subs.find((s: any) => Number(s.versao) === Number(targetAula.versao) && s.nota != null)
+    }
+
+    // 3. Se for a primeira avaliação (V1) ou coluna virtual, e não achou nota específica:
+    // utiliza a nota oficial do módulo (do histórico ou melhor tentativa)
+    if (!found && (targetAula?.is_virtual || targetAula?.versao === 1 || currentAulas[0]?.id === aulaId)) {
+      // Procura qualquer nota corrigida deste aluno neste módulo
+      const validSubs = subs.filter((s: any) => s.nota != null && !isNaN(Number(s.nota)))
+      if (validSubs.length > 0) {
+        // Pega a maior nota
+        found = validSubs.reduce((best: any, curr: any) => Number(curr.nota) > Number(best.nota) ? curr : best, validSubs[0])
+      }
+
+      // Se ainda não achou, busca no historico_notas direto pelo nome do módulo
+      if (!found && currentBook?.titulo) {
+        const histMatch = (directHistoryGrades || []).find((h: any) =>
+          h.aluno_id === alunoId && areModuleTitlesEqual(h.modulo_nome, currentBook.titulo)
+        )
+        if (histMatch && histMatch.nota != null) {
+          return { sub: histMatch, nota: Number(histMatch.nota) }
+        }
+      }
+    }
+
+    if (!found) return { sub: null, nota: null }
+    const num = Number(found.nota)
+    return { sub: found, nota: !isNaN(num) ? num : null }
+  }, [submissionsPorAlunoModulo, bookById, aulasPorModulo, directHistoryGrades])
+
+  // Determina a situação acadêmica do aluno no módulo
+  const getSituacao = useCallback((alunoId: string, livroId: string): 'aprovado' | 'reprovado' | 'nao_avaliado' => {
+    const aulas = aulasPorModulo[livroId] || []
+    let hasAnyGrade = false
+    let maxGrade = -1
+
+    for (const aula of aulas) {
+      const { nota } = getStudentGrade(alunoId, livroId, aula.id)
+      if (nota != null) {
+        hasAnyGrade = true
+        if (nota > maxGrade) maxGrade = nota
+        if (nota >= 7.0) return 'aprovado'
+      }
+    }
+
+    if (maxGrade >= 7.0) return 'aprovado'
+    if (hasAnyGrade) return 'reprovado'
+    return 'nao_avaliado'
+  }, [aulasPorModulo, getStudentGrade])
+
+  // Lista de alunos exibidos para um módulo específico
+  const getAlunosParaModulo = useCallback((livroId: string) => {
+    const mapAlunos = new Map<string, any>()
+
+    // Inclui todos os alunos da lista geral que passam pelo filtro de polo
+    for (const s of allStudents || []) {
+      const poloName = s.nucleos?.nome || 'Sem Polo'
+      if (selectedNucleo !== 'todos' && poloName !== selectedNucleo) continue
+      mapAlunos.set(s.id, s)
+    }
+
+    // Garante que TODOS os alunos que possuem notas/submissões neste módulo sejam incluídos
+    const subsModulo = submissionsPorAlunoModulo
+    for (const alunoId of Object.keys(subsModulo)) {
+      if (subsModulo[alunoId]?.[livroId]?.length > 0) {
+        if (!mapAlunos.has(alunoId)) {
+          const foundInAll = (allStudents || []).find((a: any) => a.id === alunoId)
+          if (foundInAll) {
+            const poloName = foundInAll.nucleos?.nome || 'Sem Polo'
+            if (selectedNucleo === 'todos' || poloName === selectedNucleo) {
+              mapAlunos.set(alunoId, foundInAll)
+            }
+          } else {
+            const firstSub = subsModulo[alunoId][livroId][0]
+            const poloName = firstSub.nucleus_name || 'Sem Polo'
+            if (selectedNucleo === 'todos' || poloName === selectedNucleo) {
+              mapAlunos.set(alunoId, {
+                id: alunoId,
+                nome: firstSub.student_name || 'Aluno Registrado',
+                email: firstSub.student_email || '',
+                nucleos: { nome: poloName }
+              })
+            }
+          }
+        }
+      }
+    }
+
+    let list = Array.from(mapAlunos.values())
+
+    // Filtro por busca de texto
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase().trim()
+      list = list.filter((a: any) =>
+        (a.nome || '').toLowerCase().includes(q) ||
+        (a.email || '').toLowerCase().includes(q)
+      )
+    }
+
+    return list.sort((a: any, b: any) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR'))
+  }, [allStudents, selectedNucleo, submissionsPorAlunoModulo, searchTerm])
+
+  // Salvar nota editada inline
+  const handleSaveGrade = async (alunoId: string, aulaId: string, livroId: string, newGrade: number) => {
     setSaving(`${alunoId}_${aulaId}`)
     try {
-      const existing = (submissions || []).find(
-        (s: any) => (s.student_id || s.aluno_id) === alunoId && (s.lesson_id || s.aula_id) === aulaId
-      )
-      const existingId = existing?.submission_id || existing?.id
-      const { error } = existingId
-        ? await supabase
+      const currentBook = bookById[livroId]
+      const isVirtual = String(aulaId).startsWith('virtual-')
+
+      if (isVirtual) {
+        // Grava no historico_notas se for coluna virtual
+        const { error } = await supabase
+          .from('historico_notas')
+          .upsert({
+            aluno_id: alunoId,
+            modulo_nome: currentBook?.titulo || 'Módulo',
+            nota: newGrade,
+            data_conclusao: new Date().toISOString().split('T')[0]
+          }, { onConflict: 'aluno_id,modulo_nome' })
+        if (error) throw error
+      } else {
+        const { sub } = getStudentGrade(alunoId, livroId, aulaId)
+        const subId = sub?.submission_id || sub?.id
+        if (subId && !String(subId).startsWith('hist-')) {
+          const { error } = await supabase
             .from('respostas_aulas')
-            .update({ nota: newGrade, status: 'corrigida' })
-            .eq('id', existingId)
-        : await supabase
+            .update({ nota: newGrade, status: 'corrigida', updated_at: new Date().toISOString() })
+            .eq('id', subId)
+          if (error) throw error
+        } else {
+          const { error } = await supabase
             .from('respostas_aulas')
             .upsert({
               aluno_id: alunoId,
               aula_id: aulaId,
               nota: newGrade,
               status: 'corrigida',
+              tentativas: 1,
               respostas: {},
-              tentativas: 1
+              updated_at: new Date().toISOString()
             }, { onConflict: 'aluno_id,aula_id' })
-      if (error) throw error
+          if (error) throw error
+        }
+      }
+
+      await fetchComplementaryHistory()
       if (onRefresh) onRefresh()
     } catch (err: any) {
-      alert('Erro ao salvar nota: ' + err.message)
+      alert('Erro ao salvar nota: ' + (err.message || err))
     } finally {
       setSaving(null)
     }
   }
 
-  const startEdit = (alunoId: string, aulaId: string, currentGrade: number | null) => {
-    setEditCell({ alunoId, aulaId })
+  const startEdit = (alunoId: string, aulaId: string, livroId: string, currentGrade: number | null) => {
+    setEditCell({ alunoId, aulaId, livroId })
     setEditValue(currentGrade != null ? String(currentGrade) : '')
   }
 
-  const confirmEdit = async (alunoId: string, aulaId: string) => {
+  const confirmEdit = async (alunoId: string, aulaId: string, livroId: string) => {
     if (!editCell || editValue === '') {
       setEditCell(null)
       return
     }
-    const parsed = parseFloat(editValue)
+    const parsed = parseFloat(editValue.replace(',', '.'))
     if (isNaN(parsed) || parsed < 0 || parsed > 10) {
-      alert('Nota inválida. Use valores entre 0 e 10.')
+      alert('Nota inválida. Digite um valor entre 0 e 10.')
       return
     }
-    await handleSaveGrade(alunoId, aulaId, parsed)
+    await handleSaveGrade(alunoId, aulaId, livroId, parsed)
     setEditCell(null)
   }
-
-  const getSubmissionId = (alunoId: string, livroId: string, aulaId: string): any | null => {
-    const subs = submissionsPorAlunoModulo[alunoId]?.[livroId]
-    if (subs) {
-      const found = subs.find((s: any) => s.lesson_id === aulaId || s.aula_id === aulaId)
-      if (found) return found
-    }
-    // Fallback: search all submissions for this student and lesson
-    for (const sub of submissions || []) {
-      const sAlunoId = sub.student_id || sub.aluno_id
-      const sAulaId = sub.lesson_id || sub.aula_id
-      if (sAlunoId === alunoId && sAulaId === aulaId) return sub
-    }
-    return null
-  }
-
-  const getStudentGrade = (alunoId: string, livroId: string, aulaId: string): { sub: any; nota: number | null } => {
-    const sub = getSubmissionId(alunoId, livroId, aulaId)
-    if (!sub) return { sub: null, nota: null }
-    return { sub, nota: sub.nota ?? null }
-  }
-
-  const getSituacao = (alunoId: string, livroId: string): 'aprovado' | 'reprovado' | 'nao_avaliado' => {
-    const aulas = aulasPorModulo[livroId] || []
-    let hasAnySubmission = false
-    for (const aula of aulas) {
-      const { sub, nota } = getStudentGrade(alunoId, livroId, aula.id)
-      if (sub) hasAnySubmission = true
-      const minGrade = aula.min_grade ?? 7
-      if (nota != null && nota >= minGrade) return 'aprovado'
-    }
-    if (hasAnySubmission) return 'reprovado'
-    return 'nao_avaliado'
-  }
-
-  const modulosDisponiveis = useMemo(() => {
-    if (!selectedCourseId) return []
-    const curso = cursosComModulos.find((c: any) => c.id === selectedCourseId)
-    return curso?.livros?.filter((l: any) =>
-      l.aulas?.some((a: any) => a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final)
-    ) || []
-  }, [cursosComModulos, selectedCourseId])
 
   const toggleModulo = (id: string) => {
     setExpandedModulos(prev => {
@@ -178,90 +390,163 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
 
   return (
     <div className="data-card" style={{ animation: 'fadeIn 0.3s' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
-        <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <GraduationCap color="var(--primary)" /> Boletim de Notas
-        </h3>
+      {/* Cabeçalho */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div>
+          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.4rem', fontWeight: 800 }}>
+            <GraduationCap color="var(--primary)" size={28} /> Boletim Geral de Notas & Progresso
+          </h2>
+          <p style={{ margin: '0.35rem 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            Consulte notas oficiais, edite pontuações e acompanhe as taxas de aprovação e reprovação por módulo.
+          </p>
+        </div>
+        {loadingHistory && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--primary)' }}>
+            <Loader2 size={16} className="spinner" /> Sincronizando notas...
+          </div>
+        )}
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', padding: '1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
-        <div style={{ flex: 1, minWidth: '200px' }}>
-          <label style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>Curso</label>
-          <select className="form-control" value={selectedCourseId} onChange={e => { setSelectedCourseId(e.target.value); setSelectedModuloId('') }} style={{ width: '100%' }}>
+      {/* Barra de Filtros */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '2rem', padding: '1.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
+        <div>
+          <label style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem', letterSpacing: '0.5px' }}>
+            1. Curso
+          </label>
+          <select
+            className="form-control"
+            value={selectedCourseId}
+            onChange={e => { setSelectedCourseId(e.target.value); setSelectedModuloId('') }}
+            style={{ width: '100%' }}
+          >
             <option value="">Selecione um curso...</option>
-            {cursosComModulos.map((c: any) => (
+            {cursosDisponiveis.map((c: any) => (
               <option key={c.id} value={c.id}>{c.nome}</option>
             ))}
           </select>
         </div>
-        <div style={{ flex: 1, minWidth: '200px' }}>
-          <label style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>Módulo</label>
-          <select className="form-control" value={selectedModuloId} onChange={e => setSelectedModuloId(e.target.value)} style={{ width: '100%' }} disabled={!selectedCourseId}>
-            <option value="">Todos os módulos</option>
+
+        <div>
+          <label style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem', letterSpacing: '0.5px' }}>
+            2. Módulo Específico
+          </label>
+          <select
+            className="form-control"
+            value={selectedModuloId}
+            onChange={e => setSelectedModuloId(e.target.value)}
+            style={{ width: '100%' }}
+            disabled={!selectedCourseId}
+          >
+            <option value="">Todos os Módulos do Curso</option>
             {modulosDisponiveis.map((l: any) => (
               <option key={l.id} value={l.id}>{l.titulo}</option>
             ))}
           </select>
         </div>
-        <div style={{ flex: 1, minWidth: '200px' }}>
-          <label style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>Núcleo / Polo</label>
-          <select className="form-control" value={selectedNucleo} onChange={e => setSelectedNucleo(e.target.value)} style={{ width: '100%' }}>
-            <option value="todos">Todos os Núcleos</option>
+
+        <div>
+          <label style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem', letterSpacing: '0.5px' }}>
+            3. Filtrar Polo / Núcleo
+          </label>
+          <select
+            className="form-control"
+            value={selectedNucleo}
+            onChange={e => setSelectedNucleo(e.target.value)}
+            style={{ width: '100%' }}
+          >
+            <option value="todos">Todos os Polos</option>
             {professorNucleos.map((n: any) => (
               <option key={n.id} value={n.nome}>{n.nome}</option>
             ))}
           </select>
         </div>
+
+        <div>
+          <label style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem', letterSpacing: '0.5px' }}>
+            4. Buscar Aluno
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nome ou e-mail..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{ width: '100%', paddingLeft: '2rem' }}
+            />
+            <Search size={14} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+          </div>
+        </div>
       </div>
 
+      {/* Conteúdo Principal */}
       {!selectedCourseId ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-          <BookOpen size={32} style={{ opacity: 0.2, marginBottom: '0.75rem' }} />
-          <p>Selecione um curso e módulo para visualizar o boletim.</p>
+        <div style={{ textAlign: 'center', padding: '3.5rem 2rem', color: 'var(--text-muted)' }}>
+          <BookOpen size={40} style={{ opacity: 0.3, marginBottom: '0.75rem' }} />
+          <p style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>Selecione um curso acima para visualizar o boletim.</p>
         </div>
       ) : (
         <>
           {selectedModuloId ? (
-            <ModuloBoletim
+            <ModuloBoletimContainer
+              key={selectedModuloId}
               livroId={selectedModuloId}
+              livroTitulo={bookById[selectedModuloId]?.titulo || 'Módulo'}
               aulas={aulasPorModulo[selectedModuloId] || []}
-              alunos={alunosFiltrados}
-               getStudentGrade={getStudentGrade}
-               getSituacao={getSituacao}
-               editCell={editCell}
-               editValue={editValue}
-               setEditValue={setEditValue}
-               startEdit={startEdit}
-               confirmEdit={confirmEdit}
-               saving={saving}
-             />
-           ) : (
-             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-               {modulosDisponiveis.map((mod: any) => {
-                 const isExpanded = expandedModulos.has(mod.id)
-                 return (
-                   <div key={mod.id} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
-                     <div
-                       onClick={() => toggleModulo(mod.id)}
-                       style={{ padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', background: 'rgba(var(--primary-rgb), 0.05)' }}
-                     >
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                         <BookOpen size={18} color="var(--primary)" />
-                         <span style={{ fontWeight: 800, fontSize: '1rem' }}>{mod.titulo}</span>
-                         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '4px' }}>
-                           {alunosFiltrados.length} alunos
-                         </span>
-                       </div>
-                       {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                     </div>
-                     {isExpanded && (
-                       <div style={{ padding: '1rem' }}>
-                         <ModuloBoletim
-                           livroId={mod.id}
-                           aulas={aulasPorModulo[mod.id] || []}
-                           alunos={alunosFiltrados}
-                           getStudentGrade={getStudentGrade}
-                           getSituacao={getSituacao}
+              alunos={getAlunosParaModulo(selectedModuloId)}
+              getStudentGrade={getStudentGrade}
+              getSituacao={getSituacao}
+              editCell={editCell}
+              editValue={editValue}
+              setEditValue={setEditValue}
+              startEdit={startEdit}
+              confirmEdit={confirmEdit}
+              saving={saving}
+            />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {modulosDisponiveis.map((mod: any) => {
+                const isExpanded = expandedModulos.has(mod.id)
+                const alunosModulo = getAlunosParaModulo(mod.id)
+
+                return (
+                  <div key={mod.id} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)', overflow: 'hidden' }}>
+                    <div
+                      onClick={() => toggleModulo(mod.id)}
+                      style={{
+                        padding: '1.1rem 1.5rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        background: isExpanded ? 'rgba(var(--primary-rgb), 0.08)' : 'rgba(255,255,255,0.02)',
+                        transition: 'background 0.2s'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <BookOpen size={20} color="var(--primary)" />
+                        <span style={{ fontWeight: 800, fontSize: '1.05rem' }}>{mod.titulo}</span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ffffff', background: 'var(--primary, #0056b3)', padding: '2px 10px', borderRadius: '12px' }}>
+                          {alunosModulo.length} alunos
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                          {isExpanded ? 'Ocultar Boletim' : 'Expandir Boletim'}
+                        </span>
+                        {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                      </div>
+                    </div>
+
+                    {isExpanded && (
+                      <div style={{ padding: '1.25rem' }}>
+                        <ModuloBoletimContainer
+                          livroId={mod.id}
+                          livroTitulo={mod.titulo}
+                          aulas={aulasPorModulo[mod.id] || []}
+                          alunos={alunosModulo}
+                          getStudentGrade={getStudentGrade}
+                          getSituacao={getSituacao}
                           editCell={editCell}
                           editValue={editValue}
                           setEditValue={setEditValue}
@@ -274,12 +559,6 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
                   </div>
                 )
               })}
-              {modulosDisponiveis.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                  <AlertCircle size={32} style={{ opacity: 0.2, marginBottom: '0.75rem' }} />
-                  <p>Nenhum módulo com avaliações encontrado neste curso.</p>
-                </div>
-              )}
             </div>
           )}
         </>
@@ -288,22 +567,24 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
   )
 }
 
-interface ModuloBoletimProps {
+interface ModuloBoletimContainerProps {
   livroId: string
+  livroTitulo: string
   aulas: any[]
   alunos: any[]
   getStudentGrade: (alunoId: string, livroId: string, aulaId: string) => { sub: any; nota: number | null }
   getSituacao: (alunoId: string, livroId: string) => 'aprovado' | 'reprovado' | 'nao_avaliado'
-  editCell: { alunoId: string; aulaId: string } | null
+  editCell: { alunoId: string; aulaId: string; livroId: string } | null
   editValue: string
   setEditValue: (v: string) => void
-  startEdit: (alunoId: string, aulaId: string, grade: number | null) => void
-  confirmEdit: (alunoId: string, aulaId: string) => void
+  startEdit: (alunoId: string, aulaId: string, livroId: string, grade: number | null) => void
+  confirmEdit: (alunoId: string, aulaId: string, livroId: string) => void
   saving: string | null
 }
 
-const ModuloBoletim: React.FC<ModuloBoletimProps> = ({
+const ModuloBoletimContainer: React.FC<ModuloBoletimContainerProps> = ({
   livroId,
+  livroTitulo,
   aulas,
   alunos,
   getStudentGrade,
@@ -315,141 +596,353 @@ const ModuloBoletim: React.FC<ModuloBoletimProps> = ({
   confirmEdit,
   saving,
 }) => {
-  if (aulas.length === 0) {
-    return <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>Este módulo não possui avaliações.</p>
-  }
+  // Cálculo de Progresso de Aprovação e Reprovação do Módulo
+  const stats = useMemo(() => {
+    let aprovados = 0
+    let reprovados = 0
+    let naoAvaliados = 0
+
+    for (const aluno of alunos) {
+      const sit = getSituacao(aluno.id, livroId)
+      if (sit === 'aprovado') aprovados++
+      else if (sit === 'reprovado') reprovados++
+      else naoAvaliados++
+    }
+
+    const total = alunos.length
+    const avaliados = aprovados + reprovados
+    const taxaAprovacao = avaliados > 0 ? Math.round((aprovados / avaliados) * 100) : 0
+    const taxaReprovacao = avaliados > 0 ? Math.round((reprovados / avaliados) * 100) : 0
+
+    const pctAprovadosTotal = total > 0 ? Math.round((aprovados / total) * 100) : 0
+    const pctReprovadosTotal = total > 0 ? Math.round((reprovados / total) * 100) : 0
+    const pctPendentesTotal = total > 0 ? Math.max(0, 100 - pctAprovadosTotal - pctReprovadosTotal) : 0
+
+    return {
+      total,
+      aprovados,
+      reprovados,
+      naoAvaliados,
+      avaliados,
+      taxaAprovacao,
+      taxaReprovacao,
+      pctAprovadosTotal,
+      pctReprovadosTotal,
+      pctPendentesTotal
+    }
+  }, [alunos, getSituacao, livroId])
 
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid var(--glass-border)' }}>
-            <th style={{ textAlign: 'left', padding: '0.75rem 1rem', fontWeight: 800, color: 'var(--text-muted)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', position: 'sticky', left: 0, background: 'var(--bg)' }}>
-              Aluno
-            </th>
-            <th style={{ textAlign: 'left', padding: '0.75rem 0.5rem', fontWeight: 800, color: 'var(--text-muted)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Núcleo
-            </th>
-            {aulas.map((aula: any) => (
-              <th key={aula.id} style={{ textAlign: 'center', padding: '0.75rem 0.5rem', fontWeight: 800, color: 'var(--text-muted)', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '70px' }}>
-                V{aula.versao || 1}
-                <div style={{ fontSize: '0.55rem', fontWeight: 400, opacity: 0.6, marginTop: '2px' }}>{aula.titulo?.substring(0, 20)}</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      {/* PAINEL DE PROGRESSO DE APROVAÇÃO E REPROVAÇÃO */}
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.03)',
+        border: '1px solid var(--glass-border)',
+        borderRadius: '16px',
+        padding: '1.25rem',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <TrendingUp size={20} color="var(--primary, #0056b3)" />
+            <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800 }}>
+              Progresso Acadêmico do Módulo: <span style={{ color: 'var(--primary, #0056b3)' }}>{livroTitulo}</span>
+            </h4>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem', fontWeight: 800 }}>
+            <span style={{ color: '#0056b3' }}>Aproveitamento: {stats.taxaAprovacao}%</span>
+            <span style={{ color: 'var(--text-muted)' }}>•</span>
+            <span style={{ color: '#dc2626' }}>Reprovação / DP: {stats.taxaReprovacao}%</span>
+          </div>
+        </div>
+
+        {/* Métricas KPI */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
+          <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Total Alunos</span>
+            <div style={{ fontSize: '1.35rem', fontWeight: 900, marginTop: '0.2rem' }}>{stats.total}</div>
+          </div>
+
+          <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'rgba(0, 86, 179, 0.08)', border: '1.5px solid #0056b3', textAlign: 'center' }}>
+            <span style={{ fontSize: '0.7rem', color: '#0056b3', fontWeight: 800, textTransform: 'uppercase' }}>Aprovados (≥ 7.0)</span>
+            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0056b3', marginTop: '0.2rem' }}>
+              {stats.aprovados} <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>({stats.pctAprovadosTotal}%)</span>
+            </div>
+          </div>
+
+          <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'rgba(220, 38, 38, 0.08)', border: '1.5px solid #dc2626', textAlign: 'center' }}>
+            <span style={{ fontSize: '0.7rem', color: '#dc2626', fontWeight: 800, textTransform: 'uppercase' }}>Reprovados / DP (&lt; 7.0)</span>
+            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#dc2626', marginTop: '0.2rem' }}>
+              {stats.reprovados} <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>({stats.pctReprovadosTotal}%)</span>
+            </div>
+          </div>
+
+          <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Não Avaliados</span>
+            <div style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+              {stats.naoAvaliados} <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>({stats.pctPendentesTotal}%)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Barra de Progresso Visual Segmentada */}
+        <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', display: 'flex' }}>
+          <div
+            title={`Aprovados: ${stats.aprovados} (${stats.pctAprovadosTotal}%)`}
+            style={{ width: `${stats.pctAprovadosTotal}%`, background: 'var(--primary, #0056b3)', transition: 'width 0.4s ease' }}
+          />
+          <div
+            title={`Reprovados / DP: ${stats.reprovados} (${stats.pctReprovadosTotal}%)`}
+            style={{ width: `${stats.pctReprovadosTotal}%`, background: '#dc2626', transition: 'width 0.4s ease' }}
+          />
+          <div
+            title={`Pendentes: ${stats.naoAvaliados} (${stats.pctPendentesTotal}%)`}
+            style={{ width: `${stats.pctPendentesTotal}%`, background: 'rgba(255,255,255,0.15)', transition: 'width 0.4s ease' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', gap: '1.25rem', marginTop: '0.6rem', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'var(--primary, #0056b3)', display: 'inline-block' }} /> Aprovados (Azul)
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#dc2626', display: 'inline-block' }} /> Reprovados / D.P. (Vermelho)
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'inline-block' }} /> Pendentes
+          </span>
+        </div>
+      </div>
+
+      {/* TABELA DE ALUNOS E NOTAS */}
+      <div style={{ overflowX: 'auto', background: 'rgba(255,255,255,0.01)', borderRadius: '14px', border: '1px solid var(--glass-border)' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+          <thead>
+            <tr style={{ borderBottom: '2px solid var(--glass-border)', background: 'rgba(0, 86, 179, 0.05)' }}>
+              <th style={{ textAlign: 'left', padding: '0.85rem 1rem', fontWeight: 800, color: 'var(--text-main, #fff)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Aluno
               </th>
-            ))}
-            <th style={{ textAlign: 'center', padding: '0.75rem 0.5rem', fontWeight: 800, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px', minWidth: '80px' }}>
-              Situação
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {alunos.map((aluno: any) => {
-            const situacao = getSituacao(aluno.id, livroId)
-            return (
-              <tr key={aluno.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-              >
-                <td style={{ padding: '0.6rem 1rem', position: 'sticky', left: 0, background: 'var(--bg)', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <Users size={12} color="var(--primary)" />
-                    {aluno.nome || 'Sem Nome'}
-                  </span>
-                </td>
-                <td style={{ padding: '0.6rem 0.5rem', color: 'var(--text-muted)', fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
-                  <MapPin size={10} style={{ display: 'inline', marginRight: '3px', opacity: 0.5 }} />
-                  {aluno.nucleos?.nome || 'Sem Polo'}
-                </td>
-                {aulas.map((aula: any) => {
-                  const { nota } = getStudentGrade(aluno.id, livroId, aula.id)
-                  const isEditing = editCell?.alunoId === aluno.id && editCell?.aulaId === aula.id
-                  const isSaving = saving === `${aluno.id}_${aula.id}`
+              <th style={{ textAlign: 'left', padding: '0.85rem 0.75rem', fontWeight: 800, color: 'var(--text-main, #fff)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Núcleo / Polo
+              </th>
+              {aulas.map((aula: any) => (
+                <th key={aula.id} style={{ textAlign: 'center', padding: '0.85rem 0.75rem', fontWeight: 800, color: 'var(--text-main, #fff)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '90px' }}>
+                  {aula.titulo ? (aula.titulo.length > 22 ? `${aula.titulo.substring(0, 20)}...` : aula.titulo) : `V${aula.versao || 1}`}
+                  <div style={{ fontSize: '0.62rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', marginTop: '2px' }}>
+                    {aula.versao ? `Versão ${aula.versao}` : 'Avaliação'}
+                  </div>
+                </th>
+              ))}
+              <th style={{ textAlign: 'center', padding: '0.85rem 0.75rem', fontWeight: 800, color: 'var(--text-main, #fff)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '120px' }}>
+                Situação
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {alunos.map((aluno: any) => {
+              const situacao = getSituacao(aluno.id, livroId)
 
-                  return (
-                    <td key={aula.id} style={{ textAlign: 'center', padding: '0.4rem 0.3rem' }}>
-                      {isEditing ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '2px', justifyContent: 'center' }}>
-                          <input
-                            type="number"
-                            min="0"
-                            max="10"
-                            step="0.1"
-                            value={editValue}
-                            onChange={e => setEditValue(e.target.value)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') confirmEdit(aluno.id, aula.id)
-                              if (e.key === 'Escape') setEditValue('')
+              return (
+                <tr
+                  key={aluno.id}
+                  style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  {/* Nome do Aluno */}
+                  <td style={{ padding: '0.75rem 1rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Users size={14} color="var(--primary)" style={{ flexShrink: 0 }} />
+                      <div>
+                        <div style={{ color: 'var(--text-main, #fff)' }}>{aluno.nome || 'Sem Nome'}</div>
+                        {aluno.email && <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 400 }}>{aluno.email}</div>}
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Núcleo / Polo */}
+                  <td style={{ padding: '0.75rem 0.75rem', color: 'var(--text-muted)', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <MapPin size={12} style={{ opacity: 0.6 }} />
+                      {aluno.nucleos?.nome || 'Sem Polo'}
+                    </span>
+                  </td>
+
+                  {/* Colunas de Avaliações / Notas */}
+                  {aulas.map((aula: any) => {
+                    const { nota } = getStudentGrade(aluno.id, livroId, aula.id)
+                    const isEditing = editCell?.alunoId === aluno.id && editCell?.aulaId === aula.id
+                    const isSaving = saving === `${aluno.id}_${aula.id}`
+                    const isAprovado = nota != null && nota >= 7.0
+                    const isReprovado = nota != null && nota < 7.0
+
+                    return (
+                      <td key={aula.id} style={{ textAlign: 'center', padding: '0.5rem 0.4rem' }}>
+                        {isEditing ? (
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', justifyContent: 'center' }}>
+                            <input
+                              type="number"
+                              min="0"
+                              max="10"
+                              step="0.1"
+                              value={editValue}
+                              onChange={e => setEditValue(e.target.value)}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') confirmEdit(aluno.id, aula.id, livroId)
+                                if (e.key === 'Escape') setEditValue('')
+                              }}
+                              style={{
+                                width: '56px',
+                                padding: '4px 6px',
+                                fontSize: '0.85rem',
+                                fontWeight: 800,
+                                textAlign: 'center',
+                                background: '#000',
+                                border: '2px solid var(--primary, #0056b3)',
+                                borderRadius: '6px',
+                                color: '#fff'
+                              }}
+                              autoFocus
+                            />
+                            <button
+                              onClick={() => confirmEdit(aluno.id, aula.id, livroId)}
+                              style={{ padding: '3px', background: 'none', border: 'none', color: '#10b981', cursor: 'pointer' }}
+                              title="Salvar"
+                            >
+                              <Check size={16} />
+                            </button>
+                            <button
+                              onClick={() => setEditValue('')}
+                              style={{ padding: '3px', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                              title="Cancelar"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ) : (
+                          <span
+                            onClick={() => startEdit(aluno.id, aula.id, livroId, nota)}
+                            style={{
+                              cursor: 'pointer',
+                              padding: '5px 12px',
+                              borderRadius: '8px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              minWidth: '48px',
+                              fontWeight: 900,
+                              fontSize: '0.95rem',
+                              // CONTRASTE REFORÇADO CONFORME SOLICITADO:
+                              // Sempre AZUL caso aprovado (>= 7.0)
+                              // Sempre VERMELHO caso reprova (< 7.0)
+                              background: isAprovado
+                                ? 'rgba(0, 86, 179, 0.15)'
+                                : isReprovado
+                                  ? 'rgba(220, 38, 38, 0.15)'
+                                  : 'rgba(255,255,255,0.03)',
+                              color: isAprovado
+                                ? '#0056b3'
+                                : isReprovado
+                                  ? '#dc2626'
+                                  : 'var(--text-muted)',
+                              border: isAprovado
+                                ? '1.5px solid #0056b3'
+                                : isReprovado
+                                  ? '1.5px solid #dc2626'
+                                  : '1px solid rgba(255,255,255,0.08)',
+                              boxShadow: isAprovado
+                                ? '0 2px 5px rgba(0, 86, 179, 0.2)'
+                                : isReprovado
+                                  ? '0 2px 5px rgba(220, 38, 38, 0.2)'
+                                  : 'none',
+                              transition: 'all 0.15s ease'
                             }}
-                            style={{ width: '50px', padding: '2px 4px', fontSize: '0.75rem', textAlign: 'center', background: '#000', border: '1px solid var(--primary)', borderRadius: '4px', color: '#fff' }}
-                            autoFocus
-                          />
-                          <button onClick={() => confirmEdit(aluno.id, aula.id)} style={{ padding: '2px', background: 'none', border: 'none', color: 'var(--success)', cursor: 'pointer' }}>
-                            <Check size={14} />
-                          </button>
-                          <button onClick={() => setEditValue('')} style={{ padding: '2px', background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer' }}>
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ) : (
-                        <span
-                          onClick={() => startEdit(aluno.id, aula.id, nota)}
-                          style={{
-                            cursor: 'pointer',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            display: 'inline-block',
-                            minWidth: '36px',
-                            fontWeight: 700,
-                            fontSize: '0.85rem',
-                            background: nota != null ? 'rgba(var(--primary-rgb), 0.08)' : 'rgba(255,255,255,0.02)',
-                            color: nota != null ? '#fff' : 'var(--text-muted)',
-                            border: '1px solid transparent',
-                            transition: 'all 0.15s',
-                          }}
-                          title="Clique para editar"
-                          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'}
-                          onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}
-                        >
-                          {isSaving ? <Loader2 size={12} className="spinner" /> : (nota != null ? nota.toFixed(1) : '—')}
-                        </span>
-                      )}
-                    </td>
-                  )
-                })}
-                <td style={{ textAlign: 'center', padding: '0.6rem 0.5rem' }}>
-                  {situacao === 'aprovado' && (
-                    <span style={{ padding: '3px 10px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800, background: 'rgba(16, 185, 129, 0.15)', color: 'var(--success)', border: '1px solid rgba(16,185,129,0.3)' }}>
-                      APROVADO
-                    </span>
-                  )}
-                  {situacao === 'reprovado' && (
-                    <span style={{ padding: '3px 10px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800, background: 'rgba(239, 68, 68, 0.15)', color: 'var(--error)', border: '1px solid rgba(239,68,68,0.3)' }}>
-                      REPROVADO
-                    </span>
-                  )}
-                  {situacao === 'nao_avaliado' && (
-                    <span style={{ padding: '3px 10px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 800, background: 'rgba(255,255,255,0.03)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                      Não avaliado
-                    </span>
-                  )}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+                            title="Clique para editar a nota do aluno"
+                          >
+                            {isSaving ? (
+                              <Loader2 size={14} className="spinner" />
+                            ) : (
+                              nota != null ? Number(nota).toFixed(1) : '—'
+                            )}
+                          </span>
+                        )}
+                      </td>
+                    )
+                  })}
 
-      {alunos.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-          <Users size={32} style={{ opacity: 0.2, marginBottom: '0.75rem' }} />
-          <p>Nenhum aluno encontrado com o filtro atual.</p>
-        </div>
-      )}
+                  {/* Situação */}
+                  <td style={{ textAlign: 'center', padding: '0.75rem 0.75rem' }}>
+                    {situacao === 'aprovado' && (
+                      <span style={{
+                        padding: '4px 14px',
+                        borderRadius: '20px',
+                        fontSize: '0.72rem',
+                        fontWeight: 900,
+                        background: 'var(--primary, #0056b3)',
+                        color: '#ffffff',
+                        border: '1px solid #004494',
+                        letterSpacing: '0.5px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        boxShadow: '0 2px 6px rgba(0, 86, 179, 0.3)'
+                      }}>
+                        <CheckCircle2 size={13} /> APROVADO
+                      </span>
+                    )}
+                    {situacao === 'reprovado' && (
+                      <span style={{
+                        padding: '4px 14px',
+                        borderRadius: '20px',
+                        fontSize: '0.72rem',
+                        fontWeight: 900,
+                        background: '#dc2626',
+                        color: '#ffffff',
+                        border: '1px solid #b91c1c',
+                        letterSpacing: '0.5px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                        boxShadow: '0 2px 6px rgba(220, 38, 38, 0.3)'
+                      }}>
+                        <XCircle size={13} /> REPROVADO (D.P.)
+                      </span>
+                    )}
+                    {situacao === 'nao_avaliado' && (
+                      <span style={{
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        background: 'rgba(255,255,255,0.04)',
+                        color: 'var(--text-muted)',
+                        border: '1px solid rgba(255,255,255,0.1)'
+                      }}>
+                        Não avaliado
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
 
-      {alunos.length > 0 && (
-        <div style={{ padding: '0.75rem 1rem', fontSize: '0.7rem', color: 'var(--text-muted)', borderTop: '1px solid var(--glass-border)', marginTop: '0.5rem' }}>
-          Clique em qualquer nota para editar. Use Enter para salvar, ESC para cancelar.
-        </div>
-      )}
+        {alunos.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+            <Users size={32} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
+            <p style={{ margin: 0 }}>Nenhum aluno encontrado para este módulo com os filtros aplicados.</p>
+          </div>
+        )}
+
+        {alunos.length > 0 && (
+          <div style={{ padding: '0.75rem 1rem', fontSize: '0.75rem', color: 'var(--text-muted)', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>
+              <strong>Dica:</strong> Clique em qualquer nota para editar rapidamente. Pressione <strong>Enter</strong> para salvar ou <strong>ESC</strong> para cancelar.
+            </span>
+            <span>Total: <strong>{alunos.length}</strong> alunos listados</span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

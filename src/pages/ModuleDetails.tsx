@@ -278,7 +278,7 @@ const ModuleDetails = () => {
       // Determine border color based on type
       let borderColor = 'var(--glass-border)';
       if (completed) borderColor = 'var(--success)';
-      else if (isAvaliacao) borderColor = '#eab308';
+      else if (isAvaliacao) borderColor = 'var(--primary, #0056b3)';
       else if (isExercicio) borderColor = '#10b981';
       
       return (
@@ -310,7 +310,7 @@ const ModuleDetails = () => {
         >
           {locked && <Lock size={14} color="var(--text-muted)" />}
           <div style={{ flex: 1, overflow: 'hidden' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: isAvaliacao ? '#eab308' : isExercicio ? '#10b981' : 'var(--primary)', textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: isAvaliacao ? 'var(--primary, #0056b3)' : isExercicio ? '#10b981' : 'var(--primary)', textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {label}
             </div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -387,7 +387,7 @@ const ModuleDetails = () => {
                      <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Lições</div>
                      <div style={{ textAlign: 'center', fontWeight: 800, color: '#10b981', fontSize: '0.9rem', padding: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Exercícios</div>
                      <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary)', fontSize: '0.9rem', padding: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Vídeos</div>
-                     <div style={{ textAlign: 'center', fontWeight: 800, color: '#eab308', fontSize: '0.9rem', padding: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
+                     <div style={{ textAlign: 'center', fontWeight: 800, color: 'var(--primary, #0056b3)', fontSize: '0.9rem', padding: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Avaliações</div>
  
                       {/* Rows */}
                         {sortedOrdens.map((ordem, idx) => (

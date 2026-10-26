@@ -104,7 +104,7 @@ export const DocumentGenerator = () => {
         <button onClick={handleDownloadHistorico} className="btn" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, justifyContent: 'center' }}>
           <FileText size={18} /> Gerar Histórico em PDF
         </button>
-        <button onClick={handleDownloadCertificado} className="btn" style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', border: '1px solid rgba(234, 179, 8, 0.3)', display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, justifyContent: 'center' }}>
+        <button onClick={handleDownloadCertificado} className="btn btn-primary" style={{ width: 'auto', background: 'var(--primary, #0056b3)', color: '#ffffff', border: '1px solid #004494', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
           <GraduationCap size={18} /> Gerar Certificado em PDF
         </button>
       </div>

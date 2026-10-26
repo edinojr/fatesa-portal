@@ -177,7 +177,7 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
           {!isProf && (
             <button
               className="btn"
-              style={{ width: 'auto', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '0.4rem' }}
+              style={{ width: 'auto', background: 'var(--primary, #0056b3)', color: '#ffffff', border: '1px solid #004494', padding: '0.4rem' }}
               onClick={() => handleResetActivities(user.id)}
               disabled={actionLoading === user.id}
               title="Resetar Atividades e Progresso"

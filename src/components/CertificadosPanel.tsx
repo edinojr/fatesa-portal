@@ -71,7 +71,7 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
     <div className="panel-container" style={{ animation: 'fadeIn 0.3s ease-out' }}>
       <div className="panel-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(234, 179, 8, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#eab308' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0, 86, 179, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary, #0056b3)' }}>
             <GraduationCap size={24} />
           </div>
           <div>
@@ -103,7 +103,7 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
                   <CheckCircle2 size={18} /> Formado ({summary.isMedioConcluido ? 'Teologia Médio' : 'Teologia Básico'})
                 </span>
               ) : (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: '#eab308', fontWeight: 700, fontSize: '1rem' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', color: 'var(--primary, #0056b3)', fontWeight: 800, fontSize: '1rem' }}>
                   <Clock size={18} /> Em Formação
                 </span>
               )}
@@ -126,7 +126,7 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
 
           <div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total de Matérias Aprovadas</span>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#eab308', marginTop: '0.35rem' }}>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', marginTop: '0.35rem' }}>
               {summary.totalModulosConcluidos} disciplina(s)
             </div>
           </div>
@@ -157,7 +157,7 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
 
           {/* Card Certificado de Conclusão */}
           <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#eab308' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--primary, #0056b3)' }}>
               <Award size={24} />
               <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Certificado de Conclusão</h3>
             </div>
@@ -169,20 +169,20 @@ export const CertificadosPanel = ({ profile }: { profile: any }) => {
             <button 
               onClick={handleDownloadCertificado}
               disabled={loading || !isFormado}
-              className="btn" 
+              className="btn btn-primary" 
               style={{
-                background: isFormado ? 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)' : 'rgba(255,255,255,0.05)',
-                color: isFormado ? '#000' : 'var(--text-muted)',
+                background: isFormado ? 'var(--primary, #0056b3)' : 'rgba(255,255,255,0.05)',
+                color: isFormado ? '#ffffff' : 'var(--text-muted)',
                 fontWeight: isFormado ? 800 : 500,
                 border: isFormado ? 'none' : '1px solid var(--glass-border)',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem',
-                width: '100%',
+                padding: '0.75rem 1.5rem',
+                width: 'auto',
                 cursor: (!isFormado || loading) ? 'not-allowed' : 'pointer',
-                boxShadow: isFormado ? '0 6px 20px rgba(234, 179, 8, 0.3)' : 'none'
+                boxShadow: isFormado ? '0 6px 20px rgba(0, 86, 179, 0.3)' : 'none'
               }}
             >
               <Download size={18} /> {isFormado ? 'Baixar Certificado Oficial (PDF)' : 'Certificado Bloqueado (Em Curso)'}

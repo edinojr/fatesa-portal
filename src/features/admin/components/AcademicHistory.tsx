@@ -422,15 +422,28 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
         gap: '1rem'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ background: 'rgba(234, 179, 8, 0.1)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
-            <GraduationCap size={24} color="#eab308" />
+          <div style={{ background: 'rgba(0, 86, 179, 0.12)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(0, 86, 179, 0.25)' }}>
+            <GraduationCap size={24} color="var(--primary, #0056b3)" />
           </div>
           <div>
             <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Emitir Certificado Avulso</h3>
             <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Para eventuais alunos que não estejam cadastrados mas que já concluíram o curso.</p>
           </div>
         </div>
-        <button onClick={handleEmitirCertificadoAvulso} className="btn" style={{ background: '#eab308', color: '#000', fontWeight: 800, padding: '0.75rem 1.5rem', borderRadius: '12px', border: 'none' }}>
+        <button 
+          onClick={handleEmitirCertificadoAvulso} 
+          className="btn btn-primary" 
+          style={{ 
+            background: 'var(--primary, #0056b3)', 
+            color: '#ffffff', 
+            fontWeight: 800, 
+            padding: '0.65rem 1.4rem', 
+            borderRadius: '12px', 
+            border: 'none',
+            width: 'auto',
+            display: 'inline-flex'
+          }}
+        >
           Emitir Agora
         </button>
       </div>
@@ -451,7 +464,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             <option key={n} value={n}>{n}</option>
           ))}
         </select>
-        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+        <span style={{ fontSize: '0.8rem', background: 'var(--primary, #0056b3)', color: '#ffffff', fontWeight: 800, padding: '4px 12px', borderRadius: '20px', display: 'inline-flex', alignItems: 'center' }}>
           {studentList.length} aluno(s)
         </span>
       </div>
@@ -480,7 +493,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', paddingBottom: '1rem', borderBottom: '1px solid var(--glass-border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(var(--primary-rgb), 0.25)' }}>
-                <User size={26} color={selectedStudentData.std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--primary)'} />
+                <User size={26} color="var(--primary, #0056b3)" />
               </div>
               <div>
                 <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -494,7 +507,14 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                 </h4>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {selectedStudentData.std.email} •
-                  <span style={{ color: selectedStudentData.std.tipo === 'ex_aluno' ? '#EAB308' : 'var(--success)', fontWeight: 700 }}>
+                  <span style={{ 
+                    background: selectedStudentData.std.tipo === 'ex_aluno' ? 'var(--primary, #0056b3)' : '#16a34a', 
+                    color: '#ffffff', 
+                    fontWeight: 800, 
+                    padding: '2px 10px', 
+                    borderRadius: '20px', 
+                    fontSize: '0.75rem' 
+                  }}>
                     {selectedStudentData.std.tipo === 'ex_aluno' ? 'ALUNO FORMADO' : 'ALUNO ATIVO'}
                   </span>
                   {(() => {
@@ -556,10 +576,10 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
               })()}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginRight: '1rem' }}>
-                  <button onClick={handleDownloadHistorico} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                  <button onClick={handleDownloadHistorico} className="btn" style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
                     <FileText size={14} /> Histórico PDF
                   </button>
-                  <button onClick={handleDownloadCertificado} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                  <button onClick={handleDownloadCertificado} className="btn" style={{ width: 'auto', padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'var(--primary, #0056b3)', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 700 }}>
                     <GraduationCap size={14} /> Certificado PDF
                   </button>
                 </div>
@@ -591,7 +611,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
                     {/* PROVAS SECTION */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--primary, #0056b3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <ShieldCheck size={14} /> Provas Finais ({content.provas.length})
                       </div>
                       {content.provas.length === 0 ? (
@@ -599,18 +619,18 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                       ) : (
                         content.provas.map((item: any) => (
                           <div key={item.id} style={{
-                            background: 'rgba(245, 158, 11, 0.08)',
+                            background: 'rgba(0, 86, 179, 0.05)',
                             padding: '1.25rem',
                             borderRadius: '16px',
-                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            border: '1px solid rgba(0, 86, 179, 0.2)',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '0.75rem',
-                            boxShadow: '0 4px 15px rgba(245, 158, 11, 0.05)',
+                            boxShadow: '0 4px 15px rgba(0, 86, 179, 0.05)',
                             position: 'relative'
                           }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#f59e0b', paddingRight: '2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <div style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--primary, #0056b3)', paddingRight: '2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                 {item.aulas?.titulo}
                                 {item.is_manual && (
                                   <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#fff', background: '#a855f7', padding: '1px 6px', borderRadius: '6px', letterSpacing: '0.5px' }}>MANUAL</span>
@@ -651,7 +671,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                               </div>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <div style={{ fontSize: '0.65rem', color: '#f59e0b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Avaliação de Bloco</div>
+                              <div style={{ fontSize: '0.65rem', background: 'var(--primary, #0056b3)', color: '#ffffff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', padding: '2px 8px', borderRadius: '6px' }}>Avaliação de Bloco</div>
                               <div style={{ fontSize: '0.65rem', opacity: 0.6, fontWeight: 600 }}>{new Date(item.created_at).toLocaleDateString()}</div>
                             </div>
                           </div>
@@ -697,11 +717,11 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
               const isFormadosCard = nucleoName.startsWith('🎓');
               
               return (
-              <details key={nucleoName} open={isSearching || isFormadosCard} style={{ background: isFormadosCard ? 'linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(217,119,6,0.1) 100%)' : 'rgba(255,255,255,0.02)', borderRadius: '20px', border: isFormadosCard ? '1px solid rgba(245,158,11,0.3)' : '1px solid var(--glass-border)', padding: '1.25rem', transition: 'all 0.2s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-                <summary style={{ fontSize: '1.2rem', fontWeight: 800, color: isFormadosCard ? '#f59e0b' : 'var(--primary)', cursor: 'pointer', outline: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none', margin: '-0.25rem' }}>
+              <details key={nucleoName} open={isSearching || isFormadosCard} style={{ background: isFormadosCard ? 'linear-gradient(135deg, rgba(0,86,179,0.06) 0%, rgba(59,130,246,0.08) 100%)' : 'rgba(255,255,255,0.02)', borderRadius: '20px', border: isFormadosCard ? '1px solid rgba(0,86,179,0.35)' : '1px solid var(--glass-border)', padding: '1.25rem', transition: 'all 0.2s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+                <summary style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--primary, #0056b3)', cursor: 'pointer', outline: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none', margin: '-0.25rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    {isFormadosCard ? <GraduationCap size={22} /> : <MapPin size={22} />}
-                    {nucleoName} <span style={{ fontSize: '0.85rem', opacity: 0.7, background: isFormadosCard ? 'rgba(245,158,11, 0.1)' : 'rgba(var(--primary-rgb), 0.1)', padding: '4px 10px', borderRadius: '8px' }}>{students.length} alunos</span>
+                    {isFormadosCard ? <GraduationCap size={22} color="var(--primary, #0056b3)" /> : <MapPin size={22} color="var(--primary, #0056b3)" />}
+                    {nucleoName} <span style={{ fontSize: '0.85rem', fontWeight: 800, background: 'var(--primary, #0056b3)', color: '#ffffff', padding: '4px 10px', borderRadius: '8px' }}>{students.length} alunos</span>
                   </div>
                   <ChevronRight size={20} opacity={0.5} style={{ transform: 'rotate(90deg)' }} className="details-arrow" />
                 </summary>
@@ -729,7 +749,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
                           <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)', flexShrink: 0 }}>
-                            <User size={20} color={s.tipo === 'ex_aluno' ? '#EAB308' : 'var(--primary)'} />
+                            <User size={20} color="var(--primary, #0056b3)" />
                           </div>
                           <div style={{ minWidth: 0 }}>
                             <div style={{ fontWeight: 800, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.nome}</div>

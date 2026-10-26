@@ -55,7 +55,7 @@ const FinanceReport: React.FC<FinanceReportProps> = ({ data, searchTerm, handleD
         return <span className="badge badge-success" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '4px 10px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}><CheckCircle2 size={12} /> APROVADO</span>;
       case 'pago':
       case 'pendente':
-        return <span className="badge badge-warning" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '4px 10px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}><Clock size={12} /> PENDENTE</span>;
+        return <span className="badge badge-warning" style={{ background: 'var(--primary, #0056b3)', color: '#ffffff', border: '1px solid #004494', padding: '4px 10px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}><Clock size={12} /> PENDENTE</span>;
       case 'rejeitado':
         return <span className="badge badge-error" style={{ background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', padding: '4px 10px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}><AlertCircle size={12} /> REJEITADO</span>;
       default:

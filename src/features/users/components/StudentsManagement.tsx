@@ -210,9 +210,9 @@ export default function StudentsManagement({
                                 padding: '0.2rem 0.5rem',
                                 fontSize: '0.7rem',
                                 width: 'auto',
-                                background: releasesData[student.id]?.length > 0 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255,255,255,0.05)',
-                                color: releasesData[student.id]?.length > 0 ? '#f59e0b' : 'var(--text-muted)',
-                                border: '1px solid rgba(245, 158, 11, 0.2)',
+                                background: releasesData[student.id]?.length > 0 ? 'var(--primary, #0056b3)' : 'rgba(255,255,255,0.05)',
+                                color: releasesData[student.id]?.length > 0 ? '#ffffff' : 'var(--text-muted)',
+                                border: releasesData[student.id]?.length > 0 ? '1px solid #004494' : '1px solid var(--glass-border)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '0.3rem'
@@ -321,7 +321,7 @@ export default function StudentsManagement({
                               {student.status_nucleo !== 'trancado' && handleSetTrancado && (
                                 <button 
                                   className="btn"
-                                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', width: 'auto', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)' }}
+                                  style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', width: 'auto', background: 'var(--primary, #0056b3)', color: '#ffffff', border: '1px solid #004494' }}
                                   onClick={() => handleSetTrancado(student.id)}
                                   disabled={actionLoading === student.id}
                                   title="Trancar Curso. O aluno será bloqueado no módulo seguinte."
@@ -333,7 +333,7 @@ export default function StudentsManagement({
                               {(userRole === 'admin' || userRole === 'suporte') && (
                                 <button 
                                   className="btn"
-                                  style={{ padding: '0.4rem', fontSize: '0.75rem', width: 'auto', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.2)' }}
+                                  style={{ padding: '0.4rem', fontSize: '0.75rem', width: 'auto', background: 'var(--primary, #0056b3)', color: '#ffffff', border: '1px solid #004494' }}
                                   onClick={() => handleResetActivities(student.id)}
                                   disabled={actionLoading === student.id}
                                   title="Resetar Atividades e Progresso"

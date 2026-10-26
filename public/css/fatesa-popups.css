@@ -1,39 +1,123 @@
-/* FATESA - Sistema de Pop-ups Interativos de Hover (História e Geografia) */
+/* FATESA - Sistema de Marcações Interativas e Pop-ups (História e Geografia) */
 
+/* Estilos Básicos de Termos Marcados */
 .termo-popup {
   position: relative;
   display: inline;
-  color: #b45309;
-  border-bottom: 1.5px dotted #d97706;
-  cursor: help;
+  cursor: pointer;
   font-weight: 500;
   transition: all 0.2s ease-in-out;
-  padding: 0 2px;
-  border-radius: 2px;
+  padding: 1px 3px;
+  border-radius: 3px;
+  text-decoration: none;
 }
 
-.termo-popup:hover,
-.termo-popup:focus {
-  color: #92400e;
-  background-color: rgba(245, 158, 11, 0.12);
-  border-bottom-style: solid;
-  outline: none;
+/* 1. Localidades Geográficas (Verde Esmeralda Bíblico) */
+.termo-popup.popup-geo,
+.termo-popup[data-categoria="geo"] {
+  color: #047857;
+  border-bottom: 1.5px dashed #10b981;
+  background-color: rgba(16, 185, 129, 0.08);
 }
+.termo-popup.popup-geo:hover,
+.termo-popup.popup-geo:focus {
+  color: #065f46;
+  background-color: rgba(16, 185, 129, 0.2);
+  border-bottom-style: solid;
+}
+
+/* 2. Personagens Históricos (Ouro / Âmbar Clássico) */
+.termo-popup.popup-pers,
+.termo-popup[data-categoria="pers"] {
+  color: #b45309;
+  border-bottom: 1.5px dotted #d97706;
+  background-color: rgba(245, 158, 11, 0.08);
+}
+.termo-popup.popup-pers:hover,
+.termo-popup.popup-pers:focus {
+  color: #92400e;
+  background-color: rgba(245, 158, 11, 0.2);
+  border-bottom-style: solid;
+}
+
+/* 3. Eventos Históricos (Púrpura Imperial) */
+.termo-popup.popup-evento,
+.termo-popup[data-categoria="evento"] {
+  color: #6d28d9;
+  border-bottom: 1.5px dotted #8b5cf6;
+  background-color: rgba(139, 92, 246, 0.08);
+}
+.termo-popup.popup-evento:hover,
+.termo-popup.popup-evento:focus {
+  color: #5b21b6;
+  background-color: rgba(139, 92, 246, 0.2);
+  border-bottom-style: solid;
+}
+
+/* 4. Povos e Grupos Históricos (Azul Cobalto) */
+.termo-popup.popup-povo,
+.termo-popup[data-categoria="povo"] {
+  color: #1d4ed8;
+  border-bottom: 1.5px dotted #3b82f6;
+  background-color: rgba(59, 130, 246, 0.08);
+}
+.termo-popup.popup-povo:hover,
+.termo-popup.popup-povo:focus {
+  color: #1e40af;
+  background-color: rgba(59, 130, 246, 0.2);
+  border-bottom-style: solid;
+}
+
+/* Barra de Legenda de Referências no Início das Lições */
+.fatesa-referencias-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin: 1.25rem 0 1.75rem 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.8rem;
+  color: #475569;
+}
+.legenda-titulo {
+  font-weight: 700;
+  color: #0f172a;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.legenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.legenda-item.geo { border-color: #a7f3d0; color: #065f46; }
+.legenda-item.pers { border-color: #fde68a; color: #92400e; }
+.legenda-item.evento { border-color: #ddd6fe; color: #5b21b6; }
+.legenda-item.povo { border-color: #bfdbfe; color: #1e40af; }
 
 /* Floating Tooltip Card */
 #fatesa-tooltip-card {
   position: absolute;
   z-index: 99999;
-  max-width: 320px;
+  max-width: 340px;
   width: max-content;
   background: #ffffff;
   color: #1e293b;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.18), 0 6px 12px -2px rgba(0, 0, 0, 0.08);
+  padding: 12px 16px;
   font-size: 0.875rem;
-  line-height: 1.45;
+  line-height: 1.5;
   pointer-events: none;
   opacity: 0;
   transform: translateY(6px);
@@ -51,19 +135,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   gap: 8px;
-}
-
-#fatesa-tooltip-card .tooltip-categoria {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background-color: #fef3c7;
-  color: #92400e;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 6px;
 }
 
 #fatesa-tooltip-card .tooltip-termo {
@@ -72,8 +147,57 @@
   color: #0f172a;
 }
 
+#fatesa-tooltip-card .tooltip-categoria {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* Categorias Temáticas no Tooltip */
+#fatesa-tooltip-card .tooltip-categoria.cat-geo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+#fatesa-tooltip-card .tooltip-categoria.cat-pers {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+#fatesa-tooltip-card .tooltip-categoria.cat-evento {
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+#fatesa-tooltip-card .tooltip-categoria.cat-povo {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
 #fatesa-tooltip-card .tooltip-descricao {
   font-size: 0.825rem;
   color: #334155;
   margin: 0;
+  line-height: 1.5;
+}
+
+#fatesa-tooltip-card .btn-close-tooltip {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+@media (max-width: 640px) {
+  #fatesa-tooltip-card {
+    max-width: calc(100vw - 32px);
+  }
+  #fatesa-tooltip-card .btn-close-tooltip {
+    display: inline-block;
+  }
 }

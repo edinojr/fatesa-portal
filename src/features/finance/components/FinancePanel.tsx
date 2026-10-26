@@ -101,10 +101,37 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
         </div>
       )}
 
+      {/* Informativo Santander & Isenções */}
+      <div style={{
+        marginBottom: '1.5rem',
+        padding: '1rem 1.5rem',
+        background: 'rgba(236, 0, 0, 0.06)',
+        border: '1px solid rgba(236, 0, 0, 0.25)',
+        borderRadius: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div>
+            <strong style={{ color: '#ff4d4d', fontSize: '0.95rem' }}>PIX Banco Santander • Fatesa</strong>
+            <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>
+              Favorecido: <strong>MARIA HELENA PIRANI CAVALLERO</strong> | Chave Telefone: <strong>11958259144</strong>
+            </div>
+          </div>
+          <div style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', background: 'var(--primary, #0056b3)', color: '#ffffff', borderRadius: '10px', fontWeight: 800 }}>
+            🗓️ Meses de Janeiro e Julho Isentos
+          </div>
+        </div>
+        <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          A partir de Novembro, o pop-up com a chave Pix abre a cada login para todos os alunos pagantes até o envio e validação do comprovante. Os valores são personalizados por núcleo.
+        </p>
+      </div>
+
       {/* Standard Payment Card */}
       <div style={{ marginBottom: '2.5rem' }}>
         <PaymentCard
-          pixKey={pixConfig.pixKey || 'suporte.ti@fatesa.edu.br'}
+          pixKey={pixConfig.pixKey || '11958259144'}
           pixQrUrl={pixConfig.pixQrUrl}
           uploading={!!uploading}
           onUpload={onPaymentCardUpload}
@@ -179,7 +206,7 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
                         PAGAMENTO VALIDADO
                       </div>
                     ) : p.status === 'pago' ? (
-                      <div style={{ color: '#EAB308', fontWeight: 700, fontSize: '0.8rem', background: 'rgba(234, 179, 8, 0.1)', padding: '0.5rem 1rem', borderRadius: '50px' }}>
+                      <div style={{ color: '#ffffff', fontWeight: 800, fontSize: '0.8rem', background: 'var(--primary, #0056b3)', padding: '0.5rem 1rem', borderRadius: '50px' }}>
                         EM ANÁLISE
                       </div>
                     ) : (
@@ -187,7 +214,7 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
                         className="btn btn-primary" 
                         onClick={() => onNotifyClick(p.id)}
                         disabled={uploading === p.id}
-                        style={{ padding: '0.6rem 1.2rem', fontSize: '0.85rem', borderRadius: '12px', gap: '0.5rem', display: 'flex', alignItems: 'center' }}
+                        style={{ width: 'auto', padding: '0.6rem 1.2rem', fontSize: '0.85rem', borderRadius: '12px', gap: '0.5rem', display: 'inline-flex', alignItems: 'center' }}
                       >
                         {uploading === p.id ? <Loader2 size={16} className="spinner" /> : <Upload size={16} />}
                         ANEXAR COMPROVANTE
