@@ -117,29 +117,62 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
     }
     setSaving(true);
     try {
-      const { error } = await supabase
+      const confirmedPayload: Record<string, any> = {
+        nome: form.nome.trim(),
+        cpf: onlyDigits(form.cpf) ? form.cpf : null,
+        telefone: onlyDigits(form.telefone) ? form.telefone : null,
+        endereco: form.endereco.trim() || null,
+      };
+
+      const fullPayload: Record<string, any> = {
+        ...confirmedPayload,
+        ...(form.rg ? { rg: form.rg } : {}),
+        ...(form.foto_url ? { foto_url: form.foto_url } : {})
+      };
+
+      // Tenta primeiro o payload completo (caso as colunas rg/foto_url já existam no banco)
+      const hasExtendedFields = Boolean(form.rg || form.foto_url);
+      const targetPayload = hasExtendedFields ? fullPayload : confirmedPayload;
+
+      const { error: firstError } = await supabase
         .from('users')
-        .update({
-          nome: form.nome.trim(),
-          rg: onlyDigits(form.rg) ? form.rg : null,
-          cpf: onlyDigits(form.cpf) ? form.cpf : null,
-          telefone: onlyDigits(form.telefone) ? form.telefone : null,
-          endereco: form.endereco.trim() || null,
-          foto_url: form.foto_url || null
-        })
+        .update(targetPayload)
         .eq('id', profile.id);
-      if (error) {
-        if (error.code === '42703' || /column.*does not exist/i.test(error.message || '')) {
-          toast.error('Funcionalidade temporariamente indisponível: execute a migration 20260906_add_rg_foto_users.sql no banco.');
+
+      if (firstError) {
+        // Se falhou por coluna inexistente no schema cache (PGRST204) ou Postgres 42703
+        const isMissingCol =
+          firstError.code === 'PGRST204' ||
+          firstError.code === '42703' ||
+          /column|schema cache/i.test(firstError.message || '');
+
+        if (isMissingCol && hasExtendedFields) {
+          // Fallback imediato: salva as colunas padrão confirmadas
+          const { error: fallbackError } = await supabase
+            .from('users')
+            .update(confirmedPayload)
+            .eq('id', profile.id);
+
+          if (fallbackError) throw fallbackError;
+
+          toast.success('Dados pessoais salvos com sucesso!');
+          toast('Nota: Para habilitar os campos de RG e Foto no banco, execute a migração SQL no Supabase.', {
+            icon: 'ℹ️',
+            duration: 5000
+          });
+          setEditing(false);
+          if (onRefresh) onRefresh();
           return;
         }
-        throw error;
+
+        throw firstError;
       }
-      toast.success('Dados pessoais salvos!');
+
+      toast.success('Dados pessoais salvos com sucesso!');
       setEditing(false);
       if (onRefresh) onRefresh();
     } catch (err: any) {
-      toast.error('Erro ao salvar: ' + (err.message || 'verifique as permissões'));
+      toast.error('Erro ao salvar: ' + (err.message || 'verifique os dados informados'));
     } finally {
       setSaving(false);
     }
