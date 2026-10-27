@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   LogOut,
   MapPin,
+  User,
 } from 'lucide-react';
 import Logo from '../common/Logo';
 import { PanelSwitcher } from '../common/PanelSwitcher';
@@ -27,7 +28,8 @@ export type StudentNavTab =
   | 'biblioteca'
   | 'forum'
   | 'documentos'
-  | 'certificados';
+  | 'certificados'
+  | 'perfil';
 
 interface StudentSidebarProps {
   activeTab: StudentNavTab;
@@ -539,6 +541,16 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             <GraduationCap size={19} color={activeTab === 'certificados' ? '#0056b3' : '#003366'} />
             {!isCollapsed && <span>Certificados</span>}
           </button>
+
+          {/* SEÇÃO 10: DADOS PESSOAIS */}
+          <button
+            onClick={() => handleItemClick('perfil')}
+            style={getItemStyle('perfil')}
+            title={isCollapsed ? 'Dados Pessoais & Perfil' : undefined}
+          >
+            <User size={19} color={activeTab === 'perfil' ? '#0056b3' : '#003366'} />
+            {!isCollapsed && <span>Dados Pessoais</span>}
+          </button>
         </div>
 
         {/* PROGRESSO COMPACTO NA SIDEBAR */}
@@ -600,7 +612,11 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           }}
         >
           {!isCollapsed ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: 1 }}>
+            <div
+              onClick={() => handleItemClick('perfil')}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: 1, cursor: 'pointer' }}
+              title="Acessar Meus Dados Pessoais"
+            >
               <div
                 style={{
                   width: '36px',
@@ -654,6 +670,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             </div>
           ) : (
             <div
+              onClick={() => handleItemClick('perfil')}
               style={{
                 width: '36px',
                 height: '36px',
@@ -666,6 +683,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 fontWeight: 800,
                 fontSize: '0.85rem',
                 border: '1.5px solid #d4af37',
+                cursor: 'pointer',
               }}
               title={profile?.nome || 'Aluno'}
             >

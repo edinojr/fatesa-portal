@@ -40,27 +40,28 @@ const maskPhone = (v: string): string => {
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '0.8rem 1rem',
+  padding: '0.75rem 1rem',
   borderRadius: '12px',
-  border: '1px solid var(--glass-border)',
-  background: 'rgba(255,255,255,0.03)',
-  color: 'var(--text-main)',
-  fontSize: '0.95rem',
-  fontWeight: 600
+  border: '1.5px solid rgba(212, 175, 55, 0.45)',
+  background: '#f8fafd',
+  color: '#003366',
+  fontSize: '0.92rem',
+  fontWeight: 600,
+  outline: 'none',
+  boxShadow: '0 2px 6px rgba(0, 86, 179, 0.05)',
 };
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: '0.75rem',
+  fontSize: '0.76rem',
   fontWeight: 800,
   textTransform: 'uppercase',
   letterSpacing: '0.5px',
-  color: 'var(--text-muted)',
-  marginBottom: '0.4rem'
+  color: '#0056b3',
+  marginBottom: '0.35rem'
 };
 
 const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh, courses = [], atividades = [], progressoAulas = [] }) => {
-  const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingFoto, setUploadingFoto] = useState(false);
@@ -239,108 +240,138 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
   };
 
   return (
-    <>
-      <div className="admin-action-card" onClick={() => setOpen(true)}>
-        <div className="icon-wrapper"><User size={32} /></div>
-        <h3>Dados Pessoais</h3>
-        <p>Atualize seu cadastro: RG, CPF, telefone, endereço e foto.</p>
-      </div>
-
-      {open && (
-        <div className="modal-overlay" onClick={() => setOpen(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px', width: '95%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.6rem' }}><User size={24} color="var(--primary)" /> Dados Pessoais</h2>
-              <button className="btn-icon" onClick={() => setOpen(false)}><X size={20} /></button>
-            </div>
-
-            {!editing ? (
-              <>
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-                  <div style={{ width: '88px', height: '88px', borderRadius: '20px', overflow: 'hidden', border: '2px solid var(--glass-border)', background: 'rgba(var(--primary-rgb), 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    {profile?.foto_url ? (
-                      <img src={profile.foto_url} alt="Foto do perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <User size={36} color="var(--primary)" opacity={0.5} />
-                    )}
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.35rem 1rem', fontSize: '0.9rem', flex: 1, minWidth: '250px' }}>
-                    <strong>Nome:</strong><span>{profile?.nome || '—'}</span>
-                    <strong>RG:</strong><span>{profile?.rg ? maskRG(profile.rg) : '—'}</span>
-                    <strong>CPF:</strong><span>{profile?.cpf ? maskCPF(profile.cpf) : '—'}</span>
-                    <strong>Telefone:</strong><span>{profile?.telefone ? maskPhone(profile.telefone) : '—'}</span>
-                    <strong>E-mail:</strong><span>{profile?.email || '—'}</span>
-                    <strong>Endereço:</strong><span>{profile?.endereco || '—'}</span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <button className="btn btn-primary" onClick={startEditing} style={{ width: 'auto', padding: '0.9rem 2rem' }}>
-                    <Save size={18} /> Editar Dados
-                  </button>
-                  <button className="btn btn-outline" onClick={handleDownloadHistory} disabled={generatingPdf} style={{ width: 'auto', padding: '0.9rem 2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {generatingPdf ? <Loader2 size={18} className="spinner" /> : <Download size={18} />} Baixar Histórico em PDF
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-                  <div style={{ width: '88px', height: '88px', borderRadius: '20px', overflow: 'hidden', border: '2px dashed var(--primary)', background: 'rgba(var(--primary-rgb), 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', flexShrink: 0 }}>
-                    {form.foto_url ? (
-                      <img src={form.foto_url} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <User size={36} color="var(--primary)" opacity={0.5} />
-                    )}
-                  </div>
-                  <div>
-                    <label className="btn btn-outline" style={{ width: 'auto', padding: '0.7rem 1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      {uploadingFoto ? <Loader2 size={16} className="spinner" /> : <Camera size={16} />} {form.foto_url ? 'Trocar Foto' : 'Enviar Foto'}
-                      <input type="file" accept="image/*" onChange={handleFoto} style={{ display: 'none' }} disabled={uploadingFoto} />
-                    </label>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.5rem 0 0' }}>JPG/PNG até 5MB — fica visível no seu perfil.</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
-                  <div>
-                    <label style={labelStyle}>Nome Completo *</label>
-                    <input style={inputStyle} value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} placeholder="Seu nome completo" />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>RG</label>
-                    <input style={inputStyle} value={form.rg} onChange={e => setForm(p => ({ ...p, rg: maskRG(e.target.value) }))} placeholder="00.000.000-0" inputMode="numeric" />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>CPF</label>
-                    <input style={inputStyle} value={form.cpf} onChange={e => setForm(p => ({ ...p, cpf: maskCPF(e.target.value) }))} placeholder="000.000.000-00" inputMode="numeric" />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Telefone / WhatsApp</label>
-                    <input style={inputStyle} value={form.telefone} onChange={e => setForm(p => ({ ...p, telefone: maskPhone(e.target.value) }))} placeholder="(00) 00000-0000" inputMode="numeric" />
-                  </div>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={labelStyle}>E-mail (identidade da conta — somente leitura)</label>
-                    <input style={{ ...inputStyle, opacity: 0.6, cursor: 'not-allowed' }} value={profile?.email || ''} readOnly />
-                  </div>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={labelStyle}>Endereço</label>
-                    <input style={inputStyle} value={form.endereco} onChange={e => setForm(p => ({ ...p, endereco: e.target.value }))} placeholder="Rua, número, bairro, cidade/UF" />
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1.75rem' }}>
-                  <button className="btn btn-outline" onClick={() => setEditing(false)} disabled={saving} style={{ width: 'auto', padding: '0.8rem 1.5rem' }}>Cancelar</button>
-                  <button className="btn btn-primary" onClick={handleSave} disabled={saving} style={{ width: 'auto', padding: '0.8rem 2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {saving ? <Loader2 size={18} className="spinner" /> : <Save size={18} />} Salvar Dados
-                  </button>
-                </div>
-              </>
-            )}
+    <div
+      style={{
+        background: '#ffffff',
+        border: '1px solid rgba(212, 175, 55, 0.4)',
+        borderTop: '3.5px solid #d4af37',
+        borderRadius: '20px',
+        padding: '1.75rem',
+        boxShadow: '0 8px 24px rgba(0, 86, 179, 0.08), 0 0 10px rgba(0, 86, 179, 0.12)',
+        width: '100%',
+        margin: '0 auto',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '12px', backgroundColor: 'rgba(0, 86, 179, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0056b3', border: '1px solid rgba(212, 175, 55, 0.4)' }}>
+            <User size={24} />
+          </div>
+          <div>
+            <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#003366' }}>Meus Dados Pessoais & Cadastrais</h2>
+            <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: '#1e40af' }}>Consulte e mantenha suas informações acadêmicas sempre atualizadas.</p>
           </div>
         </div>
+        <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', padding: '4px 10px', borderRadius: '20px', backgroundColor: 'rgba(0, 86, 179, 0.08)', color: '#0056b3', border: '1px solid rgba(212, 175, 55, 0.4)' }}>
+          Polo: {profile?.nucleos?.nome || 'Fatesa EAD'}
+        </span>
+      </div>
+
+      <div className="gold-separator-line" style={{ marginBottom: '1.5rem' }} />
+
+      {!editing ? (
+        <>
+          <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '1.75rem', flexWrap: 'wrap' }}>
+            <div style={{ width: '96px', height: '96px', borderRadius: '20px', overflow: 'hidden', border: '2px solid #d4af37', background: 'rgba(0, 86, 179, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 14px rgba(0, 86, 179, 0.15)' }}>
+              {profile?.foto_url ? (
+                <img src={profile.foto_url} alt="Foto do perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <User size={46} color="#0056b3" />
+              )}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.85rem 1.25rem', fontSize: '0.9rem', flex: 1, minWidth: '240px' }}>
+              <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
+                <span style={labelStyle}>Nome Completo</span>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.nome || '—'}</strong>
+              </div>
+              <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
+                <span style={labelStyle}>CPF</span>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.cpf ? maskCPF(profile.cpf) : '—'}</strong>
+              </div>
+              <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
+                <span style={labelStyle}>RG</span>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.rg ? maskRG(profile.rg) : '—'}</strong>
+              </div>
+              <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
+                <span style={labelStyle}>Telefone / WhatsApp</span>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.telefone ? maskPhone(profile.telefone) : '—'}</strong>
+              </div>
+              <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
+                <span style={labelStyle}>E-mail</span>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.email || '—'}</strong>
+              </div>
+              <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
+                <span style={labelStyle}>Endereço Residencial</span>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.endereco || '—'}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" onClick={startEditing} style={{ width: 'auto', padding: '0.75rem 1.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(0, 86, 179, 0.35)' }}>
+              <Save size={18} color="#ffffff" /> <span style={{ color: '#ffffff' }}>Editar Dados</span>
+            </button>
+            <button className="btn btn-outline" onClick={handleDownloadHistory} disabled={generatingPdf} style={{ width: 'auto', padding: '0.75rem 1.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#003366', borderColor: 'rgba(212, 175, 55, 0.45)', backgroundColor: '#f8fafd' }}>
+              {generatingPdf ? <Loader2 size={18} className="spinner" /> : <Download size={18} color="#0056b3" />} Baixar Histórico em PDF
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+            <div style={{ width: '96px', height: '96px', borderRadius: '20px', overflow: 'hidden', border: '2px dashed #0056b3', background: 'rgba(0, 86, 179, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', flexShrink: 0 }}>
+              {form.foto_url ? (
+                <img src={form.foto_url} alt="Foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <User size={44} color="#0056b3" />
+              )}
+            </div>
+            <div>
+              <label className="btn btn-outline" style={{ width: 'auto', padding: '0.65rem 1.25rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#003366', borderColor: 'rgba(212, 175, 55, 0.45)', backgroundColor: '#f8fafd' }}>
+                {uploadingFoto ? <Loader2 size={16} className="spinner" /> : <Camera size={16} color="#0056b3" />} {form.foto_url ? 'Trocar Foto' : 'Enviar Foto'}
+                <input type="file" accept="image/*" onChange={handleFoto} style={{ display: 'none' }} disabled={uploadingFoto} />
+              </label>
+              <p style={{ fontSize: '0.75rem', color: '#1e40af', margin: '0.5rem 0 0' }}>JPG ou PNG até 5MB — visível no seu cadastro.</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+            <div>
+              <label style={labelStyle}>Nome Completo *</label>
+              <input style={inputStyle} value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} placeholder="Seu nome completo" />
+            </div>
+            <div>
+              <label style={labelStyle}>RG</label>
+              <input style={inputStyle} value={form.rg} onChange={e => setForm(p => ({ ...p, rg: maskRG(e.target.value) }))} placeholder="00.000.000-0" inputMode="numeric" />
+            </div>
+            <div>
+              <label style={labelStyle}>CPF</label>
+              <input style={inputStyle} value={form.cpf} onChange={e => setForm(p => ({ ...p, cpf: maskCPF(e.target.value) }))} placeholder="000.000.000-00" inputMode="numeric" />
+            </div>
+            <div>
+              <label style={labelStyle}>Telefone / WhatsApp</label>
+              <input style={inputStyle} value={form.telefone} onChange={e => setForm(p => ({ ...p, telefone: maskPhone(e.target.value) }))} placeholder="(00) 00000-0000" inputMode="numeric" />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={labelStyle}>E-mail (somente leitura)</label>
+              <input style={{ ...inputStyle, opacity: 0.7, cursor: 'not-allowed', backgroundColor: '#e2e8f0' }} value={profile?.email || ''} readOnly />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={labelStyle}>Endereço Residencial</label>
+              <input style={inputStyle} value={form.endereco} onChange={e => setForm(p => ({ ...p, endereco: e.target.value }))} placeholder="Rua, número, bairro, cidade/UF" />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1.75rem', flexWrap: 'wrap' }}>
+            <button className="btn btn-outline" onClick={() => setEditing(false)} disabled={saving} style={{ width: 'auto', padding: '0.75rem 1.5rem', color: '#003366', borderColor: 'rgba(212, 175, 55, 0.45)' }}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave} disabled={saving} style={{ width: 'auto', padding: '0.75rem 2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 14px rgba(0, 86, 179, 0.35)' }}>
+              {saving ? <Loader2 size={18} className="spinner" /> : <Save size={18} color="#ffffff" />} <span style={{ color: '#ffffff' }}>Salvar Dados</span>
+            </button>
+          </div>
+        </>
       )}
-    </>
+    </div>
   );
 };
 

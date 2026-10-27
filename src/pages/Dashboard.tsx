@@ -75,7 +75,8 @@ const Dashboard = () => {
       'biblioteca',
       'forum',
       'documentos',
-      'certificados'
+      'certificados',
+      'perfil'
     ];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
@@ -109,6 +110,7 @@ const Dashboard = () => {
       case 'forum': return 'Fórum de Dúvidas';
       case 'documentos': return 'Documentos de Matrícula';
       case 'certificados': return 'Certificados & Diplomas';
+      case 'perfil': return 'Dados Pessoais & Perfil';
       default: return 'Portal do Aluno';
     }
   };
@@ -1362,7 +1364,8 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* 4. DADOS CADASTRAIS DO ALUNO */}
+              {/* 4. DADOS CADASTRAIS DO ALUNO (ESTÁTICO) */}
+              <div className="gold-separator-line" />
               <PersonalDataCard
                 profile={profile}
                 onRefresh={refreshProfile}
@@ -1498,6 +1501,18 @@ const Dashboard = () => {
 
           {activeTab === 'forum' && (
             <ForumPanel userProfile={profile} />
+          )}
+
+          {activeTab === 'perfil' && (
+            <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: '1000px', margin: '0 auto' }}>
+              <PersonalDataCard
+                profile={profile}
+                onRefresh={refreshProfile}
+                courses={courses}
+                atividades={atividades}
+                progressoAulas={progressoAulas}
+              />
+            </div>
           )}
         </div>
         )}

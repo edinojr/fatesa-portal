@@ -3,18 +3,11 @@ import {
   Search,
   Bell,
   Menu,
-  ChevronDown,
   X,
   BookOpen,
-  GraduationCap,
-  Clock,
-  LogOut,
-  User,
-  CreditCard,
   CheckCircle2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PanelSwitcher } from '../common/PanelSwitcher';
 
 interface StudentTopBarProps {
   onToggleSidebar: () => void;
@@ -45,12 +38,10 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
 }) => {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
 
   // Fecha popups ao clicar fora
   useEffect(() => {
@@ -60,9 +51,6 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
       }
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifications(false);
-      }
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setShowProfileMenu(false);
       }
     };
 
@@ -162,7 +150,7 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
       </div>
 
       {/* CENTRO: BARRA DE BUSCA GLOBAL */}
-      <div ref={searchRef} style={{ position: 'relative', width: '100%', maxWidth: '420px', margin: '0 1rem' }}>
+      <div ref={searchRef} style={{ position: 'relative', flex: '1 1 auto', maxWidth: '380px', minWidth: '100px', margin: '0 0.75rem' }}>
         <div
           style={{
             position: 'relative',
@@ -432,171 +420,71 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
           )}
         </div>
 
-        {/* PERFIL DO USUÁRIO & MENU DROPDOWN */}
-        <div ref={profileRef} style={{ position: 'relative' }}>
+        {/* BOTÃO ESTÁTICO DE DADOS PESSOAIS */}
+        <button
+          onClick={() => onSelectTab('perfil')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            cursor: 'pointer',
+            padding: '0.35rem 0.75rem',
+            borderRadius: '50px',
+            backgroundColor: '#f8fafd',
+            border: '1.5px solid rgba(212, 175, 55, 0.45)',
+            boxShadow: '0 0 6px rgba(0, 86, 179, 0.15)',
+            flexShrink: 0,
+            transition: 'all 0.2s ease',
+            outline: 'none',
+          }}
+          title="Acessar Meus Dados Pessoais"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#d4af37';
+            e.currentTarget.style.backgroundColor = '#ffffff';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.45)';
+            e.currentTarget.style.backgroundColor = '#f8fafd';
+          }}
+        >
           <div
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
             style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: '#0056b3',
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.65rem',
-              cursor: 'pointer',
-              padding: '0.3rem 0.6rem',
-              borderRadius: '50px',
-              backgroundColor: '#f8fafd',
-              border: '1.5px solid rgba(212, 175, 55, 0.45)',
-              boxShadow: '0 0 6px rgba(0, 86, 179, 0.15)',
+              justifyContent: 'center',
+              fontWeight: 800,
+              fontSize: '0.82rem',
+              border: '1.5px solid #d4af37',
+              flexShrink: 0,
             }}
           >
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                backgroundColor: '#0056b3',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: '0.82rem',
-                border: '1.5px solid #d4af37',
-              }}
-            >
-              {(profile?.nome || 'A').charAt(0).toUpperCase()}
-            </div>
-
-            <div className="mobile-hide" style={{ textAlign: 'left' }}>
-              <div
-                style={{
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  color: '#003366',
-                  maxWidth: '120px',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {profile?.nome || 'Aluno'}
-              </div>
-              <div style={{ fontSize: '0.65rem', color: '#1e40af', fontWeight: 600 }}>
-                Aluno Fatesa
-              </div>
-            </div>
-
-            <ChevronDown size={14} style={{ color: '#003366' }} />
+            {(profile?.nome || 'A').charAt(0).toUpperCase()}
           </div>
 
-          {/* DROPDOWN DE PERFIL */}
-          {showProfileMenu && (
+          <div className="mobile-hide" style={{ textAlign: 'left' }}>
             <div
               style={{
-                position: 'absolute',
-                top: '120%',
-                right: 0,
-                width: '240px',
-                backgroundColor: '#ffffff',
-                borderRadius: '16px',
-                border: '1.5px solid #d4af37',
-                boxShadow: '0 15px 35px rgba(0, 86, 179, 0.22), 0 0 12px rgba(0, 86, 179, 0.25)',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#003366',
+                maxWidth: '120px',
+                whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                zIndex: 1100,
-                padding: '0.5rem',
+                textOverflow: 'ellipsis',
               }}
             >
-              <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid rgba(212, 175, 55, 0.3)', marginBottom: '0.4rem', backgroundColor: '#f8fafd', borderRadius: '10px' }}>
-                <strong style={{ fontSize: '0.85rem', color: '#003366', display: 'block' }}>
-                  {profile?.nome || 'Aluno'}
-                </strong>
-                <span style={{ fontSize: '0.72rem', color: '#1e40af' }}>
-                  {profile?.email || ''}
-                </span>
-              </div>
-
-              <button
-                onClick={() => {
-                  onSelectTab('home');
-                  setShowProfileMenu(false);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem 0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.6rem',
-                  background: 'none',
-                  border: 'none',
-                  color: '#003366',
-                  borderRadius: '8px',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(0, 86, 179, 0.06)')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <User size={15} color="#0056b3" /> Meus Dados Cadastrais
-              </button>
-
-              <button
-                onClick={() => {
-                  onSelectTab('certificados');
-                  setShowProfileMenu(false);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem 0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.6rem',
-                  background: 'none',
-                  border: 'none',
-                  color: '#003366',
-                  borderRadius: '8px',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(0, 86, 179, 0.06)')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <GraduationCap size={15} color="#0056b3" /> Meus Certificados
-              </button>
-
-              <div style={{ margin: '0.4rem 0', borderTop: '1px solid rgba(212, 175, 55, 0.25)' }} />
-
-              <div style={{ padding: '0.2rem 0.75rem' }}>
-                <PanelSwitcher currentPanel="aluno" />
-              </div>
-
-              <div style={{ margin: '0.4rem 0', borderTop: '1px solid rgba(212, 175, 55, 0.25)' }} />
-
-              <button
-                onClick={() => signOut()}
-                style={{
-                  width: '100%',
-                  padding: '0.55rem 0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.6rem',
-                  background: 'rgba(220, 38, 38, 0.08)',
-                  border: '1px solid rgba(220, 38, 38, 0.3)',
-                  color: '#dc2626',
-                  borderRadius: '8px',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-              >
-                <LogOut size={15} /> Sair da Conta
-              </button>
+              {profile?.nome || 'Aluno'}
             </div>
-          )}
-        </div>
+            <div style={{ fontSize: '0.65rem', color: '#1e40af', fontWeight: 600 }}>
+              Dados Pessoais
+            </div>
+          </div>
+        </button>
       </div>
     </header>
   );
