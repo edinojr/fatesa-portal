@@ -96,17 +96,27 @@ export const fetchModuleExercises = async (livroId: string): Promise<QuizQuestio
     for (const aula of sorted) {
       const qs = Array.isArray(aula.questionario) ? aula.questionario : [];
       for (const q of qs) {
-        if (!q || !q.text) continue;
-        const key = normalizeQuestionText(q.text);
+        if (!q) continue;
+        const qText = q.text || q.statement || q.question || (q.type === 'matching' ? 'Enumere a coluna B de acordo com a coluna A:' : '');
+        if (!qText) continue;
+        const qType: QuestionType = (q.type as QuestionType) || 'multiple_choice';
+        if (qType !== 'true_false' && qType !== 'multiple_choice' && qType !== 'matching') {
+          continue; // Ignora questões discursivas ou fora do parâmetro 10-4-1
+        }
+        const key = qType === 'matching'
+          ? 'mat:' + (q.matchingPairs || []).map((p: any) => normalizeQuestionText(p.left)).join('|')
+          : `${qType}:${normalizeQuestionText(qText)}`;
         if (!key || seen.has(key)) continue;
         seen.add(key);
 
         // Clona e atribui ID único limpo
-        const qType: QuestionType = (q.type as QuestionType) || 'multiple_choice';
         collected.push({
           ...q,
+          text: qText,
           id: String(q.id || `ex-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`),
-          type: qType
+          type: qType,
+          ...(qType === 'multiple_choice' && Array.isArray(q.options) ? { options: q.options.slice(0, 4) } : {}),
+          ...(qType === 'matching' && Array.isArray(q.matchingPairs) ? { matchingPairs: q.matchingPairs.slice(0, 6) } : {})
         });
       }
     }
@@ -296,27 +306,36 @@ export const auditAndDeduplicateAllExams = async (): Promise<{
 
       let finalQuestions = deduplicated;
 
-      // Se após remover duplicadas faltarem questões para o padrão (15), tenta buscar exercícios do módulo
-      if (finalQuestions.length < 15 && exam.livro_id) {
+      // Garante o parâmetro estrito Fatesa: 10 V/F, 4 Múltipla Escolha, 1 Coluna de Relação (6 pares)
+      let tfList = finalQuestions.filter(q => q.type === 'true_false').slice(0, 10);
+      let mcList = finalQuestions.filter(q => q.type === 'multiple_choice' || !q.type).slice(0, 4);
+      let matList = finalQuestions.filter(q => q.type === 'matching' && Array.isArray(q.matchingPairs) && q.matchingPairs.length >= 6).slice(0, 1);
+
+      if ((tfList.length < 10 || mcList.length < 4 || matList.length < 1) && exam.livro_id) {
         try {
           const exerciseQs = await fetchModuleExercises(exam.livro_id);
-          const existingKeys = new Set(finalQuestions.map(q => normalizeQuestionText(q.text)));
+          const existingKeys = new Set(
+            [...tfList, ...mcList].map(q => normalizeQuestionText(q.text))
+          );
           
           for (const exQ of exerciseQs) {
-            if (finalQuestions.length >= 15) break;
             const k = normalizeQuestionText(exQ.text);
-            if (!existingKeys.has(k)) {
+            if (exQ.type === 'true_false' && tfList.length < 10 && !existingKeys.has(k)) {
               existingKeys.add(k);
-              finalQuestions.push({
-                ...exQ,
-                id: `suppl-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`
-              });
+              tfList.push({ ...exQ, id: `suppl-tf-${Date.now()}-${tfList.length}` });
+            } else if (exQ.type === 'multiple_choice' && mcList.length < 4 && !existingKeys.has(k)) {
+              existingKeys.add(k);
+              mcList.push({ ...exQ, id: `suppl-mc-${Date.now()}-${mcList.length}` });
+            } else if (exQ.type === 'matching' && matList.length < 1 && Array.isArray(exQ.matchingPairs) && exQ.matchingPairs.length >= 6) {
+              matList.push({ ...exQ, id: `suppl-mat-${Date.now()}`, matchingPairs: exQ.matchingPairs.slice(0, 6) });
             }
           }
         } catch (fetchErr) {
           console.warn('Não foi possível complementar com exercícios:', fetchErr);
         }
       }
+
+      finalQuestions = [...tfList, ...mcList, ...matList];
 
       // Atualiza a aula no Supabase
       const { error: updError } = await supabase

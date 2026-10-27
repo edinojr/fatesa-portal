@@ -513,28 +513,17 @@ const Lesson = () => {
           // Use the already-fetched allSubs (no join needed)
           const moduleSubs = allSubs.filter((s: any) => s.aulas?.livro_id === lessonData.livro_id);
           
-          // Check if student already passed the HIGHEST version of the exam for this module
+          // Check if student already passed ANY version of the exam for this module
           const examSubs = moduleSubs.filter(s => {
             const aula = s.aulas as any;
             return aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(aula?.titulo || '');
           });
           
-          let passedAny = false;
-          if (examSubs.length > 0) {
-            const highestExam = examSubs.reduce((prev, current) => {
-              const prevV = (prev.aulas as any)?.versao || 1;
-              const currV = (current.aulas as any)?.versao || 1;
-              if (currV > prevV) return current;
-              if (currV < prevV) return prev;
-              return new Date(current.created_at || 0).getTime() > new Date(prev.created_at || 0).getTime() ? current : prev;
-            });
-            const highestAula = highestExam.aulas as any;
-            const minGrade = highestAula?.min_grade || 7.0;
-            // Se a última prova feita tem versão menor que a atual, e ele passou nela, então alreadyApproved
-            if (((highestAula?.versao || 1) < versao) && highestExam.status === 'corrigida' && (highestExam.nota || 0) >= minGrade) {
-              passedAny = true;
-            }
-          }
+          const passedAny = examSubs.some(exSub => {
+            const exAula = exSub.aulas as any;
+            const minG = exAula?.min_grade || 7.0;
+            return exSub.status === 'corrigida' && (exSub.nota || 0) >= minG;
+          });
 
           const { data: individualRelease, error: indivErr } = await supabase
             .from('liberacoes_excecao_atividade')
@@ -1974,11 +1963,15 @@ const Lesson = () => {
                 
                 const isInputDisabled = (!userProfile?.isStaff && submitted && !studyMode) || (studyMode && studyModeSubmitted);
                 
-                  // Gabarito: staff sempre vê (exceto em modo teste antes de enviar) | aluno vê se submeter e atingir nota mínima ou módulo finalizado (exceto se em estudo não submetido)
+                  // Gabarito: staff sempre vê (exceto em modo teste antes de enviar) | aluno só vê na avaliação específica em que for aprovado (ou exercícios de módulo finalizado)
+                  const isExamLesson = lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao' || !!lesson?.is_bloco_final;
+                  const isApprovedThisExam = submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0);
                   const showGabarito = (userProfile?.isStaff && !(staffExamMode && !submitted)) ||
-                                       (isModuleFinished && !studyMode) ||
-                                       (isModuleFinished && studyMode && studyModeSubmitted) ||
-                                        (submitted && result?.score !== null && (result?.score ?? 0) >= (lesson?.min_grade || 7.0));
+                                       (isExamLesson ? isApprovedThisExam : (
+                                         (isModuleFinished && !studyMode) ||
+                                         (isModuleFinished && studyMode && studyModeSubmitted) ||
+                                         isApprovedThisExam
+                                       ));
 
                 return (
                   <div 
@@ -2397,8 +2390,14 @@ const Lesson = () => {
                 </div>
               )}
 
-              {/* Gabarito Oficial e Desempenho Detalhado */}
-              {questions.length > 0 && (userProfile?.isStaff || isModuleFinished || (submitted && result && (result?.score ?? 0) >= (lesson?.min_grade || 7.0))) && (
+              {/* Gabarito Oficial e Desempenho Detalhado — para provas, somente na avaliação em que o aluno foi aprovado */}
+              {questions.length > 0 && (
+                userProfile?.isStaff ||
+                ((lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao' || !!lesson?.is_bloco_final)
+                  ? (submitted && result && (result?.score ?? 0) >= (lesson?.min_grade || 7.0))
+                  : (isModuleFinished || (submitted && result && (result?.score ?? 0) >= (lesson?.min_grade || 7.0)))
+                )
+              ) && (
                 <div style={{marginTop:'2.5rem', padding:'2rem', background:'var(--glass)', borderRadius:'20px', border:'1px solid var(--glass-border)'}}>
                   <div style={{display:'flex', alignItems:'center', gap:'0.75rem', marginBottom:'1.5rem'}}>
                     <BookOpen size={24} color="var(--primary)"/>

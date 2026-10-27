@@ -115,14 +115,14 @@ const ExamNotificationModal: React.FC<ExamNotificationModalProps> = ({ exams, on
           </div>
 
            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.02em', color: '#000' }}>
-             {hasFailures ? 'Atenção: Resultado de Prova' : isRecoveryMode ? 'Recuperação Disponível!' : 'Avisos Pedagógicos'}
+             {hasFailures ? 'Atenção: Resultado de Prova' : isRecoveryMode ? 'Recuperação Disponível!' : 'Avaliação V1 Disponível!'}
            </h2>
 
           
           <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: 1.5, fontSize: '0.9rem' }}>
             {hasFailures 
               ? 'Você possui resultados que exigem atenção ou uma nova tentativa de avaliação.' 
-              : 'Identificamos atividades pendentes importantes para sua progressão acadêmica.'}
+              : 'A Avaliação V1 está disponível novamente para ser realizada. Lembre-se: você terá 1 oportunidade por versão e o gabarito será liberado na avaliação em que for aprovado.'}
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem', textAlign: 'left' }}>

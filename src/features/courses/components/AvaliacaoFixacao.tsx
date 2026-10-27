@@ -18,7 +18,14 @@ import {
 import { QuizQuestion } from '../../../types/admin';
 import { useProfile } from '../../../hooks/useProfile';
 import { supabase } from '../../../lib/supabase';
-import { regradeSubmissionsForAula } from '../../../services/examCorrection';
+import {
+  computeScore,
+  matchingPairCorrect,
+  regradeSubmissionsForAula,
+  finalizeModuleOnApproval,
+  unfinalizeModule,
+  ensureRecoveryExam
+} from '../../../services/examCorrection';
 
 type UserMode = 'admin' | 'professor' | 'student';
 
@@ -67,30 +74,37 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     matching: true
   });
 
-  // Sync questions when prop changes + modo revisão (módulo finalizado)
+  // Sync questions when prop changes + carrega submissão anterior (1 tentativa por versão)
   useEffect(() => {
     setQuestions(initialQuestions);
     setExercicioFinalizado(false);
     setRespostasAluno({});
     setEditingGabarito(false);
-    setShowGabarito(false);
+    setShowGabarito(mode === 'professor' || mode === 'admin');
 
-    if (isModuleFinished && mode === 'student' && profile?.id) {
-      // Módulo finalizado: modo revisão — carrega a submissão anterior e
-      // revela o gabarito para aprofundamento/revisão
+    if (mode === 'student' && profile?.id) {
       supabase.from('respostas_aulas')
-        .select('respostas, status')
+        .select('respostas, status, nota, tentativas')
         .eq('aula_id', lessonId)
         .eq('aluno_id', profile.id)
         .maybeSingle()
         .then(({ data }) => {
-          if (data?.respostas) setRespostasAluno(data.respostas);
-          setShowGabarito(profile?.tipo === 'ex_aluno');
-          setExercicioFinalizado(true);
+          if (data) {
+            if (data.respostas) setRespostasAluno(data.respostas);
+            const hasFinishedAttempt = data.status === 'corrigida' || data.nota !== null || (data.tentativas || 0) >= 1;
+            if (hasFinishedAttempt) {
+              setExercicioFinalizado(true);
+              const computedNota = data.nota !== null && data.nota !== undefined
+                ? Number(data.nota)
+                : computeScore(initialQuestions, data.respostas || {});
+              // Regra oficial: O aluno só terá acesso ao gabarito da avaliação em que ele for aprovado
+              setShowGabarito(computedNota >= minGrade);
+            }
+          }
         });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId, initialQuestions, isModuleFinished, mode, profile?.id]);
+  }, [lessonId, initialQuestions, isModuleFinished, mode, profile?.id, minGrade]);
 
   // Handlers
   const setResposta = (qKey: string, valor: any) => {
@@ -99,44 +113,83 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   };
 
   const handleFinalizar = async () => {
-    console.log('[AvaliacaoFixacao] Iniciando handleFinalizar');
-    console.log('[AvaliacaoFixacao] profile?.id:', profile?.id);
-    console.log('[AvaliacaoFixacao] lessonId:', lessonId);
-    console.log('[AvaliacaoFixacao] respostasAluno:', respostasAluno);
-    console.log('[AvaliacaoFixacao] stats:', stats);
-    
     if (!profile?.id) {
-      console.error('[AvaliacaoFixacao] ERRO: profile?.id é null/undefined');
       toast.error('Usuário não autenticado.');
       return;
     }
-    
+
+    if (exercicioFinalizado && mode === 'student') {
+      toast('Você já utilizou a sua 1 oportunidade para esta versão da avaliação.', { icon: '🔒' });
+      return;
+    }
+
     setSaving(true);
     try {
-      const upsertData = {
+      // Verifica no banco se o aluno já enviou esta versão (1 oportunidade por versão)
+      const { data: existingSub } = await supabase
+        .from('respostas_aulas')
+        .select('id, status, nota, tentativas, respostas')
+        .eq('aula_id', lessonId)
+        .eq('aluno_id', profile.id)
+        .maybeSingle();
+
+      if (existingSub && (existingSub.status === 'corrigida' || existingSub.nota !== null || (existingSub.tentativas || 0) >= 1) && mode === 'student') {
+        if (existingSub.respostas) setRespostasAluno(existingSub.respostas);
+        setExercicioFinalizado(true);
+        const existingNota = existingSub.nota !== null && existingSub.nota !== undefined
+          ? Number(existingSub.nota)
+          : computeScore(questions, existingSub.respostas || {});
+        setShowGabarito(existingNota >= minGrade);
+        toast('Você já realizou esta versão da avaliação. É permitida apenas 1 oportunidade por versão.', { icon: '🔒' });
+        return;
+      }
+
+      const finalGrade = computeScore(questions, respostasAluno);
+      const isApproved = finalGrade >= minGrade;
+      const nowIso = new Date().toISOString();
+
+      const upsertData: any = {
         aluno_id: profile.id,
         aula_id: lessonId,
         respostas: respostasAluno,
-        nota: stats.grade,
+        nota: finalGrade,
         status: 'corrigida',
-        updated_at: new Date().toISOString()
+        tentativas: 1,
+        primeira_correcao_at: nowIso,
+        updated_at: nowIso
       };
-      console.log('[AvaliacaoFixacao] Dados para upsert:', upsertData);
+      if (existingSub?.id) upsertData.id = existingSub.id;
 
       // 1. Salva as respostas e a nota calculada
-      const { data: saveData, error: saveError } = await supabase.from('respostas_aulas').upsert(upsertData, { onConflict: 'aluno_id,aula_id' });
-
-      console.log('[AvaliacaoFixacao] Resultado upsert respostas:', { saveData, saveError });
+      const { error: saveError } = await supabase
+        .from('respostas_aulas')
+        .upsert(upsertData, { onConflict: 'aluno_id,aula_id' });
 
       if (saveError) {
-        console.error('[AvaliacaoFixacao] ERRO ao salvar respostas:', saveError);
         throw saveError;
       }
 
-      console.log('[AvaliacaoFixacao] Respostas salvas com sucesso!');
+      // 2. Efeitos pedagógicos (finalização do módulo na aprovação ou criação de recuperação na reprovação)
+      if (mode === 'student') {
+        const { data: aulaData } = await supabase
+          .from('aulas')
+          .select('id, livro_id, min_grade, versao, tipo, titulo, questionario, ordem, parent_aula_id')
+          .eq('id', lessonId)
+          .maybeSingle();
+
+        if (aulaData?.livro_id) {
+          if (isApproved) {
+            await finalizeModuleOnApproval(profile.id, aulaData.livro_id);
+          } else {
+            await unfinalizeModule(profile.id, aulaData.livro_id);
+            await ensureRecoveryExam(aulaData, finalGrade, minGrade);
+          }
+        }
+      }
 
       setExercicioFinalizado(true);
-      setShowGabarito(profile?.tipo === 'ex_aluno');
+      // Regra oficial: ao finalizar, o aluno só terá acesso ao gabarito da avaliação em que for aprovado
+      setShowGabarito(isApproved);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       onSaved?.();
     } catch (err: any) {
@@ -223,7 +276,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     }
   };
 
-  // Get stats with points
+  // Get stats with points using official computeScore (0.5 per TF/MC, 0.5 per matching pair = 3.0 pts)
   const stats = useMemo(() => {
     let totalQuestions = 0;
     let answered = 0;
@@ -234,19 +287,32 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     for (const q of questions) {
       totalQuestions++;
       const qKey = q.id;
-      const points = q.points || 0.5;
-      totalPoints += points;
-
-      if (respostasAluno[qKey] !== undefined && respostasAluno[qKey] !== null) {
-        answered++;
-        if (isCorrect(q, qKey)) {
-          correct++;
-          earnedPoints += points;
+      if (q.type === 'matching' && q.matchingPairs?.length) {
+        const qPts = Math.min(3.0, q.matchingPairs.length * 0.5);
+        totalPoints += qPts;
+        const uA = respostasAluno[qKey];
+        if (uA && typeof uA === 'object' && Object.keys(uA).length > 0) {
+          answered++;
+          const pairPts = q.matchingPairs.reduce((acc, _, mIdx) => {
+            return acc + (matchingPairCorrect(q, mIdx, uA) ? 0.5 : 0);
+          }, 0);
+          earnedPoints += Math.min(3.0, pairPts);
+          if (isCorrect(q, qKey)) correct++;
+        }
+      } else {
+        const points = q.points || 0.5;
+        totalPoints += points;
+        if (respostasAluno[qKey] !== undefined && respostasAluno[qKey] !== null) {
+          answered++;
+          if (isCorrect(q, qKey)) {
+            correct++;
+            earnedPoints += points;
+          }
         }
       }
     }
 
-    const grade = totalPoints > 0 ? (earnedPoints / totalPoints) * 10 : 0;
+    const grade = computeScore(questions, respostasAluno);
     const passed = grade >= minGrade;
 
     return { totalQuestions, answered, correct, totalPoints, earnedPoints, grade, passed };
@@ -368,14 +434,15 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             marginTop: '1rem',
             padding: '0.75rem',
             borderRadius: '8px',
-            background: 'rgba(234, 179, 8, 0.1)',
-            color: 'var(--warning)',
+            background: 'rgba(239, 68, 68, 0.08)',
+            color: 'var(--error)',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.5rem',
+            fontSize: '0.85rem'
           }}>
-            <Clock size={18} />
-            Aguardando correção do professor
+            <AlertCircle size={18} />
+            Gabarito disponível apenas na avaliação em que o aluno for aprovado.
           </div>
         )}
       </div>
@@ -483,14 +550,15 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             marginTop: '1rem',
             padding: '0.75rem',
             borderRadius: '8px',
-            background: 'rgba(234, 179, 8, 0.1)',
-            color: 'var(--warning)',
+            background: 'rgba(239, 68, 68, 0.08)',
+            color: 'var(--error)',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.5rem',
+            fontSize: '0.85rem'
           }}>
-            <Clock size={18} />
-            Aguardando correção do professor
+            <AlertCircle size={18} />
+            Gabarito disponível apenas na avaliação em que o aluno for aprovado.
           </div>
         )}
       </div>
@@ -627,14 +695,15 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             marginTop: '1rem',
             padding: '0.75rem',
             borderRadius: '8px',
-            background: 'rgba(234, 179, 8, 0.1)',
-            color: 'var(--warning)',
+            background: 'rgba(239, 68, 68, 0.08)',
+            color: 'var(--error)',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.5rem',
+            fontSize: '0.85rem'
           }}>
-            <Clock size={18} />
-            Aguardando correção do professor
+            <AlertCircle size={18} />
+            Gabarito disponível apenas na avaliação em que o aluno for aprovado.
           </div>
         )}
       </div>
@@ -855,18 +924,22 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '1rem',
-            padding: '1rem',
-            borderRadius: '8px',
-            background: 'rgba(234, 179, 8, 0.1)',
-            border: '1px solid rgba(234, 179, 8, 0.3)'
+            padding: '1rem 1.25rem',
+            borderRadius: '12px',
+            background: stats.passed ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+            border: `1px solid ${stats.passed ? 'rgba(34, 197, 94, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`
           }}>
-            <Clock size={24} color="var(--warning)" />
+            {stats.passed ? <CheckCircle size={26} color="var(--success)" /> : <AlertCircle size={26} color="var(--error)" />}
             <div>
-              <div style={{ fontWeight: 700, color: 'var(--warning)', fontSize: '1.25rem' }}>
-                Avaliação Enviada!
+              <div style={{ fontWeight: 800, color: stats.passed ? 'var(--success)' : 'var(--error)', fontSize: '1.15rem' }}>
+                {stats.passed
+                  ? `Aprovado nesta Avaliação! Nota: ${stats.grade.toFixed(1)} / 10`
+                  : `Nota Insuficiente: ${stats.grade.toFixed(1)} / 10 (Mínimo: ${minGrade.toFixed(1)})`}
               </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                Aguardando revisão do professor. A nota será divulgada no boletim assim que corrigida.
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                {stats.passed
+                  ? 'Parabéns! Você foi aprovado e o gabarito oficial desta avaliação está liberado abaixo para revisão.'
+                  : 'Cada versão permite apenas 1 oportunidade. O gabarito oficial só é liberado na avaliação em que você for aprovado.'}
               </div>
             </div>
           </div>
@@ -963,8 +1036,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         </div>
       )}
 
-      {/* Professor ou revisão (módulo finalizado): View mode with gabarito */}
-      {(mode === 'professor' || mode === 'admin' || (isModuleFinished && mode === 'student')) && showGabarito && (
+      {/* Professor ou aluno aprovado nesta avaliação: View mode with gabarito */}
+      {(mode === 'professor' || mode === 'admin' || (mode === 'student' && exercicioFinalizado && stats.passed)) && showGabarito && (
         <div style={{
           padding: '1.5rem',
           marginBottom: '2rem',

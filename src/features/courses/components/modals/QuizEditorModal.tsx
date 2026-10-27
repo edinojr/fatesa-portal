@@ -81,10 +81,25 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
         showToast(`Avaliação preenchida com ${newQuestions.length} questões dos exercícios!`, 'success');
       } else {
         const combined = [...quizQuestions, ...newQuestions];
-        const { deduplicated, removedCount } = deduplicateQuestions(combined);
-        setQuizQuestions(deduplicated);
-        const added = combined.length - quizQuestions.length - removedCount;
-        showToast(`${Math.max(0, added)} nova(s) questão(ões) adicionada(s) dos exercícios sem duplicidade!`, 'success');
+        const { deduplicated } = deduplicateQuestions(combined);
+        const tfList = deduplicated.filter((q: any) => q.type === 'true_false').slice(0, 10);
+        const mcList = deduplicated.filter((q: any) => q.type === 'multiple_choice' || !q.type).slice(0, 4);
+        const matList = deduplicated
+          .filter((q: any) => q.type === 'matching')
+          .slice(0, 1)
+          .map((q: any) => ({
+            ...q,
+            matchingPairs: Array.isArray(q.matchingPairs)
+              ? [
+                  ...q.matchingPairs.slice(0, 6),
+                  ...Array.from({ length: Math.max(0, 6 - q.matchingPairs.length) }, () => ({ left: '', right: '' }))
+                ]
+              : Array.from({ length: 6 }, () => ({ left: '', right: '' }))
+          }));
+        const capped = [...tfList, ...mcList, ...matList];
+        setQuizQuestions(capped);
+        const added = Math.max(0, capped.length - quizQuestions.length);
+        showToast(`Avaliação ajustada no padrão 10-4-1 (${capped.length}/15 questões, ${added} adicionada(s))!`, 'success');
       }
     } catch (err: any) {
       showToast('Erro ao carregar exercícios: ' + (err.message || err), 'error');
@@ -403,7 +418,7 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
 
               {q.type === 'matching' && (
                 <div style={{ marginTop: '1.5rem' }}>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>Pares (Coluna 1 ➔ Coluna 2)</label>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>Pares (Coluna 1 ➔ Coluna 2) — Padrão: 6 pares</label>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     {(q.matchingPairs || []).map((pair, pIdx) => (
                       <div key={pIdx} style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px' }}>
@@ -426,6 +441,10 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                         </div>
                         <button className="btn btn-outline" style={{ padding: '0.8rem', color: 'var(--error)', alignSelf: 'flex-end', width: 'auto' }} onClick={() => {
                           const newQ = [...quizQuestions];
+                          if ((newQ[qIdx].matchingPairs?.length || 0) <= 6) {
+                            showToast('A coluna de relação deve manter 6 pares no padrão Fatesa.', 'error');
+                            return;
+                          }
                           newQ[qIdx].matchingPairs?.splice(pIdx, 1);
                           setQuizQuestions(newQ);
                         }}>
@@ -434,14 +453,20 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
                       </div>
                     ))}
                   </div>
-                  <button className="btn btn-outline" style={{ marginTop: '1rem', width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem' }} onClick={() => {
-                    const newQ = [...quizQuestions];
-                    if(!newQ[qIdx].matchingPairs) newQ[qIdx].matchingPairs = [];
-                    newQ[qIdx].matchingPairs!.push({ left: '', right: '' });
-                    setQuizQuestions(newQ);
-                  }}>
-                    <Plus size={14} /> Adicionar Par
-                  </button>
+                  {(q.matchingPairs?.length || 0) < 6 && (
+                    <button className="btn btn-outline" style={{ marginTop: '1rem', width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem' }} onClick={() => {
+                      const newQ = [...quizQuestions];
+                      if(!newQ[qIdx].matchingPairs) newQ[qIdx].matchingPairs = [];
+                      if (newQ[qIdx].matchingPairs!.length >= 6) {
+                        showToast('Limite máximo de 6 pares atingido.', 'error');
+                        return;
+                      }
+                      newQ[qIdx].matchingPairs!.push({ left: '', right: '' });
+                      setQuizQuestions(newQ);
+                    }}>
+                      <Plus size={14} /> Adicionar Par ({q.matchingPairs?.length || 0}/6)
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -481,35 +506,72 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
       
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--glass)', padding: '1.5rem', borderRadius: '16px', border: '1px dashed var(--glass-border)' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>Adicionar Nova Questão</label>
-              <select id="new-q-type" className="form-control" defaultValue="multiple_choice">
-                <option value="multiple_choice">Múltipla Escolha</option>
-                <option value="true_false">Verdadeiro ou Falso</option>
-                <option value="matching">Relacione as Colunas (Respectiva)</option>
-                <option value="discursive">Dissertativa (Texto Livre)</option>
+              <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>
+                Adicionar Nova Questão (Padrão Fatesa: 10 V/F, 4 Múltipla Escolha, 1 Coluna de Relação com 6 pares)
+              </label>
+              <select id="new-q-type" className="form-control" defaultValue="true_false">
+                <option value="true_false">Verdadeiro ou Falso (Máx: 10)</option>
+                <option value="multiple_choice">Múltipla Escolha (Máx: 4)</option>
+                <option value="matching">Relacione as Colunas — 6 pares (Máx: 1)</option>
               </select>
             </div>
             <button className="btn btn-outline" style={{ width: 'auto', alignSelf: 'flex-end', display: 'flex', gap: '0.5rem' }} onClick={() => {
               const sel = document.getElementById('new-q-type') as HTMLSelectElement;
               const type = sel.value as QuestionType;
+              
+              const currentTF = quizQuestions.filter(q => q.type === 'true_false').length;
+              const currentMC = quizQuestions.filter(q => q.type === 'multiple_choice' || !q.type).length;
+              const currentMat = quizQuestions.filter(q => q.type === 'matching').length;
+
+              if (type === 'true_false' && currentTF >= 10) {
+                showToast('Limite atingido: O parâmetro oficial permite no máximo 10 questões de Verdadeiro ou Falso.', 'error');
+                return;
+              }
+              if (type === 'multiple_choice' && currentMC >= 4) {
+                showToast('Limite atingido: O parâmetro oficial permite no máximo 4 questões de Múltipla Escolha.', 'error');
+                return;
+              }
+              if (type === 'matching' && currentMat >= 1) {
+                showToast('Limite atingido: O parâmetro oficial permite apenas 1 questão de Coluna de Relação (com 6 pares).', 'error');
+                return;
+              }
+              if (quizQuestions.length >= 15) {
+                showToast('A avaliação já possui as 15 questões do parâmetro oficial (10 V/F, 4 Múltipla Escolha e 1 Relacione Colunas).', 'error');
+                return;
+              }
+
               const newId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
               
               const newQuestion: QuizQuestion = {
                 id: newId,
                 type,
-                text: ''
+                text: type === 'matching' ? 'Enumere a coluna B de acordo com a coluna A:' : ''
               };
               
-              if(type === 'multiple_choice') {
+              if (type === 'multiple_choice') {
                 newQuestion.options = ['', '', '', ''];
                 newQuestion.correct = 0;
               } else if (type === 'true_false') {
                 newQuestion.isTrue = true;
               } else if (type === 'matching') {
-                newQuestion.matchingPairs = [{left: '', right: ''}, {left: '', right: ''}];
+                newQuestion.matchingPairs = [
+                  { left: '', right: '' },
+                  { left: '', right: '' },
+                  { left: '', right: '' },
+                  { left: '', right: '' },
+                  { left: '', right: '' },
+                  { left: '', right: '' }
+                ];
               }
               
-              setQuizQuestions([...quizQuestions, newQuestion]);
+              // Mantém a ordem oficial: V/F -> Múltipla Escolha -> Coluna de Relação
+              const updated = [...quizQuestions, newQuestion];
+              const sorted = [
+                ...updated.filter(q => q.type === 'true_false'),
+                ...updated.filter(q => q.type === 'multiple_choice' || !q.type),
+                ...updated.filter(q => q.type === 'matching')
+              ];
+              setQuizQuestions(sorted);
             }}>
               <Plus size={18} /> Inserir
             </button>
@@ -519,18 +581,22 @@ const QuizEditorModal: React.FC<QuizEditorModalProps> = ({
             <button className="btn btn-outline" onClick={() => { setEditingQuiz(null); setPendingExamMeta?.(null); }}>Cancelar e Voltar</button>
 
             <button className="btn btn-primary" onClick={async () => {
-              // Validação para Avaliação Final
-              if (editingQuiz.is_bloco_final) {
+              // Validação estrita do parâmetro oficial Fatesa: 10 V/F + 4 Múltipla Escolha + 1 Coluna de Relação (6 pares)
+              const isExamQuiz = editingQuiz.is_bloco_final || editingQuiz.tipo === 'avaliacao' || editingQuiz.tipo === 'prova' || editingQuiz._isNew;
+              if (isExamQuiz) {
                 const tfCount = quizQuestions.filter(q => q.type === 'true_false').length;
                 const mcCount = quizQuestions.filter(q => q.type === 'multiple_choice' || !q.type).length;
                 const matchingQuestions = quizQuestions.filter(q => q.type === 'matching');
                 const matCount = matchingQuestions.length;
                 const matchingPairsCount = matchingQuestions[0]?.matchingPairs?.length || 0;
+                const otherCount = quizQuestions.filter(q => q.type && !['true_false', 'multiple_choice', 'matching'].includes(q.type)).length;
 
-                if (tfCount !== 10 || mcCount !== 4 || matCount !== 1 || matchingPairsCount !== 6) {
-                  if (!window.confirm(`ESTRUTURA FORA DO PADRÃO: O novo padrão Fatesa exige:\n- 10 Verdadeiro ou Falso (Atuais: ${tfCount})\n- 04 Múltipla Escolha (Atuais: ${mcCount})\n- 01 Relacione Colunas com 6 pares (Atuais: ${matCount} questão com ${matchingPairsCount} pares)\n\nDeseja salvar assim mesmo?`)) {
-                    return;
-                  }
+                if (tfCount !== 10 || mcCount !== 4 || matCount !== 1 || matchingPairsCount !== 6 || otherCount > 0) {
+                  showToast(
+                    `Parâmetro inválido! A avaliação deve conter exatamente: 10 V/F (atual: ${tfCount}), 4 Múltipla Escolha (atual: ${mcCount}) e 1 Coluna de Relação com 6 questões/pares (atual: ${matCount} com ${matchingPairsCount} pares).`,
+                    'error'
+                  );
+                  return;
                 }
               }
 
