@@ -4675,3 +4675,120 @@ select.form-control option {
     text-indent: -2em;
   }
 }
+
+/* ==========================================================================
+   NOVO LAYOUT: DASHBOARD ESTRUTURADO COM SIDEBAR PERSISTENTE (LMS ALUNO)
+   ========================================================================== */
+.student-lms-container {
+  min-height: 100vh;
+  background-color: #070b14;
+  color: #f8fafc;
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.student-lms-content-wrapper {
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-left: 270px;
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
+  background: radial-gradient(circle at top right, rgba(0, 86, 179, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+              #070b14;
+}
+
+.student-lms-content-wrapper.collapsed {
+  margin-left: 76px;
+}
+
+.student-lms-main {
+  flex: 1;
+  padding: 2rem 2.5rem 4rem;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Grid de Cartões de Alta Prioridade (Área Central) */
+.student-priority-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.student-card-priority {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.student-card-priority:hover {
+  border-color: rgba(0, 86, 179, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 15px rgba(0, 86, 179, 0.15);
+}
+
+.student-card-priority::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0056b3, #60a5fa);
+  opacity: 0.8;
+}
+
+.student-card-priority.alert-danger::before {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+.student-card-priority.alert-warning::before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.student-card-priority.alert-success::before {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+/* Responsividade Mobile e Tablet para Sidebar Persistente */
+@media (max-width: 1023px) {
+  .student-persistent-sidebar {
+    transform: translateX(-100%) !important;
+    width: 280px !important;
+  }
+
+  .student-persistent-sidebar.mobile-drawer-open {
+    transform: translateX(0) !important;
+  }
+
+  .student-lms-content-wrapper,
+  .student-lms-content-wrapper.collapsed {
+    margin-left: 0 !important;
+  }
+
+  .student-lms-main {
+    padding: 1.25rem 1rem 4rem;
+  }
+
+  .student-priority-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+

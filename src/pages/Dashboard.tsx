@@ -45,9 +45,11 @@ import PopupAlertsDisplay from '../features/communication/components/PopupAlerts
 import PixPaymentPopup from '../features/finance/components/PixPaymentPopup'
 import { CertificadosPanel } from '../components/CertificadosPanel'
 import { PanelSwitcher } from '../components/common/PanelSwitcher'
+import StudentSidebar, { StudentNavTab } from '../components/layout/StudentSidebar'
+import StudentTopBar from '../components/layout/StudentTopBar'
+import DigitalLibraryPanel from '../components/library/DigitalLibraryPanel'
 
-
-type Tab = 'home' | 'cursos' | 'documentos' | 'financeiro' | 'forum' | 'modulos-concluidos' | 'certificados'
+type Tab = StudentNavTab;
 
 const Dashboard = () => {
   const { profile, signOut, refreshProfile } = useProfile();
@@ -64,12 +66,59 @@ const Dashboard = () => {
   
   const activeTab = useMemo(() => {
     const tab = searchParams.get('tab') as Tab;
-    const validTabs: Tab[] = ['home', 'cursos', 'documentos', 'financeiro', 'forum', 'modulos-concluidos', 'certificados'];
+    const validTabs: Tab[] = [
+      'home',
+      'cursos',
+      'modulos',
+      'modulos-concluidos',
+      'financeiro',
+      'biblioteca',
+      'forum',
+      'documentos',
+      'certificados'
+    ];
     return validTabs.includes(tab) ? tab : 'home';
   }, [searchParams]);
 
   const setActiveTab = (newTab: Tab) => {
     setSearchParams({ tab: newTab });
+  };
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    return localStorage.getItem('fatesa_student_sidebar_collapsed') === 'true';
+  });
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+  const [globalSearchTerm, setGlobalSearchTerm] = useState<string>('');
+
+  const toggleSidebarCollapsed = () => {
+    setIsSidebarCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('fatesa_student_sidebar_collapsed', String(next));
+      return next;
+    });
+  };
+
+  const getTabTitle = (tab: Tab): string => {
+    switch (tab) {
+      case 'home': return 'Visão Geral & Início';
+      case 'cursos': return 'Meus Cursos';
+      case 'modulos': return 'Módulos em Aberto';
+      case 'modulos-concluidos': return 'Histórico & Boletim';
+      case 'financeiro': return 'Financeiro & Mensalidades';
+      case 'biblioteca': return 'Biblioteca Virtual & Apostilas';
+      case 'forum': return 'Fórum de Dúvidas';
+      case 'documentos': return 'Documentos de Matrícula';
+      case 'certificados': return 'Certificados & Diplomas';
+      default: return 'Portal do Aluno';
+    }
+  };
+
+  const handleSelectTab = (newTab: Tab) => {
+    if (newTab === 'modulos-concluidos') {
+      navigate('/modulos-finalizados');
+      return;
+    }
+    setActiveTab(newTab);
   };
 
   useEffect(() => {
@@ -377,6 +426,16 @@ const Dashboard = () => {
     return null;
   }, [modulosAtivos]);
 
+  // Lista plana de livros / módulos em estudo ativo
+  const livrosEmEstudo = useMemo(() => {
+    return modulosAtivos.flatMap(c => 
+      (c.livros || []).map((l: any) => ({
+        ...l,
+        courseName: c.nome || c.nivel
+      }))
+    );
+  }, [modulosAtivos]);
+
   useEffect(() => {
     if (profile?.id) {
       fetchStudentDashboardData();
@@ -549,7 +608,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="admin-layout">
+    <div className="student-lms-container">
       {toast && (
         <div style={{
           position: 'fixed', bottom: '2rem', right: '2rem', padding: '1rem 2rem', 
@@ -561,45 +620,46 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Standardized Dashboard Navigation Header */}
-      <PageHeader
-        title="Painel do Aluno"
-        subtitle={
-          activeTab === 'home' ? 'Ambiente Virtual de Aprendizagem' :
-          activeTab === 'cursos' ? 'Meus Cursos e Aulas' :
-          activeTab === 'documentos' ? 'Meus Documentos' :
-          activeTab === 'financeiro' ? 'Pagamentos e Mensalidades' :
-          activeTab === 'modulos-concluidos' ? 'Histórico e Boletim de Notas' : 'Fórum de Dúvidas'
-        }
-        variant="student"
-        showBackButton={activeTab !== 'home'}
-        onBack={handleStudentBack}
-        showHomeButton={true}
-        homePath="/dashboard"
-        showTopBanner={false}
-        breadcrumb={
-          activeTab !== 'home' ? [
-            { label: 'Início', onClick: handleStudentBack },
-            { 
-              label: activeTab === 'cursos' ? 'Meus Cursos' :
-                     activeTab === 'documentos' ? 'Documentos' :
-                     activeTab === 'financeiro' ? 'Pagamentos' :
-                     activeTab === 'modulos-concluidos' ? 'Boletim' : 'Fórum',
-              isActive: true 
-            }
-          ] : undefined
-        }
-        actions={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <PanelSwitcher currentPanel="aluno" />
-            <button className="nav-btn-premium danger" onClick={() => signOut()} style={{ width: 'auto' }} title="Sair da conta">
-              <LogOut size={18} /> <span className="mobile-hide">Sair</span>
-            </button>
-          </div>
-        }
+      {/* SIDEBAR PERSISTENTE RETRÁTIL COM HIERARQUIA EM ÁRVORE */}
+      <StudentSidebar
+        activeTab={activeTab}
+        onSelectTab={handleSelectTab}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapsed}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        profile={profile}
+        signOut={signOut}
+        courses={courses}
+        finishedCount={finishedBasicCount}
+        totalRequired={GRADUATION_CONFIG.basico.requiredModules}
+        pendingExamsCount={pendingExams.length}
+        isPastDue={isPastDue}
       />
 
-      <main className="admin-main">
+      {/* CONTENT WRAPPER COM TOPBAR ENXUTA */}
+      <div className={`student-lms-content-wrapper ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+        <StudentTopBar
+          onToggleSidebar={() => {
+            if (window.innerWidth < 1024) {
+              setIsMobileSidebarOpen(prev => !prev);
+            } else {
+              toggleSidebarCollapsed();
+            }
+          }}
+          isSidebarCollapsed={isSidebarCollapsed}
+          profile={profile}
+          signOut={signOut}
+          activeTabTitle={getTabTitle(activeTab)}
+          courses={courses}
+          pendingExams={pendingExams}
+          isPastDue={isPastDue}
+          onSelectTab={handleSelectTab}
+          searchTerm={globalSearchTerm}
+          onSearchChange={setGlobalSearchTerm}
+        />
+
+        <main className="student-lms-main">
         {alumniPendingApproval ? (
           <div style={{ maxWidth: '850px', margin: '2rem auto 4rem', padding: '0 1rem' }}>
             <div style={{
@@ -672,66 +732,623 @@ const Dashboard = () => {
         ) : (
          <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
           {activeTab === 'home' && (
-            <>
-              {finishedBasicCount >= 27 && finishedMediumCount === 0 && (
-                <div style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', borderRadius: '24px', padding: '3rem 2rem', color: '#fff', marginBottom: '2rem', textAlign: 'center', boxShadow: '0 10px 30px rgba(139, 92, 246, 0.3)', position: 'relative', overflow: 'hidden' }}>
-                  <div style={{ position: 'relative', zIndex: 2 }}>
-                    <GraduationCap size={56} style={{ margin: '0 auto 1rem', opacity: 0.9 }} />
-                    <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '1rem', letterSpacing: '-0.02em' }}>Você formou no Nível Básico!</h2>
-                    <p style={{ fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto 2rem', lineHeight: '1.6', opacity: 0.9 }}>
-                      Sua jornada até aqui foi incrível. <strong>Atenção:</strong> em breve será lançado o curso <strong>Médio online</strong> nos próximos dias! Prepare-se para refazer a sua matrícula e avançar de nível.
-                    </p>
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                      <button onClick={() => setActiveTab('certificados')} style={{ background: '#fff', color: '#6d28d9', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-                        <Award size={18} /> Ver meus Certificados
-                      </button>
-                      <button onClick={() => window.open('https://wa.me/5511999720904?text=Ol%C3%A1%2C%20conclu%C3%AD%20o%20n%C3%ADvel%20B%C3%A1sico%20e%20gostaria%20de%20informa%C3%A7%C3%B5es%20para%20o%20n%C3%ADvel%20M%C3%A9dio.', '_blank')} style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', backdropFilter: 'blur(10px)' }}>
-                        Quero refazer a matrícula
-                      </button>
-                    </div>
-                  </div>
-                  <div style={{ position: 'absolute', top: '-50%', left: '-10%', width: '300px', height: '300px', background: 'rgba(255,255,255,0.1)', filter: 'blur(80px)', borderRadius: '50%', zIndex: 1 }}></div>
-                  <div style={{ position: 'absolute', bottom: '-50%', right: '-10%', width: '400px', height: '400px', background: 'rgba(0,0,0,0.2)', filter: 'blur(80px)', borderRadius: '50%', zIndex: 1 }}></div>
-                </div>
-              )}
-              {/* Welcome Section */}
-              <div style={{
-                marginBottom: '2rem',
-                padding: '2rem',
-                background: 'var(--glass)',
-                borderRadius: '24px',
-                border: '1px solid var(--glass-border)',
-                animation: 'fadeIn 0.5s'
-              }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>
-                    Bem-vindo(a), {profile?.nome || 'Aluno'}!
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              {/* TOP HEADER: Saudação & Resumo */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                <div>
+                  <h1 style={{ fontSize: '1.75rem', fontWeight: 900, margin: 0, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+                    Olá, {profile?.nome?.split(' ')[0] || 'Aluno'}!
                   </h1>
-                  {coursesLoading ? (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
-                      Carregando seus módulos…
-                    </p>
-                  ) : currentModule ? (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginTop: '1rem' }}>
-                      <div>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Continue de onde parou</p>
-                        <p style={{ color: 'var(--text-main)', fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>
-                          {currentModule.courseName} <span style={{ color: 'var(--primary)' }}>— {currentModule.livro.titulo}</span>
-                        </p>
-                      </div>
-                      <button className="btn btn-primary" onClick={() => navigate(`/module/${currentModule.livro.id}`)} style={{ width: 'auto', padding: '1rem 2.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        Retomar Estudos <Play size={20} />
-                      </button>
-                    </div>
-                  ) : (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', margin: 0 }}>
-                      Você concluiu todos os cursos disponíveis.
-                    </p>
-                  )}
+                  <p style={{ fontSize: '0.88rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
+                    Polo: <strong style={{ color: '#60a5fa' }}>{profile?.nucleos?.nome || 'Fatesa EAD'}</strong> • Ambiente Virtual de Aprendizagem
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => navigate('/modulos-finalizados')}
+                    className="btn btn-outline"
+                    style={{ width: 'auto', padding: '0.55rem 1rem', fontSize: '0.82rem', fontWeight: 700, borderColor: 'rgba(96, 165, 250, 0.3)', color: '#60a5fa', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                  >
+                    <Award size={16} /> Meu Boletim
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('biblioteca')}
+                    className="btn btn-primary"
+                    style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.82rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                  >
+                    <BookOpen size={16} /> Biblioteca
+                  </button>
                 </div>
               </div>
 
-            <div className="admin-dashboard-grid transition-fade-in" style={{ marginTop: '1rem' }}>
+              {/* AVISO DE FORMAÇÃO NO BÁSICO */}
+              {finishedBasicCount >= 27 && finishedMediumCount === 0 && (
+                <div style={{ background: 'linear-gradient(135deg, #003875 0%, #0056b3 100%)', borderRadius: '20px', padding: '2rem 1.75rem', color: '#fff', textAlign: 'center', boxShadow: '0 10px 30px rgba(0, 86, 179, 0.3)', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', zIndex: 2 }}>
+                    <GraduationCap size={48} style={{ margin: '0 auto 0.75rem', opacity: 0.9 }} />
+                    <h2 style={{ fontSize: '1.6rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>Parabéns! Você concluiu o Nível Básico!</h2>
+                    <p style={{ fontSize: '0.95rem', maxWidth: '620px', margin: '0 auto 1.5rem', lineHeight: '1.5', opacity: 0.9 }}>
+                      Sua jornada até aqui foi exemplar. Prepare-se para o nível Médio com novos módulos e aprofundamento teológico.
+                    </p>
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                      <button onClick={() => setActiveTab('certificados')} style={{ background: '#fff', color: '#0056b3', padding: '10px 20px', borderRadius: '10px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Award size={16} /> Ver Meus Certificados
+                      </button>
+                      <button onClick={() => window.open('https://wa.me/5511999720904?text=Ol%C3%A1%2C%20conclu%C3%AD%20o%20n%C3%ADvel%20B%C3%A1sico%20e%20gostaria%20de%20informa%C3%A7%C3%B5es%20para%20o%20n%C3%ADvel%20M%C3%A9dio.', '_blank')} style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', padding: '10px 20px', borderRadius: '10px', fontWeight: 800, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        Matrícula Nível Médio
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ALERTA DE ALUMNI */}
+              {isAlumniData && (
+                <div style={{ padding: '1.5rem', background: 'rgba(0, 86, 179, 0.08)', borderRadius: '18px', border: '1px solid rgba(0, 86, 179, 0.25)', textAlign: 'center' }}>
+                  <Award size={40} color="#0056b3" style={{ margin: '0 auto 0.5rem' }} />
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Conclusão Reconhecida</h3>
+                  <p style={{ color: '#94a3b8', fontSize: '0.9rem', maxWidth: '580px', margin: '0 auto 1rem' }}>
+                    Você concluiu o Curso Básico de Teologia FATESA. Seu histórico e certificados oficiais estão disponíveis.
+                  </p>
+                  <AlumniCertificate aluno={{
+                    nome: profile?.nome || isAlumniData.nome,
+                    email: profile?.email || isAlumniData.email,
+                    ano_formacao: isAlumniData.ano_formacao,
+                    matricula: isAlumniData.matricula,
+                    nucleo: profile?.nucleos?.nome || isAlumniData.nucleo,
+                    nivel_curso: isAlumniData.nivel_curso,
+                    historico: isAlumniData.historico
+                  }} />
+                </div>
+              )}
+
+              {/* ALERTA DE BLOQUEIO */}
+              {isBlocked && (
+                <div style={{ padding: '1rem 1.25rem', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid #ef4444', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                  <AlertCircle size={20} color="#ef4444" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+                  <div>
+                    <strong style={{ color: '#ef4444', fontSize: '0.92rem' }}>Acesso suspenso temporariamente.</strong>
+                    <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: '0.25rem 0 0' }}>
+                      Seu avanço aos novos módulos está suspenso. Regularize seu pagamento pelo painel financeiro para reativar.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* ALERTA DE HIATO OU TRANCADO */}
+              {(profile?.status_nucleo === 'hiato' || profile?.status_nucleo === 'trancado') && (
+                <div style={{ padding: '1rem 1.25rem', background: 'rgba(0, 86, 179, 0.08)', border: '1px solid #0056b3', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.85rem' }}>
+                  <PauseCircle size={22} color="#0056b3" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+                  <div style={{ flex: 1 }}>
+                    <strong style={{ color: '#60a5fa', fontSize: '0.92rem' }}>
+                      {profile?.status_nucleo === 'hiato' ? 'Matrícula em Hiato' : 'Curso Temporariamente Pausado'}
+                    </strong>
+                    <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: '0.25rem 0 0.5rem', lineHeight: 1.5 }}>
+                      O avanço para novos módulos está pausado. Você mantém acesso aos seus módulos concluídos e ao módulo que estiver cursando.
+                    </p>
+                    <a
+                      href="https://wa.me/5511999720904?text=Ol%C3%A1%2C%20gostaria%20de%20reativar%20minha%20matr%C3%ADcula%20na%20FATESA!"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-primary"
+                      style={{ fontSize: '0.78rem', padding: '0.4rem 0.9rem', width: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                    >
+                      Falar com Secretaria / Reativar
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* 1. GRID DE CARTÕES DE ALTA PRIORIDADE (ÁREA CENTRAL) */}
+              <div className="student-priority-grid">
+                {/* CARD 1: PRÓXIMAS AULAS / CONTINUE DE ONDE PAROU */}
+                <div className="student-card-priority" style={{ minHeight: '270px' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#60a5fa', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Play size={13} /> Continue de Onde Parou
+                      </span>
+                      <span style={{ fontSize: '0.7rem', background: 'rgba(0, 86, 179, 0.25)', color: '#93c5fd', padding: '3px 8px', borderRadius: '10px', fontWeight: 700 }}>
+                        Módulo Atual
+                      </span>
+                    </div>
+
+                    {coursesLoading ? (
+                      <div style={{ padding: '2rem 0', textAlign: 'center', color: '#94a3b8' }}>
+                        <Loader2 className="spinner" size={24} style={{ margin: '0 auto 0.5rem' }} />
+                        <span style={{ fontSize: '0.85rem' }}>Carregando módulo vigente...</span>
+                      </div>
+                    ) : currentModule ? (
+                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.25rem' }}>
+                        {currentModule.livro.capa_url ? (
+                          <img
+                            src={currentModule.livro.capa_url}
+                            alt={currentModule.livro.titulo}
+                            style={{ width: '68px', height: '94px', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 6px 14px rgba(0,0,0,0.5)', flexShrink: 0 }}
+                          />
+                        ) : (
+                          <div style={{ width: '68px', height: '94px', borderRadius: '10px', background: 'linear-gradient(135deg, #003875 0%, #0056b3 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0, boxShadow: '0 6px 14px rgba(0,0,0,0.4)' }}>
+                            <BookOpen size={30} />
+                          </div>
+                        )}
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <span style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '2px' }}>
+                            {currentModule.courseName}
+                          </span>
+                          <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff', margin: '0 0 6px 0', lineHeight: 1.25 }}>
+                            {currentModule.livro.titulo}
+                          </h3>
+                          <span style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>
+                            {(currentModule.livro.aulas || []).length} aulas e avaliações liberadas
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ padding: '1.5rem 0', textAlign: 'center', color: '#94a3b8' }}>
+                        <CheckCircle2 size={36} color="#10b981" style={{ margin: '0 auto 0.5rem' }} />
+                        <p style={{ margin: 0, fontWeight: 700, color: '#f8fafc' }}>Nenhum módulo pendente!</p>
+                        <span style={{ fontSize: '0.8rem' }}>Você completou os cursos liberados para sua turma.</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {currentModule && (
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => navigate(`/module/${currentModule.livro.id}`)}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1.25rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        fontWeight: 800,
+                        fontSize: '0.88rem',
+                        boxShadow: '0 4px 14px rgba(0, 86, 179, 0.4)'
+                      }}
+                    >
+                      <Play size={16} /> Retomar Estudos
+                    </button>
+                  )}
+                </div>
+
+                {/* CARD 2: PROGRESSO DO CURSO & FORMATURA */}
+                <div className="student-card-priority" style={{ minHeight: '270px' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#a78bfa', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <GraduationCap size={15} /> Progresso do Curso
+                      </span>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#60a5fa' }}>
+                        {Math.min(100, Math.round((finishedBasicCount / GRADUATION_CONFIG.basico.requiredModules) * 100))}%
+                      </span>
+                    </div>
+
+                    {/* Barra Nível Básico */}
+                    <div style={{ marginBottom: '1.1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', fontSize: '0.82rem' }}>
+                        <span style={{ fontWeight: 700, color: '#e2e8f0' }}>Nível Básico em Teologia</span>
+                        <span style={{ fontWeight: 800, color: '#60a5fa' }}>
+                          {finishedBasicCount} / {GRADUATION_CONFIG.basico.requiredModules} módulos
+                        </span>
+                      </div>
+                      <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            height: '100%',
+                            width: `${Math.min(100, (finishedBasicCount / GRADUATION_CONFIG.basico.requiredModules) * 100)}%`,
+                            background: 'linear-gradient(90deg, #0056b3 0%, #60a5fa 100%)',
+                            borderRadius: '10px',
+                            transition: 'width 0.6s ease'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Barra Nível Médio */}
+                    <div style={{ marginBottom: '1rem', opacity: finishedBasicCount < GRADUATION_CONFIG.basico.requiredModules ? 0.6 : 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', fontSize: '0.82rem' }}>
+                        <span style={{ fontWeight: 700, color: '#e2e8f0' }}>Nível Médio em Teologia</span>
+                        <span style={{ fontWeight: 800, color: '#a78bfa' }}>
+                          {finishedMediumCount} / {GRADUATION_CONFIG.medio.requiredModules} módulos
+                        </span>
+                      </div>
+                      <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            height: '100%',
+                            width: `${Math.min(100, (finishedMediumCount / GRADUATION_CONFIG.medio.requiredModules) * 100)}%`,
+                            background: 'linear-gradient(90deg, #8b5cf6 0%, #c084fc 100%)',
+                            borderRadius: '10px',
+                            transition: 'width 0.6s ease'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    <button
+                      onClick={() => navigate('/modulos-finalizados')}
+                      className="btn btn-outline"
+                      style={{
+                        flex: 1,
+                        padding: '0.65rem 0.75rem',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                        borderColor: 'rgba(96, 165, 250, 0.3)',
+                        color: '#60a5fa'
+                      }}
+                    >
+                      <Award size={15} /> Ver Boletim
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('certificados')}
+                      className="btn btn-outline"
+                      style={{
+                        flex: 1,
+                        padding: '0.65rem 0.75rem',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                        borderColor: 'rgba(255, 255, 255, 0.15)',
+                        color: '#e2e8f0'
+                      }}
+                    >
+                      <GraduationCap size={15} /> Certificados
+                    </button>
+                  </div>
+                </div>
+
+                {/* CARD 3: PRAZOS & TAREFAS PRIORITÁRIAS */}
+                <div
+                  className={`student-card-priority ${
+                    isPastDue ? 'alert-danger' : pendingExams.length > 0 ? 'alert-warning' : 'alert-success'
+                  }`}
+                  style={{ minHeight: '270px' }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: isPastDue ? '#f87171' : pendingExams.length > 0 ? '#fbbf24' : '#34d399', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Clock size={15} /> Prazos & Prioridades
+                      </span>
+                      {pendingExams.length > 0 && (
+                        <span style={{ fontSize: '0.72rem', background: '#f59e0b', color: '#ffffff', padding: '2px 8px', borderRadius: '10px', fontWeight: 800 }}>
+                          {pendingExams.length} ação{pendingExams.length > 1 ? 'ões' : ''}
+                        </span>
+                      )}
+                    </div>
+
+                    {pendingExams.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', marginBottom: '1rem' }}>
+                        {pendingExams.slice(0, 2).map((exam, idx) => (
+                          <div
+                            key={exam.id || idx}
+                            onClick={() => navigate(`/lesson/${exam.id}`)}
+                            style={{
+                              padding: '0.6rem 0.8rem',
+                              borderRadius: '10px',
+                              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                              border: `1px solid ${exam.isRecovery ? 'rgba(239, 68, 68, 0.35)' : 'rgba(0, 86, 179, 0.35)'}`,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '0.5rem',
+                              transition: 'background 0.15s'
+                            }}
+                          >
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                              <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
+                                {exam.livro}
+                              </div>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {exam.titulo}
+                              </div>
+                            </div>
+                            <span
+                              style={{
+                                fontSize: '0.65rem',
+                                fontWeight: 800,
+                                padding: '2px 7px',
+                                borderRadius: '6px',
+                                backgroundColor: exam.isRecovery ? '#dc2626' : '#0056b3',
+                                color: '#ffffff',
+                                flexShrink: 0
+                              }}
+                            >
+                              {exam.versao > 1 ? `V${exam.versao}: REC` : 'AVALIAÇÃO'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : isPastDue ? (
+                      <div style={{ padding: '0.75rem', borderRadius: '12px', backgroundColor: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.3)', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171', fontWeight: 800, fontSize: '0.85rem' }}>
+                          <AlertCircle size={16} /> Mensalidade Pendente
+                        </div>
+                        <p style={{ fontSize: '0.78rem', color: '#cbd5e1', margin: '4px 0 0 0' }}>
+                          Evite a suspensão do avanço dos seus estudos regularizando via PIX.
+                        </p>
+                      </div>
+                    ) : (
+                      <div style={{ padding: '1.25rem 0', textAlign: 'center' }}>
+                        <CheckCircle2 size={34} color="#10b981" style={{ margin: '0 auto 0.4rem' }} />
+                        <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#ffffff' }}>
+                          Você está 100% em dia!
+                        </div>
+                        <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
+                          Nenhuma avaliação pendente ou mensalidade em atraso.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    {isPastDue ? (
+                      <button
+                        onClick={() => setActiveTab('financeiro')}
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 1rem',
+                          backgroundColor: '#dc2626',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '12px',
+                          fontWeight: 800,
+                          fontSize: '0.82rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.5rem'
+                        }}
+                      >
+                        <CreditCard size={15} /> Regularizar Pagamento (PIX)
+                      </button>
+                    ) : pendingExams.length > 0 ? (
+                      <button
+                        onClick={() => navigate(`/lesson/${pendingExams[0].id}`)}
+                        className="btn btn-primary"
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 1rem',
+                          fontSize: '0.82rem',
+                          fontWeight: 800,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.5rem'
+                        }}
+                      >
+                        Fazer Avaliação Pendente <ChevronRight size={15} />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setActiveTab('cursos')}
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem 1rem',
+                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                          color: '#cbd5e1',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Explorar Conteúdo dos Cursos
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. MÓDULOS EM ABERTO PARA ESTUDO (GRADE VIGENTE) */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <BookOpen size={20} color="#0056b3" /> Módulos em Aberto para Estudo ({livrosEmEstudo.length})
+                    </h2>
+                    <span style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+                      Módulos com aulas liberadas para seu cronograma
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('cursos')}
+                    className="btn btn-outline"
+                    style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem', fontWeight: 700, color: '#60a5fa', borderColor: 'rgba(96, 165, 250, 0.3)' }}
+                  >
+                    Ver Todos os Cursos
+                  </button>
+                </div>
+
+                {livrosEmEstudo.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', background: 'rgba(15, 23, 42, 0.6)', borderRadius: '18px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <CheckCircle2 size={36} color="#10b981" style={{ margin: '0 auto 0.5rem' }} />
+                    <p style={{ margin: 0, fontWeight: 700, color: '#f8fafc' }}>Nenhum módulo pendente em aberto.</p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
+                    {livrosEmEstudo.map((livro: any) => (
+                      <div
+                        key={livro.id}
+                        style={{
+                          background: 'rgba(15, 23, 42, 0.75)',
+                          borderRadius: '18px',
+                          border: '1px solid rgba(255, 255, 255, 0.08)',
+                          padding: '1.25rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.85rem' }}>
+                            {livro.capa_url ? (
+                              <img
+                                src={livro.capa_url}
+                                alt={livro.titulo}
+                                style={{
+                                  width: '52px',
+                                  height: '72px',
+                                  objectFit: 'cover',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.4)',
+                                  flexShrink: 0
+                                }}
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  width: '52px',
+                                  height: '72px',
+                                  borderRadius: '8px',
+                                  background: 'linear-gradient(135deg, #003875 0%, #0056b3 100%)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: '#ffffff',
+                                  fontWeight: 800,
+                                  flexShrink: 0
+                                }}
+                              >
+                                <BookOpen size={22} />
+                              </div>
+                            )}
+
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
+                                {livro.courseName}
+                              </span>
+                              <h3
+                                style={{
+                                  fontSize: '0.95rem',
+                                  fontWeight: 800,
+                                  margin: '2px 0 0 0',
+                                  color: '#ffffff',
+                                  lineHeight: 1.3,
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}
+                                title={livro.titulo}
+                              >
+                                {livro.titulo}
+                              </h3>
+                              <span style={{ fontSize: '0.74rem', color: '#94a3b8', display: 'block', marginTop: '2px' }}>
+                                {(livro.aulas || []).length} aulas & provas
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => navigate(`/module/${livro.id}`)}
+                          style={{
+                            width: '100%',
+                            padding: '0.65rem 1rem',
+                            backgroundColor: '#0056b3',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.5rem',
+                            boxShadow: '0 4px 12px rgba(0, 86, 179, 0.3)'
+                          }}
+                        >
+                          <span>Acessar Módulo</span>
+                          <ChevronRight size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 3. ACESSO RÁPIDO & RECURSOS COMPLEMENTARES */}
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 1rem 0', color: '#f8fafc' }}>
+                  Acesso Rápido & Recursos
+                </h2>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                  <div
+                    onClick={() => setActiveTab('biblioteca')}
+                    className="admin-action-card"
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                  >
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(0, 86, 179, 0.15)', color: '#0056b3' }}>
+                      <BookOpen size={28} />
+                    </div>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Biblioteca Virtual</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                      Apostilas dos módulos, Bíblia Online e manuais de estudo.
+                    </p>
+                  </div>
+
+                  <div
+                    onClick={() => setActiveTab('forum')}
+                    className="admin-action-card"
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                  >
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(96, 165, 250, 0.15)', color: '#60a5fa' }}>
+                      <MessageSquare size={28} />
+                    </div>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Fórum de Dúvidas</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                      Tire dúvidas e interaja com professores e colegas de turma.
+                    </p>
+                  </div>
+
+                  <div
+                    onClick={() => setActiveTab('documentos')}
+                    className="admin-action-card"
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                  >
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
+                      <FileText size={28} />
+                    </div>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Documentação</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                      Envie documentos pessoais e comprove sua matrícula acadêmica.
+                    </p>
+                  </div>
+
+                  <div
+                    onClick={() => setActiveTab('certificados')}
+                    className="admin-action-card"
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                  >
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' }}>
+                      <GraduationCap size={28} />
+                    </div>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Certificados & Histórico</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                      Baixe certificados oficiais e histórico acadêmico completo.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. DADOS CADASTRAIS DO ALUNO */}
               <PersonalDataCard
                 profile={profile}
                 onRefresh={refreshProfile}
@@ -739,114 +1356,10 @@ const Dashboard = () => {
                 atividades={atividades}
                 progressoAulas={progressoAulas}
               />
-
-              <div className="admin-action-card" onClick={() => setActiveTab('cursos')}>
-                <div className="icon-wrapper"><BookOpen size={32} /></div>
-                <h3>Meus Cursos</h3>
-                <p>Acesse suas aulas, materiais e continue seus estudos.</p>
-              </div>
-
-              <div className="admin-action-card" onClick={() => setActiveTab('forum')}>
-                <div className="icon-wrapper"><MessageSquare size={32} /></div>
-                <h3>Fórum</h3>
-                <p>Participe de discussões e tire dúvidas com a comunidade.</p>
-              </div>
-
-              <div className="admin-action-card" onClick={() => setActiveTab('documentos')}>
-                <div className="icon-wrapper"><FileText size={32} /></div>
-                <h3>Documentação</h3>
-                <p>Envie e gerencie seus documentos de matrícula.</p>
-              </div>
-
-              <div className="admin-action-card" onClick={() => setActiveTab('certificados')}>
-                <div className="icon-wrapper" style={{ background: 'rgba(0, 86, 179, 0.1)', color: 'var(--primary, #0056b3)' }}><GraduationCap size={32} /></div>
-                <h3 style={{ color: 'var(--primary, #0056b3)' }}>Históricos e Certificados</h3>
-                <p>Baixe seus históricos escolares e certificados de conclusão em PDF.</p>
-              </div>
-
-              {!isStaff && (
-                <div className="admin-action-card" onClick={() => setActiveTab('financeiro')}>
-                  <div className="icon-wrapper"><CreditCard size={32} /></div>
-                  <h3>Pagamentos</h3>
-                  <p>Consulte mensalidades e gere bônus/PIX de pagamento.</p>
-                  {isPastDue && (
-                    <span style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'var(--error)', color: '#fff', fontSize: '0.7rem', padding: '4px 10px', borderRadius: '50px', fontWeight: 800 }}>
-                      PENDENTE
-                    </span>
-                  )}
-                </div>
-              )}
-
-              <div className="admin-action-card" onClick={() => navigate('/modulos-finalizados')}>
-                <div className="icon-wrapper"><Award size={32} /></div>
-                <h3>Meu Boletim</h3>
-                <p>Consulte suas notas e desempenho acadêmico.</p>
-              </div>
-
-              {profile?.status_nucleo !== 'trancado' && profile?.status_nucleo !== 'hiato' && (
-                <div className="admin-action-card" onClick={handleSelfTrancar} style={{ border: '1px solid rgba(0, 86, 179, 0.2)' }}>
-                  <div className="icon-wrapper"><PauseCircle size={32} color="var(--primary, #0056b3)" /></div>
-                  <h3>Pausar Curso</h3>
-                  <p>Tranque seu curso temporariamente se precisar de uma pausa.</p>
-                </div>
-              )}
-            </div>
-            </>
-          )}
-
-          {isAlumniData && activeTab === 'home' && (
-            <div style={{ marginBottom: '2rem', padding: '2rem', background: 'rgba(var(--primary-rgb), 0.05)', borderRadius: '24px', border: '1px solid rgba(var(--primary-rgb), 0.2)', textAlign: 'center', animation: 'fadeIn 0.5s' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                <Award size={48} color="var(--primary)" />
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>Parabéns pela Conclusão!</h2>
-                <p style={{ color: 'var(--text-muted)', maxWidth: '600px' }}>Você concluiu com aproveitamento o **Curso Básico de Teologia**. Seu certificado oficial está pronto para download abaixo.</p>
-                <AlumniCertificate aluno={{
-                  nome: profile?.nome || isAlumniData.nome,
-                  email: profile?.email || isAlumniData.email,
-                  ano_formacao: isAlumniData.ano_formacao,
-                  matricula: isAlumniData.matricula,
-                  nucleo: profile?.nucleos?.nome || isAlumniData.nucleo,
-                  nivel_curso: isAlumniData.nivel_curso,
-                  historico: isAlumniData.historico
-                }} />
-              </div>
             </div>
           )}
 
-          {isBlocked && (
-            <div style={{ marginBottom: '1.5rem', padding: '1rem 1.5rem', background: 'rgba(255, 77, 77, 0.1)', border: '1px solid var(--error)', borderRadius: '12px', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-              <AlertCircle size={20} color="var(--error)" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
-              <div>
-                <strong style={{ color: 'var(--error)' }}>Acesso suspenso pelo administrador.</strong>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '0.25rem 0 0' }}>Seu acesso aos cursos e materiais está restrito. Regularize seu pagamento abaixo para reativar todos os recursos.</p>
-              </div>
-            </div>
-          )}
-
-          {(profile?.status_nucleo === 'hiato' || profile?.status_nucleo === 'trancado') && (
-            <div style={{ marginBottom: '1.5rem', padding: '1rem 1.5rem', background: 'rgba(0, 86, 179, 0.08)', border: '1px solid var(--primary, #0056b3)', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.85rem' }}>
-              <PauseCircle size={22} color="var(--primary, #0056b3)" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
-              <div style={{ flex: 1 }}>
-                <strong style={{ color: 'var(--primary, #0056b3)', fontSize: '0.95rem' }}>
-                  {profile?.status_nucleo === 'hiato' ? 'Matrícula em Hiato' : 'Curso Temporariamente Pausado'}
-                </strong>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '0.25rem 0 0.5rem', lineHeight: 1.5 }}>
-                  O avanço para novos módulos está suspenso temporariamente. Você mantém acesso aos seus módulos concluídos e ao módulo que estiver cursando. Para reativar seu plano e avançar nos estudos, fale com a secretaria.
-                </p>
-                <a
-                  href="https://wa.me/5516999999999?text=Ol%C3%A1%2C%20gostaria%20de%20reativar%20minha%20matr%C3%ADcula%20na%20FATESA!"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn btn-primary"
-                  style={{ fontSize: '0.8rem', padding: '0.4rem 0.9rem', width: 'auto', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-                >
-                  Falar com Secretaria / Reativar
-                </a>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'cursos' && (
+          {(activeTab === 'cursos' || activeTab === 'modulos') && (
             coursesLoading ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem', padding: '5rem 2rem' }}>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -938,6 +1451,10 @@ const Dashboard = () => {
             )
           )}
 
+          {activeTab === 'biblioteca' && (
+            <DigitalLibraryPanel courses={courses} />
+          )}
+
           {activeTab === 'documentos' && (
             <DocumentUpload 
               documents={[]} // Precisa de fetch documentos se necessário, ou usar hooks
@@ -971,6 +1488,7 @@ const Dashboard = () => {
         </div>
         )}
       </main>
+      </div>
 
       {/* POP-UP DE ALERTAS E INFORMES DO ADMIN */}
       <PopupAlertsDisplay />
