@@ -44,9 +44,11 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
     let isFinished = false;
 
     // Identificação de notas manuais ou submissões vinculadas diretamente ao livro
-    const manualGrade = l.nota != null && !isNaN(Number(l.nota)) 
-      ? Number(l.nota) 
-      : (l.notaHistorico != null && !isNaN(Number(l.notaHistorico)) ? Number(l.notaHistorico) : null);
+    const rawNota = l.nota != null && !isNaN(Number(l.nota)) ? Number(l.nota) : null;
+    const rawNotaHist = l.notaHistorico != null && !isNaN(Number(l.notaHistorico)) ? Number(l.notaHistorico) : null;
+    const manualGrade = rawNota !== null && rawNotaHist !== null
+      ? Math.max(rawNota, rawNotaHist)
+      : (rawNota !== null ? rawNota : rawNotaHist);
     
     const bookSubmissions = (atividades || []).filter((at: any) => 
       at.status === 'corrigida' && at.nota !== undefined && at.nota !== null &&
@@ -63,12 +65,12 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
         isFinished = isApproved || status.isDP;
     }
 
-    // Se ainda não aprovado mas há nota manual ou submissão direta do livro
-    if (!isApproved && (manualGrade !== null || bookSubmissions.length > 0)) {
+    // Sempre garante a maior nota (Math.max) entre avaliação online, submissões diretas e histórico manual
+    if (manualGrade !== null || bookSubmissions.length > 0) {
         const bestSubGrade = bookSubmissions.length > 0 
           ? Math.max(...bookSubmissions.map((s: any) => Number(s.nota) || 0)) 
           : 0;
-        const candidateGrade = manualGrade !== null ? manualGrade : bestSubGrade;
+        const candidateGrade = Math.max(manualGrade !== null ? manualGrade : 0, bestSubGrade);
         if (candidateGrade >= 7.0) {
             isApproved = true;
             isFinished = true;

@@ -7,7 +7,7 @@ import {
   CheckCircle,
   AlertTriangle,
 } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { supabase, fetchAllRows } from '../lib/supabase'
 import { handleSupabaseError } from '../lib/authUtils'
 import { collectExamAttempts, isRecoveryUnlocked, getExamVersion, getExamLabel, isModuleApproved } from '../lib/examRules'
 import { useProfile } from '../hooks/useProfile'
@@ -47,10 +47,13 @@ const ModuleDetails = () => {
     }, [profileLoading, profile, fetchStudentDashboardData, id]);
 
     const fetchNucleusReleases = async () => {
-      const { data, error } = await supabase
-        .from('liberacoes_nucleo')
-        .select('item_id, item_type, nucleo_id')
-        .eq('liberado', true);
+      const { data, error } = await fetchAllRows((from, to) =>
+        supabase
+          .from('liberacoes_nucleo')
+          .select('item_id, item_type, nucleo_id')
+          .eq('liberado', true)
+          .range(from, to)
+      );
       if (error) {
         await handleSupabaseError(error);
         return;

@@ -25,7 +25,7 @@ interface AcademicHistoryProps {
   onCorrect?: (id: string) => void;
 }
 
-const STUDENT_TYPES = ['presencial', 'online', 'ex_aluno'];
+const STUDENT_TYPES = ['aluno', 'presencial', 'online', 'ex_aluno'];
 
 const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onDelete, onUpdateStatus, allStudents, onCorrect }) => {
   const [selectedNucleus, setSelectedNucleus] = useState<string | null>(null);
@@ -236,7 +236,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
       const studentId = u?.id || item.aluno_id || 'unknown';
       const studentName = u?.nome || 'Aluno Desconhecido';
       const rawModName = item.aulas?.livros?.titulo || item.aulas?.titulo || 'Módulo Geral';
-      const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova' || item.is_manual;
+      const isExam = item.aulas?.is_bloco_final || item.aulas?.tipo === 'prova' || item.aulas?.tipo === 'avaliacao' || item.is_manual;
 
       if (!groups[nucName]) groups[nucName] = {};
       if (!groups[nucName][studentId]) {
@@ -602,22 +602,44 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {Object.entries(selectedStudentData.std.modulos).sort((a, b) => a[0].localeCompare(b[0])).map(([modName, content]: [string, any]) => (
+              {Object.entries(selectedStudentData.std.modulos).sort((a, b) => a[0].localeCompare(b[0])).map(([modName, content]: [string, any]) => {
+                const sortedProvas = [...(content.provas || [])].sort((pA: any, pB: any) => {
+                  const nA = pA.nota != null ? Number(pA.nota) : -1;
+                  const nB = pB.nota != null ? Number(pB.nota) : -1;
+                  return nB - nA;
+                });
+                const maxNotaModulo = sortedProvas.length > 0 && sortedProvas[0].nota != null ? Number(sortedProvas[0].nota) : null;
+                return (
                 <div key={modName} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '16px', padding: '1.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <h5 style={{ margin: '0 0 1.25rem 0', fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <BookOpen size={18} /> {modName}
-                  </h5>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem' }}>
+                    <h5 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <BookOpen size={18} /> {modName}
+                    </h5>
+                    {maxNotaModulo !== null && (
+                      <span style={{
+                        fontSize: '0.78rem',
+                        fontWeight: 900,
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        background: maxNotaModulo >= 7 ? 'rgba(22, 163, 74, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                        color: maxNotaModulo >= 7 ? '#16a34a' : '#ef4444',
+                        border: `1px solid ${maxNotaModulo >= 7 ? 'rgba(22, 163, 74, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`
+                      }}>
+                        Nota Oficial (Maior Nota): {maxNotaModulo.toFixed(1)} {maxNotaModulo >= 7 ? '• APROVADO' : '• REPROVADO'}
+                      </span>
+                    )}
+                  </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
                     {/* PROVAS SECTION */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                       <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--primary, #0056b3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <ShieldCheck size={14} /> Provas Finais ({content.provas.length})
+                        <ShieldCheck size={14} /> Provas Finais ({sortedProvas.length})
                       </div>
-                      {content.provas.length === 0 ? (
+                      {sortedProvas.length === 0 ? (
                         <div style={{ fontSize: '0.8rem', opacity: 0.3, fontStyle: 'italic', padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', border: '1px dashed var(--glass-border)' }}>Nenhuma prova realizada</div>
                       ) : (
-                        content.provas.map((item: any) => (
+                        sortedProvas.map((item: any) => (
                           <div key={item.id} style={{
                             background: 'rgba(0, 86, 179, 0.05)',
                             padding: '1.25rem',
@@ -680,7 +702,8 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

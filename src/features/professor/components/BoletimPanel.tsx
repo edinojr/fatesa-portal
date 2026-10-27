@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
-import { supabase } from '../../../lib/supabase'
+import { supabase, fetchAllRows } from '../../../lib/supabase'
 import {
   BookOpen, MapPin, ChevronDown, ChevronUp, Loader2, Check, X,
   Users, GraduationCap, AlertCircle, Search, Award, TrendingUp, CheckCircle2, XCircle
@@ -127,14 +127,17 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
     }
   }
 
-  // Busca histórico de notas complementar para garantir 100% dos dados dos alunos
+  // Busca histórico de notas complementar para garantir 100% dos dados dos alunos (paginado)
   const fetchComplementaryHistory = useCallback(async () => {
     try {
       setLoadingHistory(true)
-      const { data } = await supabase
-        .from('historico_notas')
-        .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao')
-        .order('created_at', { ascending: false })
+      const { data } = await fetchAllRows((from, to) =>
+        supabase
+          .from('historico_notas')
+          .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao')
+          .order('created_at', { ascending: false })
+          .range(from, to)
+      )
       if (data) {
         setDirectHistoryGrades(data)
       }
@@ -287,38 +290,43 @@ const BoletimPanel: React.FC<BoletimPanelProps> = ({
     return map
   }, [submissions, directHistoryGrades, titleToBook])
 
-  // Obtém a nota de um aluno para uma aula específica do módulo
+  // Obtém a nota de um aluno para uma aula específica do módulo (sempre priorizando a maior nota em caso de duplicidade)
   const getStudentGrade = useCallback((alunoId: string, livroId: string, aulaId: string): { sub: any; nota: number | null } => {
     const subs = submissionsPorAlunoModulo[alunoId]?.[livroId] || []
     const currentBook = bookById[livroId]
     const currentAulas = aulasPorModulo[livroId] || []
     const targetAula = currentAulas.find((a: any) => a.id === aulaId)
 
-    // 1. Busca direta por lesson_id / aula_id
-    let found = subs.find((s: any) => (s.lesson_id === aulaId || s.aula_id === aulaId) && s.nota != null)
+    const pickHighest = (items: any[]) => {
+      if (!items || items.length === 0) return null
+      return items.reduce((best: any, curr: any) => Number(curr.nota) > Number(best.nota) ? curr : best, items[0])
+    }
+
+    // 1. Busca direta por lesson_id / aula_id (escolhendo a maior nota caso haja múltiplas)
+    const directMatches = subs.filter((s: any) => (s.lesson_id === aulaId || s.aula_id === aulaId) && s.nota != null && !isNaN(Number(s.nota)))
+    let found = pickHighest(directMatches)
 
     // 2. Busca por versão (ex: V1, V2, V3) se especificada na aula
     if (!found && targetAula?.versao) {
-      found = subs.find((s: any) => Number(s.versao) === Number(targetAula.versao) && s.nota != null)
+      const versionMatches = subs.filter((s: any) => Number(s.versao) === Number(targetAula.versao) && s.nota != null && !isNaN(Number(s.nota)))
+      found = pickHighest(versionMatches)
     }
 
-    // 3. Se for a primeira avaliação (V1) ou coluna virtual, e não achou nota específica:
-    // utiliza a nota oficial do módulo (do histórico ou melhor tentativa)
-    if (!found && (targetAula?.is_virtual || targetAula?.versao === 1 || currentAulas[0]?.id === aulaId)) {
-      // Procura qualquer nota corrigida deste aluno neste módulo
+    // 3. Se for a primeira avaliação (V1) ou coluna virtual, garante que a maior nota oficial do módulo (online ou histórico manual) prevaleça
+    if (targetAula?.is_virtual || targetAula?.versao === 1 || currentAulas[0]?.id === aulaId) {
       const validSubs = subs.filter((s: any) => s.nota != null && !isNaN(Number(s.nota)))
-      if (validSubs.length > 0) {
-        // Pega a maior nota
-        found = validSubs.reduce((best: any, curr: any) => Number(curr.nota) > Number(best.nota) ? curr : best, validSubs[0])
+      const bestSubInModule = pickHighest(validSubs)
+      if (bestSubInModule && (!found || Number(bestSubInModule.nota) > Number(found.nota))) {
+        found = bestSubInModule
       }
 
-      // Se ainda não achou, busca no historico_notas direto pelo nome do módulo
-      if (!found && currentBook?.titulo) {
-        const histMatch = (directHistoryGrades || []).find((h: any) =>
-          h.aluno_id === alunoId && areModuleTitlesEqual(h.modulo_nome, currentBook.titulo)
+      if (currentBook?.titulo) {
+        const histMatches = (directHistoryGrades || []).filter((h: any) =>
+          h.aluno_id === alunoId && areModuleTitlesEqual(h.modulo_nome, currentBook.titulo) && h.nota != null && !isNaN(Number(h.nota))
         )
-        if (histMatch && histMatch.nota != null) {
-          return { sub: histMatch, nota: Number(histMatch.nota) }
+        const bestHist = pickHighest(histMatches)
+        if (bestHist && (!found || Number(bestHist.nota) > Number(found.nota))) {
+          return { sub: bestHist, nota: Number(bestHist.nota) }
         }
       }
     }

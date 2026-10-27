@@ -66,7 +66,7 @@ import {
 
 // Hook
 import { useAdminManagement } from '../hooks/useAdminManagement'
-import { supabase } from '../lib/supabase'
+import { supabase, fetchAllRows } from '../lib/supabase'
 import { hasStudentScope } from '../lib/authUtils'
 import PageHeader from '../components/layout/PageHeader'
 import { PanelSwitcher } from '../components/common/PanelSwitcher'
@@ -192,22 +192,32 @@ const Admin = () => {
 
   const fetchBoletimSubmissions = useCallback(async () => {
     const [subRes, manualRes, aulasRes, usersRes] = await Promise.all([
-      supabase
-        .from('respostas_aulas')
-        .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('historico_notas')
-        .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('aulas')
-        .select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)')
-        .limit(5000),
-      supabase
-        .from('users')
-        .select('id, nome, email, nucleo_id, nucleos(id, nome)')
-        .limit(5000)
+      fetchAllRows((from, to) =>
+        supabase
+          .from('respostas_aulas')
+          .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+          .order('created_at', { ascending: false })
+          .range(from, to)
+      ),
+      fetchAllRows((from, to) =>
+        supabase
+          .from('historico_notas')
+          .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+          .order('created_at', { ascending: false })
+          .range(from, to)
+      ),
+      fetchAllRows((from, to) =>
+        supabase
+          .from('aulas')
+          .select('id, titulo, tipo, questionario, min_grade, versao, livro_id(id, titulo)')
+          .range(from, to)
+      ),
+      fetchAllRows((from, to) =>
+        supabase
+          .from('users')
+          .select('id, nome, email, nucleo_id, nucleos(id, nome)')
+          .range(from, to)
+      )
     ]);
 
     const subDataRaw = subRes.data || [];

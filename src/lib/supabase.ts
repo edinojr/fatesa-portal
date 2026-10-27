@@ -113,3 +113,33 @@ export const toPublicUrl = (url: string): string => {
   }
   return url;
 }
+
+
+/**
+ * Busca todas as páginas de uma consulta Supabase que pode exceder o limite padrão de 1.000 linhas do PostgREST.
+ * A função recebe um construtor de query e aplica `.range(from, to)` em blocos de 1.000 linhas até buscar 100% dos registros.
+ */
+export async function fetchAllRows<T = any>(
+  buildQuery: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: any }>
+): Promise<{ data: T[]; error: any }> {
+  const pageSize = 1000;
+  let allData: T[] = [];
+  let from = 0;
+
+  while (true) {
+    const { data, error } = await buildQuery(from, from + pageSize - 1);
+    if (error) {
+      return { data: allData.length > 0 ? allData : [], error };
+    }
+    if (!data || data.length === 0) {
+      break;
+    }
+    allData = allData.concat(data);
+    if (data.length < pageSize) {
+      break;
+    }
+    from += pageSize;
+  }
+
+  return { data: allData, error: null };
+}

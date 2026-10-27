@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '../../../lib/supabase';
+import { supabase, fetchAllRows } from '../../../lib/supabase';
 import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 
 export const useProfessorAcademic = () => {
@@ -9,28 +9,34 @@ export const useProfessorAcademic = () => {
   const fetchAcademicReport = useCallback(async () => {
     setLoading(true);
     try {
-      // Step 1: Fetch submissions, manual history and alumni official records
+      // Step 1: Fetch submissions, manual history and alumni official records (paginated to bypass 1000-row limit)
       const [{ data: subDataRaw }, { data: manualDataRaw }, { data: alumniDataRaw }] = await Promise.all([
-        supabase
-          .from('respostas_aulas')
-          .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
-          .order('updated_at', { ascending: false })
-          .limit(100000),
-        supabase
-          .from('historico_notas')
-          .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
-          .limit(100000),
-        supabase
-          .from('registros_alumni')
-          .select('id, user_id, email, nome, curso, nivel_curso, historico')
-          .limit(100000)
+        fetchAllRows((from, to) =>
+          supabase
+            .from('respostas_aulas')
+            .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
+            .order('updated_at', { ascending: false })
+            .range(from, to)
+        ),
+        fetchAllRows((from, to) =>
+          supabase
+            .from('historico_notas')
+            .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+            .range(from, to)
+        ),
+        fetchAllRows((from, to) =>
+          supabase
+            .from('registros_alumni')
+            .select('id, user_id, email, nome, curso, nivel_curso, historico')
+            .range(from, to)
+        )
       ]);
 
       if (!subDataRaw) return;
 
       const [aulasRes, usersRes] = await Promise.all([
-        supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').limit(5000),
-        supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').limit(5000)
+        fetchAllRows((from, to) => supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').range(from, to)),
+        fetchAllRows((from, to) => supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').range(from, to))
       ]);
 
       const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
@@ -61,10 +67,14 @@ export const useProfessorAcademic = () => {
             if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
               const numNota = parseFloat(String(item.nota).replace(',', '.'));
               if (isNaN(numNota)) return;
-              const alreadyExists = mergedManualData.some((m: any) => 
+              const existingIdx = mergedManualData.findIndex((m: any) => 
                 m.aluno_id === targetUserId && areModuleTitlesEqual(m.modulo_nome, item.modulo)
               );
-              if (!alreadyExists) {
+              if (existingIdx >= 0) {
+                if (numNota > Number(mergedManualData[existingIdx].nota || 0)) {
+                  mergedManualData[existingIdx].nota = numNota;
+                }
+              } else {
                 mergedManualData.push({
                   id: `alumni-${al.id}-${idx}`,
                   aluno_id: targetUserId,
@@ -134,25 +144,31 @@ export const useProfessorAcademic = () => {
     if (studentIds.length === 0) return;
     setLoading(true);
     try {
-      // Step 1: Fetch submissions, manual history and alumni for specific students
+      // Step 1: Fetch submissions, manual history and alumni for specific students (paginated)
       const [{ data: subDataRaw }, { data: manualDataRaw }, { data: alumniDataRaw }, aulasRes, usersRes] = await Promise.all([
-        supabase
-          .from('respostas_aulas')
-          .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
-          .in('aluno_id', studentIds)
-          .order('updated_at', { ascending: false })
-          .limit(100000),
-        supabase
-          .from('historico_notas')
-          .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
-          .in('aluno_id', studentIds)
-          .limit(100000),
-        supabase
-          .from('registros_alumni')
-          .select('id, user_id, email, nome, curso, nivel_curso, historico')
-          .limit(100000),
-        supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').limit(5000),
-        supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').limit(5000)
+        fetchAllRows((from, to) =>
+          supabase
+            .from('respostas_aulas')
+            .select('id, nota, status, updated_at, created_at, aula_id, aluno_id')
+            .in('aluno_id', studentIds)
+            .order('updated_at', { ascending: false })
+            .range(from, to)
+        ),
+        fetchAllRows((from, to) =>
+          supabase
+            .from('historico_notas')
+            .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+            .in('aluno_id', studentIds)
+            .range(from, to)
+        ),
+        fetchAllRows((from, to) =>
+          supabase
+            .from('registros_alumni')
+            .select('id, user_id, email, nome, curso, nivel_curso, historico')
+            .range(from, to)
+        ),
+        fetchAllRows((from, to) => supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').range(from, to)),
+        fetchAllRows((from, to) => supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').range(from, to))
       ]);
 
       if (!subDataRaw) return;
@@ -185,10 +201,14 @@ export const useProfessorAcademic = () => {
             if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
               const numNota = parseFloat(String(item.nota).replace(',', '.'));
               if (isNaN(numNota)) return;
-              const alreadyExists = mergedManualData.some((m: any) => 
+              const existingIdx = mergedManualData.findIndex((m: any) => 
                 m.aluno_id === targetUserId && areModuleTitlesEqual(m.modulo_nome, item.modulo)
               );
-              if (!alreadyExists) {
+              if (existingIdx >= 0) {
+                if (numNota > Number(mergedManualData[existingIdx].nota || 0)) {
+                  mergedManualData[existingIdx].nota = numNota;
+                }
+              } else {
                 mergedManualData.push({
                   id: `alumni-${al.id}-${idx}`,
                   aluno_id: targetUserId,

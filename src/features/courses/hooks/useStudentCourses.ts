@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '../../../lib/supabase';
+import { supabase, fetchAllRows } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
 import { GRADUATION_CONFIG } from '../../../config/graduation';
 import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion, getModuleExamStatus, isExamAula } from '../../../lib/examRules';
@@ -60,11 +60,12 @@ export const useStudentCourses = (profile: any) => {
         }
       }
 
-      const { data: releases } = await safeSelect(
+      const { data: releases } = await fetchAllRows((from, to) =>
         supabase
           .from('liberacoes_nucleo')
           .select('item_id, item_type, created_at, nucleo_id')
           .eq('liberado', true)
+          .range(from, to)
       );
 
       const studentNucleoId = profile?.nucleo_id;
@@ -355,33 +356,46 @@ export const useStudentCourses = (profile: any) => {
           .or(alumniFilters.join(','))
       );
 
-      const historyGrades: Array<{ id?: string; modulo_nome: string; curso_nome?: string; nota: number; data_conclusao?: string }> = [
-        ...(historyGradesRaw || []).map((h: any) => ({
+      const historyGrades: Array<{ id?: string; modulo_nome: string; curso_nome?: string; nota: number; data_conclusao?: string }> = [];
+
+      const upsertHistoryGrade = (entry: { id?: string; modulo_nome: string; curso_nome?: string; nota: number; data_conclusao?: string }) => {
+        if (!entry.modulo_nome || isNaN(entry.nota)) return;
+        const existingIdx = historyGrades.findIndex(h => areModuleTitlesEqual(h.modulo_nome, entry.modulo_nome));
+        if (existingIdx === -1) {
+          historyGrades.push(entry);
+        } else if (entry.nota > Number(historyGrades[existingIdx].nota || 0)) {
+          historyGrades[existingIdx] = {
+            ...historyGrades[existingIdx],
+            nota: entry.nota,
+            data_conclusao: entry.data_conclusao || historyGrades[existingIdx].data_conclusao
+          };
+        }
+      };
+
+      (historyGradesRaw || []).forEach((h: any) => {
+        upsertHistoryGrade({
           id: h.id,
           modulo_nome: h.modulo_nome,
           curso_nome: h.curso_nome,
           nota: Number(h.nota),
           data_conclusao: h.data_conclusao
-        }))
-      ];
+        });
+      });
 
-      // Mesclar notas manuais de registros_alumni.historico se existirem (apenas com nota numérica real)
+      // Mesclar notas manuais de registros_alumni.historico se existirem (apenas com nota numérica real, priorizando a maior nota)
       (alumniData || []).forEach((a: any) => {
         if (Array.isArray(a.historico)) {
           a.historico.forEach((item: any, idx: number) => {
             if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
               const numNota = parseFloat(String(item.nota).replace(',', '.'));
               if (!isNaN(numNota)) {
-                const exists = historyGrades.some(h => areModuleTitlesEqual(h.modulo_nome, item.modulo));
-                if (!exists) {
-                  historyGrades.push({
-                    id: `alumni-${a.id}-${idx}`,
-                    modulo_nome: item.modulo,
-                    curso_nome: a.curso,
-                    nota: numNota,
-                    data_conclusao: item.data
-                  });
-                }
+                upsertHistoryGrade({
+                  id: `alumni-${a.id}-${idx}`,
+                  modulo_nome: item.modulo,
+                  curso_nome: a.curso,
+                  nota: numNota,
+                  data_conclusao: item.data
+                });
               }
             }
           });
@@ -929,7 +943,12 @@ export const useStudentCourses = (profile: any) => {
                 isDPActive: isDPActive,
                 isDPQueued: isDPQueued,
                 notaHistorico: histMatch ? Number(histMatch.nota) : undefined,
-                nota: histMatch ? Number(histMatch.nota) : (isApproved && moduleExamAttempts.length > 0 ? getModuleExamStatus(l.aulas || [], moduleSubs).examGrade : undefined)
+                nota: (() => {
+                  const hNota = histMatch && !isNaN(Number(histMatch.nota)) ? Number(histMatch.nota) : -1;
+                  const exNota = moduleExamAttempts.length > 0 ? getModuleExamStatus(l.aulas || [], moduleSubs).examGrade : -1;
+                  const best = Math.max(hNota, exNota);
+                  return best >= 0 ? best : undefined;
+                })()
               };
             }).filter(Boolean)
           };

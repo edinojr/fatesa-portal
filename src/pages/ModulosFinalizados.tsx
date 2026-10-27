@@ -105,7 +105,24 @@ const goToPanel = () => {
                 alumniQuery
             ]).then(([histRes, alumniRes]) => {
                 if (histRes.error) console.error('[ModulosFinalizados] Erro ao buscar histórico:', histRes.error.message);
-                const combined = [...(histRes.data || [])];
+                const combined: any[] = [];
+                const upsertCombined = (entry: any) => {
+                    if (!entry || !entry.modulo_nome || entry.nota == null) return;
+                    const numNota = parseFloat(String(entry.nota).replace(',', '.'));
+                    if (isNaN(numNota)) return;
+                    const existingIdx = combined.findIndex(h => areModuleTitlesEqual(h.modulo_nome, entry.modulo_nome));
+                    if (existingIdx === -1) {
+                        combined.push({ ...entry, nota: numNota });
+                    } else if (numNota > Number(combined[existingIdx].nota || 0)) {
+                        combined[existingIdx] = {
+                            ...combined[existingIdx],
+                            nota: numNota,
+                            data_conclusao: entry.data_conclusao || combined[existingIdx].data_conclusao
+                        };
+                    }
+                };
+
+                (histRes.data || []).forEach(upsertCombined);
                 const alumniList = alumniRes.data || [];
                 
                 // Salvar registro de aluno formado se existir
@@ -119,18 +136,15 @@ const goToPanel = () => {
                             if (item && item.modulo && item.nota != null && String(item.nota).trim() !== '') {
                                 const numNota = parseFloat(String(item.nota).replace(',', '.'));
                                 if (!isNaN(numNota)) {
-                                    const exists = combined.some(h => areModuleTitlesEqual(h.modulo_nome, item.modulo));
-                                    if (!exists) {
-                                        combined.push({
-                                            id: `alumni-${al.id}-${idx}`,
-                                            aluno_id: profile.id,
-                                            curso_nome: al.curso || 'Teologia Básico',
-                                            modulo_nome: item.modulo,
-                                            nota: numNota,
-                                            data_conclusao: item.data || new Date().toLocaleDateString('pt-BR'),
-                                            observacao: 'Histórico oficial de notas (Formados)'
-                                        });
-                                    }
+                                    upsertCombined({
+                                        id: `alumni-${al.id}-${idx}`,
+                                        aluno_id: profile.id,
+                                        curso_nome: al.curso || 'Teologia Básico',
+                                        modulo_nome: item.modulo,
+                                        nota: numNota,
+                                        data_conclusao: item.data || new Date().toLocaleDateString('pt-BR'),
+                                        observacao: 'Histórico oficial de notas (Formados)'
+                                    });
                                 }
                             }
                         });
@@ -158,17 +172,23 @@ const goToPanel = () => {
         // 1) Históricos aprovados (nota >= 7)
         const approvedHistory = (historyGrades || []).filter((h: any) => h && h.nota != null && Number(h.nota) >= 7);
 
-        // 2) finishedCourses — marca books finalizados por prova OU por histórico manual
+        // 2) finishedCourses — marca books finalizados por prova OU por histórico manual, sempre exibindo a maior nota (Math.max)
         let localFinishedCourses = (courses || []).map(course => {
             const finishedBooks = (course.livros || []).map(l => {
                 const stats = getBookStats(l, atividades, progressoAulas);
-                const approvedHistoryEntry = approvedHistory.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
-                const approvedManual = !!approvedHistoryEntry;
-                const notaVal = approvedHistoryEntry?.nota != null 
-                    ? approvedHistoryEntry.nota 
-                    : ((l as any).notaHistorico ?? (l as any).nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : null));
+                const matchingHistoryEntries = approvedHistory.filter((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
+                const approvedManual = matchingHistoryEntries.length > 0;
+                const bestHistNota = matchingHistoryEntries.length > 0
+                    ? Math.max(...matchingHistoryEntries.map((h: any) => Number(h.nota) || 0))
+                    : -1;
+                const lNota = (l as any).nota != null && !isNaN(Number((l as any).nota)) ? Number((l as any).nota) : -1;
+                const lNotaHist = (l as any).notaHistorico != null && !isNaN(Number((l as any).notaHistorico)) ? Number((l as any).notaHistorico) : -1;
+                const statsNota = stats.examGrade != null && !isNaN(Number(stats.examGrade)) && stats.examGrade > 0 ? Number(stats.examGrade) : -1;
 
-                const isFin = (l.isFinished || stats.isFinished || approvedManual) && notaVal != null;
+                const maxCandidate = Math.max(bestHistNota, lNota, lNotaHist, statsNota);
+                const notaVal: number | undefined = maxCandidate >= 0 ? maxCandidate : undefined;
+
+                const isFin = (l.isFinished || stats.isFinished || approvedManual || (notaVal != null && notaVal >= 7)) && notaVal != null;
 
                 return { l, stats, approvedManual, notaManual: notaVal, isFin };
             }).filter(({ isFin }) => isFin)
@@ -213,14 +233,19 @@ const goToPanel = () => {
                         break;
                     }
                 }
-                if (!alreadyDisplayed && !localOrfaosAprovados.some((h: any) => areModuleTitlesEqual(h.modulo_nome, title))) {
-                    localOrfaosAprovados.push({
-                        id: at.book_id || at.lesson_id || at.id,
-                        modulo_nome: title,
-                        nota: Number(at.nota),
-                        data_conclusao: at.submitted_at || at.created_at || new Date().toISOString(),
-                        curso_nome: at.curso_nivel || 'Teologia Básico'
-                    });
+                if (!alreadyDisplayed) {
+                    const existingOrfaoIdx = localOrfaosAprovados.findIndex((h: any) => areModuleTitlesEqual(h.modulo_nome, title));
+                    if (existingOrfaoIdx === -1) {
+                        localOrfaosAprovados.push({
+                            id: at.book_id || at.lesson_id || at.id,
+                            modulo_nome: title,
+                            nota: Number(at.nota),
+                            data_conclusao: at.submitted_at || at.created_at || new Date().toISOString(),
+                            curso_nome: at.curso_nivel || 'Teologia Básico'
+                        });
+                    } else if (Number(at.nota) > Number(localOrfaosAprovados[existingOrfaoIdx].nota || 0)) {
+                        localOrfaosAprovados[existingOrfaoIdx].nota = Number(at.nota);
+                    }
                 }
             }
         });
@@ -267,20 +292,28 @@ const goToPanel = () => {
         return { finishedCourses: localFinishedCourses, orfaosAprovados: localOrfaosAprovados };
     }, [courses, historyGrades, atividades, progressoAulas, profile?.tipo, alumniRecord?.status_aprovacao]);
 
-    // Extrair lista plana de todos os módulos com notas para a tabela de boletim
+    // Extrair lista plana de todos os módulos com notas para a tabela de boletim (desduplicando por título e mantendo a maior nota)
     const allCompletedBooksFlat = useMemo(() => {
         const list: Array<{ id: string; titulo: string; curso: string; nota: number | null; data: string }> = [];
         finishedCourses.forEach(c => {
             (c.livros || []).forEach((l: any) => {
-                const rawN = l.notaHistorico ?? l.nota;
-                const n = rawN != null && !isNaN(Number(rawN)) ? Number(rawN) : null;
-                list.push({
-                    id: l.id,
-                    titulo: l.titulo,
-                    curso: c.nome || (c.nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio'),
-                    nota: n,
-                    data: l.data_conclusao || 'Concluído'
-                });
+                const n1 = l.notaHistorico != null && !isNaN(Number(l.notaHistorico)) ? Number(l.notaHistorico) : -1;
+                const n2 = l.nota != null && !isNaN(Number(l.nota)) ? Number(l.nota) : -1;
+                const bestN = Math.max(n1, n2);
+                const n = bestN >= 0 ? bestN : null;
+
+                const existingIdx = list.findIndex(item => areModuleTitlesEqual(item.titulo, l.titulo));
+                if (existingIdx === -1) {
+                    list.push({
+                        id: l.id,
+                        titulo: l.titulo,
+                        curso: c.nome || (c.nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio'),
+                        nota: n,
+                        data: l.data_conclusao || 'Concluído'
+                    });
+                } else if (n !== null && (list[existingIdx].nota === null || n > list[existingIdx].nota!)) {
+                    list[existingIdx].nota = n;
+                }
             });
         });
         return list;

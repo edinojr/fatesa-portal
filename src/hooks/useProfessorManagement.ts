@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, fetchAllRows } from '../lib/supabase'
 import { useProfile } from './useProfile'
 import { isUserAdmin } from '../lib/authUtils'
 
@@ -67,16 +67,22 @@ export const useProfessorManagement = () => {
         const { data: sData } = await supabase.from('users').select('*, nucleos(nome)').order('nome');
         if (sData) studentHook.setAllStudents(sData);
 
-        // Fetch submissions and historic grades in stages to avoid 400 errors
+        // Fetch submissions and historic grades in stages to avoid 400 errors and 1000-row truncation
         const [{ data: subDataRaw }, { data: histDataRaw }] = await Promise.all([
-          supabase
-            .from('respostas_aulas')
-            .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
-            .order('created_at', { ascending: false }),
-          supabase
-            .from('historico_notas')
-            .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
-            .order('created_at', { ascending: false })
+          fetchAllRows((from, to) =>
+            supabase
+              .from('respostas_aulas')
+              .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+              .order('created_at', { ascending: false })
+              .range(from, to)
+          ),
+          fetchAllRows((from, to) =>
+            supabase
+              .from('historico_notas')
+              .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+              .order('created_at', { ascending: false })
+              .range(from, to)
+          )
         ]);
 
         const aulaIds = Array.from(new Set((subDataRaw || []).map(r => r.aula_id).filter(Boolean)));
@@ -202,16 +208,22 @@ export const useProfessorManagement = () => {
             if (studentIds.length > 0) {
               acad.fetchAcademicHistory(studentIds);
               const [{ data: subDataRaw }, { data: histDataRaw }] = await Promise.all([
-                supabase
-                  .from('respostas_aulas')
-                  .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
-                  .in('aluno_id', studentIds)
-                  .order('created_at', { ascending: false }),
-                supabase
-                  .from('historico_notas')
-                  .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
-                  .in('aluno_id', studentIds)
-                  .order('created_at', { ascending: false })
+                fetchAllRows((from, to) =>
+                  supabase
+                    .from('respostas_aulas')
+                    .select('id, aula_id, aluno_id, nota, status, tentativas, created_at, updated_at, comentario_professor, primeira_correcao_at, respostas')
+                    .in('aluno_id', studentIds)
+                    .order('created_at', { ascending: false })
+                    .range(from, to)
+                ),
+                fetchAllRows((from, to) =>
+                  supabase
+                    .from('historico_notas')
+                    .select('id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at')
+                    .in('aluno_id', studentIds)
+                    .order('created_at', { ascending: false })
+                    .range(from, to)
+                )
               ]);
 
               const aulaIds = Array.from(new Set((subDataRaw || []).map(r => r.aula_id).filter(Boolean)));

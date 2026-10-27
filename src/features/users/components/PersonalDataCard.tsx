@@ -233,11 +233,16 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
           if (l.isFinished) {
             const stats = getBookStats(l, atividades, progressoAulas);
             const status = l.isDP ? 'D.P. (Dependência)' : (l.isApproved || stats.isApproved) ? 'Aprovado' : 'Concluído';
+            const bestNota = Math.max(
+              stats.examGrade || 0,
+              l.nota != null && !isNaN(Number(l.nota)) ? Number(l.nota) : 0,
+              l.notaHistorico != null && !isNaN(Number(l.notaHistorico)) ? Number(l.notaHistorico) : 0
+            );
             finished.push({
               curso: c.nome,
               titulo: l.titulo,
               status,
-              nota: stats.examGrade ? stats.examGrade.toFixed(1) : (l.nota != null ? Number(l.nota).toFixed(1) : '—')
+              nota: bestNota > 0 ? bestNota.toFixed(1) : '—'
             });
           }
         });

@@ -3,7 +3,7 @@ import {
   Search, GraduationCap, User, MapPin, BookOpen, Calendar,
   Trash2, Edit, X, Loader2, CheckCircle2, FileText
 } from 'lucide-react';
-import { supabase } from '../../../lib/supabase';
+import { supabase, fetchAllRows } from '../../../lib/supabase';
 
 interface ManualHistoryPanelProps {
   onRefresh?: () => void;
@@ -48,14 +48,17 @@ const ManualHistoryPanel: React.FC<ManualHistoryPanelProps> = ({ onRefresh }) =>
   const fetchRecords = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('historico_notas')
-        .select(`
-          id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, inserido_por, created_at, updated_at,
-          users:aluno_id(id, nome, email, nucleos:nucleo_id(nome)),
-          inserted_by:inserido_por(nome)
-        `)
-        .order('created_at', { ascending: false });
+      const { data, error } = await fetchAllRows((from, to) =>
+        supabase
+          .from('historico_notas')
+          .select(`
+            id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, inserido_por, created_at, updated_at,
+            users:aluno_id(id, nome, email, nucleos:nucleo_id(nome)),
+            inserted_by:inserido_por(nome)
+          `)
+          .order('created_at', { ascending: false })
+          .range(from, to)
+      );
       if (error) throw error;
       const normalized = (data || []).map((r: any) => ({
         ...r,
