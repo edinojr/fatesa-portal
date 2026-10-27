@@ -1,6 +1,13 @@
 import { getRequiredModules } from '../../../config/graduation';
 import { getModuleExamStatus } from '../../../lib/examRules';
-export { normalizeModuleTitle, cleanModuleTitle, areModuleTitlesEqual } from '../../../lib/courseTitles';
+export {
+  normalizeModuleTitle,
+  cleanModuleTitle,
+  areModuleTitlesEqual,
+  getHierarchicalTrackIndex,
+  isModuleInHierarchicalTrack,
+  HIERARCHICAL_TRACK_TITLES
+} from '../../../lib/courseTitles';
 import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 
 export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any[] = []) => {

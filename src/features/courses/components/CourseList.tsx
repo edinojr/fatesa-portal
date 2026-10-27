@@ -54,11 +54,13 @@ const CourseList: React.FC<CourseListProps> = ({
 
     let subtitulo = '';
     if (numNota != null) {
-      subtitulo = `Nota ${numNota.toFixed(1)} • ${isApprovedManual ? 'Aprovado por Histórico' : isDP ? 'Dependência (Recuperação Pendente)' : 'Aprovado em Avaliação'}`;
+      subtitulo = `Nota ${numNota.toFixed(1)} • ${isApprovedManual ? 'Aprovado por Histórico' : isDP ? (currentBook.isDPQueued ? 'Dependência (Na Fila)' : 'Dependência (Recuperação Aberta)') : 'Aprovado em Avaliação'}`;
     } else if (isMaintenance) {
       subtitulo = 'Módulo em manutenção — conteúdo indisponível';
     } else if (isDP) {
-      subtitulo = 'Módulo em dependência — realize a prova de recuperação';
+      subtitulo = currentBook.isDPQueued 
+        ? 'Módulo em dependência (na fila) — aguarde a aprovação do módulo anterior'
+        : 'Módulo em dependência — realize a prova de recuperação';
     } else if (isApproved) {
       subtitulo = isHistoricoSintetico ? 'Finalizado por Histórico Manual' : `${stats.total > 0 ? `${stats.total} aulas • ` : ''}100% Concluído`;
     } else {
@@ -83,9 +85,9 @@ const CourseList: React.FC<CourseListProps> = ({
                 }
               : isDP
                 ? {
-                    label: 'D.P. (RECUPERAÇÃO)',
+                    label: currentBook.isDPQueued ? 'D.P. NA FILA' : 'D.P. (RECUPERAÇÃO)',
                     color: '#ffffff',
-                    bg: 'var(--primary, #0056b3)',
+                    bg: currentBook.isDPQueued ? '#b45309' : 'var(--primary, #0056b3)',
                   }
               : isApproved
                 ? {

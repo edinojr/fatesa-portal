@@ -65,6 +65,65 @@ export const areModuleTitlesEqual = (title1: string, title2: string): boolean =>
   return false;
 };
 
+/**
+ * Trilha Hierárquica Oficial Fatesa (7 Módulos em sequência):
+ * 1. Epístolas aos Hebreus
+ * 2. Doutrina do Espírito Santo
+ * 3. Epístolas Paulinas I
+ * 4. Teologia Prática
+ * 5. História da Igreja
+ * 6. Cristologia
+ * 7. Escatologia Bíblica
+ */
+export const HIERARCHICAL_TRACK_TITLES = [
+  'epistola aos hebreus',
+  'doutrina do espirito santo',
+  'epistolas paulinas i',
+  'teologia pratica',
+  'historia da igreja',
+  'cristologia',
+  'escatologia biblica'
+];
+
+export const getHierarchicalTrackIndex = (title: string): number => {
+  if (!title) return -1;
+  const clean = cleanModuleTitle(title);
+  
+  if (clean === 'epistola aos hebreus' || clean === 'epistolas aos hebreus' || clean === 'epistolas ao hebreus' || clean === 'hebreus') {
+    return 0;
+  }
+  if (clean === 'doutrina do espirito santo' || clean === 'espirito santo') {
+    return 1;
+  }
+  if (clean === 'epistolas paulinas i' || clean === 'epistola paulina i' || clean === 'epistolas paulinas 1' || clean === 'paulinas i' || clean === 'paulinas 1') {
+    return 2;
+  }
+  if (clean === 'teologia pratica' || clean === 'teologia praticas') {
+    return 3;
+  }
+  if (clean === 'historia da igreja' || clean === 'historia igreja') {
+    return 4;
+  }
+  if (clean === 'cristologia') {
+    return 5;
+  }
+  if (clean === 'escatologia biblica' || clean === 'escatologia') {
+    return 6;
+  }
+
+  for (let i = 0; i < HIERARCHICAL_TRACK_TITLES.length; i++) {
+    if (areModuleTitlesEqual(clean, HIERARCHICAL_TRACK_TITLES[i])) {
+      return i;
+    }
+  }
+
+  return -1;
+};
+
+export const isModuleInHierarchicalTrack = (title: string): boolean => {
+  return getHierarchicalTrackIndex(title) !== -1;
+};
+
 export const LEGACY_AULA_TO_BOOK_TITLE: Record<string, string> = {
   // Epístola aos Hebreus
   'cca138c2-f8fb-4e5a-ba5c-4cbda81f8eed': 'Epístola aos Hebreus',

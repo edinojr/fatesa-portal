@@ -31,6 +31,8 @@ export interface Book {
   isFinished?: boolean
   isApproved?: boolean
   isDP?: boolean
+  isDPActive?: boolean
+  isDPQueued?: boolean
   ordem?: number
 }
 

@@ -2,8 +2,8 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Course } from '../../../types/dashboard';
 import { GRADUATION_CONFIG } from '../../../config/graduation';
-import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion, getModuleExamStatus } from '../../../lib/examRules';
-import { areModuleTitlesEqual, normalizeModuleTitle, cleanModuleTitle } from '../utils/courseUtils';
+import { collectExamAttempts, isModuleApproved, isModuleDP, isRecoveryUnlocked, getExamVersion, getModuleExamStatus, isExamAula } from '../../../lib/examRules';
+import { areModuleTitlesEqual, normalizeModuleTitle, cleanModuleTitle, getHierarchicalTrackIndex, HIERARCHICAL_TRACK_TITLES } from '../utils/courseUtils';
 
 const MEDIA_APROVACAO = 7.0;
 
@@ -575,12 +575,21 @@ export const useStudentCourses = (profile: any) => {
           const levelLocked = isMedium && !isBasicFinished && !isAlumniApproved && !isStaff;
 
           // =========================================================================
-          // HIERARQUIA MODULAR INSTITUCIONAL FATESA:
-          // Regra Mestra:
-          // 1. Liberação individual de módulos (liberacoes_excecao) tem prioridade total.
-          // 2. Módulos em Dependência (DP) permanecem abertos para recuperação e estudo.
-          // 3. Bibliologia DEVE PERMANECER FECHADO até que os professores o liberem.
-          // 4. Alunos em HIATO/Trancados: mantêm o módulo em andamento, mas são bloqueados no seguinte.
+          // HIERARQUIA MODULAR INSTITUCIONAL FATESA E FILA DE DP 1 POR 1:
+          // 1. Módulos liberados por hierarquia (7 títulos oficiais):
+          //    - Epístolas aos Hebreus
+          //    - Doutrina do Espírito Santo
+          //    - Epístolas Paulinas I
+          //    - Teologia Prática
+          //    - História da Igreja
+          //    - Cristologia
+          //    - Escatologia Bíblica
+          // 2. Os demais módulos estão bloqueados (exceto se já aprovado ou exceção individual).
+          // 3. Hierarquia: O professor libera a versão 1 (V1) da prova de um módulo e o sistema libera o módulo seguinte.
+          // 4. Módulos finalizados com aprovação (nota >= 7) permanecem liberados para revisão e consulta.
+          // 5. Alunos retidos nos módulos ficam de DP.
+          // 6. DP liberado após o final do curso, na fila 1 por 1:
+          //    Quando o aluno faz a prova em DP e é aprovado, libera o próximo na fila de DP.
           // =========================================================================
 
           const isBibliologiaBook = (book: any) => {
@@ -589,14 +598,33 @@ export const useStudentCourses = (profile: any) => {
             return norm === 'bibliologia' || norm.includes('bibliologia') || book.id === 'cd525251-b438-4e21-aaea-bd5578017698';
           };
 
+          const isV1ExamReleasedForBook = (book: any): boolean => {
+            if (releasedExamBookIds.has(book.id)) return true;
+            const examAulas = (book.aulas || []).filter(isExamAula);
+            if (examAulas.length === 0) return false;
+            const v1Aulas = examAulas.filter((a: any) => getExamVersion(a) === 1);
+            const targetAulas = v1Aulas.length > 0 ? v1Aulas : [examAulas[0]];
+            return targetAulas.some((a: any) => {
+              if (a.professor_active === false) return false;
+              const isRel = releasedExamIds.has(a.id) || releasedItems.has(a.id);
+              const isProfActive = a.professor_active === true;
+              const isSched = a.status_liberacao === true && (!a.data_liberacao || new Date(a.data_liberacao) <= new Date());
+              const hasEx = examExceptionIds.includes(a.id);
+              return isRel || isProfActive || isSched || hasEx;
+            });
+          };
+
           const bookStatusMap = new Map<string, {
+            trackIndex: number;
+            isInTrack: boolean;
             examReleased: boolean;
             studentAttempted: boolean;
             isApproved: boolean;
             isDP: boolean;
             isManualFinished: boolean;
             isProfessorReleased: boolean;
-            isBibliologiaReleasedForPolo: boolean;
+            isV1ExamReleased: boolean;
+            isV1ReleasedOrPassed: boolean;
             hasExcep: boolean;
             isBibliologia: boolean;
           }>();
@@ -604,6 +632,8 @@ export const useStudentCourses = (profile: any) => {
           sortedLivros.forEach((l: any) => {
             const hasExcep = exceptionIds.includes(l.id);
             const isBib = isBibliologiaBook(l);
+            const trackIndex = getHierarchicalTrackIndex(l.titulo);
+            const isInTrack = trackIndex !== -1;
 
             // Liberação específica para o polo do aluno na tabela liberacoes_nucleo (item_type = 'modulo')
             const hasPoloSpecificRelease = studentNucleoId 
@@ -618,13 +648,9 @@ export const useStudentCourses = (profile: any) => {
             // Módulo ativo pelo professor (se professor_active === false, o professor desativou expressamente)
             const isNotBlockedByProfessor = l.professor_active !== false;
 
-            // Regra Bibliologia:
-            // Bibliologia DEVE PERMANECER FECHADO até que o professor o libere explicitamente para o núcleo do aluno
-            const isBibliologiaReleasedForPolo = isBib && hasPoloSpecificRelease && isNotBlockedByProfessor;
-
-            // Módulo regular: liberado pelo professor para o núcleo e não desativado
+            // Módulo regular liberado diretamente pelo professor para a turma / núcleo
             const isProfessorReleased = isNotBlockedByProfessor && (
-              isBib ? isBibliologiaReleasedForPolo : hasPoloRelease
+              isBib ? (hasPoloSpecificRelease && isNotBlockedByProfessor) : hasPoloRelease
             );
 
             const histMatch = historyGrades.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
@@ -652,53 +678,108 @@ export const useStudentCourses = (profile: any) => {
             const userActivity = userHasActivityInModule(l.id, (l.aulas || []).map((a: any) => a.id));
             const studentAttempted = moduleExamAttempts.length > 0 || moduleSubs.length > 0 || userActivity;
 
+            const isV1ExamReleased = isV1ExamReleasedForBook(l);
+            const isV1ReleasedOrPassed = isV1ExamReleased || isApproved || isManualFinished || studentAttempted;
+
             bookStatusMap.set(l.id, {
+              trackIndex,
+              isInTrack,
               examReleased,
               studentAttempted,
               isApproved,
               isDP,
               isManualFinished,
               isProfessorReleased,
-              isBibliologiaReleasedForPolo,
+              isV1ExamReleased,
+              isV1ReleasedOrPassed,
               hasExcep,
               isBibliologia: isBib
             });
           });
 
           const unlockedBookIds = new Set<string>();
+          const dpActiveBookIds = new Set<string>();
+          const dpQueuedBookIds = new Set<string>();
 
           // Staff (admin, professor, colaborador): desbloqueia todos para conferência e gestão
           if (isStaff) {
             sortedLivros.forEach((l: any) => unlockedBookIds.add(l.id));
           } else {
+            // Identificar módulos da trilha presentes no curso
+            const trackBooksInCourse = sortedLivros
+              .map((l: any) => ({ book: l, st: bookStatusMap.get(l.id)! }))
+              .filter((x: any) => x.st && x.st.isInTrack)
+              .sort((a: any, b: any) => a.st.trackIndex - b.st.trackIndex);
+
+            // Verificar se o curso regular chegou ao final para liberação da fila de DP:
+            // - Ex-aluno / aprovado oficial
+            // - Ou status_nucleo concluido
+            // - Ou V1 do último módulo da trilha (Escatologia Bíblica) já foi liberada / cursada
+            // - Ou todos os módulos não-DP da trilha já foram concluídos
+            const lastTrackModule = trackBooksInCourse.find((x: any) => x.st.trackIndex === 6);
+            const isLastTrackV1Released = !!lastTrackModule && (
+              lastTrackModule.st.isV1ReleasedOrPassed || lastTrackModule.st.isApproved || lastTrackModule.st.studentAttempted
+            );
+
+            const hasUnfinishedNonDPTrackModules = trackBooksInCourse.some((x: any) => {
+              return !x.st.isApproved && !x.st.isManualFinished && !x.st.isDP;
+            });
+
+            const isEndOfCourse = isAlumniApproved || 
+                                  profile?.status_nucleo === 'concluido' || 
+                                  isLastTrackV1Released || 
+                                  (!hasUnfinishedNonDPTrackModules && trackBooksInCourse.length > 0);
+
+            // Fila de DP (Dependência): "sendo liberado o modulo na fila 1 por um. quando os alunos fazem a prova em DP e é aprovado libera o proximo na fila que está em DP."
+            const pendingDPBooks = sortedLivros.filter((l: any) => {
+              const st = bookStatusMap.get(l.id);
+              return st && st.isDP && !st.isApproved && !st.isManualFinished;
+            });
+
+            if (pendingDPBooks.length > 0) {
+              pendingDPBooks.forEach((l: any, dpIndex: number) => {
+                if (dpIndex === 0 && isEndOfCourse) {
+                  // Primeiro da fila liberado após o final do curso para realização da prova de DP
+                  unlockedBookIds.add(l.id);
+                  dpActiveBookIds.add(l.id);
+                } else {
+                  // Módulos posteriores na fila ou antes do fim do curso aguardam liberação sequencial
+                  dpQueuedBookIds.add(l.id);
+                }
+              });
+            }
+
+            // Desbloqueio dos módulos regulares e tratamento das regras de hierarquia
             sortedLivros.forEach((l: any) => {
               const st = bookStatusMap.get(l.id);
               if (!st) return;
 
-              // 1. Liberação individual de módulos (liberacoes_excecao):
-              // Alunos em transição pré-plataforma ou com permissão especial individual da secretaria
+              // 1. Liberação individual de módulos (liberacoes_excecao): prioridade máxima
               if (st.hasExcep) {
                 unlockedBookIds.add(l.id);
                 return;
               }
 
-              // 2. Módulos já concluídos / aprovados (plataforma ou histórico escolar):
-              // Permanecem abertos para revisão de aulas e consulta no boletim
+              // 2. Módulos já concluídos e aprovados (nota >= 7):
+              // "Os módulos ficam liberados para os alunos que finalizarem a avaliação e forem aprovados"
               if (st.isApproved || st.isManualFinished) {
                 unlockedBookIds.add(l.id);
                 return;
               }
 
               // 3. Módulos em Dependência (DP):
-              // Permanecem abertos para o aluno estudar as lições e realizar a prova de recuperação (V2/V3)
+              // Tratados exclusivamente na fila 1 por 1 acima
               if (st.isDP) {
-                unlockedBookIds.add(l.id);
                 return;
               }
 
-              // 4. Alunos em HIATO / Trancados:
-              // Mantêm acesso aos módulos concluídos e ao módulo que estiverem cursando atualmente,
-              // mas são bloqueados de abrir novos módulos.
+              // 4. Módulos FORA da trilha hierárquica oficial de 7 livros:
+              // "os demais módulos estão bloqueados."
+              if (!st.isInTrack) {
+                return;
+              }
+
+              // 5. Alunos em HIATO / Trancados:
               if (isHiatoStudent) {
                 if (st.studentAttempted && !st.isApproved && !studentExclusions.includes(l.id)) {
                   unlockedBookIds.add(l.id);
@@ -706,19 +787,36 @@ export const useStudentCourses = (profile: any) => {
                 return;
               }
 
-              // 5. Módulos liberados pelo professor para a turma / núcleo:
-              // Só abre se o professor tiver liberado expressamente na tabela liberacoes_nucleo
-              // e respeitando pré-requisito de nível (Básico antes de Médio).
-              if (!levelLocked && st.isProfessorReleased) {
-                if (st.isBibliologia) {
-                  // Bibliologia só abre se o professor liberou expressamente para o polo deste aluno
-                  if (st.isBibliologiaReleasedForPolo) {
-                    unlockedBookIds.add(l.id);
-                  }
-                } else {
+              // 6. Hierarquia dos 7 livros:
+              // "existem uma hierarquia Professor libera a versão 1 da prova e o sistema libera módulo seguinte."
+              if (!levelLocked && l.professor_active !== false) {
+                const trackIdx = st.trackIndex;
+
+                if (trackIdx === 0) {
+                  // Módulo inicial da hierarquia (Epístolas aos Hebreus) é liberado para início dos estudos
                   unlockedBookIds.add(l.id);
+                  return;
                 }
-                return;
+
+                // Para os módulos seguintes (1 a 6):
+                // Verifica se a versão 1 da prova do módulo anterior foi liberada pelo professor ou se o aluno já cursou
+                const prevModule = trackBooksInCourse.find((x: any) => x.st.trackIndex === trackIdx - 1);
+                const prevV1Released = prevModule && (
+                  prevModule.st.isV1ReleasedOrPassed ||
+                  prevModule.st.isApproved ||
+                  prevModule.st.studentAttempted
+                );
+
+                if (prevV1Released) {
+                  unlockedBookIds.add(l.id);
+                  return;
+                }
+
+                // Liberação direta do professor para a turma / núcleo
+                if (st.isProfessorReleased) {
+                  unlockedBookIds.add(l.id);
+                  return;
+                }
               }
             });
           }
@@ -736,7 +834,10 @@ export const useStudentCourses = (profile: any) => {
               const moduleExamAttempts = collectExamAttempts(l.aulas || [], moduleSubs);
 
               const isApproved = isModuleApproved(moduleExamAttempts) || hasValidHistoryGrade;
-              const isDP = !isStaff && isModuleDP(moduleExamAttempts);
+              const hasHistoryDP = !!histMatch && Number(histMatch.nota) > 0 && Number(histMatch.nota) < 7;
+              const isDP = !isStaff && (isModuleDP(moduleExamAttempts) || hasHistoryDP);
+              const isDPActive = dpActiveBookIds.has(l.id);
+              const isDPQueued = dpQueuedBookIds.has(l.id);
 
               // Módulo em manutenção: apenas se NÃO houver aulas cadastradas no módulo
               const hasAnyAulasInModule = (l.aulas || []).length > 0;
@@ -821,6 +922,8 @@ export const useStudentCourses = (profile: any) => {
                 isFinished: finalFinished,
                 isApproved: finalApproved,
                 isDP: isDP,
+                isDPActive: isDPActive,
+                isDPQueued: isDPQueued,
                 notaHistorico: histMatch ? Number(histMatch.nota) : undefined,
                 nota: histMatch ? Number(histMatch.nota) : (isApproved && moduleExamAttempts.length > 0 ? getModuleExamStatus(l.aulas || [], moduleSubs).examGrade : undefined)
               };
