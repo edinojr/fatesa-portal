@@ -401,7 +401,7 @@ const Dashboard = () => {
     
     return courses.map(course => ({
       ...course,
-      livros: (course.livros || []).filter((livro: any) => livro.isUnlocked || !livro.isFinished)
+      livros: (course.livros || []).filter((livro: any) => livro.isUnlocked && !livro.isFinished)
     })).filter(course => course.livros.length > 0);
   }, [courses, isStaff]);
 

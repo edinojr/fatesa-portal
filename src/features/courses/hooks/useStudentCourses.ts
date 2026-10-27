@@ -595,15 +595,37 @@ export const useStudentCourses = (profile: any) => {
             isApproved: boolean;
             isDP: boolean;
             isManualFinished: boolean;
-            isDirectlyReleased: boolean;
+            isProfessorReleased: boolean;
+            isBibliologiaReleasedForPolo: boolean;
             hasExcep: boolean;
             isBibliologia: boolean;
           }>();
 
           sortedLivros.forEach((l: any) => {
-            const hasNucleoRelease = releasedModulos.has(l.id) || (l.aulas || []).some((a: any) => releasedItems.has(a.id));
-            const isProfActive = l.professor_active === true;
             const hasExcep = exceptionIds.includes(l.id);
+            const isBib = isBibliologiaBook(l);
+
+            // Liberação específica para o polo do aluno na tabela liberacoes_nucleo (item_type = 'modulo')
+            const hasPoloSpecificRelease = studentNucleoId 
+              ? releasesForStudentNucleo.some((r: any) => r.item_id === l.id && r.item_type === 'modulo')
+              : false;
+
+            // Liberação geral de polo (específica do núcleo ou global se o aluno não tiver polo cadastrado)
+            const hasPoloRelease = studentNucleoId 
+              ? hasPoloSpecificRelease 
+              : releasedModulos.has(l.id);
+
+            // Módulo ativo pelo professor (se professor_active === false, o professor desativou expressamente)
+            const isNotBlockedByProfessor = l.professor_active !== false;
+
+            // Regra Bibliologia:
+            // Bibliologia DEVE PERMANECER FECHADO até que o professor o libere explicitamente para o núcleo do aluno
+            const isBibliologiaReleasedForPolo = isBib && hasPoloSpecificRelease && isNotBlockedByProfessor;
+
+            // Módulo regular: liberado pelo professor para o núcleo e não desativado
+            const isProfessorReleased = isNotBlockedByProfessor && (
+              isBib ? isBibliologiaReleasedForPolo : hasPoloRelease
+            );
 
             const histMatch = historyGrades.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
             const hasValidHistoryGrade = !!histMatch && Number(histMatch.nota) >= 7;
@@ -629,7 +651,6 @@ export const useStudentCourses = (profile: any) => {
             // Submissão de avaliação (passou ou reprovou) OU aulas assistidas
             const userActivity = userHasActivityInModule(l.id, (l.aulas || []).map((a: any) => a.id));
             const studentAttempted = moduleExamAttempts.length > 0 || moduleSubs.length > 0 || userActivity;
-            const isDirectlyReleased = hasNucleoRelease || isProfActive || hasExcep;
 
             bookStatusMap.set(l.id, {
               examReleased,
@@ -637,105 +658,69 @@ export const useStudentCourses = (profile: any) => {
               isApproved,
               isDP,
               isManualFinished,
-              isDirectlyReleased,
+              isProfessorReleased,
+              isBibliologiaReleasedForPolo,
               hasExcep,
-              isBibliologia: isBibliologiaBook(l)
+              isBibliologia: isBib
             });
           });
 
           const unlockedBookIds = new Set<string>();
 
-          // 1. Liberação individual de módulos (liberacoes_excecao):
-          // SEMPRE desbloqueia o módulo diretamente para o aluno (sobrepõe qualquer nível ou restrição)
-          sortedLivros.forEach((l: any) => {
-            const st = bookStatusMap.get(l.id);
-            if (st?.hasExcep) {
-              unlockedBookIds.add(l.id);
-            }
-          });
-
-          // 2. Módulos já concluídos / aprovados (histórico ou online):
-          // SEMPRE desbloqueados para permitir consulta, revisão de aulas e visualização no boletim
-          sortedLivros.forEach((l: any) => {
-            const st = bookStatusMap.get(l.id);
-            if (st && (st.isApproved || st.isManualFinished)) {
-              unlockedBookIds.add(l.id);
-            }
-          });
-
-          // 3. Módulos em Dependência (DP):
-          // Alunos com módulos em dependência precisam ter acesso às lições para estudar e realizar a recuperação (V2/V3)
-          sortedLivros.forEach((l: any) => {
-            const st = bookStatusMap.get(l.id);
-            if (st?.isDP) {
-              unlockedBookIds.add(l.id);
-            }
-          });
-
-          // 4. Módulos com liberação direta (núcleo, professor_active ou admin):
-          // REGRA INSTITUCIONAL CRÍTICA:
-          // O livro "Bibliologia" DEVE PERMANECER FECHADO para todos os alunos até que os professores o liberem.
-          // Bibliologia NUNCA é liberado automaticamente por índice 0 ou padrão.
-          sortedLivros.forEach((l: any) => {
-            const st = bookStatusMap.get(l.id);
-            if (!levelLocked && st && st.isDirectlyReleased) {
-              if (st.isBibliologia) {
-                // Bibliologia só desbloqueia se houver liberação expressa do professor/núcleo (ou staff)
-                if (st.isDirectlyReleased || isStaff) {
-                  unlockedBookIds.add(l.id);
-                }
-              } else {
-                unlockedBookIds.add(l.id);
-              }
-            }
-          });
-
-          // 5. Alunos em HIATO / Trancados:
-          // "Caso o aluno esteja cursando um módulo atualmente, ele será bloqueado no módulo seguinte."
-          // Alunos em hiato mantêm acesso aos módulos concluídos e ao módulo que estiverem cursando atualmente,
-          // porém são BLOQUEADOS de avançar para os módulos seguintes (sem propagação sequencial).
-          if (isHiatoStudent) {
+          // Staff (admin, professor, colaborador): desbloqueia todos para conferência e gestão
+          if (isStaff) {
+            sortedLivros.forEach((l: any) => unlockedBookIds.add(l.id));
+          } else {
             sortedLivros.forEach((l: any) => {
               const st = bookStatusMap.get(l.id);
-              if (st && st.studentAttempted && !st.isApproved) {
-                if (!studentExclusions.includes(l.id) || st.hasExcep) {
+              if (!st) return;
+
+              // 1. Liberação individual de módulos (liberacoes_excecao):
+              // Alunos em transição pré-plataforma ou com permissão especial individual da secretaria
+              if (st.hasExcep) {
+                unlockedBookIds.add(l.id);
+                return;
+              }
+
+              // 2. Módulos já concluídos / aprovados (plataforma ou histórico escolar):
+              // Permanecem abertos para revisão de aulas e consulta no boletim
+              if (st.isApproved || st.isManualFinished) {
+                unlockedBookIds.add(l.id);
+                return;
+              }
+
+              // 3. Módulos em Dependência (DP):
+              // Permanecem abertos para o aluno estudar as lições e realizar a prova de recuperação (V2/V3)
+              if (st.isDP) {
+                unlockedBookIds.add(l.id);
+                return;
+              }
+
+              // 4. Alunos em HIATO / Trancados:
+              // Mantêm acesso aos módulos concluídos e ao módulo que estiverem cursando atualmente,
+              // mas são bloqueados de abrir novos módulos.
+              if (isHiatoStudent) {
+                if (st.studentAttempted && !st.isApproved && !studentExclusions.includes(l.id)) {
                   unlockedBookIds.add(l.id);
                 }
+                return;
+              }
+
+              // 5. Módulos liberados pelo professor para a turma / núcleo:
+              // Só abre se o professor tiver liberado expressamente na tabela liberacoes_nucleo
+              // e respeitando pré-requisito de nível (Básico antes de Médio).
+              if (!levelLocked && st.isProfessorReleased) {
+                if (st.isBibliologia) {
+                  // Bibliologia só abre se o professor liberou expressamente para o polo deste aluno
+                  if (st.isBibliologiaReleasedForPolo) {
+                    unlockedBookIds.add(l.id);
+                  }
+                } else {
+                  unlockedBookIds.add(l.id);
+                }
+                return;
               }
             });
-            // Nenhuma propagação em cadeia para alunos em hiato.
-          } else {
-            // 6. Propagação sequencial para alunos regulares ativos (não em hiato e nível liberado):
-            // Quando a prova de um módulo liberado for liberada pelo professor, ou o aluno tentar/concluir a avaliação (passou ou DP),
-            // o módulo SEGUINTE da grade é desbloqueado para estudo.
-            // NOTA: Bibliologia NUNCA é desbloqueada por propagação sequencial a menos que o professor a tenha liberado diretamente!
-            if (!levelLocked) {
-              let progressChanged = true;
-              while (progressChanged) {
-                progressChanged = false;
-                sortedLivros.forEach((l: any, idx: number) => {
-                  if (!unlockedBookIds.has(l.id)) return;
-                  const st = bookStatusMap.get(l.id);
-                  if (!st) return;
-
-                  if (st.examReleased || st.studentAttempted || st.isApproved || st.isDP || st.isManualFinished) {
-                    const nextBook = sortedLivros[idx + 1];
-                    if (nextBook && !unlockedBookIds.has(nextBook.id)) {
-                      const nextSt = bookStatusMap.get(nextBook.id);
-                      if (nextSt?.isBibliologia) {
-                        if (nextSt.isDirectlyReleased || isStaff) {
-                          unlockedBookIds.add(nextBook.id);
-                          progressChanged = true;
-                        }
-                      } else {
-                        unlockedBookIds.add(nextBook.id);
-                        progressChanged = true;
-                      }
-                    }
-                  }
-                });
-              }
-            }
           }
 
           return {
