@@ -114,16 +114,16 @@ const FinancePanel: React.FC<FinancePanelProps> = ({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div>
-            <strong style={{ color: '#ff4d4d', fontSize: '0.95rem' }}>PIX Banco Santander • Fatesa</strong>
-            <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.85)', marginTop: '2px' }}>
-              Favorecido: <strong>MARIA HELENA PIRANI CAVALLERO</strong> | Chave Telefone: <strong>11958259144</strong>
+            <strong style={{ color: '#b91c1c', fontSize: '0.95rem' }}>PIX Banco Santander • Fatesa</strong>
+            <div style={{ fontSize: '0.88rem', color: '#0f172a', fontWeight: 600, marginTop: '4px' }}>
+              Favorecido: <strong style={{ color: '#002244', fontWeight: 800 }}>MARIA HELENA PIRANI CAVALLERO</strong> | Chave Telefone: <strong style={{ color: '#002244', fontWeight: 800 }}>11958259144</strong>
             </div>
           </div>
           <div style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', background: 'var(--primary, #0056b3)', color: '#ffffff', borderRadius: '10px', fontWeight: 800 }}>
             🗓️ Meses de Janeiro e Julho Isentos
           </div>
         </div>
-        <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+        <p style={{ margin: 0, fontSize: '0.82rem', color: '#1e3a8a', fontWeight: 500 }}>
           A partir de Novembro, o pop-up com a chave Pix abre a cada login para todos os alunos pagantes até o envio e validação do comprovante. Os valores são personalizados por núcleo.
         </p>
       </div>

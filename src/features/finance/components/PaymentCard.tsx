@@ -78,12 +78,13 @@ const PaymentCard: React.FC<PaymentCardProps> = ({
       }}>
         <p style={{
           fontSize: '0.8rem',
-          opacity: 0.6,
+          color: '#334155',
+          fontWeight: 700,
           marginBottom: '0.5rem',
           textTransform: 'uppercase',
           letterSpacing: '0.5px'
         }}>
-          Chave PIX (E-mail)
+          Chave PIX (Telefone) • Favorecido: MARIA HELENA PIRANI CAVALLERO
         </p>
         <div style={{
           display: 'flex',
