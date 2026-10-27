@@ -322,22 +322,23 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
             )}
           </button>
 
-          {/* DROPDOWN DE NOTIFICAÇÕES */}
+          {/* BACKDROP MOBILE PARA NOTIFICAÇÕES */}
           {showNotifications && (
             <div
+              onClick={() => setShowNotifications(false)}
               style={{
-                position: 'absolute',
-                top: '120%',
-                right: 0,
-                width: '320px',
-                backgroundColor: '#ffffff',
-                borderRadius: '16px',
-                border: '1.5px solid #d4af37',
-                boxShadow: '0 15px 35px rgba(0, 86, 179, 0.22), 0 0 12px rgba(0, 86, 179, 0.25)',
-                overflow: 'hidden',
-                zIndex: 1100,
+                position: 'fixed',
+                inset: 0,
+                backgroundColor: 'rgba(0, 51, 102, 0.2)',
+                backdropFilter: 'blur(2px)',
+                zIndex: 1040,
               }}
-            >
+            />
+          )}
+
+          {/* DROPDOWN DE NOTIFICAÇÕES RESPONSIVO */}
+          {showNotifications && (
+            <div className="student-notifications-dropdown">
               <div
                 style={{
                   padding: '0.85rem 1rem',
@@ -348,10 +349,31 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
                   alignItems: 'center',
                 }}
               >
-                <strong style={{ fontSize: '0.85rem', color: '#003366' }}>Notificações & Prazos</strong>
-                <span style={{ fontSize: '0.72rem', color: '#1e40af', fontWeight: 600 }}>
-                  {totalNotifications} ativa{totalNotifications > 1 ? 's' : ''}
-                </span>
+                <strong style={{ fontSize: '0.85rem', color: '#003366', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Bell size={15} color="#0056b3" /> Notificações & Prazos
+                </strong>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '0.72rem', color: '#1e40af', fontWeight: 600 }}>
+                    {totalNotifications} ativa{totalNotifications > 1 ? 's' : ''}
+                  </span>
+                  <button
+                    onClick={() => setShowNotifications(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      color: '#003366',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '6px',
+                    }}
+                    title="Fechar notificações"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
               </div>
 
               <div style={{ maxHeight: '340px', overflowY: 'auto' }}>
