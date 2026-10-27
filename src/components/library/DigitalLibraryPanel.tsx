@@ -414,6 +414,7 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
 
                   <button
                     onClick={() => navigate(`/module/${mod.id}`)}
+                    className="btn-module-access"
                     style={{
                       width: '100%',
                       padding: '0.65rem 1rem',
@@ -432,8 +433,8 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
                       transition: 'background 0.2s',
                     }}
                   >
-                    <span>Acessar Material & Aulas</span>
-                    <ArrowRight size={14} />
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>Acessar Material & Aulas</span>
+                    <ArrowRight size={14} color="#ffffff" />
                   </button>
                 </div>
               ))}

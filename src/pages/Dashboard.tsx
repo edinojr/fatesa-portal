@@ -896,7 +896,7 @@ const Dashboard = () => {
 
                   {currentModule && (
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary btn-module-access"
                       onClick={() => navigate(`/module/${currentModule.livro.id}`)}
                       style={{
                         width: '100%',
@@ -907,10 +907,12 @@ const Dashboard = () => {
                         gap: '0.5rem',
                         fontWeight: 800,
                         fontSize: '0.88rem',
+                        color: '#ffffff',
+                        backgroundColor: '#0056b3',
                         boxShadow: '0 4px 14px rgba(0, 86, 179, 0.35)'
                       }}
                     >
-                      <Play size={16} /> Retomar Estudos
+                      <Play size={16} color="#ffffff" /> <span style={{ color: '#ffffff' }}>Retomar Estudos</span>
                     </button>
                   )}
                 </div>
@@ -1130,10 +1132,11 @@ const Dashboard = () => {
                           alignItems: 'center',
                           justifyContent: 'center',
                           gap: '0.5rem',
+                          color: '#ffffff',
                           boxShadow: '0 4px 14px rgba(0, 86, 179, 0.35)'
                         }}
                       >
-                        Fazer Avaliação Pendente <ChevronRight size={15} />
+                        <span style={{ color: '#ffffff' }}>Fazer Avaliação Pendente</span> <ChevronRight size={15} color="#ffffff" />
                       </button>
                     ) : (
                       <button
@@ -1265,6 +1268,7 @@ const Dashboard = () => {
 
                         <button
                           onClick={() => navigate(`/module/${livro.id}`)}
+                          className="btn-module-access"
                           style={{
                             width: '100%',
                             padding: '0.65rem 1rem',
@@ -1282,8 +1286,8 @@ const Dashboard = () => {
                             boxShadow: '0 4px 12px rgba(0, 86, 179, 0.3)'
                           }}
                         >
-                          <span>Acessar Módulo</span>
-                          <ChevronRight size={14} />
+                          <span style={{ color: '#ffffff', fontWeight: 700 }}>Acessar Módulo</span>
+                          <ChevronRight size={14} color="#ffffff" />
                         </button>
                       </div>
                     ))}

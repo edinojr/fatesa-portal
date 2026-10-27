@@ -45,6 +45,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body {
   color: var(--text-main);
 }
 
@@ -519,10 +522,22 @@ body {
   width: 100%;
 }
 
+.btn-primary,
+.btn-primary *,
+.btn-module-access,
+.btn-module-access * {
+  color: #ffffff !important;
+}
+
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: #ffffff !important;
   box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.btn-module-access {
+  background: #0056b3;
+  color: #ffffff !important;
 }
 
 .btn-primary:hover {
