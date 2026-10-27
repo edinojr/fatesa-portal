@@ -235,6 +235,75 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           }}
           className="admin-table-scrollbar"
         >
+          {/* TÓPICO FIXO DO ALUNO (DADOS PESSOAIS) */}
+          <div
+            onClick={() => handleItemClick('perfil')}
+            style={{
+              padding: isCollapsed ? '0.65rem 0' : '0.65rem 0.85rem',
+              marginBottom: '0.45rem',
+              borderRadius: '12px',
+              backgroundColor: activeTab === 'perfil' ? 'rgba(0, 86, 179, 0.1)' : 'rgba(0, 86, 179, 0.04)',
+              border: activeTab === 'perfil' ? '1.5px solid #d4af37' : '1px solid rgba(212, 175, 55, 0.35)',
+              borderLeft: activeTab === 'perfil' ? '4px solid #d4af37' : '1px solid rgba(212, 175, 55, 0.35)',
+              boxShadow: activeTab === 'perfil' ? '0 0 10px rgba(0, 86, 179, 0.2)' : '0 2px 6px rgba(0, 86, 179, 0.04)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              gap: '0.75rem',
+              transition: 'all 0.15s ease',
+            }}
+            title={isCollapsed ? `Aluno: ${profile?.nome || 'Dados Pessoais'}` : undefined}
+          >
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                backgroundColor: '#0056b3',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 800,
+                fontSize: '0.82rem',
+                border: '1.5px solid #d4af37',
+                flexShrink: 0,
+              }}
+            >
+              {(profile?.nome || 'A').charAt(0).toUpperCase()}
+            </div>
+
+            {!isCollapsed && (
+              <div style={{ minWidth: 0, flex: 1, overflow: 'hidden', textAlign: 'left' }}>
+                <div
+                  style={{
+                    fontSize: '0.84rem',
+                    fontWeight: 800,
+                    color: '#003366',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {profile?.nome || 'Aluno'}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.67rem',
+                    color: '#0056b3',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  Dados Pessoais & Perfil
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* SEÇÃO 1: VISÃO GERAL */}
           <button
             onClick={() => handleItemClick('home')}

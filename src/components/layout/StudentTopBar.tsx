@@ -105,43 +105,45 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
   return (
     <header
       style={{
-        height: '64px',
+        height: '60px',
         backgroundColor: '#ffffff',
         borderBottom: '2.5px solid #d4af37',
         boxShadow: '0 4px 16px rgba(0, 86, 179, 0.16), 0 0 10px rgba(0, 86, 179, 0.22)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 1.5rem',
+        padding: '0 1rem',
         position: 'sticky',
         top: 0,
         zIndex: 900,
+        gap: '0.75rem',
       }}
     >
       {/* LADO ESQUERDO: TOGGLE & TÍTULO */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
         <button
           onClick={onToggleSidebar}
           style={{
             background: 'rgba(0, 86, 179, 0.06)',
             border: '1px solid rgba(212, 175, 55, 0.45)',
             color: '#003366',
-            width: '36px',
-            height: '36px',
+            width: '38px',
+            height: '38px',
             borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             transition: 'background 0.2s',
+            flexShrink: 0,
           }}
           title={isSidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}
         >
-          <Menu size={18} color="#003366" />
+          <Menu size={20} color="#003366" />
         </button>
 
         <div className="mobile-hide">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#1e40af' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#1e40af', whiteSpace: 'nowrap' }}>
             <span>Portal do Aluno</span>
             <span>/</span>
             <span style={{ color: '#003366', fontWeight: 800 }}>{activeTabTitle}</span>
@@ -150,7 +152,7 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
       </div>
 
       {/* CENTRO: BARRA DE BUSCA GLOBAL */}
-      <div ref={searchRef} style={{ position: 'relative', flex: '1 1 auto', maxWidth: '380px', minWidth: '100px', margin: '0 0.75rem' }}>
+      <div ref={searchRef} style={{ position: 'relative', flex: '1 1 auto', maxWidth: '420px', minWidth: '80px', margin: '0 0.5rem' }}>
         <div
           style={{
             position: 'relative',
@@ -442,71 +444,6 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
           )}
         </div>
 
-        {/* BOTÃO ESTÁTICO DE DADOS PESSOAIS */}
-        <button
-          onClick={() => onSelectTab('perfil')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            cursor: 'pointer',
-            padding: '0.35rem 0.75rem',
-            borderRadius: '50px',
-            backgroundColor: '#f8fafd',
-            border: '1.5px solid rgba(212, 175, 55, 0.45)',
-            boxShadow: '0 0 6px rgba(0, 86, 179, 0.15)',
-            flexShrink: 0,
-            transition: 'all 0.2s ease',
-            outline: 'none',
-          }}
-          title="Acessar Meus Dados Pessoais"
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#d4af37';
-            e.currentTarget.style.backgroundColor = '#ffffff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.45)';
-            e.currentTarget.style.backgroundColor = '#f8fafd';
-          }}
-        >
-          <div
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              backgroundColor: '#0056b3',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 800,
-              fontSize: '0.82rem',
-              border: '1.5px solid #d4af37',
-              flexShrink: 0,
-            }}
-          >
-            {(profile?.nome || 'A').charAt(0).toUpperCase()}
-          </div>
-
-          <div className="mobile-hide" style={{ textAlign: 'left' }}>
-            <div
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                color: '#003366',
-                maxWidth: '120px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {profile?.nome || 'Aluno'}
-            </div>
-            <div style={{ fontSize: '0.65rem', color: '#1e40af', fontWeight: 600 }}>
-              Dados Pessoais
-            </div>
-          </div>
-        </button>
       </div>
     </header>
   );

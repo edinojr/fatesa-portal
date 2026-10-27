@@ -4866,5 +4866,9 @@ select.form-control option {
     margin: 0 auto !important;
     box-shadow: 0 20px 45px rgba(0, 51, 102, 0.35), 0 0 15px rgba(0, 86, 179, 0.3) !important;
   }
+
+  .mobile-hide {
+    display: none !important;
+  }
 }
 
