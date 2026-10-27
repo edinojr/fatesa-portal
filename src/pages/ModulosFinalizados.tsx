@@ -450,6 +450,8 @@ const goToPanel = () => {
                     </div>
                 </div>
 
+                <div className="gold-separator-line" style={{ marginBottom: '2rem' }} />
+
                 {/* Barra de Seleção de Visualização: Cards vs Tabela */}
                 <div style={{ 
                     display: 'flex', 

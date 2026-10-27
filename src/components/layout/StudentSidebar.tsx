@@ -14,10 +14,6 @@ import {
   ChevronLeft,
   LogOut,
   MapPin,
-  CheckCircle2,
-  Clock,
-  Sparkles,
-  ExternalLink,
 } from 'lucide-react';
 import Logo from '../common/Logo';
 import { PanelSwitcher } from '../common/PanelSwitcher';
@@ -64,7 +60,6 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
   pendingExamsCount = 0,
   isPastDue = false,
 }) => {
-  // Controle de expansão dos ramos da árvore
   const [coursesTreeOpen, setCoursesTreeOpen] = useState(true);
   const [modulesTreeOpen, setModulesTreeOpen] = useState(true);
 
@@ -77,6 +72,28 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
 
   const pctConcluido = totalRequired > 0 ? Math.min(100, Math.round((finishedCount / totalRequired) * 100)) : 0;
 
+  const getItemStyle = (tabKey: StudentNavTab, isTreeChild = false) => {
+    const isActive = activeTab === tabKey;
+    return {
+      width: '100%',
+      padding: isCollapsed ? '0.75rem 0' : isTreeChild ? '0.5rem 0.8rem' : '0.7rem 0.9rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: isCollapsed ? 'center' : 'flex-start',
+      gap: '0.75rem',
+      backgroundColor: isActive ? 'rgba(0, 86, 179, 0.08)' : 'transparent',
+      color: isActive ? '#002d62' : '#003366',
+      border: isActive ? '1px solid rgba(0, 86, 179, 0.3)' : '1px solid transparent',
+      borderLeft: isActive ? '4px solid #d4af37' : '1px solid transparent',
+      boxShadow: isActive ? '0 0 10px rgba(0, 86, 179, 0.2)' : 'none',
+      borderRadius: '12px',
+      fontSize: isTreeChild ? '0.8rem' : '0.85rem',
+      fontWeight: isActive ? 800 : 600,
+      cursor: 'pointer',
+      transition: 'all 0.15s ease',
+    };
+  };
+
   return (
     <>
       {/* BACKDROP MOBILE */}
@@ -86,7 +103,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backgroundColor: 'rgba(0, 51, 102, 0.45)',
             backdropFilter: 'blur(4px)',
             zIndex: 999,
           }}
@@ -101,16 +118,14 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           left: 0,
           bottom: 0,
           width: isCollapsed ? '76px' : '270px',
-          backgroundColor: '#0a0f1d',
-          borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: '#ffffff',
+          borderRight: '2px solid #d4af37',
           display: 'flex',
           flexDirection: 'column',
           zIndex: 1000,
           transition: 'width 0.25s ease, transform 0.25s ease',
-          transform: isMobileOpen
-            ? 'translateX(0)'
-            : 'translateX(0)', // no desktop sempre fixo, no mobile controlado via media query ou inline
-          boxShadow: '4px 0 24px rgba(0, 0, 0, 0.5)',
+          transform: isMobileOpen ? 'translateX(0)' : 'translateX(0)',
+          boxShadow: '4px 0 18px rgba(0, 86, 179, 0.18), 0 0 12px rgba(0, 86, 179, 0.22)',
         }}
         className={`student-persistent-sidebar ${isMobileOpen ? 'mobile-drawer-open' : ''}`}
       >
@@ -122,8 +137,9 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: isCollapsed ? 'center' : 'space-between',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-            background: 'linear-gradient(180deg, rgba(0, 86, 179, 0.12) 0%, transparent 100%)',
+            borderBottom: '2px solid #d4af37',
+            boxShadow: '0 2px 8px rgba(0, 86, 179, 0.35)',
+            background: 'linear-gradient(180deg, rgba(0, 86, 179, 0.05) 0%, #ffffff 100%)',
           }}
         >
           <div
@@ -146,7 +162,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
-                boxShadow: '0 4px 12px rgba(0, 86, 179, 0.4)',
+                boxShadow: '0 4px 12px rgba(0, 86, 179, 0.35)',
               }}
             >
               <Logo size={26} />
@@ -159,7 +175,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                     fontSize: '1rem',
                     fontWeight: 900,
                     letterSpacing: '0.5px',
-                    color: '#ffffff',
+                    color: '#003366',
                     display: 'block',
                     lineHeight: 1.1,
                   }}
@@ -170,7 +186,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   style={{
                     fontSize: '0.68rem',
                     fontWeight: 700,
-                    color: '#60a5fa',
+                    color: '#0056b3',
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
                   }}
@@ -185,9 +201,9 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             <button
               onClick={onToggleCollapse}
               style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                color: '#94a3b8',
+                background: 'rgba(0, 86, 179, 0.06)',
+                border: '1px solid rgba(212, 175, 55, 0.4)',
+                color: '#003366',
                 width: '28px',
                 height: '28px',
                 borderRadius: '8px',
@@ -213,31 +229,17 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             display: 'flex',
             flexDirection: 'column',
             gap: '0.35rem',
+            backgroundColor: '#ffffff',
           }}
           className="admin-table-scrollbar"
         >
           {/* SEÇÃO 1: VISÃO GERAL */}
           <button
             onClick={() => handleItemClick('home')}
-            style={{
-              width: '100%',
-              padding: isCollapsed ? '0.75rem 0' : '0.7rem 0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isCollapsed ? 'center' : 'flex-start',
-              gap: '0.75rem',
-              backgroundColor: activeTab === 'home' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-              color: activeTab === 'home' ? '#60a5fa' : '#cbd5e1',
-              border: activeTab === 'home' ? '1px solid rgba(0, 86, 179, 0.4)' : '1px solid transparent',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              fontWeight: activeTab === 'home' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            style={getItemStyle('home')}
             title={isCollapsed ? 'Início / Dashboard' : undefined}
           >
-            <LayoutDashboard size={19} color={activeTab === 'home' ? '#60a5fa' : '#94a3b8'} />
+            <LayoutDashboard size={19} color={activeTab === 'home' ? '#0056b3' : '#003366'} />
             {!isCollapsed && <span>Início</span>}
           </button>
 
@@ -257,8 +259,8 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: isCollapsed ? 'center' : 'space-between',
-                color: activeTab === 'cursos' ? '#60a5fa' : '#94a3b8',
-                backgroundColor: activeTab === 'cursos' && !coursesTreeOpen ? 'rgba(0, 86, 179, 0.15)' : 'transparent',
+                color: activeTab === 'cursos' ? '#002d62' : '#003366',
+                backgroundColor: activeTab === 'cursos' && !coursesTreeOpen ? 'rgba(0, 86, 179, 0.08)' : 'transparent',
                 borderRadius: '12px',
                 cursor: 'pointer',
                 fontSize: '0.85rem',
@@ -268,11 +270,11 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
               title={isCollapsed ? 'Cursos' : undefined}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <BookOpen size={19} color={activeTab === 'cursos' ? '#60a5fa' : '#94a3b8'} />
+                <BookOpen size={19} color={activeTab === 'cursos' ? '#0056b3' : '#003366'} />
                 {!isCollapsed && <span>Cursos</span>}
               </div>
               {!isCollapsed && (
-                coursesTreeOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />
+                coursesTreeOpen ? <ChevronDown size={14} color="#003366" /> : <ChevronRight size={14} color="#003366" />
               )}
             </div>
 
@@ -282,7 +284,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 style={{
                   marginLeft: '1.25rem',
                   paddingLeft: '0.75rem',
-                  borderLeft: '1.5px solid rgba(255, 255, 255, 0.1)',
+                  borderLeft: '1.5px solid rgba(212, 175, 55, 0.45)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '0.2rem',
@@ -294,12 +296,12 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   style={{
                     padding: '0.45rem 0.75rem',
                     textAlign: 'left',
-                    background: activeTab === 'cursos' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-                    color: activeTab === 'cursos' ? '#60a5fa' : '#cbd5e1',
+                    background: activeTab === 'cursos' ? 'rgba(0, 86, 179, 0.08)' : 'transparent',
+                    color: activeTab === 'cursos' ? '#002d62' : '#1e40af',
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '0.8rem',
-                    fontWeight: activeTab === 'cursos' ? 700 : 500,
+                    fontWeight: activeTab === 'cursos' ? 700 : 600,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -312,8 +314,9 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                       fontSize: '0.65rem',
                       padding: '1px 6px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(255,255,255,0.08)',
-                      color: '#94a3b8',
+                      backgroundColor: 'rgba(0, 86, 179, 0.08)',
+                      color: '#0056b3',
+                      fontWeight: 700,
                     }}
                   >
                     {courses.length}
@@ -328,11 +331,11 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                       padding: '0.45rem 0.75rem',
                       textAlign: 'left',
                       background: 'transparent',
-                      color: '#94a3b8',
+                      color: '#1e40af',
                       border: 'none',
                       borderRadius: '8px',
                       fontSize: '0.78rem',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       cursor: 'pointer',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -363,7 +366,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: isCollapsed ? 'center' : 'space-between',
-                color: activeTab === 'modulos' || activeTab === 'modulos-concluidos' ? '#60a5fa' : '#94a3b8',
+                color: activeTab === 'modulos' || activeTab === 'modulos-concluidos' ? '#002d62' : '#003366',
                 borderRadius: '12px',
                 cursor: 'pointer',
                 fontSize: '0.85rem',
@@ -373,11 +376,11 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
               title={isCollapsed ? 'Módulos' : undefined}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <Layers size={19} color={activeTab === 'modulos' || activeTab === 'modulos-concluidos' ? '#60a5fa' : '#94a3b8'} />
+                <Layers size={19} color={activeTab === 'modulos' || activeTab === 'modulos-concluidos' ? '#0056b3' : '#003366'} />
                 {!isCollapsed && <span>Módulos</span>}
               </div>
               {!isCollapsed && (
-                modulesTreeOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />
+                modulesTreeOpen ? <ChevronDown size={14} color="#003366" /> : <ChevronRight size={14} color="#003366" />
               )}
             </div>
 
@@ -386,7 +389,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 style={{
                   marginLeft: '1.25rem',
                   paddingLeft: '0.75rem',
-                  borderLeft: '1.5px solid rgba(255, 255, 255, 0.1)',
+                  borderLeft: '1.5px solid rgba(212, 175, 55, 0.45)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '0.2rem',
@@ -398,12 +401,12 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   style={{
                     padding: '0.45rem 0.75rem',
                     textAlign: 'left',
-                    background: activeTab === 'modulos' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-                    color: activeTab === 'modulos' ? '#60a5fa' : '#cbd5e1',
+                    background: activeTab === 'modulos' ? 'rgba(0, 86, 179, 0.08)' : 'transparent',
+                    color: activeTab === 'modulos' ? '#002d62' : '#1e40af',
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '0.8rem',
-                    fontWeight: activeTab === 'modulos' ? 700 : 500,
+                    fontWeight: activeTab === 'modulos' ? 700 : 600,
                     cursor: 'pointer',
                   }}
                 >
@@ -415,12 +418,12 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   style={{
                     padding: '0.45rem 0.75rem',
                     textAlign: 'left',
-                    background: activeTab === 'modulos-concluidos' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-                    color: activeTab === 'modulos-concluidos' ? '#60a5fa' : '#cbd5e1',
+                    background: activeTab === 'modulos-concluidos' ? 'rgba(0, 86, 179, 0.08)' : 'transparent',
+                    color: activeTab === 'modulos-concluidos' ? '#002d62' : '#1e40af',
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '0.8rem',
-                    fontWeight: activeTab === 'modulos-concluidos' ? 700 : 500,
+                    fontWeight: activeTab === 'modulos-concluidos' ? 700 : 600,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -433,9 +436,9 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                       fontSize: '0.65rem',
                       padding: '1px 6px',
                       borderRadius: '10px',
-                      backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                      color: '#22c55e',
-                      fontWeight: 700,
+                      backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                      color: '#059669',
+                      fontWeight: 800,
                     }}
                   >
                     {finishedCount}
@@ -448,26 +451,11 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           {/* SEÇÃO 4: NOTAS & BOLETIM */}
           <button
             onClick={() => handleItemClick('modulos-concluidos')}
-            style={{
-              width: '100%',
-              padding: isCollapsed ? '0.75rem 0' : '0.7rem 0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isCollapsed ? 'center' : 'space-between',
-              gap: '0.75rem',
-              backgroundColor: activeTab === 'modulos-concluidos' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-              color: activeTab === 'modulos-concluidos' ? '#60a5fa' : '#cbd5e1',
-              border: activeTab === 'modulos-concluidos' ? '1px solid rgba(0, 86, 179, 0.4)' : '1px solid transparent',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              fontWeight: activeTab === 'modulos-concluidos' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            style={getItemStyle('modulos-concluidos')}
             title={isCollapsed ? 'Notas e Boletim' : undefined}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Award size={19} color={activeTab === 'modulos-concluidos' ? '#60a5fa' : '#94a3b8'} />
+              <Award size={19} color={activeTab === 'modulos-concluidos' ? '#0056b3' : '#003366'} />
               {!isCollapsed && <span>Notas & Boletim</span>}
             </div>
             {!isCollapsed && pendingExamsCount > 0 && (
@@ -489,26 +477,11 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           {/* SEÇÃO 5: FINANCEIRO */}
           <button
             onClick={() => handleItemClick('financeiro')}
-            style={{
-              width: '100%',
-              padding: isCollapsed ? '0.75rem 0' : '0.7rem 0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isCollapsed ? 'center' : 'space-between',
-              gap: '0.75rem',
-              backgroundColor: activeTab === 'financeiro' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-              color: activeTab === 'financeiro' ? '#60a5fa' : '#cbd5e1',
-              border: activeTab === 'financeiro' ? '1px solid rgba(0, 86, 179, 0.4)' : '1px solid transparent',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              fontWeight: activeTab === 'financeiro' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            style={getItemStyle('financeiro')}
             title={isCollapsed ? 'Financeiro e Mensalidades' : undefined}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <CreditCard size={19} color={activeTab === 'financeiro' ? '#60a5fa' : '#94a3b8'} />
+              <CreditCard size={19} color={activeTab === 'financeiro' ? '#0056b3' : '#003366'} />
               {!isCollapsed && <span>Financeiro</span>}
             </div>
             {!isCollapsed && isPastDue && (
@@ -530,100 +503,40 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           {/* SEÇÃO 6: BIBLIOTECA & MATERIAIS */}
           <button
             onClick={() => handleItemClick('biblioteca')}
-            style={{
-              width: '100%',
-              padding: isCollapsed ? '0.75rem 0' : '0.7rem 0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isCollapsed ? 'center' : 'flex-start',
-              gap: '0.75rem',
-              backgroundColor: activeTab === 'biblioteca' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-              color: activeTab === 'biblioteca' ? '#60a5fa' : '#cbd5e1',
-              border: activeTab === 'biblioteca' ? '1px solid rgba(0, 86, 179, 0.4)' : '1px solid transparent',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              fontWeight: activeTab === 'biblioteca' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            style={getItemStyle('biblioteca')}
             title={isCollapsed ? 'Biblioteca e Apostilas' : undefined}
           >
-            <BookMarked size={19} color={activeTab === 'biblioteca' ? '#60a5fa' : '#94a3b8'} />
+            <BookMarked size={19} color={activeTab === 'biblioteca' ? '#0056b3' : '#003366'} />
             {!isCollapsed && <span>Biblioteca</span>}
           </button>
 
           {/* SEÇÃO 7: FÓRUM */}
           <button
             onClick={() => handleItemClick('forum')}
-            style={{
-              width: '100%',
-              padding: isCollapsed ? '0.75rem 0' : '0.7rem 0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isCollapsed ? 'center' : 'flex-start',
-              gap: '0.75rem',
-              backgroundColor: activeTab === 'forum' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-              color: activeTab === 'forum' ? '#60a5fa' : '#cbd5e1',
-              border: activeTab === 'forum' ? '1px solid rgba(0, 86, 179, 0.4)' : '1px solid transparent',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              fontWeight: activeTab === 'forum' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            style={getItemStyle('forum')}
             title={isCollapsed ? 'Fórum da Comunidade' : undefined}
           >
-            <MessageSquare size={19} color={activeTab === 'forum' ? '#60a5fa' : '#94a3b8'} />
+            <MessageSquare size={19} color={activeTab === 'forum' ? '#0056b3' : '#003366'} />
             {!isCollapsed && <span>Fórum</span>}
           </button>
 
           {/* SEÇÃO 8: DOCUMENTOS */}
           <button
             onClick={() => handleItemClick('documentos')}
-            style={{
-              width: '100%',
-              padding: isCollapsed ? '0.75rem 0' : '0.7rem 0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isCollapsed ? 'center' : 'flex-start',
-              gap: '0.75rem',
-              backgroundColor: activeTab === 'documentos' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-              color: activeTab === 'documentos' ? '#60a5fa' : '#cbd5e1',
-              border: activeTab === 'documentos' ? '1px solid rgba(0, 86, 179, 0.4)' : '1px solid transparent',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              fontWeight: activeTab === 'documentos' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            style={getItemStyle('documentos')}
             title={isCollapsed ? 'Documentos de Matrícula' : undefined}
           >
-            <FileText size={19} color={activeTab === 'documentos' ? '#60a5fa' : '#94a3b8'} />
+            <FileText size={19} color={activeTab === 'documentos' ? '#0056b3' : '#003366'} />
             {!isCollapsed && <span>Documentos</span>}
           </button>
 
           {/* SEÇÃO 9: CERTIFICADOS */}
           <button
             onClick={() => handleItemClick('certificados')}
-            style={{
-              width: '100%',
-              padding: isCollapsed ? '0.75rem 0' : '0.7rem 0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isCollapsed ? 'center' : 'flex-start',
-              gap: '0.75rem',
-              backgroundColor: activeTab === 'certificados' ? 'rgba(0, 86, 179, 0.2)' : 'transparent',
-              color: activeTab === 'certificados' ? '#60a5fa' : '#cbd5e1',
-              border: activeTab === 'certificados' ? '1px solid rgba(0, 86, 179, 0.4)' : '1px solid transparent',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              fontWeight: activeTab === 'certificados' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
+            style={getItemStyle('certificados')}
             title={isCollapsed ? 'Certificados e Histórico' : undefined}
           >
-            <GraduationCap size={19} color={activeTab === 'certificados' ? '#60a5fa' : '#94a3b8'} />
+            <GraduationCap size={19} color={activeTab === 'certificados' ? '#0056b3' : '#003366'} />
             {!isCollapsed && <span>Certificados</span>}
           </button>
         </div>
@@ -635,23 +548,24 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
               padding: '1rem 1.25rem',
               margin: '0 0.75rem 0.75rem',
               borderRadius: '14px',
-              backgroundColor: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
+              backgroundColor: '#f8fafd',
+              border: '1px solid rgba(212, 175, 55, 0.4)',
+              boxShadow: '0 0 10px rgba(0, 86, 179, 0.15)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#94a3b8' }}>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#003366' }}>
                 Progresso Geral
               </span>
-              <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#60a5fa' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#0056b3' }}>
                 {pctConcluido}%
               </span>
             </div>
             <div
               style={{
-                height: '6px',
+                height: '7px',
                 width: '100%',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                backgroundColor: 'rgba(0, 86, 179, 0.08)',
                 borderRadius: '10px',
                 overflow: 'hidden',
               }}
@@ -660,13 +574,13 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 style={{
                   height: '100%',
                   width: `${pctConcluido}%`,
-                  background: 'linear-gradient(90deg, #0056b3 0%, #60a5fa 100%)',
+                  background: 'linear-gradient(90deg, #0056b3 0%, #3b82f6 100%)',
                   borderRadius: '10px',
                   transition: 'width 0.4s ease',
                 }}
               />
             </div>
-            <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '0.35rem' }}>
+            <div style={{ fontSize: '0.68rem', color: '#1e40af', fontWeight: 600, marginTop: '0.35rem' }}>
               {finishedCount} de {totalRequired} módulos concluídos
             </div>
           </div>
@@ -676,8 +590,9 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
         <div
           style={{
             padding: isCollapsed ? '0.85rem 0.5rem' : '0.85rem 1rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            backgroundColor: 'rgba(0, 0, 0, 0.25)',
+            borderTop: '2px solid #d4af37',
+            boxShadow: '0 -2px 8px rgba(0, 86, 179, 0.35)',
+            backgroundColor: '#ffffff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: isCollapsed ? 'center' : 'space-between',
@@ -699,7 +614,8 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   fontWeight: 800,
                   fontSize: '0.85rem',
                   flexShrink: 0,
-                  border: '1.5px solid rgba(96, 165, 250, 0.4)',
+                  border: '1.5px solid #d4af37',
+                  boxShadow: '0 0 6px rgba(0, 86, 179, 0.3)',
                 }}
               >
                 {(profile?.nome || 'A').charAt(0).toUpperCase()}
@@ -709,7 +625,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   style={{
                     fontSize: '0.82rem',
                     fontWeight: 700,
-                    color: '#ffffff',
+                    color: '#003366',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -721,7 +637,8 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 <div
                   style={{
                     fontSize: '0.68rem',
-                    color: '#94a3b8',
+                    color: '#1e40af',
+                    fontWeight: 600,
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.25rem',
@@ -730,7 +647,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  <MapPin size={10} color="#60a5fa" />
+                  <MapPin size={10} color="#0056b3" />
                   <span>{profile?.nucleos?.nome || 'Fatesa EAD'}</span>
                 </div>
               </div>
@@ -748,6 +665,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 justifyContent: 'center',
                 fontWeight: 800,
                 fontSize: '0.85rem',
+                border: '1.5px solid #d4af37',
               }}
               title={profile?.nome || 'Aluno'}
             >
@@ -761,9 +679,9 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
               <button
                 onClick={() => signOut()}
                 style={{
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.25)',
-                  color: '#f87171',
+                  background: 'rgba(239, 68, 68, 0.08)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  color: '#dc2626',
                   width: '32px',
                   height: '32px',
                   borderRadius: '8px',

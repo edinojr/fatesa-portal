@@ -303,7 +303,7 @@ const ModuleDetails = () => {
            }}
            style={{ 
             padding: '1rem', 
-            background: locked ? 'rgba(255,255,255,0.02)' : 'var(--glass)', 
+            background: locked ? '#f8fafd' : '#ffffff', 
             borderTop: `1px solid ${borderColor}`,
             borderRight: `1px solid ${borderColor}`,
             borderBottom: `1px solid ${borderColor}`,
@@ -317,21 +317,22 @@ const ModuleDetails = () => {
             position: 'relative',
             marginBottom: '0.5rem',
             height: '80px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxShadow: locked ? 'none' : '0 4px 12px rgba(0, 86, 179, 0.08), 0 0 6px rgba(0, 86, 179, 0.1)',
           }}
-          onMouseEnter={(e) => { if(!locked) e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
-          onMouseLeave={(e) => { if(!locked) e.currentTarget.style.background = 'var(--glass)'; }}
+          onMouseEnter={(e) => { if(!locked) { e.currentTarget.style.background = '#f0f5fa'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 86, 179, 0.15), 0 0 10px rgba(0, 86, 179, 0.2)'; } }}
+          onMouseLeave={(e) => { if(!locked) { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 86, 179, 0.08), 0 0 6px rgba(0, 86, 179, 0.1)'; } }}
         >
-          {locked && <Lock size={14} color="var(--text-muted)" />}
+          {locked && <Lock size={14} color="#64748b" />}
           <div style={{ flex: 1, overflow: 'hidden' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: isAvaliacao ? 'var(--primary, #0056b3)' : isExercicio ? '#10b981' : 'var(--primary)', textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: isAvaliacao ? '#0056b3' : isExercicio ? '#059669' : '#0056b3', textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {label}
             </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: '0.85rem', color: '#003366', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {item.titulo}
             </div>
           </div>
-          {completed && <CheckCircle size={16} color="var(--success)" />}
+          {completed && <CheckCircle size={16} color="#10b981" />}
         </div>
       );
     };
@@ -352,13 +353,14 @@ const ModuleDetails = () => {
 
 
                 <main className="admin-main" style={{ padding: '1rem' }}>
-                <div className="nav-breadcrumb-modern" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span onClick={() => navigate('/dashboard')} style={{ color: 'inherit', textDecoration: 'none', opacity: 0.7, cursor: 'pointer' }}>Início</span>
-                    <ChevronRight size={14} style={{ opacity: 0.3 }} />
-                    <span onClick={() => navigate('/dashboard?tab=cursos')} style={{ color: 'inherit', textDecoration: 'none', opacity: 0.7, cursor: 'pointer' }}>Meus Cursos</span>
-                    <ChevronRight size={14} style={{ opacity: 0.3 }} />
-                    <span className="active" style={{ color: 'var(--primary)', fontWeight: 700 }}>{book.titulo}</span>
+                <div className="nav-breadcrumb-modern" style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span onClick={() => navigate('/dashboard')} style={{ color: '#0056b3', textDecoration: 'none', fontWeight: 600, cursor: 'pointer' }}>Início</span>
+                    <ChevronRight size={14} style={{ color: '#0056b3', opacity: 0.5 }} />
+                    <span onClick={() => navigate('/dashboard?tab=cursos')} style={{ color: '#0056b3', textDecoration: 'none', fontWeight: 600, cursor: 'pointer' }}>Meus Cursos</span>
+                    <ChevronRight size={14} style={{ color: '#0056b3', opacity: 0.5 }} />
+                    <span className="active" style={{ color: '#003366', fontWeight: 800 }}>{book.titulo}</span>
                 </div>
+                <div className="gold-separator-line" style={{ marginBottom: '1.75rem' }} />
 
                 {!hasAnyContent ? (
                   <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'var(--glass)', borderRadius: '32px', border: '1px dashed rgba(245, 158, 11, 0.4)' }}>

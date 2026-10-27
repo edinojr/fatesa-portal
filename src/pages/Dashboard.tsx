@@ -736,30 +736,32 @@ const Dashboard = () => {
               {/* TOP HEADER: Saudação & Resumo */}
               <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
                 <div>
-                  <h1 style={{ fontSize: '1.75rem', fontWeight: 900, margin: 0, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+                  <h1 style={{ fontSize: '1.75rem', fontWeight: 900, margin: 0, color: '#003366', letterSpacing: '-0.02em' }}>
                     Olá, {profile?.nome?.split(' ')[0] || 'Aluno'}!
                   </h1>
-                  <p style={{ fontSize: '0.88rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
-                    Polo: <strong style={{ color: '#60a5fa' }}>{profile?.nucleos?.nome || 'Fatesa EAD'}</strong> • Ambiente Virtual de Aprendizagem
+                  <p style={{ fontSize: '0.88rem', color: '#1e40af', margin: '4px 0 0 0' }}>
+                    Polo: <strong style={{ color: '#0056b3' }}>{profile?.nucleos?.nome || 'Fatesa EAD'}</strong> • Ambiente Virtual de Aprendizagem
                   </p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => navigate('/modulos-finalizados')}
                     className="btn btn-outline"
-                    style={{ width: 'auto', padding: '0.55rem 1rem', fontSize: '0.82rem', fontWeight: 700, borderColor: 'rgba(96, 165, 250, 0.3)', color: '#60a5fa', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                    style={{ width: 'auto', padding: '0.55rem 1rem', fontSize: '0.82rem', fontWeight: 700, borderColor: 'rgba(212, 175, 55, 0.45)', color: '#003366', display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: '0 0 8px rgba(0, 86, 179, 0.15)' }}
                   >
-                    <Award size={16} /> Meu Boletim
+                    <Award size={16} color="#0056b3" /> Meu Boletim
                   </button>
                   <button
                     onClick={() => setActiveTab('biblioteca')}
                     className="btn btn-primary"
-                    style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.82rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                    style={{ width: 'auto', padding: '0.55rem 1.1rem', fontSize: '0.82rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: '0 4px 14px rgba(0, 86, 179, 0.35)' }}
                   >
                     <BookOpen size={16} /> Biblioteca
                   </button>
                 </div>
               </div>
+
+              <div className="gold-separator-line" />
 
               {/* AVISO DE FORMAÇÃO NO BÁSICO */}
               {finishedBasicCount >= 27 && finishedMediumCount === 0 && (
@@ -784,10 +786,10 @@ const Dashboard = () => {
 
               {/* ALERTA DE ALUMNI */}
               {isAlumniData && (
-                <div style={{ padding: '1.5rem', background: 'rgba(0, 86, 179, 0.08)', borderRadius: '18px', border: '1px solid rgba(0, 86, 179, 0.25)', textAlign: 'center' }}>
+                <div style={{ padding: '1.5rem', background: '#f8fafd', borderRadius: '18px', border: '1px solid rgba(212, 175, 55, 0.4)', textAlign: 'center', boxShadow: '0 4px 16px rgba(0, 86, 179, 0.08)' }}>
                   <Award size={40} color="#0056b3" style={{ margin: '0 auto 0.5rem' }} />
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Conclusão Reconhecida</h3>
-                  <p style={{ color: '#94a3b8', fontSize: '0.9rem', maxWidth: '580px', margin: '0 auto 1rem' }}>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: '0 0 0.5rem 0', color: '#003366' }}>Conclusão Reconhecida</h3>
+                  <p style={{ color: '#1e40af', fontSize: '0.9rem', maxWidth: '580px', margin: '0 auto 1rem' }}>
                     Você concluiu o Curso Básico de Teologia FATESA. Seu histórico e certificados oficiais estão disponíveis.
                   </p>
                   <AlumniCertificate aluno={{
@@ -804,11 +806,11 @@ const Dashboard = () => {
 
               {/* ALERTA DE BLOQUEIO */}
               {isBlocked && (
-                <div style={{ padding: '1rem 1.25rem', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid #ef4444', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-                  <AlertCircle size={20} color="#ef4444" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+                <div style={{ padding: '1rem 1.25rem', background: '#fff5f5', border: '1px solid #ef4444', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                  <AlertCircle size={20} color="#dc2626" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
                   <div>
-                    <strong style={{ color: '#ef4444', fontSize: '0.92rem' }}>Acesso suspenso temporariamente.</strong>
-                    <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: '0.25rem 0 0' }}>
+                    <strong style={{ color: '#dc2626', fontSize: '0.92rem' }}>Acesso suspenso temporariamente.</strong>
+                    <p style={{ fontSize: '0.85rem', color: '#991b1b', margin: '0.25rem 0 0' }}>
                       Seu avanço aos novos módulos está suspenso. Regularize seu pagamento pelo painel financeiro para reativar.
                     </p>
                   </div>
@@ -817,13 +819,13 @@ const Dashboard = () => {
 
               {/* ALERTA DE HIATO OU TRANCADO */}
               {(profile?.status_nucleo === 'hiato' || profile?.status_nucleo === 'trancado') && (
-                <div style={{ padding: '1rem 1.25rem', background: 'rgba(0, 86, 179, 0.08)', border: '1px solid #0056b3', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.85rem' }}>
+                <div style={{ padding: '1rem 1.25rem', background: '#f8fafd', border: '1px solid rgba(212, 175, 55, 0.4)', borderRadius: '14px', display: 'flex', alignItems: 'flex-start', gap: '0.85rem', boxShadow: '0 4px 14px rgba(0, 86, 179, 0.08)' }}>
                   <PauseCircle size={22} color="#0056b3" style={{ flexShrink: 0, marginTop: '0.1rem' }} />
                   <div style={{ flex: 1 }}>
-                    <strong style={{ color: '#60a5fa', fontSize: '0.92rem' }}>
+                    <strong style={{ color: '#003366', fontSize: '0.92rem' }}>
                       {profile?.status_nucleo === 'hiato' ? 'Matrícula em Hiato' : 'Curso Temporariamente Pausado'}
                     </strong>
-                    <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: '0.25rem 0 0.5rem', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '0.85rem', color: '#1e40af', margin: '0.25rem 0 0.5rem', lineHeight: 1.5 }}>
                       O avanço para novos módulos está pausado. Você mantém acesso aos seus módulos concluídos e ao módulo que estiver cursando.
                     </p>
                     <a
@@ -845,16 +847,16 @@ const Dashboard = () => {
                 <div className="student-card-priority" style={{ minHeight: '270px' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#60a5fa', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <Play size={13} /> Continue de Onde Parou
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#0056b3', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Play size={13} color="#0056b3" /> Continue de Onde Parou
                       </span>
-                      <span style={{ fontSize: '0.7rem', background: 'rgba(0, 86, 179, 0.25)', color: '#93c5fd', padding: '3px 8px', borderRadius: '10px', fontWeight: 700 }}>
+                      <span style={{ fontSize: '0.7rem', background: 'rgba(0, 86, 179, 0.08)', color: '#003366', border: '1px solid rgba(212, 175, 55, 0.4)', padding: '3px 8px', borderRadius: '10px', fontWeight: 700 }}>
                         Módulo Atual
                       </span>
                     </div>
 
                     {coursesLoading ? (
-                      <div style={{ padding: '2rem 0', textAlign: 'center', color: '#94a3b8' }}>
+                      <div style={{ padding: '2rem 0', textAlign: 'center', color: '#1e40af' }}>
                         <Loader2 className="spinner" size={24} style={{ margin: '0 auto 0.5rem' }} />
                         <span style={{ fontSize: '0.85rem' }}>Carregando módulo vigente...</span>
                       </div>
@@ -864,29 +866,29 @@ const Dashboard = () => {
                           <img
                             src={currentModule.livro.capa_url}
                             alt={currentModule.livro.titulo}
-                            style={{ width: '68px', height: '94px', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 6px 14px rgba(0,0,0,0.5)', flexShrink: 0 }}
+                            style={{ width: '68px', height: '94px', objectFit: 'cover', borderRadius: '10px', boxShadow: '0 6px 14px rgba(0, 51, 102, 0.25)', border: '1px solid rgba(212, 175, 55, 0.4)', flexShrink: 0 }}
                           />
                         ) : (
-                          <div style={{ width: '68px', height: '94px', borderRadius: '10px', background: 'linear-gradient(135deg, #003875 0%, #0056b3 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0, boxShadow: '0 6px 14px rgba(0,0,0,0.4)' }}>
+                          <div style={{ width: '68px', height: '94px', borderRadius: '10px', background: 'linear-gradient(135deg, #003875 0%, #0056b3 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0, boxShadow: '0 6px 14px rgba(0, 51, 102, 0.25)' }}>
                             <BookOpen size={30} />
                           </div>
                         )}
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <span style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '2px' }}>
+                          <span style={{ fontSize: '0.72rem', color: '#1e40af', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '2px' }}>
                             {currentModule.courseName}
                           </span>
-                          <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#ffffff', margin: '0 0 6px 0', lineHeight: 1.25 }}>
+                          <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#003366', margin: '0 0 6px 0', lineHeight: 1.25 }}>
                             {currentModule.livro.titulo}
                           </h3>
-                          <span style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>
+                          <span style={{ fontSize: '0.78rem', color: '#1e40af', fontWeight: 600 }}>
                             {(currentModule.livro.aulas || []).length} aulas e avaliações liberadas
                           </span>
                         </div>
                       </div>
                     ) : (
-                      <div style={{ padding: '1.5rem 0', textAlign: 'center', color: '#94a3b8' }}>
+                      <div style={{ padding: '1.5rem 0', textAlign: 'center', color: '#1e40af' }}>
                         <CheckCircle2 size={36} color="#10b981" style={{ margin: '0 auto 0.5rem' }} />
-                        <p style={{ margin: 0, fontWeight: 700, color: '#f8fafc' }}>Nenhum módulo pendente!</p>
+                        <p style={{ margin: 0, fontWeight: 700, color: '#003366' }}>Nenhum módulo pendente!</p>
                         <span style={{ fontSize: '0.8rem' }}>Você completou os cursos liberados para sua turma.</span>
                       </div>
                     )}
@@ -905,7 +907,7 @@ const Dashboard = () => {
                         gap: '0.5rem',
                         fontWeight: 800,
                         fontSize: '0.88rem',
-                        boxShadow: '0 4px 14px rgba(0, 86, 179, 0.4)'
+                        boxShadow: '0 4px 14px rgba(0, 86, 179, 0.35)'
                       }}
                     >
                       <Play size={16} /> Retomar Estudos
@@ -917,10 +919,10 @@ const Dashboard = () => {
                 <div className="student-card-priority" style={{ minHeight: '270px' }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#a78bfa', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <GraduationCap size={15} /> Progresso do Curso
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#0056b3', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <GraduationCap size={15} color="#0056b3" /> Progresso do Curso
                       </span>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#60a5fa' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#0056b3' }}>
                         {Math.min(100, Math.round((finishedBasicCount / GRADUATION_CONFIG.basico.requiredModules) * 100))}%
                       </span>
                     </div>
@@ -928,17 +930,17 @@ const Dashboard = () => {
                     {/* Barra Nível Básico */}
                     <div style={{ marginBottom: '1.1rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', fontSize: '0.82rem' }}>
-                        <span style={{ fontWeight: 700, color: '#e2e8f0' }}>Nível Básico em Teologia</span>
-                        <span style={{ fontWeight: 800, color: '#60a5fa' }}>
+                        <span style={{ fontWeight: 700, color: '#003366' }}>Nível Básico em Teologia</span>
+                        <span style={{ fontWeight: 800, color: '#0056b3' }}>
                           {finishedBasicCount} / {GRADUATION_CONFIG.basico.requiredModules} módulos
                         </span>
                       </div>
-                      <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
+                      <div style={{ height: '8px', background: 'rgba(0, 86, 179, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
                         <div
                           style={{
                             height: '100%',
                             width: `${Math.min(100, (finishedBasicCount / GRADUATION_CONFIG.basico.requiredModules) * 100)}%`,
-                            background: 'linear-gradient(90deg, #0056b3 0%, #60a5fa 100%)',
+                            background: 'linear-gradient(90deg, #0056b3 0%, #3b82f6 100%)',
                             borderRadius: '10px',
                             transition: 'width 0.6s ease'
                           }}
@@ -949,17 +951,17 @@ const Dashboard = () => {
                     {/* Barra Nível Médio */}
                     <div style={{ marginBottom: '1rem', opacity: finishedBasicCount < GRADUATION_CONFIG.basico.requiredModules ? 0.6 : 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', fontSize: '0.82rem' }}>
-                        <span style={{ fontWeight: 700, color: '#e2e8f0' }}>Nível Médio em Teologia</span>
-                        <span style={{ fontWeight: 800, color: '#a78bfa' }}>
+                        <span style={{ fontWeight: 700, color: '#003366' }}>Nível Médio em Teologia</span>
+                        <span style={{ fontWeight: 800, color: '#1e40af' }}>
                           {finishedMediumCount} / {GRADUATION_CONFIG.medio.requiredModules} módulos
                         </span>
                       </div>
-                      <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
+                      <div style={{ height: '8px', background: 'rgba(0, 86, 179, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
                         <div
                           style={{
                             height: '100%',
                             width: `${Math.min(100, (finishedMediumCount / GRADUATION_CONFIG.medio.requiredModules) * 100)}%`,
-                            background: 'linear-gradient(90deg, #8b5cf6 0%, #c084fc 100%)',
+                            background: 'linear-gradient(90deg, #1e40af 0%, #60a5fa 100%)',
                             borderRadius: '10px',
                             transition: 'width 0.6s ease'
                           }}
@@ -981,11 +983,11 @@ const Dashboard = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '0.4rem',
-                        borderColor: 'rgba(96, 165, 250, 0.3)',
-                        color: '#60a5fa'
+                        borderColor: 'rgba(212, 175, 55, 0.45)',
+                        color: '#003366'
                       }}
                     >
-                      <Award size={15} /> Ver Boletim
+                      <Award size={15} color="#0056b3" /> Ver Boletim
                     </button>
                     <button
                       onClick={() => setActiveTab('certificados')}
@@ -999,11 +1001,11 @@ const Dashboard = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '0.4rem',
-                        borderColor: 'rgba(255, 255, 255, 0.15)',
-                        color: '#e2e8f0'
+                        borderColor: 'rgba(212, 175, 55, 0.45)',
+                        color: '#003366'
                       }}
                     >
-                      <GraduationCap size={15} /> Certificados
+                      <GraduationCap size={15} color="#0056b3" /> Certificados
                     </button>
                   </div>
                 </div>
@@ -1017,11 +1019,11 @@ const Dashboard = () => {
                 >
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: isPastDue ? '#f87171' : pendingExams.length > 0 ? '#fbbf24' : '#34d399', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: isPastDue ? '#dc2626' : pendingExams.length > 0 ? '#b45309' : '#059669', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <Clock size={15} /> Prazos & Prioridades
                       </span>
                       {pendingExams.length > 0 && (
-                        <span style={{ fontSize: '0.72rem', background: '#f59e0b', color: '#ffffff', padding: '2px 8px', borderRadius: '10px', fontWeight: 800 }}>
+                        <span style={{ fontSize: '0.72rem', background: '#d4af37', color: '#002d62', padding: '2px 8px', borderRadius: '10px', fontWeight: 800, boxShadow: '0 0 6px rgba(0, 86, 179, 0.25)' }}>
                           {pendingExams.length} ação{pendingExams.length > 1 ? 'ões' : ''}
                         </span>
                       )}
@@ -1036,8 +1038,9 @@ const Dashboard = () => {
                             style={{
                               padding: '0.6rem 0.8rem',
                               borderRadius: '10px',
-                              backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                              border: `1px solid ${exam.isRecovery ? 'rgba(239, 68, 68, 0.35)' : 'rgba(0, 86, 179, 0.35)'}`,
+                              backgroundColor: '#f8fafd',
+                              border: `1px solid ${exam.isRecovery ? 'rgba(220, 38, 38, 0.4)' : 'rgba(212, 175, 55, 0.5)'}`,
+                              boxShadow: '0 0 8px rgba(0, 86, 179, 0.12)',
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
@@ -1047,10 +1050,10 @@ const Dashboard = () => {
                             }}
                           >
                             <div style={{ minWidth: 0, flex: 1 }}>
-                              <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
+                              <div style={{ fontSize: '0.68rem', color: '#1e40af', fontWeight: 700, textTransform: 'uppercase' }}>
                                 {exam.livro}
                               </div>
-                              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#003366', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {exam.titulo}
                               </div>
                             </div>
@@ -1071,21 +1074,21 @@ const Dashboard = () => {
                         ))}
                       </div>
                     ) : isPastDue ? (
-                      <div style={{ padding: '0.75rem', borderRadius: '12px', backgroundColor: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.3)', marginBottom: '1rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171', fontWeight: 800, fontSize: '0.85rem' }}>
+                      <div style={{ padding: '0.75rem', borderRadius: '12px', backgroundColor: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#dc2626', fontWeight: 800, fontSize: '0.85rem' }}>
                           <AlertCircle size={16} /> Mensalidade Pendente
                         </div>
-                        <p style={{ fontSize: '0.78rem', color: '#cbd5e1', margin: '4px 0 0 0' }}>
+                        <p style={{ fontSize: '0.78rem', color: '#1e40af', margin: '4px 0 0 0' }}>
                           Evite a suspensão do avanço dos seus estudos regularizando via PIX.
                         </p>
                       </div>
                     ) : (
                       <div style={{ padding: '1.25rem 0', textAlign: 'center' }}>
                         <CheckCircle2 size={34} color="#10b981" style={{ margin: '0 auto 0.4rem' }} />
-                        <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#ffffff' }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#003366' }}>
                           Você está 100% em dia!
                         </div>
-                        <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
+                        <p style={{ fontSize: '0.78rem', color: '#1e40af', margin: '4px 0 0 0' }}>
                           Nenhuma avaliação pendente ou mensalidade em atraso.
                         </p>
                       </div>
@@ -1126,7 +1129,8 @@ const Dashboard = () => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '0.5rem'
+                          gap: '0.5rem',
+                          boxShadow: '0 4px 14px rgba(0, 86, 179, 0.35)'
                         }}
                       >
                         Fazer Avaliação Pendente <ChevronRight size={15} />
@@ -1137,9 +1141,9 @@ const Dashboard = () => {
                         style={{
                           width: '100%',
                           padding: '0.65rem 1rem',
-                          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                          color: '#cbd5e1',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          backgroundColor: '#f8fafd',
+                          color: '#003366',
+                          border: '1px solid rgba(212, 175, 55, 0.45)',
                           borderRadius: '12px',
                           fontSize: '0.8rem',
                           fontWeight: 700,
@@ -1154,29 +1158,31 @@ const Dashboard = () => {
               </div>
 
               {/* 2. MÓDULOS EM ABERTO PARA ESTUDO (GRADE VIGENTE) */}
+              <div className="gold-separator-line" />
+
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                   <div>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: '#003366', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <BookOpen size={20} color="#0056b3" /> Módulos em Aberto para Estudo ({livrosEmEstudo.length})
                     </h2>
-                    <span style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+                    <span style={{ fontSize: '0.82rem', color: '#1e40af' }}>
                       Módulos com aulas liberadas para seu cronograma
                     </span>
                   </div>
                   <button
                     onClick={() => setActiveTab('cursos')}
                     className="btn btn-outline"
-                    style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem', fontWeight: 700, color: '#60a5fa', borderColor: 'rgba(96, 165, 250, 0.3)' }}
+                    style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8rem', fontWeight: 700, color: '#003366', borderColor: 'rgba(212, 175, 55, 0.45)', boxShadow: '0 0 6px rgba(0, 86, 179, 0.12)' }}
                   >
                     Ver Todos os Cursos
                   </button>
                 </div>
 
                 {livrosEmEstudo.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', background: 'rgba(15, 23, 42, 0.6)', borderRadius: '18px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                  <div style={{ textAlign: 'center', padding: '2.5rem 1rem', background: '#f8fafd', borderRadius: '18px', border: '1px solid rgba(212, 175, 55, 0.35)', boxShadow: '0 0 10px rgba(0, 86, 179, 0.12)' }}>
                     <CheckCircle2 size={36} color="#10b981" style={{ margin: '0 auto 0.5rem' }} />
-                    <p style={{ margin: 0, fontWeight: 700, color: '#f8fafc' }}>Nenhum módulo pendente em aberto.</p>
+                    <p style={{ margin: 0, fontWeight: 700, color: '#003366' }}>Nenhum módulo pendente em aberto.</p>
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
@@ -1184,14 +1190,15 @@ const Dashboard = () => {
                       <div
                         key={livro.id}
                         style={{
-                          background: 'rgba(15, 23, 42, 0.75)',
+                          background: '#ffffff',
                           borderRadius: '18px',
-                          border: '1px solid rgba(255, 255, 255, 0.08)',
+                          border: '1px solid rgba(212, 175, 55, 0.4)',
+                          borderTop: '3.5px solid #d4af37',
                           padding: '1.25rem',
                           display: 'flex',
                           flexDirection: 'column',
                           justifyContent: 'space-between',
-                          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
+                          boxShadow: '0 8px 24px rgba(0, 86, 179, 0.08), 0 0 10px rgba(0, 86, 179, 0.14)',
                           transition: 'all 0.2s ease'
                         }}
                       >
@@ -1206,7 +1213,8 @@ const Dashboard = () => {
                                   height: '72px',
                                   objectFit: 'cover',
                                   borderRadius: '8px',
-                                  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.4)',
+                                  boxShadow: '0 4px 10px rgba(0, 51, 102, 0.2)',
+                                  border: '1px solid rgba(212, 175, 55, 0.35)',
                                   flexShrink: 0
                                 }}
                               />
@@ -1230,7 +1238,7 @@ const Dashboard = () => {
                             )}
 
                             <div style={{ minWidth: 0, flex: 1 }}>
-                              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
+                              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0056b3', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block' }}>
                                 {livro.courseName}
                               </span>
                               <h3
@@ -1238,7 +1246,7 @@ const Dashboard = () => {
                                   fontSize: '0.95rem',
                                   fontWeight: 800,
                                   margin: '2px 0 0 0',
-                                  color: '#ffffff',
+                                  color: '#003366',
                                   lineHeight: 1.3,
                                   whiteSpace: 'nowrap',
                                   overflow: 'hidden',
@@ -1248,7 +1256,7 @@ const Dashboard = () => {
                               >
                                 {livro.titulo}
                               </h3>
-                              <span style={{ fontSize: '0.74rem', color: '#94a3b8', display: 'block', marginTop: '2px' }}>
+                              <span style={{ fontSize: '0.74rem', color: '#1e40af', display: 'block', marginTop: '2px', fontWeight: 600 }}>
                                 {(livro.aulas || []).length} aulas & provas
                               </span>
                             </div>
@@ -1284,8 +1292,10 @@ const Dashboard = () => {
               </div>
 
               {/* 3. ACESSO RÁPIDO & RECURSOS COMPLEMENTARES */}
+              <div className="gold-separator-line" />
+
               <div>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 1rem 0', color: '#f8fafc' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 1rem 0', color: '#003366' }}>
                   Acesso Rápido & Recursos
                 </h2>
 
@@ -1293,13 +1303,13 @@ const Dashboard = () => {
                   <div
                     onClick={() => setActiveTab('biblioteca')}
                     className="admin-action-card"
-                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer', background: '#ffffff', border: '1px solid rgba(212, 175, 55, 0.4)', boxShadow: '0 6px 18px rgba(0, 86, 179, 0.08), 0 0 8px rgba(0, 86, 179, 0.12)' }}
                   >
-                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(0, 86, 179, 0.15)', color: '#0056b3' }}>
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(0, 86, 179, 0.08)', color: '#0056b3' }}>
                       <BookOpen size={28} />
                     </div>
-                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Biblioteca Virtual</h3>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0', color: '#003366' }}>Biblioteca Virtual</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#1e40af', margin: 0 }}>
                       Apostilas dos módulos, Bíblia Online e manuais de estudo.
                     </p>
                   </div>
@@ -1307,13 +1317,13 @@ const Dashboard = () => {
                   <div
                     onClick={() => setActiveTab('forum')}
                     className="admin-action-card"
-                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer', background: '#ffffff', border: '1px solid rgba(212, 175, 55, 0.4)', boxShadow: '0 6px 18px rgba(0, 86, 179, 0.08), 0 0 8px rgba(0, 86, 179, 0.12)' }}
                   >
-                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(96, 165, 250, 0.15)', color: '#60a5fa' }}>
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(0, 86, 179, 0.08)', color: '#0056b3' }}>
                       <MessageSquare size={28} />
                     </div>
-                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Fórum de Dúvidas</h3>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0', color: '#003366' }}>Fórum de Dúvidas</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#1e40af', margin: 0 }}>
                       Tire dúvidas e interaja com professores e colegas de turma.
                     </p>
                   </div>
@@ -1321,13 +1331,13 @@ const Dashboard = () => {
                   <div
                     onClick={() => setActiveTab('documentos')}
                     className="admin-action-card"
-                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer', background: '#ffffff', border: '1px solid rgba(212, 175, 55, 0.4)', boxShadow: '0 6px 18px rgba(0, 86, 179, 0.08), 0 0 8px rgba(0, 86, 179, 0.12)' }}
                   >
-                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}>
                       <FileText size={28} />
                     </div>
-                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Documentação</h3>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0', color: '#003366' }}>Documentação</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#1e40af', margin: 0 }}>
                       Envie documentos pessoais e comprove sua matrícula acadêmica.
                     </p>
                   </div>
@@ -1335,13 +1345,13 @@ const Dashboard = () => {
                   <div
                     onClick={() => setActiveTab('certificados')}
                     className="admin-action-card"
-                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer' }}
+                    style={{ margin: 0, padding: '1.25rem', cursor: 'pointer', background: '#ffffff', border: '1px solid rgba(212, 175, 55, 0.4)', boxShadow: '0 6px 18px rgba(0, 86, 179, 0.08), 0 0 8px rgba(0, 86, 179, 0.12)' }}
                   >
-                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' }}>
+                    <div className="icon-wrapper" style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)', color: '#b45309' }}>
                       <GraduationCap size={28} />
                     </div>
-                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0' }}>Certificados & Histórico</h3>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: 0 }}>
+                    <h3 style={{ fontSize: '1.05rem', margin: '0 0 0.25rem 0', color: '#003366' }}>Certificados & Histórico</h3>
+                    <p style={{ fontSize: '0.82rem', color: '#1e40af', margin: 0 }}>
                       Baixe certificados oficiais e histórico acadêmico completo.
                     </p>
                   </div>
