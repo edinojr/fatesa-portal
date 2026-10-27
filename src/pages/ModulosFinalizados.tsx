@@ -339,26 +339,26 @@ const goToPanel = () => {
 
     return (
         <div className="admin-layout">
-            <header className="dashboard-header-modern">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                    <Logo size={120} />
-                    <div style={{ display: 'flex', gap: '0.75rem', borderLeft: '1px solid var(--glass-border)', paddingLeft: '1.5rem' }}>
-                        <button onClick={() => goToPanel()} className="nav-btn-premium" title="Voltar ao Painel">
-                            <ChevronLeft size={18} /> <span className="mobile-hide">Painel do Aluno</span>
+            <header className="dashboard-header-modern" style={{ height: '60px', minHeight: '60px', maxHeight: '60px', padding: '0 1.5rem', flexWrap: 'nowrap', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
+                    <Logo size={72} maxHeight={42} />
+                    <div style={{ display: 'flex', gap: '0.5rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1rem' }}>
+                        <button onClick={() => goToPanel()} className="nav-btn-premium" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} title="Voltar ao Painel">
+                            <ChevronLeft size={16} /> <span className="mobile-hide">Painel do Aluno</span>
                         </button>
                     </div>
                 </div>
 
-                <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                     <h1 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>Meu Boletim & Módulos Finalizados</h1>
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center', minWidth: 0, overflow: 'hidden' }}>
+                     <h1 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Meu Boletim & Módulos Finalizados</h1>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'nowrap', flexShrink: 0 }}>
                     <PanelSwitcher currentPanel="aluno" />
-                    <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', padding: '0.4rem 1rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.75rem', border: '1px solid var(--glass-border)' }}>
-                        <Award size={18} color="var(--primary)" />
-                        <span style={{ fontWeight: 800 }}>{totalModulosConcluidos}</span>
-                        <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Módulos</span>
+                    <div className="mobile-hide" style={{ background: 'rgba(255, 255, 255, 0.15)', padding: '0.35rem 0.75rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.5rem', border: '1px solid rgba(255, 255, 255, 0.3)' }}>
+                        <Award size={16} color="#ffffff" />
+                        <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#ffffff' }}>{totalModulosConcluidos}</span>
+                        <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255, 255, 255, 0.85)', textTransform: 'uppercase' }}>Módulos</span>
                     </div>
                 </div>
             </header>

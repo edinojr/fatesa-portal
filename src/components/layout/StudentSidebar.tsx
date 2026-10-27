@@ -134,12 +134,14 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
         {/* TOPO DA SIDEBAR: LOGO & STATUS */}
         <div
           style={{
-            height: '68px',
+            height: '60px',
+            minHeight: '60px',
+            maxHeight: '60px',
             padding: isCollapsed ? '0 0.5rem' : '0 1.25rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: isCollapsed ? 'center' : 'space-between',
-            borderBottom: '2px solid #d4af37',
+            borderBottom: '2.5px solid #d4af37',
             boxShadow: '0 2px 8px rgba(0, 86, 179, 0.35)',
             background: 'linear-gradient(180deg, rgba(0, 86, 179, 0.05) 0%, #ffffff 100%)',
           }}

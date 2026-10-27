@@ -344,14 +344,14 @@ const ModuleDetails = () => {
 
     return (
         <div className="admin-layout">
-            <header className="dashboard-header-modern" style={{ justifyContent: 'space-between', padding: '1rem 2.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button onClick={() => goToPanel()} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem' }} title="Voltar">
-                        <ChevronLeft size={18} />
+            <header className="dashboard-header-modern" style={{ justifyContent: 'space-between', padding: '0 1.5rem', height: '60px', minHeight: '60px', maxHeight: '60px', flexWrap: 'nowrap', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', minWidth: 0, overflow: 'hidden' }}>
+                    <button onClick={() => goToPanel()} className="nav-btn-premium" style={{ width: 'auto', padding: '0.4rem 0.6rem', flexShrink: 0 }} title="Voltar">
+                        <ChevronLeft size={16} />
                     </button>
-                    <div>
-                        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>{book.titulo}</h1>
-                        <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>{courseName} • Caminho de Aprendizado</p>
+                    <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                        <h1 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{book.titulo}</h1>
+                        <p className="mobile-hide" style={{ margin: 0, opacity: 0.8, fontSize: '0.72rem', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{courseName} • Caminho de Aprendizado</p>
                     </div>
                 </div>
             </header>

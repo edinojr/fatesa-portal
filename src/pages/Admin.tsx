@@ -352,12 +352,12 @@ const Admin = () => {
   }
 
   const adminActions = (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'nowrap' }}>
       <PanelSwitcher currentPanel="admin" />
-      <div className="input-group" style={{ marginBottom: 0, width: '100%', maxWidth: '300px' }}>
+      <div className="input-group mobile-hide" style={{ marginBottom: 0, width: '210px' }}>
         <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>
         <div style={{ position: 'relative' }}>
-          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.85, color: '#ffffff' }} />
+          <Search size={15} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.85, color: '#ffffff' }} />
           <input 
             id="admin-global-search"
             name="admin-search"
@@ -367,11 +367,13 @@ const Admin = () => {
             value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} 
             style={{ 
-              paddingLeft: '2.5rem',
+              padding: '0.35rem 0.75rem 0.35rem 2.1rem',
+              height: '34px',
+              fontSize: '0.82rem',
               background: 'rgba(255, 255, 255, 0.15)',
               border: '1px solid rgba(255, 255, 255, 0.35)',
               color: '#ffffff',
-              borderRadius: '12px'
+              borderRadius: '10px'
             }}
           />
         </div>
@@ -379,9 +381,9 @@ const Admin = () => {
       <button 
         onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }}
         className="nav-btn-premium danger"
-        style={{ width: 'auto' }}
+        style={{ width: 'auto', padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
       >
-        <LogOut size={18} /> <span className="mobile-hide">Sair</span>
+        <LogOut size={16} /> <span className="mobile-hide">Sair</span>
       </button>
     </div>
   )

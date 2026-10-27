@@ -31,7 +31,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   nav,
   variant = 'student',
   breadcrumb,
-  showTopBanner = true
+  showTopBanner = false
 }) => {
   const navigate = useNavigate()
   const { signOut } = useProfile()
@@ -98,14 +98,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           background: 'var(--primary, #0056b3)',
           color: '#ffffff',
           justifyContent: 'space-between',
-          padding: '0.85rem 2rem',
-          height: 'auto',
-          minHeight: '70px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.2)'
+          padding: '0 1.5rem',
+          height: '60px',
+          minHeight: '60px',
+          maxHeight: '60px',
+          boxShadow: '0 4px 16px rgba(0, 86, 179, 0.16), 0 0 10px rgba(0, 86, 179, 0.22)',
+          borderBottom: '2.5px solid #d4af37',
+          flexWrap: 'nowrap',
+          overflow: 'hidden'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'nowrap', minWidth: 0, flex: 1 }}>
           {/* Logo Oficial Fatesa Padronizado */}
           <Link 
             to="/" 
@@ -113,23 +116,24 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               display: 'inline-flex', 
               alignItems: 'center', 
               textDecoration: 'none',
-              transition: 'transform 0.2s ease'
+              transition: 'transform 0.2s ease',
+              flexShrink: 0
             }} 
             title="Ir para a página inicial"
           >
-            <Logo size={115} />
+            <Logo size={72} maxHeight={42} />
           </Link>
 
           {/* Menus e botões de navegação brancos */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1rem', flexShrink: 0 }}>
             {showHome && (
               <button 
                 onClick={() => navigate(effectiveHomePath)} 
                 className="nav-btn-premium" 
-                style={{ width: 'auto', padding: '0.5rem 0.9rem', gap: '0.5rem' }}
+                style={{ width: 'auto', padding: '0.4rem 0.75rem', gap: '0.4rem', fontSize: '0.8rem' }}
                 title="Voltar ao Painel Inicial"
               >
-                <Home size={18} /> <span className="mobile-hide">Painel Inicial</span>
+                <Home size={16} /> <span className="mobile-hide">Painel Inicial</span>
               </button>
             )}
 
@@ -137,26 +141,26 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               <button 
                 onClick={handleBack} 
                 className="nav-btn-premium" 
-                style={{ width: 'auto', padding: '0.5rem 0.8rem', gap: '0.4rem' }}
+                style={{ width: 'auto', padding: '0.4rem 0.7rem', gap: '0.35rem', fontSize: '0.8rem' }}
                 title="Voltar"
               >
-                <ChevronLeft size={18} /> <span className="mobile-hide">Voltar</span>
+                <ChevronLeft size={16} /> <span className="mobile-hide">Voltar</span>
               </button>
             )}
           </div>
           
-          <div style={{ marginLeft: '0.25rem' }}>
-            <h1 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em' }}>{title}</h1>
+          <div style={{ marginLeft: '0.25rem', minWidth: 0, overflow: 'hidden' }}>
+            <h1 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h1>
             {subtitle && (
-              <p style={{ margin: 0, opacity: 0.85, fontSize: '0.82rem', color: '#ffffff' }}>{subtitle}</p>
+              <p className="mobile-hide" style={{ margin: 0, opacity: 0.85, fontSize: '0.72rem', color: '#ffffff', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{subtitle}</p>
             )}
           </div>
 
           {breadcrumb && breadcrumb.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '0.5rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1.25rem' }}>
+            <div className="mobile-hide" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginLeft: '0.4rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1rem', flexShrink: 0 }}>
               {breadcrumb.map((item, idx) => (
                 <React.Fragment key={idx}>
-                  {idx > 0 && <ChevronRight size={14} style={{ opacity: 0.6, color: '#ffffff' }} />}
+                  {idx > 0 && <ChevronRight size={13} style={{ opacity: 0.6, color: '#ffffff' }} />}
                   <span 
                     onClick={item.onClick}
                     style={{ 
@@ -165,7 +169,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
                       fontWeight: item.isActive ? 800 : 500,
                       cursor: item.onClick ? 'pointer' : 'default',
                       textDecoration: item.onClick ? 'underline' : 'none',
-                      fontSize: '0.9rem'
+                      fontSize: '0.82rem',
+                      whiteSpace: 'nowrap'
                     }}
                   >
                     {item.label}
@@ -176,13 +181,13 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           )}
 
           {nav && (
-            <div style={{ marginLeft: '0.5rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1.25rem' }}>
+            <div style={{ marginLeft: '0.4rem', borderLeft: '1px solid rgba(255, 255, 255, 0.25)', paddingLeft: '1rem', flexShrink: 0 }}>
               {nav}
             </div>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'nowrap', flexShrink: 0 }}>
           {actions || getDefaultActions()}
         </div>
       </header>

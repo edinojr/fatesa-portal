@@ -194,10 +194,10 @@ const Navbar = () => {
         }
       `}</style>
 
-      <nav className="portal-nav" style={{ background: '#fff', borderBottom: '2px solid var(--primary)', padding: '1rem 0', position: 'sticky', top: 0, zIndex: 1000 }}>
-        <div className="container portal-nav-inner">
-          <Link to="/" onClick={handleNavClick} style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
-            <Logo size={120} />
+      <nav className="portal-nav" style={{ background: '#fff', borderBottom: '2px solid var(--primary)', padding: '0.35rem 0', height: '60px', minHeight: '60px', maxHeight: '60px', display: 'flex', alignItems: 'center', position: 'sticky', top: 0, zIndex: 1000 }}>
+        <div className="container portal-nav-inner" style={{ width: '100%' }}>
+          <Link to="/" onClick={handleNavClick} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
+            <Logo size={76} maxHeight={44} />
           </Link>
 
           {/* Desktop Links */}

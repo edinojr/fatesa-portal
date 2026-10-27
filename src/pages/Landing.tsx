@@ -36,22 +36,22 @@ const Landing = () => {
       <section id="home" className="hero-section hero-section--home">
         <div className="hero-overlay"></div>
         <div className="hero-content">
-          <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>Formação Teológica de Alto Nível</h1>
-          <p className="slogan" style={{ fontSize: '1.1rem', maxWidth: '700px', margin: '0 auto 2.5rem' }}>
+          <h1 style={{ fontSize: '2.1rem', marginBottom: '0.4rem' }}>Formação Teológica de Alto Nível</h1>
+          <p className="slogan" style={{ fontSize: '0.96rem', maxWidth: '680px', margin: '0 auto 1rem' }}>
             Aprofunde seu conhecimento nas Escrituras com uma metodologia transformadora e professores renomados.
           </p>
-          <div className="hero-btns" style={{ justifyContent: 'center', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ padding: '0.875rem 2rem', borderRadius: '50px', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.5px', boxShadow: '0 10px 25px var(--primary-glow)', flex: '1', minWidth: '180px' }}>
-               ENTRAR NO PORTAL <ChevronRight size={18} />
+          <div className="hero-btns" style={{ justifyContent: 'center', display: 'flex', gap: '0.85rem', flexWrap: 'wrap' }}>
+            <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ padding: '0.55rem 1.5rem', borderRadius: '50px', fontSize: '0.86rem', fontWeight: 600, letterSpacing: '0.5px', boxShadow: '0 8px 20px var(--primary-glow)', flex: '0 1 auto', minWidth: '165px' }}>
+               ENTRAR NO PORTAL <ChevronRight size={16} />
             </button>
-            <button onClick={() => navigate('/matricula')} className="btn btn-outline" style={{ padding: '0.875rem 2rem', borderRadius: '50px', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.5px', flex: '1', minWidth: '180px' }}>
-               CADASTRE-SE <ChevronRight size={18} />
+            <button onClick={() => navigate('/matricula')} className="btn btn-outline" style={{ padding: '0.55rem 1.5rem', borderRadius: '50px', fontSize: '0.86rem', fontWeight: 600, letterSpacing: '0.5px', flex: '0 1 auto', minWidth: '165px' }}>
+               CADASTRE-SE <ChevronRight size={16} />
             </button>
           </div>
           {visitCount !== null && visitCount > 0 && (
-            <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', opacity: 0.7 }}>
-              <Eye size={16} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{visitCount.toLocaleString('pt-BR')} acessos ao portal</span>
+            <div style={{ marginTop: '0.65rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.4rem', opacity: 0.7 }}>
+              <Eye size={14} />
+              <span style={{ fontSize: '0.76rem', fontWeight: 600 }}>{visitCount.toLocaleString('pt-BR')} acessos ao portal</span>
             </div>
           )}
         </div>
@@ -163,6 +163,5 @@ const Landing = () => {
     </PublicPageLayout>
   )
 }
-
 
 export default Landing

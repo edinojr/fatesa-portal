@@ -401,7 +401,7 @@ const SmartViewer = () => {
         overflow: isMobile ? 'visible' : 'hidden' 
       }}
     >
-      <header className="dashboard-header-modern" style={{ height: 'auto', minHeight: '60px', padding: '0.75rem 2rem', background: '#0f0f0f', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+      <header className="dashboard-header-modern" style={{ height: '60px', minHeight: '60px', maxHeight: '60px', padding: '0 1.5rem', background: '#0f0f0f', borderBottom: '1px solid rgba(255,255,255,0.1)', flexWrap: 'nowrap', overflow: 'hidden' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <button onClick={goToModule} className="nav-btn-premium" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(var(--primary-rgb), 0.15)', borderColor: 'rgba(var(--primary-rgb), 0.3)' }} title="Voltar à página de seleção de lições (ESC)">
             <LayoutGrid size={16} /> <span className="mobile-hide">Lições do Módulo</span>
