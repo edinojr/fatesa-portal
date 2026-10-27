@@ -38,13 +38,13 @@ const ModuleDetails = () => {
     }, [courses, id]);
 
     useEffect(() => {
-        if (!profileLoading && profile) {
+        if (!profileLoading && profile?.id) {
             fetchStudentDashboardData();
             fetchNucleusReleases();
             fetchIndividualExceptions();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [profileLoading, profile, fetchStudentDashboardData, id]);
+    }, [profileLoading, profile?.id, id]);
 
     const fetchNucleusReleases = async () => {
       const { data, error } = await fetchAllRows((from, to) =>

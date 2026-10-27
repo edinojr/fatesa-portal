@@ -350,7 +350,7 @@ export const useProfessorManagement = () => {
   }, [profile?.id]);
 
 
-  // 4. Auth and Role Setup
+  // 4. Auth and Role Setup (executa apenas uma vez por sessão de usuário, sem recarregar ao voltar de outra aba do navegador)
   useEffect(() => {
     if (!profileLoading) {
       if (!profile) { navigate('/login'); return; }
@@ -367,7 +367,8 @@ export const useProfessorManagement = () => {
       
       fetchData().finally(() => setLoading(false));
     }
-  }, [profile, profileLoading, navigate, fetchData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, profileLoading, navigate, fetchData]);
 
   const handleLogout = useCallback(async () => {
     await supabase.auth.signOut();

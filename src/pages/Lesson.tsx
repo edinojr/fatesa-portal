@@ -1074,13 +1074,6 @@ const Lesson = () => {
       window.history.pushState(null, '', window.location.href);
     };
 
-    // ——— pageshow: detect bfcache restore ———
-    const onPageShow = (e: PageTransitionEvent) => {
-      if (e.persisted) {
-        window.location.reload();
-      }
-    };
-
     // ——— Cache-prevention meta tags ———
     const metaCache = document.createElement('meta');
     metaCache.httpEquiv = 'Cache-Control';
@@ -1105,7 +1098,6 @@ const Lesson = () => {
     document.addEventListener('visibilitychange', onVisibilityChange);
     document.addEventListener('fullscreenchange', onFullscreenChange);
     window.addEventListener('popstate', onPopState);
-    window.addEventListener('pageshow', onPageShow);
 
     // ——— Request fullscreen ———
     document.documentElement.requestFullscreen().catch(() => {});
@@ -1115,7 +1107,6 @@ const Lesson = () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       window.removeEventListener('popstate', onPopState);
-      window.removeEventListener('pageshow', onPageShow);
 
       metaCache.remove();
       metaPragma.remove();

@@ -129,7 +129,8 @@ export const useCoordinatorData = (profile: any) => {
     } finally {
       setLoading(false);
     }
-  }, [profile?.nucleo_id, profile, page, pageSize]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, profile?.nucleo_id, page, pageSize]);
 
   useEffect(() => {
     fetchCoordinatorDashboard();

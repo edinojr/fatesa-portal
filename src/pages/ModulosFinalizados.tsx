@@ -77,11 +77,11 @@ const goToPanel = () => {
     };
 
     useEffect(() => {
-        if (!profileLoading && profile) {
+        if (!profileLoading && profile?.id) {
             fetchStudentDashboardData();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [profileLoading, profile]);
+    }, [profileLoading, profile?.id]);
 
     const [viewMode, setViewMode] = useState<'cards' | 'tabela'>('cards');
 

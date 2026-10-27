@@ -62,14 +62,16 @@ export const useAdminManagement = () => {
         return;
       }
     }
-  }, [profile, profileLoading, navigate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, profileLoading, navigate]);
 
-  // 5. Initial Data Fetch
+  // 5. Initial Data Fetch (executa apenas na primeira carga ou quando o usuário muda de aba do painel, sem recarregar ao voltar de outra guia do navegador)
   useEffect(() => {
-    if (profile && !profileLoading) {
+    if (profile?.id && !profileLoading) {
       fetchData();
     }
-  }, [nav.activeTab, profile, profileLoading, fetchData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nav.activeTab, profile?.id, profileLoading, fetchData]);
 
   // Return the unified interface (Bridge)
   return useMemo(() => ({

@@ -1,87 +1,58 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, onSupabaseAuthError } from '../lib/supabase';
 import { checkAccessStatus } from '../lib/paymentCycle';
-import { isTokenExpired, signOutLocal, isUserAdmin, ADMIN_EMAILS } from '../lib/authUtils';
+import { isTokenExpired, signOutLocal, ADMIN_EMAILS } from '../lib/authUtils';
 
-// Global cache to prevent race conditions (5000ms Lock error) when multiple components mount
+// Global in-memory cache so switching tabs or remounting components reuses the loaded profile
+// without re-querying Supabase or resetting UI state, unless explicitly refreshed by the user.
 let globalProfilePromise: Promise<any> | null = null;
+let cachedProfileData: any = null;
 let lastFetchTime = 0;
 
 export const useProfile = () => {
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(() => cachedProfileData);
+  const [loading, setLoading] = useState<boolean>(() => !cachedProfileData);
   const navigate = useNavigate();
   const navigatingRef = useRef(false);
+  const profileRef = useRef<any>(cachedProfileData);
+  profileRef.current = profile;
 
-  const goToLogin = (message?: string) => {
-    if (navigatingRef.current) return
-    navigatingRef.current = true
-    setProfile(null)
-    setLoading(false)
-    void signOutLocal()
-    const path = message ? `/login?expired=true&message=${encodeURIComponent(message)}` : '/login?expired=true'
-    navigate(path, { replace: true })
-  }
+  const goToLogin = useCallback((message?: string) => {
+    if (navigatingRef.current) return;
+    navigatingRef.current = true;
+    cachedProfileData = null;
+    globalProfilePromise = null;
+    setProfile(null);
+    setLoading(false);
+    void signOutLocal();
+    const path = message ? `/login?expired=true&message=${encodeURIComponent(message)}` : '/login?expired=true';
+    navigate(path, { replace: true });
+  }, [navigate]);
 
-  useEffect(() => {
-    fetchProfile();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      switch (event) {
-        case 'SIGNED_OUT':
-          goToLogin('Sessão encerrada.');
-          break
-        case 'TOKEN_REFRESHED':
-          if (session) fetchProfile()
-          break
-        case 'SIGNED_IN':
-          if (session) fetchProfile()
-          break
-        case 'INITIAL_SESSION':
-          if (!session) {
-            goToLogin()
-          }
-          break
-        default:
-          if (event.toLowerCase().includes('failed') || event.toLowerCase().includes('error')) {
-            goToLogin('Sessão expirada. Faça login novamente.')
-          }
+  const fetchProfile = useCallback(async (forceRefresh = false) => {
+    // Se já temos o perfil carregado em memória e não foi pedido refresh explícito pelo usuário,
+    // mantém o mesmo objeto (evita re-renderizar ou recarregar dados ao voltar de outra aba do navegador).
+    if (!forceRefresh && cachedProfileData) {
+      if (profileRef.current !== cachedProfileData) {
+        setProfile(cachedProfileData);
       }
-    });
+      setLoading(false);
+      return cachedProfileData;
+    }
 
-    const healthCheck = setInterval(async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session && isTokenExpired(session.access_token)) {
-        const { data: refreshed } = await supabase.auth.refreshSession()
-        if (!refreshed.session) {
-          goToLogin('Sua sessão expirou.')
-        }
-      }
-    }, 60000)
-
-    const unsubAuthError = onSupabaseAuthError(() => {
-      goToLogin('Sessão expirada. Faça login novamente.')
-    })
-
-    return () => {
-      subscription.unsubscribe()
-      clearInterval(healthCheck)
-      unsubAuthError()
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchProfile = async (forceRefresh = false) => {
-    // If there's an ongoing request or a very recent cache (within 2 seconds), reuse it
-    if (!forceRefresh && globalProfilePromise && (Date.now() - lastFetchTime < 2000)) {
+    // Se já existe uma requisição em andamento recente, reaproveita a mesma Promise
+    if (!forceRefresh && globalProfilePromise && (Date.now() - lastFetchTime < 10000)) {
       try {
-        const cachedProfile = await globalProfilePromise;
-        setProfile(cachedProfile);
+        const cached = await globalProfilePromise;
+        if (cached) {
+          cachedProfileData = cached;
+          setProfile((prev: any) => (prev?.id === cached.id && JSON.stringify(prev) === JSON.stringify(cached) ? prev : cached));
+        }
         setLoading(false);
-        return;
-      } catch (e) {
-        // Fallthrough if the cached promise failed
+        return cached;
+      } catch {
+        // Continua caso a promise anterior tenha falhado
       }
     }
 
@@ -92,21 +63,21 @@ export const useProfile = () => {
         if (sessionError) {
           console.error('Session Error:', sessionError);
           if (sessionError.message?.toLowerCase().includes('refresh') || sessionError.message?.toLowerCase().includes('token')) {
-            goToLogin('Sessão expirada. Faça login novamente.')
+            goToLogin('Sessão expirada. Faça login novamente.');
           }
           setLoading(false);
-          return;
+          return null;
         }
         if (s) {
           if (isTokenExpired(s.access_token)) {
-            const { data: refreshed } = await supabase.auth.refreshSession()
+            const { data: refreshed } = await supabase.auth.refreshSession();
             if (!refreshed.session) {
-              goToLogin('Sua sessão expirou.')
-              return
+              goToLogin('Sua sessão expirou.');
+              return null;
             }
-            session = refreshed.session
+            session = refreshed.session;
           } else {
-            session = s
+            session = s;
           }
           break;
         }
@@ -114,10 +85,10 @@ export const useProfile = () => {
           await new Promise(resolve => setTimeout(resolve, 500));
         }
       }
-      
+
       if (!session) {
         goToLogin();
-        return;
+        return null;
       }
 
       const emailLower = (session.user.email || '').toLowerCase().trim();
@@ -129,7 +100,7 @@ export const useProfile = () => {
           err.code === 'PGRST301' ||
           err.code === '401' ||
           String(err.message || '').toLowerCase().includes('jwt')
-        )
+        );
 
       let data: any = null, error: any = null;
       try {
@@ -145,14 +116,14 @@ export const useProfile = () => {
       }
 
       if (isJwtErr(error)) {
-        const { data: refreshed } = await supabase.auth.refreshSession()
+        const { data: refreshed } = await supabase.auth.refreshSession();
         if (!refreshed.session) {
           if (!isMasterAdmin) {
-            goToLogin('Sua sessão expirou.')
-            return
+            goToLogin('Sua sessão expirou.');
+            return null;
           }
         } else {
-          session = refreshed.session
+          session = refreshed.session;
           try {
             const retryJwt = await supabase
               .from('users')
@@ -180,7 +151,7 @@ export const useProfile = () => {
           // keep error
         }
       }
-      
+
       // Administrador Master tem imunidade contra erros de tabela e bloqueio de pagamento
       if (isMasterAdmin) {
         if (!data) {
@@ -204,21 +175,14 @@ export const useProfile = () => {
         }
         error = null;
 
-        // Sincroniza em background no Supabase para garantir consistência
-        supabase.from('users').update({
-          tipo: 'admin',
-          bloqueado: false,
-          caminhos_acesso: allMasterRoles
-        }).eq('id', session.user.id).then(() => {}, () => {});
-
         const refreshedNucleo = (data as any).nucleos?.nome || data.nucleo;
         return { ...data, nucleo: refreshedNucleo, email: session.user.email, accessStatus: 'active' };
       }
 
       if (error) {
         if (isJwtErr(error)) {
-          goToLogin('Sua sessão expirou.')
-          return
+          goToLogin('Sua sessão expirou.');
+          return null;
         }
         throw error;
       }
@@ -246,23 +210,79 @@ export const useProfile = () => {
 
     try {
       const finalProfile = await globalProfilePromise;
-      if (finalProfile) setProfile(finalProfile);
-    } catch (err: any) {
-      const msg = String(err?.message || '').toLowerCase()
-      if (err?.code === 'PGRST301' || err?.code === '401' || msg.includes('jwt')) {
-        goToLogin('Sua sessão expirou.')
-        return
+      if (finalProfile) {
+        cachedProfileData = finalProfile;
+        setProfile((prev: any) => {
+          if (prev && prev.id === finalProfile.id && JSON.stringify(prev) === JSON.stringify(finalProfile)) {
+            return prev;
+          }
+          return finalProfile;
+        });
       }
-      goToLogin('Não foi possível carregar seu perfil. Faça login novamente.')
+      return finalProfile;
+    } catch (err: any) {
+      const msg = String(err?.message || '').toLowerCase();
+      if (err?.code === 'PGRST301' || err?.code === '401' || msg.includes('jwt')) {
+        goToLogin('Sua sessão expirou.');
+        return null;
+      }
+      if (!cachedProfileData) {
+        goToLogin('Não foi possível carregar seu perfil. Faça login novamente.');
+      }
+      return cachedProfileData;
     } finally {
       setLoading(false);
     }
-  };
+  }, [goToLogin]);
+
+  useEffect(() => {
+    void fetchProfile(false);
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      switch (event) {
+        case 'SIGNED_OUT':
+          goToLogin('Sessão encerrada.');
+          break;
+        case 'TOKEN_REFRESHED':
+          // Não refaz consulta ao banco quando o navegador volta do segundo plano e renova o token JWT!
+          break;
+        case 'SIGNED_IN':
+          // Se o mesmo usuário já está carregado em memória (evento disparado pelo foco da aba), ignora para não atualizar a página nem consumir dados
+          if (session && cachedProfileData && cachedProfileData.id === session.user?.id) {
+            break;
+          }
+          if (session) void fetchProfile(true);
+          break;
+        case 'INITIAL_SESSION':
+          if (!session && !cachedProfileData) {
+            goToLogin();
+          }
+          break;
+        default:
+          if (event.toLowerCase().includes('failed') || event.toLowerCase().includes('error')) {
+            goToLogin('Sessão expirada. Faça login novamente.');
+          }
+      }
+    });
+
+    const unsubAuthError = onSupabaseAuthError(() => {
+      goToLogin('Sessão expirada. Faça login novamente.');
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      unsubAuthError();
+    };
+  }, [fetchProfile, goToLogin]);
 
   const signOut = async () => {
+    cachedProfileData = null;
+    globalProfilePromise = null;
     await supabase.auth.signOut();
     navigate('/login');
   };
 
-  return { profile, loading, signOut, refreshProfile: fetchProfile };
+  const refreshProfile = useCallback(() => fetchProfile(true), [fetchProfile]);
+
+  return { profile, loading, signOut, refreshProfile };
 };
