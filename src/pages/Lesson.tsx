@@ -365,8 +365,9 @@ const Lesson = () => {
           const fallback = await supabase.from('users').select('tipo, caminhos_acesso, nucleo_id').eq('id', user.id).maybeSingle();
           profile = { ...(fallback.data || {}), modulos_finalizados_manual: [] };
         }
-        const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r.toLowerCase()));
-        setUserProfile({ ...user, profile_tipo: profile.tipo, caminhos_acesso: profile.caminhos_acesso, nucleo_id: profile.nucleo_id, modulos_finalizados_manual: profile.modulos_finalizados_manual || [], isStaff });
+        const isEdiAdmin = (user.email || '').toLowerCase().trim() === 'edi.ben.jr@gmail.com';
+        const isStaff = isEdiAdmin || ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo?.toLowerCase() || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r.toLowerCase()));
+        setUserProfile({ ...user, profile_tipo: profile.tipo, caminhos_acesso: profile.caminhos_acesso, nucleo_id: profile.nucleo_id, modulos_finalizados_manual: profile.modulos_finalizados_manual || [], isStaff, isEdiAdmin });
 
         // 1. Audit: Content Release Policy — fetch submissions + aula data without nested join
         let modulePassed = false;
@@ -841,8 +842,11 @@ const Lesson = () => {
     }
     
     const targetId = (lesson as any).linkedActivity?.id || id;
-    
-    if (userProfile?.isStaff && isSavingGabarito) {
+    const isEdiAdmin = !!userProfile?.isEdiAdmin || (userProfile?.email || '').toLowerCase().trim() === 'edi.ben.jr@gmail.com';
+    let effectiveQuestions = questions;
+    let effectiveAnswers = { ...answers };
+
+    if (userProfile?.isStaff && (isSavingGabarito || isEdiAdmin)) {
       const gabarito = questions.map((q, idx) => {
         const qKey = q.id || idx;
         const adminAns = answers[qKey];
@@ -868,16 +872,46 @@ const Lesson = () => {
 
       const { error } = await supabase.from('aulas').update({ questionario: gabarito }).eq('id', targetId);
       if (error) throw error;
+      setQuestions(gabarito);
+      effectiveQuestions = gabarito;
+
+      if (isEdiAdmin) {
+        gabarito.forEach((q, idx) => {
+          const qKey = q.id || idx;
+          if (effectiveAnswers[qKey] === undefined || effectiveAnswers[qKey] === null || effectiveAnswers[qKey] === '') {
+            if (q.type === 'true_false') effectiveAnswers[qKey] = q.isTrue ?? true;
+            else if (q.type === 'multiple_choice' || !q.type) effectiveAnswers[qKey] = q.correct ?? 0;
+            else if (q.type === 'matching' && q.matchingPairs) {
+              const mapAns: Record<number, string> = {};
+              q.matchingPairs.forEach((_, mIdx) => { mapAns[mIdx] = String(mIdx); });
+              effectiveAnswers[qKey] = mapAns;
+            }
+          } else if (q.type === 'matching' && q.matchingPairs && typeof effectiveAnswers[qKey] === 'object') {
+            const normalizedMap: Record<number, string> = {};
+            q.matchingPairs.forEach((_, mIdx) => { normalizedMap[mIdx] = String(mIdx); });
+            effectiveAnswers[qKey] = normalizedMap;
+          }
+        });
+        setAnswers(effectiveAnswers);
+      }
 
       // Recorreção retroativa: gabarito alterado → recalcular notas dos alunos
-      if (window.confirm('Gabarito Oficial salvo!\n\nDeseja RECORRIGIR agora as notas de todos os alunos que já fizeram esta avaliação com o novo gabarito?')) {
-        const regraded = await regradeSubmissionsForAula(targetId);
-        if (regraded >= 0) toast.success(`Recorreção concluída: ${regraded} nota(s) atualizada(s).`);
-        else toast.error('Este questionário não possui gabarito completo (há questões dissertativas ou sem resposta definida). As notas existentes foram mantidas.');
+      if (!isEdiAdmin) {
+        if (window.confirm('Gabarito Oficial salvo!\n\nDeseja RECORRIGIR agora as notas de todos os alunos que já fizeram esta avaliação com o novo gabarito?')) {
+          const regraded = await regradeSubmissionsForAula(targetId);
+          if (regraded >= 0) toast.success(`Recorreção concluída: ${regraded} nota(s) atualizada(s).`);
+          else toast.error('Este questionário não possui gabarito completo (há questões dissertativas ou sem resposta definida). As notas existentes foram mantidas.');
+        }
+        toast.success('Gabarito Oficial salvo com sucesso!');
+        setSubmitting(false);
+        return;
+      } else {
+        try {
+          await regradeSubmissionsForAula(targetId);
+        } catch (regradeErr) {
+          console.warn('[Lesson.handleSubmit] Aviso na recorreção automática:', regradeErr);
+        }
       }
-      toast.success('Gabarito Oficial salvo com sucesso!');
-      setSubmitting(false);
-      return;
     }
     try {
       const targetId = (lesson as any).linkedActivity?.id || id;
@@ -888,7 +922,7 @@ const Lesson = () => {
       console.log('[Lesson.handleSubmit] targetId:', targetId);
       console.log('[Lesson.handleSubmit] targetLesson:', targetLesson);
       console.log('[Lesson.handleSubmit] currentSub:', currentSub);
-      console.log('[Lesson.handleSubmit] answers:', answers);
+      console.log('[Lesson.handleSubmit] answers:', effectiveAnswers);
       
 
        const isFinal = targetLesson.tipo === 'prova' || targetLesson.tipo === 'avaliacao' || !!targetLesson.is_bloco_final;
@@ -900,7 +934,7 @@ const Lesson = () => {
        }
       
        // Auto-correção oficial pelo sistema — nota calculada via computeScore
-       const score = computeScore(questions, answers);
+       const score = computeScore(effectiveQuestions, effectiveAnswers);
        const finalScore = isFinal ? score : null; 
        const status = isFinal ? 'corrigida' : 'concluido';
 
@@ -911,10 +945,10 @@ const Lesson = () => {
       const payload: any = {
         aluno_id: userProfile.id, 
         aula_id: targetId, 
-        respostas: answers, 
+        respostas: effectiveAnswers, 
         nota: finalScore, // null para exercícios pedagógicos
         status: status,
-        tentativas: (currentSub?.tentativas || 0) + 1, 
+        tentativas: isEdiAdmin ? 1 : (currentSub?.tentativas || 0) + 1, 
         updated_at: new Date().toISOString()
       };
       if (isFinal) {
@@ -935,15 +969,20 @@ const Lesson = () => {
       console.log('[Lesson.handleSubmit] Salvo com sucesso!');
 
         if (isFinal) {
-          // Efeitos pedagógicos apenas para alunos reais (modo teste do staff não altera módulos)
-          if (!userProfile?.isStaff && finalScore !== null && targetLesson) {
+          // Efeitos pedagógicos para alunos reais e para o administrador-aluno edi.ben.jr@gmail.com
+          if ((!userProfile?.isStaff || isEdiAdmin) && finalScore !== null && targetLesson) {
             const minGrade = targetLesson.min_grade || 7;
             if (finalScore >= minGrade && targetLesson.livro_id) {
               await finalizeModuleOnApproval(userProfile.id, targetLesson.livro_id);
-            } else if (finalScore < minGrade) {
+              setIsModuleFinished(true);
+            } else if (finalScore < minGrade && !isEdiAdmin) {
               await unfinalizeModule(userProfile.id, targetLesson.livro_id);
               await ensureRecoveryExam(targetLesson, finalScore, minGrade);
             }
+          }
+
+          if (isEdiAdmin) {
+            toast.success(`Gabarito e nota do aluno (${finalScore !== null ? finalScore.toFixed(1) : '—'}) salvos com sucesso!`);
           }
 
           // Modo teste do staff: permanece na página e libera o gabarito + nota imediatamente
@@ -951,7 +990,7 @@ const Lesson = () => {
             setResult({ score: finalScore, passed: finalScore !== null && finalScore >= ((targetLesson?.min_grade as any) || 7), pendingReview: false });
             setSubmitted(true);
             setIsExamStarted(false);
-            setStaffExamMode(true);
+            if (!isEdiAdmin) setStaffExamMode(true);
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
           }
@@ -2149,7 +2188,9 @@ const Lesson = () => {
                   {userProfile?.isStaff && (
                     <div style={{ paddingTop: '1.5rem', borderTop: '1px solid rgba(34, 197, 94, 0.15)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0, textAlign: 'center' }}>
-                        Selecione as respostas corretas nas questões acima e clique para salvar como gabarito oficial.
+                        {userProfile?.isEdiAdmin
+                          ? 'Selecione as respostas nas questões acima: ao salvar, o gabarito oficial será atualizado e sua prova será salva com a nota do aluno.'
+                          : 'Selecione as respostas corretas nas questões acima e clique para salvar como gabarito oficial.'}
                       </p>
                       <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                         <button
@@ -2161,7 +2202,7 @@ const Lesson = () => {
                             display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: submitting ? 'not-allowed' : 'pointer'
                           }}
                         >
-                          {submitting ? <Loader2 className="spinner" size={18} /> : 'Salvar Gabarito Oficial'}
+                          {submitting ? <Loader2 className="spinner" size={18} /> : (userProfile?.isEdiAdmin ? '✓ Salvar Gabarito e Nota do Aluno' : 'Salvar Gabarito Oficial')}
                         </button>
                         <button
                           onClick={() => setShowQuizEditor(true)}
@@ -2173,7 +2214,7 @@ const Lesson = () => {
                         >
                           <FileText size={18} /> Editar Questionário
                         </button>
-                        {(lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao' || lesson?.is_bloco_final) && (
+                        {(lesson?.tipo === 'prova' || lesson?.tipo === 'avaliacao' || lesson?.is_bloco_final) && !userProfile?.isEdiAdmin && (
                           <button
                             onClick={() => {
                               if (!window.confirm('MODO TESTE: você fará esta prova como um aluno, sem ver o gabarito durante a resolução. Ao finalizar, o gabarito e sua nota serão exibidos para conferência da correção. Continuar?')) return;
@@ -2224,7 +2265,7 @@ const Lesson = () => {
                 </div>
               )}
 
-               {!submitted && !isModuleFinished && (!userProfile?.isStaff || staffExamMode) && (
+               {(userProfile?.isEdiAdmin || (!submitted && !isModuleFinished && (!userProfile?.isStaff || staffExamMode))) && (
                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
                   <button 
                     className="btn btn-outline" 
@@ -2268,7 +2309,7 @@ const Lesson = () => {
                       boxShadow: '0 4px 20px rgba(var(--primary-rgb), 0.35)'
                     }}
                   >
-                    {submitting ? <Loader2 className="spinner" size={18} /> : '✓ Enviar Respostas'}
+                    {submitting ? <Loader2 className="spinner" size={18} /> : (userProfile?.isEdiAdmin ? '✓ Salvar Prova, Gabarito e Nota' : '✓ Enviar Respostas')}
                   </button>
                 </div>
               )}

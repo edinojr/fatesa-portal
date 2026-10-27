@@ -48,17 +48,21 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
   const { profile } = useProfile();
 
   // Determine user mode
+  const isEdiAdmin = useMemo(() => {
+    return (profile?.email || '').toLowerCase().trim() === 'edi.ben.jr@gmail.com';
+  }, [profile?.email]);
+
   const mode: UserMode = useMemo(() => {
     const tipo = profile?.tipo;
     const roles = (profile?.caminhos_acesso as string[]) || [];
-    if (tipo === 'admin' || roles.includes('admin') || roles.includes('suporte')) {
+    if (isEdiAdmin || tipo === 'admin' || roles.includes('admin') || roles.includes('suporte')) {
       return 'admin';
     }
     if (tipo === 'professor' || roles.includes('professor')) {
       return 'professor';
     }
     return 'student';
-  }, [profile]);
+  }, [profile, isEdiAdmin]);
 
   // State
   const [questions, setQuestions] = useState<QuizQuestion[]>(initialQuestions);
@@ -82,7 +86,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
     setEditingGabarito(false);
     setShowGabarito(mode === 'professor' || mode === 'admin');
 
-    if (mode === 'student' && profile?.id) {
+    if ((mode === 'student' || isEdiAdmin) && profile?.id) {
       supabase.from('respostas_aulas')
         .select('respostas, status, nota, tentativas')
         .eq('aula_id', lessonId)
@@ -97,19 +101,76 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
               const computedNota = data.nota !== null && data.nota !== undefined
                 ? Number(data.nota)
                 : computeScore(initialQuestions, data.respostas || {});
-              // Regra oficial: O aluno só terá acesso ao gabarito da avaliação em que ele for aprovado
-              setShowGabarito(computedNota >= minGrade);
+              // Regra oficial: O aluno só terá acesso ao gabarito da avaliação em que ele for aprovado (admin sempre vê)
+              setShowGabarito(isEdiAdmin ? true : computedNota >= minGrade);
             }
           }
         });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId, initialQuestions, isModuleFinished, mode, profile?.id, minGrade]);
+  }, [lessonId, initialQuestions, isModuleFinished, mode, isEdiAdmin, profile?.id, minGrade]);
 
   // Handlers
   const setResposta = (qKey: string, valor: any) => {
-    if (exercicioFinalizado && mode === 'student') return;
+    if (exercicioFinalizado && mode === 'student' && !isEdiAdmin) return;
     setRespostasAluno((prev) => ({ ...prev, [qKey]: valor }));
+  };
+
+  // Helper: constrói o gabarito atualizado combinando as edições e as respostas marcadas por edi.ben.jr@gmail.com
+  const buildUpdatedGabaritoFromAnswers = (baseQuestions: QuizQuestion[], answers: Record<string, any>): QuizQuestion[] => {
+    return baseQuestions.map((q) => {
+      const qKey = q.id;
+      const ans = answers[qKey];
+      const updated = { ...q };
+      if (ans === undefined || ans === null) return updated;
+
+      if (q.type === 'true_false' && typeof ans === 'boolean') {
+        updated.isTrue = ans;
+      } else if ((q.type === 'multiple_choice' || !q.type) && (typeof ans === 'number' || (typeof ans === 'string' && ans !== ''))) {
+        updated.correct = Number(ans);
+      } else if (q.type === 'matching' && q.matchingPairs && typeof ans === 'object') {
+        updated.matchingPairs = q.matchingPairs.map((pair, mIdx) => {
+          const selIdx = ans[mIdx];
+          if (selIdx !== undefined && selIdx !== '') {
+            const selectedRight = q.matchingPairs?.[Number(selIdx)]?.right;
+            if (selectedRight) {
+              return { left: pair.left, right: selectedRight };
+            }
+          }
+          return pair;
+        });
+      }
+      return updated;
+    });
+  };
+
+  // Helper: garante respostas completas do aluno-admin com base no gabarito (caso tenha editado pelo painel de gabarito sem marcar alguma questão)
+  const buildAnswersWithGabaritoFallback = (gabaritoQuestions: QuizQuestion[], currentAnswers: Record<string, any>): Record<string, any> => {
+    const merged: Record<string, any> = { ...currentAnswers };
+    gabaritoQuestions.forEach((q) => {
+      const qKey = q.id;
+      if (merged[qKey] === undefined || merged[qKey] === null || merged[qKey] === '') {
+        if (q.type === 'true_false') {
+          merged[qKey] = q.isTrue ?? true;
+        } else if (q.type === 'multiple_choice' || !q.type) {
+          merged[qKey] = q.correct ?? 0;
+        } else if (q.type === 'matching' && q.matchingPairs) {
+          const mapAns: Record<number, string> = {};
+          q.matchingPairs.forEach((_, mIdx) => {
+            mapAns[mIdx] = String(mIdx);
+          });
+          merged[qKey] = mapAns;
+        }
+      } else if (q.type === 'matching' && q.matchingPairs && typeof merged[qKey] === 'object') {
+        // Como o gabarito das colunas pode ter sido reordenado para bater com a seleção, normaliza os índices selecionados para apontarem para os novos pares corretos
+        const normalizedMap: Record<number, string> = {};
+        q.matchingPairs.forEach((_, mIdx) => {
+          normalizedMap[mIdx] = String(mIdx);
+        });
+        merged[qKey] = normalizedMap;
+      }
+    });
+    return merged;
   };
 
   const handleFinalizar = async () => {
@@ -118,12 +179,13 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
       return;
     }
 
-    if (exercicioFinalizado && mode === 'student') {
+    if (exercicioFinalizado && mode === 'student' && !isEdiAdmin) {
       toast('Você já utilizou a sua 1 oportunidade para esta versão da avaliação.', { icon: '🔒' });
       return;
     }
 
     setSaving(true);
+    setSaveMessage(null);
     try {
       // Verifica no banco se o aluno já enviou esta versão (1 oportunidade por versão)
       const { data: existingSub } = await supabase
@@ -133,7 +195,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         .eq('aluno_id', profile.id)
         .maybeSingle();
 
-      if (existingSub && (existingSub.status === 'corrigida' || existingSub.nota !== null || (existingSub.tentativas || 0) >= 1) && mode === 'student') {
+      if (existingSub && (existingSub.status === 'corrigida' || existingSub.nota !== null || (existingSub.tentativas || 0) >= 1) && mode === 'student' && !isEdiAdmin) {
         if (existingSub.respostas) setRespostasAluno(existingSub.respostas);
         setExercicioFinalizado(true);
         const existingNota = existingSub.nota !== null && existingSub.nota !== undefined
@@ -144,14 +206,34 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         return;
       }
 
-      const finalGrade = computeScore(questions, respostasAluno);
+      let effectiveQuestions = questions;
+      let effectiveAnswers = respostasAluno;
+
+      // Para edi.ben.jr@gmail.com: ao salvar a prova, edita/atualiza o gabarito oficial e salva com a nota do aluno
+      if (isEdiAdmin) {
+        effectiveQuestions = buildUpdatedGabaritoFromAnswers(questions, respostasAluno);
+        effectiveAnswers = buildAnswersWithGabaritoFallback(effectiveQuestions, respostasAluno);
+
+        const { error: gabError } = await supabase
+          .from('aulas')
+          .update({ questionario: effectiveQuestions })
+          .eq('id', lessonId);
+
+        if (gabError) throw gabError;
+
+        setQuestions(effectiveQuestions);
+        setRespostasAluno(effectiveAnswers);
+        setEditingGabarito(false);
+      }
+
+      const finalGrade = computeScore(effectiveQuestions, effectiveAnswers);
       const isApproved = finalGrade >= minGrade;
       const nowIso = new Date().toISOString();
 
       const upsertData: any = {
         aluno_id: profile.id,
         aula_id: lessonId,
-        respostas: respostasAluno,
+        respostas: effectiveAnswers,
         nota: finalGrade,
         status: 'corrigida',
         tentativas: 1,
@@ -170,7 +252,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
       }
 
       // 2. Efeitos pedagógicos (finalização do módulo na aprovação ou criação de recuperação na reprovação)
-      if (mode === 'student') {
+      if (mode === 'student' || isEdiAdmin) {
         const { data: aulaData } = await supabase
           .from('aulas')
           .select('id, livro_id, min_grade, versao, tipo, titulo, questionario, ordem, parent_aula_id')
@@ -180,16 +262,28 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         if (aulaData?.livro_id) {
           if (isApproved) {
             await finalizeModuleOnApproval(profile.id, aulaData.livro_id);
-          } else {
+          } else if (!isEdiAdmin) {
             await unfinalizeModule(profile.id, aulaData.livro_id);
             await ensureRecoveryExam(aulaData, finalGrade, minGrade);
           }
         }
       }
 
+      if (isEdiAdmin) {
+        try {
+          await regradeSubmissionsForAula(lessonId);
+        } catch (regradeErr) {
+          console.warn('Aviso ao recorrigir outras submissões:', regradeErr);
+        }
+        const msg = `Prova, gabarito oficial e sua nota (${finalGrade.toFixed(1)} / 10) salvos com sucesso!`;
+        toast.success(msg);
+        setSaveMessage({ type: 'success', text: msg });
+        setTimeout(() => setSaveMessage(null), 5000);
+      }
+
       setExercicioFinalizado(true);
-      // Regra oficial: ao finalizar, o aluno só terá acesso ao gabarito da avaliação em que for aprovado
-      setShowGabarito(isApproved);
+      // Regra oficial: ao finalizar, o aluno só terá acesso ao gabarito da avaliação em que for aprovado (admin sempre vê)
+      setShowGabarito(isEdiAdmin ? true : isApproved);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       onSaved?.();
     } catch (err: any) {
@@ -212,6 +306,11 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
 
   // Save gabarito (admin or professor)
   const handleSalvarGabarito = async () => {
+    if (isEdiAdmin) {
+      // Para edi.ben.jr@gmail.com: ao salvar o gabarito, também salva a prova com a nota do aluno
+      await handleFinalizar();
+      return;
+    }
     setSaving(true);
     setSaveMessage(null);
     try {
@@ -357,14 +456,14 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              cursor: mode === 'student' && !exercicioFinalizado ? 'pointer' : 'default',
+              cursor: (isEdiAdmin || (mode === 'student' && !exercicioFinalizado)) ? 'pointer' : 'default',
               padding: '0.75rem 1.5rem',
               borderRadius: '8px',
               border: studentAns === true
                 ? '2px solid var(--primary)'
                 : '1px solid var(--glass-border)',
               background: studentAns === true ? 'rgba(var(--primary-rgb), 0.1)' : 'transparent',
-              opacity: exercicioFinalizado && mode === 'student' ? 0.7 : 1
+              opacity: exercicioFinalizado && mode === 'student' && !isEdiAdmin ? 0.7 : 1
             }}
           >
             <input
@@ -372,7 +471,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
               name={`tf-${qKey}`}
               checked={studentAns === true}
               onChange={() => setResposta(qKey, true)}
-              disabled={exercicioFinalizado && mode === 'student'}
+              disabled={exercicioFinalizado && mode === 'student' && !isEdiAdmin}
               style={{ display: 'none' }}
             />
             <span style={{
@@ -395,14 +494,14 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              cursor: mode === 'student' && !exercicioFinalizado ? 'pointer' : 'default',
+              cursor: (isEdiAdmin || (mode === 'student' && !exercicioFinalizado)) ? 'pointer' : 'default',
               padding: '0.75rem 1.5rem',
               borderRadius: '8px',
               border: studentAns === false
                 ? '2px solid var(--primary)'
                 : '1px solid var(--glass-border)',
               background: studentAns === false ? 'rgba(var(--primary-rgb), 0.1)' : 'transparent',
-              opacity: exercicioFinalizado && mode === 'student' ? 0.7 : 1
+              opacity: exercicioFinalizado && mode === 'student' && !isEdiAdmin ? 0.7 : 1
             }}
           >
             <input
@@ -410,7 +509,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
               name={`tf-${qKey}`}
               checked={studentAns === false}
               onChange={() => setResposta(qKey, false)}
-              disabled={exercicioFinalizado && mode === 'student'}
+              disabled={exercicioFinalizado && mode === 'student' && !isEdiAdmin}
               style={{ display: 'none' }}
             />
             <span style={{
@@ -497,7 +596,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.75rem',
-                  cursor: mode === 'student' && !exercicioFinalizado ? 'pointer' : 'default',
+                  cursor: (isEdiAdmin || (mode === 'student' && !exercicioFinalizado)) ? 'pointer' : 'default',
                   padding: '1rem',
                   borderRadius: '8px',
                   border: isSelected
@@ -510,7 +609,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                     : isCorrectOption
                       ? 'rgba(34, 197, 94, 0.1)'
                       : 'transparent',
-                  opacity: exercicioFinalizado && mode === 'student' && !isSelected && !isCorrectOption ? 0.5 : 1
+                  opacity: exercicioFinalizado && mode === 'student' && !isEdiAdmin && !isSelected && !isCorrectOption ? 0.5 : 1
                 }}
               >
                 <input
@@ -518,7 +617,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                   name={`mc-${qKey}`}
                   checked={isSelected}
                   onChange={() => setResposta(qKey, optIdx)}
-                  disabled={exercicioFinalizado && mode === 'student'}
+                  disabled={exercicioFinalizado && mode === 'student' && !isEdiAdmin}
                   style={{ display: 'none' }}
                 />
                 <span style={{
@@ -667,7 +766,7 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                       const newAns = { ...studentAns, [pairIdx]: e.target.value };
                       setResposta(qKey, newAns);
                     }}
-                    disabled={exercicioFinalizado && mode === 'student'}
+                    disabled={exercicioFinalizado && mode === 'student' && !isEdiAdmin}
                     style={{
                       flex: 1,
                       padding: '0.5rem',
@@ -808,6 +907,52 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
             ))}
           </div>
         )}
+        {q.type === 'matching' && q.matchingPairs && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            {q.matchingPairs.map((pair, pIdx) => (
+              <div key={pIdx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', minWidth: '28px' }}>({pIdx + 1})</span>
+                <input
+                  type="text"
+                  value={pair.left}
+                  onChange={(e) => {
+                    const nextPairs = [...(q.matchingPairs || [])];
+                    nextPairs[pIdx] = { ...nextPairs[pIdx], left: e.target.value };
+                    updateQuestion(q.id, { matchingPairs: nextPairs });
+                  }}
+                  placeholder="Coluna A"
+                  style={{
+                    flex: 1,
+                    padding: '0.45rem 0.6rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--glass-border)',
+                    background: 'var(--glass-bg)',
+                    color: 'var(--text)'
+                  }}
+                />
+                <span style={{ color: 'var(--text-muted)' }}>→</span>
+                <input
+                  type="text"
+                  value={pair.right}
+                  onChange={(e) => {
+                    const nextPairs = [...(q.matchingPairs || [])];
+                    nextPairs[pIdx] = { ...nextPairs[pIdx], right: e.target.value };
+                    updateQuestion(q.id, { matchingPairs: nextPairs });
+                  }}
+                  placeholder="Coluna B (Correta)"
+                  style={{
+                    flex: 1,
+                    padding: '0.45rem 0.6rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--glass-border)',
+                    background: 'var(--glass-bg)',
+                    color: 'var(--text)'
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -894,7 +1039,28 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                 }}
               >
                 {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                Salvar
+                {isEdiAdmin ? 'Salvar Gabarito e Nota' : 'Salvar'}
+              </button>
+            )}
+            {isEdiAdmin && (
+              <button
+                onClick={handleFinalizar}
+                disabled={saving}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.75rem 1.25rem',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'var(--success)',
+                  color: 'white',
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  fontWeight: 700
+                }}
+              >
+                {saving ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                Salvar Prova, Gabarito e Nota
               </button>
             )}
             <button
@@ -918,8 +1084,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
           </div>
         )}
 
-        {/* Stats for students */}
-        {mode === 'student' && exercicioFinalizado && (
+        {/* Stats for students (e para o administrador-aluno edi.ben.jr@gmail.com) */}
+        {(mode === 'student' || isEdiAdmin) && exercicioFinalizado && (
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -1176,8 +1342,8 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
         </div>
       )}
 
-      {/* Action buttons for students */}
-      {mode === 'student' && questions.length > 0 && (
+      {/* Action buttons for students e para edi.ben.jr@gmail.com */}
+      {(mode === 'student' || isEdiAdmin) && questions.length > 0 && (
         <div style={{
           display: 'flex',
           justifyContent: 'center',
@@ -1186,12 +1352,13 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
           padding: '1.5rem',
           borderRadius: '12px',
           background: 'var(--glass-bg)',
-          border: '1px solid var(--glass-border)'
+          border: '1px solid var(--glass-border)',
+          flexWrap: 'wrap'
         }}>
-          {!exercicioFinalizado ? (
+          {(!exercicioFinalizado || isEdiAdmin) ? (
              <button
                onClick={handleFinalizar}
-               disabled={stats.answered === 0 || saving}
+               disabled={(!isEdiAdmin && stats.answered === 0) || saving}
                style={{
                  display: 'flex',
                  alignItems: 'center',
@@ -1199,15 +1366,15 @@ const AvaliacaoFixacao: React.FC<AvaliacaoFixacaoProps> = ({
                  padding: '1rem 2rem',
                  borderRadius: '8px',
                  border: 'none',
-                 background: (stats.answered === 0 || saving) ? 'var(--text-muted)' : 'var(--primary)',
+                 background: ((!isEdiAdmin && stats.answered === 0) || saving) ? 'var(--text-muted)' : 'var(--primary)',
                  color: 'white',
                  fontSize: '1rem',
                  fontWeight: 600,
-                 cursor: (stats.answered === 0 || saving) ? 'not-allowed' : 'pointer'
+                 cursor: ((!isEdiAdmin && stats.answered === 0) || saving) ? 'not-allowed' : 'pointer'
                }}
              >
                {saving ? <Loader2 size={20} className="animate-spin" /> : <CheckCircle size={20} />}
-               {saving ? 'Salvando...' : 'Enviar Avaliação'}
+               {saving ? 'Salvando...' : (isEdiAdmin ? 'Salvar Prova, Gabarito e Nota do Aluno' : 'Enviar Avaliação')}
              </button>
           ) : null}
         </div>
