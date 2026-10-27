@@ -40,7 +40,7 @@ const CourseList: React.FC<CourseListProps> = ({
 
   const renderBookCard = (currentBook: any) => {
     const stats = getBookStatsWrapper(currentBook);
-    const isHistoricoSintetico = !currentBook.aulas || currentBook.aulas.length === 0;
+    const isHistoricoSintetico = String(currentBook.id || '').startsWith('historico-');
 
     const rawNota = currentBook.notaHistorico ?? currentBook.nota ?? (stats.isApproved && stats.examGrade ? stats.examGrade : null);
     const numNota = rawNota != null && !isNaN(Number(rawNota)) ? Number(rawNota) : null;
@@ -48,13 +48,14 @@ const CourseList: React.FC<CourseListProps> = ({
     const isApproved = currentBook.isApproved || stats.isApproved || isApprovedManual;
     const isDP = currentBook.isDP || (!isApproved && stats.isFinished);
     const isFinished = isApproved;
+    const isEffectivelyUnlocked = !!currentBook.isUnlocked || isApproved;
 
     // Módulo em manutenção: sem conteúdo ou sem prova final configurada.
     const isMaintenance = stats.isMaintenance && !isApproved;
 
     let subtitulo = '';
     if (numNota != null) {
-      subtitulo = `Nota ${numNota.toFixed(1)} • ${isApprovedManual ? 'Aprovado por Histórico' : isDP ? (currentBook.isDPQueued ? 'Dependência (Na Fila)' : 'Dependência (Recuperação Aberta)') : 'Aprovado em Avaliação'}`;
+      subtitulo = `Nota ${numNota.toFixed(1)} • ${isApprovedManual ? 'Aprovado / Liberado (Nota Manual)' : isDP ? (currentBook.isDPQueued ? 'Dependência (Na Fila)' : 'Dependência (Recuperação Aberta)') : 'Aprovado / Liberado'}`;
     } else if (isMaintenance) {
       subtitulo = 'Módulo em manutenção — conteúdo indisponível';
     } else if (isDP) {
@@ -62,7 +63,7 @@ const CourseList: React.FC<CourseListProps> = ({
         ? 'Módulo em dependência (na fila) — aguarde a aprovação do módulo anterior'
         : 'Módulo em dependência — realize a prova de recuperação';
     } else if (isApproved) {
-      subtitulo = isHistoricoSintetico ? 'Finalizado por Histórico Manual' : `${stats.total > 0 ? `${stats.total} aulas • ` : ''}100% Concluído`;
+      subtitulo = isHistoricoSintetico ? 'Aprovado / Liberado por Histórico Manual' : `${stats.total > 0 ? `${stats.total} aulas • ` : ''}100% Concluído • Liberado`;
     } else {
       subtitulo = `${stats.total} aulas • ${stats.percent}% concluído`;
     }
@@ -91,13 +92,13 @@ const CourseList: React.FC<CourseListProps> = ({
                   }
               : isApproved
                 ? {
-                    label: 'FINALIZADO',
+                    label: 'APROVADO / LIBERADO',
                     color: '#ffffff',
                     bg: 'var(--success, #10b981)',
                   }
                 : undefined
           }
-          status={!currentBook.isUnlocked ? 'locked' : isMaintenance ? 'locked' : isApproved ? 'completed' : 'default'}
+          status={!isEffectivelyUnlocked ? 'locked' : isMaintenance ? 'locked' : isApproved ? 'completed' : 'default'}
           accentColor={isMaintenance ? 'var(--primary, #0056b3)' : isApproved ? 'var(--success)' : 'var(--primary)'}
         >
           <div style={{ marginTop: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>

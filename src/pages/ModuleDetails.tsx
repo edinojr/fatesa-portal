@@ -105,8 +105,11 @@ const ModuleDetails = () => {
     }
 
     const { book, courseName } = currentBook;
+    const isManualOrExamApproved = !!book.isApproved || !!book.isFinished ||
+      (book.notaHistorico != null && Number(book.notaHistorico) >= 7) ||
+      (book.nota != null && Number(book.nota) >= 7);
 
-    if (!book.isUnlocked && !isStaff && !moduleException) {
+    if (!book.isUnlocked && !isManualOrExamApproved && !isStaff && !moduleException) {
         return (
             <div className="auth-container">
                 <Lock size={64} color="var(--primary)" style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
@@ -178,9 +181,8 @@ const ModuleDetails = () => {
     };
     const isActuallyLocked = (item: any) => {
       if (isStaff) return false;
-      // Módulo finalizado: grade 100% aberta para revisão
-      // (conteúdo, provas e exercícios com seus respectivos gabaritos)
-      if (currentBook?.book?.isFinished) return false;
+      // Módulo finalizado ou aprovado (online ou por nota manual): grade 100% aberta para revisão
+      if (currentBook?.book?.isFinished || isManualOrExamApproved) return false;
 
       const versao = getExamVersion(item);
       const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;

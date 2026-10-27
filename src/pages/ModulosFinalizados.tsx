@@ -174,6 +174,8 @@ const goToPanel = () => {
             }).filter(({ isFin }) => isFin)
             .map(({ l, stats, approvedManual, notaManual }) => ({
                 ...l,
+                isUnlocked: true,
+                isReleased: true,
                 isFinished: true,
                 isApproved: true,
                 notaHistorico: notaManual,
@@ -224,14 +226,19 @@ const goToPanel = () => {
         });
 
         if (localOrfaosAprovados.length > 0) {
+            const allCourseBooks = (courses || []).flatMap(c => c.livros || []);
             const orfaosByNivel: Record<string, any[]> = { basico: [], medio: [] };
             localOrfaosAprovados.forEach((h: any) => {
                 const nivel = detectNivel(h.curso_nome || h.modulo_nome || '');
+                const matchedCourseBook = allCourseBooks.find((b: any) => areModuleTitlesEqual(b.titulo, h.modulo_nome));
                 orfaosByNivel[nivel].push({
-                    id: `historico-${h.id || h.modulo_nome}`,
-                    titulo: h.modulo_nome,
-                    aulas: [],
-                    capa_url: undefined,
+                    ...(matchedCourseBook || {}),
+                    id: matchedCourseBook?.id || `historico-${h.id || h.modulo_nome}`,
+                    titulo: matchedCourseBook?.titulo || h.modulo_nome,
+                    aulas: matchedCourseBook?.aulas || [],
+                    capa_url: matchedCourseBook?.capa_url || undefined,
+                    isUnlocked: true,
+                    isReleased: true,
                     isFinished: true,
                     isApproved: true,
                     nota: h.nota,

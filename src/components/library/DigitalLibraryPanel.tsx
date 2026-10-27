@@ -10,7 +10,8 @@ import {
   Bookmark,
   CheckCircle2,
   Library,
-  ArrowRight
+  ArrowRight,
+  Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BibleReaderPopup } from '../BibleReaderPopup';
@@ -25,17 +26,29 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
   const [selectedCategory, setSelectedCategory] = useState<'todos' | 'apostilas' | 'biblia' | 'manuais'>('todos');
   const [showBibleModal, setShowBibleModal] = useState(false);
 
-  // Extrair todos os livros / módulos dos cursos
+  // Extrair todos os livros / módulos dos cursos preservando status de aprovação, nota manual e liberação
   const modulos = courses.flatMap((c) =>
-    (c.livros || []).map((l: any) => ({
-      id: l.id,
-      titulo: l.titulo,
-      capa_url: l.capa_url,
-      descricao: l.descricao || `Apostila e material de estudos para ${l.titulo}.`,
-      curso: c.nome,
-      tipo: 'apostila',
-      aulasCount: (l.aulas || []).length,
-    }))
+    (c.livros || []).map((l: any) => {
+      const rawNota = l.notaHistorico ?? l.nota;
+      const numNota = rawNota != null && !isNaN(Number(rawNota)) ? Number(rawNota) : null;
+      const isManualApproved = l.notaHistorico != null && !isNaN(Number(l.notaHistorico)) && Number(l.notaHistorico) >= 7;
+      const isApproved = !!l.isApproved || !!l.isFinished || (numNota != null && numNota >= 7);
+      const isUnlocked = !!l.isUnlocked || !!l.isReleased || isApproved;
+
+      return {
+        id: l.id,
+        titulo: l.titulo,
+        capa_url: l.capa_url,
+        descricao: l.descricao || `Apostila e material de estudos para ${l.titulo}.`,
+        curso: c.nome,
+        tipo: 'apostila',
+        aulasCount: (l.aulas || []).length,
+        isUnlocked,
+        isApproved,
+        isManualApproved,
+        nota: numNota,
+      };
+    })
   );
 
   // Materiais complementares e guias
@@ -72,13 +85,20 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
     },
   ];
 
-  const filteredModulos = modulos.filter((m) => {
-    const matchesSearch =
-      m.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.curso.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'todos' || selectedCategory === 'apostilas';
-    return matchesSearch && matchesCategory;
-  });
+  const filteredModulos = modulos
+    .filter((m) => {
+      const matchesSearch =
+        m.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        m.curso.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'todos' || selectedCategory === 'apostilas';
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      const aLib = a.isUnlocked || a.isApproved ? 1 : 0;
+      const bLib = b.isUnlocked || b.isApproved ? 1 : 0;
+      if (aLib !== bLib) return bLib - aLib;
+      return 0;
+    });
 
   const filteredFixos = materiaisFixos.filter((m) => {
     const matchesSearch =
@@ -316,14 +336,20 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
-              {filteredModulos.map((mod) => (
+              {filteredModulos.map((mod) => {
+                const isLiberadoOuAprovado = mod.isUnlocked || mod.isApproved;
+                return (
                 <div
                   key={mod.id}
                   style={{
                     background: '#ffffff',
                     borderRadius: '18px',
-                    border: '1px solid rgba(212, 175, 55, 0.35)',
-                    borderTop: '3.5px solid #d4af37',
+                    border: isLiberadoOuAprovado
+                      ? '1.5px solid rgba(21, 128, 61, 0.35)'
+                      : '1px solid rgba(212, 175, 55, 0.35)',
+                    borderTop: isLiberadoOuAprovado
+                      ? '4px solid #16a34a'
+                      : '3.5px solid #d4af37',
                     padding: '1.25rem',
                     display: 'flex',
                     flexDirection: 'column',
@@ -335,6 +361,84 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
                   }}
                 >
                   <div>
+                    {/* Status em Verde nos Módulos Liberados / Aprovados */}
+                    {isLiberadoOuAprovado ? (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.4rem',
+                          backgroundColor: '#dcfce7',
+                          border: '1px solid #86efac',
+                          borderRadius: '10px',
+                          padding: '0.4rem 0.65rem',
+                          marginBottom: '0.85rem',
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            color: '#15803d',
+                            fontSize: '0.73rem',
+                            fontWeight: 900,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.4px',
+                          }}
+                        >
+                          <CheckCircle2 size={14} color="#15803d" style={{ flexShrink: 0 }} />
+                          {mod.isApproved
+                            ? mod.isManualApproved
+                              ? 'Aprovado / Liberado (Nota Manual)'
+                              : 'Aprovado / Liberado'
+                            : 'Módulo Liberado'}
+                        </span>
+                        {mod.nota != null && mod.nota >= 7 && (
+                          <span
+                            style={{
+                              backgroundColor: '#15803d',
+                              color: '#ffffff',
+                              fontSize: '0.7rem',
+                              fontWeight: 900,
+                              padding: '2px 7px',
+                              borderRadius: '6px',
+                              flexShrink: 0,
+                            }}
+                          >
+                            Nota {mod.nota.toFixed(1)}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          backgroundColor: '#f1f5f9',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '10px',
+                          padding: '0.4rem 0.65rem',
+                          marginBottom: '0.85rem',
+                        }}
+                      >
+                        <Lock size={13} color="#64748b" style={{ flexShrink: 0 }} />
+                        <span
+                          style={{
+                            color: '#475569',
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.4px',
+                          }}
+                        >
+                          Aguardando Liberação
+                        </span>
+                      </div>
+                    )}
+
                     {/* Cabeçalho do Card */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1rem' }}>
                       {mod.capa_url ? (
@@ -401,8 +505,10 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
                         >
                           {mod.titulo}
                         </h3>
-                        <span style={{ fontSize: '0.75rem', color: '#1e40af', display: 'block', marginTop: '4px', fontWeight: 600 }}>
-                          {mod.aulasCount} aula{mod.aulasCount > 1 ? 's' : ''} e avaliações
+                        <span style={{ fontSize: '0.75rem', color: isLiberadoOuAprovado ? '#15803d' : '#1e40af', display: 'block', marginTop: '4px', fontWeight: 700 }}>
+                          {isLiberadoOuAprovado
+                            ? `✓ Liberado • ${mod.aulasCount} aula${mod.aulasCount > 1 ? 's' : ''} e avaliações`
+                            : `${mod.aulasCount} aula${mod.aulasCount > 1 ? 's' : ''} e avaliações`}
                         </span>
                       </div>
                     </div>
@@ -413,31 +519,38 @@ export const DigitalLibraryPanel: React.FC<DigitalLibraryPanelProps> = ({ course
                   </div>
 
                   <button
-                    onClick={() => navigate(`/module/${mod.id}`)}
+                    onClick={() => {
+                      if (!isLiberadoOuAprovado) return;
+                      navigate(`/module/${mod.id}`);
+                    }}
+                    disabled={!isLiberadoOuAprovado}
                     className="btn-module-access"
                     style={{
                       width: '100%',
                       padding: '0.65rem 1rem',
-                      backgroundColor: '#0056b3',
+                      backgroundColor: isLiberadoOuAprovado ? '#0056b3' : '#94a3b8',
                       color: '#ffffff',
                       border: 'none',
                       borderRadius: '12px',
                       fontSize: '0.82rem',
                       fontWeight: 700,
-                      cursor: 'pointer',
+                      cursor: isLiberadoOuAprovado ? 'pointer' : 'not-allowed',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '0.5rem',
-                      boxShadow: '0 4px 12px rgba(0, 86, 179, 0.25)',
+                      boxShadow: isLiberadoOuAprovado ? '0 4px 12px rgba(0, 86, 179, 0.25)' : 'none',
                       transition: 'background 0.2s',
                     }}
                   >
-                    <span style={{ color: '#ffffff', fontWeight: 700 }}>Acessar Material & Aulas</span>
-                    <ArrowRight size={14} color="#ffffff" />
+                    <span style={{ color: '#ffffff', fontWeight: 700 }}>
+                      {isLiberadoOuAprovado ? 'Acessar Material & Aulas' : 'Módulo Bloqueado'}
+                    </span>
+                    {isLiberadoOuAprovado ? <ArrowRight size={14} color="#ffffff" /> : <Lock size={14} color="#ffffff" />}
                   </button>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

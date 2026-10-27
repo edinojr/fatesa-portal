@@ -33,6 +33,8 @@ export interface Book {
   isDP?: boolean
   isDPActive?: boolean
   isDPQueued?: boolean
+  notaHistorico?: number
+  nota?: number
   ordem?: number
 }
 

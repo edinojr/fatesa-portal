@@ -344,11 +344,15 @@ export const useStudentCourses = (profile: any) => {
         supabase.from('historico_notas').select('id, modulo_nome, curso_nome, nota, data_conclusao').eq('aluno_id', profile.id)
       );
       const userEmail = (profile.email || '').toLowerCase().trim();
+      const userName = (profile.nome || '').trim();
+      const alumniFilters = [`user_id.eq.${profile.id}`];
+      if (userEmail) alumniFilters.push(`email.eq.${userEmail}`);
+      if (userName) alumniFilters.push(`nome.ilike.${userName.replace(/,/g, '')}`);
       const { data: alumniData } = await safeSelect(
         supabase
           .from('registros_alumni')
           .select('id, nome, curso, nivel_curso, status_aprovacao, historico, user_id')
-          .or(`user_id.eq.${profile.id}${userEmail ? `,email.eq.${userEmail}` : ''}`)
+          .or(alumniFilters.join(','))
       );
 
       const historyGrades: Array<{ id?: string; modulo_nome: string; curso_nome?: string; nota: number; data_conclusao?: string }> = [
