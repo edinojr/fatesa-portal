@@ -4,121 +4,121 @@
   "tfQuestions": [
     {
       "id": "esp2-tf-1",
-      "question": "A expressão “quando vier o Consolador” refere se ao dia do arrebatamento da igreja",
-      "answer": "F"
-    },
-    {
-      "id": "esp2-tf-2",
       "question": "Podemos afirmar que o Espírito Santo nunca fala de si mesmo.",
       "answer": "V"
     },
     {
-      "id": "esp2-tf-3",
-      "question": "Ser ungido com o Espírito Santo foi uma concessão especial feita a Jesus",
-      "answer": "F"
-    },
-    {
-      "id": "esp2-tf-4",
+      "id": "esp2-tf-2",
       "question": "Com a presença do Espírito Santo, Jesus não tinha muita necessidade de orar.",
       "answer": "F"
     },
     {
-      "id": "esp2-tf-5",
-      "question": "Ao aceitar Jesus como Salvador o homem é selado com o Espírito Santo.",
-      "answer": "V"
-    },
-    {
-      "id": "esp2-tf-6",
+      "id": "esp2-tf-3",
       "question": "A formação do fruto do Espírito não acontece num único ato.",
       "answer": "V"
     },
     {
-      "id": "esp2-tf-7",
-      "question": "Mansidão não pode ser confundida com falta de autoridade nem covardia.",
-      "answer": "V"
-    },
-    {
-      "id": "esp2-tf-8",
+      "id": "esp2-tf-4",
       "question": "O dom espiritual tem como objetivo a santificação daquele que o recebe.",
       "answer": "F"
     },
     {
+      "id": "esp2-tf-5",
+      "question": "Não mais pela graça, mas haverá salvação durante a Grande Tribulação.",
+      "answer": "V"
+    },
+    {
+      "id": "esp2-tf-6",
+      "question": "A realidade da existência da trindade só pode ser aceita pela fé.",
+      "answer": "V"
+    },
+    {
+      "id": "esp2-tf-7",
+      "question": "O Espírito Santo é chamado, na Bíblia, de Espírito Eterno.",
+      "answer": "V"
+    },
+    {
+      "id": "esp2-tf-8",
+      "question": "João Batista foi gerado no ventre de sua mãe por seu pai Zacarias.",
+      "answer": "V"
+    },
+    {
       "id": "esp2-tf-9",
-      "question": "Somente Jesus é quem pode doar ao homem os dons do Espírito.",
+      "question": "No Pentecoste o Espírito Santo desceu como uma tocha de fogo.",
       "answer": "F"
     },
     {
       "id": "esp2-tf-10",
-      "question": "Não mais pela graça, mas haverá salvação durante a Grande Tribulação.",
+      "question": "O Espírito Santo veio para preparar e levar a igreja entregando-a Jesus.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "esp2-mc-1",
-      "question": "O Espírito Santo concedeu a Jesus a unção para ser -",
+      "question": "É uma concessão feita pelo Pai —",
       "options": [
-        "Sacerdote",
-        "Profeta",
-        "Rei",
-        "Todas estão corretas"
+        "dons espirituais;",
+        "dons de serviços;",
+        "dons naturais;",
+        "todas estão corretas."
       ],
-      "answer": 3
+      "answer": 2
     },
     {
       "id": "esp2-mc-2",
-      "question": "É uma concessão feita pelo Pai",
+      "question": "O Espírito Santo no arrebatamento —",
       "options": [
-        "Dons espirituais",
-        "Dons de serviços",
-        "Dons naturais",
-        "Todas estão corretas"
+        "ressuscitará os mortos;",
+        "transformara os vivos;",
+        "levará a igreja;",
+        "todas estão corretas"
       ],
       "answer": 2
     },
     {
       "id": "esp2-mc-3",
-      "question": "O Espírito Santo no arrebatamento —",
+      "question": "Os dons espirituais são dados como —",
       "options": [
-        "Ressuscitará os mortos",
-        "Transformara os vivos",
-        "Levará a igreja",
-        "Todas estão corretas"
+        "presentes;",
+        "instrumento de trabalho;",
+        "premio por serviços prestados;",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "esp2-mc-4",
-      "question": "Os dons espirituais são dados como —",
+      "question": "O fogo como símbolo do Espírito Santo —",
       "options": [
-        "Presentes",
-        "Instrumento de trabalho",
-        "Premio por serviços prestados",
-        "Todas estão corretas"
+        "queima a palha;",
+        "endurece o barro;",
+        "purifica o ouro;",
+        ".todas estão corretas"
       ],
-      "answer": 1
+      "answer": 3
     }
   ],
   "matchingPairs": [
     {
       "id": "esp2-mp-1",
       "left": "Capacidade de liderança",
-      "right": "Dom natural"
+      "right": "dom natural"
     },
     {
       "id": "esp2-mp-2",
       "left": "Exortar e exercer misericórdia",
-      "right": "Dons assistenciais"
+      "right": "dons assistenciais"
     },
     {
       "id": "esp2-mp-3",
       "left": "Manifestação sobrenatural do poder de Deus",
-      "right": "Dons espirituais"
+      "right": "dons espirituais"
     },
     {
       "id": "esp2-mp-4",
       "left": "Semelhança com os dons espirituais",
-      "right": "Dons de inspiração diabólica"
+      "right": "dons de inspiração diabólica"
     },
     {
       "id": "esp2-mp-5",

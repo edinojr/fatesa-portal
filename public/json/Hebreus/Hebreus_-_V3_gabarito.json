@@ -9,116 +9,116 @@
     },
     {
       "id": "heb3-tf-2",
-      "question": "Nem todas as palavras faladas pelos anjos permaneceram firmes.",
-      "answer": "F"
-    },
-    {
-      "id": "heb3-tf-3",
-      "question": "Para os judeus, Moisés e Jesus são os dois maiores homens da história.",
-      "answer": "F"
-    },
-    {
-      "id": "heb3-tf-4",
-      "question": "Para os judeus o repouso completo prometido por Deus acontecerá no milênio.",
-      "answer": "V"
-    },
-    {
-      "id": "heb3-tf-5",
       "question": "Somente o homem que não nasceu de novo é que pode cometer apostasia.",
       "answer": "F"
     },
     {
-      "id": "heb3-tf-6",
-      "question": "Um pastor, mesmo quando exige algo que não está na Bíblia, deve ser Obedecido",
+      "id": "heb3-tf-3",
+      "question": "Um pastor, mesmo quando exige algo que não está na Bíblia, deve ser obedecido",
       "answer": "F"
     },
     {
-      "id": "heb3-tf-7",
+      "id": "heb3-tf-4",
       "question": "Jesus foi o único Sumo Sacerdote que não ofereceu sacrifício por si mesmo.",
       "answer": "V"
     },
     {
-      "id": "heb3-tf-8",
-      "question": "O escritor aos hebreus disse que a salvação foi anunciada por João Batista.",
-      "answer": "F"
-    },
-    {
-      "id": "heb3-tf-9",
+      "id": "heb3-tf-5",
       "question": "O escritor aos hebreus destaca a importância de Moisés como servo de Deus.",
       "answer": "V"
     },
     {
-      "id": "heb3-tf-10",
+      "id": "heb3-tf-6",
       "question": "Jesus como Sumo Sacerdote pode, hoje, compadecer-se das nossas fraquezas.",
       "answer": "V"
+    },
+    {
+      "id": "heb3-tf-7",
+      "question": "A revelação pelos profetas foi divina, progressiva e parcial.",
+      "answer": "V"
+    },
+    {
+      "id": "heb3-tf-8",
+      "question": "Os anjos são chamados, na Bíblia, de espíritos mediadores entre Deus e os homens",
+      "answer": "F"
+    },
+    {
+      "id": "heb3-tf-9",
+      "question": "A salvação trazida por Jesus foi confirmada somente pelas por suas palavras.",
+      "answer": "F"
+    },
+    {
+      "id": "heb3-tf-10",
+      "question": "Na dispensação da Lei os homens somente podiam chegar a Deus através dos sacerdotes",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "heb3-mc-1",
-      "question": "Perigo que ameaçava os crentes hebreus era —",
+      "question": "Os anjos estarão em atividades —",
       "options": [
-        "Voltar à idolatria",
-        "Voltar ao mundo",
-        "Voltar ao judaísmo",
-        "Todas estão corretas"
+        "no arrebatamento da igreja;",
+        "na grande tribulação;",
+        "no julgamento das nações;",
+        "todas estão corretas"
       ],
-      "answer": 2
+      "answer": 3
     },
     {
       "id": "heb3-mc-2",
-      "question": "Os presos maltratados referidos em Hebreus eram -",
+      "question": "Israel falhou como —",
       "options": [
-        "Os cristãos",
-        "Os ladrões",
-        "Todos, indistintamente",
-        "Todas estão corretas"
+        "povo peculiar;",
+        "reino sacerdotal;",
+        "povo santo;",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 3
     },
     {
       "id": "heb3-mc-3",
-      "question": "A Epístola aos Hebreus foi endereçada —",
+      "question": "Apostasia é —",
       "options": [
-        "A todos os cristãos",
-        "A todos os hebreus",
-        "Aos cristão judeus",
-        "Todas estão erradas"
+        "mudar de igreja;",
+        "voltar para o \"mundo\";",
+        "batizar nas águas duas vezes;",
+        "todas estão erradas."
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "heb3-mc-4",
-      "question": "Os anjos estarão em atividades —",
+      "question": "Primeiro homem de fé mencionado na Bíblia —",
       "options": [
-        "No arrebatamento da igreja",
-        "Na grande tribulação",
-        "No julgamento das nações",
-        "Todas estão corretas"
+        "Adão;",
+        "Enoque;",
+        "Abel;",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "heb3-mp-1",
       "left": "Palavras faladas por Cristo",
-      "right": "Uma tão grande salvação"
+      "right": "uma tão grande salvação"
     },
     {
       "id": "heb3-mp-2",
       "left": "Palavras faladas pelos anjos",
-      "right": "Permaneceram firmes"
+      "right": "permaneceram firmes"
     },
     {
       "id": "heb3-mp-3",
       "left": "Coisas que temos ouvido",
-      "right": "Atentar com mais diligência"
+      "right": "atentar com mais diligência"
     },
     {
       "id": "heb3-mp-4",
       "left": "Testificando Deus com eles",
-      "right": "Sinais, milagres, maravilhas"
+      "right": "sinais, milagres, maravilhas"
     },
     {
       "id": "heb3-mp-5",

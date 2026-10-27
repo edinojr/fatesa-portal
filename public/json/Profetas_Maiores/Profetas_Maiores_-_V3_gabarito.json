@@ -9,94 +9,94 @@
     },
     {
       "id": "pm3-tf-2",
-      "question": "Isaías começou seu ministério depois da morte do Rei Uzias.",
-      "answer": "F"
-    },
-    {
-      "id": "pm3-tf-3",
       "question": "Em Isaías 14:12 a expressão “Estrela da manhã” refere-se a Satanás.",
       "answer": "V"
     },
     {
-      "id": "pm3-tf-4",
+      "id": "pm3-tf-3",
       "question": "Jerusalém somente terá sua glória restituída no dia do arrebatamento da igreja.",
       "answer": "F"
     },
     {
+      "id": "pm3-tf-4",
+      "question": "Ao jovem Daniel, Deus deu a Belsazar a interpretação de sua visão.",
+      "answer": "F"
+    },
+    {
       "id": "pm3-tf-5",
-      "question": "Como homem de Deus, Jeremias foi respeitado e amado pelo povo e por sua família.",
+      "question": "Tanto os filisteus como também os moabitas são descendentes de Ló.",
       "answer": "F"
     },
     {
       "id": "pm3-tf-6",
-      "question": "O Livro de lamentações foi escrito por Jeremias quando estava no Egito",
-      "answer": "F"
+      "question": "O Senhor declarou que Israel foi vendido pelas suas próprias maldades.",
+      "answer": "V"
     },
     {
       "id": "pm3-tf-7",
-      "question": "Deus proibiu que Ezequiel revelasse tristeza em razão da morte de sua esposa.",
+      "question": "Numa batalha contra o Egito, o Rei Josias foi morto por uma flecha.",
       "answer": "V"
     },
     {
       "id": "pm3-tf-8",
-      "question": "No milênio, estando Jesus presente na terra, não haverá necessidade de templo.",
-      "answer": "F"
-    },
-    {
-      "id": "pm3-tf-9",
-      "question": "É certo que o Império Gentílico começou a ser formado com Ninrode.",
+      "question": "O cativeiro foi o remédio ministrado por Deus para curar o seu povo da idolatria.",
       "answer": "V"
     },
     {
-      "id": "pm3-tf-10",
-      "question": "Ao jovem Daniel, Deus deu a Belsazar a interpretação de sua visão",
+      "id": "pm3-tf-9",
+      "question": "Deus, sendo espírito, não poderia e não pode habitar no meio do seu povo.",
       "answer": "F"
+    },
+    {
+      "id": "pm3-tf-10",
+      "question": "Podemos afirmar, através da história, que o Império Gentílico está em decadência.",
+      "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "pm3-mc-1",
-      "question": "Na Bíblia a expressão “peso” pode significar -",
+      "question": "Na Bíblia, a expressão “peso” pode significar —",
       "options": [
-        "Carga",
-        "Oráculo",
-        "Mensagem pesada",
-        "Todas estão corretas"
+        "carga",
+        "oráculo",
+        "mensagem pesada",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "pm3-mc-2",
-      "question": "Ezequiel viu saindo do templo",
+      "question": "Ezequiel foi orientado por Deus a pregar -",
       "options": [
-        "Raios e trovões",
-        "Um rio caudaloso",
-        "Como um fio de água",
-        "Todas estão corretas"
+        "com amor",
+        "com dureza",
+        "através de símbolos",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "pm3-mc-3",
-      "question": "A mensagem de Jeremias falava de -",
+      "question": "Ezequiel foi levado para o cativeiro com a -",
       "options": [
-        "Arrependimento",
-        "Perdão",
-        "Mudança de vida",
-        "Todas estão corretas"
+        "primeira turma",
+        "segunda turma",
+        "terceira turma",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "pm3-mc-4",
-      "question": "Ezequiel foi orientado por Deus a pregar -",
+      "question": "O dono da vinha, em relação à figueira, ordenou -",
       "options": [
-        "Com amor",
-        "Com dureza",
-        "Através de símbolos",
-        "Todas estão corretas"
+        "cortar",
+        "arrancar",
+        "adubar",
+        "todas estão erradas."
       ],
-      "answer": 2
+      "answer": 0
     }
   ],
   "matchingPairs": [
@@ -113,7 +113,7 @@
     {
       "id": "pm3-mp-3",
       "left": "Ordem dada por Deus a Ezequiel",
-      "right": "Comer um livro"
+      "right": "comer um livro"
     },
     {
       "id": "pm3-mp-4",
@@ -128,7 +128,7 @@
     {
       "id": "pm3-mp-6",
       "left": "Deixou o templo e a cidade de Jerusalém",
-      "right": "A glória de Deus"
+      "right": "a glória de Deus"
     }
   ]
 }

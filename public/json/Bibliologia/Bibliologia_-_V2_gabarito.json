@@ -9,94 +9,94 @@
     },
     {
       "id": "bibl2-tf-2",
-      "question": "De alguma forma, Jesus pode ser encontrado em quase todos os livros da Bíblia.",
-      "answer": "F"
-    },
-    {
-      "id": "bibl2-tf-3",
-      "question": "O livro de Atos dos Apóstolos relata a história da igreja entre os anos 29 e 63 dC.",
-      "answer": "V"
-    },
-    {
-      "id": "bibl2-tf-4",
-      "question": "Com a morte de Jesus o Antigo Testamento perdeu sua validade.",
-      "answer": "F"
-    },
-    {
-      "id": "bibl2-tf-5",
       "question": "Assim como o hebraico, também o aramaico continua sendo falado em Israel.",
       "answer": "F"
     },
     {
-      "id": "bibl2-tf-6",
-      "question": "A tradução de João Ferreira de Almeida foi a primeira Bíblia impressa em português.",
+      "id": "bibl2-tf-3",
+      "question": "Alexandre, embora de forma indireta, contribuiu na realização da “Septuaginta”",
       "answer": "V"
+    },
+    {
+      "id": "bibl2-tf-4",
+      "question": "Podemos afirmar que a Bíblia foi o primeiro livro impresso no mundo.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl2-tf-5",
+      "question": "A redenção do homem poderia ser possível caso ele reconhecesse o seu pecado.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl2-tf-6",
+      "question": "Através do Profeta Obadias Deus deixou claro seu propósito de abençoar os descendentes de Esaú.",
+      "answer": "F"
     },
     {
       "id": "bibl2-tf-7",
-      "question": "Livro apócrifo é aquele no qual não é reconhecida a inspiração divina.",
-      "answer": "V"
+      "question": "Para a igreja, hoje, o antigo Testamento não tem nenhuma validade.",
+      "answer": "F"
     },
     {
       "id": "bibl2-tf-8",
-      "question": "Não podemos afirmar quanto tempo durou o cativeiro de Judá em Babilônia.",
+      "question": "O Rei Jeoaquim queimou o livro escrito pelo profeta Jeremias.",
       "answer": "F"
     },
     {
       "id": "bibl2-tf-9",
-      "question": "Alexandre, embora de forma indireta, contribuiu na realização da “Septuaginta”.",
-      "answer": "V"
+      "question": "O Antigo Testamento foi escrito em hebraico e aramaico porque Deus queira comunicar-se só com Israel",
+      "answer": "F"
     },
     {
       "id": "bibl2-tf-10",
-      "question": "Foram os Macabeus que deram origem ao chamado “Movimento Sionista”.",
-      "answer": "F"
+      "question": "A Bíblia foi escrita por inspiração e também por revelações do Espírito Santo.",
+      "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "bibl2-mc-1",
-      "question": "O preço da redenção foi exigido:",
+      "question": "Falou sobre o Antigo Testamento-",
       "options": [
-        "Por Satanás",
-        "Pelo amor de Deus",
-        "Pela justiça de Deus",
-        "Todas estão corretas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "bibl2-mc-2",
-      "question": "No período interbíblico Israel esteve sob o domínio dos:",
-      "options": [
-        "Persas",
-        "Romanos",
-        "Gregos",
-        "Todas estão corretas"
+        "Jesus",
+        "Pedro",
+        "Estêvão",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "bibl2-mc-3",
-      "question": "Mandou construiu a “serpente de metal”:",
+      "id": "bibl2-mc-2",
+      "question": "Imperador que julgou ter destruído a Bíblia –",
       "options": [
-        "Deus",
-        "Rei Ezequias",
-        "Rei Ageu",
-        "Todas estão corretas"
+        "Nero",
+        "Antíoco Epifâneo",
+        "Diocleciano",
+        "todas estão erradas."
       ],
-      "answer": 0
+      "answer": 2
+    },
+    {
+      "id": "bibl2-mc-3",
+      "question": "Traduziu a “Vulgata Latina”",
+      "options": [
+        "Agostinho",
+        "Jerônimo",
+        "Lutero",
+        "todas estão erradas"
+      ],
+      "answer": 1
     },
     {
       "id": "bibl2-mc-4",
-      "question": "Mandou destruir a “serpente de metal”:",
+      "question": "Inerrância significa–",
       "options": [
-        "Deus",
-        "Rei Ezequias",
-        "Profeta Samuel",
-        "Todas estão corretas"
+        "difícil de errar",
+        "errar sempre",
+        "infalível",
+        "todas estão erradas."
       ],
-      "answer": 1
+      "answer": 2
     }
   ],
   "matchingPairs": [
@@ -118,7 +118,7 @@
     {
       "id": "bibl2-mp-4",
       "left": "Não fizeram divisão em seus livros",
-      "right": "Todos os escritores"
+      "right": "todos os escritores"
     },
     {
       "id": "bibl2-mp-5",

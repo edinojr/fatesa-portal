@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "doud1-tf-1",
-      "question": "Podemos afirmar que hoje o politeísmo tem predominância sobre todas as religiões existentes.",
+      "question": "No Salmo 90, o salmista Davi afirma que Deus é Deus de eternidade a eternidade.",
       "answer": "F"
     },
     {
       "id": "doud1-tf-2",
-      "question": "No Salmo 90 o salmista Davi afirma que Deus é Deus de eternidade a eternidade.",
-      "answer": "F"
-    },
-    {
-      "id": "doud1-tf-3",
-      "question": "É certo que o livro de Gênesis fala da origem de tudo e de todos os seres existentes.",
-      "answer": "F"
-    },
-    {
-      "id": "doud1-tf-4",
-      "question": "Nenhum argumento racional da existência de Deus convencerá o homem que não quiser crer n’Ele.",
-      "answer": "V"
-    },
-    {
-      "id": "doud1-tf-5",
-      "question": "É bíblico afirmar que Deus é transcendente e também imanente.",
-      "answer": "V"
-    },
-    {
-      "id": "doud1-tf-6",
-      "question": "Os atributos morais de Deus não são comunicáveis ao homem.",
-      "answer": "F"
-    },
-    {
-      "id": "doud1-tf-7",
       "question": "Sendo que sua natureza é má, segue-se que Satanás não pode praticar o bem.",
       "answer": "V"
     },
     {
+      "id": "doud1-tf-3",
+      "question": "Segundo a Bíblia existe apenas um Deus, Criador e sustentador de tudo e de todos.",
+      "answer": "V"
+    },
+    {
+      "id": "doud1-tf-4",
+      "question": "No Monte Sinai, ao ver a glória de Deus, Israel declarou que \"só o Senhor é Deus\".",
+      "answer": "F"
+    },
+    {
+      "id": "doud1-tf-5",
+      "question": "O conhecimento da ética e da filosofia é valioso para o entendimento da teologia.",
+      "answer": "F"
+    },
+    {
+      "id": "doud1-tf-6",
+      "question": "Nenhum argumento racional da exigência de Deus convencerá o homem que não quiser crer n’Ele.",
+      "answer": "V"
+    },
+    {
+      "id": "doud1-tf-7",
+      "question": "Podemos afirmar que nunca houve um pensamento uniforme a respeito de Deus.",
+      "answer": "V"
+    },
+    {
       "id": "doud1-tf-8",
-      "question": "No sentido bíblico não se pode fazer diferença entre benignidade e bondade.",
+      "question": "Sendo, como é, um ser espiritual, nada sabemos sobre a substância de Deus.",
       "answer": "F"
     },
     {
       "id": "doud1-tf-9",
-      "question": "A redenção do reino vegetal e animal só ocorrerá no milênio.",
-      "answer": "V"
+      "question": "Segundo declarou Samuel \"Não há santo como é o Senhor\".",
+      "answer": "F"
     },
     {
       "id": "doud1-tf-10",
-      "question": "Mesmo os filhos de Deus não podem entender por nenhum meio o mistério da Trindade.",
-      "answer": "V"
+      "question": "Caso a Bíblia não dissesse que Deus é benigno, os homens teriam dificuldade de entender a sua benignidade.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "doud1-mc-1",
-      "question": "O Deus que conhecemos é -",
+      "question": "Os céus manifestam -",
       "options": [
-        "A difícil de perdoar",
-        "Sem compaixão",
-        "Grande e terrível",
-        "Todas estão erradas"
+        "o juízo de Deus",
+        "a misericórdia de Deus",
+        "a glória de Deus",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "doud1-mc-2",
-      "question": "Os céus manifestam -",
-      "options": [
-        "O juízo de Deus",
-        "A glória de Deus",
-        "A misericórdia de Deus",
-        "Todas estão corretas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "doud1-mc-3",
       "question": "Destruiu a serpente de metal -",
       "options": [
         "Moisés",
         "Ezequias",
         "Josué",
-        "Davi"
+        "Davi."
       ],
       "answer": 1
     },
     {
-      "id": "doud1-mc-4",
+      "id": "doud1-mc-3",
       "question": "É onipresente –",
       "options": [
-        "Satanás",
-        "O arcanjo Miguel",
         "Jesus",
-        "Todas estão corretas"
+        "Satanás",
+        "o arcanjo Miguel",
+        "todas estão corretas."
+      ],
+      "answer": 0
+    },
+    {
+      "id": "doud1-mc-4",
+      "question": "Politeísmo é -",
+      "options": [
+        "ser ateu",
+        "crer num só Deus",
+        "crer em muitos deuses",
+        "todas estão erradas."
       ],
       "answer": 2
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "doud1-mp-1",
-      "left": "Panteísmo",
-      "right": "Tudo é Deus"
+      "left": "Deus principal dos cananeus",
+      "right": "Baal"
     },
     {
       "id": "doud1-mp-2",
-      "left": "Cristianismo",
-      "right": "Deus é espírito"
+      "left": "Deus principal dos filisteus",
+      "right": "Dagom"
     },
     {
       "id": "doud1-mp-3",
-      "left": "Agnosticismo",
-      "right": "Deus pode ou não existir"
+      "left": "Deus principal dos amonitas",
+      "right": "Moloque"
     },
     {
       "id": "doud1-mp-4",
-      "left": "Materialismo",
-      "right": "A eternidade da matéria"
+      "left": "Deusa protetora da agricultura",
+      "right": "Ceres"
     },
     {
       "id": "doud1-mp-5",
-      "left": "Ateísmo",
-      "right": "Nega a existência de Deus"
+      "left": "Um deus egípcio",
+      "right": "Apis"
     },
     {
       "id": "doud1-mp-6",
-      "left": "Modo errado de viver",
-      "right": "Forma de negar a existência de Deus"
+      "left": "Serpente de metal",
+      "right": "Neustã"
     }
   ]
 }

@@ -9,126 +9,126 @@
     },
     {
       "id": "dsal2-tf-2",
-      "question": "É certo que o Dia da Graça começou com o nascimento de Jesus.",
-      "answer": "F"
-    },
-    {
-      "id": "dsal2-tf-3",
       "question": "É certo que a Bíblia não foi escrita para contar a história do homem.",
       "answer": "V"
     },
     {
-      "id": "dsal2-tf-4",
-      "question": "A Bíblia afirma que o inferno foi preparado para o diabo e seus anjos.",
-      "answer": "V"
-    },
-    {
-      "id": "dsal2-tf-5",
+      "id": "dsal2-tf-3",
       "question": "O homem natural, ao reconhecer sua culpa, toma posse da salvação.",
       "answer": "F"
     },
     {
-      "id": "dsal2-tf-6",
-      "question": "No sentido bíblico, morte significa separação e não o fim de uma vida.",
-      "answer": "V"
-    },
-    {
-      "id": "dsal2-tf-7",
+      "id": "dsal2-tf-4",
       "question": "Sendo, como é, amor, Deus não mandará nenhum de seus filhos para o inferno.",
       "answer": "V"
     },
     {
-      "id": "dsal2-tf-8",
-      "question": "O fato de Jesus ser colocado entre dois ladrões foi pura coincidência.",
+      "id": "dsal2-tf-5",
+      "question": "Pela adoção o homem torna-se participante da natureza de Deus.",
       "answer": "F"
     },
     {
+      "id": "dsal2-tf-6",
+      "question": "Mesmo “morto em ofensas e pecados” o homem é amado por Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal2-tf-7",
+      "question": "Podemos afirmar haver diferença entre Reino dos Céus e Reino de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "dsal2-tf-8",
+      "question": "Após o diluvio a geração de Noé não foi melhor do que a de Adão.",
+      "answer": "V"
+    },
+    {
       "id": "dsal2-tf-9",
-      "question": "Paulo afirma que o corpo do homem salvo é o templo do Espírito Santo.",
+      "question": "Paulo nunca falou sobre eleição e predestinação.",
       "answer": "F"
     },
     {
       "id": "dsal2-tf-10",
-      "question": "Pela adoção o homem torna-se participante da natureza de Deus.",
-      "answer": "F"
+      "question": "A fé é como botão que aciona o processo que leva à salvação.",
+      "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "dsal2-mc-1",
-      "question": "Fala da salvação com mais profundidade -",
+      "question": "O plano de Redenção foi revelado por Deus —",
       "options": [
-        "Mateus",
-        "Marcos",
-        "Lucas",
-        "João"
+        "em Belém de Judá",
+        "no Jardim do Éden",
+        "na cruz do calvário",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "dsal2-mc-2",
-      "question": "É um milagre de transformação -",
+      "question": "A Bíblia foi escrita para contar a",
       "options": [
-        "Adoção",
-        "Justificação",
-        "Novo nascimento",
-        "Todas estão corretas"
+        "a queda de Satanás",
+        "história da humanidade",
+        "história da redenção do homem",
+        "todas estão erradas."
       ],
       "answer": 2
     },
     {
       "id": "dsal2-mc-3",
-      "question": "O plano de Redenção foi revelado por Deus —",
+      "question": "Autor da expressão— “pela graça sois salvos, mediante a fé” —",
       "options": [
-        "Em Belém de Judá",
-        "No Jardim do Éden",
-        "Na cruz do calvário",
-        "Todas estão erradas"
+        "Jacob Armínio",
+        "Calvino",
+        "Paulo",
+        "todas estão erradas"
       ],
-      "answer": 1
+      "answer": 2
     },
     {
       "id": "dsal2-mc-4",
-      "question": "A Bíblia foi escrita para contar a",
+      "question": "Conversão requer mudança na maneira de -",
       "options": [
-        "A queda de Satanás",
-        "História da humanidade",
-        "História da redenção do homem",
-        "Todas estão erradas"
+        "andar",
+        "pensar",
+        "viver",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 3
     }
   ],
   "matchingPairs": [
     {
       "id": "dsal2-mp-1",
       "left": "Graça",
-      "right": "Provisão de Deus"
+      "right": "meio de tomar posse da salvação"
     },
     {
       "id": "dsal2-mp-2",
       "left": "Adoção",
-      "right": "Mudança de posição"
+      "right": "mudança de posição"
     },
     {
       "id": "dsal2-mp-3",
       "left": "Fé",
-      "right": "Meio de adquirir a salvação"
+      "right": "meio de obter a salvação"
     },
     {
       "id": "dsal2-mp-4",
       "left": "Regeneração",
-      "right": "Mudança de natureza"
+      "right": "mudança de natureza"
     },
     {
       "id": "dsal2-mp-5",
       "left": "Comprova a salvação",
-      "right": "Prática de boas obras"
+      "right": "prática de boas obras"
     },
     {
       "id": "dsal2-mp-6",
       "left": "Parte do homem na salvação",
-      "right": "Fé"
+      "right": "fé"
     }
   ]
 }

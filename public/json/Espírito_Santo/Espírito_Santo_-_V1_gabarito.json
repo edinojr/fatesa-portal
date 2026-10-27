@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "esp1-tf-1",
-      "question": "Espírito Santo é o único nome da terceira pessoa da Trindade",
-      "answer": "F"
-    },
-    {
-      "id": "esp1-tf-2",
       "question": "É o Espírito Santo quem opera no homem o milagre do novo nascimento.",
       "answer": "V"
     },
     {
-      "id": "esp1-tf-3",
-      "question": "Ser cheio do Espírito Santo desde o ventre de sua mãe foi um privilégio somente de Jesus",
-      "answer": "F"
-    },
-    {
-      "id": "esp1-tf-4",
+      "id": "esp1-tf-2",
       "question": "Tal como a pomba, o Espírito Santo não habita onde houver impurezas.",
       "answer": "V"
     },
     {
-      "id": "esp1-tf-5",
-      "question": "O batismo com o Espírito Santo é a maior benção ao alcance do homem natural.",
-      "answer": "F"
-    },
-    {
-      "id": "esp1-tf-6",
+      "id": "esp1-tf-3",
       "question": "Paulo deixou claro que são nove as manifestações do fruto do Espírito.",
       "answer": "F"
     },
     {
+      "id": "esp1-tf-4",
+      "question": "O homem pode ou não usar os dons naturais no serviço do Reino de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "esp1-tf-5",
+      "question": "Após o arrebatamento o Espírito Santo não estará mais na terra.",
+      "answer": "F"
+    },
+    {
+      "id": "esp1-tf-6",
+      "question": "Pneumatologia trata, especificamente, do estudo do Espírito Santo.",
+      "answer": "F"
+    },
+    {
       "id": "esp1-tf-7",
-      "question": "É certo que durante a grande tribulação Deus não poderá fazer uso da sua benignidade.",
+      "question": "Divindade fala de Jesus e deidade fala do Espírito Santo.",
       "answer": "F"
     },
     {
       "id": "esp1-tf-8",
-      "question": "O homem pode ou não usar os dons naturais no serviço do Reino de Deus",
+      "question": "O nascimento de Jesus foi uma promessa feita pelo Pai lá no Éden.",
       "answer": "V"
     },
     {
       "id": "esp1-tf-9",
-      "question": "Liberdade do Espírito não pode ser confundida com desorganização.",
+      "question": "Durante o ministério de Jesus o Espírito Santo nada falou de si mesmo.",
       "answer": "V"
     },
     {
       "id": "esp1-tf-10",
-      "question": "Após o arrebatamento o Espírito Santo não estará mais na terra.",
-      "answer": "F"
+      "question": "No Novo Testamento o primeiro a falar sobre o Espírito Santo foi João Batista",
+      "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "esp1-mc-1",
-      "question": "Antes do Dia de Pentecostes, os discípulos -",
+      "question": "O fruto do Espírito fala do que —",
       "options": [
-        "Não tinham o Espírito Santo",
-        "Nada sabiam sobre o Espírito Santo",
-        "Já tinham o Espírito Santo",
-        "Todas estão erradas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "esp1-mc-2",
-      "question": "O fruto do Espírito fala do que -",
-      "options": [
-        "O crente faz",
-        "O que o crente é",
-        "O que o crente pensa",
-        "Todas estão erradas"
+        "o crente faz;",
+        "o crente é;",
+        "o crente pensa;",
+        "todas estão corretas."
       ],
       "answer": 1
     },
     {
-      "id": "esp1-mc-3",
+      "id": "esp1-mc-2",
       "question": "Ministro é —",
       "options": [
-        "Um cargo superior",
-        "Uma posição de destaque",
-        "Aquele que serve",
-        "Todas estão erradas"
+        "um cargo superior;",
+        "uma posição de destaque;",
+        "aquele que serve;",
+        "todas estão erradas."
       ],
       "answer": 2
     },
     {
-      "id": "esp1-mc-4",
+      "id": "esp1-mc-3",
       "question": "Realizou milagres pelo poder do Espírito Santo —",
       "options": [
-        "Jesus",
-        "Josué",
-        "Moisés",
-        "Todas estão corretas"
+        "Jesus;",
+        "Josué;",
+        "Moisés;",
+        "todas estão corretas."
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esp1-mc-4",
+      "question": "Segundo a Bíblia, Deus é —",
+      "options": [
+        "o Pai;",
+        "o Filho;",
+        "o Espírito Santo;",
+        "todas estão corretas."
       ],
       "answer": 3
     }
@@ -103,32 +103,32 @@
     {
       "id": "esp1-mp-1",
       "left": "Pela virtude do Espírito Santo, Eliseu",
-      "right": "Curou um leproso"
+      "right": "curou um leproso"
     },
     {
       "id": "esp1-mp-2",
       "left": "Pela virtude do Espírito Santo, Jesus",
-      "right": "Andou sobre as águas"
+      "right": "andou sobre as águas"
     },
     {
       "id": "esp1-mp-3",
       "left": "Pela virtude do Espírito Santo, Sansão",
-      "right": "Feriu mil homens"
+      "right": "feriu mil homens"
     },
     {
       "id": "esp1-mp-4",
       "left": "Pela virtude do Espírito Santo, Josué",
-      "right": "Parou o tempo"
+      "right": "parou o tempo"
     },
     {
       "id": "esp1-mp-5",
       "left": "Pela virtude do Espírito Santo, Davi",
-      "right": "Matou um gigante"
+      "right": "matou um gigante"
     },
     {
       "id": "esp1-mp-6",
       "left": "Pela virtude do Espírito Santo, Moisés",
-      "right": "Abriu um mar"
+      "right": "abriu um mar"
     }
   ]
 }

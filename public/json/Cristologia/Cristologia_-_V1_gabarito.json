@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "cris1-tf-1",
-      "question": "Na cruz do calvário Cristo pagou o preço da nossa redenção.",
-      "answer": "F"
-    },
-    {
-      "id": "cris1-tf-2",
       "question": "Aqui na terra, como Jesus Cristo, ele era cem por cento homem e cem por cento Deus.",
       "answer": "V"
     },
     {
+      "id": "cris1-tf-2",
+      "question": "Quase tudo que estava escrito sobre Jesus no Antigo Testamento teria que se cumprir, e cumpriu.",
+      "answer": "F"
+    },
+    {
       "id": "cris1-tf-3",
-      "question": "Para evitar o politeísmo, Deus não permitiu nenhum vestígio da trindade no Antigo Testamento.",
-      "answer": "F"
-    },
-    {
-      "id": "cris1-tf-4",
-      "question": "Quase tudo que estava escrito sobre Jesus no Antigo Testamento teria que se cumprir e cumpriu.",
-      "answer": "F"
-    },
-    {
-      "id": "cris1-tf-5",
-      "question": "Para vir à terra, como homem, Cristo despiu-se de sua glória e divindade.",
-      "answer": "F"
-    },
-    {
-      "id": "cris1-tf-6",
       "question": "Aqui na terra Satanás teria que ser vencido por um homem igual ao que ele venceu no Éden.",
       "answer": "V"
     },
     {
-      "id": "cris1-tf-7",
-      "question": "Morte vicária tem o sentido de morte substitutiva, ou seja, alguém morrer em lugar de outro.",
+      "id": "cris1-tf-4",
+      "question": "Jesus, num corpo ressuscitado, comeu, com seus discípulos, peixe e mel.",
       "answer": "V"
     },
     {
-      "id": "cris1-tf-8",
-      "question": "Jesus, num corpo ressuscitado, comeu com seus discípulos peixe e mel.",
+      "id": "cris1-tf-5",
+      "question": "A expressão \"os outros mortos\" refere-se aos ímpios de todos os tempos, sem exceção.",
       "answer": "V"
     },
     {
-      "id": "cris1-tf-9",
-      "question": "Hoje, nesta dispensação da graça, podemos ver na pessoa de cada pastor, um sumo sacerdote",
+      "id": "cris1-tf-6",
+      "question": "No Antigo Testamento nada encontramos sobre Cristologia.",
       "answer": "F"
     },
     {
-      "id": "cris1-tf-10",
-      "question": "A expressão “os outros mortos” refere-se aos ímpios de todos os tempos, sem exceção.",
+      "id": "cris1-tf-7",
+      "question": "A principal diferença entre anjos e homens está no fato de que os anjos são eternos.",
+      "answer": "F"
+    },
+    {
+      "id": "cris1-tf-8",
+      "question": "Quanto a função exercida nunca houve supremacia de uma pessoa da Trindade sobre outra.",
+      "answer": "F"
+    },
+    {
+      "id": "cris1-tf-9",
+      "question": "Podemos afirmar que Adão, antes de pecar, era um homem justo.",
       "answer": "V"
+    },
+    {
+      "id": "cris1-tf-10",
+      "question": "Podemos, sem dúvidas, afirmar que quando Jesus nasceu o rei Herodes já havia morrido.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "cris1-mc-1",
-      "question": "Em relação ao homem, na terra, o último ato de Jesus foi ou será -",
-      "options": [
-        "Sua morte na cruz",
-        "Sua ressurreição",
-        "Julgamento do Trono Branco",
-        "Todas estão erradas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "cris1-mc-2",
-      "question": "“Perfeito eras nos teus caminhos” fala de -",
+      "question": "\"Perfeito eras nos teus caminhos\" fala de -",
       "options": [
         "Jesus",
         "Satanás",
         "Adão",
-        "Todas estão corretas"
+        "todas estão erradas"
       ],
       "answer": 1
     },
     {
-      "id": "cris1-mc-3",
+      "id": "cris1-mc-2",
       "question": "Pelas Escrituras podemos entender que Jesus é -",
       "options": [
         "Profeta",
         "Sumo Sacerdote",
         "Rei dos Reis",
-        "Todas estão corretas"
+        "todas estão corretas"
+      ],
+      "answer": 3
+    },
+    {
+      "id": "cris1-mc-3",
+      "question": "Como homem Jesus sentiu -",
+      "options": [
+        "indignação",
+        "angústias e tristezas",
+        "fome e sede",
+        "todas estão corretas"
       ],
       "answer": 3
     },
     {
       "id": "cris1-mc-4",
-      "question": "Como homem Jesus sentiu -",
+      "question": "Para Robert Tilton, Jesus era -",
       "options": [
-        "Indignação",
-        "Angústias e tristezas",
-        "Fome e sede",
-        "Todas estão corretas"
+        "o Filho de Deus",
+        "um grande profeta",
+        "extremamente rico",
+        "apenas um homem"
       ],
-      "answer": 3
+      "answer": 2
     }
   ],
   "matchingPairs": [
@@ -108,27 +108,27 @@
     {
       "id": "cris1-mp-2",
       "left": "Queria a morte de Jesus",
-      "right": "Sumo sacerdote"
+      "right": "sumo sacerdote"
     },
     {
       "id": "cris1-mp-3",
       "left": "Sangue",
-      "right": "Símbolo de purificação"
+      "right": "símbolo de purificação"
     },
     {
       "id": "cris1-mp-4",
       "left": "Água",
-      "right": "Símbolo do Espírito Santo"
+      "right": "símbolo do Espírito Santo"
     },
     {
       "id": "cris1-mp-5",
       "left": "Rocha de Horebe",
-      "right": "Símbolo de Jesus"
+      "right": "símbolo de Jesus"
     },
     {
       "id": "cris1-mp-6",
       "left": "Lança",
-      "right": "Soldado romano"
+      "right": "soldado romano"
     }
   ]
 }

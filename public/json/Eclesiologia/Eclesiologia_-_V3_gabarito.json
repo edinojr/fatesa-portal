@@ -9,92 +9,92 @@
     },
     {
       "id": "ecl3-tf-2",
-      "question": "As condições exigidas por Deus em relação à igreja são diferentes em relação as de Israel.",
-      "answer": "F"
+      "question": "Quanto a salvação os judeus não têm nenhum privilégio nesta Dispensação da Graça.",
+      "answer": "V"
     },
     {
       "id": "ecl3-tf-3",
-      "question": "Quanto à salvação os judeus não têm nenhum privilégio nesta Dispensação da Graça.",
+      "question": "O Senhor Jesus deixou claro que o paraíso para a igreja não será aqui na terra.",
       "answer": "V"
     },
     {
       "id": "ecl3-tf-4",
-      "question": "A expressão “vindo a plenitude dos tempos” refere-se ao arrebatamento da igreja",
+      "question": "Coube a segunda geração de Israel executar a ordem de Deus exterminando o povo da terra.",
       "answer": "F"
     },
     {
       "id": "ecl3-tf-5",
-      "question": "A palavra igreja é encontrada na Bíblia no singular e também no plural.",
+      "question": "A Dispensação da Graça terminará com o arrebatamento da igreja.",
       "answer": "V"
     },
     {
       "id": "ecl3-tf-6",
-      "question": "O batismo no corpo místico de Cristo é realizado pelo Espírito Santo.",
+      "question": "A palavra “ekklesia”, entre os gregos, não tinha sentido religioso.",
       "answer": "V"
     },
     {
       "id": "ecl3-tf-7",
-      "question": "A doutrina pentecostal não é uma inovação doutrinária ocorrida dentro do cristianismo.",
-      "answer": "V"
-    },
-    {
-      "id": "ecl3-tf-8",
-      "question": "O batismo nas águas só pode ser realizado após o candidato completar doze anos de idade.",
+      "question": "Paulo foi o único apóstolo que identificou Jesus como sendo a “pedra”.",
       "answer": "F"
     },
     {
+      "id": "ecl3-tf-8",
+      "question": "A igreja local é onde nós nos reunimos para adorar e para cultuar a Deus.",
+      "answer": "V"
+    },
+    {
       "id": "ecl3-tf-9",
-      "question": "É certo que a Ceia do Senhor não tem qualquer relação com o arrebatamento da igreja.",
+      "question": "Sabemos, pela Bíblia, não ser correto batizar alguém antes de completar doze anos.",
       "answer": "F"
     },
     {
       "id": "ecl3-tf-10",
-      "question": "A oferta que mais agrada a Deus é uma vida santa de seus filhos no altar.",
-      "answer": "V"
+      "question": "É certo que a páscoa celebrada pelos judeus é igual a ceia dos cristãos",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "ecl3-mc-1",
-      "question": "Em Jesus a Lei Cerimonial foi -",
+      "question": "Na celebração da Ceia do Senhor comemoramos –",
       "options": [
-        "Revogada",
-        "Modificada",
-        "Cumprida",
-        "Todas estão erradas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "ecl3-mc-2",
-      "question": "A salvação foi e ainda é -",
-      "options": [
-        "Planejada pelo Pai",
-        "Executada por Jesus",
-        "Aplicada pelo Espírito Santo",
-        "Todas estão corretas"
+        "a morte de Jesus",
+        "sua segunda vinda",
+        "nossa libertação do jugo do pecado",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "ecl3-mc-3",
-      "question": "Na celebração da Ceia do Senhor comemoramos –",
+      "id": "ecl3-mc-2",
+      "question": "A igreja não é –",
       "options": [
-        "A morte de Jesus",
-        "Sua segunda vinda",
-        "Nossa libertação do jugo do pecado",
-        "Todas estão corretas"
+        "uma instituição divina",
+        "uma instituição humana",
+        "um edifício",
+        "todas estão erradas."
+      ],
+      "answer": 2
+    },
+    {
+      "id": "ecl3-mc-3",
+      "question": "Lemas dos evangélicos ao redor do mundo–",
+      "options": [
+        "só as Escrituras",
+        "só a fé",
+        "só a graça",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "ecl3-mc-4",
-      "question": "A igreja não é –",
+      "question": "Exigida pela Bíblia como sinal de salvação–",
       "options": [
-        "Uma instituição divina",
-        "Uma instituição humana",
-        "Um edifício",
-        "Todas estão erradas"
+        "penitência",
+        "extrema unção",
+        "batismo nas águas",
+        "todas estão corretas."
       ],
       "answer": 2
     }
@@ -103,32 +103,32 @@
     {
       "id": "ecl3-mp-1",
       "left": "Igreja universal",
-      "right": "Igreja triunfante"
+      "right": "igreja triunfante"
     },
     {
       "id": "ecl3-mp-2",
       "left": "Igreja local",
-      "right": "Igreja militante"
+      "right": "igreja militante"
     },
     {
       "id": "ecl3-mp-3",
       "left": "Ingresso na igreja universal",
-      "right": "Batismo no corpo de Cristo"
+      "right": "batismo no corpo de Cristo"
     },
     {
       "id": "ecl3-mp-4",
       "left": "Ingresso na igreja local",
-      "right": "Batismo nas águas"
+      "right": "batismo nas água"
     },
     {
       "id": "ecl3-mp-5",
       "left": "Virgens loucas e peixes ruins",
-      "right": "Igreja local"
+      "right": "igreja local"
     },
     {
       "id": "ecl3-mp-6",
       "left": "Virgens prudentes e peixes bons",
-      "right": "Igreja universal"
+      "right": "igreja universal"
     }
   ]
 }

@@ -229,7 +229,8 @@ export const unfinalizeModule = async (alunoId: string, livroId: string) => {
 export const ensureRecoveryExam = async (aula: any, nota: number, minGrade: number) => {
   const versaoAtual = aula?.versao || 1;
   const livroId = aula?.livro_id;
-  if (nota >= minGrade || versaoAtual >= 3 || !livroId || !aula?.id) return;
+  const isExam = aula?.tipo === 'prova' || aula?.tipo === 'avaliacao' || aula?.is_bloco_final;
+  if (!isExam || nota >= minGrade || versaoAtual >= 3 || !livroId || !aula?.id) return;
 
   const nextVersion = versaoAtual + 1;
   const baseTitle = (aula.titulo || '')
@@ -243,16 +244,28 @@ export const ensureRecoveryExam = async (aula: any, nota: number, minGrade: numb
     .select('id')
     .eq('livro_id', livroId)
     .eq('versao', nextVersion)
-    .ilike('titulo', `%${baseTitle}%`)
+    .in('tipo', ['prova', 'avaliacao'])
     .limit(1);
 
   if (!existing || existing.length === 0) {
-    // Gera novas questões a partir dos exercícios pedagógicos do módulo, evitando duplicidade com a V1/V2
+    // Busca todas as questões já usadas nas avaliações anteriores do módulo (V1 e V2) para garantir 0 repetição
+    const { data: prevExams } = await supabase
+      .from('aulas')
+      .select('questionario')
+      .eq('livro_id', livroId)
+      .in('tipo', ['prova', 'avaliacao']);
+
+    const allUsedQuestions = [
+      ...(aula.questionario || []),
+      ...((prevExams || []).flatMap((e: any) => Array.isArray(e.questionario) ? e.questionario : []))
+    ];
+
+    // Gera novas questões a partir dos 10 questionários do módulo, evitando duplicidade com V1/V2
     let recoveryQuestions = aula.questionario || [];
     try {
       const generated = await generateQuestionsFromExercises({
         livroId,
-        excludeQuestions: aula.questionario || [],
+        excludeQuestions: allUsedQuestions,
         targetTF: 10,
         targetMC: 4,
         targetMatching: 1

@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "heb2-tf-1",
-      "question": "O Espírito Santo é o ponto máximo da revelação da glória de Deus.",
+      "question": "Mesmo quando não estão a serviço de Deus os anjos se comunicam com os homens.",
       "answer": "F"
     },
     {
       "id": "heb2-tf-2",
-      "question": "Os cristãos hebreus conheciam muito pouco do Antigo Testamento.",
+      "question": "O escritor aos hebreus disse que a salvação foi anunciada por João Batista.",
       "answer": "F"
     },
     {
       "id": "heb2-tf-3",
-      "question": "Nesta Dispensação da Graça todo filho de Deus é um sacerdote.",
-      "answer": "V"
+      "question": "Os crentes hebreus não eram perseguidos pelos romanos e, sim, pelos judeus.",
+      "answer": "F"
     },
     {
       "id": "heb2-tf-4",
-      "question": "Na morte de Jesus o véu rasgado significava estar aberto o acesso do homem a Deus",
-      "answer": "V"
+      "question": "Conhecer a Palavra de Deus impede o homem de cometer o pecado da apostasia",
+      "answer": "F"
     },
     {
       "id": "heb2-tf-5",
-      "question": "Sacrifícios humanos só foram aceitos por Deus antes da Lei de Moisés.",
+      "question": "Sendo soberano, Deus não podia ficar preso aos termos de uma aliança.",
       "answer": "F"
     },
     {
       "id": "heb2-tf-6",
-      "question": "A fé é como um título de propriedade dos bens que não podemos ver.",
-      "answer": "V"
+      "question": "Pela Lei de Moisés em todo tipo de sacrifício o animal tinha que ser morto.",
+      "answer": "F"
     },
     {
       "id": "heb2-tf-7",
-      "question": "O pleno conhecimento da verdade só é alcançado depois de muitos anos de fé.",
+      "question": "Os homens de fé e fiéis nunca foram chamados por Deus para vencer e morrer.",
       "answer": "F"
     },
     {
       "id": "heb2-tf-8",
-      "question": "Os hebreus identificaram Jesus como sendo o Cordeiro que foi morto desde a fundação do mundo.",
-      "answer": "F"
-    },
-    {
-      "id": "heb2-tf-9",
-      "question": "Os presos mencionados pelo escritor aos Hebreus eram cristãos perseguidos pelo Império Romano.",
+      "question": "Podemos afirmar que caridade significa a prática do amor.",
       "answer": "V"
     },
     {
+      "id": "heb2-tf-9",
+      "question": "No princípio Deus somente falava com o homem através dos profetas.",
+      "answer": "F"
+    },
+    {
       "id": "heb2-tf-10",
-      "question": "O pecado imperdoável é diferente do desviar-se, ou afastar-se da igreja.",
+      "question": "A santidade distingue os anjos caídos dos que permanecem fiéis a Deus.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "heb2-mc-1",
-      "question": "Os anjos estarão em atividade -",
+      "question": "Filho de Levi —",
       "options": [
-        "No arrebatamento da igreja",
-        "Na grande tribulação",
-        "No julgamento da nações",
-        "Todas estão corretas"
+        "Gerson;",
+        "Coate;",
+        "Merari;",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "heb2-mc-2",
-      "question": "Perigo que ameaçava os cristãos hebreus era -",
+      "question": "O descanso pleno do cristão será —",
       "options": [
-        "Voltar à idolatria",
-        "Voltar ao mundo",
-        "Voltar ao judaísmo",
-        "Todas estão corretas"
+        "na terra, com Jesus;",
+        "no milênio;",
+        "no céu;",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "heb2-mc-3",
-      "question": "Israel falhou como —",
+      "question": "Apostasia significa —",
       "options": [
-        "Povo peculiar",
-        "Reino sacerdotal",
-        "Povo santo",
-        "Todas estão corretas"
+        "abandonar a igreja;",
+        "abandonar a fé;",
+        "abandonar os pais;",
+        "todas estão corretas."
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "heb2-mc-4",
-      "question": "Rejeitando o sacrifício de Jesus —",
+      "question": "Queixou-se de não haver entre ele e Deus um árbitro —",
       "options": [
-        "Necessita fazer sacrifício próprio",
-        "Terá que ir para o purgatório",
-        "Não resta outro sacrifício",
-        "Todas estão erradas"
+        "Jesus;",
+        "Moisés;",
+        "Jó;",
+        "todas estão erradas."
       ],
       "answer": 2
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "heb2-mp-1",
-      "left": "Cair nas mãos do Deus vivo",
-      "right": "Horrenda coisa"
+      "left": "Os anjos são servos",
+      "right": "Jesus é o Senhor"
     },
     {
       "id": "heb2-mp-2",
-      "left": "Sacrifício, hoje, aceito por Deus",
-      "right": "Corpo no altar"
+      "left": "Os anjos são poderosos",
+      "right": "Jesus é Onipotente"
     },
     {
       "id": "heb2-mp-3",
-      "left": "Uma só oblação",
-      "right": "Sacrifício único"
+      "left": "Os anjos são criaturas",
+      "right": "Jesus é o Criador"
     },
     {
       "id": "heb2-mp-4",
-      "left": "Contrário a Palavra de Deus",
-      "right": "Sacrifício de tolo"
+      "left": "Os anjos são seres gloriosos",
+      "right": "Jesus é o esplendor da glória de Deus"
     },
     {
       "id": "heb2-mp-5",
-      "left": "Sacrifício de Jesus",
-      "right": "Preço da redenção"
+      "left": "Os anjos são mensageiros",
+      "right": "Jesus é a mensagem"
     },
     {
       "id": "heb2-mp-6",
-      "left": "Pecado imperdoável",
-      "right": "Apostasia"
+      "left": "Os anjos estão em todas as partes",
+      "right": "Jesus é onipresente"
     }
   ]
 }

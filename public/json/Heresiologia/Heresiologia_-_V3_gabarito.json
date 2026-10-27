@@ -4,106 +4,106 @@
   "tfQuestions": [
     {
       "id": "her3-tf-1",
-      "question": "Antes de seu encontro com Jesus, Paulo era um fervoroso seguidor de uma seita judaica",
+      "question": "“As Testemunhas de Jeová” substituíram, em sua Bíblia, a palavra cruz por estaca.",
       "answer": "V"
     },
     {
       "id": "her3-tf-2",
-      "question": "É certo que na igreja primitiva Maria sempre ocupou um lugar de destaque.",
+      "question": "A doutrina da Nova Era está fundamentada na astronomia e na astrologia.",
       "answer": "F"
     },
     {
       "id": "her3-tf-3",
-      "question": "Foi São Tomaz de Aquino o criador da chamada doutrina da transubstanciação",
+      "question": "O hinduísmo não é apenas uma religião, mas é também uma tradição cultural.",
       "answer": "V"
     },
     {
       "id": "her3-tf-4",
-      "question": "Biblicamente, idolatria é tudo que ocupa o lugar de Deus em nosso coração.",
+      "question": "A Igreja Católica Romana não ensina mais sobre a existência do limbo.",
       "answer": "V"
     },
     {
       "id": "her3-tf-5",
-      "question": "A música, no Brasil, não sofreu nenhuma influência ligada ao espiritismo.",
+      "question": "Tal como hoje o confessionário podia ser encontrado em algumas igrejas.",
       "answer": "F"
     },
     {
       "id": "her3-tf-6",
-      "question": "Sendo uma doutrina difícil de entender, o mormonismo cresce muito pouco.",
-      "answer": "F"
+      "question": "Pela doutrina espírita a reencarnação só acontece entre os humanos.",
+      "answer": "V"
     },
     {
       "id": "her3-tf-7",
-      "question": "As \"Testemunhas de Jeová\" substituíram em sua Bíblia a palavra cruz por estaca.",
+      "question": "Foi através de revelações que Joseph Smith entendeu ser possível a poligamia.",
       "answer": "V"
     },
     {
       "id": "her3-tf-8",
-      "question": "Para a Teologia da Prosperidade é certo que Pedro e João não podiam estar bem com Deus",
-      "answer": "V"
-    },
-    {
-      "id": "her3-tf-9",
-      "question": "A Doutrina da Nova Era está fundamentada na astronomia e na astrologia.",
+      "question": "Russel tendo falhado, Rutherford, seu sucessor, não quis fazer mais novas previsões",
       "answer": "F"
     },
     {
-      "id": "her3-tf-10",
-      "question": "A Nova Era não tem como objetivo acabar com as religiões existentes na terra.",
+      "id": "her3-tf-9",
+      "question": "Jó não podia explicar seu sofrimento, mas sabia que era a mão de Deus.",
       "answer": "V"
+    },
+    {
+      "id": "her3-tf-10",
+      "question": "O Projeto da Nova era de formar uma “Nova Ordem Mundial” não contraria à Bíblia.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "her3-mc-1",
-      "question": "Concílio que declarou Maria como mãe de Deus -",
+      "question": "Concílio que declarou Maria como mãe de Deus—",
       "options": [
-        "Trento",
-        "Nicéia",
-        "Éfeso",
-        "Todas estão corretas"
+        "de Niceia",
+        "de Éfeso",
+        "de Trento",
+        "todas estão erradas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "her3-mc-2",
-      "question": "Declarou a extinção do limbo -",
-      "options": [
-        "São Gregório",
-        "Tomaz de Aquino",
-        "Papa Bento XVI",
-        "Papa Pio IX"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "her3-mc-3",
       "question": "Uma palavra muito popular no movimento Nova Era -",
       "options": [
-        "Holística",
-        "Cosmos",
-        "Energia",
-        "Todas estão corretas"
+        "holística",
+        "cosmos",
+        "energia",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "her3-mc-4",
-      "question": "A igreja primitiva era ameaçada pelos seita dos -",
+      "id": "her3-mc-3",
+      "question": "Possui alguma identidade com “As Testemunhas de Jeová” -",
       "options": [
-        "Gnósticos",
-        "Judaizantes",
-        "Testemunhas de Jeová",
-        "Todas estão corretas"
+        "o mormonismo",
+        "o espiritismo",
+        "o adventismo",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 2
+    },
+    {
+      "id": "her3-mc-4",
+      "question": "A Igreja de Laulicéia, segundo os “Amigos de Jó”, era -",
+      "options": [
+        "uma igreja abençoada",
+        "uma igreja morta",
+        "uma igreja não evangélica",
+        "todas estão corretas."
+      ],
+      "answer": 0
     }
   ],
   "matchingPairs": [
     {
       "id": "her3-mp-1",
       "left": "A grande mente universal",
-      "right": "Cognome dado a Lúcifer"
+      "right": "cognome dado a Lúcifer"
     },
     {
       "id": "her3-mp-2",
@@ -113,22 +113,22 @@
     {
       "id": "her3-mp-3",
       "left": "Schambalá",
-      "right": "Reino onde Lúcifer habita"
+      "right": "reino onde Lúcifer habita"
     },
     {
       "id": "her3-mp-4",
       "left": "Holístico",
-      "right": "Homem integrado ao cosmos"
+      "right": "homem integrado ao cosmos"
     },
     {
       "id": "her3-mp-5",
       "left": "Terra",
-      "right": "Deusa mãe"
+      "right": "deusa mãe"
     },
     {
       "id": "her3-mp-6",
       "left": "Colônia global",
-      "right": "O mundo"
+      "right": "o mundo"
     }
   ]
 }

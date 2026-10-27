@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "ange3-tf-1",
-      "question": "No ministério de Jesus a Bíblia declara que os anjos o serviram.",
-      "answer": "V"
+      "question": "A expressão “magníficos em poder” refere-se à beleza espiritual dos anjos.",
+      "answer": "F"
     },
     {
       "id": "ange3-tf-2",
-      "question": "Os profetas Isaías e Ezequiel nunca souberam que haviam escrito sobre a queda de Satanás.",
-      "answer": "V"
+      "question": "No “reino das trevas” não existe nenhuma forma de organização.",
+      "answer": "F"
     },
     {
       "id": "ange3-tf-3",
-      "question": "Jó afirmou que quando Deus lançava os fundamentos da terra os anjos já existiam.",
-      "answer": "F"
+      "question": "A expressão “exercito dos céus”, segundo a Bíblia, refere-se aos anjos.",
+      "answer": "V"
     },
     {
       "id": "ange3-tf-4",
-      "question": "Ao pecar, o homem conservou a semelhança, mas perdeu a imagem de Deus.",
-      "answer": "F"
+      "question": "Somente pela fé podemos aceitar que os mundos foram criados pela palavra de Deus",
+      "answer": "V"
     },
     {
       "id": "ange3-tf-5",
-      "question": "Biblicamente uma sábia politica ambiental, global e local, pode salvar a terra da ação destruidora do homem.",
+      "question": "O rei Nabucodonosor, sendo gentio, nunca reconheceu a soberania do Deus de Israel",
       "answer": "F"
     },
     {
       "id": "ange3-tf-6",
-      "question": "Tanto a idolatria como o desprezo do corpo são erros bíblicos que devem ser evitados.",
+      "question": "Para um homem de Deus é possível sintonizar sua mente com a mente de Cristo.",
       "answer": "V"
     },
     {
       "id": "ange3-tf-7",
-      "question": "Num casamento entre pessoas do mesmo sexo a geração de filhos só será possível através de métodos científicos.",
+      "question": "A afirmação de que a mulher foi feita de uma “costela do homem” deve ser vista de forma simbólica.",
       "answer": "F"
     },
     {
       "id": "ange3-tf-8",
-      "question": "Deus, embora amando o pecador, abomina e não pode suportar o pecado.",
+      "question": "Não dar lugar e resistir ao diabo evita cometer o erro cometido por Eva.",
       "answer": "V"
     },
     {
       "id": "ange3-tf-9",
-      "question": "Tirar o pecado, resgatando o homem da escravidão, foi o objetivo do sacrifício de Jesus.",
-      "answer": "V"
+      "question": "A Bíblia afirma que Deus é amor e misericórdia, portanto, não é bíblico falar em ira de Deus.",
+      "answer": "F"
     },
     {
       "id": "ange3-tf-10",
-      "question": "Podemos afirmar não ser bíblica a classificação dos pecados em mortais e veniais.",
-      "answer": "V"
+      "question": "Biblicamente, além do sangue de Jesus, existem outras formas de cobrir o pecado.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "ange3-mc-1",
-      "question": "Paulo afirma que não temos que lutar contra -",
+      "question": "Passar de homem natural para espiritual –",
       "options": [
-        "A carne e sangue",
-        "As potestades",
-        "Os principados",
-        "Todas estão corretas"
+        "só com muita oração",
+        "só com a morte física",
+        "só pelo novo nascimento",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 2
     },
     {
       "id": "ange3-mc-2",
-      "question": "Condições para o perdão do pecado -",
+      "question": "Na presença de Deus, assumiu a culpa pelo pecado -",
       "options": [
-        "Reconhecimento do pecado",
-        "Confissão e pedido de perdão",
-        "Arrependimento",
-        "Todas estão corretas"
+        "o homem",
+        "a mulher",
+        "a ‘serpente”",
+        "todas estão erradas."
       ],
       "answer": 3
     },
     {
       "id": "ange3-mc-3",
-      "question": "Os serafins são mencionados na Bíblia –",
+      "question": "Como filho de Deus, o homem não está livre –",
       "options": [
-        "Inúmeras vezes",
-        "Apenas três",
-        "Uma única vez",
-        "Todas estão corretas"
+        "da culpa do pecado",
+        "da consequência do pecado",
+        "do poder do pecado",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "ange3-mc-4",
-      "question": "Passar de homem natural para espiritual –",
+      "question": "A doutrina do pecado original foi defendida por -",
       "options": [
-        "Só com muita oração",
-        "Só com a morte física",
-        "Só pelo novo nascimento",
-        "Todas estão corretas"
+        "Paulo",
+        "Jesus",
+        "Santo Agostinho",
+        "todas estão corretas."
       ],
       "answer": 2
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "ange3-mp-1",
-      "left": "Liga o homem aos irracionais",
-      "right": "Evolucionismo"
+      "left": "Instituição de Deus em relação ao pecado",
+      "right": "sacrifício de animais"
     },
     {
       "id": "ange3-mp-2",
-      "left": "Liga o homem a Deus",
-      "right": "Criacionismo"
+      "left": "Sacrifício humano",
+      "right": "condenado por Deus"
     },
     {
       "id": "ange3-mp-3",
-      "left": "Nega a existência de um Criador",
-      "right": "Ateísmo"
+      "left": "Sacrifício aceito por Deus",
+      "right": "feito por Jesus"
     },
     {
       "id": "ange3-mp-4",
-      "left": "Identifica Deus com a obra da criação",
-      "right": "Panteísmo"
+      "left": "Eficácia do sangue de animais",
+      "right": "cobrir o pecado"
     },
     {
       "id": "ange3-mp-5",
-      "left": "Não existe um Deus único",
-      "right": "Politeísmo"
+      "left": "Eficaz contra o pecado",
+      "right": "sangue de Jesus"
     },
     {
       "id": "ange3-mp-6",
-      "left": "Deus como Criador do homem",
-      "right": "Doutrina bíblica"
+      "left": "Penitência",
+      "right": "prática antibíblica"
     }
   ]
 }

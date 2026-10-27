@@ -4,52 +4,52 @@
   "tfQuestions": [
     {
       "id": "ep32-tf-1",
-      "question": "Embora sendo uma igreja problemática não faltava em Corinto nenhum dom espiritual.",
-      "answer": "V"
-    },
-    {
-      "id": "ep32-tf-2",
-      "question": "A expressão \"toda alma esteja sujeita às autoridades\" não se aplica ao pastor da igreja",
+      "question": "A expressão “toda alma esteja sujeita às autoridades” não se aplica ao pastor da igreja.",
       "answer": "F"
     },
     {
-      "id": "ep32-tf-3",
+      "id": "ep32-tf-2",
       "question": "Paulo era um homem de paz, mas nunca abriu mão de sua autoridade ministerial.",
       "answer": "V"
     },
     {
-      "id": "ep32-tf-4",
-      "question": "Biblicamente, na igreja, entre irmãos não pode haver qualquer tipo de conflito.",
+      "id": "ep32-tf-3",
+      "question": "Paulo afirmou que o obreiro deve trabalhar com suas mãos e não receber salário da igreja",
       "answer": "F"
+    },
+    {
+      "id": "ep32-tf-4",
+      "question": "Na doutrina pentecostal os dons espirituais continuam em evidência nos dias atuais",
+      "answer": "V"
     },
     {
       "id": "ep32-tf-5",
-      "question": "Paulo afirmou que o obreiro deve trabalhar com suas mãos e não receber salário da igreja.",
-      "answer": "F"
-    },
-    {
-      "id": "ep32-tf-6",
-      "question": "Os dons espirituais constituem um direito que os filhos de Deus devem tomar posse.",
-      "answer": "F"
-    },
-    {
-      "id": "ep32-tf-7",
-      "question": "Na doutrina pentecostal os dons espirituais continuam em evidência nos dias atuais.",
-      "answer": "V"
-    },
-    {
-      "id": "ep32-tf-8",
-      "question": "A tribulação pode ser um pré-requisito para o crente receber a bênção da consolação.",
-      "answer": "V"
-    },
-    {
-      "id": "ep32-tf-9",
       "question": "Não tendo sido criado pela Lei de Moisés o dízimo não podia ser revogado por ela.",
       "answer": "V"
     },
     {
+      "id": "ep32-tf-6",
+      "question": "Embora sendo uma cidade muito rica, a maioria dos crentes de Corinto era pobre.",
+      "answer": "V"
+    },
+    {
+      "id": "ep32-tf-7",
+      "question": "Constituída por homens falíveis é natural que haja divisões na igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "ep32-tf-8",
+      "question": "O obreiro, sendo um homem culto, no púlpito deve fazer uso da sabedoria de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "ep32-tf-9",
+      "question": "Segundo afirmou Paulo, em Corinto um filho mantinha relação sexual com sua mãe.",
+      "answer": "F"
+    },
+    {
       "id": "ep32-tf-10",
-      "question": "Uma Bíblia na qual II Coríntios tenha 14 capítulos deve ser considerada falsa.",
+      "question": "Preso em Roma, Paulo agradeceu a igreja de Corinto pela ajuda financeira a ele.",
       "answer": "F"
     }
   ],
@@ -58,21 +58,21 @@
       "id": "ep32-mc-1",
       "question": "A Ceia do Senhor representa -",
       "options": [
-        "A morte de Jesus",
-        "Sua segunda vinda",
-        "Nossa redenção",
-        "Todas estão corretas"
+        "a morte de Jesus",
+        "sua segunda vinda",
+        "nossa redenção",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "ep32-mc-2",
-      "question": "Paulo julgou poder gloriar-se -",
+      "question": "Paulo julgou poder gloriar-se –",
       "options": [
-        "No seu trabalho ministerial",
-        "Na sua sabedoria",
-        "Nas suas fraquezas",
-        "Todas estão corretas"
+        "no seu trabalho ministerial",
+        "na sua sabedoria",
+        "nas suas fraquezas",
+        "todas estão corretas."
       ],
       "answer": 2
     },
@@ -83,52 +83,52 @@
         "Jesus",
         "Pedro",
         "Paulo",
-        "Todas estão corretas"
+        "todas estão corretas."
       ],
       "answer": 1
     },
     {
       "id": "ep32-mc-4",
-      "question": "A Ceia do Senhor representa -",
+      "question": "Biblicamente não é pecado a prática sexual -",
       "options": [
-        "A morte de Jesus",
-        "Sua segunda vinda",
-        "Nossa redenção",
-        "Todas estão corretas"
+        "entre noivos",
+        "entre pessoas do mesmo sexo",
+        "após o casamento",
+        "todas estão erradas"
       ],
-      "answer": 3
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "ep32-mp-1",
       "left": "Difamadores de Paulo",
-      "right": "Judaizantes"
+      "right": "judaizantes"
     },
     {
       "id": "ep32-mp-2",
-      "left": "A \"letra que mata\"",
+      "left": "A “letra que mata”",
       "right": "Lei de Moisés"
     },
     {
       "id": "ep32-mp-3",
       "left": "Vaso de barro",
-      "right": "Corpo físico"
+      "right": "corpo físico"
     },
     {
       "id": "ep32-mp-4",
       "left": "Corpo espiritual",
-      "right": "Casa espiritual"
+      "right": "casa espiritual"
     },
     {
       "id": "ep32-mp-5",
       "left": "Diferença entre o evangelho e outras religiões",
-      "right": "A esperança"
+      "right": "a esperança"
     },
     {
       "id": "ep32-mp-6",
       "left": "Um desejo de Paulo",
-      "right": "Habitar com o Senhor"
+      "right": "habitar com o Senhor"
     }
   ]
 }

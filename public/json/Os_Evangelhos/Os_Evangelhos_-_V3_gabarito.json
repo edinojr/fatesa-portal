@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "evan3-tf-1",
-      "question": "Pela Bíblia sabemos que os magos eram três e que se chamavam Gaspar, Melchior e Baltazar.",
+      "question": "Em Israel foi Jesus quem introduziu o ensino através de parábolas.",
       "answer": "F"
     },
     {
       "id": "evan3-tf-2",
-      "question": "Amar o próximo e aborrecer o inimigo não estava na Lei de Moisés.",
+      "question": "Toda parábola contém apenas uma verdade central.",
       "answer": "V"
     },
     {
       "id": "evan3-tf-3",
-      "question": "O Profeta Isaías profetizou que a glória do segundo templo seria maior que a do primeiro.",
-      "answer": "F"
+      "question": "Na Parábola do Semeador Jesus destacou a importância da semente.",
+      "answer": "V"
     },
     {
       "id": "evan3-tf-4",
-      "question": "Na Parábola dos Dois Filhos, o segundo obedeceu a ordem dada pelo pai.",
-      "answer": "F"
+      "question": "É possível que muitos semeadores não recebam suas recompensas nesta vida.",
+      "answer": "V"
     },
     {
       "id": "evan3-tf-5",
-      "question": "Sendo a lepra uma doença contagiosa, Jesus nunca colocou sua mão num leproso.",
+      "question": "Um crente novo convertido não pode ser um semeador.",
       "answer": "F"
     },
     {
       "id": "evan3-tf-6",
-      "question": "Não foi o endemoninhado quem falou com Jesus, mas, sim, os demônios.",
-      "answer": "V"
+      "question": "Antes de iniciar seu ministério Jesus não frequentava a sinagoga.",
+      "answer": "F"
     },
     {
       "id": "evan3-tf-7",
-      "question": "A circuncisão era feita no oitavo dia e a apresentação no quadragésimo.",
+      "question": "Onde não era desejado Jesus não insistia em permanecer.",
       "answer": "V"
     },
     {
       "id": "evan3-tf-8",
-      "question": "Jesus não afirmou que uma vara que dá pouco fruto deve ser cortada.",
-      "answer": "V"
-    },
-    {
-      "id": "evan3-tf-9",
-      "question": "Jesus aceitou o convite de seus irmãos para ir com eles a Jerusalém.",
+      "question": "A aparição de Moisés e Elias, no monte, foi simbólico e não real.",
       "answer": "F"
     },
     {
-      "id": "evan3-tf-10",
-      "question": "Na oração feita por seus discípulos nós também estávamos incluídos.",
+      "id": "evan3-tf-9",
+      "question": "Mateus, Marcos e Lucas pouco falaram do ministério de Jesus na Judeia.",
       "answer": "V"
+    },
+    {
+      "id": "evan3-tf-10",
+      "question": "Sendo manso e humilde de coração, Jesus usou de diplomacia na purificação do templo.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "evan3-mc-1",
-      "question": "Após sua ressurreição, Jesus permaneceu na terra -",
+      "question": "Mar onde Pedro e João eram pescadores —",
       "options": [
-        "Dez dias",
-        "Quarenta dias",
-        "Cinquenta dias",
-        "Todas estão erradas"
+        "da Galileia",
+        "de Tiberíades",
+        "de Quenerite",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "evan3-mc-2",
-      "question": "O Sinédrio era formado -",
+      "question": "Marcos é mencionado em —",
       "options": [
-        "Somente por sacerdotes",
-        "Por 71 membros",
-        "Só por escribas e fariseus",
-        "Todas estão erradas"
+        "Colossenses",
+        "Primeira Epístola de Pedro",
+        "Atos dos Apóstolos",
+        "todas estão corretas."
       ],
       "answer": 1
     },
     {
       "id": "evan3-mc-3",
-      "question": "Em sua oração sacerdotal, Jesus orou —",
+      "question": "Um crente salvo não está sujeito a —",
       "options": [
-        "Por si mesmo",
-        "Só pelos apóstolos",
-        "Por nós, hoje",
-        "Todas estão corretas"
+        "opressão",
+        "possessão",
+        "tentação",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "evan3-mc-4",
-      "question": "Dos apóstolos de Jesus, qual deles o Senhor não lavou seus pés —",
+      "question": "Os milagres sobre a natureza descritos por Marcos foram —",
       "options": [
-        "Judas Scariotes",
-        "Pedro",
-        "Tomé",
-        "Lavou de todos"
+        "incontáveis",
+        "quinze",
+        "cinco",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "evan3-mp-1",
-      "left": "Filho do Homem",
-      "right": "Jesus no Evangelho de Lucas"
+      "left": "Templo purificado por Jesus",
+      "right": "Zorobabel"
     },
     {
       "id": "evan3-mp-2",
-      "left": "Rejeitado pelo povo",
-      "right": "Jesus em Nazaré"
+      "left": "Missão de Jesus",
+      "right": "salvar o pecador"
     },
     {
       "id": "evan3-mp-3",
-      "left": "“Semente de Mulher”",
-      "right": "Filho do Homem"
+      "left": "Missão do Espírito Santo",
+      "right": "convencer o homem"
     },
     {
       "id": "evan3-mp-4",
-      "left": "Seu poder sobre a morte",
-      "right": "Naim"
+      "left": "Missão do homem",
+      "right": "Pregar a Palavra de Deus"
     },
     {
       "id": "evan3-mp-5",
-      "left": "Messias",
-      "right": "Cristo"
+      "left": "Campo da semeadura",
+      "right": "terra"
     },
     {
       "id": "evan3-mp-6",
-      "left": "Seu poder de perdoar pecados",
-      "right": "Jesus em Cafarnaum"
+      "left": "Ensino por parábolas",
+      "right": "Antigo e Novo Testamento"
     }
   ]
 }

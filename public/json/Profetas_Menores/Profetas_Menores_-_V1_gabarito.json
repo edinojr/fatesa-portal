@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "pmen1-tf-1",
-      "question": "Foram poucos os períodos da história que Deus deixou de falar com os homens.",
-      "answer": "F"
+      "question": "Formalismo religioso, mesmo com sacrifícios, não move o coração de Deus.",
+      "answer": "V"
     },
     {
       "id": "pmen1-tf-2",
-      "question": "Formalismo religioso, mesmo com sacrifícios, não move o coração de Deus",
-      "answer": "V"
+      "question": "Sofonias profetizou sobre a “Grande Tribulação” e não sobre o milênio.",
+      "answer": "F"
     },
     {
       "id": "pmen1-tf-3",
-      "question": "Em Gomêr podemos ver uma tipologia da nação de Israel.",
-      "answer": "V"
+      "question": "Oséias profetizou no Reino de Judá até a morte do Rei Ezequias.",
+      "answer": "F"
     },
     {
       "id": "pmen1-tf-4",
-      "question": "Joel falou sobre uma mensagem do derramamento do Espírito Santo havida no seu tempo.",
-      "answer": "F"
-    },
-    {
-      "id": "pmen1-tf-5",
-      "question": "Amós foi enviado para pregar a um povo que pensava estar bem com Deus",
+      "question": "Nos dias de Oséias sacerdotes e povo se igualavam na vida pecaminosa.",
       "answer": "V"
     },
     {
-      "id": "pmen1-tf-6",
-      "question": "Obadias relata a tumultuada relação entre os judeus e os moabitas.",
+      "id": "pmen1-tf-5",
+      "question": "O desejo de Deus era o isolamento de Israel em relação as demais nações.",
       "answer": "F"
     },
     {
+      "id": "pmen1-tf-6",
+      "question": "Não há unanimidade de pensamento sobre a época em que viveu Joel.",
+      "answer": "V"
+    },
+    {
       "id": "pmen1-tf-7",
-      "question": "É certo que todos os pecados perdoados jamais serão lembrados por Deus",
+      "question": "Amós foi um profeta missionário nascido em Judá e enviado para pregar em Israel.",
       "answer": "V"
     },
     {
       "id": "pmen1-tf-8",
-      "question": "Sofonias profetizou sobre a Grande Tribulação e não sobre o milênio.",
-      "answer": "F"
+      "question": "Obadias foi um nacionalista, porém, piedoso e temente a Deus.",
+      "answer": "V"
     },
     {
       "id": "pmen1-tf-9",
-      "question": "Zacarias nasceu no exílio e foi contemporâneo de Ageu e Malaquias.",
+      "question": "O Profeta Miquéias é também conhecido como sendo Micaías.",
       "answer": "F"
     },
     {
       "id": "pmen1-tf-10",
-      "question": "O remanescente fiel referido por Malaquias aponta para a existência da igreja.",
-      "answer": "V"
+      "question": "Habacuque foi sacerdote, não profeta, porque não há profecia em seu livro.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "pmen1-mc-1",
-      "question": "Falou sobre o terremoto profetizado por Amós -",
+      "question": "Falou sobre o terremoto profetizado por Amós–",
       "options": [
         "Jesus",
-        "Zacarias",
-        "Isaías",
-        "Todas estão corretas"
+        "o Profeta Zacarias",
+        "o Profeta Isaias",
+        "todas estão corretas."
       ],
       "answer": 1
     },
     {
       "id": "pmen1-mc-2",
-      "question": "Lideraram a construção do templo -",
+      "question": "Namorado de Gômer -",
       "options": [
-        "Esdras e Neemias",
-        "Ageu e Zacarias",
-        "Zorobabel e Josué",
-        "Todas estão erradas"
+        "Baal",
+        "Moloque",
+        "Astorete",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 3
     },
     {
       "id": "pmen1-mc-3",
-      "question": "Tipologicamente, o papel desempenhado por Oséias e por Gômer -",
+      "question": "Deus acusou o Reino de Judá de –",
       "options": [
-        "Oséias é um tipo de Deus Pai",
-        "Gômer é um tipo de Israel",
-        "Oséias e Gômer não é desempenha nenhum papel",
-        "Alternativa A e B está correta"
+        "mentir",
+        "perjurar",
+        "adulterar",
+        "todas estão erradas."
       ],
       "answer": 3
     },
     {
       "id": "pmen1-mc-4",
-      "question": "Em relação à ira, como Deus costuma agir?",
+      "question": "Os sacerdotes de Israel eram –",
       "options": [
-        "Deus é tardio em irar-se, mas ira",
-        "Deus não é tardio em irar-se",
-        "Deus nunca ira-se",
-        "Todas estão erradas"
+        "da Tribo de Levi",
+        "escolhidos pelo sumo sacerdote",
+        "escolhidos pelo rei",
+        "todas estão erradas."
       ],
-      "answer": 0
+      "answer": 2
     }
   ],
   "matchingPairs": [
@@ -123,12 +123,12 @@
     {
       "id": "pmen1-mp-5",
       "left": "Fala de encorajamento",
-      "right": "Primeira visão"
+      "right": "primeira visão"
     },
     {
       "id": "pmen1-mp-6",
       "left": "Fala de livramento",
-      "right": "Segunda visão"
+      "right": "segunda visão"
     }
   ]
 }

@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "eppi3-tf-1",
-      "question": "A justificação pela graça é o tema da Epístola aos Romanos.",
+      "question": "Podemos afirmar não haver qualquer relação entre tribulação e paciência.",
       "answer": "F"
     },
     {
       "id": "eppi3-tf-2",
-      "question": "Segundo afirmou Paulo, a expressão “segundo Adão” diz respeito a Cristo.",
-      "answer": "V"
+      "question": "Por ser Seu povo escolhido, Deus, ainda no Egito, celebrou uma aliança com Israel.",
+      "answer": "F"
     },
     {
       "id": "eppi3-tf-3",
-      "question": "Após o novo nascimento o homem está livre das consequências do pecado.",
-      "answer": "F"
+      "question": "Em relação a Pedro, Jesus deixou o exemplo de como ajudar um crente fraco.",
+      "answer": "V"
     },
     {
       "id": "eppi3-tf-4",
-      "question": "No Antigo Testamento Israel é chamado por Deus de Seu povo, mas, não de seu filho.",
-      "answer": "F"
+      "question": "Paulo manifestou sua perplexidade com a rapidez com que os gálatas desviaram da fé.",
+      "answer": "V"
     },
     {
       "id": "eppi3-tf-5",
-      "question": "Falando com Pilatos, Jesus deixou claro que o poder para governar vem de Deus.",
-      "answer": "V"
+      "question": "Satanás pode semear e frutificar sementes do mal no coração de um homem de Deus.",
+      "answer": "F"
     },
     {
       "id": "eppi3-tf-6",
-      "question": "O espírito de rebelião, de divisão e de rebeldia sempre está presente na vida de um crente fraco.",
-      "answer": "F"
+      "question": "Podemos afirmar que a ira de Deus nunca se manifesta contra seus filhos.",
+      "answer": "V"
     },
     {
       "id": "eppi3-tf-7",
-      "question": "Gálatas faz a apologia da liberdade cristã contra todas as formas de legalismo.",
-      "answer": "V"
-    },
-    {
-      "id": "eppi3-tf-8",
-      "question": "Acusado pelos mestres judaizantes de não ser apóstolo, Paulo não procurou defender seu apostolado.",
+      "question": "O fato de Jesus ter sido crucificado entre dois malfeitores foi pura coincidência.",
       "answer": "F"
     },
     {
-      "id": "eppi3-tf-9",
-      "question": "Existe “carga” que temos de levar sozinho, sem qualquer ajuda humana.",
+      "id": "eppi3-tf-8",
+      "question": "O objetivo espiritual da lei foi o de trazer o Salvador e não a salvação.",
       "answer": "V"
     },
     {
+      "id": "eppi3-tf-9",
+      "question": "Os judeus entenderam, facilmente, que o objetivo da Lei foi trazer o Salvador e não a salvação.",
+      "answer": "F"
+    },
+    {
       "id": "eppi3-tf-10",
-      "question": "Pela lei da semeadura sabemos que um só pecado pode produzir diversas consequências.",
+      "question": "A Bíblia deixa claro que a vingança pertence a Deus e o homem não deve fazer uso dela",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "eppi3-mc-1",
-      "question": "Paulo afirmou que a Lei trouxe -",
+      "question": "É um aspecto do fruto do Espírito -",
       "options": [
-        "A salvação",
-        "O Salvador",
-        "Esperança aos judeus e aos gentios",
-        "Todas estão erradas"
+        "a fé;",
+        "a paz;",
+        "a benignidade;",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "eppi3-mc-2",
-      "question": "Paulo subiu a Jerusalém por -",
+      "question": "O propósito de Deus para justificar os gentios era -",
       "options": [
-        "Uma decisão pessoal",
-        "Convocação dos apóstolos",
-        "Uma revelação",
-        "Todas estão corretas"
+        "pela Lei de Moisés;",
+        "pela Lei e pela fé;",
+        "pela fé;",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "eppi3-mc-3",
-      "question": "Entre a Lei e a Graça não existe -",
+      "question": "Obreiro que fala mal de alguém demonstra falta de –",
       "options": [
-        "Concorrência",
-        "Rivalidade",
-        "Superioridade",
-        "Todas estão corretas"
+        "temor de Deus;",
+        "ética ministerial;",
+        "conhecimento da Palavra;",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "eppi3-mc-4",
-      "question": "Pelo novo nascimento o homem não fica livre –",
+      "question": "Paulo subiu a Jerusalém por -",
       "options": [
-        "Das consequências do pecado",
-        "Da culpa do pecado",
-        "Do poder do pecado",
-        "Todas estão corretas"
+        "uma decisão pessoal;",
+        "uma revelação;",
+        "convocação dos apóstolos;",
+        "exigência dos judaizantes."
       ],
-      "answer": 0
+      "answer": 1
     }
   ],
   "matchingPairs": [
     {
       "id": "eppi3-mp-1",
-      "left": "Justiça",
-      "right": "Dá o que o homem merece"
+      "left": "Evangelho da circuncisão",
+      "right": "Pedro"
     },
     {
       "id": "eppi3-mp-2",
-      "left": "Misericórdia",
-      "right": "Dá o que o homem precisa sem merecer"
+      "left": "Evangelho da incircuncisão",
+      "right": "Paulo"
     },
     {
       "id": "eppi3-mp-3",
-      "left": "Amor",
-      "right": "Não procura defeitos"
+      "left": "Não foi justificado pela circuncisão",
+      "right": "Abraão"
     },
     {
       "id": "eppi3-mp-4",
-      "left": "Tolerância",
-      "right": "Respeitar opiniões contrárias"
+      "left": "Paulo não aceitou sua circuncisão",
+      "right": "Tito"
     },
     {
       "id": "eppi3-mp-5",
-      "left": "Nega as verdades bíblicas",
-      "right": "Herege"
+      "left": "Circuncidado por iniciativa de Paulo",
+      "right": "Timóteo"
     },
     {
       "id": "eppi3-mp-6",
-      "left": "Promotor de escândalos",
-      "right": "Desordeiro"
+      "left": "Para a salvação, exigiam a circuncisão",
+      "right": "judaizantes"
     }
   ]
 }

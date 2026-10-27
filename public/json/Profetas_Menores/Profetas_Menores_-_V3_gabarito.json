@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "pmen3-tf-1",
-      "question": "É certo que Deus não exige sacrifícios dos que ele chama para seu ministério.",
-      "answer": "F"
-    },
-    {
-      "id": "pmen3-tf-2",
-      "question": "No tempo de Oséias os sacerdotes eram acusados de homicidas e assaltantes.",
+      "question": "Podemos ver em Gomêr, esposa de Oséias, uma figura da Nação de Israel",
       "answer": "V"
     },
     {
-      "id": "pmen3-tf-3",
-      "question": "O Reino do Norte, rejeitado por Deus, os israelitas não mais farão parte do seu povo.",
+      "id": "pmen3-tf-2",
+      "question": "Quando Israel buscou o Senhor, então o socorro veio do céu.",
       "answer": "F"
     },
     {
+      "id": "pmen3-tf-3",
+      "question": "Em relação à adoração podemos afirmar que Deus é exclusivista.",
+      "answer": "V"
+    },
+    {
       "id": "pmen3-tf-4",
-      "question": "Jesus, em Mateus, capítulo 24, falou sobre o grande e terrível Dia do Senhor.",
+      "question": "A expressão “Dia de Deus”, referida por Joel, fala da eternidade.",
       "answer": "V"
     },
     {
       "id": "pmen3-tf-5",
-      "question": "As profecias sobre a queda do Reino de Israel se cumpriram no ano 722 aC",
+      "question": "Face a rebeldia de Israel, Amós profetizou que o castigo seria inevitável.",
       "answer": "V"
     },
     {
       "id": "pmen3-tf-6",
-      "question": "Na terra, hoje, existem poucos descendentes de Esaú.",
-      "answer": "F"
+      "question": "Entre os teólogos não existe unanimidade de pensamento sobre a existência de Jonas.",
+      "answer": "V"
     },
     {
       "id": "pmen3-tf-7",
-      "question": "Entre Jonas e Naum há um espaço de cerca de 150 anos.",
+      "question": "Podemos afirmar que o juízo de Deus pode ser usado como um meio e não apenas como um fim.",
       "answer": "V"
     },
     {
       "id": "pmen3-tf-8",
-      "question": "Na construção do templo a liderança foi exercita por Ageu e Zacarias.",
-      "answer": "F"
+      "question": "Ao falar sobre o juízo de Deus, Sofonias não excluiu Jerusalém.",
+      "answer": "V"
     },
     {
       "id": "pmen3-tf-9",
-      "question": "Zacarias profetizou que o julgamento das nações será no Vale de Josafá.",
+      "question": "Zacarias, em visão, viu Satanás à direita do Sacerdote Josué.",
       "answer": "V"
     },
     {
       "id": "pmen3-tf-10",
-      "question": "É certo que Malaquias não conviveu com Neemias e nem com Esdras.",
+      "question": "O nome de uma igreja não garante a presença de Deus dentro dela.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "pmen3-mc-1",
-      "question": "O Vale de Acor fala de -",
+      "question": "Miquéias profetizou sobre –",
       "options": [
-        "Bênção",
-        "Paz",
-        "Tribulação",
-        "Todas estão corretas"
+        "o Reino de Judá",
+        "sobre Judá e Israel",
+        "somente sobre o Reino do Norte",
+        "todas estão erradas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "pmen3-mc-2",
-      "question": "Os edomitas eram descendentes de -",
+      "question": "“Ouvi, Senhor, a tua voz e temi, declarou –",
       "options": [
-        "Esaú, filho de Isaque",
-        "Ló com sua filha mais velha",
-        "Ló com sua filha mais nova",
-        "Todas estão erradas"
+        "Ageu",
+        "Habacuque",
+        "Josué",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 1
     },
     {
       "id": "pmen3-mc-3",
-      "question": "Será necessário para que Israel volte a ter “sacrifício’ e “éfode”.",
+      "question": "Zacarias nasceu–",
       "options": [
-        "Fazer eleições de novos sacerdotes",
-        "Os sacerdotes são desnecessário",
-        "A construção do templo",
-        "Todas alternativas estão erradas"
+        "em Jerusalém",
+        "na Judeia",
+        "no cativeiro",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "pmen3-mc-4",
-      "question": "Segundo menor livro do Antigo Testamento -",
+      "question": "No tempo de Malaquias o povo estava –",
       "options": [
-        "O livro de Ageu",
-        "O livro de Malaquias",
-        "O livro de Zacarias",
-        "O livro de Isaías"
+        "politicamente desorganizado",
+        "sob o domínio persa",
+        "sem rei",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 3
     }
   ],
   "matchingPairs": [

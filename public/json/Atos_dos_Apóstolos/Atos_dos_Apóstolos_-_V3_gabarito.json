@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "atos3-tf-1",
-      "question": "No aspecto humano, os nomes que mais se destacaram em Atos são os de Pedro e João.",
-      "answer": "F"
-    },
-    {
-      "id": "atos3-tf-2",
-      "question": "Os judeus, ainda hoje, continuam celebrando a Festa de Pentecostes, embora com limitação.",
-      "answer": "V"
-    },
-    {
-      "id": "atos3-tf-3",
-      "question": "Não pode haver avivamento genuíno e duradouro sem ensino da Palavra de Deus.",
-      "answer": "V"
-    },
-    {
-      "id": "atos3-tf-4",
-      "question": "Paulo levantou uma grande coleta para os pobres de Jerusalém.",
-      "answer": "F"
-    },
-    {
-      "id": "atos3-tf-5",
       "question": "Face a existência do templo, em Jerusalém não havia sinagogas.",
       "answer": "F"
     },
     {
-      "id": "atos3-tf-6",
+      "id": "atos3-tf-2",
       "question": "Sabemos, pela Bíblia, que perseguir um crente fiel significa perseguir o próprio Jesus.",
       "answer": "V"
     },
     {
-      "id": "atos3-tf-7",
+      "id": "atos3-tf-3",
       "question": "Em Listra, Paulo e Barnabé foram recebidos como deuses.",
       "answer": "V"
     },
     {
+      "id": "atos3-tf-4",
+      "question": "Sabemos, pela Bíblia, que os apóstolos sempre habitaram em Jerusalém.",
+      "answer": "F"
+    },
+    {
+      "id": "atos3-tf-5",
+      "question": "Jesus veio como enviado do Pai e o Espírito Santo como enviado de Jesus.",
+      "answer": "V"
+    },
+    {
+      "id": "atos3-tf-6",
+      "question": "Gunnar Vingren era pastor de uma Igreja Batista na Suécia.",
+      "answer": "F"
+    },
+    {
+      "id": "atos3-tf-7",
+      "question": "É certo que na Igreja de Jerusalém o Espírito Santo tinha liberdade plena de operar.",
+      "answer": "V"
+    },
+    {
       "id": "atos3-tf-8",
-      "question": "Quanto à forma de fazer a obra de Deus pode haver divergências entre obreiros.",
+      "question": "Certamente a grande perseguição à igreja aconteceu por permissão de Deus.",
       "answer": "V"
     },
     {
       "id": "atos3-tf-9",
-      "question": "Tal como Ágabo, também as filhas de Filipe eram profetas.",
-      "answer": "F"
+      "question": "Antioquia, da Síria, era uma das cidades mais depravadas do mundo.",
+      "answer": "V"
     },
     {
       "id": "atos3-tf-10",
-      "question": "As atividades de Paulo, após deixar a prisão, não foram registradas por Lucas.",
-      "answer": "V"
+      "question": "Sabemos que Paulo nunca mais voltou à cidade de Listra.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "atos3-mc-1",
-      "question": "Na igreja de Jerusalém não havia crentes -",
-      "options": [
-        "Ricos",
-        "Pobres",
-        "Necessitados",
-        "Todas estão corretas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "atos3-mc-2",
-      "question": "Paulo esteve em Éfeso pela primeira vez em sua -",
-      "options": [
-        "Primeira viagem",
-        "Segunda viagem",
-        "Terceira viagem",
-        "Todas estão erradas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "atos3-mc-3",
       "question": "Foi professor de Paulo, em Jerusalém —",
       "options": [
         "Hilel",
         "Nicodemos",
         "Gamaliel",
-        "Todas estão corretas"
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
-      "id": "atos3-mc-4",
+      "id": "atos3-mc-2",
       "question": "No retorno de Jerusalém, acompanharam Paulo e Barnabé —",
       "options": [
         "Tiago e João",
         "Tiago e Pedro",
         "Judas e Silas",
-        "Todas estão erradas"
+        "todas estão erradas."
+      ],
+      "answer": 2
+    },
+    {
+      "id": "atos3-mc-3",
+      "question": "Cidade natal de Timóteo —",
+      "options": [
+        "Derbe",
+        "Listra",
+        "Icônio",
+        "todas estão erradas."
+      ],
+      "answer": 1
+    },
+    {
+      "id": "atos3-mc-4",
+      "question": "Integrou-se a equipe de Paulo em Trôade —",
+      "options": [
+        "Timóteo",
+        "Silas",
+        "Lucas",
+        "todas estão erradas."
       ],
       "answer": 2
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "atos3-mp-1",
-      "left": "Capacidade para fazer a obra de Deus",
-      "right": "Azeite na mão"
+      "left": "Paulo permaneceu três anos",
+      "right": "Éfeso"
     },
     {
       "id": "atos3-mp-2",
-      "left": "Capacidade para refletir a glória de Deus",
-      "right": "Azeite no rosto"
+      "left": "Paulo permaneceu três meses",
+      "right": "Grécia"
     },
     {
       "id": "atos3-mp-3",
-      "left": "Capacidade para andar com Deus",
-      "right": "Azeite no pé"
+      "left": "Paulo permaneceu sete dias",
+      "right": "Trôade"
     },
     {
       "id": "atos3-mp-4",
-      "left": "Capacidade para ouvir a voz de Deus",
-      "right": "Azeite na orelha"
+      "left": "Paulo permaneceu dois anos",
+      "right": "Cesareia"
     },
     {
       "id": "atos3-mp-5",
-      "left": "Um símbolo do Espírito Santo",
-      "right": "Azeite"
+      "left": "Paulo foi preso",
+      "right": "Jerusalém"
     },
     {
       "id": "atos3-mp-6",
-      "left": "Obreiros cheios do Espírito Santo",
-      "right": "Vasilhas cheias de azeite"
+      "left": "Paulo reuniu-se com os anciãos de Éfeso",
+      "right": "Mileto"
     }
   ]
 }

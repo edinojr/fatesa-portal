@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "poetii3-tf-1",
-      "question": "Sendo o décimo filho, do ponto de vista humano, Salomão jamais seria Rei de Israel.",
-      "answer": "V"
-    },
-    {
-      "id": "poetii3-tf-2",
       "question": "Deus deu a Salomão grande prestígio com as demais nações e esta foi a causa de seu fracasso.",
       "answer": "F"
     },
     {
+      "id": "poetii3-tf-2",
+      "question": "O homem, de acordo com sua maneira de viver, pode aumentar ou diminuir seus dias de vida.",
+      "answer": "V"
+    },
+    {
       "id": "poetii3-tf-3",
-      "question": "O homem, de acordo com sua maneira de viver, pode aumentar ou diminuir seus dias de vida",
-      "answer": "V"
-    },
-    {
-      "id": "poetii3-tf-4",
-      "question": "Tendo se envolvido com muitas mulheres Salomão não pôde ensinar os jovens.",
-      "answer": "F"
-    },
-    {
-      "id": "poetii3-tf-5",
-      "question": "Podemos ver na sabedoria descrita em Provérbios capítulos 8 e 9 a personificação de Jesus.",
-      "answer": "F"
-    },
-    {
-      "id": "poetii3-tf-6",
-      "question": "Segundo o Rei Lamuel “toda palavra de Deus é pura”.",
-      "answer": "F"
-    },
-    {
-      "id": "poetii3-tf-7",
-      "question": "A expressão “guarda o teu pé” fala do respeito e temor quando se está na “casa do Senhor”.",
-      "answer": "V"
-    },
-    {
-      "id": "poetii3-tf-8",
-      "question": "Salomão declarou ter visto os príncipes a cavalo e os servos andando a pé.",
-      "answer": "F"
-    },
-    {
-      "id": "poetii3-tf-9",
       "question": "Lido com olhos ungidos Cantares exala uma suave fragrância do Espírito.",
       "answer": "V"
     },
     {
-      "id": "poetii3-tf-10",
-      "question": "Para Sunamita era fácil identificar, entre dez mil, o seu amado.",
+      "id": "poetii3-tf-4",
+      "question": "Deus deu a Salomão todas as instruções sobre a construção do templo",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-5",
+      "question": "De Salomão podemos dizer que ele “amou o Deus de seus pais” e também amou muitas mulheres.",
       "answer": "V"
+    },
+    {
+      "id": "poetii3-tf-6",
+      "question": "Salomão afirma que a redenção de uma alma é caríssima.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-7",
+      "question": "Em Provérbios o conceito de sabedoria está vinculado à cultura intelectual e à inteligência.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-8",
+      "question": "Segundo Provérbios, ao escolher uma mulher para casamento, é conveniente conhecer seu grau de sabedoria.",
+      "answer": "F"
+    },
+    {
+      "id": "poetii3-tf-9",
+      "question": "Sendo ser enganoso o coração, nem sempre a verdade do homem está de acordo com a verdade de Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "poetii3-tf-10",
+      "question": "Pelas declarações feitas por Salomão podemos duvidar da canonicidade do Livro de Eclesiastes.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "poetii3-mc-1",
-      "question": "Falou sobre a Rainha de Sabá o -",
+      "question": "Não e um Livro apócrifo -",
       "options": [
-        "Antigo Testamente",
-        "“Talmude”",
-        "Alcorão",
-        "Todas estão corretas"
+        "Eclesiastes",
+        "Eclesiástico",
+        "Livro da Sabedoria",
+        "todas estão corretas."
       ],
-      "answer": 3
+      "answer": 0
     },
     {
       "id": "poetii3-mc-2",
-      "question": "É “como joia de ouro em focinho de porca” a mulher -",
+      "question": "Quando escreveu Cantares, Salomão tinha -",
       "options": [
-        "Virtuosa",
-        "Insensata",
-        "Adultera",
-        "Prostituta"
+        "uma única esposa",
+        "nenhuma esposa",
+        "sessenta esposas",
+        "setecentas esposas."
       ],
-      "answer": 1
+      "answer": 2
     },
     {
       "id": "poetii3-mc-3",
-      "question": "Salomão, em Provérbios, adverte contra -",
+      "question": "Para Salomão a Sunamita era como -",
       "options": [
-        "As más companhias",
-        "A ociosidade",
-        "A sociedade com os ímpios",
-        "Todas estão corretas"
+        "jardim fechado",
+        "manancial fechado",
+        "fonte selada",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "poetii3-mc-4",
-      "question": "O Senhor reserva a verdadeira sabedoria para os -",
+      "question": "O templo foi construído em –",
       "options": [
-        "Inteligentes",
-        "Homens",
-        "Retos",
-        "Todas estão corretas"
+        "sete anos",
+        "quatro anos",
+        "12 anos",
+        "todas estão erradas."
       ],
-      "answer": 2
+      "answer": 0
     }
   ],
   "matchingPairs": [
@@ -118,7 +118,7 @@
     {
       "id": "poetii3-mp-4",
       "left": "Provérbios",
-      "right": "Dá instruções, sabedoria"
+      "right": "dá instruções, sabedoria"
     },
     {
       "id": "poetii3-mp-5",

@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "hisii3-tf-1",
-      "question": "Quase todos os Reis do Sul fizeram o que era mau aos olhos do Senhor.",
-      "answer": "F"
-    },
-    {
-      "id": "hisii3-tf-2",
-      "question": "Tanto Roboão como também Jeroboão tinham chamada e promessas de Deus.",
-      "answer": "V"
-    },
-    {
-      "id": "hisii3-tf-3",
       "question": "A promessa de Deus, hoje, aos seus filhos, é dar-lhes o céu e não a terra.",
       "answer": "V"
     },
     {
+      "id": "hisii3-tf-2",
+      "question": "Jeroboão foi um \"vaso\" usado por Deus para promover a divisão entre as doze tribos de Israel.",
+      "answer": "V"
+    },
+    {
+      "id": "hisii3-tf-3",
+      "question": "Não só os fundadores, mas os seguidores das falsas religiões sofrem por sua desobediência à Palavra de Deus.",
+      "answer": "V"
+    },
+    {
       "id": "hisii3-tf-4",
-      "question": "Cumprindo ordens de Deus recebidas no Monte Horebe, Elias ungiu Jeú como rei.",
+      "question": "É difícil entender porque Deus proibiu plantar árvores próximo de seu altar.",
       "answer": "F"
     },
     {
       "id": "hisii3-tf-5",
-      "question": "Assim como aconteceu no tempo de Jó, Satanás poderia fazer uso do fogo no Monte Carmelo.",
-      "answer": "F"
+      "question": "O Reino do Norte, num curto período de trinta anos, foi governado por seis reis.",
+      "answer": "V"
     },
     {
       "id": "hisii3-tf-6",
-      "question": "A mais dura mensagem ao Rei Acabe foi entregue por Elias após o episódio do Monte Carmelo.",
-      "answer": "V"
-    },
-    {
-      "id": "hisii3-tf-7",
-      "question": "Sabemos que Zacarias, neto de Ido, foi morto por ordem do Rei Joás.",
+      "question": "O Rio Querite era um rio semelhante ao Rio Jordão; nada havia de diferente.",
       "answer": "F"
     },
     {
-      "id": "hisii3-tf-8",
-      "question": "O Rei Manassés desprezou os bons exemplos de seu pai preferindo repetir as maldades de seu avô.",
+      "id": "hisii3-tf-7",
+      "question": "Elias, o \"campeão de Deus\", foi encontrado por Ele escondido numa caverna.",
       "answer": "V"
     },
     {
+      "id": "hisii3-tf-8",
+      "question": "Está escrito que o Rei Joás fez \"o que era reto aos olhos do Senhor\" toda sua vida",
+      "answer": "F"
+    },
+    {
       "id": "hisii3-tf-9",
-      "question": "Cumprindo a profecia de Jeremias, o Rei Zedequias foi levado cego para Babilônia.",
+      "question": "Face as ameaças do Rei da Assíria, o Rei Ezequias e o Profeta Isaías oraram e clamaram ao céu",
       "answer": "V"
     },
     {
       "id": "hisii3-tf-10",
-      "question": "Antes do arrebatamento da igreja, Israel não poderá dar frutos para Deus.",
+      "question": "O final do Reino de Judá foi marcado por uma total calamidade espiritual e material.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "hisii3-mc-1",
-      "question": "Mensageiro enviado pelo Rei Jeroboão ao Profeta Aías -",
+      "question": "No deserto, após comer e beber, Elias -",
       "options": [
-        "Sua esposa",
-        "Seu filho",
-        "Seu mordomo",
-        "Todas estão erradas"
+        "retornou a Samaria",
+        "seguiu em direção ao Monte Horebe",
+        "tornou a deitar e dormiu",
+        "todas estão erradas."
       ],
-      "answer": 0
+      "answer": 2
     },
     {
       "id": "hisii3-mc-2",
-      "question": "Profetizou a morte do Rei Acabe -",
+      "question": "Destruiu a \"serpente de metal\" feita por Moisés-",
       "options": [
-        "Eliseu",
-        "Elias",
-        "Micaías",
-        "Jeú"
+        "o próprio Deus",
+        "o Rei Ezequias",
+        "o Rei Amon",
+        "todas estão erradas"
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "hisii3-mc-3",
-      "question": "No deserto, após comer e beber, Elias -",
+      "question": "Não foram escritos depois do cativeiro -",
       "options": [
-        "Retornou a Samaria",
-        "Seguiu em direção ao Monte Horebe",
-        "Tornou a deitar e dormiu",
-        "Todas estão erradas"
+        "I e II Crônicas",
+        "I e II Reis",
+        "Esdras, Neemias e Ester",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "hisii3-mc-4",
-      "question": "Rei morto por Jeú -",
+      "question": "Construiu a cidade de Samaria –",
       "options": [
         "Acabe",
-        "Jorão",
-        "Amazias",
-        "Todas estão erradas"
+        "Jeroboão",
+        "Onrí",
+        "todas estão erradas."
       ],
-      "answer": 1
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "hisii3-mp-1",
-      "left": "Rei que destruiu o “altar de Betel”",
-      "right": "Josias"
+      "left": "Rei de Judá que morreu no Egito",
+      "right": "Joacaz"
     },
     {
       "id": "hisii3-mp-2",
-      "left": "Rei punido por querer queimar incenso no altar",
-      "right": "Uzias"
+      "left": "Morreu durante o cerco de Jerusalém",
+      "right": "Jeoaquim"
     },
     {
       "id": "hisii3-mp-3",
-      "left": "Rei que exercia as funções sacerdotais",
-      "right": "Jeroboão"
+      "left": "Rei morto pelo exército egípcio",
+      "right": "Josias"
     },
     {
       "id": "hisii3-mp-4",
-      "left": "Rei de Judá que derrotou o exército de Jeroboão",
-      "right": "Abias"
+      "left": "Rei levado cego para o Egito",
+      "right": "Zedequias"
     },
     {
       "id": "hisii3-mp-5",
-      "left": "Um profeta cego",
-      "right": "Aías"
+      "left": "Permaneceu preso por 37 anos no cativeiro",
+      "right": "Joaquim"
     },
     {
       "id": "hisii3-mp-6",
-      "left": "Rei que destruiu a “casa” de Jeroboão",
-      "right": "Baasa"
+      "left": "Governador nomeado por Nabucodonosor",
+      "right": "Gedalias"
     }
   ]
 }

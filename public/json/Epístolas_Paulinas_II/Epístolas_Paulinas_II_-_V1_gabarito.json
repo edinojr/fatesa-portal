@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "eppii1-tf-1",
-      "question": "A igreja, como corpo de Cristo, é o tema da Epístola aos Efésios.",
-      "answer": "V"
-    },
-    {
-      "id": "eppii1-tf-2",
       "question": "Para um homem casado e responsável a prioridade maior deve ser seus filhos.",
       "answer": "F"
     },
     {
+      "id": "eppii1-tf-2",
+      "question": "Para Paulo anunciar o Evangelho era uma obrigação que lhe foi imposta.",
+      "answer": "V"
+    },
+    {
       "id": "eppii1-tf-3",
-      "question": "Um pai tendo vários filhos não é bíblico ter predileção por um deles.",
-      "answer": "F"
+      "question": "Israel receberá o Anticristo como sendo o Messias e fará com ele uma aliança",
+      "answer": "V"
     },
     {
       "id": "eppii1-tf-4",
-      "question": "Para Paulo, anunciar o evangelho, era uma obrigação que lhe foi imposta.",
-      "answer": "V"
-    },
-    {
-      "id": "eppii1-tf-5",
-      "question": "Paulo afirmou que Satanás o impediu de retornar a Tessalônica.",
-      "answer": "V"
-    },
-    {
-      "id": "eppii1-tf-6",
-      "question": "Israel receberá o Anticristo como sendo o Messias e fará com ele uma aliança.",
-      "answer": "V"
-    },
-    {
-      "id": "eppii1-tf-7",
-      "question": "Por ter um bom testemunho a igreja de Listra pediu para Paulo levar Timóteo com ele",
-      "answer": "F"
-    },
-    {
-      "id": "eppii1-tf-8",
       "question": "É certo que Timóteo esteve ao lado de Paulo até o dia de sua execução.",
       "answer": "F"
     },
     {
+      "id": "eppii1-tf-5",
+      "question": "A Epístola aos Efésios foi escrita por Paulo durante sua segunda prisão em Roma.",
+      "answer": "F"
+    },
+    {
+      "id": "eppii1-tf-6",
+      "question": "Pela Bíblia todos os nascidos fora da comunidade de Israel eram chamados de gentios.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii1-tf-7",
+      "question": "A primeira igreja, na Europa, foi fundada em Filipos.",
+      "answer": "V"
+    },
+    {
+      "id": "eppii1-tf-8",
+      "question": "Foi em sua segunda viagem missionária que Paulo esteve em Colossos.",
+      "answer": "F"
+    },
+    {
       "id": "eppii1-tf-9",
-      "question": "Não podemos afirmar, com certeza, quem fundou a igreja na Ilha de Creta.",
+      "question": "A igreja de Tessalônica foi a segunda igreja fundada por Paulo na Europa.",
       "answer": "V"
     },
     {
       "id": "eppii1-tf-10",
-      "question": "Jesus não pregou contra a escravidão material e humana no Império Romano",
-      "answer": "V"
+      "question": "As notícias trazidas por Timóteo levaram Paulo a escrever a segunda epístola aos tessalonicenses.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "eppii1-mc-1",
-      "question": "Ameaçava a igreja de Colossos -",
+      "question": "Ameaçava a igreja de Colossos –",
       "options": [
-        "O mundanismo",
-        "As contendas entre irmãos",
-        "As heresias",
-        "Todas estão corretas"
+        "o mundanismo",
+        "as contendas entre irmãos",
+        "as heresias",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "eppii1-mc-2",
-      "question": "Na Epístola a Tito a mensagem central era -",
-      "options": [
-        "Proteger a fé",
-        "Praticar a fé",
-        "Pregar a fé",
-        "Todas estão erradas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "eppii1-mc-3",
       "question": "Primeira cidade da Europa a receber o evangelho-",
       "options": [
         "Roma",
         "Neápolis",
         "Filipos",
-        "Tessalônica"
+        "Tessalônica."
       ],
       "answer": 2
     },
     {
-      "id": "eppii1-mc-4",
+      "id": "eppii1-mc-3",
       "question": "Localização de Tessalônica –",
       "options": [
         "Europa",
         "Ásia",
         "Ásia Menor",
-        "Todas estão erradas"
+        "todas estão erradas."
+      ],
+      "answer": 0
+    },
+    {
+      "id": "eppii1-mc-4",
+      "question": "As ruínas do Templo de Diana podem ser encontradas, hoje –",
+      "options": [
+        "na Turquia",
+        "na Síria",
+        "na Grécia",
+        "em nenhum lugar."
       ],
       "answer": 0
     }
@@ -103,17 +103,17 @@
     {
       "id": "eppii1-mp-1",
       "left": "Não criam na ressurreição",
-      "right": "Os gregos"
+      "right": "os gregos"
     },
     {
       "id": "eppii1-mp-2",
       "left": "Criam na ressurreição",
-      "right": "Os judeus"
+      "right": "os judeus"
     },
     {
       "id": "eppii1-mp-3",
       "left": "Primeira fase da vinda de Jesus",
-      "right": "Arrebatamento"
+      "right": "arrebatamento"
     },
     {
       "id": "eppii1-mp-4",
@@ -123,12 +123,12 @@
     {
       "id": "eppii1-mp-5",
       "left": "Ressurreição dos ímpios",
-      "right": "Segunda ressurreição"
+      "right": "segunda ressurreição"
     },
     {
       "id": "eppii1-mp-6",
       "left": "Ressurreição espiritual",
-      "right": "Novo nascimento"
+      "right": "novo nascimento"
     }
   ]
 }

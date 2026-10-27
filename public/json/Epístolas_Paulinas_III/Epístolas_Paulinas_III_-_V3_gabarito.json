@@ -4,75 +4,75 @@
   "tfQuestions": [
     {
       "id": "ep33-tf-1",
-      "question": "Mesmo presumindo-se vazias o obreiro deve apurar o que lhe foi relatado.",
-      "answer": "F"
-    },
-    {
-      "id": "ep33-tf-2",
-      "question": "Paulo classificou os que promovem divisão na igreja como \"carnais\" e \"meninos\".",
-      "answer": "V"
-    },
-    {
-      "id": "ep33-tf-3",
-      "question": "Um obreiro, tendo convicção de sua chamada ministerial, deve sempre declarar esta sua convicção.",
-      "answer": "F"
-    },
-    {
-      "id": "ep33-tf-4",
-      "question": "Sabemos, pela ciência, ser muito difícil nascer duas pessoas exatamente iguais.",
-      "answer": "F"
-    },
-    {
-      "id": "ep33-tf-5",
-      "question": "Os bons costumes não podem ser exigidos como sendo doutrina bíblica.",
-      "answer": "V"
-    },
-    {
-      "id": "ep33-tf-6",
-      "question": "Formada, na sua maioria, por escravos, Paulo chamou os crentes de Corinto de ignorantes.",
-      "answer": "F"
-    },
-    {
-      "id": "ep33-tf-7",
       "question": "Num culto público, segundo Paulo, a prioridade é a pregação da Palavra de Deus.",
       "answer": "V"
     },
     {
-      "id": "ep33-tf-8",
-      "question": "Em relação a Tito, a preocupação de Paulo era com sua saúde.",
-      "answer": "F"
-    },
-    {
-      "id": "ep33-tf-9",
+      "id": "ep33-tf-2",
       "question": "No sentido material Paulo não ensinava a doutrina do triunfalismo nas igrejas.",
       "answer": "V"
     },
     {
+      "id": "ep33-tf-3",
+      "question": "Paulo afirmou que os crentes de Corinto eram santificados em Cristo e chamados santos",
+      "answer": "V"
+    },
+    {
+      "id": "ep33-tf-4",
+      "question": "Os apóstolos não assumiram a responsabilidade de administrar as necessidades materiais da igreja.",
+      "answer": "V"
+    },
+    {
+      "id": "ep33-tf-5",
+      "question": "Uma decisão ministerial, em nossa legislação, não tem força de lei.",
+      "answer": "V"
+    },
+    {
+      "id": "ep33-tf-6",
+      "question": "A prática dos bons costumes deve ser exigida como doutrina bíblica.",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-7",
+      "question": "Os dons naturais são casuais e não conferidos por Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-8",
+      "question": "Dons espirituais só são dados aos crentes após adquirirem maturidade espiritual",
+      "answer": "F"
+    },
+    {
+      "id": "ep33-tf-9",
+      "question": "Embora filhos de Deus é certo que nem sempre conseguimos realizar nossos sonhos.",
+      "answer": "V"
+    },
+    {
       "id": "ep33-tf-10",
-      "question": "Paulo afirmou poder gloriar-se em suas fraquezas.",
+      "question": "Paulo fez uso de toda sua autoridade apostólica para combater os falsos apóstolos.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "ep33-mc-1",
-      "question": "Promotor de divisões na igreja é o crente-",
+      "question": "Promotor de divisões na igreja é o crente -",
       "options": [
-        "Rebelde",
-        "Carnal",
-        "\"Menino\"",
-        "Todas estão corretas"
+        "rebelde",
+        "“menino”",
+        "carnal",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 2
     },
     {
       "id": "ep33-mc-2",
-      "question": "Jesus, como homem, realizou milagres -",
+      "question": "Jesus, como homem, realizou milagres –",
       "options": [
-        "Porque era Deus",
-        "Não realizou milagres",
-        "Pela virtude do Espírito Santo",
-        "Todas estão erradas"
+        "porque era Deus",
+        "não realizou milagres",
+        "pela virtude do Espírito Santo",
+        "todas estão cerradas."
       ],
       "answer": 2
     },
@@ -80,10 +80,10 @@
       "id": "ep33-mc-3",
       "question": "A Bíblia nos fala de –",
       "options": [
-        "Dons do Pai",
-        "Dons do Filho",
-        "Dons do Espírito Santo",
-        "Todas estão corretas"
+        "dons do Pai",
+        "dons do Filho",
+        "dons do Espírito Santo",
+        "todas estão corretas."
       ],
       "answer": 3
     },
@@ -91,10 +91,10 @@
       "id": "ep33-mc-4",
       "question": "Sabemos que Paulo escreveu aos coríntios –",
       "options": [
-        "Uma carta",
-        "Duas cartas",
-        "Três cartas",
-        "Todas estão erradas"
+        "uma carta",
+        "duas cartas",
+        "três cartas",
+        "todas estão erradas."
       ],
       "answer": 2
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "ep33-mp-1",
-      "left": "É um dom natural",
-      "right": "Eloquência"
+      "left": "Deus ama",
+      "right": "ao que dá com alegria"
     },
     {
       "id": "ep33-mp-2",
-      "left": "É um dom de poder",
-      "right": "Operação de maravilhas"
+      "left": "Ao Senhor empresta",
+      "right": "o que se compadece do pobre"
     },
     {
       "id": "ep33-mp-3",
-      "left": "É um dom de revelação",
-      "right": "Palavra de ciência"
+      "left": "Nessa graça",
+      "right": "ministério da contribuição"
     },
     {
       "id": "ep33-mp-4",
-      "left": "É um dom de inspiração",
-      "right": "Profecia"
+      "left": "Recursos materiais",
+      "right": "não caem do céu"
     },
     {
       "id": "ep33-mp-5",
-      "left": "Um caminho mais excelente",
-      "right": "Amor"
+      "left": "Para construção do Tabernáculo",
+      "right": "recursos vindo do povo"
     },
     {
       "id": "ep33-mp-6",
-      "left": "Identifica um bom crente",
-      "right": "Fruto do Espírito"
+      "left": "Lei de Moisés",
+      "right": "não criou o dízimo"
     }
   ]
 }

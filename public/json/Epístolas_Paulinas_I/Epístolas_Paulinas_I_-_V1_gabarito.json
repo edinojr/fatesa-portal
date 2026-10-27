@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "eppi1-tf-1",
-      "question": "A justificação pela graça é o tema da Epístola aos Romanos.",
-      "answer": "F"
+      "question": "Pela Bíblia podemos afirmar que, de forma unilateral, Deus não pode justificar o homem.",
+      "answer": "V"
     },
     {
       "id": "eppi1-tf-2",
-      "question": "Pela Bíblia podemos afirmar que, de forma unilateral, Deus não pode justificar o homem",
+      "question": "Deus, na Sua soberania, pode fazer vasos para honra e também para desonra.",
       "answer": "V"
     },
     {
       "id": "eppi1-tf-3",
-      "question": "“Amados, não estranheis a ardente prova que vem sobre vós...”, afirmou Paulo.",
-      "answer": "F"
-    },
-    {
-      "id": "eppi1-tf-4",
-      "question": "Deus, na sua Soberania, pode fazer vasos para honra e também para desonra.",
-      "answer": "V"
-    },
-    {
-      "id": "eppi1-tf-5",
-      "question": "Jesus reconheceu o poder que o Imperador de Roma deu a Pilatos.",
-      "answer": "F"
-    },
-    {
-      "id": "eppi1-tf-6",
       "question": "O ideal bíblico é sempre ensinar a criança a pensar e agir como um adulto.",
       "answer": "F"
     },
     {
-      "id": "eppi1-tf-7",
-      "question": "O judeu poderia ser salvo pela Lei se cumprisse os 613 preceitos extraídos dela",
-      "answer": "F"
-    },
-    {
-      "id": "eppi1-tf-8",
+      "id": "eppi1-tf-4",
       "question": "A revelação do mistério que envolvia o evangelho foi dada, diretamente, por Jesus a Paulo.",
       "answer": "V"
     },
     {
-      "id": "eppi1-tf-9",
-      "question": "Segundo ensinou Paulo, um irmão surpreendido numa ofensa deve ser repreendido.",
+      "id": "eppi1-tf-5",
+      "question": "É de Paulo a autoria da expressão \"...o justo viverá pela fé\".",
       "answer": "F"
     },
     {
-      "id": "eppi1-tf-10",
-      "question": "Podemos ver na lei da semeadura consequências positivas ou negativas na relação dos filhos com seus pais.",
+      "id": "eppi1-tf-6",
+      "question": "No Antigo Testamento a justificação era pelas obras, hoje é somente pela fé.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-7",
+      "question": "Embora sem merecer a salvação, por Jesus o homem tem acesso a ela pela graça.",
       "answer": "V"
+    },
+    {
+      "id": "eppi1-tf-8",
+      "question": "Tendo rejeitado a graça, a Nação de Israel foi excluída do plano de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "eppi1-tf-9",
+      "question": "Na revelação de seu plano que envolve a salvação, Deus nada pediu ao homem.",
+      "answer": "V"
+    },
+    {
+      "id": "eppi1-tf-10",
+      "question": "Tolerância significa estar de acordo com o pensamento de outra pessoa, sem criticá-la.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "eppi1-mc-1",
-      "question": "Entre a Lei e a Graça não existe -",
+      "question": "Entre a Lei e a Graça não existe –",
       "options": [
-        "Concorrência",
-        "Rivalidade",
-        "Superioridade",
-        "Todas estão corretas"
+        "concorrência;",
+        "superioridade;",
+        "rivalidade;",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "eppi1-mc-2",
-      "question": "O crente fraco é o -",
+      "question": "Quando escreveu a Epístola aos Romanos, Paulo estava –",
       "options": [
-        "Herege",
-        "O que, embora errado, quer acertar",
-        "Desordeiro",
-        "Todas estão corretas"
+        "na Galácia;",
+        "em Corínto;",
+        "em Éfeso;",
+        "em Antioquia."
       ],
       "answer": 1
     },
     {
       "id": "eppi1-mc-3",
-      "question": "A trilogia que forma o processo da justificação.",
+      "question": "O uso correto do sangue de Jesus –",
       "options": [
-        "Graça de Deus",
-        "A fé do pecador",
-        "O sangue de Jesus",
-        "Todas estão corretas"
+        "curar enfermos;",
+        "expulsar demônios;",
+        "purifica pecados;",
+        "todas estão corretas."
       ],
-      "answer": 3
+      "answer": 2
     },
     {
       "id": "eppi1-mc-4",
-      "question": "Paulo afirmou que a Lei trouxe -",
+      "question": "Pelo novo nascimento o homem não fica livre –",
       "options": [
-        "A salvação",
-        "O Salvador",
-        "Esperança aos judeus e aos gentios",
-        "Todas estão erradas"
+        "das consequências do pecado;",
+        "do poder do pecado;",
+        "da culpa do pecado;",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 0
     }
   ],
   "matchingPairs": [
     {
       "id": "eppi1-mp-1",
       "left": "Cristo fez em nós",
-      "right": "Removeu o poder pecado"
+      "right": "removeu o poder pecado"
     },
     {
       "id": "eppi1-mp-2",
       "left": "Cristo fez por nós",
-      "right": "Removeu a culpa do pecado"
+      "right": "removeu a culpa do pecado"
     },
     {
       "id": "eppi1-mp-3",
       "left": "Fonte da justificação",
-      "right": "A graça de Deus"
+      "right": "a graça de Deus"
     },
     {
       "id": "eppi1-mp-4",
       "left": "Instrumento da justificação",
-      "right": "Sangue de Jesus"
+      "right": "sangue de Jesus"
     },
     {
       "id": "eppi1-mp-5",
       "left": "Meio para alcançar a justificação",
-      "right": "A fé"
+      "right": "a fé"
     },
     {
       "id": "eppi1-mp-6",
       "left": "Pecador não perdoado",
-      "right": "Fugitivo de Deus"
+      "right": "fugitivo de Deus"
     }
   ]
 }

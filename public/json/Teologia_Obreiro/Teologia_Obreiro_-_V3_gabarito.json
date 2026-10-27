@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "to3-tf-1",
-      "question": "Um crente mesmo não sendo um pregador pode ser um ganhador de almas.",
-      "answer": "V"
-    },
-    {
-      "id": "to3-tf-2",
       "question": "A expressão “pedras vivas” diz respeito a todos os crentes membros da igreja.",
       "answer": "F"
     },
     {
-      "id": "to3-tf-3",
-      "question": "Jesus, em seu ministério, também necessitou de recursos financeiros.",
-      "answer": "V"
-    },
-    {
-      "id": "to3-tf-4",
+      "id": "to3-tf-2",
       "question": "A conduta ou testemunho de um crente é como o cartão de visita de sua igreja.",
       "answer": "V"
     },
     {
-      "id": "to3-tf-5",
-      "question": "É certo que Jesus não chama desocupados e nem preguiçosos para o ministério.",
-      "answer": "V"
-    },
-    {
-      "id": "to3-tf-6",
+      "id": "to3-tf-3",
       "question": "Por não ter sido plantada em terreno fértil a vinha do Antigo Testamento não deu frutos.",
       "answer": "F"
     },
     {
-      "id": "to3-tf-7",
-      "question": "Não há na Bíblia nenhum apóstolo chamado pelo Espírito Santo.",
+      "id": "to3-tf-4",
+      "question": "Nada impede um obreiro cheio do Espírito Santo ser também um homem letrado.",
+      "answer": "V"
+    },
+    {
+      "id": "to3-tf-5",
+      "question": "É certo que apenas orando o crente não pode ser um ganhador de almas.",
       "answer": "F"
     },
     {
+      "id": "to3-tf-6",
+      "question": "Numa grande construção tem que existir uma hierarquia entre os trabalhadores.",
+      "answer": "V"
+    },
+    {
+      "id": "to3-tf-7",
+      "question": "O erro dos escribas e fariseus era não viver de acordo com o que ensinavam.",
+      "answer": "V"
+    },
+    {
       "id": "to3-tf-8",
-      "question": "Podemos afirmar que nem sempre um obreiro verá o resultado de seu trabalho.",
+      "question": "No evangelismo pessoal é fundamental falar do que Jesus fez em nossa vida.",
       "answer": "V"
     },
     {
       "id": "to3-tf-9",
-      "question": "O dom de ensinar, como serviço, é o mesmo dom ministerial de mestre.",
-      "answer": "F"
+      "question": "É certo afirmar que Deus não dá igreja para pastor, mas dá pastor para a igreja.",
+      "answer": "V"
     },
     {
       "id": "to3-tf-10",
-      "question": "Nada impede um obreiro cheio do Espírito Santo ser também um homem letrado",
-      "answer": "V"
+      "question": "Respondendo a pergunta feita por seus discípulos Jesus contou a Parábola da Vinha",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "to3-mc-1",
-      "question": "Cada crente deve ser um -",
+      "question": "A igreja assemelha-se a um –",
       "options": [
-        "Apóstolo",
-        "Mestre",
-        "Ganhador de almas",
-        "Todas estão corretas"
+        "galpão",
+        "edifício",
+        "uma casa térrea",
+        "todas estão erradas."
+      ],
+      "answer": 1
+    },
+    {
+      "id": "to3-mc-2",
+      "question": "Um apóstolo enviado pelo Espírito Santo –",
+      "options": [
+        "Estevão",
+        "Marcos",
+        "Barnabé",
+        "todas estão erradas."
       ],
       "answer": 2
     },
     {
-      "id": "to3-mc-2",
-      "question": "O que todo diácono precisa ter ou ser -",
-      "options": [
-        "Boa reputação",
-        "Cheio do Espírito Santo",
-        "Cheio de sabedoria",
-        "Todas estão corretas"
-      ],
-      "answer": 3
-    },
-    {
       "id": "to3-mc-3",
-      "question": "Ao dono de uma construção compete decidir sobre -",
+      "question": "É uma característica do bom pastor -",
       "options": [
-        "Sua finalidade",
-        "Lugar onde construir",
-        "Natureza do material",
-        "Todas estão corretas"
+        "conhecer suas ovelhas",
+        "guiar as ovelhas",
+        "buscá-las quando desviadas",
+        "todas estão corretas"
       ],
       "answer": 3
     },
     {
       "id": "to3-mc-4",
-      "question": "A igreja assemelha-se a um –",
+      "question": "Os dons assistenciais conferem -",
       "options": [
-        "Galpão",
-        "Edifício",
-        "Uma casa térrea",
-        "Todas estão erradas"
+        "“status”",
+        "retorno financeiro",
+        "oportunidade de ser útil",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "to3-mp-1",
-      "left": "Deus encontrou no deserto",
-      "right": "Moisés"
+      "left": "Vinha do Antigo Testamento",
+      "right": "Israel"
     },
     {
       "id": "to3-mp-2",
-      "left": "Deus encontrou arando a terra",
-      "right": "Eliseu"
+      "left": "Vinha do Novo Testamento",
+      "right": "igreja"
     },
     {
       "id": "to3-mp-3",
-      "left": "Deus encontrou pastoreando ovelhas",
-      "right": "Davi"
+      "left": "Início do dia judaico",
+      "right": "6 horas da manhã"
     },
     {
       "id": "to3-mp-4",
-      "left": "Deus encontrou em Listra",
-      "right": "Timóteo"
+      "left": "Hora terceira",
+      "right": "9 horas da manhã"
     },
     {
       "id": "to3-mp-5",
-      "left": "Chamado por Deus",
-      "right": "Arão"
+      "left": "Hora undécima",
+      "right": "17 horas"
     },
     {
       "id": "to3-mp-6",
-      "left": "Enviado pela Igreja de Jerusalém",
-      "right": "Barnabé"
+      "left": "Final do dia",
+      "right": "18 horas"
     }
   ]
 }

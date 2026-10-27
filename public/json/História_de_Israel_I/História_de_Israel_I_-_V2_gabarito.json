@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "hisi2-tf-1",
-      "question": "A exigência do “santo sereis porque eu, o Senhor vosso Deus, sou o santo” não existia antes da Lei de Moisés.",
+      "question": "Ao chamar Abraão, Deus mencionou também a chamada de Sara, sua esposa",
       "answer": "F"
     },
     {
       "id": "hisi2-tf-2",
-      "question": "Embora estando em terra firme, Noé e sua família permaneceram na arca por mais 57 dias.",
-      "answer": "V"
-    },
-    {
-      "id": "hisi2-tf-3",
-      "question": "Ao chamar Abraão, Deus mencionou também a chamada de Sara, sua esposa.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi2-tf-4",
-      "question": "Israel não conseguiu viver no Egito sem misturar-se com os egípcios.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi2-tf-5",
       "question": "No sentido literal a primeira batalha da qual Josué participou foi contra os amalequitas.",
       "answer": "V"
     },
     {
+      "id": "hisi2-tf-3",
+      "question": "\"Cada um fazia o que parecia reto aos seus olhos” é como termina o Livro de Juízes.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi2-tf-4",
+      "question": "Os livros de Esdras, Neemias e Ester, contam a história de Israel após o retorno do cativeiro.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi2-tf-5",
+      "question": "Foram poucas as vezes, na história, que Deus não manteve comunicação com os homens.",
+      "answer": "F"
+    },
+    {
       "id": "hisi2-tf-6",
-      "question": "Sendo amor, Deus desejava perdoar e não destruir as nações que estavam na terra.",
+      "question": "O pecado de Cão se agravou pelo fato de ter zombado de seu pai.",
       "answer": "F"
     },
     {
       "id": "hisi2-tf-7",
-      "question": "Cada um fazia o que parecia reto aos seus olhos é como termina o Livro de Juízes.",
-      "answer": "V"
+      "question": "Sendo seu pai já velho e Ló, seu sobrinho, órfão, Abraão não poderia deixa- los sós.",
+      "answer": "F"
     },
     {
       "id": "hisi2-tf-8",
-      "question": "Samuel teve o privilégio de ungir os dois primeiros reis do Reino Unido de Israel.",
-      "answer": "V"
+      "question": "Sabemos haver uma contradição sobre o número da família de Jacó que desceu ao Egito",
+      "answer": "F"
     },
     {
       "id": "hisi2-tf-9",
-      "question": "Todo reinado de Saul, que durou quarenta anos, é descrito no Livro I Samuel.",
-      "answer": "V"
+      "question": "Segundo o \"Talmude\", Josué era da idade de quase vinte anos quando saiu do Egito.",
+      "answer": "F"
     },
     {
       "id": "hisi2-tf-10",
-      "question": "Os Livros de Esdras, Neemias e Ester, contam a história de Israel após o retorno do cativeiro.",
-      "answer": "V"
+      "question": "O erro de Josué foi tomar uma decisão sem consultar seus príncipes.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "hisi2-mc-1",
-      "question": "O nome de Isaque foi dado por",
-      "options": [
-        "Sara",
-        "Deus",
-        "Abraão",
-        "Todas estão erradas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "hisi2-mc-2",
-      "question": "Um juiz não constituído por Deus -",
-      "options": [
-        "Abimeleque",
-        "Jefté",
-        "Eli",
-        "Sansão"
-      ],
-      "answer": 0
-    },
-    {
-      "id": "hisi2-mc-3",
       "question": "Samuel foi -",
       "options": [
-        "Profeta",
-        "Juiz",
-        "Sacerdote",
-        "Todas estão corretas.."
+        "profeta",
+        "juiz",
+        "sacerdote",
+        "todas estão corretas.."
       ],
       "answer": 3
     },
     {
-      "id": "hisi2-mc-4",
+      "id": "hisi2-mc-2",
       "question": "Uma cidade de refúgio -",
       "options": [
         "Jerusalém",
         "Siquém",
         "Belém",
-        "Todas estão corretas"
+        "todas estão corretas."
       ],
       "answer": 1
+    },
+    {
+      "id": "hisi2-mc-3",
+      "question": "Grau de parentesco da mãe de Moisés em relação ao seu pai -",
+      "options": [
+        "irmã",
+        "tia",
+        "nenhum",
+        "todas estão erradas."
+      ],
+      "answer": 1
+    },
+    {
+      "id": "hisi2-mc-4",
+      "question": "O nome original de Josué era –",
+      "options": [
+        "Efraim",
+        "Jesus",
+        "Oseias",
+        "todas estão erradas."
+      ],
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "hisi2-mp-1",
-      "left": "Pai de Enoque",
-      "right": "Jarede"
+      "left": "Primeira Páscoa",
+      "right": "Egito"
     },
     {
       "id": "hisi2-mp-2",
-      "left": "Filho de Enoque",
-      "right": "Matusalém"
+      "left": "Segunda Páscoa",
+      "right": "Sinai"
     },
     {
       "id": "hisi2-mp-3",
-      "left": "Filho de Noé",
-      "right": "Sem"
+      "left": "Terceira Páscoa",
+      "right": "Gilgal"
     },
     {
       "id": "hisi2-mp-4",
-      "left": "Contemporâneo de Adão",
-      "right": "Enoque"
+      "left": "Última Páscoa",
+      "right": "Jerusalém"
     },
     {
       "id": "hisi2-mp-5",
-      "left": "Bígamo e assassino",
-      "right": "Lameque"
+      "left": "Impecílio para sair do Egito",
+      "right": "Mar Vermelho"
     },
     {
       "id": "hisi2-mp-6",
-      "left": "Pós-dilúvio",
-      "right": "Abraão"
+      "left": "Impacílio para entrar em Canaã",
+      "right": "Rio Jordão"
     }
   ]
 }

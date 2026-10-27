@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "esp3-tf-1",
-      "question": "Pela Bíblia o único nome da Terceira Pessoa da Trindade é Espírito Santo.",
-      "answer": "F"
-    },
-    {
-      "id": "esp3-tf-2",
       "question": "O pecado de Ananias não teve perdão porque ele pecou contra o Espírito Santo.",
       "answer": "F"
     },
     {
-      "id": "esp3-tf-3",
-      "question": "Ser cheio do Espírito Santo desde o ventre de sua mãe não foi um privilégio só de Jesus.",
-      "answer": "V"
-    },
-    {
-      "id": "esp3-tf-4",
+      "id": "esp3-tf-2",
       "question": "Para Deus o importante é o sacrifício, não importando como esteja o altar.",
       "answer": "F"
     },
     {
-      "id": "esp3-tf-5",
-      "question": "Podemos afirmar que todo salvo está selado com o Espírito Santo.",
-      "answer": "V"
-    },
-    {
-      "id": "esp3-tf-6",
-      "question": "Dons espirituais não credenciam o crente para o ministério.",
-      "answer": "V"
-    },
-    {
-      "id": "esp3-tf-7",
-      "question": "A tristeza, em sua forma crônica, é uma doença da alma.",
-      "answer": "F"
-    },
-    {
-      "id": "esp3-tf-8",
+      "id": "esp3-tf-3",
       "question": "Os dons espirituais não se confundem com os dons ministeriais.",
       "answer": "V"
     },
     {
-      "id": "esp3-tf-9",
-      "question": "Podemos afirmar, segundo ensinou Paulo, que são nove os dons do Espírito.",
+      "id": "esp3-tf-4",
+      "question": "Em relação à igreja, o arrebatamento será o último ato do Espírito Santo.",
+      "answer": "V"
+    },
+    {
+      "id": "esp3-tf-5",
+      "question": "Em Eliezer, como guia de Rebeca, podemos ver um tipo de Jesus.",
       "answer": "F"
     },
     {
+      "id": "esp3-tf-6",
+      "question": "Podemos afirmar que a Trindade quando em ação forma uma unidade.",
+      "answer": "V"
+    },
+    {
+      "id": "esp3-tf-7",
+      "question": "Aos trinta anos Jesus foi conduzido ao deserto por Satanás para ser por ele tentado.",
+      "answer": "F"
+    },
+    {
+      "id": "esp3-tf-8",
+      "question": "Não podemos afirmar que o novo nascimento e regeneração é a mesma coisa.",
+      "answer": "F"
+    },
+    {
+      "id": "esp3-tf-9",
+      "question": "Dons espirituais não credencia o crente para o ministério.",
+      "answer": "V"
+    },
+    {
       "id": "esp3-tf-10",
-      "question": "Em relação à igreja, o arrebatamento será o último ato do Espírito Santo.",
+      "question": "Biblicamente não há diferença entre paciência e longanimidade.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "esp3-mc-1",
-      "question": "O Espírito Santo concedeu a Jesus a unção para ser -",
+      "question": "Não havendo intérprete, o dom de língua edifica —",
       "options": [
-        "Profeta",
-        "Sacerdote",
-        "Rei",
-        "Todas estão corretas"
-      ],
-      "answer": 3
-    },
-    {
-      "id": "esp3-mc-2",
-      "question": "Não havendo intérprete, o dom de língua edifica -",
-      "options": [
-        "A igreja",
-        "O que fala",
-        "Não edifica ninguém",
-        "Todas estão erradas"
+        "a igreja;",
+        "o que fala;",
+        "não edifica ninguém;",
+        "todas estão erradas.."
       ],
       "answer": 1
     },
     {
-      "id": "esp3-mc-3",
+      "id": "esp3-mc-2",
       "question": "A unção no Antigo Testamento era somente para —",
       "options": [
-        "Os sacerdotes",
-        "Os reis",
-        "Os profetas",
-        "Todas estão corretas"
+        "os sacerdotes;",
+        "os reis;",
+        "os profetas;",
+        "todas estão corretas."
+      ],
+      "answer": 3
+    },
+    {
+      "id": "esp3-mc-3",
+      "question": "É um símbolo do Espírito Santo —",
+      "options": [
+        "o sangue de Jesus;",
+        "a Palavra de Deus;",
+        "o orvalho;",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "esp3-mc-4",
-      "question": "É um símbolo do Espírito Santo —",
+      "question": "Biblicamente, mansidão não se confunde com —",
       "options": [
-        "O sangue de Jesus",
-        "A Palavra de Deus",
-        "O orvalho",
-        "Todas estão corretas"
+        "medo;",
+        "timidez;",
+        "falta de autoridade;",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 3
     }
   ],
   "matchingPairs": [
@@ -123,7 +123,7 @@
     {
       "id": "esp3-mp-5",
       "left": "Falaram inspirados pelo Espírito Santo",
-      "right": "Os profetas"
+      "right": "os profetas"
     },
     {
       "id": "esp3-mp-6",

@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "teop2-tf-1",
-      "question": "Estando o mundo no maligno, Deus não pode ser o Senhor de toda a terra.",
+      "question": "Em relação aos direitos de Deus não há diferença entre os filhos de Deus e os ímpios",
       "answer": "F"
     },
     {
       "id": "teop2-tf-2",
-      "question": "Em relação às coisas materiais não há registro de falhas na geração de Noé.",
+      "question": "Ninguém será um bom crente sendo mau pai; ninguém será um bom crente sendo um mau filho.",
       "answer": "V"
     },
     {
       "id": "teop2-tf-3",
-      "question": "“O Senhor é o que tira a vida e a dá”, foi o que afirmou Samuel.",
+      "question": "Pela Lei de Moisés não havia obrigatoriedade ao cumprimento da palavra dada.",
       "answer": "F"
     },
     {
       "id": "teop2-tf-4",
-      "question": "É muito difícil, mas e possível encontrar duas pessoas exatamente iguais.",
+      "question": "Segundo a ciência, a má convivência dos pais não influencia os filhos durante a gestação.",
       "answer": "F"
     },
     {
       "id": "teop2-tf-5",
-      "question": "No sentido espiritual, por falta de humildade, o homem pode perder uma bênção",
-      "answer": "V"
-    },
-    {
-      "id": "teop2-tf-6",
-      "question": "Ensinar os filhos, hoje, pode evitar ter que pedir orações por eles, amanhã.",
-      "answer": "V"
-    },
-    {
-      "id": "teop2-tf-7",
-      "question": "Um patrão, sendo um crente fiel, terá dificuldades em ter um empregado incrédulo.",
+      "question": "Quem exerce um cargo que exige o uso da autoridade, não pode ser humilde.",
       "answer": "F"
     },
     {
-      "id": "teop2-tf-8",
-      "question": "Para o judeu, um gentio não podia ser chamado de seu próximo.",
+      "id": "teop2-tf-6",
+      "question": "Educar, ensinar ou instruir os filhos é uma obrigação somente dos pais.",
+      "answer": "F"
+    },
+    {
+      "id": "teop2-tf-7",
+      "question": "Sabemos, pela Bíblia, ser possível ser rico, ter muitos empregados e ser fiel a Deus.",
       "answer": "V"
     },
     {
+      "id": "teop2-tf-8",
+      "question": "Na prática, amar a si mesmo tem o mesmo sentido de ser amante de si mesmo.",
+      "answer": "F"
+    },
+    {
       "id": "teop2-tf-9",
-      "question": "Visitar os órfãos e as viúvas tem o sentido de levar-lhes uma palavra de amor e consolo.",
+      "question": "O fato de ser \"evangélico\" capacita o homem a viver em santificação.",
       "answer": "F"
     },
     {
       "id": "teop2-tf-10",
-      "question": "A falta do conhecimento da Palavra de Deus é uma das características dos falsos profetas.",
+      "question": "Tanto no deserto como também em Canaã, Deus não deixou faltar o maná ao povo.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "teop2-mc-1",
-      "question": "O crente precisa ser",
+      "question": "A Bíblia diz que o amor -",
       "options": [
-        "Tardio para ouvir",
-        "Pronto para falar",
-        "Pronto para ouvir",
-        "Todas estão erradas"
+        "é cruel como a sepultura",
+        "traz muitas dificuldades",
+        "é forte como a morte",
+        "todas estão erradas"
       ],
       "answer": 2
     },
     {
       "id": "teop2-mc-2",
-      "question": "A Bíblia diz que ele cuidava dos órfãos e das viúvas -",
+      "question": "Não é sinônimo de humildade -",
       "options": [
-        "Ló",
-        "Jó",
-        "Abraão",
-        "Todas estão corretas"
+        "pobreza",
+        "acomodação",
+        "ignorância",
+        "todas estão corretas"
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "teop2-mc-3",
-      "question": "A Bíblia diz que o amor -",
+      "question": "Nada sabemos dos filhos -",
       "options": [
-        "É cruel como a sepultura",
-        "Traz muitas dificuldades",
-        "É forte como a morte",
-        "Todas estão erradas"
+        "de Elias",
+        "dos apóstolos",
+        "da maioria dos profetas",
+        "todas estão corretas"
       ],
-      "answer": 2
+      "answer": 3
     },
     {
       "id": "teop2-mc-4",
-      "question": "Quanto ao uso da terra, o homem é -",
+      "question": "Um crente fiel pode ser –",
       "options": [
-        "Permissionário",
-        "Locatário",
-        "Proprietário",
-        "Todas estão corretas"
+        "empregado de um ímpio",
+        "empregado de outro crente",
+        "patrão de outro crente",
+        "todas estão corretas"
       ],
-      "answer": 0
+      "answer": 3
     }
   ],
   "matchingPairs": [
     {
       "id": "teop2-mp-1",
-      "left": "Suas palavras nunca caíram por terra",
-      "right": "Samuel"
+      "left": "Perdeu a bênção por falta de humildade",
+      "right": "Uzias"
     },
     {
       "id": "teop2-mp-2",
-      "left": "Eu velo sobre a minha palavra",
-      "right": "Deus"
+      "left": "Quase perdeu a bênção por falta de humildade",
+      "right": "Naamã"
     },
     {
       "id": "teop2-mp-3",
-      "left": "Exigia o cumprimento da palavra",
-      "right": "Lei de Moisés"
+      "left": "Tornou-se animal por falta de humildade",
+      "right": "Nabucodonozor"
     },
     {
       "id": "teop2-mp-4",
-      "left": "Garantia o cumprimento da palavra",
-      "right": "Juramento"
+      "left": "Recebeu a bênção por causa da humildade",
+      "right": "mulher cananeia"
     },
     {
       "id": "teop2-mp-5",
-      "left": "Uma palavra branda",
-      "right": "Desvia o furor"
+      "left": "Amor e humildade",
+      "right": "sujeição voluntária"
     },
     {
       "id": "teop2-mp-6",
-      "left": "Assim falai e assim procedei",
-      "right": "Tiago"
+      "left": "Sujeição obrigatória",
+      "right": "exigência legal"
     }
   ]
 }

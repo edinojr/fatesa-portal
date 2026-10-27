@@ -4,105 +4,105 @@
   "tfQuestions": [
     {
       "id": "pm1-tf-1",
-      "question": "É certo que Enoque, e não Abraão, foi o primeiro profeta mencionado na Bíblia",
-      "answer": "F"
-    },
-    {
-      "id": "pm1-tf-2",
-      "question": "Embora sendo rei de Judá, Ezequias pediu ajuda do Profeta Isaías.",
-      "answer": "V"
-    },
-    {
-      "id": "pm1-tf-3",
-      "question": "Sob a proteção de Deus o exército de Ezequias destruiu o exército da Assíria.",
-      "answer": "F"
-    },
-    {
-      "id": "pm1-tf-4",
       "question": "Para abrigar refugiados de Israel, Ezequias construiu um novo bairro em Jerusalém.",
       "answer": "V"
     },
     {
-      "id": "pm1-tf-5",
-      "question": "Deus disse a Jeremias que não ouviria sua oração se ele orasse pelo povo.",
-      "answer": "V"
-    },
-    {
-      "id": "pm1-tf-6",
+      "id": "pm1-tf-2",
       "question": "Jeremias entrou em Jerusalém levando no pescoço um jugo de ferro.",
       "answer": "F"
     },
     {
+      "id": "pm1-tf-3",
+      "question": "Devido a importância de suas mensagens os profetas foram divididos em maiores e menores",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-4",
+      "question": "Isaías era filho do profeta Amós que profetizou nos dias do Rei Uzias.",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-5",
+      "question": "Aconselhado por Profeta Isaías, o Rei Acaz não fez aliança com o Rei da Assiria.",
+      "answer": "F"
+    },
+    {
+      "id": "pm1-tf-6",
+      "question": "No sentido literal, ao falar do nascimento de um menino, Isaías refere-se a Ezequias.",
+      "answer": "V"
+    },
+    {
       "id": "pm1-tf-7",
-      "question": "O cativeiro foi o remédio que Deus usou para curar Israel da idolatria.",
+      "question": "Sendo filho de um sacerdote, Jeremias foi profeta e também sacerdote",
       "answer": "F"
     },
     {
       "id": "pm1-tf-8",
-      "question": "O templo visto por Ezequiel não será o templo da grande tribulação.",
+      "question": "O Profeta Jeremias profetizou que um rei e sua mãe seriam levados para o cativeiro.",
       "answer": "V"
     },
     {
       "id": "pm1-tf-9",
-      "question": "O jovem Daniel foi reconhecido pela rainha como tendo “o espírito dos deuses santos”.",
+      "question": "Não podemos afirmar, com segurança, que Ezequiel era casado.",
       "answer": "F"
     },
     {
       "id": "pm1-tf-10",
-      "question": "A história não registrou nenhum imperador da Babilônia chamado Belsazar.",
-      "answer": "V"
+      "question": "Israel e as nações vizinhas sempre tiveram um bom relacionamento.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "pm1-mc-1",
-      "question": "Segundo profetizou Isaías, Jesus viria -",
+      "question": "Segundo profetizou Isaías, Jesus viria—",
       "options": [
-        "Como conquistador",
-        "Com poder e grande glória",
-        "Como raiz de uma terra seca",
-        "Todas estão corretas"
+        "como conquistador",
+        "com poder e grande glória",
+        "como raiz de uma terra seca",
+        "todas estão erradas."
       ],
       "answer": 2
     },
     {
       "id": "pm1-mc-2",
-      "question": "A nação de Israel é representada como uma figueira -",
+      "question": "Foi um profeta da Palavra –",
       "options": [
-        "Seca",
-        "Carregada de folhas",
-        "Brotando",
-        "Todas estão corretas"
-      ],
-      "answer": 3
-    },
-    {
-      "id": "pm1-mc-3",
-      "question": "Passagem bíblica lida por Jesus na Sinagoga de Nazaré",
-      "options": [
-        "Isaías 61:1-2",
-        "Isaías 61:22",
-        "Isaías 61:12",
-        "Todas estão corretas"
+        "Elias",
+        "Obadias",
+        "Naum",
+        "todas estão corretas."
       ],
       "answer": 0
     },
     {
-      "id": "pm1-mc-4",
-      "question": "Segundo profetizou Isaías, Jesus viria—",
+      "id": "pm1-mc-3",
+      "question": "Foi uma sacerdotisa -",
       "options": [
-        "Como conquistador",
-        "Com poder e grande glória",
-        "Como raiz de uma terra seca",
-        "Todas estão erradas"
+        "Hulda",
+        "Débora",
+        "Miriã",
+        "todas estão erradas."
       ],
-      "answer": 2
+      "answer": 3
+    },
+    {
+      "id": "pm1-mc-4",
+      "question": "Profetizou em Judá no tempo de Isaías—",
+      "options": [
+        "Oséias",
+        "Miquéias",
+        "Amós",
+        "todas estão corretas."
+      ],
+      "answer": 1
     }
   ],
   "matchingPairs": [
     {
       "id": "pm1-mp-1",
-      "left": "Profetizou no reinado de Acabe",
+      "left": "Profetizou no reino de Acabe",
       "right": "Micaías"
     },
     {

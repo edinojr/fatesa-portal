@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "evan1-tf-1",
-      "question": "Em seu evangelho João teve como objetivo defender a divindade e materialização de Jesus",
-      "answer": "V"
+      "question": "É certo que não existe um ponto em comum nos quatro evangelhos.",
+      "answer": "F"
     },
     {
       "id": "evan1-tf-2",
-      "question": "Somente o crente que tem o dom de discernir é que pode fazer julgamento.",
+      "question": "Foram 4 os evangelhos para que tivéssemos uma biografia completa de Jesus.",
       "answer": "F"
     },
     {
       "id": "evan1-tf-3",
-      "question": "Podemos afirmar que Jesus gostava de ser chamado de Mestre.",
+      "question": "Mateus teve o privilégio de introduzir Jesus no Novo Testamento",
       "answer": "V"
     },
     {
       "id": "evan1-tf-4",
-      "question": "No Sermão do Monte das Oliveiras somente Pedro, Tiago e João estavam presentes.",
+      "question": "Sendo publicano, Mateus não conhecia bem o Antigo Testamento",
       "answer": "F"
     },
     {
       "id": "evan1-tf-5",
-      "question": "Ao curar um leproso, Jesus evitou colocar suas mãos sobre ele.",
+      "question": "Rute, uma gentia, na genealogia de Jesus, foi um erro de Mateus",
       "answer": "F"
     },
     {
       "id": "evan1-tf-6",
-      "question": "O Sinédrio, a Suprema Corte de Israel, não podia executar pena de morte.",
-      "answer": "V"
+      "question": "Biblicamente, podemos afirmar quantos eram os magos e os seus nomes",
+      "answer": "F"
     },
     {
       "id": "evan1-tf-7",
-      "question": "O nome de João Batista foi dado pelo anjo Gabriel a seus pais Zacarias e Isabel.",
+      "question": "Sendo o Egito um símbolo do mundo, José errou levando Jesus para lá.",
       "answer": "F"
     },
     {
       "id": "evan1-tf-8",
-      "question": "Pela Bíblia sabemos que Deus dificilmente faz acepção de pessoas.",
-      "answer": "F"
+      "question": "O “Sermão do Monte” escandalizou a maioria dos que desejavam ouvir Jesus.",
+      "answer": "V"
     },
     {
       "id": "evan1-tf-9",
-      "question": "Jesus evitou ir para Jerusalém na companhia de seus irmãos.",
+      "question": "A ordem na expressão “sal da terra” e “luz do mundo” não pode ser alterada.",
       "answer": "V"
     },
     {
       "id": "evan1-tf-10",
-      "question": "Nada tendo para deixar aos seus discípulos, então Jesus deixou-lhes o amor.",
+      "question": "Na Bíblia “as muitas águas” simbolizam bênçãos, prosperidade.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "evan1-mc-1",
-      "question": "Mar no qual Pedro e João eram pescadores -",
+      "question": "Os judeus desprezavam os publicanos porque —",
       "options": [
-        "Da Galileia",
-        "De Tiberíades",
-        "De Quenerite",
-        "Todas estão corretas"
+        "não eram judeus",
+        "eram cobradores de impostos",
+        "eram pobres",
+        "todas estão corretas"
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "evan1-mc-2",
-      "question": "Ao cego de nascença Jesus ordenou -",
+      "question": "O “Sermão das Bem Aventuranças” foi pregado —",
       "options": [
-        "Que seria curado no tanque de Betesda",
-        "Que ao lavar seria curado",
-        "Ir lavar no tanque de Betesda",
-        "Todas estão erradas"
+        "no Monte das Oliveiras",
+        "no Monte Moriá",
+        "num monte",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 2
     },
     {
       "id": "evan1-mc-3",
-      "question": "Um crente salvo não está sujeito a —",
+      "question": "É possível vencer o mal, segundo ensinou Paulo, com —",
       "options": [
-        "Opressão",
-        "Possessão",
-        "Tentação",
-        "Todas estão corretas"
+        "jejum e oração",
+        "o bem",
+        "humildade",
+        "todas estão erradas"
       ],
       "answer": 1
     },
     {
       "id": "evan1-mc-4",
-      "question": "A missão primeira de um obreiro é —",
+      "question": "Dá o que o homem precisa, sem merecer —",
       "options": [
-        "Defender o cristianismo",
-        "Condenar o pecado",
-        "Semear a Palavra de Deus",
-        "Todas estão corretas"
+        "o amor",
+        "a justiça",
+        "a misericórdia",
+        "todas estão corretas."
       ],
       "answer": 2
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "evan1-mp-1",
-      "left": "Templo purificado por Jesus",
-      "right": "Zorobabel"
+      "left": "Evangelho de João",
+      "right": "escrito para a igreja"
     },
     {
       "id": "evan1-mp-2",
-      "left": "Missão de Jesus",
-      "right": "Salvar o pecador"
+      "left": "Evangelho de Lucas",
+      "right": "escrito para os gregos"
     },
     {
       "id": "evan1-mp-3",
-      "left": "Missão do Espírito Santo",
-      "right": "Convencer o homem"
+      "left": "Evangelho de Mateus",
+      "right": "escrita para os judeus"
     },
     {
       "id": "evan1-mp-4",
-      "left": "Missão do homem",
-      "right": "Pregar a Palavra de Deus"
+      "left": "Evangelho de Marcos",
+      "right": "escrito para os romanos"
     },
     {
       "id": "evan1-mp-5",
-      "left": "Campo da semeadura",
-      "right": "Terra"
+      "left": "A luz",
+      "right": "precisa ser vista"
     },
     {
       "id": "evan1-mp-6",
-      "left": "Ensino por parábolas",
-      "right": "Antigo e Novo Testamento"
+      "left": "O sal",
+      "right": "deve passar despercebido"
     }
   ]
 }

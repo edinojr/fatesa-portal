@@ -9,48 +9,48 @@
     },
     {
       "id": "pent3-tf-2",
-      "question": "Ao chamar Abraão, Deus fez menção do nome de Sara",
-      "answer": "F"
-    },
-    {
-      "id": "pent3-tf-3",
-      "question": "Tendo no ventre um filho de Abraão, Deus não podia abandonar Agar.",
+      "question": "Próximo da morte, Jacó fez José jurar que seu corpo não seria sepultado no Egito.",
       "answer": "V"
     },
     {
+      "id": "pent3-tf-3",
+      "question": "Sabemos, pela Bíblia, que Miriâ, irmã de Moisés, era uma sacerdotisa.",
+      "answer": "F"
+    },
+    {
       "id": "pent3-tf-4",
-      "question": "Labão só entregou Raquel a Jacó após este trabalhar quatorze anos.",
+      "question": "Deus proibiu o homem de comer de todas as árvores, exceto uma.",
       "answer": "F"
     },
     {
       "id": "pent3-tf-5",
-      "question": "Próximo da morte, Jacó fez José jurar que seu corpo não seria sepultado no Egito",
+      "question": "Tendo no ventre um filho de Abraão, Agar não podia ser abandonada por Deus.",
       "answer": "V"
     },
     {
       "id": "pent3-tf-6",
-      "question": "A família de Jacó foi levado para o Egito 22 anos depois da ida de José.",
+      "question": "De Jacó, após seu nascimento, nada se diz sobre sua infância.",
       "answer": "V"
     },
     {
       "id": "pent3-tf-7",
-      "question": "As cinzas do holocausto, símbolo do corpo de Jesus, tinham que ser guardadas num lugar seguro.",
+      "question": "Sabendo ser inocente, num primeiro momento, José demonstrou profunda revolta.",
       "answer": "F"
     },
     {
       "id": "pent3-tf-8",
-      "question": "Nas ofertas pacíficas a carne era comida pelos ofertantes e pelos sacerdotes.",
+      "question": "O propósito de Deus foi levar o povo por um caminho mais longo.",
       "answer": "V"
     },
     {
       "id": "pent3-tf-9",
-      "question": "Sabemos, pela Bíblia, que Miriã, irmã de Moisés, era uma sacerdotisa.",
+      "question": "O espaço do lugar santíssimo era maior do que o do lugar santo.",
       "answer": "F"
     },
     {
       "id": "pent3-tf-10",
-      "question": "Num mesmo espaço de terreno a Lei de Moisés proibia semear espécies diferentes de sementes.",
-      "answer": "V"
+      "question": "A palavra expiação, no hebraico, significa perdoar.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
@@ -58,77 +58,77 @@
       "id": "pent3-mc-1",
       "question": "Moisés falou sobre a necessidade de celebrar a festa -",
       "options": [
-        "Da Páscoa",
-        "Do Pentecoste",
-        "Do Tabernáculo",
-        "Todas estão corretas"
+        "da Páscoa",
+        "do Pentecoste",
+        "do Tabernáculo",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "pent3-mc-2",
-      "question": "Chamado por Deus, Moisés alegou —",
-      "options": [
-        "Falta de sabedoria",
-        "Falta de eloquência",
-        "Sua incapacidade",
-        "Todas estão corretas"
-      ],
-      "answer": 3
-    },
-    {
-      "id": "pent3-mc-3",
       "question": "Prata no Tabernáculo fala de —",
       "options": [
-        "Amor",
-        "Justiça",
-        "Redenção",
-        "Todas estão corretas"
+        "amor",
+        "justiça",
+        "redenção",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
-      "id": "pent3-mc-4",
+      "id": "pent3-mc-3",
       "question": "Num segundo momento as tábuas de pedra foram preparadas —",
       "options": [
-        "Por Deus",
-        "Por Moisés",
-        "Por Moisés e Arão",
-        "Todas estão corretas"
+        "por Deus",
+        "por Moisés",
+        "por Moisés e Arão",
+        "todas estão corretas."
       ],
       "answer": 1
+    },
+    {
+      "id": "pent3-mc-4",
+      "question": "Na oferta de manjares havia —",
+      "options": [
+        "farinha",
+        "azeite",
+        "incenso",
+        "todas estão corretas."
+      ],
+      "answer": 3
     }
   ],
   "matchingPairs": [
     {
       "id": "pent3-mp-1",
-      "left": "Evitou que José fosse morto",
-      "right": "Rubens"
+      "left": "Encontramos o homem perdido",
+      "right": "Gênesis"
     },
     {
       "id": "pent3-mp-2",
-      "left": "Comprou José dos ismaelitas",
-      "right": "Potifar"
+      "left": "Vemos o homem redimido",
+      "right": "Êxodo"
     },
     {
       "id": "pent3-mp-3",
-      "left": "Filho de José",
-      "right": "Manassés"
+      "left": "O homem em adoração",
+      "right": "Levítico"
     },
     {
       "id": "pent3-mp-4",
-      "left": "Filho mais novo de Jacó",
-      "right": "Benjamim"
+      "left": "A caminhada da igreja em direção a Canaã",
+      "right": "Números"
     },
     {
       "id": "pent3-mp-5",
-      "left": "Nome dado por Faraó a José",
-      "right": "Zafenate Panéia"
+      "left": "Deuteronômio, literalmente, significa",
+      "right": "cópia, repetição"
     },
     {
       "id": "pent3-mp-6",
-      "left": "Sogro de José",
-      "right": "Potifera"
+      "left": "A tradição judaica intitula Deuteronômio",
+      "right": "“Mishanet Torah”"
     }
   ]
 }

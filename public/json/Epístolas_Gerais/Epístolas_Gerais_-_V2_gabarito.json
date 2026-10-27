@@ -9,94 +9,94 @@
     },
     {
       "id": "epge2-tf-2",
-      "question": "Deus, sendo amor, é certo que nenhuma fonte de sofrimento pode ser gerada por ele.",
+      "question": "Tudo o que sabemos sobre Pedro é o que está na Bíblia e no \"Talmud\", o livro das tradições judaicas.",
       "answer": "F"
     },
     {
       "id": "epge2-tf-3",
-      "question": "Para Tiago o crente só pode comprovar sua fé através das obras.",
+      "question": "O arrebatamento da igreja não foi o único evento escatológico mencionado por Pedro",
       "answer": "V"
     },
     {
       "id": "epge2-tf-4",
-      "question": "Tiago afirmou ser “... melhor a sabedoria do que a força”.",
-      "answer": "F"
+      "question": "A segunda Epistola de João pode ser o único livro da Bíblia escrito para uma mulher.",
+      "answer": "V"
     },
     {
       "id": "epge2-tf-5",
-      "question": "Tudo o que sabemos sobre Pedro é o que está na Bíblia e no “Talmud”, o livro das tradições judaicas.",
+      "question": "Existe um limite para a resistência de um crente ao diabo.",
       "answer": "F"
     },
     {
       "id": "epge2-tf-6",
-      "question": "Um crente, embora salvo, não consegue alegrar-se no sofrimento.",
+      "question": "Na igreja nunca deve haver qualquer tipo de tratamento diferenciado.",
       "answer": "F"
     },
     {
       "id": "epge2-tf-7",
-      "question": "O arrebatamento da igreja não foi o único evento escatológico mencionado por Pedro.",
-      "answer": "V"
+      "question": "Um dos objetivos da sabedoria que vem do alto é capacitar o homem a grandes descobertas cientificas.",
+      "answer": "F"
     },
     {
       "id": "epge2-tf-8",
-      "question": "Ter comunhão com Deus requer que se tenha comunhão com os irmãos.",
-      "answer": "V"
+      "question": "Face as muitas fraquezas de Pedro, por pouco Jesus não desistiu de tê-lo em seu ministério.",
+      "answer": "F"
     },
     {
       "id": "epge2-tf-9",
-      "question": "A segunda Epístola de João pode ser o único livro da Bíblia escrito para uma mulher.",
-      "answer": "V"
+      "question": "Considerada como \"vaso mais fraco\" não se pode exigir que a mulher faça serviços de homens.",
+      "answer": "F"
     },
     {
       "id": "epge2-tf-10",
-      "question": "Com Judas aprendemos que Deus nunca intervém no sentido de mudar nosso propósito.",
+      "question": "Podemos afirmar, com certeza, que Pedro morreu em Roma entre os anos 67 e 68 dC",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "epge2-mc-1",
-      "question": "Tiago, em sua epístola, fala sobre -",
+      "question": "É uma fonte de profecia -",
       "options": [
-        "Salvação pelas obras",
-        "A inutilidade das obras",
-        "As obras como prova de fé",
-        "Todas estão erradas"
+        "o Espírito Santo",
+        "os demônios",
+        "a carne",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 3
     },
     {
       "id": "epge2-mc-2",
-      "question": "No judaísmo a mulher devia -",
+      "question": "A Bíblia ensina que devemos -",
       "options": [
-        "Ser honrada",
-        "Tida em alta estima",
-        "Tratada como inferior",
-        "Todas estão erradas"
+        "ter medo do diabo",
+        "resistir o diabo",
+        "fugir do diabo",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "epge2-mc-3",
-      "question": "As fontes geradoras de sofrimento.",
+      "question": "A igreja é hoje -",
       "options": [
-        "O próprio homem",
-        "Deus",
-        "Satanás",
-        "Todas estão corretas"
+        "geração eleita",
+        "o sacerdócio real",
+        "a nação santa",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "epge2-mc-4",
-      "question": "É uma fonte de profecia -",
+      "question": "Crentes salvos precisam ter -",
       "options": [
-        "O Espírito Santo",
-        "A carne",
-        "Os demônios",
-        "Todas estão corretas"
+        "um mesmo pensamento",
+        "um mesmo sentimento",
+        "um mesmo projeto de vida",
+        "todas estão corretas."
       ],
-      "answer": 3
+      "answer": 1
     }
   ],
   "matchingPairs": [
@@ -123,7 +123,7 @@
     {
       "id": "epge2-mp-5",
       "left": "Ancião, bispo e presbítero",
-      "right": "Pastor"
+      "right": "pastor"
     },
     {
       "id": "epge2-mp-6",

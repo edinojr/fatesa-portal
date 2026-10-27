@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "teop3-tf-1",
-      "question": "Os escribas e fariseus foram censurados por falta de conhecimento da Palavra.",
-      "answer": "F"
-    },
-    {
-      "id": "teop3-tf-2",
       "question": "Ter esquecido de Deus foi o grande erro das gerações de Noé e de Ló.",
       "answer": "V"
     },
     {
-      "id": "teop3-tf-3",
-      "question": "A Lei de Moisés exigia o cumprimento da palavra dita por um homem.",
-      "answer": "V"
-    },
-    {
-      "id": "teop3-tf-4",
+      "id": "teop3-tf-2",
       "question": "No lar de Adão, formado como foi, por Deus, não podia haver problemas.",
       "answer": "F"
     },
     {
-      "id": "teop3-tf-5",
-      "question": "Sem humildade é difícil haver sujeição voluntária.",
-      "answer": "V"
-    },
-    {
-      "id": "teop3-tf-6",
-      "question": "Educar, ensinar ou instruir os filhos é uma obrigação somente dos pais.",
-      "answer": "F"
-    },
-    {
-      "id": "teop3-tf-7",
-      "question": "A humildade de um patrão crente não pode anular sua autoridade.",
-      "answer": "V"
-    },
-    {
-      "id": "teop3-tf-8",
+      "id": "teop3-tf-3",
       "question": "Sabemos que Deus não pede o que não temos para dar e não exige o que não podemos fazer.",
       "answer": "V"
     },
     {
-      "id": "teop3-tf-9",
-      "question": "Biblicamente, a vida cristã só começa após o batismo nas águas.",
+      "id": "teop3-tf-4",
+      "question": "Deixar Deus com as \"sobras\" seria considerá-lo pobre e estrangeiro.",
+      "answer": "V"
+    },
+    {
+      "id": "teop3-tf-5",
+      "question": "Quem conhece tudo que a Bíblia fala sobre a oração, não precisa orar muito.",
       "answer": "F"
     },
     {
+      "id": "teop3-tf-6",
+      "question": "Paulo instruiu Timóteo a ser um exemplo no conhecimento da Palavra de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "teop3-tf-7",
+      "question": "Segundo a Bíblia, o marido tem obrigação de amar, proteger, sustentar e honrar sua esposa.",
+      "answer": "V"
+    },
+    {
+      "id": "teop3-tf-8",
+      "question": "Os filhos, uma vez casados, não têm mais nenhum compromisso com seus pais.",
+      "answer": "F"
+    },
+    {
+      "id": "teop3-tf-9",
+      "question": "A Bíblia fala de homens ricos, patrões de muitos empregados, e que foram fiéis a Deus.",
+      "answer": "V"
+    },
+    {
       "id": "teop3-tf-10",
-      "question": "Sendo que o novo homem continua sendo um ser social, a igreja deve prover entretenimento para ele.",
+      "question": "É através da fé que somos identificados como discípulos de Cristo.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "teop3-mc-1",
-      "question": "A expressão “muitas águas” fala de -",
-      "options": [
-        "Bênçãos",
-        "Dificuldades",
-        "Provações",
-        "Todas estão corretas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "teop3-mc-2",
       "question": "Meu próximo pode ser -",
       "options": [
-        "Meu inimigo",
-        "Meu amigo",
-        "Meu irmão",
-        "Todas estão corretas"
+        "meu inimigo",
+        "meu amigo",
+        "meu irmão",
+        "todas estão corretas"
       ],
       "answer": 3
     },
     {
-      "id": "teop3-mc-3",
+      "id": "teop3-mc-2",
       "question": "Filho gerado em santidade -",
       "options": [
-        "Fora do matrimônio",
-        "Fruto do desejo carnal",
-        "Em amor, no matrimônio",
-        "Todas estão corretas"
+        "fora do matrimônio",
+        "fruto do desejo carnal",
+        "em amor, no matrimônio",
+        "todas estão corretas"
+      ],
+      "answer": 2
+    },
+    {
+      "id": "teop3-mc-3",
+      "question": "Uma pessoa faminta precisa, primeiro -",
+      "options": [
+        "ouvir a Palavra",
+        "receber uma oração",
+        "receber alimento material",
+        "receber uma exortação"
       ],
       "answer": 2
     },
     {
       "id": "teop3-mc-4",
-      "question": "Uma pessoa faminta precisa, primeiro -",
+      "question": "Um bom exemplo de patrão –",
       "options": [
-        "Ouvir a Palavra",
-        "Receber uma oração",
-        "Receber alimento material",
-        "Receber uma exortação"
+        "José",
+        "Eliezer",
+        "Jó",
+        "Onésimo"
       ],
       "answer": 2
     }

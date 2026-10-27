@@ -4,52 +4,52 @@
   "tfQuestions": [
     {
       "id": "higr1-tf-1",
-      "question": "Sabemos, pela Bíblia, que a grande esperança dos judeus era a vinda de Jesus.",
+      "question": "Sabemos, pela história, que a igreja foi constituída por dois povos, judeus e gentios",
       "answer": "F"
     },
     {
       "id": "higr1-tf-2",
-      "question": "Sabemos, pela história, que a igreja foi constituída por dois povos, judeus e gentios.",
-      "answer": "F"
-    },
-    {
-      "id": "higr1-tf-3",
-      "question": "A história comprova que a igreja de Jerusalém era uma igreja solidária.",
-      "answer": "V"
-    },
-    {
-      "id": "higr1-tf-4",
       "question": "Vender as propriedades e entregar o dinheiro aos apóstolos era uma decisão pessoal e não uma doutrina.",
       "answer": "V"
     },
     {
-      "id": "higr1-tf-5",
-      "question": "Podemos afirmar que na igreja que Jesus chamou de minha não havia preconceito racial.",
-      "answer": "V"
-    },
-    {
-      "id": "higr1-tf-6",
+      "id": "higr1-tf-3",
       "question": "Num primeiro momento o cristianismo não foi reconhecido por Roma como uma religião.",
       "answer": "V"
     },
     {
-      "id": "higr1-tf-7",
-      "question": "Pela Bíblia e pela história não há fundamento para se falar em “Pais da Igreja”.",
-      "answer": "F"
-    },
-    {
-      "id": "higr1-tf-8",
+      "id": "higr1-tf-4",
       "question": "A doutrina cristã, num primeiro momento, era ensinada oralmente.",
       "answer": "V"
     },
     {
+      "id": "higr1-tf-5",
+      "question": "Na História da Igreja foram poucas as vezes que Deus não teve fiéis na terra.",
+      "answer": "F"
+    },
+    {
+      "id": "higr1-tf-6",
+      "question": "Sendo a história uma ciência, é certo não haver nela interesse ao estudante da Bíblia.",
+      "answer": "F"
+    },
+    {
+      "id": "higr1-tf-7",
+      "question": "Deus concedeu a Paulo o privilégio da elaboração do projeto da igreja.",
+      "answer": "F"
+    },
+    {
+      "id": "higr1-tf-8",
+      "question": "Lucas, com Atos dos Apóstolos, escreveu o primeiro capítulo da história da Igreja.",
+      "answer": "V"
+    },
+    {
       "id": "higr1-tf-9",
-      "question": "No reinado do Imperador Teodósio o cristianismo foi declarado a religião oficial do império.",
+      "question": "Na igreja primitiva todos os que criam passavam a habitar num mesmo lugar.",
       "answer": "F"
     },
     {
       "id": "higr1-tf-10",
-      "question": "Na história da igreja foram poucas as vezes que Deus não teve fiéis na terra.",
+      "question": "A ordem de Jesus era evangelizar Jerusalém, depois Judeia, Samaria, até os confins do mundo.",
       "answer": "F"
     }
   ],
@@ -58,77 +58,77 @@
       "id": "higr1-mc-1",
       "question": "A igreja de Jerusalém era formada -",
       "options": [
-        "Somente por judeus",
-        "Por judeus e gentios",
-        "Por judeus e gregos",
-        "Todas estão erradas"
+        "por judeus e gentios",
+        "somente por judeus",
+        "por judeus e por gregos",
+        "todas estão corretas"
       ],
-      "answer": 0
+      "answer": 1
     },
     {
       "id": "higr1-mc-2",
-      "question": "Com o Imperador Constantino a igreja tornou-se -",
+      "question": "Com o Imperador Constantino a igreja tornou-se",
       "options": [
-        "Corrupta",
-        "Rica",
-        "Respeitada",
-        "Todas estão corretas"
+        "corrupta",
+        "rica",
+        "respeitada",
+        "todas estão corretas"
       ],
       "answer": 3
     },
     {
       "id": "higr1-mc-3",
-      "question": "A igreja foi inaugurada",
+      "question": "A igreja foi inaugurada -",
       "options": [
-        "No nascimento de Jesus",
-        "No dia do Pentecoste",
-        "No dia da ressurreição de Jesus",
-        "Na cruz do calvário"
+        "no nascimento de Jesus",
+        "na cruz do calvário",
+        "no dia da ressurreição de Jesus",
+        "no dia de Pentecostes"
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "higr1-mc-4",
-      "question": "Com o Imperador Constantino a igreja tornou-se",
+      "question": "Pedra sobre a qual a igreja foi edificada -",
       "options": [
-        "Corrupta",
-        "Rica",
-        "Respeitada",
-        "Todas estão corretas"
+        "Jesus",
+        "Pedro",
+        "Espírito Santo",
+        "todas estão corretas"
       ],
-      "answer": 3
+      "answer": 0
     }
   ],
   "matchingPairs": [
     {
       "id": "higr1-mp-1",
       "left": "Aproxima o homem de Deus",
-      "right": "Temor"
+      "right": "temor"
     },
     {
       "id": "higr1-mp-2",
       "left": "Igreja evangélica",
-      "right": "Biblicamente estruturada"
+      "right": "biblicamente estruturada"
     },
     {
       "id": "higr1-mp-3",
       "left": "Afasta o homem de Deus",
-      "right": "Medo"
+      "right": "medo"
     },
     {
       "id": "higr1-mp-4",
       "left": "Igreja evangelística",
-      "right": "Uma igreja que cresce"
+      "right": "uma igreja que cresce"
     },
     {
       "id": "higr1-mp-5",
       "left": "A igreja de Jerusalém",
-      "right": "Evangélica e evangelística"
+      "right": "evangélica e evangelística"
     },
     {
       "id": "higr1-mp-6",
-      "left": "“Para que sejam um”",
-      "right": "Comunhão"
+      "left": "\"Para que sejam um\"",
+      "right": "comunhão"
     }
   ]
 }

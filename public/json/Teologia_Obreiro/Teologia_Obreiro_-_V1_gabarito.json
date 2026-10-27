@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "to1-tf-1",
-      "question": "Nem todo crente, embora salvo, pode ser chamado de obreiro.",
-      "answer": "F"
-    },
-    {
-      "id": "to1-tf-2",
       "question": "Numa igreja local somente o pastor deve ser considerado um sacerdote.",
       "answer": "F"
     },
     {
-      "id": "to1-tf-3",
-      "question": "Na construção do Tabernáculo os recursos estavam com o povo e não com Deus.",
-      "answer": "V"
-    },
-    {
-      "id": "to1-tf-4",
+      "id": "to1-tf-2",
       "question": "É certo que nossa vida particular nada tem a ver com nossa religião.",
       "answer": "F"
     },
     {
-      "id": "to1-tf-5",
-      "question": "Entre a unção e o trono, Davi esperou por cerca de quinze anos.",
-      "answer": "V"
-    },
-    {
-      "id": "to1-tf-6",
+      "id": "to1-tf-3",
       "question": "O salário a ser pago foi ajustado somente com os primeiros trabalhadores chamados.",
       "answer": "V"
     },
     {
-      "id": "to1-tf-7",
-      "question": "Chamado por Cristo, o homem deve entender qual é a sua vocação ministerial.",
-      "answer": "V"
-    },
-    {
-      "id": "to1-tf-8",
+      "id": "to1-tf-4",
       "question": "Mesmo que a exigência não seja bíblica devemos sempre obedecer nosso pastor.",
       "answer": "F"
     },
     {
+      "id": "to1-tf-5",
+      "question": "Biblicamente, no aspecto ministerial, não há diferença entre presbítero, ancião e bispo",
+      "answer": "V"
+    },
+    {
+      "id": "to1-tf-6",
+      "question": "A igreja, como instituição, é a maior de todas as obras na terra.",
+      "answer": "V"
+    },
+    {
+      "id": "to1-tf-7",
+      "question": "É certo que, biblicamente, a igreja é um edifício.",
+      "answer": "F"
+    },
+    {
+      "id": "to1-tf-8",
+      "question": "A Bíblia diz que Jesus percorria toda Galileia pregando e ensinando nas sinagogas.",
+      "answer": "F"
+    },
+    {
       "id": "to1-tf-9",
-      "question": "Segundo afirmou Paulo é certo que são nove os dons espirituais.",
+      "question": "Não é possível ganhar almas apenas vivendo a vida cristã.",
       "answer": "F"
     },
     {
       "id": "to1-tf-10",
-      "question": "Biblicamente, no aspecto ministerial, não há diferença entre presbítero, ancião e bispo.",
+      "question": "Podemos afirmar que a igreja é na terra uma extensão do Reino de Deus.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "to1-mc-1",
-      "question": "Os primeiros missionários partiram de -",
-      "options": [
-        "Jerusalém",
-        "Antioquia",
-        "Samaria",
-        "Todas estão erradas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "to1-mc-2",
       "question": "Foi um dos doze apóstolos de Jesus -",
       "options": [
         "Paulo",
         "Lebeu",
         "Tiago, irmão do Senhor",
-        "Todas estão erradas"
+        "todas estão corretas"
       ],
       "answer": 1
     },
     {
-      "id": "to1-mc-3",
-      "question": "Dons concedidos pelos Espírito Santo para o serviço da obra de Deus-",
+      "id": "to1-mc-2",
+      "question": "Um obreiro pode envergonhar-se –",
       "options": [
-        "Dom de profecia",
-        "Dom de mestre",
-        "Dom de maravilhas",
-        "Todas estão corretas"
+        "de sua fé",
+        "do tempo que dedica a Deus",
+        "de seu próprio testemunho",
+        "todas estão corretas."
+      ],
+      "answer": 3
+    },
+    {
+      "id": "to1-mc-3",
+      "question": "Ao dono de uma construção compete decidir sobre -",
+      "options": [
+        "sua finalidade",
+        "lugar onde construir",
+        "natureza do material",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "to1-mc-4",
-      "question": "Dons concedidos por Jesus a sua igreja -",
+      "question": "Para o obreiro ensinador, em relação à Palavra, deve –",
       "options": [
-        "Dons espirituais",
-        "Dons de serviços",
-        "Dons ministeriais",
-        "Todos estão corretos"
+        "conhecer",
+        "viver",
+        "crer",
+        "todas estão corretas."
       ],
       "answer": 3
     }
@@ -103,32 +103,32 @@
     {
       "id": "to1-mp-1",
       "left": "Bezalel e seus cooperadores",
-      "right": "Construtores de objetos úteis à obra"
+      "right": "construtores de objetos úteis à obra"
     },
     {
       "id": "to1-mp-2",
       "left": "Joana e Suzana",
-      "right": "Contribuição financeira"
+      "right": "contribuição financeira"
     },
     {
       "id": "to1-mp-3",
       "left": "Círculo de oração",
-      "right": "Contribuição espiritual"
+      "right": "contribuição espiritual"
     },
     {
       "id": "to1-mp-4",
       "left": "Vão à floresta em busca de madeira",
-      "right": "Evangelistas"
+      "right": "evangelistas"
     },
     {
       "id": "to1-mp-5",
       "left": "Na linha de frente ou na retaguarda",
-      "right": "Recompensa igual"
+      "right": "recompensa igual"
     },
     {
       "id": "to1-mp-6",
       "left": "Jesus pregava e ensinava",
-      "right": "Em todos os lugares"
+      "right": "em todos os lugares"
     }
   ]
 }

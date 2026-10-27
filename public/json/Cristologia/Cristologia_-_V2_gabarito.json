@@ -9,101 +9,101 @@
     },
     {
       "id": "cris2-tf-2",
-      "question": "Jesus, como homem, aqui na terra, não aceitou adoração.",
-      "answer": "F"
-    },
-    {
-      "id": "cris2-tf-3",
       "question": "Através de diferentes tipos podemos encontrar Jesus em quase todos os livros do Antigo Testamento.",
       "answer": "F"
     },
     {
+      "id": "cris2-tf-3",
+      "question": "Podemos ver na visita de alguns gregos uma possibilidade de Jesus chegar à glória sem a cruz.",
+      "answer": "V"
+    },
+    {
       "id": "cris2-tf-4",
-      "question": "Sendo Deus onisciente, ele não necessitou elaborar o seu plano de redenção.",
-      "answer": "F"
-    },
-    {
-      "id": "cris2-tf-5",
-      "question": "No sentido literal não há diferença entre o significado das expressões Cristo e Messias.",
-      "answer": "V"
-    },
-    {
-      "id": "cris2-tf-6",
-      "question": "É certo quem tendo nascido no ano 4aC., Jesus morreu com 29 anos.",
-      "answer": "F"
-    },
-    {
-      "id": "cris2-tf-7",
-      "question": "Podemos ver na visita de alguns gregos uma possibilidade de Jesus chegar a glória sem a cruz.",
-      "answer": "V"
-    },
-    {
-      "id": "cris2-tf-8",
-      "question": "Caso Jesus falhasse, o Pai já tinha um segundo plano de redenção.",
-      "answer": "F"
-    },
-    {
-      "id": "cris2-tf-9",
       "question": "Cristo, na condição de Deus, não podia exercer a função de sacerdote.",
       "answer": "V"
     },
     {
-      "id": "cris2-tf-10",
-      "question": "Aqui na terra, mesmo antes da sua ressurreição, como homem, Jesus aceitou adoração.",
+      "id": "cris2-tf-5",
+      "question": "Como homem, Jesus precisava de informações sobre o que povo pensava sobre Ele.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-6",
+      "question": "Ao dizer que Jesus veio antes dele, embora tendo nascido depois, João Batista falava da eternidade.",
       "answer": "V"
+    },
+    {
+      "id": "cris2-tf-7",
+      "question": "Não podemos afirmar, com segurança, que o anjo do Senhor era Jesus.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-8",
+      "question": "O primeiro homem a cultivar o poder pessoal foi Cão, filho de Noé.",
+      "answer": "F"
+    },
+    {
+      "id": "cris2-tf-9",
+      "question": "Para ser o redentor do homem, sendo Deus, Jesus teria que se tornar homem.",
+      "answer": "V"
+    },
+    {
+      "id": "cris2-tf-10",
+      "question": "Em Nazaré apenas seus pais e irmãos sabiam que Jesus era o Cristo.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "cris2-mc-1",
-      "question": "Declarou a divindade de Jesus -",
+      "question": "A morte de Jesus foi -",
       "options": [
-        "O Pai",
-        "O anjo Gabriel",
-        "O próprio Jesus",
-        "Todas estão corretas"
+        "expiatória",
+        "pré - decretada",
+        "voluntária",
+        "todas estão corretas"
       ],
       "answer": 3
     },
     {
       "id": "cris2-mc-2",
-      "question": "Como homem, Jesus sentiu -",
+      "question": "Faz a diferença entre o cristianismo e todas as religiões -",
       "options": [
-        "Indignação",
-        "Angústias e tristezas",
-        "Fome e sede",
-        "Todas estão corretas"
+        "a ressurreição de Jesus",
+        "a morte de Jesus",
+        "o nascimento de Jesus",
+        "todas estão corretas"
       ],
-      "answer": 3
+      "answer": 0
     },
     {
       "id": "cris2-mc-3",
-      "question": "A morte de Jesus foi -",
+      "question": "Último dos sete impérios mundiais mencionado pela Bíblia -",
       "options": [
-        "Expiatória",
-        "Pré - decretada",
-        "Voluntária",
-        "Todas estão corretas"
+        "o milênio",
+        "o de Roma",
+        "o do Anticristo",
+        "o novo céu e a nova terra"
       ],
-      "answer": 3
+      "answer": 2
     },
     {
       "id": "cris2-mc-4",
-      "question": "Faz a diferença entre o cristianismo e todas as religiões -",
+      "question": "O nome da cidade de Nazaré só é encontrado -",
       "options": [
-        "A ressurreição de Jesus",
-        "A morte de Jesus",
-        "O nascimento de Jesus",
-        "Todas estão corretas"
+        "na história de Josefo",
+        "nos livros apócrifos",
+        "no Antigo Testamento",
+        "todas estão erradas"
       ],
-      "answer": 0
+      "answer": 3
     }
   ],
   "matchingPairs": [
     {
       "id": "cris2-mp-1",
       "left": "Jesus",
-      "right": "Filho do homem"
+      "right": "filho do homem"
     },
     {
       "id": "cris2-mp-2",
@@ -123,7 +123,7 @@
     {
       "id": "cris2-mp-5",
       "left": "Ministério atual de Jesus",
-      "right": "Sacerdote"
+      "right": "sacerdote"
     },
     {
       "id": "cris2-mp-6",

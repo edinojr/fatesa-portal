@@ -4,121 +4,121 @@
   "tfQuestions": [
     {
       "id": "poet2-tf-1",
-      "question": "No Novo Testamento não há qualquer referência a respeito da existência de Jó.",
-      "answer": "F"
-    },
-    {
-      "id": "poet2-tf-2",
       "question": "Determinar a rejeição das dificuldades e exigir as bênçãos de Deus não tem fundamento bíblico.",
       "answer": "V"
     },
     {
-      "id": "poet2-tf-3",
-      "question": "Mesmo Jesus, num primeiro momento, desejou evitar o sofrimento.",
-      "answer": "V"
-    },
-    {
-      "id": "poet2-tf-4",
+      "id": "poet2-tf-2",
       "question": "Jó, no mais profundo sofrimento, demonstrou firme convicção de não estar em pecado.",
       "answer": "V"
     },
     {
-      "id": "poet2-tf-5",
-      "question": "Satanás roubou e destruiu toda riqueza de Jó e também matou seus filhos e esposa.",
-      "answer": "F"
-    },
-    {
-      "id": "poet2-tf-6",
-      "question": "Lendo apenas um Salmo por dia podemos fazer a leitura do Livro de Salmos em cinco meses.",
-      "answer": "V"
-    },
-    {
-      "id": "poet2-tf-7",
-      "question": "No Livro de Salmos a expressão “sejam pouco os seus dias” referia-se a Jesus.",
-      "answer": "F"
-    },
-    {
-      "id": "poet2-tf-8",
+      "id": "poet2-tf-3",
       "question": "O Salmo 29 deixa claro a interferência de Satanás nas grandes tempestades.",
       "answer": "F"
     },
     {
-      "id": "poet2-tf-9",
-      "question": "Um espírito quebrantado é a oferta mais preciosa que podemos oferecer a Deus.",
+      "id": "poet2-tf-4",
+      "question": "Nada mais sabemos de Jó além do que está registrado no seu livro.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-5",
+      "question": "A visita dos amigos de Jó durou pouco tempo, pois suas feridas cheiravam mal.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-6",
+      "question": "Segundo a teologia de Elifaz, o homem poderia, através de boas obras, comprar o favor de Deus.",
       "answer": "V"
     },
     {
+      "id": "poet2-tf-7",
+      "question": "De Jó, Satanás sabia tudo, seu passado, seu presente e seu futuro.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-8",
+      "question": "A igreja foi constituída e chamada, antes de tudo, para pregar o evangelho.",
+      "answer": "F"
+    },
+    {
+      "id": "poet2-tf-9",
+      "question": "Davi se destacou na história por ser um grande rei e um poderoso guerreiro.",
+      "answer": "F"
+    },
+    {
       "id": "poet2-tf-10",
-      "question": "O termo “mictão”, ao que tudo indica, fala de Salmos de lamentação e arrependimento.",
+      "question": "“Contemplar a formosura do Senhor e aprender no seu templo” era um desejo de Davi",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "poet2-mc-1",
-      "question": "Um filho de Deus está livre da -",
+      "question": "Um salmista neto do Profeta Samuel -",
       "options": [
-        "Tentação",
-        "Correção",
-        "Provação",
-        "Todas estão erradas"
+        "Heman",
+        "Etã",
+        "Asafe",
+        "todas estão erradas."
+      ],
+      "answer": 0
+    },
+    {
+      "id": "poet2-mc-2",
+      "question": "Um teólogo pode ser –",
+      "options": [
+        "um homem de Deus",
+        "um ateu",
+        "um materialista",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "poet2-mc-2",
-      "question": "É um Salmo messiânico -",
+      "id": "poet2-mc-3",
+      "question": "Personagem central do Livro de Jó -",
       "options": [
-        "Salmo 122",
-        "Salmo 2",
-        "Salmo 91",
-        "Todas estão corretas"
+        "Jó",
+        "Deus",
+        "Satanás",
+        "todas estão corretas."
       ],
       "answer": 1
     },
     {
-      "id": "poet2-mc-3",
-      "question": "Jó chamou seus amigos de -",
+      "id": "poet2-mc-4",
+      "question": "Saltério, sentido literal -",
       "options": [
-        "Amigos leais",
-        "Homens abençoados",
-        "Inventores de mentiras",
-        "Todas estão corretas"
+        "pandeiro",
+        "flauta",
+        "instrumento de corda",
+        "todas estão corretas."
       ],
       "answer": 2
-    },
-    {
-      "id": "poet2-mc-4",
-      "question": "Um salmista neto do Profeta Samuel -",
-      "options": [
-        "N Heman",
-        "Etã",
-        "Asafe",
-        "Todas estão erradas"
-      ],
-      "answer": 0
     }
   ],
   "matchingPairs": [
     {
       "id": "poet2-mp-1",
       "left": "Abandonaram Jó",
-      "right": "Parentes e empregados"
+      "right": "parentes e empregados"
     },
     {
       "id": "poet2-mp-2",
       "left": "Choraram pelo sofrimento de Jó",
-      "right": "Seus amigos"
+      "right": "seus amigos"
     },
     {
       "id": "poet2-mp-3",
       "left": "Desejou a morte de Jó",
-      "right": "Sua esposa"
+      "right": "sua esposa"
     },
     {
       "id": "poet2-mp-4",
       "left": "Um desejo de Jó",
-      "right": "Ter morrido ao nascer"
+      "right": "ter morrido ao nascer"
     },
     {
       "id": "poet2-mp-5",

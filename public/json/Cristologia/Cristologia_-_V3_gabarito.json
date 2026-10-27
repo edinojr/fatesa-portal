@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "cris3-tf-1",
-      "question": "É certo que que nunca houve um pensamento único sobre quem era Jesus.",
+      "question": "Segundo Marcião, o Deus do Antigo Testamento não era o mesmo do Novo Testamento.",
       "answer": "V"
     },
     {
       "id": "cris3-tf-2",
-      "question": "Sendo Jesus a segunda pessoa da trindade podemos afirmar que o Pai existiu antes dele.",
+      "question": "A Trindade teve sua integridade violada quando ocorreu a encarnação do Verbo.",
       "answer": "F"
     },
     {
       "id": "cris3-tf-3",
-      "question": "Através do Antigo Testamento nada podemos saber sobre Jesus.",
-      "answer": "F"
+      "question": "Podemos afirmar que a Trindade quando em ação age como sendo uma unidade.",
+      "answer": "V"
     },
     {
       "id": "cris3-tf-4",
-      "question": "Quase tudo que estava escrito sobre Jesus no Antigo Testamento teria que se cumprir e cumpriu.",
-      "answer": "F"
+      "question": "Podemos afirmar que o Império Gentílico começou a entrar em decadência com a queda da Babilônia.",
+      "answer": "V"
     },
     {
       "id": "cris3-tf-5",
-      "question": "Sendo um menino judeu, Jesus foi apresentado no templo no oitavo dia e circuncidado aos quarenta dias.",
+      "question": "O menino Jesus podia fazer uso de quase cem por cento de sua capacidade mental.",
       "answer": "F"
     },
     {
       "id": "cris3-tf-6",
-      "question": "Com certeza ninguém pode afirmar o mês e o dia do nascimento de Jesus.",
-      "answer": "V"
+      "question": "Na manjedoura os magos ajoelharam e adoraram Maria e o menino Jesus.",
+      "answer": "F"
     },
     {
       "id": "cris3-tf-7",
-      "question": "Vendo que Jesus já estava morto os soldados não quebraram suas pernas.",
-      "answer": "V"
+      "question": "A \"serpente levantada no deserto\" não pode ter qualquer relação com a morte de Jesus.",
+      "answer": "F"
     },
     {
       "id": "cris3-tf-8",
-      "question": "Podemos afirmar que “hades”, “sheol” e inferno falam de um só lugar.",
-      "answer": "V"
+      "question": "Não tendo conseguido evitar a morte vicária de Jesus, Satanás nada fez para evitar sua ressurreição.",
+      "answer": "F"
     },
     {
       "id": "cris3-tf-9",
-      "question": "Pela Lei de Moisés os sacerdotes eram intercessores e mediadores entre Deus e o homem.",
+      "question": "A missão do Filho de Deus, como homem, começou na terra e continuou no céu.",
       "answer": "F"
     },
     {
       "id": "cris3-tf-10",
-      "question": "Deus, sendo amor, mesmo no julgamento do Trono Branco haverá misericórdia.",
+      "question": "Sendo, como é, um Rei eterno, Jesus sempre reinou e continua reinando sobre toda terra.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "cris3-mc-1",
-      "question": "Morrer em lugar de outrem é uma morte -",
+      "question": "A morte de Jesus declarada por -",
       "options": [
-        "Expiatória",
-        "Vicária",
-        "Propiciatória",
-        "Todas estão erradas"
+        "um anjo",
+        "Maria Madalena",
+        "um gentio",
+        "todas estão corretas"
       ],
-      "answer": 1
+      "answer": 2
     },
     {
       "id": "cris3-mc-2",
-      "question": "Diante de Josué, o Anjo do Senhor -",
+      "question": "Satanás procurou evitar -",
       "options": [
-        "Aceitou adoração",
-        "Foi chamado de Senhor",
-        "Santificou o lugar",
-        "Todas estão corretas"
+        "o nascimento de Jesus",
+        "a morte de Jesus",
+        "a ressurreição de Jesus",
+        "todas estão corretas"
       ],
       "answer": 3
     },
     {
       "id": "cris3-mc-3",
-      "question": "O significado da palavra “Emanuel”",
+      "question": "Compadecer-se significa, literalmente -",
       "options": [
-        "Deus conosco",
-        "Deus forte",
-        "Deus provedor",
-        "Todas estão corretas"
+        "amar",
+        "ter o mesmo sentimento",
+        "ser paciencioso",
+        "todas estão erradas."
       ],
-      "answer": 0
+      "answer": 1
     },
     {
       "id": "cris3-mc-4",
-      "question": "Jesus fez uso emprestado de -",
+      "question": "Diante do Trono Branco estarão -",
       "options": [
-        "Um jumentinho",
-        "Um cenáculo",
-        "Um túmulo",
-        "Todas estão corretas"
+        "somente os gentios",
+        "os mortos no Antigo Testamento",
+        "mortos ímpios de todos os tempos",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 2
     }
   ],
   "matchingPairs": [
@@ -118,17 +118,17 @@
     {
       "id": "cris3-mp-4",
       "left": "A esperança da igreja",
-      "right": "Vinda de Jesus"
+      "right": "vinda de Jesus"
     },
     {
       "id": "cris3-mp-5",
       "left": "Primeira vinda de Jesus",
-      "right": "Como homem, em fraqueza"
+      "right": "como homem, em fraqueza"
     },
     {
       "id": "cris3-mp-6",
       "left": "Segunda vinda de Jesus",
-      "right": "Como Rei dos reis"
+      "right": "como Rei dos reis"
     }
   ]
 }

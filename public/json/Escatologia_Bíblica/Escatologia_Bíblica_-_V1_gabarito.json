@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "esca1-tf-1",
-      "question": "Sendo para o “tempo do fim” os “últimos dias” preditos por Joel ainda estão por vir",
-      "answer": "F"
+      "question": "Podemos afirmar que na primeira ressurreição somente os mortos salvos \"ouvirão a sua voz\".",
+      "answer": "V"
     },
     {
       "id": "esca1-tf-2",
-      "question": "Embora a morte seja chamada de “inimigo”, a Bíblia diz ser, para Deus, preciosa a morte dos santos.",
-      "answer": "V"
-    },
-    {
-      "id": "esca1-tf-3",
-      "question": "Podemos afirmar que a doutrina do sono da alma tem fundamento bíblico.",
+      "question": "Podemos afirmar que a grande esperança da igreja é o de reinar com Cristo no milênio.",
       "answer": "F"
     },
     {
-      "id": "esca1-tf-4",
-      "question": "Podemos afirmar que na primeira ressurreição somente os mortos salvos ouvirão a sua voz.",
+      "id": "esca1-tf-3",
+      "question": "Israel só reconhecerá Jesus como seu Messias no dia da Revelação em Glória.",
       "answer": "V"
     },
     {
+      "id": "esca1-tf-4",
+      "question": "Os corpos que forem cremados, segundo a Bíblia, não ressuscitarão.",
+      "answer": "F"
+    },
+    {
       "id": "esca1-tf-5",
-      "question": "O Senhor Jesus deixou claro que os salvos devem olhar somente para a figueira.",
+      "question": "Deus, sendo onisciente, não sentiu necessidade de estabelecer um plano para nortear suas ações.",
       "answer": "F"
     },
     {
       "id": "esca1-tf-6",
-      "question": "Podemos afirmar que a grande esperança da igreja é o de reinar com Cristo no milênio",
+      "question": "O estudo da doutrina da morte será sempre agradável e salutar.",
       "answer": "F"
     },
     {
       "id": "esca1-tf-7",
-      "question": "Como povo de Deus é certo que os judeus não farão nenhuma aliança com o Anticristo.",
-      "answer": "F"
-    },
-    {
-      "id": "esca1-tf-8",
-      "question": "Israel só reconhecerá Jesus como seu Messias no Dia da Revelação em Glória.",
+      "question": "O corpo humano, formado por matéria, não tem vida em sim mesmo.",
       "answer": "V"
     },
     {
+      "id": "esca1-tf-8",
+      "question": "A expressão \"todos os que estão nos sepulcros\" não inclui os que foram cremados.",
+      "answer": "F"
+    },
+    {
       "id": "esca1-tf-9",
-      "question": "A maldição imposta por Deus à terra só será revogada no milênio.",
+      "question": "Dos sinais referentes ao arrebatamento, alguns já aconteceram e outros estão acontecendo.",
       "answer": "V"
     },
     {
       "id": "esca1-tf-10",
-      "question": "Os corpos que forem cremados, segundo a Bíblia, não ressuscitarão.",
+      "question": "Segundo Paulo, a coroa da vida está reservada aos que amam a vinda de Jesus.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "esca1-mc-1",
-      "question": "Em seu ministério, Jesus ressuscitou -",
+      "question": "Satanás dará ao Anticristo -",
       "options": [
-        "Uma criança",
-        "Um jovem",
-        "Um adulto",
-        "Todas estão corretas"
+        "seu trono",
+        "seu poder",
+        "seu grande poderio",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "esca1-mc-2",
-      "question": "Satanás dará ao Anticristo -",
+      "question": "Devemos ver Israel como -",
       "options": [
-        "Seu trono",
-        "Seu poder",
-        "Seu grande poderio",
-        "Todas estão corretas"
+        "uma nação igual as outras",
+        "uma nação amante de guerra",
+        "o relógio escatológico de Deus",
+        "todas estão corretas."
       ],
-      "answer": 3
+      "answer": 2
     },
     {
       "id": "esca1-mc-3",
-      "question": "Devemos ver Israel como -",
+      "question": "O Tribunal de Cristo será um -",
       "options": [
-        "Uma nação igual as outras",
-        "Uma nação amante de guerra",
-        "O relógio escatológico de Deus",
-        "Todas estão corretas"
+        "lugar de juízo condenatório",
+        "lugar de castigo",
+        "lugar de premiação",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "esca1-mc-4",
-      "question": "O Tribunal de Cristo será um -",
+      "question": "A Bíblia condena a -",
       "options": [
-        "Lugar de juízo condenatório",
-        "Lugar de castigo",
-        "Lugar de premiação",
-        "Todas estão corretas"
+        "astrologia",
+        "astronomia",
+        "escatologia",
+        "todas estão corretas."
       ],
-      "answer": 2
+      "answer": 0
     }
   ],
   "matchingPairs": [
     {
       "id": "esca1-mp-1",
       "left": "Primeira ressurreição",
-      "right": "Todos os salvos"
+      "right": "todos os salvos"
     },
     {
       "id": "esca1-mp-2",
       "left": "Segunda ressurreição",
-      "right": "Todos os ímpios"
+      "right": "todos os ímpios"
     },
     {
       "id": "esca1-mp-3",
       "left": "Lugar dos ímpios até a ressurreição",
-      "right": "“Hades” ou “sheol”"
+      "right": "\"hades\" ou \"sheol"
     },
     {
       "id": "esca1-mp-4",
       "left": "Lugar dos salvos até a ressurreição",
-      "right": "Paraíso"
+      "right": "paraíso"
     },
     {
       "id": "esca1-mp-5",
       "left": "Lugar eterno dos ímpios",
-      "right": "Lago de fogo"
+      "right": "lago de fogo"
     },
     {
       "id": "esca1-mp-6",
       "left": "Salvos, no paraíso; ímpios no inferno",
-      "right": "Consolados; atormentados"
+      "right": "consolados; atormentados"
     }
   ]
 }

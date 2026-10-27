@@ -18,6 +18,16 @@ export const normalizeQuestionText = (text: string): string => {
     .trim();
 };
 
+export const getQuestionSignature = (q: any): string => {
+  if (!q) return '';
+  if (q.type === 'matching' && Array.isArray(q.matchingPairs) && q.matchingPairs.length > 0) {
+    return 'mat:' + q.matchingPairs.slice(0, 6).map((p: any) => normalizeQuestionText(p?.left || '')).join('|');
+  }
+  const text = q.text || q.statement || q.question || '';
+  const norm = normalizeQuestionText(text);
+  return norm ? `${q.type || 'multiple_choice'}:${norm}` : '';
+};
+
 /**
  * Deduplica uma lista de questões com base no enunciado normalizado.
  * Mantém a primeira ocorrência completa (com gabarito válido).
@@ -84,16 +94,15 @@ export const fetchModuleExercises = async (livroId: string): Promise<QuizQuestio
     const collected: QuizQuestion[] = [];
     const seen = new Set<string>();
 
-    // Prioriza aulas do tipo exercicio e atividade (que não sejam bloco final de prova)
-    const sorted = [...exerciseAulas].sort((a, b) => {
-      const isExA = a.tipo === 'exercicio' || a.tipo === 'atividade';
-      const isExB = b.tipo === 'exercicio' || b.tipo === 'atividade';
-      if (isExA && !isExB) return -1;
-      if (!isExA && !isExB) return 1;
-      return 0;
-    });
+    // Filtra apenas os 10 questionários de lição (tipo exercicio ou atividade, versão 1), excluindo avaliações/provas e cópias de recuperação
+    const onlyLessonQuestionnaires = exerciseAulas.filter(
+      a => (a.tipo === 'exercicio' || a.tipo === 'atividade') && !a.is_bloco_final && (!a.versao || a.versao === 1)
+    );
+    const sourceList = onlyLessonQuestionnaires.length > 0
+      ? onlyLessonQuestionnaires
+      : exerciseAulas.filter(a => a.tipo !== 'prova' && a.tipo !== 'avaliacao' && !a.is_bloco_final);
 
-    for (const aula of sorted) {
+    for (const aula of sourceList) {
       const qs = Array.isArray(aula.questionario) ? aula.questionario : [];
       for (const q of qs) {
         if (!q) continue;
@@ -103,9 +112,7 @@ export const fetchModuleExercises = async (livroId: string): Promise<QuizQuestio
         if (qType !== 'true_false' && qType !== 'multiple_choice' && qType !== 'matching') {
           continue; // Ignora questões discursivas ou fora do parâmetro 10-4-1
         }
-        const key = qType === 'matching'
-          ? 'mat:' + (q.matchingPairs || []).map((p: any) => normalizeQuestionText(p.left)).join('|')
-          : `${qType}:${normalizeQuestionText(qText)}`;
+        const key = getQuestionSignature({ ...q, text: qText, type: qType });
         if (!key || seen.has(key)) continue;
         seen.add(key);
 
@@ -154,9 +161,11 @@ export const generateQuestionsFromExercises = async (params: {
 
   const exercisePool = await fetchModuleExercises(livroId);
 
-  // Conjunto de enunciados já utilizados (para evitar repetição)
+  // Conjunto de enunciados/assinaturas já utilizados nas outras versões do módulo (para evitar repetição entre V1, V2 e V3)
   const excludedKeys = new Set<string>();
   excludeQuestions.forEach(q => {
+    const sig = getQuestionSignature(q);
+    if (sig) excludedKeys.add(sig);
     if (q && q.text) {
       const k = normalizeQuestionText(q.text);
       if (k) excludedKeys.add(k);
@@ -169,8 +178,9 @@ export const generateQuestionsFromExercises = async (params: {
   const poolMatching: QuizQuestion[] = [];
 
   for (const q of exercisePool) {
+    const sig = getQuestionSignature(q);
     const key = normalizeQuestionText(q.text);
-    if (excludedKeys.has(key)) continue;
+    if ((sig && excludedKeys.has(sig)) || (key && q.type !== 'matching' && excludedKeys.has(key))) continue;
 
     if (q.type === 'true_false') {
       poolTF.push(q);
@@ -188,8 +198,8 @@ export const generateQuestionsFromExercises = async (params: {
   let tfAdded = 0;
   for (const q of poolTF) {
     if (tfAdded >= targetTF) break;
-    const k = normalizeQuestionText(q.text);
-    if (!chosenKeys.has(k)) {
+    const k = getQuestionSignature(q);
+    if (k && !chosenKeys.has(k)) {
       chosenKeys.add(k);
       finalQuestions.push({ ...q, id: `tf-${Date.now()}-${tfAdded}`, type: 'true_false' });
       tfAdded++;
@@ -201,8 +211,8 @@ export const generateQuestionsFromExercises = async (params: {
     for (const q of exercisePool) {
       if (tfAdded >= targetTF) break;
       if (q.type === 'true_false') {
-        const k = normalizeQuestionText(q.text);
-        if (!chosenKeys.has(k)) {
+        const k = getQuestionSignature(q);
+        if (k && !chosenKeys.has(k)) {
           chosenKeys.add(k);
           finalQuestions.push({ ...q, id: `tf-${Date.now()}-${tfAdded}`, type: 'true_false' });
           tfAdded++;
@@ -215,8 +225,8 @@ export const generateQuestionsFromExercises = async (params: {
   let mcAdded = 0;
   for (const q of poolMC) {
     if (mcAdded >= targetMC) break;
-    const k = normalizeQuestionText(q.text);
-    if (!chosenKeys.has(k)) {
+    const k = getQuestionSignature(q);
+    if (k && !chosenKeys.has(k)) {
       chosenKeys.add(k);
       finalQuestions.push({ ...q, id: `mc-${Date.now()}-${mcAdded}`, type: 'multiple_choice' });
       mcAdded++;
@@ -227,8 +237,8 @@ export const generateQuestionsFromExercises = async (params: {
     for (const q of exercisePool) {
       if (mcAdded >= targetMC) break;
       if (q.type === 'multiple_choice' || !q.type) {
-        const k = normalizeQuestionText(q.text);
-        if (!chosenKeys.has(k)) {
+        const k = getQuestionSignature(q);
+        if (k && !chosenKeys.has(k)) {
           chosenKeys.add(k);
           finalQuestions.push({ ...q, id: `mc-${Date.now()}-${mcAdded}`, type: 'multiple_choice' });
           mcAdded++;
@@ -241,8 +251,8 @@ export const generateQuestionsFromExercises = async (params: {
   let matAdded = 0;
   for (const q of poolMatching) {
     if (matAdded >= targetMatching) break;
-    const k = normalizeQuestionText(q.text);
-    if (!chosenKeys.has(k)) {
+    const k = getQuestionSignature(q);
+    if (k && !chosenKeys.has(k)) {
       chosenKeys.add(k);
       finalQuestions.push({ ...q, id: `mat-${Date.now()}-${matAdded}`, type: 'matching' });
       matAdded++;
@@ -253,8 +263,8 @@ export const generateQuestionsFromExercises = async (params: {
     for (const q of exercisePool) {
       if (matAdded >= targetMatching) break;
       if (q.type === 'matching') {
-        const k = normalizeQuestionText(q.text);
-        if (!chosenKeys.has(k)) {
+        const k = getQuestionSignature(q);
+        if (k && !chosenKeys.has(k)) {
           chosenKeys.add(k);
           finalQuestions.push({ ...q, id: `mat-${Date.now()}-${matAdded}`, type: 'matching' });
           matAdded++;

@@ -4,116 +4,116 @@
   "tfQuestions": [
     {
       "id": "apoc2-tf-1",
-      "question": "É certo que a Grande Tribulação ocorrerá entre os capítulos 4 e 19 de Apocalipse.",
-      "answer": "F"
-    },
-    {
-      "id": "apoc2-tf-2",
       "question": "Na mão direita de Jesus, João declarou ter visto os sete pastores das sete igrejas.",
       "answer": "F"
     },
     {
-      "id": "apoc2-tf-3",
-      "question": "A Igreja de Filadélfia recebeu de Jesus uma declaração de amor.",
-      "answer": "V"
-    },
-    {
-      "id": "apoc2-tf-4",
+      "id": "apoc2-tf-2",
       "question": "Sardes era uma igreja pobre no sentido material e morta no sentido espiritual.",
       "answer": "F"
     },
     {
-      "id": "apoc2-tf-5",
-      "question": "Jesus é um Cordeiro para os santos, mas agirá como leão para os ímpios.",
-      "answer": "V"
-    },
-    {
-      "id": "apoc2-tf-6",
+      "id": "apoc2-tf-3",
       "question": "Como povo de Deus, a igreja não ocupou o lugar dos judeus.",
       "answer": "V"
     },
     {
-      "id": "apoc2-tf-7",
-      "question": "Entre os diversos comentaristas não há dúvida que o Anticristo será um homem.",
-      "answer": "F"
-    },
-    {
-      "id": "apoc2-tf-8",
+      "id": "apoc2-tf-4",
       "question": "Babilônia será reconstruída e também será o maior centro financeiro da terra.",
       "answer": "V"
     },
     {
-      "id": "apoc2-tf-9",
-      "question": "Sendo santo e amor não é bíblico falar sobre a ira de Deus.",
+      "id": "apoc2-tf-5",
+      "question": "O Apóstolo João declarou ter visto a formosa Jerusalém celestial.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc2-tf-6",
+      "question": "A literatura apocalíptica usava código e era quase sempre anônima.",
+      "answer": "V"
+    },
+    {
+      "id": "apoc2-tf-7",
+      "question": "Entre os castiçais João viu Jesus vestido como um sacerdote.",
       "answer": "F"
     },
     {
+      "id": "apoc2-tf-8",
+      "question": "Podemos afirmar que vivemos hoje no período das igrejas de Éfeso e Laodiceia.",
+      "answer": "F"
+    },
+    {
+      "id": "apoc2-tf-9",
+      "question": "Em Tiatira havia uma igreja fiel ao lado de uma igreja profana.",
+      "answer": "V"
+    },
+    {
       "id": "apoc2-tf-10",
-      "question": "O Apóstolo João declarou ter visto a formosa Jerusalém celestial.",
+      "question": "Em relação ao arrebatamento da igreja não existe um pensamento uniforme.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "apoc2-mc-1",
-      "question": "Imperador que libertou João da Ilha de Pátmos -",
+      "question": "Na “grande tribulação” os homens estarão debaixo da —",
       "options": [
-        "Trajano",
-        "Domiciano",
-        "Nerva",
-        "Todas estão erradas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "apoc2-mc-2",
-      "question": "Na Grande Tribulação os homens estarão debaixo da -",
-      "options": [
-        "Ira de Deus",
-        "Ira de Satanás",
-        "Ira do Cordeiro",
-        "Todas estão corretas"
+        "ira de Deus",
+        "ira de Satanás",
+        "ira do Cordeiro",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "apoc2-mc-3",
+      "id": "apoc2-mc-2",
       "question": "A “mulher vestida de sol” fala provavelmente, sobre —",
       "options": [
         "Maria",
         "Israel",
-        "Igreja",
-        "Todas estão erradas"
+        "igreja",
+        "todas estão erradas."
       ],
       "answer": 1
     },
     {
-      "id": "apoc2-mc-4",
+      "id": "apoc2-mc-3",
       "question": "Cavalo, na Bíblia, é símbolo de —",
       "options": [
-        "Violência",
-        "Paz",
-        "Força",
-        "Todas estão erradas"
+        "violência",
+        "paz",
+        "força",
+        "todas estão erradas."
       ],
       "answer": 2
+    },
+    {
+      "id": "apoc2-mc-4",
+      "question": "Igreja onde Jezabel foi citada—",
+      "options": [
+        "Éfeso",
+        "Tiatira",
+        "Sardes",
+        "todas estão erradas."
+      ],
+      "answer": 1
     }
   ],
   "matchingPairs": [
     {
       "id": "apoc2-mp-1",
       "left": "Olhos como chama de fogo",
-      "right": "Onisciência de Deus"
+      "right": "onisciência de Deus"
     },
     {
       "id": "apoc2-mp-2",
       "left": "Pés semelhantes a latão reluzente",
-      "right": "Juízo a ser executado"
+      "right": "juízo a ser executado"
     },
     {
       "id": "apoc2-mp-3",
       "left": "Voz como de muitas águas",
-      "right": "Barulho do mar"
+      "right": "barulho do mar"
     },
     {
       "id": "apoc2-mp-4",
@@ -123,12 +123,12 @@
     {
       "id": "apoc2-mp-5",
       "left": "Desmaiou na presença de Deus",
-      "right": "Um profeta"
+      "right": "um profeta"
     },
     {
       "id": "apoc2-mp-6",
       "left": "Caiu aos pés de Jesus como morto",
-      "right": "Um apóstolo"
+      "right": "um apóstolo"
     }
   ]
 }

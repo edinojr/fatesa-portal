@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "poetii2-tf-1",
-      "question": "No regime monárquico, sendo o décimo filho, Salomão jamais seria o rei de Israel.",
+      "question": "Salomão não foi um nome escolhido pelos seus pais, mas, sim, por Deus.",
       "answer": "V"
     },
     {
       "id": "poetii2-tf-2",
-      "question": "É certo que os adversários de Salomão foram levantados pelo próprio Deus.",
+      "question": "Era propósito de Deus, através do reinado de Salomão, conceder ricas bênçãos a todos os povos.",
       "answer": "V"
     },
     {
       "id": "poetii2-tf-3",
-      "question": "Toda criatura humana nasce com um tempo de vida predeterminado por Deus.",
-      "answer": "F"
-    },
-    {
-      "id": "poetii2-tf-4",
-      "question": "Pala Lei de Moisés os filhos que desprezassem seus pais eram tidos como malditos.",
+      "question": "A maior loucura que alguém pode cometer é a de deixar Deus fora de sua vida.",
       "answer": "V"
     },
     {
+      "id": "poetii2-tf-4",
+      "question": "Pela Lei de Moisés somente a desobediência ao Pai era punida com a pena de morte.",
+      "answer": "F"
+    },
+    {
       "id": "poetii2-tf-5",
-      "question": "Em Provérbios mesmo o chamado de “filho louco” podia ser corrigido por seus pais.",
+      "question": "Para seu banquete a loucura convidou os simples e os faltos de entendimento",
       "answer": "V"
     },
     {
       "id": "poetii2-tf-6",
-      "question": "Conhece-se uma mulher virtuosa por sua dedicação ao trabalho ao lado de seu esposo",
+      "question": "Ser uma mulher virtuosa não está ao alcance de todas as mulheres.",
       "answer": "F"
     },
     {
       "id": "poetii2-tf-7",
-      "question": "Além de Provérbios e Cantares Salomão escreveu também o Livro de Eclesiástico.",
+      "question": "Segundo declarações de Salomão, podemos afirmar que o sol não está fixo, como diz a ciência.",
       "answer": "F"
     },
     {
       "id": "poetii2-tf-8",
-      "question": "Repartir o que tem não deve ser aplicado ao que só tem o necessário para sua sobrevivência.",
-      "answer": "F"
-    },
-    {
-      "id": "poetii2-tf-9",
-      "question": "A repreensão de um sábio é melhor que o elogio de um tolo, segundo Salomão.",
+      "question": "Quanto à obediência às autoridades não há conflito entre o pensamento de Salomão e o de Paulo.",
       "answer": "V"
     },
     {
+      "id": "poetii2-tf-9",
+      "question": "É certo que o conteúdo da Escritura hebraico é diferente do nosso Antigo Testamento.",
+      "answer": "F"
+    },
+    {
       "id": "poetii2-tf-10",
-      "question": "Na expressão “jardim fechado” e “fonte selada” podemos ver a simbologia da pureza e da virgindade.",
+      "question": "Os valores éticos e morais no Reino de Deus são diferentes dos existentes no mundo.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "poetii2-mc-1",
-      "question": "Falou de formigas, coelhos, gafanhotos e aranhas -",
-      "options": [
-        "O Rei Lemuel",
-        "Davi",
-        "Agur",
-        "Todas estão erradas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "poetii2-mc-2",
       "question": "Salomão, em Provérbios, adverte contra -",
       "options": [
-        "As más companhias",
-        "A ociosidade",
-        "A sociedade com os ímpios",
-        "Todas estão corretas"
+        "as más companhias",
+        "a ociosidade",
+        "a sociedade com os ímpios",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "poetii2-mc-3",
+      "id": "poetii2-mc-2",
       "question": "Salomão declarou ser melhor -",
       "options": [
-        "A repreensão do justo",
-        "A casa de festa",
-        "O dia do nascimento",
-        "Todas estão corretas"
+        "o dia do nascimento",
+        "a repreensão do justo",
+        "a casa de festa",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 1
+    },
+    {
+      "id": "poetii2-mc-3",
+      "question": "Recomendação de Salomão aos jovens -",
+      "options": [
+        "uma vida de reclusão",
+        "uma vida de piedade",
+        "um prazer inteligente",
+        "todas estão corretas."
+      ],
+      "answer": 2
     },
     {
       "id": "poetii2-mc-4",
-      "question": "Recomendação de Salomão aos jovens -",
+      "question": "O Senhor reserva a verdadeira sabedoria para os -",
       "options": [
-        "Uma vida de reclusão",
-        "Uma vida de piedade",
-        "Um prazer inteligente",
-        "Todas estão corretas"
+        "inteligentes",
+        "homens",
+        "retos",
+        "todas estão corretas."
       ],
       "answer": 2
     }
@@ -103,32 +103,32 @@
     {
       "id": "poetii2-mp-1",
       "left": "Hadade",
-      "right": "Adversário de Salomão"
+      "right": "adversário de Salomão"
     },
     {
       "id": "poetii2-mp-2",
       "left": "Jeroboão",
-      "right": "Servo de Salomão"
+      "right": "servo de Salomão"
     },
     {
       "id": "poetii2-mp-3",
       "left": "Rei Menelik I",
-      "right": "Filho de Salomão"
+      "right": "filho de Salomão"
     },
     {
       "id": "poetii2-mp-4",
       "left": "Faraó",
-      "right": "Sogro de Salomão"
+      "right": "sogro de Salomão"
     },
     {
       "id": "poetii2-mp-5",
       "left": "Jesus",
-      "right": "Falou sobre a Rainha de Sabá"
+      "right": "falou sobre a Rainha de Sabá"
     },
     {
       "id": "poetii2-mp-6",
       "left": "Davi",
-      "right": "Um rei guerreiro"
+      "right": "um rei guerreiro"
     }
   ]
 }

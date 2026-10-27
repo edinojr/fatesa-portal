@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "higr2-tf-1",
-      "question": "É certo que o fundador da igreja é Jesus e não o Cristo.",
+      "question": "O primeiro sermão de Jesus fortaleceu a esperança dos judeus sobre a vinda do Messias.",
       "answer": "F"
     },
     {
       "id": "higr2-tf-2",
-      "question": "Coube a Pedro o privilégio de abrir as portas da salvação para os judeus e gentios.",
-      "answer": "V"
+      "question": "Pedro, teve dificuldades para explicar o que estava acontecendo em Jerusalém.",
+      "answer": "F"
     },
     {
       "id": "higr2-tf-3",
-      "question": "O ensino na igreja era transmitido por revelações, visões e profecias.",
+      "question": "Quando Paulo esteve em Jerusalém os apóstolos o advertiram a, sempre que possível, evitar os pobres.",
       "answer": "F"
     },
     {
       "id": "higr2-tf-4",
-      "question": "A morte de Ananias comprova que a igreja ainda era influenciada pela Lei de Moisés.",
+      "question": "Sendo, como é, amor, Deus sempre fala à igreja com voz mansa e suave.",
       "answer": "F"
     },
     {
       "id": "higr2-tf-5",
-      "question": "Sem uma visão dada por Deus, Pedro não receberia os enviados de Cornélio em sua casa.",
-      "answer": "V"
+      "question": "Tendo sido um zeloso fariseu, Paulo teve dificuldades para conviver com os gentios.",
+      "answer": "F"
     },
     {
       "id": "higr2-tf-6",
-      "question": "Não tendo nascido em Israel, Barnabé estava familiarizado com a cultura dos gentios.",
+      "question": "Simão, irmão de Jesus, foi crucificado durante o reinado de Trajano.",
       "answer": "V"
     },
     {
       "id": "higr2-tf-7",
-      "question": "Entre os anos 64 e 305 foram dez os imperadores que perseguiram a igreja.",
-      "answer": "F"
-    },
-    {
-      "id": "higr2-tf-8",
       "question": "Para Paulo, nas heresias não existia nada de positivo ou benéfico.",
       "answer": "F"
     },
     {
+      "id": "higr2-tf-8",
+      "question": "Na Parábola do Joio e do Trigo a semente é a mesma da Parábola do Semeador",
+      "answer": "F"
+    },
+    {
       "id": "higr2-tf-9",
-      "question": "O Estado cooperar e patrocinar as atividades da igreja não foi um projeto de Deus.",
+      "question": "Durante a Idade Média muitas heresias foram introduzidas na Igreja de Roma",
       "answer": "V"
     },
     {
       "id": "higr2-tf-10",
-      "question": "Apesar dos protestos de Lutero e de outros lideres, a Igreja Católica prosseguiu com suas heresias.",
-      "answer": "V"
+      "question": "Jesus deixou claro que a base sobre a qual Seu reino estaria apoiado era a fé.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "higr2-mc-1",
-      "question": "O fundador da igreja foi",
+      "question": "A igreja espiritual recebeu sua natureza de -",
       "options": [
-        "Pedro",
+        "Cristo",
         "Jesus",
-        "Jesus Cristo",
-        "Todas estão corretas"
+        "de Jesus Cristo",
+        "todas estão corretas"
       ],
-      "answer": 2
+      "answer": 0
     },
     {
       "id": "higr2-mc-2",
-      "question": "O Imperador Domiciano era",
+      "question": "Pedro afirmou que Ananias -",
       "options": [
-        "Um grande perseguidor da igreja",
-        "Filho do Imperador Vespasiano",
-        "Irmão do General Tito",
-        "Todas estão corretas"
+        "deveria ter dado tudo",
+        "poderia não ter dado nada",
+        "fez bem em dar uma parte",
+        "todas estão erradas"
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "higr2-mc-3",
-      "question": "Terminada a Idade Média, cresceu o",
+      "question": "Simultaneidade significa -",
       "options": [
-        "Materialismo",
-        "Naturalismo",
-        "Iluminismo",
-        "Todas estão corretas"
+        "uma coisa após outra",
+        "ao mesmo tempo",
+        "simplicidade",
+        "todas estão corretas"
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "higr2-mc-4",
-      "question": "No Império Romano -",
+      "question": "Barnabé conheceu Paulo em -",
       "options": [
-        "Não havia liberdade religiosa",
-        "Havia liberdade religiosa plena",
-        "Havia liberdade religiosa restrita",
-        "Todas estão erradas"
+        "Jerusalém",
+        "Tarso",
+        "Antioquia",
+        "Chipre"
       ],
-      "answer": 2
+      "answer": 0
     }
   ],
   "matchingPairs": [
@@ -123,12 +123,12 @@
     {
       "id": "higr2-mp-5",
       "left": "Primeiros pregadores fora de Jerusalém",
-      "right": "Os que fugiram de Jerusalém"
+      "right": "os que fugiram de Jerusalém"
     },
     {
       "id": "higr2-mp-6",
       "left": "Permaneceram em Jerusalém",
-      "right": "Os apóstolos"
+      "right": "os apóstolos"
     }
   ]
 }

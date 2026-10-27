@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "ecl1-tf-1",
-      "question": "Entre os primeiros trabalhadores da vinha do Novo Testamento estava João Batista.",
-      "answer": "F"
-    },
-    {
-      "id": "ecl1-tf-2",
       "question": "Embora sendo um homem, na Bíblia não encontramos nenhum erro grave de Moisés.",
       "answer": "F"
     },
     {
+      "id": "ecl1-tf-2",
+      "question": "Numa igreja local é possível haver crentes batizados nas águas sem o novo nascimento",
+      "answer": "V"
+    },
+    {
       "id": "ecl1-tf-3",
-      "question": "Podemos afirmar que os dons de Deus são sem arrependimento.",
+      "question": "Biblicamente existe uma razão para a presença da Trindade no ato do batismo nas águas",
       "answer": "V"
     },
     {
       "id": "ecl1-tf-4",
-      "question": "Jesus, em seu ministério, não tinha a revelação do mistério que envolvia a igreja.",
+      "question": "O homem foi o único ser criado para viver na terra e também no céu.",
       "answer": "F"
     },
     {
       "id": "ecl1-tf-5",
-      "question": "As duas naturezas da igreja, material e espiritual, são encontradas em Jesus Cristo.",
+      "question": "Em relação ao céu não existe nenhuma promessa para a Nação de Israel.",
       "answer": "V"
     },
     {
       "id": "ecl1-tf-6",
-      "question": "Numa igreja local é possível haver crentes batizados nas águas sem o novo nascimento.",
-      "answer": "V"
+      "question": "Todas as nações gentílicas falharam na Dispensação da Lei.",
+      "answer": "F"
     },
     {
       "id": "ecl1-tf-7",
-      "question": "Paulo condenou a pregação do evangelho quando feita sem amor.",
+      "question": "Após a criação do homem, Deus incluiu no seu propósito a formação da igreja.",
       "answer": "F"
     },
     {
       "id": "ecl1-tf-8",
-      "question": "Biblicamente existe uma razão para a presença da Trindade no ato do batismo nas águas.",
+      "question": "A igreja foi projetada por Deus antes da criação dos céus e da terra.",
       "answer": "V"
     },
     {
       "id": "ecl1-tf-9",
-      "question": "Não existe qualquer simbolismo entre a Ceia do Senhor e a Páscoa Judaica.",
+      "question": "A igreja dos primogênitos é chamada de a Universal Assembleia de Deus.",
       "answer": "F"
     },
     {
       "id": "ecl1-tf-10",
-      "question": "A oferta alçada tem um objetivo definido e só é solicitada em casos especiais.",
+      "question": "Jesus não deu um nome para a igreja que ele chamou de minha.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "ecl1-mc-1",
-      "question": "A vocação da igreja é -",
+      "question": "A participação da ceia do Senhor é para o filho de Deus –",
       "options": [
-        "Terrena",
-        "Celestial",
-        "Terrena e celestial",
-        "Todas estão corretas"
+        "um ato voluntário",
+        "uma necessidade",
+        "uma exigência da igreja",
+        "todas estão erradas."
       ],
       "answer": 1
     },
     {
       "id": "ecl1-mc-2",
-      "question": "A participação da ceia do Senhor é para o filho de Deus -",
+      "question": "A igreja foi fundada por",
       "options": [
-        "Um ato voluntário",
-        "Uma necessidade",
-        "Uma exigência da igreja",
-        "Todas estão corretas"
+        "Deus",
+        "Jesus Cristo",
+        "pelo Espírito Santo",
+        "todas estão corretas."
       ],
       "answer": 1
     },
     {
       "id": "ecl1-mc-3",
-      "question": "O sentido literal das expressões “petra” e “petros” -",
+      "question": "Possui duas naturezas—",
       "options": [
-        "“Pedra” – rocha; “Petros” – Pedra pequena",
-        "“Petros” – rocha; “Pedra” – Pedra pequena",
-        "“Pedra” e “Petros” tem o mesmo sentido",
-        "Todas as alternativas estão erradas"
+        "Deus",
+        "homem",
+        "os anjos",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 1
     },
     {
       "id": "ecl1-mc-4",
-      "question": "A igreja foi fundada por -",
+      "question": "Em Jesus a Lei Cerimonial foi –",
       "options": [
-        "Deus",
-        "Jesus Cristo",
-        "Pelo Espírito Santo",
-        "Todas estão corretas"
+        "revogada",
+        "modificada",
+        "cumprida",
+        "todas estão erradas."
       ],
-      "answer": 1
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "ecl1-mp-1",
       "left": "Igreja visível",
-      "right": "Uma organização"
+      "right": "uma organização"
     },
     {
       "id": "ecl1-mp-2",
       "left": "Igreja invisível",
-      "right": "Um organismo vivo"
+      "right": "um organismo vivo"
     },
     {
       "id": "ecl1-mp-3",
       "left": "Jesus",
-      "right": "Parente do homem"
+      "right": "parente do homem"
     },
     {
       "id": "ecl1-mp-4",
       "left": "Cristo",
-      "right": "Segunda pessoa da Trindade"
+      "right": "segunda pessoa da trindade"
     },
     {
       "id": "ecl1-mp-5",
       "left": "Jesus Cristo",
-      "right": "Fundador da igreja"
+      "right": "fundador da igreja"
     },
     {
       "id": "ecl1-mp-6",
       "left": "Necessita de dinheiro",
-      "right": "Igreja visível"
+      "right": "igreja visível"
     }
   ]
 }

@@ -9,126 +9,126 @@
     },
     {
       "id": "atos2-tf-2",
-      "question": "Após celebrar a Páscoa, Jesus celebrou a primeira “Santa Ceia”.",
-      "answer": "V"
+      "question": "Sendo a “hora terceira”, ou seja, três horas da manhã, ninguém podia estar embriagado",
+      "answer": "F"
     },
     {
       "id": "atos2-tf-3",
-      "question": "Sendo a hora terceira, ou seja, três horas da manhã, ninguém podia estar embriagado.",
-      "answer": "F"
-    },
-    {
-      "id": "atos2-tf-4",
-      "question": "Em obediência à Lei de Moisés os judeus oravam três vezes ao dia.",
-      "answer": "F"
-    },
-    {
-      "id": "atos2-tf-5",
       "question": "Em Samaria, Filipe falou de Jesus, mas nada falou do Espírito Santo.",
       "answer": "V"
     },
     {
+      "id": "atos2-tf-4",
+      "question": "Podemos afirmar que Tiago, irmão de Jesus, foi Pastor da igreja de Jerusalém.",
+      "answer": "V"
+    },
+    {
+      "id": "atos2-tf-5",
+      "question": "O Livro de Atos descreve o primeiro capítulo da História da Igreja.",
+      "answer": "V"
+    },
+    {
       "id": "atos2-tf-6",
-      "question": "Na casa de Cornélio houve batismo com o Espírito Santo antes da salvação.",
-      "answer": "F"
+      "question": "Podemos afirmar que para a igreja a Festa do Pentecostes ainda não terminou.",
+      "answer": "V"
     },
     {
       "id": "atos2-tf-7",
-      "question": "Podemos afirmar que Tiago, irmão de Jesus, foi pastor da igreja de Jerusalém.",
-      "answer": "V"
-    },
-    {
-      "id": "atos2-tf-8",
-      "question": "A expressão “mulher de Corinto” significava “mulher de vida fácil”.",
-      "answer": "V"
-    },
-    {
-      "id": "atos2-tf-9",
-      "question": "Éfeso situava em território que hoje pertence à Grécia.",
+      "question": "Não há diferença entre igreja pentecostal e movimento pentecostal.",
       "answer": "F"
     },
     {
+      "id": "atos2-tf-8",
+      "question": "A cura de um paralítico aconteceu quando Pedro e João estavam retornando do templo.",
+      "answer": "F"
+    },
+    {
+      "id": "atos2-tf-9",
+      "question": "Podemos afirmar que, diante de Deus, Estêvão foi considerado um autêntico missionário",
+      "answer": "V"
+    },
+    {
       "id": "atos2-tf-10",
-      "question": "Em Roma, sem qualquer restrição, Paulo permaneceu em prisão domiciliar.",
+      "question": "Após sua conversão Paulo não retornou mais para Tarso.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "atos2-mc-1",
-      "question": "Ao deixar Samaria, Filipe foi para -",
+      "question": "Ao deixar Samaria, Filipe foi para —",
       "options": [
         "Jerusalém",
         "Gaza",
-        "Uma estrada deserta",
-        "Todas estão erradas"
+        "uma estrada deserta",
+        "todas estão erradas."
       ],
       "answer": 2
     },
     {
       "id": "atos2-mc-2",
-      "question": "Ao sair de Bereia, Paulo foi para -",
+      "question": "A conversão de Paulo aconteceu —",
       "options": [
-        "Tessalônica",
-        "Corinto",
-        "Atenas",
-        "Todas estão erradas"
+        "em Jerusalém",
+        "na Síria",
+        "na Turquia",
+        "todas estão erradas."
       ],
-      "answer": 2
+      "answer": 1
     },
     {
       "id": "atos2-mc-3",
-      "question": "Após sua ressurreição, Jesus permaneceu na terra -",
+      "question": "Na igreja de Jerusalém não havia —",
       "options": [
-        "Vinte dias",
-        "Noventa dias",
-        "Quarenta dias",
-        "Todas estão erradas"
+        "crentes ricos",
+        "crentes pobres",
+        "crentes necessitados",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "atos2-mc-4",
-      "question": "A conversão de Paulo aconteceu —",
+      "question": "Jesus ordenou que o evangelho fosse pregado primeiro —",
       "options": [
-        "Em Jerusalém",
-        "Na Síria",
-        "Na Turquia",
-        "Todas estão erradas"
+        "em toda Jerusalém",
+        "em toda Judeia",
+        "em toda Samaria",
+        "todas estão erradas"
       ],
-      "answer": 1
+      "answer": 3
     }
   ],
   "matchingPairs": [
     {
       "id": "atos2-mp-1",
-      "left": "Deixado como pastor em Creta",
-      "right": "Tito"
+      "left": "Doutrinadores",
+      "right": "Pedro e João"
     },
     {
       "id": "atos2-mp-2",
-      "left": "Deixado como pastor em Éfeso",
-      "right": "Timóteo"
+      "left": "O evangelho na África",
+      "right": "Eunuco"
     },
     {
       "id": "atos2-mp-3",
-      "left": "Permaneceu com Paulo até o fim",
-      "right": "Lucas"
+      "left": "Este é “ a grande virtude de Deus”",
+      "right": "Filipe"
     },
     {
       "id": "atos2-mp-4",
-      "left": "Abandonou Paulo na prisão",
-      "right": "Demas"
+      "left": "Homens cheios do Espírito Santo",
+      "right": "Diáconos"
     },
     {
       "id": "atos2-mp-5",
-      "left": "Epístola escrita na segunda prisão",
-      "right": "II Timóteo"
+      "left": "Ministério da Palavra",
+      "right": "Apóstolos"
     },
     {
       "id": "atos2-mp-6",
-      "left": "Epístola escrita na primeira prisão",
-      "right": "Filemon"
+      "left": "",
+      "right": "Filipe"
     }
   ]
 }

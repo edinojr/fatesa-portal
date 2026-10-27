@@ -4,48 +4,48 @@
   "tfQuestions": [
     {
       "id": "higr3-tf-1",
-      "question": "A igreja de Jerusalém era formada por judeus e gentios, entre eles os gregos.",
+      "question": "Para saber o que os homens pensavam dele, Jesus interrogou seus discípulos.",
       "answer": "F"
     },
     {
       "id": "higr3-tf-2",
-      "question": "Quando da descida do Espírito Santo estavam reunidos no Cenáculo cento e vinte discípulos",
-      "answer": "F"
-    },
-    {
-      "id": "higr3-tf-3",
-      "question": "Na igreja de Jerusalém a Ceia do Senhor era realizada todos os sábados.",
-      "answer": "F"
-    },
-    {
-      "id": "higr3-tf-4",
-      "question": "Em Jerusalém, além do templo, existiam centenas de sinagogas.",
+      "question": "Coube a Pedro o privilégio de abrir as portas da salvação para os judeus e para os gentios",
       "answer": "V"
     },
     {
+      "id": "higr3-tf-3",
+      "question": "Pode haver comunhão entre pessoas diferentes tanto na área social, econômica e também cultural.",
+      "answer": "V"
+    },
+    {
+      "id": "higr3-tf-4",
+      "question": "A morte de Ananias comprova que a igreja ainda era influenciada pela Lei de Moisés.",
+      "answer": "F"
+    },
+    {
       "id": "higr3-tf-5",
-      "question": "Na igreja de Jerusalém o “vender tudo” era uma opção pessoal e não uma obrigação.",
+      "question": "No primeiro momento os cristãos conservavam as tradições e costumes do judaísmo.",
       "answer": "V"
     },
     {
       "id": "higr3-tf-6",
-      "question": "Contrariando ordens dadas pelos apóstolos, os novos convertidos pregaram o evangelho aos gentios.",
-      "answer": "F"
+      "question": "Até o ano 64 dC. A igreja foi perseguida pelos judeus e não pelos romanos.",
+      "answer": "V"
     },
     {
       "id": "higr3-tf-7",
-      "question": "Segundo a tradição, Lucas foi enforcado numa oliveira, na Grécia.",
+      "question": "De 64 a 305 os cristãos foram perseguidos somente no governo de dez imperadores.",
       "answer": "V"
     },
     {
       "id": "higr3-tf-8",
-      "question": "Pela salvação e pelos pecados o castigo do corpo tem pouca utilidade.",
+      "question": "A doutrina gnóstica ensinava ser possível o contato direto entre o homem e Deus.",
       "answer": "F"
     },
     {
       "id": "higr3-tf-9",
-      "question": "Em dois séculos e meio de história a igreja foi perseguida somente por dez imperadores.",
-      "answer": "F"
+      "question": "Ao que parece, num primeiro momento, Satanás não tinha um plano preparado contra a igreja.",
+      "answer": "V"
     },
     {
       "id": "higr3-tf-10",
@@ -56,34 +56,34 @@
   "mcQuestions": [
     {
       "id": "higr3-mc-1",
-      "question": "Escrava cristã torturada da manhã até a noite-",
+      "question": "Pela Bíblia sabemos que Pedro -",
       "options": [
-        "Agar",
-        "Helena",
-        "Blandina",
-        "Todas estão erradas"
+        "tem as chaves do céu",
+        "é a pedra fundamental da igreja",
+        "foi o primeiro Papa",
+        "todas estão erradas"
       ],
-      "answer": 2
+      "answer": 3
     },
     {
       "id": "higr3-mc-2",
-      "question": "A igreja espiritual recebeu sua natureza de -",
+      "question": "O Imperador Domiciano era -",
       "options": [
-        "Cristo",
-        "Jesus",
-        "Jesus Cristo",
-        "Todas estão corretas"
+        "um grande perseguidor da igreja",
+        "filho do Imperador Vespasiano",
+        "irmão do General Tito",
+        "todas estão corretas"
       ],
-      "answer": 0
+      "answer": 3
     },
     {
       "id": "higr3-mc-3",
       "question": "No Concílio de Niceia votaram a favor de Ário.",
       "options": [
-        "A maioria dos bispos presentes",
-        "Apenas um terço dos bispos",
-        "Apenas dois bispos",
-        "Nenhum dos bispos"
+        "a maioria dos bispos presentes",
+        "apenas um terço dos bispos",
+        "apenas dois bispos",
+        "nenhum dos bispos"
       ],
       "answer": 2
     },
@@ -91,10 +91,10 @@
       "id": "higr3-mc-4",
       "question": "Entre 313 e 400 dC., a igreja cresceu -",
       "options": [
-        "Em número",
-        "Em poder",
-        "Em santidade",
-        "Todas estão corretas"
+        "em número",
+        "em poder",
+        "em santidade",
+        "todas estão corretas"
       ],
       "answer": 0
     }
@@ -117,7 +117,7 @@
     },
     {
       "id": "higr3-mp-4",
-      "left": "Um exemplo dos que não “dormiram”",
+      "left": "Um exemplo dos que não \"dormiram\"",
       "right": "Justino"
     },
     {

@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "esca3-tf-1",
-      "question": "A Bíblia condena a astrologia, os astrólogos e os que a eles recorrem.",
+      "question": "Os chamados \"outros mortos\" ressuscitarão para o juízo do grande \"Trono Branco\".",
       "answer": "V"
     },
     {
       "id": "esca3-tf-2",
-      "question": "Os chamados “outros mortos” ressuscitarão para o juízo do grande “Trono Branco”.",
-      "answer": "V"
-    },
-    {
-      "id": "esca3-tf-3",
-      "question": "No Antigo Testamento os mortos ímpios iam para o “Hades” e no Novo Testamento para o “Sheol”.",
-      "answer": "F"
-    },
-    {
-      "id": "esca3-tf-4",
       "question": "Depois do arrebatamento da igreja não haverá mais ressurreição de salvos.",
       "answer": "F"
     },
     {
-      "id": "esca3-tf-5",
-      "question": "No Antigo Testamento a videira era um símbolo de Israel e no Novo a figueira simboliza a igreja.",
-      "answer": "F"
-    },
-    {
-      "id": "esca3-tf-6",
-      "question": "Na Parábola das Dez Virgens a expressão “meia- noite” fala do fim do Dia da Graça.",
+      "id": "esca3-tf-3",
+      "question": "Na parábola das Dez Virgens a expressão \"meia noite\" fala do fim do Dia da Graça",
       "answer": "V"
     },
     {
-      "id": "esca3-tf-7",
-      "question": "Após o arrebatamento da igreja não haverá mais eventos escatológicos na terra.",
-      "answer": "F"
-    },
-    {
-      "id": "esca3-tf-8",
+      "id": "esca3-tf-4",
       "question": "Entre os evangélicos não há um consenso em relação ao arrebatamento da igreja e a grande tribulação.",
       "answer": "V"
     },
     {
+      "id": "esca3-tf-5",
+      "question": "Na igreja primitiva não houve preocupação com nenhum evento escatológico.",
+      "answer": "F"
+    },
+    {
+      "id": "esca3-tf-6",
+      "question": "Segundo a Bíblia, ao morrer, o espírito do homem é levado ao lugar onde Deus está.",
+      "answer": "F"
+    },
+    {
+      "id": "esca3-tf-7",
+      "question": "Pela Bíblia sabemos, com clareza, o lugar onde o \"hades\" está localizado.",
+      "answer": "F"
+    },
+    {
+      "id": "esca3-tf-8",
+      "question": "Mesmo entre os judeus, os fariseus não criam na ressurreição.",
+      "answer": "F"
+    },
+    {
       "id": "esca3-tf-9",
-      "question": "O termo milênio, no sentido literal, não se encontra na Bíblia.",
-      "answer": "V"
+      "question": "A expressão \"é já a última hora\" não deve ser usada em relação à igreja.",
+      "answer": "F"
     },
     {
       "id": "esca3-tf-10",
-      "question": "Os “outros mortos” são todos aquele que morreram durante o Antigo Testamento.",
-      "answer": "F"
+      "question": "Satanás formará uma trindade diabólica constituída por ele próprio, pelo Anticristo e pelo Falso Profeta.",
+      "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "esca3-mc-1",
-      "question": "A Bíblia fala sobre morte -",
+      "question": "No milênio haverá paz entre -",
       "options": [
-        "Física",
-        "Espiritual",
-        "Eterna",
-        "Todas estão corretas"
+        "as nações",
+        "os homens",
+        "os animais",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "esca3-mc-2",
-      "question": "No milênio Satanás estará no -",
+      "question": "Réus no julgamento final -",
       "options": [
-        "“Lago de fogo”",
-        "“Hades”",
-        "Abismo",
-        "Todas estão erradas"
+        "os mortos na grande tribulação",
+        "todos os judeus",
+        "todos os mortos ímpios",
+        "só os gentios mortos;"
       ],
       "answer": 2
     },
     {
       "id": "esca3-mc-3",
-      "question": "No milênio haverá paz entre -",
+      "question": "Falou com Daniel sobre as setenta semanas -",
       "options": [
-        "As nações",
-        "Os homens",
-        "Os animais",
-        "Todas estão corretas"
+        "o anjo do Senhor",
+        "o arcanjo Miguel",
+        "o anjo Gabriel",
+        "Deus em sonho."
       ],
-      "answer": 3
+      "answer": 2
     },
     {
       "id": "esca3-mc-4",
-      "question": "Réus no julgamento final -",
+      "question": "O juízo final será realizado -",
       "options": [
-        "Os mortos na grande tribulação",
-        "Todos os judeus",
-        "Todos os mortos ímpios",
-        "Só os gentios mortos"
+        "local ignorado",
+        "na terra",
+        "antes do final do milênio",
+        "no \"hades\" ou \"sheol\"."
       ],
-      "answer": 2
+      "answer": 0
     }
   ],
   "matchingPairs": [
@@ -123,7 +123,7 @@
     {
       "id": "esca3-mp-5",
       "left": "Pragana das eiras no estio",
-      "right": "Fim do império gentílico"
+      "right": "fim do império gentílico"
     },
     {
       "id": "esca3-mp-6",

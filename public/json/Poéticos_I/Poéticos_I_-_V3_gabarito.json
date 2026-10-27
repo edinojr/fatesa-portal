@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "poet3-tf-1",
-      "question": "Não sendo sacerdote, Jó não poderia oferecer sacrifício pelos seus filhos.",
+      "question": "Sendo, como era, um homem muito rico, Jó descuidou do cuidado de sua família",
       "answer": "F"
     },
     {
       "id": "poet3-tf-2",
-      "question": "Entre os evangélicos há uma corrente que ensina que hoje Deus não prova seus filhos.",
+      "question": "A guerra entre o Reino de Deus e o reino das trevas e travada, hoje, aqui na terra.",
       "answer": "V"
     },
     {
       "id": "poet3-tf-3",
-      "question": "Naquele dia se os filhos de Jó não estivessem numa festa eles não teriam morrido.",
-      "answer": "F"
-    },
-    {
-      "id": "poet3-tf-4",
-      "question": "Para três dos quatro amigos a doença de Jó era consequência de seus pecados.",
-      "answer": "F"
-    },
-    {
-      "id": "poet3-tf-5",
-      "question": "Jó foi “torturado” por Satanás no espírito, na alma e no corpo.",
+      "question": "Zofar exaltou-se com a teimosia de Jó de que seus sofrimentos não era consequência de seu pecado.",
       "answer": "V"
     },
     {
-      "id": "poet3-tf-6",
-      "question": "A expressão, o “Salmista”, sempre faz referência a Davi.",
+      "id": "poet3-tf-4",
+      "question": "Imaginando-se cheio de razões, era o desejo de Jó defender-se diante de Deus",
+      "answer": "V"
+    },
+    {
+      "id": "poet3-tf-5",
+      "question": "Sendo o autor da maioria dos Salmos é correto usar sempre a expressão Salmo de Davi para todos.",
       "answer": "F"
     },
     {
+      "id": "poet3-tf-6",
+      "question": "Depois de ser ungido por Samuel, Davi soube esperar pelo tempo de Deus para ocupar o trono.",
+      "answer": "V"
+    },
+    {
       "id": "poet3-tf-7",
-      "question": "Foi pelo fato de ser rei em Israel que Davi se tornou conhecido por todas as nações.",
+      "question": "Sendo um homem “segundo o coração de Deus”, Davi teve facilidade para alcançar o perdão pelo seu pecado.",
       "answer": "F"
     },
     {
       "id": "poet3-tf-8",
-      "question": "A Teoria Evolucionista está entre as “vãs imaginações” dos homens.",
+      "question": "Podemos afirmar que os hinos que Paulo e Silas cantaram na prisão foram alguns dos salmos.",
       "answer": "V"
     },
     {
       "id": "poet3-tf-9",
-      "question": "Com base nos “Salmos Imprecatórios”, hoje não devemos orar pelos nossos inimigos.",
+      "question": "Casado apenas com uma mulher Jó gerou, ao todo, sete filhas e três filhos.",
       "answer": "F"
     },
     {
       "id": "poet3-tf-10",
-      "question": "Não podemos afirmar, com segurança, o sentido da expressão “selá”.",
-      "answer": "V"
+      "question": "Buscando o Reino de Deus temos a promessa de que todas as demais coisas nos são acrescentadas.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "poet3-mc-1",
-      "question": "Não é um instrumento usado por Deus -",
-      "options": [
-        "Provação",
-        "Tentação",
-        "Correção",
-        "Todas estão erradas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "poet3-mc-2",
-      "question": "Do Salmo 46 podemos entender -",
-      "options": [
-        "O que Deus faz",
-        "Onde está Deus",
-        "O que Deus é",
-        "Todas estão corretas"
-      ],
-      "answer": 3
-    },
-    {
-      "id": "poet3-mc-3",
-      "question": "Personagem central do Livro de Jó -",
-      "options": [
-        "Jó",
-        "Deus",
-        "Satanás",
-        "Todas estão corretas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "poet3-mc-4",
       "question": "Tipo de Salmo cantado pelos peregrinos -",
       "options": [
         "Salmo de peregrinação",
         "Salmo dos degraus",
         "Salmo de romagem",
-        "Todas estão corretas"
+        "todas estão corretas."
       ],
       "answer": 3
+    },
+    {
+      "id": "poet3-mc-2",
+      "question": "Davi seria conhecido em todo mundo como -",
+      "options": [
+        "Rei de Israel",
+        "um grande guerreiro",
+        "salmista",
+        "homem que matou Golias."
+      ],
+      "answer": 2
+    },
+    {
+      "id": "poet3-mc-3",
+      "question": "Salmo que fala sobre o riso de Deus -",
+      "options": [
+        "Salmo 37",
+        "Salmo 2",
+        "Salmo 59",
+        "todas estão corretas."
+      ],
+      "answer": 3
+    },
+    {
+      "id": "poet3-mc-4",
+      "question": "Salmista que falou de Davi em seu Salmo -",
+      "options": [
+        "Salomão",
+        "Asafe",
+        "Etã",
+        "Hemã."
+      ],
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "poet3-mp-1",
-      "left": "Salmo Messiânico",
-      "right": "Salmo 22"
+      "left": "Uma ordem dada por Deus",
+      "right": "destruir os inimigos"
     },
     {
       "id": "poet3-mp-2",
-      "left": "Salmo de Peregrinação",
-      "right": "Salmo 122"
+      "left": "Um ensino de Jesus",
+      "right": "amar os inimigos"
     },
     {
       "id": "poet3-mp-3",
-      "left": "Salmo Histórico",
-      "right": "Salmo 78"
+      "left": "Ordem dada por Jesus",
+      "right": "guardar a espada"
     },
     {
       "id": "poet3-mp-4",
-      "left": "Salmo da natureza",
-      "right": "Salmo 8"
+      "left": "Um ensino de Paulo",
+      "right": "alimentar os inimigos"
     },
     {
       "id": "poet3-mp-5",
-      "left": "Salmo de Súplica",
-      "right": "Salmo 31"
+      "left": "Um Salmo imprecatório",
+      "right": "Salmo 109"
     },
     {
       "id": "poet3-mp-6",
-      "left": "Salmo Imprecatório",
-      "right": "Salmo 109"
+      "left": "Um Salmo de penitência",
+      "right": "Salmo 51"
     }
   ]
 }

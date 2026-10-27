@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "eppi2-tf-1",
-      "question": "Adorar o Imperador era uma prova exigida como lealdade ao Império Romano.",
-      "answer": "V"
+      "question": "Podemos afirmar que o fundador da Igreja de Roma foi Paulo e não Pedro.",
+      "answer": "F"
     },
     {
       "id": "eppi2-tf-2",
-      "question": "Podemos afirmar não haver qualquer relação entre tribulação e paciência.",
+      "question": "Pela justiça própria dificilmente um homem poderá ser justificado.",
       "answer": "F"
     },
     {
       "id": "eppi2-tf-3",
-      "question": "O capítulo 8 de Romanos fala da luta entre as duas naturezas do crente.",
-      "answer": "F"
+      "question": "Somente através do novo nascimento é que o homem torna-se livre do domínio do pecado.",
+      "answer": "V"
     },
     {
       "id": "eppi2-tf-4",
-      "question": "Por ser seu povo escolhido, Deus, ainda no Egito, celebrou uma aliança com Israel.",
+      "question": "No Antigo Testamento Israel é chamado por Deus de Seu povo, mas, não de seu filho.",
       "answer": "F"
     },
     {
       "id": "eppi2-tf-5",
-      "question": "Crente, necessariamente, precisa ter e viver em paz com todos os homens.",
-      "answer": "F"
+      "question": "Conformar com o mundo tem o sentido de tomar a forma do mundo.",
+      "answer": "V"
     },
     {
       "id": "eppi2-tf-6",
-      "question": "Em relação a Pedro, Jesus deixou o exemplo de como ajudar um crente fraco.",
-      "answer": "V"
+      "question": "Como era de seu feitio, Paulo começa a Epístola aos Gálatas elogiando os crentes da Galácia.",
+      "answer": "F"
     },
     {
       "id": "eppi2-tf-7",
-      "question": "Gálatas faz apologia da liberdade cristã contra todas as formas de legalismo.",
-      "answer": "V"
+      "question": "Segundo a Bíblia não é correto querer imitar a fé de nosso pastor.",
+      "answer": "F"
     },
     {
       "id": "eppi2-tf-8",
-      "question": "Paulo manifestou sua perplexidade com a rapidez com que os gálatas desviaram da fé.",
+      "question": "Pela lei da semeadura sabemos que um só pecado pode produzir diversas consequências.",
       "answer": "V"
     },
     {
       "id": "eppi2-tf-9",
-      "question": "Existem cargas que devemos levar sozinho, sem qualquer ajuda.",
-      "answer": "V"
+      "question": "Segundo ensinou Paulo, o homem justificado não sente desejo de pecar.",
+      "answer": "F"
     },
     {
       "id": "eppi2-tf-10",
-      "question": "Satanás pode semear e frutificar sementes do mal no coração de um homem de Deus.",
+      "question": "A expressão, \"o corpo do pecado seja desfeito\", fala da morte física.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "eppi2-mc-1",
-      "question": "As obras são necessárias para -",
+      "question": "Romanos fala do sofrimento de Paulo pela –",
       "options": [
-        "Alcançar a salvação",
-        "Cobrir nossos pecados",
-        "Comprovar a salvação",
-        "Todas estão erradas"
+        "conversão dos gentios;",
+        "conversão dos romanos;",
+        "conversão de judeus;",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "eppi2-mc-2",
-      "question": "É um aspecto do fruto do Espírito -",
+      "question": "Crente salvo precisa amar –",
       "options": [
-        "A fé",
-        "A benignidade",
-        "A paz",
-        "Todas estão corretas"
+        "seus familiares;",
+        "seus inimigos;",
+        "seus amigos;",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "eppi2-mc-3",
-      "question": "O propósito de Deus para justificar os gentios era -",
+      "question": "Como suportar um crente fraco –",
       "options": [
-        "Pela Lei de Moisés",
-        "Pela fé",
-        "Pela Lei e pela fé",
-        "Todas estão corretas"
+        "com amor, muito amor;",
+        "com humildade;",
+        "sendo cheio do Espírito Santo;",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "eppi2-mc-4",
-      "question": "Romanos fala do sofrimento de Paulo pela –",
+      "question": "Os Gálatas eram descendentes dos –",
       "options": [
-        "Conversão dos gentios",
-        "Conversão de judeus",
-        "Conversão dos romanos",
-        "Todas estão corretas"
+        "gregos;",
+        "cananeus;",
+        "gauleses e celtas;",
+        "romanos."
       ],
-      "answer": 1
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "eppi2-mp-1",
-      "left": "Evangelho da circuncisão",
-      "right": "Pedro"
+      "left": "Única forma de se tornar cidadão do céu",
+      "right": "novo nascimento"
     },
     {
       "id": "eppi2-mp-2",
-      "left": "Evangelho da incircuncisão",
-      "right": "Paulo"
+      "left": "Condição fundamental para viver como salvo",
+      "right": "ser salvo"
     },
     {
       "id": "eppi2-mp-3",
-      "left": "Não foi justificado pela circuncisão",
-      "right": "Abraão"
+      "left": "Autoridade vinda de Deus",
+      "right": "toda autoridade"
     },
     {
       "id": "eppi2-mp-4",
-      "left": "Paulo não aceitou sua circuncisão",
-      "right": "Tito"
+      "left": "Autoridade civil",
+      "right": "Pilatos"
     },
     {
       "id": "eppi2-mp-5",
-      "left": "Circuncidado por iniciativa de Paulo",
-      "right": "Timóteo"
+      "left": "Autoridade militar",
+      "right": "Centurião romano"
     },
     {
       "id": "eppi2-mp-6",
-      "left": "Para a salvação, exigiam a circuncisão",
-      "right": "Judaizantes"
+      "left": "Autoridade eclesiástica",
+      "right": "Apóstolo Paulo"
     }
   ]
 }

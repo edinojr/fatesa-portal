@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "hisi3-tf-1",
-      "question": "Foram poucas as vezes, na história, que Deus deixou de se comunicar com os homens.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi3-tf-2",
-      "question": "Após a formação de Israel Deus não mais tratava, diretamente, com as demais nações existentes.",
-      "answer": "V"
-    },
-    {
-      "id": "hisi3-tf-3",
       "question": "Pela Bíblia podemos afirmar que Abraão permaneceu em Harã por muito pouco tempo.",
       "answer": "F"
     },
     {
-      "id": "hisi3-tf-4",
-      "question": "A história de José encontra-se no Livro de Gênesis do capítulo 37 a 50.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi3-tf-5",
-      "question": "Em Gilgal, após a primeira colheita de trigo, Deus não mandou mais o maná.",
-      "answer": "V"
-    },
-    {
-      "id": "hisi3-tf-6",
-      "question": "A ciência não comprovou o relato bíblico de que o sol e a lua pararam “quase um dia inteiro”.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi3-tf-7",
+      "id": "hisi3-tf-2",
       "question": "Jefté, por ser filho bastardo, foi rejeitado por seus irmãos, mas foi aprovado por Deus.",
       "answer": "V"
     },
     {
+      "id": "hisi3-tf-3",
+      "question": "Ser casado e tendo uma família para cuidar não impediu Enoque de andar com Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi3-tf-4",
+      "question": "Quando da chamada de Abraão somente sua família não era idólatra.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi3-tf-5",
+      "question": "Ao chegar em Canaã, Abraão edificou um altar ao seu Deus que lhe aparecera em Hur.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi3-tf-6",
+      "question": "Tendo sido indicado por Moisés, Josué assumiu a liderança do povo após sua morte.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi3-tf-7",
+      "question": "Durante o período de conquistas poucas foram as vezes que Josué e seu exército retornaram a Gilgal",
+      "answer": "F"
+    },
+    {
       "id": "hisi3-tf-8",
-      "question": "A colocação de Rute na genealogia de Jesus é uma simbologia da salvação dos gentios.",
+      "question": "Após a grande vitória dada por Deus a Gideão, Israel teve paz por quarenta anos.",
       "answer": "V"
     },
     {
       "id": "hisi3-tf-9",
-      "question": "A monarquia foi o sistema de governo, em Israel, até ser levado para o cativeiro.",
+      "question": "Podemos ver em Boaz a figura de Jesus como nosso parente remidor.",
       "answer": "V"
     },
     {
       "id": "hisi3-tf-10",
-      "question": "Quanto ao conteúdo não há diferença entre I e II Crônicas e I e II Paralelipômenos.",
-      "answer": "V"
+      "question": "Após a morte de Saul, Davi, com idade de trinta anos, assumiu o trono de Israel.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "hisi3-mc-1",
-      "question": "Um descendente de Abel -",
+      "question": "O ponto fraco do Rei Saul –",
       "options": [
-        "Enoque",
-        "Noé",
-        "Jesus",
-        "Todas estão erradas"
+        "envolvimento com mulheres",
+        "apego à riqueza",
+        "apego ao poder",
+        "todas estão corretas."
       ],
-      "answer": 3
+      "answer": 2
     },
     {
       "id": "hisi3-mc-2",
-      "question": "Nome do esposo de Ester na história secular -",
+      "question": "Israel teve ao todo –",
       "options": [
-        "Assuero",
-        "Xerxes I",
-        "Artaxerxes",
-        "Cambisis II"
+        "15 juízes",
+        "12 juízes",
+        "24 juízes",
+        "número indeterminado."
       ],
-      "answer": 1
+      "answer": 0
     },
     {
       "id": "hisi3-mc-3",
-      "question": "O ponto fraco do Rei Saul –",
+      "question": "Deus nivelou Samuel com –",
       "options": [
-        "Envolvimento com mulheres",
-        "Apego à riqueza",
-        "Apego ao poder",
-        "Todas estão corretas"
+        "Elias",
+        "Davi",
+        "Moisés",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "hisi3-mc-4",
-      "question": "Primeiro desafio de Josué -",
+      "question": "Saul foi escolhido rei -",
       "options": [
-        "Tomar Jericó",
-        "Atravessar o Jordão",
-        "Conquistar Gilgal",
-        "Circuncidar os israelitas"
+        "por Deus",
+        "pelo povo",
+        "por Samuel",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 0
     }
   ],
   "matchingPairs": [

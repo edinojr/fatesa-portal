@@ -4,106 +4,106 @@
   "tfQuestions": [
     {
       "id": "dsal3-tf-1",
-      "question": "As expressões salvação e salvador têm o mesmo sentido nos dois testamentos.",
-      "answer": "F"
-    },
-    {
-      "id": "dsal3-tf-2",
       "question": "A glorificação representa o capítulo final da salvação pela graça.",
       "answer": "V"
     },
     {
-      "id": "dsal3-tf-3",
-      "question": "Na Bíblia, as expressões expiação e redenção têm o mesmo significado.",
-      "answer": "F"
-    },
-    {
-      "id": "dsal3-tf-4",
+      "id": "dsal3-tf-2",
       "question": "Para Deus o importante é como vivemos e não como pensamos.",
       "answer": "V"
     },
     {
+      "id": "dsal3-tf-3",
+      "question": "Não foram ao anjos os servos enviados para chamar os convidados para as bodas.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal3-tf-4",
+      "question": "A Parábola das Bodas fala, com certeza, das Bodas do Cordeiro.",
+      "answer": "F"
+    },
+    {
       "id": "dsal3-tf-5",
-      "question": "Para a conversão o homem pode fazer uso de sua fé natural.",
+      "question": "Na redenção temos a ideia de perdão mediante o arrependimento do homem.",
       "answer": "F"
     },
     {
       "id": "dsal3-tf-6",
-      "question": "A expressão regenerar significa uma reforma total realizada no homem.",
-      "answer": "F"
-    },
-    {
-      "id": "dsal3-tf-7",
-      "question": "Biblicamente, podemos afirmar que nem todos os homens são filhos de Deus.",
+      "question": "A salvação preparada por Deus abrange o corpo, a alma e o espirito.",
       "answer": "V"
     },
     {
+      "id": "dsal3-tf-7",
+      "question": "Sem um verdadeiro arrependimento é difícil haver salvação.",
+      "answer": "F"
+    },
+    {
       "id": "dsal3-tf-8",
-      "question": "Justificação é como uma declaração legal de que o homem está isento de culpa.",
+      "question": "Dominar era a vocação do homem conforme determinação de Deus.",
       "answer": "V"
     },
     {
       "id": "dsal3-tf-9",
-      "question": "Vestidos alvos em todo tempo fala de santificação permanente.",
+      "question": "Pela salvação qualquer sacrifício pessoal seria afrontoso a Deus.",
       "answer": "V"
     },
     {
       "id": "dsal3-tf-10",
-      "question": "Pela Bíblia sabemos que o corpo glorioso que receberemos é espiritual e material",
+      "question": "O fato de Jesus ser colocado entre os dois ladrões foi pura coincidência.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "dsal3-mc-1",
-      "question": "A Bíblia foi escrita para contar a -",
-      "options": [
-        "Queda de Satanás",
-        "História da redenção do homem",
-        "História da humanidade",
-        "Todas estão corretas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "dsal3-mc-2",
-      "question": "Nascer da água significa -",
-      "options": [
-        "Batismo nas águas",
-        "Transformação pela Palavra",
-        "Batismo com o Espírito Santo",
-        "Todas estão corretas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "dsal3-mc-3",
       "question": "A regeneração é também chamada de —",
       "options": [
-        "A nova vida",
-        "Uma nova criação",
-        "Novo nascimento",
-        "Todas estão erradas"
+        "a nova vida",
+        "uma nova criação",
+        "novo nascimento",
+        "todas estão erradas."
       ],
       "answer": 2
     },
     {
-      "id": "dsal3-mc-4",
+      "id": "dsal3-mc-2",
       "question": "Degenerar significa -",
       "options": [
-        "Perder a qualidade original",
-        "Corromper-se",
-        "Mudar para pior",
-        "Todas estão corretas"
+        "perder a qualidade original",
+        "corromper-se",
+        "mudar para pior",
+        "todas estão corretas."
       ],
       "answer": 3
+    },
+    {
+      "id": "dsal3-mc-3",
+      "question": "O homem regenerado não está —",
+      "options": [
+        "livre de pecar",
+        "vivo para Deus",
+        "morto para o mundo",
+        "todas estão corretas."
+      ],
+      "answer": 0
+    },
+    {
+      "id": "dsal3-mc-4",
+      "question": "É um meio para obter a salvação —",
+      "options": [
+        "a graça",
+        "a fé",
+        "justiça",
+        "todas estão corretas."
+      ],
+      "answer": 1
     }
   ],
   "matchingPairs": [
     {
       "id": "dsal3-mp-1",
       "left": "A bodas vistas por João",
-      "right": "União de Cristo com a igreja"
+      "right": "união de Cristo com a igreja"
     },
     {
       "id": "dsal3-mp-2",
@@ -118,17 +118,17 @@
     {
       "id": "dsal3-mp-4",
       "left": "Rejeitaram o convite para as bodas",
-      "right": "Os judeus"
+      "right": "os judeus"
     },
     {
       "id": "dsal3-mp-5",
       "left": "Tem aparência de salvo",
-      "right": "Joio"
+      "right": "joio"
     },
     {
       "id": "dsal3-mp-6",
       "left": "Não tem aparência de salvo",
-      "right": "Peixes ruins"
+      "right": "peixes ruins"
     }
   ]
 }

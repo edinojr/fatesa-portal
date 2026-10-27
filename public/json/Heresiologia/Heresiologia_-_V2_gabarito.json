@@ -4,105 +4,105 @@
   "tfQuestions": [
     {
       "id": "her2-tf-1",
-      "question": "Em relação ao cristianismo a religião muçulmana não é uma seita.",
-      "answer": "V"
-    },
-    {
-      "id": "her2-tf-2",
-      "question": "Pela Bíblia podemos afirmar não haver qualquer indício de que Pedro esteve em Roma",
-      "answer": "V"
-    },
-    {
-      "id": "her2-tf-3",
-      "question": "Transubstanciação fala da presença real e corporal de Jesus na hóstia.",
-      "answer": "V"
-    },
-    {
-      "id": "her2-tf-4",
       "question": "A escolha de Maria foi a mais difícil de todas as escolhas feitas por Deus.",
       "answer": "F"
     },
     {
+      "id": "her2-tf-2",
+      "question": "Podemos afirmar que Paulo foi seguidor de uma seita judaica.",
+      "answer": "V"
+    },
+    {
+      "id": "her2-tf-3",
+      "question": "Pela Bíblia podemos afirmar que não há nenhum indício de que Pedro esteve em Roma",
+      "answer": "V"
+    },
+    {
+      "id": "her2-tf-4",
+      "question": "Na prática podemos afirmar que os católicos veneram, mas não adoram os ídolos.",
+      "answer": "F"
+    },
+    {
       "id": "her2-tf-5",
-      "question": "A reencarnação ensinada na doutrina espírita é a mesma das doutrinas orientais.",
+      "question": "A música, no Brasil, não sofreu nenhuma influência ligada ao espiritismo.",
       "answer": "F"
     },
     {
       "id": "her2-tf-6",
-      "question": "Para traduzir as escrituras das placas de ouro Joseph Smith precisou estudar a língua egípcia.",
+      "question": "Para traduzir a escritura das placas de ouro Joseph Smith precisou estudar a língua egípcia.",
       "answer": "F"
     },
     {
       "id": "her2-tf-7",
-      "question": "A \"Tradução Novo Mundo\" é a Bíblia oficial das \"Testemunhas de Jeová\".",
+      "question": "A publicação principal das “Testemunhas de Jeová” é a “A Sentinela”.",
       "answer": "V"
     },
     {
       "id": "her2-tf-8",
-      "question": "A bênção e a maldição não estão nos bens, mas na forma de fazer uso deles.",
-      "answer": "V"
+      "question": "Para Elifaz, embora Jó fosse inocente e sincero, devia ter cometido algum pecado.",
+      "answer": "F"
     },
     {
       "id": "her2-tf-9",
-      "question": "Não é um propósito da Nova Era substituir a medicina convencional pela alternativa.",
+      "question": "O culto religioso da Nova Era é liturgicamente organizado.",
       "answer": "F"
     },
     {
       "id": "her2-tf-10",
-      "question": "Consciente ou não todos os meios de comunicação estão colaborando com Nova Era",
-      "answer": "V"
+      "question": "Para a Nova Era a fita entrelaçada nada tem a ver com a doutrina espírita.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "her2-mc-1",
-      "question": "É uma unção com azeite -",
+      "question": "A Teologia da Prosperidade prega -",
       "options": [
-        "O batismo",
-        "A extrema unção",
-        "O casamento",
-        "Todas estão corretas"
+        "uma mensagem materialista",
+        "o bem estar do corpo",
+        "a aquisição de riquezas",
+        "todas estão corretas."
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "her2-mc-2",
-      "question": "O deus da Nova Era é -",
+      "question": "A Nova Era está infiltrada na —",
       "options": [
-        "O criador do universo",
-        "\"Avatar\"",
-        "A energia mística e impessoal",
-        "Todas estão erradas"
+        "religião",
+        "política",
+        "literatura",
+        "todas estão corretas."
+      ],
+      "answer": 3
+    },
+    {
+      "id": "her2-mc-3",
+      "question": "Declarou que os ídolos são deuses estranhos -",
+      "options": [
+        "Paulo",
+        "Davi",
+        "Jacó",
+        "todas estão erradas."
       ],
       "answer": 2
     },
     {
-      "id": "her2-mc-3",
-      "question": "A Teologia da Prosperidade prega -",
-      "options": [
-        "Uma mensagem materialista",
-        "O bem estar do corpo",
-        "A aquisição de riquezas",
-        "Todas estão corretas"
-      ],
-      "answer": 3
-    },
-    {
       "id": "her2-mc-4",
-      "question": "A Nova Era está infiltrada na —",
+      "question": "Fundador do primeiro centro espírita do Brasil -",
       "options": [
-        "Religião",
-        "Política",
-        "Literatura",
-        "Todas estão corretas"
+        "Allan Kardec",
+        "Chico Xavier",
+        "Luís Olímpio",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "her2-mp-1",
-      "left": "Maria declarada \"mãe de Deus\"",
+      "left": "Maria declarada “mãe de Deus”",
       "right": "Concílio de Éfeso"
     },
     {
@@ -127,7 +127,7 @@
     },
     {
       "id": "her2-mp-6",
-      "left": "Instituiu a reza da \"Ave Maria\"",
+      "left": "Instituiu a reza da “Ave Maria”",
       "right": "Papa João XXII"
     }
   ]

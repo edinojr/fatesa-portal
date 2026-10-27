@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "evan2-tf-1",
-      "question": "Foram quatro os evangelhos para que tivéssemos uma biografia completa de Jesus.",
+      "question": "Somente os gêmeos univitelinos é que são exatamente iguais.",
       "answer": "F"
     },
     {
       "id": "evan2-tf-2",
-      "question": "Jesus deixou claro a impossibilidade da edificação de uma casa sobre a areia.",
+      "question": "Jesus ensinou que dois irmãos a caminho do tribunal deve procurar fazer um acordo.",
       "answer": "F"
     },
     {
       "id": "evan2-tf-3",
-      "question": "Onde não era desejado Jesus não insistia em permanecer.",
+      "question": "Amar o próximo e aborrecer o inimigo não estava na Lei de Moisés.",
       "answer": "V"
     },
     {
       "id": "evan2-tf-4",
-      "question": "Segundo profetizou Isaías a glória do segundo templo seria maior que a do primeiro.",
-      "answer": "F"
+      "question": "Para um filho de Deu amar o inimigo com seu próprio amor é difícil.",
+      "answer": "V"
     },
     {
       "id": "evan2-tf-5",
-      "question": "Marcos não deu destaque a Jesus como sendo um grande mestre",
+      "question": "No Sermão do Monte Jesus ministrou uma aula sobre a hipocrisia religiosa.",
       "answer": "V"
     },
     {
       "id": "evan2-tf-6",
-      "question": "Jesus negou o pedido que lhe foi feito pelo gardareno.",
-      "answer": "V"
+      "question": "Somente o crente que tem o dom de discernir é que pode fazer julgamento.",
+      "answer": "F"
     },
     {
       "id": "evan2-tf-7",
-      "question": "Dos quatro evangelhos, foi Lucas que mais detalhou a infância de Jesus.",
-      "answer": "V"
+      "question": "“Não julgueis”, portanto um obreiro não pode ser um juiz de direito.",
+      "answer": "F"
     },
     {
       "id": "evan2-tf-8",
-      "question": "Pela lei romana os condenados à morte de cruz eram pregados e não amarrados na cruz.",
-      "answer": "F"
+      "question": "Biblicamente, sem a cruz não é possível tomar posse no Reino de Deus.",
+      "answer": "V"
     },
     {
       "id": "evan2-tf-9",
-      "question": "Em seu evangelho João procurou mostrar Jesus como um homem perfeito.",
-      "answer": "F"
+      "question": "No Reino de Deus é o homem que tem que edificar sua casa espiritual.",
+      "answer": "V"
     },
     {
       "id": "evan2-tf-10",
-      "question": "Convencer o mundo do pecado, da justiça e do juízo é uma missão do Espírito Santo.",
-      "answer": "V"
+      "question": "Jesus, como Mestre, nunca mudou sua estratégia na área do ensino.",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "evan2-mc-1",
-      "question": "A única diferença entre as dez virgens -",
+      "question": "A missão primeira de um obreiro é —",
       "options": [
-        "Estava nas suas vestes",
-        "Algumas não tinham lâmpadas",
-        "Algumas dormiram",
-        "Todas estão erradas"
-      ],
-      "answer": 3
-    },
-    {
-      "id": "evan2-mc-2",
-      "question": "Em relação à morte de Jesus, os dois discípulos deixaram Jerusalém -",
-      "options": [
-        "Oito dias depois",
-        "No dia de sua morte",
-        "No terceiro dia",
-        "Todas estão erradas"
+        "defender o cristianismo",
+        "condenar o pecado",
+        "semear a Palavra de Deus",
+        "todas estão corretas"
       ],
       "answer": 2
     },
     {
-      "id": "evan2-mc-3",
-      "question": "Para levar alguém a Jesus é preciso —",
+      "id": "evan2-mc-2",
+      "question": "Jesus comparou o Reino dos Céus —",
       "options": [
-        "Conhecer Jesus",
-        "Amor pelas almas",
-        "Persistência para vencer dificuldades",
-        "Todas estão corretas"
+        "ao joio e ao trigo",
+        "à rede de pesca",
+        "tesouro escondido",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "evan2-mc-4",
-      "question": "Ao cego de nascença Jesus ordenou —",
+      "id": "evan2-mc-3",
+      "question": "O Sinédrio era formado —",
       "options": [
-        "Que seria curado no tanque de Betesda",
-        "Ir lavar no tanque de Betesada",
-        "Que ao lavar seria curado",
-        "Todas estão erradas"
+        "somente por sacerdotes",
+        "por 71 membros",
+        "só por escribas e fariseus",
+        "todas estão erradas"
+      ],
+      "answer": 1
+    },
+    {
+      "id": "evan2-mc-4",
+      "question": "A única diferença entre as Dez Virgens —",
+      "options": [
+        "estava nas suas vestes",
+        "cinco não tinham lâmpadas",
+        "algumas adormeceram",
+        "todas estão erradas"
       ],
       "answer": 3
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "evan2-mp-1",
-      "left": "Divindade de Jesus como Filho de Deus",
-      "right": "Evangelho de João"
+      "left": "As Leis do Reino",
+      "right": "primeiro sermão"
     },
     {
       "id": "evan2-mp-2",
-      "left": "Humanidade de Jesus como servo",
-      "right": "Evangelho de Marcos"
+      "left": "Instruções aos discípulos",
+      "right": "segundo sermão"
     },
     {
       "id": "evan2-mp-3",
-      "left": "Humanidade de Jesus como homem perfeito",
-      "right": "Evangelho de Lucas"
+      "left": "Parábolas sobre o reino",
+      "right": "terceiro sermão"
     },
     {
       "id": "evan2-mp-4",
-      "left": "Soberania de Jesus como Rei",
-      "right": "Evangelho de Mateus"
+      "left": "Censura aos líderes religiosos",
+      "right": "quarto sermão"
     },
     {
       "id": "evan2-mp-5",
-      "left": "Fixou residência após deixar Nazaré",
-      "right": "Cafarnaum"
+      "left": "Sermão escatológico",
+      "right": "quinto sermão"
     },
     {
       "id": "evan2-mp-6",
-      "left": "Lugar onde Jesus libertou uma endemoninhada",
-      "right": "Fenícia"
+      "left": "Formaram conselho contra o Rei",
+      "right": "os fariseus"
     }
   ]
 }

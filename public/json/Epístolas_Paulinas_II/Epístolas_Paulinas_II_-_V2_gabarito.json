@@ -9,92 +9,92 @@
     },
     {
       "id": "eppii2-tf-2",
-      "question": "A perfeição de um corpo está relacionada com a desigualdade de seus membros.",
+      "question": "No sentido espiritual a Bíblia afirma que o homem vivendo no pecado, está morto.",
       "answer": "V"
     },
     {
       "id": "eppii2-tf-3",
-      "question": "Em Filipos, como de costume, Paulo pregou o evangelho primeiro aos judeus na sinagoga.",
-      "answer": "F"
+      "question": "Ao chamar Timóteo de “meu filho”, Paulo declara ser seu pai espiritual.",
+      "answer": "V"
     },
     {
       "id": "eppii2-tf-4",
-      "question": "Um crente, sem dizer palavras, pode abrir ou fechar as portas para o evangelho.",
+      "question": "Como os “lugares celestiais” não descem, então o crente precisa subir.",
       "answer": "V"
     },
     {
       "id": "eppii2-tf-5",
-      "question": "No sentido espiritual a Bíblia afirma que o homem, vivendo no pecado, está morto.",
-      "answer": "V"
+      "question": "Os membros da igreja só podem ser identificados através da revelação do Espírito Santo.",
+      "answer": "F"
     },
     {
       "id": "eppii2-tf-6",
-      "question": "Podemos afirmar que o Anticristo será um homem criado e ungido por Satanás.",
+      "question": "No ministério de Paulo a primeira expulsão de demônios aconteceu em Filipos.",
       "answer": "F"
     },
     {
       "id": "eppii2-tf-7",
-      "question": "Ao chamar Timóteo de \"meu filho\", Paulo declara ser seu pai espiritual.",
-      "answer": "V"
+      "question": "Paulo, num primeiro momento, teve dificuldades para entender o que estava acontecendo em Colossos.",
+      "answer": "F"
     },
     {
       "id": "eppii2-tf-8",
-      "question": "A igreja não foi perseguida pelo Império Romano antes do ano 64 dC.",
+      "question": "A igreja de Tessalônica em pouco tempo tornou-se uma igreja missionária.",
       "answer": "V"
     },
     {
       "id": "eppii2-tf-9",
-      "question": "Paulo orientou Tito a tratar os obreiros da igreja de Creta com prudência e amor.",
+      "question": "O obreiro deve usar sua autoridade ministerial para corrigir erros doutrinários na igreja.",
       "answer": "F"
     },
     {
       "id": "eppii2-tf-10",
-      "question": "Sabemos, pela Bíblia, que ninguém pode ser obrigado a perdoar.",
+      "question": "Como obreiro auxiliar Timóteo esteve ao lado de Paulo por mais de doze anos",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "eppii2-mc-1",
-      "question": "As ruínas do Templo de Diana podem ser encontradas -",
+      "question": "Orientação de Paulo em relação aos hereges",
       "options": [
-        "Na Turquia",
-        "Na Síria",
-        "Na Grécia",
-        "Em nenhum lugar"
+        "afastar-se deles",
+        "tratá-los com amor",
+        "ensinar-lhes a Palavra",
+        "todas estão corretas."
       ],
       "answer": 0
     },
     {
       "id": "eppii2-mc-2",
-      "question": "Orientação de Paulo em relação aos hereges -",
-      "options": [
-        "Tratá-los com amor",
-        "Afastar-se deles",
-        "Ensinar-lhes a Palavra",
-        "Todas estão erradas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "eppii2-mc-3",
       "question": "Um atributo requerido para ser diácono –",
       "options": [
-        "Boa reputação",
-        "Ser cheio do Espírito santo",
-        "Cheio de sabedoria",
-        "Todas estão corretas"
+        "boa reputação",
+        "ser cheio do Espírito santo",
+        "cheio de sabedoria",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
-      "id": "eppii2-mc-4",
+      "id": "eppii2-mc-3",
       "question": "Ao escrever II Tessalonicenses Paulo estava em",
       "options": [
         "Éfeso",
-        "Corinto",
+        "Corínto",
         "Colossos",
-        "Todas estão erradas"
+        "todas estão erradas."
+      ],
+      "answer": 1
+    },
+    {
+      "id": "eppii2-mc-4",
+      "question": "Mensageiro que levou a Epístola a Colossos-",
+      "options": [
+        "Epafras",
+        "Tíquico",
+        "Timóteo",
+        "todas estão erradas."
       ],
       "answer": 1
     }
@@ -102,33 +102,33 @@
   "matchingPairs": [
     {
       "id": "eppii2-mp-1",
-      "left": "\"Besta\" que subiu do \"mar\"",
-      "right": "Anticristo"
+      "left": "“Marca registrada” da igreja",
+      "right": "santificação"
     },
     {
       "id": "eppii2-mp-2",
-      "left": "Sete \"cabeças\"",
-      "right": "Inteligência, liderança"
+      "left": "“Marca registrada” de Israel",
+      "right": "circuncisão"
     },
     {
       "id": "eppii2-mp-3",
-      "left": "Dez \"chifres\"",
-      "right": "Poder destruidor"
+      "left": "A igreja como corpo de Cristo",
+      "right": "tema da Epístola aos Efésios"
     },
     {
       "id": "eppii2-mp-4",
-      "left": "Dez diademas",
-      "right": "Capacidade de governar"
+      "left": "Não pode viver sem Cristo",
+      "right": "igreja"
     },
     {
       "id": "eppii2-mp-5",
-      "left": "Anticristo",
-      "right": "Homem do pecado, filho da perdição"
+      "left": "Nunca foi o povo de Deus",
+      "right": "os romanos"
     },
     {
       "id": "eppii2-mp-6",
-      "left": "\"Besta\" que subiu da terra",
-      "right": "Falso Profeta"
+      "left": "Povo de Deus até Abraão",
+      "right": "gentios"
     }
   ]
 }

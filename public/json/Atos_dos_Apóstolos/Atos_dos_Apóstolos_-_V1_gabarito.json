@@ -4,99 +4,99 @@
   "tfQuestions": [
     {
       "id": "atos1-tf-1",
-      "question": "Sendo grego, o objetivo de Lucas era evangelizar os gentios.",
-      "answer": "F"
-    },
-    {
-      "id": "atos1-tf-2",
-      "question": "Podemos afirmar que no dia de Pentecostes veio do céu um vento veemente.",
-      "answer": "F"
-    },
-    {
-      "id": "atos1-tf-3",
-      "question": "Numa igreja pentecostal pode haver manifestações carnais e até demoníacas.",
-      "answer": "V"
-    },
-    {
-      "id": "atos1-tf-4",
       "question": "É certo que se Pedro e João tivessem uma moeda o coxo não seria curado.",
       "answer": "V"
     },
     {
-      "id": "atos1-tf-5",
-      "question": "Hoje, em hipótese nenhuma alguém deve vender sua casa e dar o dinheiro à igreja",
-      "answer": "F"
-    },
-    {
-      "id": "atos1-tf-6",
-      "question": "Após a conversão os judeus cristãos abandonaram todos os costumes e tradições judaicas.",
-      "answer": "F"
-    },
-    {
-      "id": "atos1-tf-7",
-      "question": "Transformar a igreja numa seita judaica foi a primeira porta do inferno levantada contra ela.",
-      "answer": "V"
-    },
-    {
-      "id": "atos1-tf-8",
+      "id": "atos1-tf-2",
       "question": "Sabemos que Satanás impediu Paulo de retornar para Tessalônica.",
       "answer": "V"
     },
     {
-      "id": "atos1-tf-9",
+      "id": "atos1-tf-3",
       "question": "Tal como Ágabo, também as filhas de Filipe eram profetas.",
       "answer": "F"
     },
     {
-      "id": "atos1-tf-10",
+      "id": "atos1-tf-4",
       "question": "Na prisão, em Roma, Paulo sentiu-se impedido para fazer a obra de Deus.",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-5",
+      "question": "Em Atos dos Apóstolos o personagem central é o Espírito Santo.",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-6",
+      "question": "Para os judeus, hoje, a Festa do Pentecostes não tem o mesmo sentido que tinha.",
+      "answer": "V"
+    },
+    {
+      "id": "atos1-tf-7",
+      "question": "Os gentios presentes em Jerusalém, perguntaram “Que quer isto dizer ?”",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-8",
+      "question": "Os judeus, pela Lei de Moisés, tinham que orar três vezes ao dia.",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-9",
+      "question": "Numa igreja abençoada não pode haver problemas entre os irmãos",
+      "answer": "F"
+    },
+    {
+      "id": "atos1-tf-10",
+      "question": "É certo que, depois de sua conversão, Saulo foi transformado em um Paulo.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "atos1-mc-1",
-      "question": "Profetizaram ou anunciaram a vinda do Espírito Santo",
+      "question": "Profetizaram ou anunciaram a vinda do Espírito Santo —",
       "options": [
         "Joel",
         "Isaías",
         "João Batista",
-        "Todas estão corretas"
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "atos1-mc-2",
-      "question": "Condenado à morte, Paulo foi -",
+      "question": "Na igreja de Jerusalém havia —",
       "options": [
-        "Crucificado",
-        "Decapitado",
-        "Enforcado",
-        "Todas estão erradas"
+        "temor de Deus",
+        "ensino da Palavra",
+        "comunhão",
+        "todas estão corretas"
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "atos1-mc-3",
-      "question": "No momento da descida do Espírito Santo estavam reunidos -",
+      "question": "Em Atos destaca-se —",
       "options": [
-        "Quase 120 discípulos",
-        "Quase 180 discípulos",
-        "Quase 98 discípulos",
-        "Todas estão erradas"
+        "a doutrina da igreja",
+        "os milagres de Jesus",
+        "a obra missionária",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 2
     },
     {
       "id": "atos1-mc-4",
-      "question": "Na igreja de Jerusalém havia —",
+      "question": "Última das festas anuais —",
       "options": [
-        "Temor de Deus",
-        "Ensino da Palavra",
-        "Comunhão",
-        "Todas estão corretas"
+        "Festa da Colheita",
+        "Festa dos Tabernáculos",
+        "Festa da Páscoa",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 1
     }
   ],
   "matchingPairs": [
@@ -113,12 +113,12 @@
     {
       "id": "atos1-mp-3",
       "left": "Amor à Palavra de Deus",
-      "right": "Cheio do Espírito Santo"
+      "right": "cheio do Espírito Santo"
     },
     {
       "id": "atos1-mp-4",
       "left": "Autêntica Igreja Pentecostal",
-      "right": "Jerusalém"
+      "right": "Igreja de Jerusalém"
     },
     {
       "id": "atos1-mp-5",
@@ -128,7 +128,7 @@
     {
       "id": "atos1-mp-6",
       "left": "Aproxima e afasta o homem de Deus",
-      "right": "Temor e tremor"
+      "right": "temor e tremor"
     }
   ]
 }

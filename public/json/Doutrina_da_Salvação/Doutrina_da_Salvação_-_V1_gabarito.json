@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "dsal1-tf-1",
-      "question": "Pela Parábola das Bodas sabemos que os judeus não foram convidados para a festa.",
-      "answer": "F"
-    },
-    {
-      "id": "dsal1-tf-2",
       "question": "O plano de salvação só foi preparado por Deus após a queda do homem.",
       "answer": "F"
     },
     {
-      "id": "dsal1-tf-3",
-      "question": "Podemos afirmar que redenção e expiação são duas coisas diferentes.",
-      "answer": "V"
-    },
-    {
-      "id": "dsal1-tf-4",
-      "question": "Pela Bíblia sabemos que Deus não fez um inferno para o homem.",
-      "answer": "V"
-    },
-    {
-      "id": "dsal1-tf-5",
-      "question": "Segundo a Bíblia o homem não é salvo pela fé.",
-      "answer": "V"
-    },
-    {
-      "id": "dsal1-tf-6",
+      "id": "dsal1-tf-2",
       "question": "O regenerar significa uma reforma total realizada no homem.",
       "answer": "F"
     },
     {
+      "id": "dsal1-tf-3",
+      "question": "Antes da queda não havia como o homem entender o sentido da salvação.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal1-tf-4",
+      "question": "Sabemos ser uma bênção pertencer ao segundo grupo de convidados.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal1-tf-5",
+      "question": "A justiça de Deus exige reparação às ofensas contra sua santidade.",
+      "answer": "V"
+    },
+    {
+      "id": "dsal1-tf-6",
+      "question": "A única chamada divina é a chamada ministerial.",
+      "answer": "F"
+    },
+    {
       "id": "dsal1-tf-7",
-      "question": "É certo que os filhos de um casal salvo nascem sendo filhos de Deus.",
+      "question": "A fé salvifica existe no coração do homem desde seu nascimento.",
       "answer": "F"
     },
     {
       "id": "dsal1-tf-8",
-      "question": "Podemos afirmar que o homem salvo precisa praticar boas obras.",
-      "answer": "V"
+      "question": "Apenas uma vez na história a matéria produziu uma vida.",
+      "answer": "F"
     },
     {
       "id": "dsal1-tf-9",
-      "question": "A Bíblia afirma ser bom que os filhos de Deus sejam santos.",
+      "question": "Regeneração e novo nascimento são duas coisas diferentes.",
       "answer": "F"
     },
     {
       "id": "dsal1-tf-10",
-      "question": "Através da morte física o corpo de um homem salvo é decomposto e não glorificado.",
+      "question": "Justificação é como uma declaração legal de que o homem está isento de culpa.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "dsal1-mc-1",
-      "question": "Significado literal da palavra “metanóia”-",
+      "question": "Significado literal da palavra “metanoia” —",
       "options": [
-        "Arrependimento",
-        "Mudança de direção",
-        "Mudança de mente",
-        "Todas estão corretas"
+        "arrependimento",
+        "mudança de direção",
+        "mudança de mente",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "dsal1-mc-2",
-      "question": "Não comprova o novo nascimento -",
-      "options": [
-        "Batismo no corpo de Cristo",
-        "Batismo nas águas",
-        "Batismo com Espírito Santo",
-        "Todas estão erradas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "dsal1-mc-3",
       "question": "Fala da salvação com mais profundidade —",
       "options": [
         "Mateus",
         "Marcos",
         "Lucas",
-        "João"
+        "João."
       ],
       "answer": 3
     },
     {
-      "id": "dsal1-mc-4",
+      "id": "dsal1-mc-3",
       "question": "Nos escritos originais a palavra “Soter” com referência a Jesus é encontrada —",
       "options": [
-        "Uma vez",
-        "Vinte e quatro vezes",
-        "Nenhuma vez",
-        "Todas estão erradas"
+        "uma vez",
+        "vinte e quatro vezes",
+        "nenhuma vez",
+        "todas estão erradas."
+      ],
+      "answer": 1
+    },
+    {
+      "id": "dsal1-mc-4",
+      "question": "Os gentios em relação ao convite das bodas",
+      "options": [
+        "não foram convidados",
+        "estavam no 2º grupo de convidados",
+        "foram os primeiros convidados",
+        "todas estão erradas."
       ],
       "answer": 1
     }
@@ -103,32 +103,32 @@
     {
       "id": "dsal1-mp-1",
       "left": "Condição essencial para ver Deus",
-      "right": "Santificação"
+      "right": "santificação"
     },
     {
       "id": "dsal1-mp-2",
       "left": "Recebe no ato da regeneração",
-      "right": "Santificação instantânea"
+      "right": "santificação instantânea"
     },
     {
       "id": "dsal1-mp-3",
       "left": "Palavra, oração, sangue de Jesus",
-      "right": "Meios de conservar a santidade"
+      "right": "meios de conservar a santidade"
     },
     {
       "id": "dsal1-mp-4",
       "left": "Símbolo da santificação",
-      "right": "Pia de cobre"
+      "right": "pia de cobre"
     },
     {
       "id": "dsal1-mp-5",
       "left": "Separado para uso do Senhor",
-      "right": "Ser santo"
+      "right": "ser santo"
     },
     {
       "id": "dsal1-mp-6",
       "left": "Exigência da presença do corpo",
-      "right": "Altar do sacrifício"
+      "right": "altar do sacrifício"
     }
   ]
 }

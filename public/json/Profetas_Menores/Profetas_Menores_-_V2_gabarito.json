@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "pmen2-tf-1",
-      "question": "Israel ficou sem governo próprio de 586 aC até 1948 dC.",
-      "answer": "V"
-    },
-    {
-      "id": "pmen2-tf-2",
       "question": "O Profeta Amós proibiu Amazias de profetizar no Reino do Norte.",
       "answer": "F"
     },
     {
-      "id": "pmen2-tf-3",
-      "question": "O arrependimento que Deus exige é a confissão do pecado e o pedido de perdão.",
-      "answer": "V"
-    },
-    {
-      "id": "pmen2-tf-4",
+      "id": "pmen2-tf-2",
       "question": "A mensagem de arrependimento pregada por Joel foi aceita pelo povo.",
       "answer": "V"
     },
     {
-      "id": "pmen2-tf-5",
-      "question": "Amós foi enviado para pregar para um povo que sabia estar mal com Deus.",
+      "id": "pmen2-tf-3",
+      "question": "Na construção do templo os profetas atuaram como auxiliares de Zorobabel.",
+      "answer": "V"
+    },
+    {
+      "id": "pmen2-tf-4",
+      "question": "Malaquias, um profeta do pós-cativeiro, foi contemporâneo de Ageu e Zacarias.",
       "answer": "F"
     },
     {
+      "id": "pmen2-tf-5",
+      "question": "É certo que as promessas de Deus não contemplam apenas a Nação de Israel.",
+      "answer": "V"
+    },
+    {
       "id": "pmen2-tf-6",
-      "question": "Sendo, como era, um homem, Jonas com medo de ser morto, não foi para Nínive",
+      "question": "Em 722 aC. o Reino de Judá acabou e o Rei Oséias foi levado para o cativeiro.",
       "answer": "F"
     },
     {
       "id": "pmen2-tf-7",
-      "question": "Face ao arrependimento de Nínive, Deus revogou a sentença que pesava sobre ela",
-      "answer": "F"
-    },
-    {
-      "id": "pmen2-tf-8",
-      "question": "Na construção do Templo os profetas atuaram como auxiliares de Zorobabel.",
+      "question": "Embora Israel tenha clamado, Deus não veio em seu socorro.",
       "answer": "V"
     },
     {
+      "id": "pmen2-tf-8",
+      "question": "A praga de gafanhotos, referida por Joel, foi simbólica, não real.",
+      "answer": "F"
+    },
+    {
       "id": "pmen2-tf-9",
-      "question": "O Vale de Josafá, mencionado na Bíblia, até hoje nunca existiu.",
+      "question": "No reinado de Jeroboão II, Israel estava, materialmente, muito bem.",
       "answer": "V"
     },
     {
       "id": "pmen2-tf-10",
-      "question": "Malaquias, um profeta do pós cativeiro, foi contemporâneo de Ageu e Zacarias.",
-      "answer": "F"
+      "question": "Petra, uma cidade edificada numa montanha rochosa, era quase inconquistável.",
+      "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "pmen2-mc-1",
-      "question": "Joel profetizou sobre -",
+      "question": "Falou sobre o “Dia do Senhor” –",
       "options": [
-        "Israel no milênio",
-        "O julgamento das nações",
-        "Jerusalém restaurada",
-        "Todas estão corretas"
+        "Joel",
+        "Sofonias",
+        "Jesus",
+        "todas estão corretas."
       ],
       "answer": 3
     },
     {
       "id": "pmen2-mc-2",
-      "question": "O Profeta Zacarias nasceu -",
+      "question": "Deus prometeu enviar sobre a terra fome—",
       "options": [
-        "Em Jerusalém",
-        "Na Judeia",
-        "No cativeiro",
-        "Todas estão erradas"
+        "de pão",
+        "de carne",
+        "da Palavra",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "pmen2-mc-3",
-      "question": "Na tipologia bíblica, quem estava representado por Oséias e Gômer? -",
+      "question": "Profeta que profetizou contra Edom –",
       "options": [
-        "Oséias – Deus Pai; Gômer- Israel",
-        "Gômer – Deus Pai; Oséias-Israel",
-        "Apenas Oséia tipifica Israel",
-        "Todas alternativas estão erradas"
+        "Obadias",
+        "Isaías",
+        "Amós",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 3
     },
     {
       "id": "pmen2-mc-4",
-      "question": "Ao deixar Oséias, após seu casamento, Gômer. -",
+      "question": "Nínive foi destruída –",
       "options": [
-        "Deixou a prostituição definitivamente",
-        "Ela irou -se com Oseias",
-        "Voltou a prostituição",
-        "Todas alternativa estão erradas"
+        "pela Assíria",
+        "pelos Medos-Persas",
+        "por Babilônia",
+        "pelos romanos."
       ],
       "answer": 2
     }

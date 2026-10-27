@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "ep31-tf-1",
-      "question": "É certo que, dificilmente, Satanás consegue tocar num crente santificado.",
-      "answer": "F"
-    },
-    {
-      "id": "ep31-tf-2",
-      "question": "Numa igreja local o importante deve ser a qualidade e não a quantidade de membros.",
-      "answer": "V"
-    },
-    {
-      "id": "ep31-tf-3",
       "question": "A igreja de Corinto sobreviveu através do ensino ministrado por Paulo.",
       "answer": "V"
     },
     {
-      "id": "ep31-tf-4",
-      "question": "A Bíblia condena o adultério e a prostituição, mas nada fala sobre fornicação.",
-      "answer": "F"
-    },
-    {
-      "id": "ep31-tf-5",
-      "question": "Para os membros da igreja a Santa Ceia não é uma opção, é obrigação.",
+      "id": "ep31-tf-2",
+      "question": "Para os membros da igreja a santa ceia não é uma opção, é obrigação.",
       "answer": "V"
     },
     {
-      "id": "ep31-tf-6",
-      "question": "Os crentes fiéis são identificados através da posse dos dons espirituais.",
-      "answer": "F"
-    },
-    {
-      "id": "ep31-tf-7",
+      "id": "ep31-tf-3",
       "question": "É certo que a coleta levantada na Macedônia era para os pobres de Jerusalém.",
       "answer": "F"
     },
     {
-      "id": "ep31-tf-8",
-      "question": "Foi pelas mãos de Tito que Paulo enviou aos coríntios sua segunda epístola.",
+      "id": "ep31-tf-4",
+      "question": "A igreja visível, enquanto estiver aqui na terra, necessita de recursos financeiros.",
       "answer": "V"
+    },
+    {
+      "id": "ep31-tf-5",
+      "question": "Corinto, uma cidade grega, tornou-se famosa pela sabedoria dos mestres existentes ali.",
+      "answer": "F"
+    },
+    {
+      "id": "ep31-tf-6",
+      "question": "Paulo considerou ser bom que não houvesse divisão na igreja de Corinto.",
+      "answer": "F"
+    },
+    {
+      "id": "ep31-tf-7",
+      "question": "Os coríntios exaltavam a sabedoria humana bem como a espiritual.",
+      "answer": "F"
+    },
+    {
+      "id": "ep31-tf-8",
+      "question": "Em relação aos pecados sexuais a terminologia pode agravar o grau de pecaminosidade.",
+      "answer": "F"
     },
     {
       "id": "ep31-tf-9",
-      "question": "A igreja visível enquanto estiver aqui na terra necessita de recursos financeiros.",
-      "answer": "V"
+      "question": "Tendo a consciência tranquila não devemos preocupar com o que pensam de nós.",
+      "answer": "F"
     },
     {
       "id": "ep31-tf-10",
-      "question": "Paulo afirmou que Satanás pode transfigurar-se em anjo de luz.",
-      "answer": "V"
+      "question": "Numa igreja problemática como a de Corinto não poderia haver manifestação dos dons espirituais",
+      "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "ep31-mc-1",
-      "question": "Paulo elogiou os que disseram ser de -",
+      "question": "Aquele irmão abençoado enviado com Tito era -",
       "options": [
-        "Paulo",
-        "Cefas",
-        "Cristo",
-        "Todas estão erradas"
+        "Timóteo",
+        "nome ignorado",
+        "Barnabé",
+        "todas estão erradas.."
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "ep31-mc-2",
-      "question": "Aquele irmão abençoado enviado com Tito era -",
+      "question": "Paulo afirmou que os crentes de Corinto eram -",
       "options": [
-        "Nome ignorado",
-        "Timóteo",
-        "Barnabé",
-        "Todas estão erradas"
+        "santificados em Cristo",
+        "rebeldes",
+        "mundanos",
+        "todas estão erradas."
       ],
       "answer": 0
     },
     {
       "id": "ep31-mc-3",
-      "question": "Paulo afirmou que os crentes de Corinto eram -",
+      "question": "Apolo era –",
       "options": [
-        "Santificados em Cristo",
-        "Rebeldes",
-        "Mundanos",
-        "Todas estão erradas"
+        "pregador itinerante",
+        "natural de Alexandria",
+        "um pregador eloquente",
+        "todas estão corretas."
       ],
-      "answer": 0
+      "answer": 3
     },
     {
       "id": "ep31-mc-4",
-      "question": "Apolo era –",
+      "question": "Era maioria em Corinto –",
       "options": [
-        "Pregador itinerante",
-        "Natural de Alexandria",
-        "Um pregador eloquente",
-        "Todas estão corretas"
+        "os romanos",
+        "os comerciantes",
+        "os escravos",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 2
     }
   ],
   "matchingPairs": [
     {
       "id": "ep31-mp-1",
-      "left": "É um dom natural",
-      "right": "Eloquência"
+      "left": "È um dom natural",
+      "right": "eloquência"
     },
     {
       "id": "ep31-mp-2",
       "left": "É um dom de poder",
-      "right": "Operação de maravilhas"
+      "right": "operação de maravilhas"
     },
     {
       "id": "ep31-mp-3",
       "left": "É um dom de revelação",
-      "right": "Palavra de ciência"
+      "right": "palavra de ciência"
     },
     {
       "id": "ep31-mp-4",
       "left": "É um dom de inspiração",
-      "right": "Profecia"
+      "right": "profecia"
     },
     {
       "id": "ep31-mp-5",
       "left": "Um caminho mais excelente",
-      "right": "Amor"
+      "right": "amor"
     },
     {
       "id": "ep31-mp-6",
       "left": "Identifica um bom crente",
-      "right": "Fruto do Espírito"
+      "right": "fruto do Espírito"
     }
   ]
 }

@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "doud3-tf-1",
-      "question": "Pela Lei de Moisés, em Israel, a pena de morte era aplicada a quem adorasse o sol e a lua.",
-      "answer": "V"
-    },
-    {
-      "id": "doud3-tf-2",
-      "question": "O conhecimento teórico não leva o homem a Deus e não traz Deus ao homem.",
-      "answer": "V"
-    },
-    {
-      "id": "doud3-tf-3",
-      "question": "De várias formas as Escrituras procuram provar aos homens a existência de Deus.",
+      "question": "Pela Bíblia sabemos que em Israel nunca houve sacrifico de crianças a qualquer deus pagão.",
       "answer": "F"
     },
     {
+      "id": "doud3-tf-2",
+      "question": "Pela Bíblia podemos afirmar que foram poucas as vezes que Deus deixou de falar com o homem.",
+      "answer": "F"
+    },
+    {
+      "id": "doud3-tf-3",
+      "question": "Karl Marx, embora filho de judeu, reconhecia como único Deus a consciência do homem.",
+      "answer": "V"
+    },
+    {
       "id": "doud3-tf-4",
-      "question": "“De um só fez toda geração dos homens, para habitar sobre toda face da terra”, afirmou Pedro, no Sinédrio.",
+      "question": "Embora sendo o Senhor dos céus, Deus não é o Senhor da terra pois ela está no domínio de Satanás.",
       "answer": "F"
     },
     {
       "id": "doud3-tf-5",
-      "question": "Pela Bíblia sabemos que, sempre que necessário, Deus interfere no sentido de mudar o curso da história.",
-      "answer": "V"
+      "question": "Para o humanismo Deus é um ser supremo e transcendental.",
+      "answer": "F"
     },
     {
       "id": "doud3-tf-6",
-      "question": "Todos os atributos de Deus são comunicáveis em relação aos seus filhos.",
+      "question": "Segundo a Bíblia, nem mesmo Deus pode limitar o exercício de Sua onipotência.",
       "answer": "F"
     },
     {
       "id": "doud3-tf-7",
-      "question": "Ser ou não ser santo é uma decisão daqueles que são filhos de Deus.",
-      "answer": "F"
+      "question": "O Senhor Jesus afirmou que somente Deus é bom em si mesmo.",
+      "answer": "V"
     },
     {
       "id": "doud3-tf-8",
-      "question": "No sentido bíblico, benignidade não é sinônimo de bondade.",
-      "answer": "V"
+      "question": "Um homem de fé não necessita se preocupar em ser temperante ou equilibrado.",
+      "answer": "F"
     },
     {
       "id": "doud3-tf-9",
-      "question": "A queda de Satanás foi a provável causa da terra ter-se tornado caótica.",
-      "answer": "V"
+      "question": "É certo que a vida animal surgiu nas águas, saindo os animais depois para a terra.",
+      "answer": "F"
     },
     {
       "id": "doud3-tf-10",
-      "question": "Mesmo os filhos de Deus não podem entender, por nenhum meio, o mistério da Trindade.",
+      "question": "Quando Pedro afirmou que Deus ungiu Jesus de Nazaré o instrumento da unção foi o Espírito Santo.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "doud3-mc-1",
-      "question": "O Deus que conhecemos é -",
+      "question": "A obra do sétimo dia –",
       "options": [
-        "A difícil de perdoar",
-        "Sem compaixão",
-        "Grande e terrível",
-        "Todas estão erradas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "doud3-mc-2",
-      "question": "A obra do sétimo dia -",
-      "options": [
-        "Criação do homem",
-        "A criação dos anjos",
-        "Criação de animais",
-        "Todas estão erradas"
+        "a criação do homem",
+        "a criação dos anjos",
+        "a criação dos animais",
+        "todas estão erradas."
       ],
       "answer": 3
     },
     {
-      "id": "doud3-mc-3",
-      "question": "É onipresente –",
+      "id": "doud3-mc-2",
+      "question": "É um atributo moral de Deus -",
       "options": [
-        "Satanás",
-        "O arcanjo Miguel",
-        "Jesus",
-        "Todas estão corretas"
+        "a eternidade",
+        "a soberania",
+        "a santidade",
+        "todas estão corretas."
+      ],
+      "answer": 2
+    },
+    {
+      "id": "doud3-mc-3",
+      "question": "Segundo Salomão, melhor é o homem -",
+      "options": [
+        "valente",
+        "rico",
+        "longânimo",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
       "id": "doud3-mc-4",
-      "question": "A obra do sétimo dia –",
+      "question": "A Trindade pode ser encontrada -",
       "options": [
-        "A criação do homem",
-        "A criação dos anjos",
-        "A criação dos animais",
-        "Todas estão erradas"
+        "em Apocalipse",
+        "nos evangelhos",
+        "em Atos dos Apóstolos",
+        "todas estão corretas."
       ],
       "answer": 3
     }
@@ -103,22 +103,22 @@
     {
       "id": "doud3-mp-1",
       "left": "Deus na visão do judaísmo",
-      "right": "Deus revelado no Antigo Testamento"
+      "right": "Deus revelado pelo antigo Testamento"
     },
     {
       "id": "doud3-mp-2",
       "left": "Deus na visão do islamismo",
-      "right": "Ultra transcendental"
+      "right": "ultra transcendental"
     },
     {
       "id": "doud3-mp-3",
       "left": "Deus na visão do budismo",
-      "right": "Uma forma impessoal"
+      "right": "uma forma impessoal"
     },
     {
       "id": "doud3-mp-4",
       "left": "Deus na visão dos materialistas",
-      "right": "Não existe"
+      "right": "não existe"
     },
     {
       "id": "doud3-mp-5",
@@ -128,7 +128,7 @@
     {
       "id": "doud3-mp-6",
       "left": "Deus na visão da Bíblia",
-      "right": "O Grande Eu sou"
+      "right": "o Grande Eu sou"
     }
   ]
 }

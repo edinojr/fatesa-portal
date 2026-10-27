@@ -4,97 +4,97 @@
   "tfQuestions": [
     {
       "id": "hisi1-tf-1",
-      "question": "Na transladação de Enoque podemos ver uma simbologia do arrebatamento da igreja.",
+      "question": "Caso dependesse da escolha dos filhos de Israel eles jamais deixariam o Egito",
       "answer": "V"
     },
     {
       "id": "hisi1-tf-2",
-      "question": "No princípio a história começou com Adão e Eva e num segundo momento reiniciou com Noé e sua esposa",
-      "answer": "F"
-    },
-    {
-      "id": "hisi1-tf-3",
-      "question": "Sendo que Esaú era o primogênito é certo que Isaque deveria confirmar sua primogenitura.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi1-tf-4",
-      "question": "Caso dependesse da escolha dos filhos de Israel eles jamais deixariam o Egito.",
-      "answer": "V"
-    },
-    {
-      "id": "hisi1-tf-5",
-      "question": "A arca, símbolo da presença de Deus, deveria estar no meio do povo para ser protegida.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi1-tf-6",
-      "question": "Durante o período de conquistas foram poucas as vezes que Josué e seu exército retornaram a Gilgal.",
-      "answer": "F"
-    },
-    {
-      "id": "hisi1-tf-7",
-      "question": "O Livro de Juízes relata a história de um povo que começou bem mas terminou mal.",
-      "answer": "V"
-    },
-    {
-      "id": "hisi1-tf-8",
       "question": "Sendo gentios, não havia qualquer relação de parentesco entre os moabitas e os israelitas.",
       "answer": "F"
     },
     {
+      "id": "hisi1-tf-3",
+      "question": "Esdras voltou para Jerusalém para construir o templo e Neemias para construir os muros da cidade.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi1-tf-4",
+      "question": "Os 66 livros da Bíblia não estão colocados na ordem cronológica em que foram escritos.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi1-tf-5",
+      "question": "No princípio a história começou com Adão e Eva e num segundo momento ela reiniciou com Noé e sua esposa.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi1-tf-6",
+      "question": "Caso Abraão fosse nosso contemporâneo ele seria iraquiano.",
+      "answer": "V"
+    },
+    {
+      "id": "hisi1-tf-7",
+      "question": "José foi vendido aos egípcios por trinta moedas de prata.",
+      "answer": "F"
+    },
+    {
+      "id": "hisi1-tf-8",
+      "question": "Dúvida não poder existir de que Josué escreveu, inteiramente, seu livro.",
+      "answer": "F"
+    },
+    {
       "id": "hisi1-tf-9",
-      "question": "Embora fosse um desejo de Davi, Deus não lhe permitiu construir o templo.",
+      "question": "Do ponto de vista moral nada podemos encontrar na vida de Josué que comprometa sua conduta.",
       "answer": "V"
     },
     {
       "id": "hisi1-tf-10",
-      "question": "Esdras voltou para Jerusalém para construir o templo e Neemias para construir os muros da cidade.",
+      "question": "Podemos afirmar, com certeza, ter sido Samuel o autor do Livro de Juízes.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "hisi1-mc-1",
-      "question": "Em Gênesis o Espírito Santo reservou para José",
+      "question": "Em Gênesis o Espírito Santo reservou para José –",
       "options": [
-        "Do capítulo 37 ao 50",
+        "do capítulo 37 ao 50",
         "13 capítulos",
-        "15 capítulos",
-        "Todas estão erradas"
+        "14 capítulos",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 1
     },
     {
       "id": "hisi1-mc-2",
-      "question": "Jerusalém foi -",
-      "options": [
-        "Edificada por Davi",
-        "Primeira capital de Israel",
-        "Tomada dos jebuseus",
-        "Todas estão corretas"
-      ],
-      "answer": 2
-    },
-    {
-      "id": "hisi1-mc-3",
       "question": "Andou com Deus e não morreu –",
       "options": [
         "Enoque",
         "Adão",
         "Noé",
-        "Todas estão corretas"
+        "todas estão corretas."
       ],
       "answer": 0
     },
     {
-      "id": "hisi1-mc-4",
+      "id": "hisi1-mc-3",
       "question": "Primeiro desafio de Josué -",
       "options": [
-        "Tomar Jericó",
-        "Atravessar o Jordão",
-        "Conquistar Gilgal",
-        "Circuncidar os israelitas"
+        "tomar Jericó",
+        "atravessar o Jordão",
+        "conquistar Gilgal",
+        "circuncidar os israelitas."
+      ],
+      "answer": 1
+    },
+    {
+      "id": "hisi1-mc-4",
+      "question": "A arca permaneceu com sua porta aberta -",
+      "options": [
+        "três dias",
+        "sete dias",
+        "dez dias",
+        "todas estão erradas."
       ],
       "answer": 1
     }
@@ -103,32 +103,32 @@
     {
       "id": "hisi1-mp-1",
       "left": "Gibeão",
-      "right": "Heveus"
+      "right": "heveus"
     },
     {
       "id": "hisi1-mp-2",
       "left": "Josué",
-      "right": "Hábil administrador"
+      "right": "hábil administrador"
     },
     {
       "id": "hisi1-mp-3",
       "left": "Tottem",
-      "right": "Astrônomo"
+      "right": "astrônomo"
     },
     {
       "id": "hisi1-mp-4",
       "left": "Jabim",
-      "right": "Rei cananeu"
+      "right": "rei cananeu"
     },
     {
       "id": "hisi1-mp-5",
       "left": "Gola",
-      "right": "Cidade de refúgio"
+      "right": "cidade de refúgio"
     },
     {
       "id": "hisi1-mp-6",
       "left": "Eliazar",
-      "right": "Sacerdote"
+      "right": "sacerdote"
     }
   ]
 }

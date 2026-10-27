@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "bibl1-tf-1",
-      "question": "A presença material da Bíblia numa casa não traz nenhuma proteção.",
+      "question": "No Livro de Ester as expressões Deus e Senhor não são encontradas.",
       "answer": "V"
     },
     {
       "id": "bibl1-tf-2",
-      "question": "No livro de Ester as expressões Deus e Senhor não são encontradas.",
-      "answer": "V"
-    },
-    {
-      "id": "bibl1-tf-3",
-      "question": "Em quase todos os livros da Bíblia Jesus é o personagem central.",
-      "answer": "F"
-    },
-    {
-      "id": "bibl1-tf-4",
       "question": "Dos 27 livros do Novo Testamento, num sentido literal, Paulo é o autor de treze.",
       "answer": "V"
     },
     {
+      "id": "bibl1-tf-3",
+      "question": "Vista no sentido material a Bíblia é apenas um livro; sua presença física não traz qualquer proteção.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl1-tf-4",
+      "question": "Podemos afirmar ser a Bíblia o Livro da História da Redenção.",
+      "answer": "V"
+    },
+    {
       "id": "bibl1-tf-5",
-      "question": "O aramaico, língua falada por Jesus, não é mais falado em nenhum lugar da terra.",
+      "question": "No Livro de Oséias Jesus não aparece visto que a figura central é a de Deus Pai.",
       "answer": "F"
     },
     {
       "id": "bibl1-tf-6",
-      "question": "O único exemplar existente da “Septuaginta”, no original, encontra-se no Vaticano.",
-      "answer": "F"
+      "question": "A expressão “testamento”, no sentido literal, expressa a ideia de “aliança” ou “concerto”.",
+      "answer": "V"
     },
     {
       "id": "bibl1-tf-7",
-      "question": "O Novo Testamento da chamada de “nossa” Bíblia é igual ao da chamada Bíblia católica.",
+      "question": "Não existe na terra um só texto bíblico escrito pelo próprio autor.",
       "answer": "V"
     },
     {
       "id": "bibl1-tf-8",
-      "question": "Para contar a história de cem anos da vida de Abraão a Bíblia fez uso de 14 capítulos.",
+      "question": "Todas as traduções existentes da Bíblia são traduções indiretas.",
       "answer": "V"
     },
     {
       "id": "bibl1-tf-9",
-      "question": "Nos cerca de quatrocentos anos do período interbíblico Deus não levantou nenhum profeta.",
+      "question": "Embora escrita por homem, o autor espiritual da Bíblia é o Espírito Santo.",
       "answer": "V"
     },
     {
       "id": "bibl1-tf-10",
-      "question": "Sendo apócrifos, os livros dos Macabeus não têm qualquer valor bíblico ou histórico.",
+      "question": "Através dos estudos arqueológicos foi possível determinar o tempo entre a criação do homem e sua queda.",
       "answer": "F"
     }
   ],
   "mcQuestions": [
     {
       "id": "bibl1-mc-1",
-      "question": "É um profeta da escrita:",
+      "question": "É um profeta da escrita –",
       "options": [
         "Elias",
         "Sofonias",
         "Natã",
-        "Todas estão corretas"
+        "todas estão corretas."
       ],
       "answer": 1
     },
     {
       "id": "bibl1-mc-2",
-      "question": "Concílio que reconheceu o Cânon do Novo Testamento:",
+      "question": "Segundo material usado para escritos dos manuais bíblicos –",
       "options": [
-        "III Concílio de Cartago",
-        "Concílio de Jâmnia",
-        "Concílio de Trento",
-        "Todas estão erradas"
+        "pergaminho",
+        "papiro",
+        "papel",
+        "todas estão erradas."
       ],
       "answer": 0
     },
     {
       "id": "bibl1-mc-3",
-      "question": "Podemos ver Jesus no Livro de Daniel como:",
+      "question": "O preço da redenção foi exigido-",
       "options": [
-        "Terceiro homem na fornalha",
-        "Quarto homem na fornalha",
-        "Segundo homem na fornalha",
-        "Todas estão corretas"
+        "por Satanás",
+        "pelo amor de Deus",
+        "pela justiça de Deus",
+        "todas estão erradas."
       ],
-      "answer": 1
+      "answer": 2
     },
     {
       "id": "bibl1-mc-4",
-      "question": "Profetas do pós cativeiro:",
+      "question": "Um livro do Antigo Testamento com um só capítulo –",
       "options": [
-        "Ageu",
-        "Zacarias",
-        "Malaquias",
-        "Todas estão corretas"
+        "Naum",
+        "Obadias",
+        "Sofonias",
+        "todas estão erradas."
       ],
-      "answer": 3
+      "answer": 1
     }
   ],
   "matchingPairs": [
     {
       "id": "bibl1-mp-1",
-      "left": "Língua popular no tempo de Jesus",
-      "right": "Aramaico"
+      "left": "Bibliolatria",
+      "right": "adivinhação pela Bíblia"
     },
     {
       "id": "bibl1-mp-2",
-      "left": "Falava em hebraico e aramaico",
-      "right": "Paulo"
+      "left": "Bíblia",
+      "right": "rolo ou volume"
     },
     {
       "id": "bibl1-mp-3",
-      "left": "Local onde os judeus aprenderam o aramaico",
-      "right": "Babilônia"
+      "left": "“Teuchos”",
+      "right": "vários rolos pequenos"
     },
     {
       "id": "bibl1-mp-4",
-      "left": "Copiavam e interpretavam as leis",
-      "right": "Escribas"
+      "left": "“Biblos”",
+      "right": "um livro pequeno"
     },
     {
       "id": "bibl1-mp-5",
-      "left": "Copista que escreveu a Epístola aos Romanos",
-      "right": "Tércio"
+      "left": "“Biblion”",
+      "right": "folha de papiro preparada para escrita"
     },
     {
       "id": "bibl1-mp-6",
-      "left": "Contribuiu para a divulgação do Evangelho",
-      "right": "Koiné"
+      "left": "Bibliomancia",
+      "right": "adoração da Bíblia"
     }
   ]
 }

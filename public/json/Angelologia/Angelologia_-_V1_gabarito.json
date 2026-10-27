@@ -4,131 +4,131 @@
   "tfQuestions": [
     {
       "id": "ange1-tf-1",
-      "question": "A expressão anjo nunca foi e não pode ser usada em relação ao homem",
+      "question": "A expressão “anjo” nunca foi e não pode ser usada em relação ao homem.",
       "answer": "F"
     },
     {
       "id": "ange1-tf-2",
-      "question": "Quando Jesus fez uso da expressão “manietar o valente” ele referia-se ao Espírito Santo.",
+      "question": "Diferentemente da igreja, os anjos não podem adorar a Cristo como Redentor.",
       "answer": "V"
     },
     {
       "id": "ange1-tf-3",
-      "question": "Diferentemente da igreja os anjos não podem adorar a Cristo como Redentor.",
-      "answer": "V"
-    },
-    {
-      "id": "ange1-tf-4",
-      "question": "Evolucionismo e criacionismo são as duas teorias bíblicas sobre a origem do homem.",
-      "answer": "F"
-    },
-    {
-      "id": "ange1-tf-5",
-      "question": "Mordomia fala da administração de bens alheios e que, no futuro, poderão pertencer ao mordomo.",
-      "answer": "F"
-    },
-    {
-      "id": "ange1-tf-6",
       "question": "Para um crente fiel é fácil arrancar ou neutralizar uma raiz de amargura.",
       "answer": "F"
     },
     {
-      "id": "ange1-tf-7",
-      "question": "Alma e espírito não podem ser separados nesta vida e nem na eternidade.",
-      "answer": "V"
-    },
-    {
-      "id": "ange1-tf-8",
+      "id": "ange1-tf-4",
       "question": "Indiretamente, Adão procurou transferir sua culpa para o próprio Deus.",
       "answer": "V"
     },
     {
+      "id": "ange1-tf-5",
+      "question": "Pelo uso da razão o homem não tem condições para entender como foram criados os céus e a terra.",
+      "answer": "V"
+    },
+    {
+      "id": "ange1-tf-6",
+      "question": "Através da Bíblia podemos determinar o tempo da rebelião dos anjos.",
+      "answer": "F"
+    },
+    {
+      "id": "ange1-tf-7",
+      "question": "Há entre os anjos uma perfeita hierarquia que, foi definida por Deus.",
+      "answer": "V"
+    },
+    {
+      "id": "ange1-tf-8",
+      "question": "Ao pecar o homem conservou a semelhança, mas perdeu a imagem de Deus.",
+      "answer": "F"
+    },
+    {
       "id": "ange1-tf-9",
-      "question": "O preço a ser pago pela redenção do homem foi uma exigência da justiça de Deus.",
+      "question": "A imagem e semelhança de Deus no homem não devem ser vistas no sentido material",
       "answer": "V"
     },
     {
       "id": "ange1-tf-10",
-      "question": "Podemos afirmar que se a pessoa sente que pecou contra o Espírito Santo é sinal de que ela não pecou.",
+      "question": "Pela Bíblia sabemos que o corpo sempre esteve ligado ao sacrifício.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "ange1-mc-1",
-      "question": "É chamado de “grande príncipe” -",
+      "question": "O pecado –",
       "options": [
-        "Jesus",
-        "Miguel",
-        "Lúcifer",
-        "Todas estão corretas"
-      ],
-      "answer": 1
-    },
-    {
-      "id": "ange1-mc-2",
-      "question": "O pecado -",
-      "options": [
-        "Existia antes do homem",
-        "Foi criado com o homem",
-        "Foi criado pelo homem",
-        "Todas estão erradas"
+        "existia antes do homem",
+        "foi criado pelo homem",
+        "foi criado com o homem",
+        "todas estão erradas."
       ],
       "answer": 0
     },
     {
-      "id": "ange1-mc-3",
+      "id": "ange1-mc-2",
       "question": "Os anjos não possuem -",
       "options": [
-        "Inteligência",
-        "Corpo espiritual",
-        "Vida eterna",
-        "Todas estão corretas"
+        "inteligência",
+        "corpo espiritual",
+        "vida eterna",
+        "todas estão corretas."
       ],
       "answer": 2
     },
     {
-      "id": "ange1-mc-4",
+      "id": "ange1-mc-3",
       "question": "Os anjos foram criados –",
       "options": [
-        "Pela palavra de Deus",
-        "Pelas mãos de Deus",
-        "De matéria pré-existente",
-        "Pelo sopro de Deus"
+        "pela palavra de Deus",
+        "pelas mãos de Deus",
+        "de matéria pré-existente",
+        "pelo sopro de Deus."
       ],
       "answer": 0
+    },
+    {
+      "id": "ange1-mc-4",
+      "question": "Deus no princípio, criou –",
+      "options": [
+        "os anjos santos",
+        "os anjos",
+        "os anjos bons e maus",
+        "todas estão corretas."
+      ],
+      "answer": 1
     }
   ],
   "matchingPairs": [
     {
       "id": "ange1-mp-1",
-      "left": "Corpo, alma e espírito",
-      "right": "Homem"
+      "left": "Não criam na existência de anjos",
+      "right": "saduceus"
     },
     {
       "id": "ange1-mp-2",
-      "left": "Corpo e alma",
-      "right": "Animal irracional"
+      "left": "Criam na existência de anjos",
+      "right": "fariseus"
     },
     {
       "id": "ange1-mp-3",
-      "left": "Homem natural",
-      "right": "Homem velho"
+      "left": "Recebeu um anjo em sua casa",
+      "right": "Cornélio"
     },
     {
       "id": "ange1-mp-4",
-      "left": "Homem espiritual",
-      "right": "Homem novo"
+      "left": "Recebeu dois anjos em sua casa",
+      "right": "Ló"
     },
     {
       "id": "ange1-mp-5",
-      "left": "Iniquidade",
-      "right": "Faz divisão entre homem e Deus"
+      "left": "Viu anjos em seu sonho",
+      "right": "Jacó"
     },
     {
       "id": "ange1-mp-6",
-      "left": "O nascer do Espírito",
-      "right": "Regeneração"
+      "left": "Ajudado no deserto por um anjo",
+      "right": "Elias"
     }
   ]
 }

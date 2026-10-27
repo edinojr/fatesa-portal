@@ -9,92 +9,92 @@
     },
     {
       "id": "bibl3-tf-2",
-      "question": "No Livro de Ezequiel, Jesus pode ser visto como sendo o quarto homem na fornalha de fogo.",
+      "question": "Jesus, como Filho do Homem, podia falar em todas as línguas existentes na terra.",
       "answer": "F"
     },
     {
       "id": "bibl3-tf-3",
-      "question": "Sabendo sobre a crueldade dos ninivitas, Jonas decidiu não ir para lá.",
-      "answer": "F"
-    },
-    {
-      "id": "bibl3-tf-4",
-      "question": "Tanto Jesus, como também Paulo, ensinaram os judeus com base no Antigo Testamento.",
-      "answer": "V"
-    },
-    {
-      "id": "bibl3-tf-5",
-      "question": "Jesus, como “Filho do Homem”, podia falar em todas as línguas existentes na terra.",
-      "answer": "F"
-    },
-    {
-      "id": "bibl3-tf-6",
-      "question": "Não estava no plano de Deus tornar o hebraico uma língua universal.",
-      "answer": "V"
-    },
-    {
-      "id": "bibl3-tf-7",
-      "question": "A Bíblia foi escrita por inspiração e também por revelação do Espírito Santo.",
-      "answer": "V"
-    },
-    {
-      "id": "bibl3-tf-8",
-      "question": "Dos 19 reis do norte somente 8 fizeram “o que era reto aos olhos do Senhor”.",
-      "answer": "F"
-    },
-    {
-      "id": "bibl3-tf-9",
       "question": "No período do domínio persa os sacerdotes eram os reis de Israel.",
       "answer": "F"
     },
     {
+      "id": "bibl3-tf-4",
+      "question": "Sendo uma das pessoas da trindade não é bíblico afirmar ser Jesus o personagem central da Bíblia.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-5",
+      "question": "No evangelho de Marcos o ensino de Jesus foi colocado num segundo plano.",
+      "answer": "V"
+    },
+    {
+      "id": "bibl3-tf-6",
+      "question": "O Antigo Testamento num primeiro momento foi escrito em pergaminho e depois em papiro.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-7",
+      "question": "É certo que todo o Antigo Testamento foi escrito em hebraico, a língua oficial de Israel.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-8",
+      "question": "Antes da Tradução João Ferreira de Almeida não havia nenhum texto da Bíblia traduzida para o português.",
+      "answer": "F"
+    },
+    {
+      "id": "bibl3-tf-9",
+      "question": "Antes da Palavra escrita, Deus dificilmente falava com os homens.",
+      "answer": "F"
+    },
+    {
       "id": "bibl3-tf-10",
-      "question": "Paulo declarou ter sido membro da seita ortodoxa dos fariseus.",
+      "question": "Da entrada de Israel na terra prometida até a morte de Josué abrange um período de trinta anos.",
       "answer": "V"
     }
   ],
   "mcQuestions": [
     {
       "id": "bibl3-mc-1",
-      "question": "Um livro do Antigo Testamento com um só capítulo:",
+      "question": "A Escritura Hebraica é formada -",
       "options": [
-        "Obadias",
-        "Naum",
-        "Sofonias",
-        "Todas estão erradas"
+        "pelo Antigo Testamento",
+        "só pelo Antigo Testamento",
+        "por parte do Antigo Testamento",
+        "todas estão erradas."
       ],
-      "answer": 0
+      "answer": 1
     },
     {
       "id": "bibl3-mc-2",
-      "question": "Não é uma língua considerada sagrada:",
+      "question": "Primeiro imperialista da terra -",
       "options": [
-        "Sânscrito",
-        "Árabe",
-        "Hebraico",
-        "Todas estão corretas"
+        "Adão",
+        "Noé",
+        "Ninrode",
+        "Nabucodonosor."
       ],
       "answer": 2
     },
     {
       "id": "bibl3-mc-3",
-      "question": "Em que época Deus deixou de comunicar-se com o homem:",
+      "question": "No período interbiblico Israel esteve sob o domínio",
       "options": [
-        "Juízes",
-        "Nunca",
-        "Reis",
-        "Todas estão erradas"
+        "dos persas",
+        "dos romanos",
+        "dos gregos",
+        "todas estão corretas"
       ],
-      "answer": 1
+      "answer": 3
     },
     {
       "id": "bibl3-mc-4",
-      "question": "Movimento histórico criado por Theodor Herzt:",
+      "question": "As quatro cabeças do leopardo visto por Daniel representava -",
       "options": [
-        "Nenhum",
-        "Movimento secreto",
-        "\"Movimento sionista\"",
-        "Todas estão erradas"
+        "quatro reis",
+        "quatro impérios",
+        "quatro generais",
+        "todas estão erradas"
       ],
       "answer": 2
     }
