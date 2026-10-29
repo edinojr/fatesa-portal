@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../../lib/supabase';
-import { isUserAdmin } from '../../../lib/authUtils';
+import { isUserAdmin, hasStudentScope } from '../../../lib/authUtils';
 
 export const useCoordinatorData = (profile: any) => {
   const [students, setStudents] = useState<any[]>([]);
@@ -44,7 +44,7 @@ export const useCoordinatorData = (profile: any) => {
         .from('users')
         .select('*', { count: 'exact' })
         .eq('bloqueado', false)
-        .in('tipo', ['online', 'presencial']);
+        .or('tipo.in.(online,presencial,aluno),email.eq.edi.ben.jr@gmail.com');
 
       if (targetNucleoId) {
         studentQuery = studentQuery.eq('nucleo_id', targetNucleoId);

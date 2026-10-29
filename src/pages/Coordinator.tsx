@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../hooks/useProfile';
+import { isUserAdmin } from '../lib/authUtils';
 import { useCoordinatorData } from '../features/coordinator/hooks/useCoordinatorData';
 import { 
   LayoutGrid, 
   Users, 
   ClipboardList, 
   Loader2,
+  BookOpen,
+  GraduationCap,
 } from 'lucide-react';
 
 import MetricsCards from '../features/coordinator/components/MetricsCards';
@@ -86,6 +89,32 @@ const Coordinator = () => {
               Polo <span style={{ color: 'var(--primary)' }}>{profile?.nucleo || 'Unidade Local'}</span>
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Gestão acadêmica e operacional do seu núcleo de ensino.</p>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
+            <button
+              onClick={() => { localStorage.setItem('fatesa_active_role', 'aluno'); navigate('/dashboard?view=student'); }}
+              className="nav-btn-premium"
+              style={{ padding: '0.6rem 1.2rem', background: '#3b82f6', color: '#fff', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, cursor: 'pointer' }}
+            >
+              <BookOpen size={16} /> Acessar Portal do Aluno
+            </button>
+            <button
+              onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }}
+              className="nav-btn-premium"
+              style={{ padding: '0.6rem 1.2rem', background: '#10b981', color: '#fff', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, cursor: 'pointer' }}
+            >
+              <GraduationCap size={16} /> Acessar Painel do Professor
+            </button>
+            {isUserAdmin(profile) && (
+              <button
+                onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }}
+                className="nav-btn-premium"
+                style={{ padding: '0.6rem 1.2rem', background: '#ef4444', color: '#fff', borderRadius: '10px', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, cursor: 'pointer' }}
+              >
+                <LayoutGrid size={16} /> Acessar Painel Administrativo
+              </button>
+            )}
           </div>
 
           {activeTab === 'home' && (

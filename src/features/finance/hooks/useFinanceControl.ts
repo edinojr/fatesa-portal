@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { financeService } from '../../../services/financeService';
+import { isUserAdmin } from '../../../lib/authUtils';
 
 export const useFinanceControl = (userProfile: any) => {
   const [payments, setPayments] = useState<any[]>([]);
@@ -29,7 +30,7 @@ export const useFinanceControl = (userProfile: any) => {
       const isUnderExtension = extensionDate && todayStr <= extensionDate && day <= 15;
       
       const isPresencial = userProfile?.tipo === 'presencial';
-      const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(userProfile?.tipo || '') || (userProfile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
+      const isStaff = isUserAdmin(userProfile) || ['admin', 'professor', 'suporte', 'colaborador'].includes(userProfile?.tipo || '') || (userProfile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
       const isExempt = userProfile?.bolsista || isStaff || isPresencial;
 
       if (hasOpenPayment && !isExempt) {

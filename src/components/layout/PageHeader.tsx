@@ -47,7 +47,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       const activeRole = localStorage.getItem('fatesa_active_role')
       if (activeRole === 'admin') navigate('/admin')
       else if (activeRole === 'professor') navigate('/professor')
-      else if (activeRole === 'coordenador_polo') navigate('/coordenador')
+      else if (activeRole === 'coordenador_polo' || activeRole === 'coordenador') navigate('/coordenador')
       else navigate('/dashboard')
     }
   }
@@ -66,9 +66,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     if (variant === 'viewer') return null
     
     const actionButtons: React.ReactNode[] = []
-    const currentPanel: 'admin' | 'professor' | 'aluno' = 
+    const currentPanel: 'admin' | 'professor' | 'aluno' | 'coordenador' = 
       variant === 'admin' ? 'admin' : 
-      variant === 'professor' ? 'professor' : 'aluno'
+      variant === 'professor' ? 'professor' : 
+      variant === 'coordinator' ? 'coordenador' : 'aluno'
 
     actionButtons.push(
       <PanelSwitcher key="panel-switcher" currentPanel={currentPanel} />

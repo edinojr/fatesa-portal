@@ -7,7 +7,8 @@ import {
   ChevronDown, 
   Check, 
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Users
 } from 'lucide-react'
 import { useProfile } from '../../hooks/useProfile'
 import { isUserAdmin } from '../../lib/authUtils'
@@ -19,7 +20,7 @@ export interface PanelSwitcherProps {
 }
 
 interface PanelOption {
-  id: 'admin' | 'aluno' | 'professor'
+  id: 'admin' | 'aluno' | 'professor' | 'coordenador'
   name: string
   shortName: string
   badge: string
@@ -61,14 +62,15 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
   const isAdmin = isUserAdmin(profile)
   const roles = (profile.caminhos_acesso as string[]) || []
   const isProfessor = isAdmin || profile.tipo === 'professor' || roles.includes('professor')
+  const isCoordinator = isAdmin || profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo')
 
   // Se o usuário não for admin e tiver apenas 1 papel, não exibe o seletor
-  const totalRoles = (isAdmin ? 3 : 1) + (isProfessor && !isAdmin ? 1 : 0)
+  const totalRoles = (isAdmin ? 4 : 1) + (isProfessor && !isAdmin ? 1 : 0) + (isCoordinator && !isAdmin ? 1 : 0)
   if (!isAdmin && totalRoles <= 1) {
     return null
   }
 
-  // Lista de painéis disponíveis para o usuário (excluído coordenador/polo conforme solicitado)
+  // Lista de painéis disponíveis para o usuário
   const options: PanelOption[] = []
 
   if (isAdmin) {
@@ -97,6 +99,19 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
     })
   }
 
+  if (isCoordinator) {
+    options.push({
+      id: 'coordenador',
+      name: 'Painel do Coordenador',
+      shortName: 'Coordenador',
+      badge: 'Polo',
+      badgeColor: '#8b5cf6',
+      description: 'Gestão dos alunos e chamadas do polo',
+      path: '/coordenador',
+      icon: <Users size={18} />
+    })
+  }
+
   // Todo usuário com acesso a múltiplos painéis pode acessar o Painel do Aluno
   options.push({
     id: 'aluno',
@@ -109,8 +124,8 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
     icon: <BookOpen size={18} />
   })
 
-  const normalizedPanel = currentPanel === 'coordenador' ? 'admin' : currentPanel
-  const currentOption = options.find(o => o.id === normalizedPanel) || options[0]
+  const currentOption = options.find(o => o.id === currentPanel) || options[0]
+  const isLightHeader = currentPanel === 'aluno'
 
   const handleSelectPanel = (opt: PanelOption) => {
     localStorage.setItem('fatesa_active_role', opt.id)
@@ -135,11 +150,11 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
           gap: '0.6rem',
           padding: '0.45rem 0.9rem',
           borderRadius: '12px',
-          background: 'rgba(255, 255, 255, 0.15)',
-          border: '1px solid rgba(255, 255, 255, 0.35)',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
+          background: isLightHeader ? '#003366' : 'rgba(255, 255, 255, 0.18)',
+          border: isLightHeader ? '1.5px solid #d4af37' : '1px solid rgba(255, 255, 255, 0.35)',
+          boxShadow: isLightHeader ? '0 4px 15px rgba(0, 51, 102, 0.25)' : '0 4px 15px rgba(0,0,0,0.15)',
           cursor: 'pointer',
-          color: '#fff',
+          color: '#ffffff',
           fontWeight: 700,
           fontSize: '0.82rem',
           transition: 'all 0.2s ease',
@@ -151,7 +166,7 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
           alignItems: 'center', 
           justifyContent: 'center',
           color: currentOption.badgeColor,
-          background: 'rgba(255,255,255,0.15)',
+          background: isLightHeader ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.15)',
           padding: '4px',
           borderRadius: '8px'
         }}>
@@ -159,11 +174,11 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
         </span>
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', lineHeight: 1.15 }}>
-          <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'rgba(255,255,255,0.85)', fontWeight: 800 }}>
-            Painel Atual
+          <span style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: isLightHeader ? 'rgba(212, 175, 55, 0.95)' : 'rgba(255,255,255,0.85)', fontWeight: 800 }}>
+            Painel Ativo
           </span>
-          <span style={{ fontWeight: 800, color: '#fff' }}>
-            {currentOption.name}
+          <span style={{ fontWeight: 800, color: '#ffffff' }}>
+            {currentOption.shortName}
           </span>
         </div>
 
@@ -171,9 +186,9 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
           fontSize: '0.65rem',
           padding: '2px 7px',
           borderRadius: '20px',
-          background: 'rgba(255,255,255,0.2)',
+          background: isLightHeader ? 'rgba(212, 175, 55, 0.25)' : 'rgba(255,255,255,0.2)',
           color: '#ffffff',
-          border: '1px solid rgba(255,255,255,0.3)',
+          border: isLightHeader ? '1px solid #d4af37' : '1px solid rgba(255,255,255,0.3)',
           fontWeight: 800,
           marginLeft: '2px'
         }}>
@@ -199,17 +214,18 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
             top: 'calc(100% + 8px)',
             right: 0,
             width: '320px',
-            background: '#12141c',
-            border: '1px solid rgba(255,255,255,0.15)',
+            maxWidth: '92vw',
+            background: '#0d1527',
+            border: '1.5px solid #d4af37',
             borderRadius: '16px',
             padding: '0.75rem',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.7)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.85), 0 0 20px rgba(0, 86, 179, 0.35)',
             backdropFilter: 'blur(25px)',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.4rem',
             animation: 'fadeInSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-            zIndex: 9999
+            zIndex: 99999
           }}
         >
           {/* Header do menu dropdown */}

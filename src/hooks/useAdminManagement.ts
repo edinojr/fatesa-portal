@@ -84,6 +84,7 @@ export const useAdminManagement = () => {
     ...analytics,
     ...actions,
     profile,
+    profileLoading,
     fetchAnalytics: analytics.fetchAnalytics,
     userRole: (['admin', 'suporte'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'suporte'].includes(r))) ? 'admin' : profile?.tipo,
     availableRoles: profile?.caminhos_acesso || [profile?.tipo].filter(Boolean),

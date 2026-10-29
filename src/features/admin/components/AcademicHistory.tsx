@@ -11,7 +11,7 @@ import {
   ChevronLeft,
   FileText
 } from 'lucide-react';
-import { isStaffStudentProxy } from '../../../lib/authUtils';
+import { isStaffStudentProxy, hasStudentScope } from '../../../lib/authUtils';
 import { generateHistoricoPDF, generateCertificadoPDF } from '../../../utils/pdfGenerator';
 import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 import { fetchStudentAcademicSummary, detectNivelModulo } from '../../../services/academicService';
@@ -321,7 +321,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
       });
     });
 
-    let list = Object.values(byId).filter(s => STUDENT_TYPES.includes(s.tipo) || isStaffStudentProxy(s));
+    let list = Object.values(byId).filter(s => STUDENT_TYPES.includes(s.tipo) || isStaffStudentProxy(s) || hasStudentScope(s));
     if (selectedNucleus) list = list.filter(s => (s.nucleos?.nome || 'Geral / Sem Núcleo') === selectedNucleus);
     if (term) list = list.filter(s => s.nome?.toLowerCase().includes(term) || s.email?.toLowerCase().includes(term));
     return list.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));

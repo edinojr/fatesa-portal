@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
+import { isUserAdmin } from '../lib/authUtils'
 import Logo from '../components/common/Logo'
 import PageHeader from '../components/layout/PageHeader'
 import { GRADUATION_CONFIG } from '../config/graduation'
@@ -165,7 +166,7 @@ const Dashboard = () => {
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [savingModules, setSavingModules] = useState(false);
 
-  const isBlocked = profile?.bloqueado;
+  const isBlocked = !isUserAdmin(profile) && profile?.bloqueado;
   const isAlumniData = (profile as any)?.isAlumni;
 
   // Status de aprovação para alunos formados
@@ -290,7 +291,7 @@ const Dashboard = () => {
 
   // Logica de Provas Pendentes e Recuperação (Refinada para Aprovação/Reprovação)
   const pendingExams = useMemo(() => {
-    if (!courses.length || profile?.bloqueado) return [];
+    if (!courses.length || (!isUserAdmin(profile) && profile?.bloqueado)) return [];
     
     const pending: any[] = [];
     courses.forEach(course => {

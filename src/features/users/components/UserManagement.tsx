@@ -280,7 +280,8 @@ const UserManagement: React.FC<UserManagementProps> = ({
       if (!acc[nucName]) acc[nucName] = { professors: [], students: [] }
       if (STAFF_TYPES.includes(user.tipo)) {
         acc[nucName].professors.push(user)
-      } else {
+      }
+      if (!STAFF_TYPES.includes(user.tipo) || hasStudentScope(user)) {
         acc[nucName].students.push(user)
       }
       return acc

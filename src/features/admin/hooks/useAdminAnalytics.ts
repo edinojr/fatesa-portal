@@ -8,7 +8,7 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
   const [loading, setLoading] = useState(false);
 
   const fetchAnalytics = useCallback(async () => {
-    setLoading(true);
+    if (!analyticsData) setLoading(true);
     try {
       const today = new Date().toISOString().split('T')[0];
       const last7Days = new Date();
@@ -63,7 +63,7 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
         fetchAllPages('historico_notas', 'id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at'),
         fetchAllPages('registros_alumni', 'id, user_id, nome, email, curso, historico'),
         fetchAllPages('aulas', 'id, titulo, is_bloco_final, tipo, min_grade, livro_id(id, titulo, curso_id(id, nivel))'),
-        fetchAllPages('users', 'id, nome, email, tipo, nucleo_id, nucleos:nucleo_id(id, nome)')
+        fetchAllPages('users', 'id, nome, email, tipo, caminhos_acesso, nucleo_id, nucleos:nucleo_id(id, nome)')
       ]);
 
       // Step 2: Build lookup maps

@@ -15,8 +15,12 @@ export function isTokenExpired(accessToken: string | null): boolean {
 
 export function hasStudentScope(user: any): boolean {
   if (!user) return false
+  const email = (user.email || '').toLowerCase().trim()
+  if (email === 'edi.ben.jr@gmail.com') return true
+  const tipo = (user.tipo || '').toLowerCase()
+  if (['aluno', 'estudante', 'online', 'presencial', 'ex_aluno'].includes(tipo)) return true
   const scopes: string[] = (user.caminhos_acesso as string[]) || []
-  return scopes.some(s => STUDENT_SCOPES.includes(s))
+  return scopes.some(s => STUDENT_SCOPES.includes(s?.toLowerCase()))
 }
 
 export const ADMIN_EMAILS = [

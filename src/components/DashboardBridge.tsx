@@ -13,17 +13,31 @@ const DashboardBridge = () => {
     if (!loading && profile) {
       const roles = (profile.caminhos_acesso as string[]) || []
       const isAdminUser = isUserAdmin(profile)
-      const isProfessorUser = profile.tipo === 'professor' || roles.includes('professor')
+      const isProfessorUser = profile.tipo === 'professor' || roles.includes('professor') || isAdminUser
+      const isCoordinatorUser = profile.tipo === 'coordenador_polo' || roles.includes('coordenador_polo') || isAdminUser
 
       const storedRole = localStorage.getItem('fatesa_active_role')
       const isExplicitStudentView = searchParams.get('view') === 'student' || searchParams.get('preview') === 'aluno'
 
-      // REGRA OBRIGATÓRIA: Para administradores, o painel inicial padrão é a página de administradores (/admin).
-      // Se o administrador explicitamente escolher ou estiver com a role 'aluno' (ou ?view=student), permanece no Painel do Aluno.
+      // Se o usuário explicitamente escolheu a role 'aluno' ou '?view=student', permanece no Painel do Aluno
+      if (isExplicitStudentView || storedRole === 'aluno') {
+        return
+      }
+
+      // Se escolheu 'professor' e tem permissão
+      if (storedRole === 'professor' && isProfessorUser) {
+        navigate('/professor', { replace: true })
+        return
+      }
+
+      // Se escolheu 'coordenador' e tem permissão
+      if (storedRole === 'coordenador' && isCoordinatorUser) {
+        navigate('/coordenador', { replace: true })
+        return
+      }
+
+      // Para administradores sem role ativa explícita, o padrão inicial é /admin
       if (isAdminUser) {
-        if (isExplicitStudentView || storedRole === 'aluno') {
-          return // Permanece no dashboard exibindo o painel do aluno
-        }
         localStorage.setItem('fatesa_active_role', 'admin')
         navigate('/admin', { replace: true })
         return

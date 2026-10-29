@@ -101,7 +101,7 @@ const Login = () => {
 
     // Auto-repair missing profile or handle errors for Admin
     if (isAdminEmail) {
-      const allRoles = ['admin', 'suporte', 'professor', 'aluno'];
+      const allRoles = ['admin', 'suporte', 'professor', 'coordenador_polo', 'aluno'];
       if (!data) {
         data = {
           tipo: 'admin',

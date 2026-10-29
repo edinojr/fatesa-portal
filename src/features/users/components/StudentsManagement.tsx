@@ -128,9 +128,9 @@ export default function StudentsManagement({
   }
 
   const filteredStudents = allStudents.filter(s => {
-    // Excluir professores da gestão de alunos, independentemente do escopo
-    const isProfessor = s.tipo === 'professor' || s.tipo === 'admin' || s.tipo === 'suporte';
-    if (isProfessor) return false;
+    // Excluir apenas staff que não possui papel de aluno
+    const isOnlyStaff = (s.tipo === 'professor' || s.tipo === 'admin' || s.tipo === 'suporte') && !hasStudentScope(s);
+    if (isOnlyStaff) return false;
 
     // Filtro por Núcleo selecionado nos cards
     if (selectedNucleoId && s.nucleo_id !== selectedNucleoId) return false;

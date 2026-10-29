@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   BookOpen,
@@ -15,9 +16,11 @@ import {
   LogOut,
   MapPin,
   User,
+  Users
 } from 'lucide-react';
 import Logo from '../common/Logo';
 import { PanelSwitcher } from '../common/PanelSwitcher';
+import { isUserAdmin } from '../../lib/authUtils';
 
 export type StudentNavTab =
   | 'home'
@@ -62,8 +65,15 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
   pendingExamsCount = 0,
   isPastDue = false,
 }) => {
+  const navigate = useNavigate();
   const [coursesTreeOpen, setCoursesTreeOpen] = useState(true);
   const [modulesTreeOpen, setModulesTreeOpen] = useState(true);
+
+  const isAdmin = isUserAdmin(profile);
+  const roles = (profile?.caminhos_acesso as string[]) || [];
+  const isProfessor = isAdmin || profile?.tipo === 'professor' || roles.includes('professor');
+  const isCoordinator = isAdmin || profile?.tipo === 'coordenador_polo' || roles.includes('coordenador_polo');
+  const hasStaffPanels = isAdmin || isProfessor || isCoordinator;
 
   const handleItemClick = (tab: StudentNavTab) => {
     onSelectTab(tab);
@@ -622,6 +632,53 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             <User size={19} color={activeTab === 'perfil' ? '#0056b3' : '#003366'} />
             {!isCollapsed && <span>Dados Pessoais</span>}
           </button>
+
+          {/* SEÇÃO ESPECIAL: PAINÉIS DE GESTÃO (ADMIN / PROFESSOR / COORDENADOR) */}
+          {hasStaffPanels && (
+            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(212, 175, 55, 0.35)' }}>
+              {!isCollapsed && (
+                <div style={{ padding: '0 0.75rem 0.4rem', fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#b45309' }}>
+                  Painéis de Acesso
+                </div>
+              )}
+              {isAdmin && (
+                <button
+                  onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }}
+                  style={{ ...getItemStyle('home'), color: '#dc2626', background: 'rgba(239, 68, 68, 0.06)', marginBottom: '0.25rem' }}
+                  title="Acessar Painel Administrativo"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <LayoutDashboard size={19} color="#dc2626" />
+                    {!isCollapsed && <span style={{ fontWeight: 800, color: '#dc2626' }}>Painel Administrativo</span>}
+                  </div>
+                </button>
+              )}
+              {isProfessor && (
+                <button
+                  onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }}
+                  style={{ ...getItemStyle('home'), color: '#059669', background: 'rgba(16, 185, 129, 0.06)', marginBottom: '0.25rem' }}
+                  title="Acessar Painel do Professor"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <GraduationCap size={19} color="#059669" />
+                    {!isCollapsed && <span style={{ fontWeight: 800, color: '#059669' }}>Painel do Professor</span>}
+                  </div>
+                </button>
+              )}
+              {isCoordinator && (
+                <button
+                  onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }}
+                  style={{ ...getItemStyle('home'), color: '#7c3aed', background: 'rgba(139, 92, 246, 0.06)', marginBottom: '0.25rem' }}
+                  title="Acessar Painel do Coordenador"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Users size={19} color="#7c3aed" />
+                    {!isCollapsed && <span style={{ fontWeight: 800, color: '#7c3aed' }}>Painel do Coordenador</span>}
+                  </div>
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* PROGRESSO COMPACTO NA SIDEBAR */}

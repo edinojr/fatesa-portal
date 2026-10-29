@@ -8,6 +8,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { PanelSwitcher } from '../common/PanelSwitcher';
 
 interface StudentTopBarProps {
   onToggleSidebar: () => void;
@@ -277,8 +278,9 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
         )}
       </div>
 
-      {/* LADO DIREITO: NOTIFICAÇÕES & PERFIL */}
+      {/* LADO DIREITO: SELETOR DE PAINÉIS, NOTIFICAÇÕES & PERFIL */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+        <PanelSwitcher currentPanel="aluno" />
         {/* SINO DE NOTIFICAÇÕES */}
         <div ref={notifRef} style={{ position: 'relative' }}>
           <button
