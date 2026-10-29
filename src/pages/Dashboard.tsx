@@ -63,7 +63,11 @@ const Dashboard = () => {
     localStorage.setItem('fatesa_active_role', 'aluno')
   }, [])
 
-  const isStaff = ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo || '') || (profile?.caminhos_acesso || []).some((r: string) => ['admin', 'professor', 'suporte', 'colaborador'].includes(r));
+  const isAdmin = isUserAdmin(profile);
+  const staffRoles = (profile?.caminhos_acesso as string[]) || [];
+  const isProfessor = isAdmin || profile?.tipo === 'professor' || staffRoles.includes('professor');
+  const isCoordinator = isAdmin || profile?.tipo === 'coordenador_polo' || profile?.tipo === 'coordenador' || staffRoles.some((r: string) => r.includes('coordenador'));
+  const isStaff = isAdmin || isProfessor || isCoordinator || ['admin', 'professor', 'suporte', 'colaborador'].includes(profile?.tipo || '');
   
   const [searchParams, setSearchParams] = useSearchParams();
   
@@ -759,66 +763,72 @@ const Dashboard = () => {
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <button 
-                  onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }}
-                  style={{
-                    background: '#dc2626',
-                    color: '#fff',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    padding: '0.45rem 0.85rem',
-                    borderRadius: '8px',
-                    fontWeight: 800,
-                    fontSize: '0.78rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    boxShadow: '0 2px 6px rgba(220,38,38,0.3)'
-                  }}
-                  title="Ir para o Painel Administrativo"
-                >
-                  <LayoutDashboard size={14} /> Painel Administrativo
-                </button>
-                <button 
-                  onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }}
-                  style={{
-                    background: '#059669',
-                    color: '#fff',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    padding: '0.45rem 0.85rem',
-                    borderRadius: '8px',
-                    fontWeight: 800,
-                    fontSize: '0.78rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    boxShadow: '0 2px 6px rgba(5,150,105,0.3)'
-                  }}
-                  title="Ir para o Painel do Professor"
-                >
-                  <GraduationCap size={14} /> Painel do Professor
-                </button>
-                <button 
-                  onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }}
-                  style={{
-                    background: '#7c3aed',
-                    color: '#fff',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    padding: '0.45rem 0.85rem',
-                    borderRadius: '8px',
-                    fontWeight: 800,
-                    fontSize: '0.78rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    boxShadow: '0 2px 6px rgba(124,58,237,0.3)'
-                  }}
-                  title="Ir para o Painel do Coordenador"
-                >
-                  <Users size={14} /> Painel do Coordenador
-                </button>
+                {isAdmin && (
+                  <button 
+                    onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }}
+                    style={{
+                      background: '#dc2626',
+                      color: '#fff',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      padding: '0.45rem 0.85rem',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      boxShadow: '0 2px 6px rgba(220,38,38,0.3)'
+                    }}
+                    title="Ir para o Painel Administrativo"
+                  >
+                    <LayoutDashboard size={14} /> Painel Administrativo
+                  </button>
+                )}
+                {isProfessor && (
+                  <button 
+                    onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }}
+                    style={{
+                      background: '#059669',
+                      color: '#fff',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      padding: '0.45rem 0.85rem',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      boxShadow: '0 2px 6px rgba(5,150,105,0.3)'
+                    }}
+                    title="Ir para o Painel do Professor"
+                  >
+                    <GraduationCap size={14} /> Painel do Professor
+                  </button>
+                )}
+                {isCoordinator && (
+                  <button 
+                    onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }}
+                    style={{
+                      background: '#7c3aed',
+                      color: '#fff',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      padding: '0.45rem 0.85rem',
+                      borderRadius: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      boxShadow: '0 2px 6px rgba(124,58,237,0.3)'
+                    }}
+                    title="Ir para o Painel do Coordenador"
+                  >
+                    <Users size={14} /> Painel do Coordenador
+                  </button>
+                )}
               </div>
             </div>
           )}

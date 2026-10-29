@@ -16,12 +16,9 @@ import {
   LogOut,
   MapPin,
   User,
-  Users,
-  Sparkles
+  Users
 } from 'lucide-react';
 import Logo from '../common/Logo';
-import { PanelSwitcher } from '../common/PanelSwitcher';
-import { isUserAdmin } from '../../lib/authUtils';
 
 export type StudentNavTab =
   | 'home'
@@ -70,11 +67,6 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
   const [coursesTreeOpen, setCoursesTreeOpen] = useState(true);
   const [modulesTreeOpen, setModulesTreeOpen] = useState(true);
 
-  const isAdmin = isUserAdmin(profile);
-  const roles = (profile?.caminhos_acesso as string[]) || [];
-  const isProfessor = isAdmin || profile?.tipo === 'professor' || roles.includes('professor');
-  const isCoordinator = isAdmin || profile?.tipo === 'coordenador_polo' || roles.includes('coordenador_polo');
-  const hasStaffPanels = isAdmin || isProfessor || isCoordinator;
 
   const handleItemClick = (tab: StudentNavTab) => {
     onSelectTab(tab);
@@ -316,106 +308,6 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
               </div>
             )}
           </div>
-
-          {/* SEÇÃO ESPECIAL: PAINÉIS DE GESTÃO (ADMIN / PROFESSOR / COORDENADOR) NO TOPO */}
-          {hasStaffPanels && (
-            <div style={{
-              padding: isCollapsed ? '0.45rem 0.2rem' : '0.6rem 0.75rem',
-              marginBottom: '0.65rem',
-              backgroundColor: 'rgba(0, 51, 102, 0.04)',
-              border: '1.5px solid rgba(212, 175, 55, 0.55)',
-              borderRadius: '14px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.35rem'
-            }}>
-              {!isCollapsed && (
-                <div style={{ fontSize: '0.64rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#b45309', display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.15rem' }}>
-                  <Sparkles size={13} color="#b45309" />
-                  Painéis de Acesso
-                </div>
-              )}
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.65rem',
-                    padding: isCollapsed ? '0.5rem 0' : '0.5rem 0.75rem',
-                    borderRadius: '10px',
-                    border: '1.5px solid #ef4444',
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    color: '#b91c1c',
-                    fontWeight: 800,
-                    fontSize: '0.82rem',
-                    cursor: 'pointer',
-                    width: '100%',
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    transition: 'all 0.15s ease'
-                  }}
-                  title="Acessar Painel Administrativo"
-                >
-                  <LayoutDashboard size={18} color="#dc2626" />
-                  {!isCollapsed && <span>Painel Administrativo</span>}
-                </button>
-              )}
-              {isProfessor && (
-                <button
-                  type="button"
-                  onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.65rem',
-                    padding: isCollapsed ? '0.5rem 0' : '0.5rem 0.75rem',
-                    borderRadius: '10px',
-                    border: '1.5px solid #10b981',
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    color: '#047857',
-                    fontWeight: 800,
-                    fontSize: '0.82rem',
-                    cursor: 'pointer',
-                    width: '100%',
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    transition: 'all 0.15s ease'
-                  }}
-                  title="Acessar Painel do Professor"
-                >
-                  <GraduationCap size={18} color="#059669" />
-                  {!isCollapsed && <span>Painel do Professor</span>}
-                </button>
-              )}
-              {isCoordinator && (
-                <button
-                  type="button"
-                  onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.65rem',
-                    padding: isCollapsed ? '0.5rem 0' : '0.5rem 0.75rem',
-                    borderRadius: '10px',
-                    border: '1.5px solid #8b5cf6',
-                    background: 'rgba(139, 92, 246, 0.1)',
-                    color: '#6d28d9',
-                    fontWeight: 800,
-                    fontSize: '0.82rem',
-                    cursor: 'pointer',
-                    width: '100%',
-                    justifyContent: isCollapsed ? 'center' : 'flex-start',
-                    transition: 'all 0.15s ease'
-                  }}
-                  title="Acessar Painel do Coordenador"
-                >
-                  <Users size={18} color="#7c3aed" />
-                  {!isCollapsed && <span>Painel do Coordenador</span>}
-                </button>
-              )}
-            </div>
-          )}
-
 
           {/* SEÇÃO 1: VISÃO GERAL */}
           <button
@@ -875,9 +767,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
           )}
 
           {!isCollapsed && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <PanelSwitcher currentPanel="aluno" />
-              <button
+            <button
                 onClick={() => signOut()}
                 style={{
                   background: 'rgba(239, 68, 68, 0.08)',
@@ -896,7 +786,6 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
               >
                 <LogOut size={15} />
               </button>
-            </div>
           )}
         </div>
       </aside>

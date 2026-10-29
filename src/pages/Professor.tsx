@@ -191,29 +191,6 @@ const Professor = () => {
                       <h3>Fórum da Comunidade</h3>
                       <p>Interaja e tire dúvidas dos estudantes.</p>
                     </div>
-
-                    <div className="admin-action-card" onClick={() => { localStorage.setItem('fatesa_active_role', 'aluno'); navigate('/dashboard?view=student'); }} style={{ border: '1.5px solid #3b82f6', background: 'rgba(59, 130, 246, 0.05)' }}>
-                      <span className="category-badge" style={{ background: '#3b82f6', color: '#fff' }}>Estudante</span>
-                      <div className="icon-wrapper" style={{ background: '#3b82f6' }}><GraduationCap size={32} color="#fff" /></div>
-                      <h3 style={{ color: '#1d4ed8' }}>Portal do Aluno</h3>
-                      <p>Acesse suas aulas, cursos, provas e boletim como estudante.</p>
-                    </div>
-
-                    {isUserAdmin(profile) && (
-                      <div className="admin-action-card" onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }} style={{ border: '1.5px solid #ef4444', background: 'rgba(239, 68, 68, 0.05)' }}>
-                        <span className="category-badge" style={{ background: '#ef4444', color: '#fff' }}>Gestão</span>
-                        <div className="icon-wrapper" style={{ background: '#ef4444' }}><Users size={32} color="#fff" /></div>
-                        <h3 style={{ color: '#dc2626' }}>Painel Administrativo</h3>
-                        <p>Controle financeiro, matrículas e gestão global da instituição.</p>
-                      </div>
-                    )}
-
-                    <div className="admin-action-card" onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }} style={{ border: '1.5px solid #8b5cf6', background: 'rgba(139, 92, 246, 0.05)' }}>
-                      <span className="category-badge" style={{ background: '#8b5cf6', color: '#fff' }}>Polo</span>
-                      <div className="icon-wrapper" style={{ background: '#8b5cf6' }}><MapPin size={32} color="#fff" /></div>
-                      <h3 style={{ color: '#6d28d9' }}>Painel do Coordenador</h3>
-                      <p>Gestão dos alunos e chamadas do polo regional.</p>
-                    </div>
                   </>
                 )}
  

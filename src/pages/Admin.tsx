@@ -475,24 +475,6 @@ const Admin = () => {
                     <h3>Histórico Acadêmico</h3>
                     <p>Relatório completo de notas e módulos.</p>
                   </div>
-
-                  <div className="admin-action-card" onClick={() => { localStorage.setItem('fatesa_active_role', 'aluno'); navigate('/dashboard?view=student'); }} style={{ border: '1.5px solid #3b82f6', background: 'rgba(59, 130, 246, 0.05)' }}>
-                    <div className="icon-wrapper" style={{ background: '#3b82f6' }}><GraduationCap size={32} color="#fff" /></div>
-                    <h3 style={{ color: '#1d4ed8' }}>Portal do Aluno</h3>
-                    <p>Acesse suas aulas, cursos, provas e boletim como estudante.</p>
-                  </div>
-
-                  <div className="admin-action-card" onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }} style={{ border: '1.5px solid #10b981', background: 'rgba(16, 185, 129, 0.05)' }}>
-                    <div className="icon-wrapper" style={{ background: '#10b981' }}><BookOpen size={32} color="#fff" /></div>
-                    <h3 style={{ color: '#047857' }}>Painel do Professor</h3>
-                    <p>Lançamento de aulas, diário de presenças e correções docentes.</p>
-                  </div>
-
-                  <div className="admin-action-card" onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }} style={{ border: '1.5px solid #8b5cf6', background: 'rgba(139, 92, 246, 0.05)' }}>
-                    <div className="icon-wrapper" style={{ background: '#8b5cf6' }}><Users size={32} color="#fff" /></div>
-                    <h3 style={{ color: '#6d28d9' }}>Painel do Coordenador</h3>
-                    <p>Gestão acadêmica e alunos do polo regional.</p>
-                  </div>
                 </>
               )}
 
