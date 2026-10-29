@@ -91,7 +91,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   }
 
   return (
-    <div>
+    <div style={{ position: 'relative', zIndex: 1100, overflow: 'visible' }}>
       {showTopBanner && <TopBanner />}
       <header 
         className="dashboard-header-modern"
@@ -106,7 +106,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           boxShadow: '0 4px 16px rgba(0, 86, 179, 0.16), 0 0 10px rgba(0, 86, 179, 0.22)',
           borderBottom: '2.5px solid #d4af37',
           flexWrap: 'nowrap',
-          overflow: 'hidden'
+          overflow: 'visible',
+          position: 'relative',
+          zIndex: 1100
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'nowrap', minWidth: 0, flex: 1 }}>

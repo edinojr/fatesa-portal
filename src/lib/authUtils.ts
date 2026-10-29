@@ -13,16 +13,6 @@ export function isTokenExpired(accessToken: string | null): boolean {
   }
 }
 
-export function hasStudentScope(user: any): boolean {
-  if (!user) return false
-  const email = (user.email || '').toLowerCase().trim()
-  if (email === 'edi.ben.jr@gmail.com') return true
-  const tipo = (user.tipo || '').toLowerCase()
-  if (['aluno', 'estudante', 'online', 'presencial', 'ex_aluno'].includes(tipo)) return true
-  const scopes: string[] = (user.caminhos_acesso as string[]) || []
-  return scopes.some(s => STUDENT_SCOPES.includes(s?.toLowerCase()))
-}
-
 export const ADMIN_EMAILS = [
   'edi.ben.jr@gmail.com',
   'ap.panisso@gmail.com',
@@ -30,8 +20,24 @@ export const ADMIN_EMAILS = [
   'fatesacasadosaber@gmail.com'
 ];
 
+export const ADMIN_IDS = [
+  '4ab793ec-7a3d-4438-bcb7-d80fc7d05fea'
+];
+
+export function hasStudentScope(user: any): boolean {
+  if (!user) return false
+  if (user.id && ADMIN_IDS.includes(user.id)) return true
+  const email = (user.email || '').toLowerCase().trim()
+  if (ADMIN_EMAILS.includes(email)) return true
+  const tipo = (user.tipo || '').toLowerCase()
+  if (['aluno', 'estudante', 'online', 'presencial', 'ex_aluno'].includes(tipo)) return true
+  const scopes: string[] = (user.caminhos_acesso as string[]) || []
+  return scopes.some(s => STUDENT_SCOPES.includes(s?.toLowerCase()))
+}
+
 export function isUserAdmin(user: any): boolean {
   if (!user) return false;
+  if (user.id && ADMIN_IDS.includes(user.id)) return true;
   const email = (user.email || '').toLowerCase().trim();
   if (ADMIN_EMAILS.includes(email)) return true;
   const tipo = user.tipo?.toLowerCase();

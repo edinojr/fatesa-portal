@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { 
   LayoutDashboard, 
@@ -6,9 +7,9 @@ import {
   GraduationCap, 
   ChevronDown, 
   Check, 
-  Sparkles,
-  ArrowRight,
-  Users
+  Sparkles, 
+  ArrowRight, 
+  Users 
 } from 'lucide-react'
 import { useProfile } from '../../hooks/useProfile'
 import { isUserAdmin } from '../../lib/authUtils'
@@ -17,6 +18,7 @@ export interface PanelSwitcherProps {
   currentPanel: 'admin' | 'aluno' | 'professor' | 'coordenador'
   className?: string
   style?: React.CSSProperties
+  profile?: any
 }
 
 interface PanelOption {
@@ -30,32 +32,80 @@ interface PanelOption {
   icon: React.ReactNode
 }
 
-export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, className, style }) => {
-  const { profile } = useProfile()
+export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ 
+  currentPanel, 
+  className, 
+  style, 
+  profile: propProfile 
+}) => {
+  const { profile: hookProfile } = useProfile()
+  const profile = propProfile || hookProfile
   const navigate = useNavigate()
-  const [isOpen, setIsOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Close when clicking outside
+  const [isOpen, setIsOpen] = useState(false)
+  const [dropdownCoords, setDropdownCoords] = useState<{ top: number; right: number } | null>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Atualiza coordenadas do dropdown em relação ao botão trigger
+  const updateCoords = useCallback(() => {
+    if (!buttonRef.current) return
+    const rect = buttonRef.current.getBoundingClientRect()
+    const spaceBelow = window.innerHeight - rect.bottom
+    const dropdownHeight = 280
+
+    let top = rect.bottom + 8
+    // Se não houver espaço embaixo, abre para cima
+    if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+      top = Math.max(10, rect.top - dropdownHeight - 8)
+    }
+
+    const right = Math.max(12, window.innerWidth - rect.right)
+    setDropdownCoords({ top, right })
+  }, [])
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!isOpen) {
+      updateCoords()
+    }
+    setIsOpen(prev => !prev)
+  }
+
+  // Fecha ao clicar fora ou pressionar Escape
   useEffect(() => {
+    if (!isOpen) return
+
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (
+        buttonRef.current && !buttonRef.current.contains(target) &&
+        dropdownRef.current && !dropdownRef.current.contains(target)
+      ) {
         setIsOpen(false)
       }
     }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsOpen(false)
     }
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('keydown', handleKeyDown)
+    const handleScrollOrResize = () => {
+      updateCoords()
     }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('resize', handleScrollOrResize)
+    window.addEventListener('scroll', handleScrollOrResize, true)
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('resize', handleScrollOrResize)
+      window.removeEventListener('scroll', handleScrollOrResize, true)
     }
-  }, [isOpen])
+  }, [isOpen, updateCoords])
 
   if (!profile) return null
 
@@ -135,13 +185,13 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
 
   return (
     <div 
-      ref={containerRef} 
       className={`panel-switcher-container ${className || ''}`}
       style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', zIndex: 1200, ...style }}
     >
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setIsOpen(prev => !prev)}
+        onClick={handleToggle}
         className="nav-btn-premium panel-switcher-trigger"
         style={{
           width: 'auto',
@@ -166,7 +216,7 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
           alignItems: 'center', 
           justifyContent: 'center',
           color: currentOption.badgeColor,
-          background: isLightHeader ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.15)',
+          background: 'rgba(255,255,255,0.15)',
           padding: '4px',
           borderRadius: '8px'
         }}>
@@ -206,26 +256,28 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
         />
       </button>
 
-      {isOpen && (
+      {/* Renderiza via React Portal diretamente no document.body para NUNCA ser cortado por overflow: hidden */}
+      {isOpen && dropdownCoords && createPortal(
         <div
+          ref={dropdownRef}
           className="panel-switcher-dropdown"
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 8px)',
-            right: 0,
+            position: 'fixed',
+            top: `${dropdownCoords.top}px`,
+            right: `${dropdownCoords.right}px`,
             width: '320px',
-            maxWidth: '92vw',
+            maxWidth: 'calc(100vw - 24px)',
             background: '#0d1527',
             border: '1.5px solid #d4af37',
             borderRadius: '16px',
             padding: '0.75rem',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.85), 0 0 20px rgba(0, 86, 179, 0.35)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.85), 0 0 25px rgba(0, 86, 179, 0.45)',
             backdropFilter: 'blur(25px)',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.4rem',
             animation: 'fadeInSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-            zIndex: 99999
+            zIndex: 999999
           }}
         >
           {/* Header do menu dropdown */}
@@ -266,8 +318,8 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
                     width: '100%',
                     padding: '0.7rem 0.8rem',
                     borderRadius: '12px',
-                    border: isActive ? `1px solid ${opt.badgeColor}66` : '1px solid transparent',
-                    background: isActive ? `${opt.badgeColor}18` : 'transparent',
+                    border: isActive ? `1.5px solid ${opt.badgeColor}` : '1.5px solid rgba(255,255,255,0.06)',
+                    background: isActive ? `${opt.badgeColor}22` : 'rgba(255,255,255,0.03)',
                     color: '#fff',
                     cursor: 'pointer',
                     textAlign: 'left',
@@ -275,22 +327,23 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
                     position: 'relative'
                   }}
                   onMouseEnter={(e) => {
-                    if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+                    if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
                   }}
                   onMouseLeave={(e) => {
-                    if (!isActive) e.currentTarget.style.background = 'transparent'
+                    if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
                   }}
                 >
                   <div style={{
                     width: '36px',
                     height: '36px',
                     borderRadius: '10px',
-                    background: `${opt.badgeColor}22`,
+                    background: `${opt.badgeColor}25`,
                     color: opt.badgeColor,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    border: `1px solid ${opt.badgeColor}40`
                   }}>
                     {opt.icon}
                   </div>
@@ -304,9 +357,10 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
                         fontSize: '0.6rem',
                         padding: '1px 6px',
                         borderRadius: '10px',
-                        background: `${opt.badgeColor}22`,
+                        background: `${opt.badgeColor}25`,
                         color: opt.badgeColor,
-                        fontWeight: 700
+                        fontWeight: 700,
+                        border: `1px solid ${opt.badgeColor}50`
                       }}>
                         {opt.badge}
                       </span>
@@ -331,13 +385,14 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({ currentPanel, clas
                       <Check size={13} strokeWidth={3} />
                     </div>
                   ) : (
-                    <ArrowRight size={15} style={{ opacity: 0.3, flexShrink: 0 }} />
+                    <ArrowRight size={15} style={{ opacity: 0.4, flexShrink: 0 }} />
                   )}
                 </button>
               )
             })}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <style>{`

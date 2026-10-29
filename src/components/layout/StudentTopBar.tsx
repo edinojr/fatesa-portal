@@ -280,7 +280,7 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
 
       {/* LADO DIREITO: SELETOR DE PAINÉIS, NOTIFICAÇÕES & PERFIL */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-        <PanelSwitcher currentPanel="aluno" />
+        <PanelSwitcher currentPanel="aluno" profile={profile} />
         {/* SINO DE NOTIFICAÇÕES */}
         <div ref={notifRef} style={{ position: 'relative' }}>
           <button

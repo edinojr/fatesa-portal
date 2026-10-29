@@ -20,7 +20,9 @@ import {
   Loader2,
   PauseCircle,
   Play,
-  Clock
+  Clock,
+  LayoutDashboard,
+  Sparkles
 } from 'lucide-react'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useProfile } from '../hooks/useProfile'
@@ -174,7 +176,7 @@ const Dashboard = () => {
   const [checkingAlumniStatus, setCheckingAlumniStatus] = useState<boolean>(true);
 
   const checkPendingStatus = useCallback(async () => {
-    if (!profile?.id || profile?.tipo !== 'ex_aluno') {
+    if (!profile?.id || isUserAdmin(profile) || profile?.tipo !== 'ex_aluno') {
       setAlumniPendingApproval(false);
       setCheckingAlumniStatus(false);
       return;
@@ -734,6 +736,92 @@ const Dashboard = () => {
           </div>
         ) : (
          <div className="tab-content" style={{ animation: 'fadeIn 0.3s' }}>
+          {/* BANNER DE MIGRAÇÃO RÁPIDA DE PAINEL PARA STAFF/ADMIN */}
+          {isStaff && (
+            <div style={{
+              background: 'linear-gradient(90deg, #002244 0%, #004080 100%)',
+              border: '1.5px solid #d4af37',
+              borderRadius: '16px',
+              padding: '0.85rem 1.25rem',
+              marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              boxShadow: '0 4px 15px rgba(0, 51, 102, 0.25)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#fff' }}>
+                <Sparkles size={20} color="#f59e0b" />
+                <div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 800 }}>Portal do Aluno (Modo Multi-Painel Ativo)</div>
+                  <div style={{ fontSize: '0.74rem', color: 'rgba(255,255,255,0.8)' }}>Você possui permissões administrativas. Alterne para outro painel a qualquer momento:</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => { localStorage.setItem('fatesa_active_role', 'admin'); navigate('/admin'); }}
+                  style={{
+                    background: '#dc2626',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    boxShadow: '0 2px 6px rgba(220,38,38,0.3)'
+                  }}
+                  title="Ir para o Painel Administrativo"
+                >
+                  <LayoutDashboard size={14} /> Painel Administrativo
+                </button>
+                <button 
+                  onClick={() => { localStorage.setItem('fatesa_active_role', 'professor'); navigate('/professor'); }}
+                  style={{
+                    background: '#059669',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    boxShadow: '0 2px 6px rgba(5,150,105,0.3)'
+                  }}
+                  title="Ir para o Painel do Professor"
+                >
+                  <GraduationCap size={14} /> Painel do Professor
+                </button>
+                <button 
+                  onClick={() => { localStorage.setItem('fatesa_active_role', 'coordenador'); navigate('/coordenador'); }}
+                  style={{
+                    background: '#7c3aed',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    boxShadow: '0 2px 6px rgba(124,58,237,0.3)'
+                  }}
+                  title="Ir para o Painel do Coordenador"
+                >
+                  <Users size={14} /> Painel do Coordenador
+                </button>
+              </div>
+            </div>
+          )}
           {activeTab === 'home' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
               {/* TOP HEADER: Saudação & Resumo */}

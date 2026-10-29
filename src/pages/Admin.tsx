@@ -355,7 +355,7 @@ const Admin = () => {
 
   const adminActions = (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'nowrap' }}>
-      <PanelSwitcher currentPanel="admin" />
+      <PanelSwitcher currentPanel="admin" profile={profile} />
       <div className="input-group mobile-hide" style={{ marginBottom: 0, width: '210px' }}>
         <label htmlFor="admin-global-search" style={{ display: 'none' }}>Pesquisar</label>
         <div style={{ position: 'relative' }}>
