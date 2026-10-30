@@ -71,7 +71,7 @@ const Signup = () => {
           const reg = regRes.data[0];
           console.log('Pré-registro encontrado:', reg);
           setPreRegistered(reg);
-          setNome(reg.nome);
+          setNome(reg.nome ? reg.nome.toUpperCase() : '');
           // Garantir que tipos administrativos sejam convertidos para tipos de aluno válidos na UI
           setTipo(reg.tipo === 'admin' || reg.tipo === 'professor' ? 'online' : reg.tipo);
           setNucleo(reg.nucleo_id || reg.nucleo || '');
@@ -190,7 +190,7 @@ const Signup = () => {
         password,
         options: {
           data: {
-            full_name: nome,
+            full_name: (nome || '').trim().toUpperCase(),
             student_type: tipo,
             nucleo: availableNucleos.find(n => n.id === nucleo)?.nome || (nucleo.includes('-') ? '' : nucleo),
             nucleo_id: nucleo.includes('-') ? nucleo : null,
@@ -230,9 +230,9 @@ const Signup = () => {
             await supabase.from('registros_alumni').insert({
               nome: nome.toUpperCase().trim(),
               email: email.toLowerCase().trim(),
-              curso: 'Teologia',
-              nivel_curso: 'Básico',
-              nucleo: nucleoName,
+              curso: 'TEOLOGIA',
+              nivel_curso: 'BÁSICO',
+              nucleo: nucleoName.toUpperCase(),
               ano_formacao: 'Pendente',
               user_id: authData.user.id,
               status_aprovacao: 'pendente',
@@ -302,10 +302,10 @@ const Signup = () => {
               className="form-control"
               placeholder="Digite seu nome"
               value={nome}
-              onChange={(e) => setNome(e.target.value)}
+              onChange={(e) => setNome(e.target.value.toUpperCase())}
               required
               readOnly={!!preRegistered}
-              style={{ opacity: preRegistered ? 0.7 : 1 }}
+              style={{ opacity: preRegistered ? 0.7 : 1, textTransform: 'uppercase' }}
               autoComplete="name"
             />
           </div>

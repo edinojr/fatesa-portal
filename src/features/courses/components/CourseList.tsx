@@ -3,6 +3,7 @@ import { BookOpen, AlertCircle, Award, CheckCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Course } from '../../../types/dashboard'
 import { getBookStats } from '../utils/courseUtils'
+import { sortModulesByCurriculum } from '../../../lib/courseTitles'
 import BaseCard from './cards/BaseCard'
 import ModalityBadge from '../../../components/ui/ModalityBadge'
 
@@ -161,7 +162,10 @@ const CourseList: React.FC<CourseListProps> = ({
     return (courseList || [])
       .map(course => ({
         ...course,
-        livros: (course.livros || []).filter(isBookVisible)
+        livros: sortModulesByCurriculum(
+          (course.livros || []).filter(isBookVisible),
+          (b: any) => b.titulo || ''
+        )
       }))
       .filter(course => course.livros.length > 0);
   };

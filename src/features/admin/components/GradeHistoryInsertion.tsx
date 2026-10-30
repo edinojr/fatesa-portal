@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { hasStudentScope } from '../../../lib/authUtils';
+import { sortModulesByCurriculum, getOfficialBookTitle } from '../../../lib/courseTitles';
 
 interface GradeHistoryInsertionProps {
   onRefresh?: () => void;
@@ -181,7 +182,7 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
   const availableModules = React.useMemo(() => {
     const selectedCourseObj = courses.find((c) => c.nome === formData.curso_nome);
     const list = [...(selectedCourseObj?.livros || [])];
-    return list.sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0) || a.titulo.localeCompare(b.titulo));
+    return sortModulesByCurriculum(list, (m: any) => m.titulo || '');
   }, [courses, formData.curso_nome]);
 
   // 4. Salvar ou Atualizar Nota (sem sair da tela nem recarregar a página inteira)
@@ -678,7 +679,7 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
               </div>
             ) : (
               <div style={{ display: 'grid', gap: '0.75rem' }}>
-                {historyData.map((record) => {
+                {sortModulesByCurriculum(historyData, (r) => r.modulo_nome || '').map((record) => {
                   const isApproved = record.nota >= 7.0;
                   const isEditingThis = editingId === record.id;
                   const isDeletingThis = deletingId === record.id;
@@ -714,7 +715,7 @@ const GradeHistoryInsertion: React.FC<GradeHistoryInsertionProps> = ({ onRefresh
                         </div>
                         <div>
                           <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-main)' }}>
-                            {record.modulo_nome}
+                            {getOfficialBookTitle(record.modulo_nome)}
                           </div>
                           <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.2rem', display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                             <span>{record.curso_nome}</span>

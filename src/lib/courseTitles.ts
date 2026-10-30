@@ -11,8 +11,16 @@ export const normalizeModuleTitle = (s: string): string => {
 export const cleanModuleTitle = (s: string): string => {
   let norm = normalizeModuleTitle(s);
   norm = norm
+    .replace(/^\d+[\s.-]+/, '')
     .replace(/^(avaliacao\s+final|prova\s+final|avaliacao\s+online|avaliacao|prova|recuperacao\s+2|recuperacao|modulo|disciplina)\s*(de\s+|do\s+|da\s+|dos\s+|das\s+)?/i, '')
     .replace(/\s+(avaliacao\s+online|avaliacao\s+final|prova\s+final|avaliacao|prova|recuperacao\s+2|recuperacao)$/i, '')
+    .replace(/^(o|os|a|as)\s+/i, '')
+    .replace(/\b1\b/g, 'i')
+    .replace(/\b2\b/g, 'ii')
+    .replace(/\b3\b/g, 'iii')
+    .replace(/\b4\b/g, 'iv')
+    .replace(/\b5\b/g, 'v')
+    .replace(/\s+/g, ' ')
     .trim();
   return norm;
 };
@@ -25,7 +33,14 @@ export const areModuleTitlesEqual = (title1: string, title2: string): boolean =>
 
   const getSuffix = (s: string) => {
     const match = s.match(/\b(i{1,3}|iv|v|vi{0,3}|[1-9])\b$/);
-    return match ? match[1] : null;
+    if (!match) return null;
+    let val = match[1];
+    if (val === '1') val = 'i';
+    if (val === '2') val = 'ii';
+    if (val === '3') val = 'iii';
+    if (val === '4') val = 'iv';
+    if (val === '5') val = 'v';
+    return val;
   };
 
   const suf1 = getSuffix(n1);
@@ -41,25 +56,42 @@ export const areModuleTitlesEqual = (title1: string, title2: string): boolean =>
     ['hebreus', 'epistolas aos hebreus'],
     ['epistola aos hebreus', 'epistolas aos hebreus'],
     ['espirito santo', 'doutrina do espirito santo'],
-    ['paulinas 1', 'epistolas paulinas i'],
+    ['pneumatologia', 'doutrina do espirito santo'],
+    ['espirito santo', 'pneumatologia'],
     ['paulinas i', 'epistolas paulinas i'],
-    ['paulinas 2', 'epistolas paulinas ii'],
+    ['epistola paulina i', 'epistolas paulinas i'],
     ['paulinas ii', 'epistolas paulinas ii'],
-    ['paulinas 3', 'epistolas paulinas iii'],
+    ['epistola paulina ii', 'epistolas paulinas ii'],
     ['paulinas iii', 'epistolas paulinas iii'],
+    ['epistola paulina iii', 'epistolas paulinas iii'],
     ['salvacao', 'doutrina da salvacao'],
-    ['israel 1', 'historia de israel i'],
+    ['soteriologia', 'doutrina da salvacao'],
+    ['obreiro', 'teologia do obreiro'],
+    ['obreiros', 'teologia do obreiro'],
     ['israel i', 'historia de israel i'],
-    ['israel 2', 'historia de israel ii'],
     ['israel ii', 'historia de israel ii'],
-    ['poeticos 1', 'livros poeticos i'],
     ['poeticos i', 'livros poeticos i'],
-    ['poeticos 2', 'livros poeticos ii'],
-    ['poeticos ii', 'livros poeticos ii']
+    ['poeticos ii', 'livros poeticos ii'],
+    ['livros poeticos i jo e salmos', 'livros poeticos i'],
+    ['livros poeticos i jo e salmos', 'poeticos i'],
+    ['livros poeticos ii proverbios eclesiastes e cantares', 'livros poeticos ii'],
+    ['livros poeticos ii proverbios eclesiastes e cantares', 'poeticos ii'],
+    ['pentateuco', 'o pentateuco'],
+    ['evangelhos', 'os evangelhos'],
+    ['atos', 'atos dos apostolos'],
+    ['escatologia', 'escatologia biblica'],
+    ['epistola geral', 'epistolas gerais'],
+    ['teologia propria', 'doutrina de deus'],
+    ['angelologia', 'anjos homem e pecado'],
+    ['anjos homem pecado', 'anjos homem e pecado'],
+    ['hamartiologia', 'anjos homem e pecado'],
+    ['antropologia e hamartiologia', 'anjos homem e pecado']
   ];
 
   for (const [a, b] of EQUIVALENCES) {
-    if ((n1 === a && n2 === b) || (n1 === b && n2 === a)) return true;
+    const ca = cleanModuleTitle(a);
+    const cb = cleanModuleTitle(b);
+    if ((n1 === ca && n2 === cb) || (n1 === cb && n2 === ca)) return true;
   }
 
   return false;
@@ -182,3 +214,86 @@ export const LEGACY_AULA_TO_BOOK_TITLE: Record<string, string> = {
   'e68ce31d-0b5f-4b28-8070-6e80e701f7d7': 'Teologia Prática',
   '199d5b3e-9697-4620-8b72-fea1aedf106e': 'Teologia Prática'
 };
+
+/**
+ * 27 Livros Oficiais do Curso Básico Fatesa ordenados e numerados (1 a 27)
+ */
+export const OFFICIAL_COURSE_BOOKS = [
+  '1. BIBLIOLOGIA',
+  '2. EPÍSTOLAS PAULINAS II',
+  '3. EPÍSTOLAS PAULINAS III',
+  '4. HERESIOLOGIA',
+  '5. TEOLOGIA DO OBREIRO',
+  '6. PROFETAS MAIORES',
+  '7. PROFETAS MENORES',
+  '8. ECLESIOLOGIA',
+  '9. DOUTRINA DA SALVAÇÃO',
+  '10. APOCALIPSE',
+  '11. O PENTATEUCO',
+  '12. OS EVANGELHOS',
+  '13. ATOS DOS APÓSTOLOS',
+  '14. EPÍSTOLA AOS HEBREUS',
+  '15. A DOUTRINA DO ESPÍRITO SANTO',
+  '16. EPÍSTOLAS PAULINAS I',
+  '17. TEOLOGIA PRÁTICA',
+  '18. HISTÓRIA DA IGREJA',
+  '19. CRISTOLOGIA',
+  '20. ESCATOLOGIA BÍBLICA',
+  '21. EPÍSTOLAS GERAIS',
+  '22. DOUTRINA DE DEUS',
+  '23. ANJOS, HOMEM E PECADO',
+  '24. HISTÓRIA DE ISRAEL I',
+  '25. HISTÓRIA DE ISRAEL II',
+  '26. OS LIVROS POÉTICOS I – JÓ E SALMOS',
+  '27. OS LIVROS POÉTICOS II – PROVÉRBIOS, ECLESIASTES E CANTARES'
+] as const;
+
+/**
+ * Obtém o índice curricular (0 a 26) para ordenar qualquer título
+ */
+export const getOfficialBookIndex = (title: string): number => {
+  if (!title) return 999;
+
+  // 1. Tentar correspondência direta ou por equivalência com os 27 livros oficiais
+  for (let i = 0; i < OFFICIAL_COURSE_BOOKS.length; i++) {
+    if (areModuleTitlesEqual(title, OFFICIAL_COURSE_BOOKS[i])) {
+      return i;
+    }
+  }
+
+  // 2. Se o título iniciar com numeração (ex: "1. Bibliologia", "02 - ...", "28. ..."), extrai o índice
+  const matchDirect = title.match(/^\s*(\d+)(?:[\s.-]|$)/);
+  if (matchDirect) {
+    const num = parseInt(matchDirect[1], 10);
+    if (num >= 1) return num - 1;
+  }
+
+  return 999;
+};
+
+/**
+ * Retorna o título oficial numerado se corresponder aos 27 livros
+ */
+export const getOfficialBookTitle = (title: string): string => {
+  if (!title) return '';
+  const idx = getOfficialBookIndex(title);
+  if (idx >= 0 && idx < OFFICIAL_COURSE_BOOKS.length) {
+    return OFFICIAL_COURSE_BOOKS[idx];
+  }
+  return title.toUpperCase().trim();
+};
+
+/**
+ * Ordena itens seguindo a ordem curricular estrita do curso (1 a 27)
+ */
+export const sortModulesByCurriculum = <T>(items: T[], getTitle: (item: T) => string): T[] => {
+  return [...items].sort((a, b) => {
+    const titleA = getTitle(a);
+    const titleB = getTitle(b);
+    const idxA = getOfficialBookIndex(titleA);
+    const idxB = getOfficialBookIndex(titleB);
+    if (idxA !== idxB) return idxA - idxB;
+    return titleA.localeCompare(titleB, undefined, { numeric: true, sensitivity: 'base' });
+  });
+};
+

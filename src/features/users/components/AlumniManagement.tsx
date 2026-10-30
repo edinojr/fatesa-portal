@@ -26,6 +26,7 @@ import LevelCertificate from './LevelCertificate'
 import TranscriptDocument from './TranscriptDocument'
 import { generateCertificadoPDF, generateHistoricoPDF } from '../../../utils/pdfGenerator'
 import { fetchStudentAcademicSummary } from '../../../services/academicService'
+import { areModuleTitlesEqual, getOfficialBookIndex, sortModulesByCurriculum, OFFICIAL_COURSE_BOOKS, cleanModuleTitle, getOfficialBookTitle } from '../../../lib/courseTitles'
 
 interface AlumniRecord {
   id: string
@@ -39,6 +40,7 @@ interface AlumniRecord {
   observacoes: string
   historico?: { modulo: string; nota: string; data: string }[]
   certificados?: { id: string; titulo: string; data_emissao: string }[]
+  cpf?: string
   rg?: string
   telefone?: string
   cep?: string
@@ -71,6 +73,7 @@ const AlumniManagement = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false)
   const [historyCourseId, setHistoryCourseId] = useState('')
   const [historyDrafts, setHistoryDrafts] = useState<{ modulo: string; nota: string; data: string; manual?: boolean; registered?: boolean }[]>([])
+  const [openHistoryAfterSave, setOpenHistoryAfterSave] = useState(true)
   const [courses, setCourses] = useState<any[]>([])
   const [fetchError, setFetchError] = useState<string | null>(null)
   
@@ -87,7 +90,7 @@ const AlumniManagement = () => {
     matricula: '',
     nivel_curso: 'Básico',
     observacoes: '',
-    rg: '',
+    cpf: '',
     telefone: '',
     cep: '',
     endereco: '',
@@ -187,22 +190,55 @@ const AlumniManagement = () => {
     return isNaN(d.getTime()) ? iso : d.toLocaleDateString()
   }
 
+  const formatDisplayEmail = (email?: string | null): string => {
+    if (!email || email.includes('@formados.fatesa.edu.br')) return 'Não informado'
+    return email
+  }
+
+  const openHistoryModalFor = (alumni: AlumniRecord) => {
+    setSelectedAlumni(alumni)
+    const nivelMap: Record<string, string> = { 'Básico': 'basico', 'Basico': 'basico', 'Médio': 'medio', 'Medio': 'medio' }
+    const matched = courses.find(c => c.nome === alumni.curso)
+      || courses.find(c => c.nivel === nivelMap[alumni.nivel_curso])
+      || courses[0]
+    const courseId = matched?.id || ''
+    setHistoryCourseId(courseId)
+    setHistoryDrafts(buildHistoryDrafts(courseId, alumni))
+    setShowHistoryModal(true)
+  }
+
   const buildHistoryDrafts = (courseId: string, alumni: AlumniRecord | null) => {
     const course = courses.find(c => c.id === courseId)
-    const histMap = new Map(
-      (alumni?.historico || []).map((h: any) => [String(h.modulo || '').toLowerCase().trim(), h])
-    )
+    const existingHist = alumni?.historico || []
     const today = new Date().toISOString().split('T')[0]
-    const drafts = (course?.livros || []).map((m: any) => {
-      const existing = histMap.get(String(m.titulo || '').toLowerCase().trim())
+    const sortedCourseBooks: string[] = course?.livros && course.livros.length > 0
+      ? [...course.livros].sort((a: any, b: any) => (a.ordem || 0) - (b.ordem || 0)).map((m: any) => m.titulo as string)
+      : [...OFFICIAL_COURSE_BOOKS]
+
+    const drafts: { modulo: string; nota: string; data: string; manual?: boolean; registered?: boolean }[] = sortedCourseBooks.map((bookTitle: string) => {
+      const existing = existingHist.find((h: any) => areModuleTitlesEqual(h.modulo, bookTitle))
       return {
-        modulo: m.titulo as string,
+        modulo: bookTitle,
         nota: existing?.nota != null ? String(existing.nota) : '',
         data: toISODate(existing?.data || today),
         registered: !!existing
       }
     })
-    if (drafts.length === 0) drafts.push({ modulo: '', nota: '', data: today, manual: true })
+
+    const recognizedClean = new Set(sortedCourseBooks.map(b => cleanModuleTitle(b)))
+    existingHist.forEach((h: any) => {
+      if (h.modulo && !recognizedClean.has(cleanModuleTitle(h.modulo))) {
+        drafts.push({
+          modulo: h.modulo,
+          nota: h.nota != null ? String(h.nota) : '',
+          data: toISODate(h.data || today),
+          registered: true,
+          manual: true
+        })
+      }
+    })
+
+    if (drafts.length === 0) drafts.push({ modulo: '', nota: '', data: today, manual: true, registered: false })
     return drafts
   }
 
@@ -244,6 +280,29 @@ const AlumniManagement = () => {
         .update({ historico: newHistory })
         .eq('id', selectedAlumni.id)
       if (error) throw error
+
+      // Se o formado possuir user_id vinculado, sincroniza também em historico_notas
+      if (selectedAlumni.user_id) {
+        for (const d of filled) {
+          const num = parseFloat(d.nota.replace(',', '.'))
+          if (!isNaN(num)) {
+            try {
+              await supabase
+                .from('historico_notas')
+                .upsert({
+                  user_id: selectedAlumni.user_id,
+                  modulo_nome: getOfficialBookTitle(d.modulo.trim()),
+                  nota: num,
+                  data_conclusao: d.data || new Date().toISOString().split('T')[0],
+                  origem: 'manual_alumni'
+                }, { onConflict: 'user_id, modulo_nome' })
+            } catch {
+              // Silently ignore sync error if user has special constraint
+            }
+          }
+        }
+      }
+
       const updated = { ...selectedAlumni, historico: newHistory }
       setSelectedAlumni(updated)
       setRecords(prev => prev.map(r => (r.id === updated.id ? updated : r)))
@@ -278,30 +337,84 @@ const AlumniManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formData.nome.trim()) {
+      alert('O campo Nome Completo é obrigatório para cadastramento.')
+      return
+    }
+    if (!formData.nivel_curso.trim()) {
+      alert('O campo Nível do Curso é obrigatório para cadastramento.')
+      return
+    }
+
     setActionLoading('saving')
 
     try {
-      if (editingRecord) {
-        const { error } = await supabase
-          .from('registros_alumni')
-          .update(formData)
-          .eq('id', editingRecord.id)
-        if (error) throw error
-      } else {
-        const { error } = await supabase
-          .from('registros_alumni')
-          .insert(formData)
-        if (error) throw error
+      const emailInput = (formData.email || '').trim().toLowerCase()
+      let finalEmail = emailInput
+      if (!finalEmail) {
+        if (editingRecord && editingRecord.email) {
+          finalEmail = editingRecord.email
+        } else {
+          const rand = Math.random().toString(36).substring(2, 7)
+          finalEmail = `sem-email.${Date.now()}.${rand}@formados.fatesa.edu.br`
+        }
       }
 
+      const sanitizedData = {
+        ...formData,
+        nome: (formData.nome || '').trim().toUpperCase(),
+        curso: (formData.curso || 'CURSO BÁSICO EM TEOLOGIA').trim().toUpperCase(),
+        nivel_curso: (formData.nivel_curso || 'Básico').trim(),
+        nucleo: (formData.nucleo || '').trim().toUpperCase(),
+        rg: (formData.cpf || '').trim(),
+        endereco: (formData.endereco || '').trim().toUpperCase(),
+        bairro: (formData.bairro || '').trim().toUpperCase(),
+        cidade: (formData.cidade || '').trim().toUpperCase(),
+        uf: (formData.uf || '').trim().toUpperCase(),
+        ano_formacao: (formData.ano_formacao || '').trim(),
+        matricula: (formData.matricula || '').trim().toUpperCase(),
+        email: finalEmail,
+      };
+
+      let savedRecord: AlumniRecord | null = null
+
+      if (editingRecord) {
+        const { data, error } = await supabase
+          .from('registros_alumni')
+          .update(sanitizedData)
+          .eq('id', editingRecord.id)
+          .select()
+          .single()
+        if (error) throw error
+        savedRecord = data as AlumniRecord
+      } else {
+        const { data, error } = await supabase
+          .from('registros_alumni')
+          .insert({
+            ...sanitizedData,
+            status_aprovacao: 'aprovado',
+            historico: []
+          })
+          .select()
+          .single()
+        if (error) throw error
+        savedRecord = data as AlumniRecord
+      }
+
+      const wasCreating = !editingRecord
       setShowModal(false)
       setEditingRecord(null)
       setFormData({ 
         nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', 
         matricula: '', nivel_curso: 'Básico', observacoes: '',
-        rg: '', telefone: '', cep: '', endereco: '', bairro: '', cidade: '', uf: ''
+        cpf: '', telefone: '', cep: '', endereco: '', bairro: '', cidade: '', uf: ''
       })
-      fetchRecords()
+      await fetchRecords()
+
+      // Se cadastrou um novo formado e a opção estiver marcada, abre diretamente a inserção de notas
+      if (wasCreating && openHistoryAfterSave && savedRecord) {
+        openHistoryModalFor(savedRecord)
+      }
     } catch (err: any) {
       alert('Erro ao salvar: ' + err.message)
     } finally {
@@ -327,16 +440,17 @@ const AlumniManagement = () => {
 
   const handleEdit = (record: AlumniRecord) => {
     setEditingRecord(record)
+    const isGeneratedEmail = (record.email || '').includes('@formados.fatesa.edu.br')
     setFormData({
       nome: record.nome,
-      email: record.email,
+      email: isGeneratedEmail ? '' : record.email,
       curso: record.curso || '',
       nucleo: record.nucleo || '',
       ano_formacao: record.ano_formacao || '',
       matricula: record.matricula || '',
       nivel_curso: record.nivel_curso || 'Básico',
       observacoes: record.observacoes || '',
-      rg: record.rg || '',
+      cpf: record.cpf || record.rg || '',
       telefone: record.telefone || '',
       cep: record.cep || '',
       endereco: record.endereco || '',
@@ -416,17 +530,17 @@ const AlumniManagement = () => {
 
     const nomeImpresso = window.prompt(
       "Digite ou confirme o nome do aluno que sairá no certificado:",
-      record.nome
+      (record.nome || '').toUpperCase()
     );
     if (!nomeImpresso || !nomeImpresso.trim()) return;
 
     try {
       const summary = await fetchStudentAcademicSummary(record);
-      await generateCertificadoPDF(nomeImpresso.trim(), nivel, summary.dataConclusao);
+      await generateCertificadoPDF(nomeImpresso.trim().toUpperCase(), nivel, summary.dataConclusao);
     } catch (err: any) {
       console.warn('Erro ao obter data da última prova, emitindo com data do pedido:', err);
       try {
-        await generateCertificadoPDF(nomeImpresso.trim(), nivel, new Date());
+        await generateCertificadoPDF(nomeImpresso.trim().toUpperCase(), nivel, new Date());
       } catch (e: any) {
         alert('Erro ao gerar certificado: ' + e.message);
       }
@@ -455,7 +569,7 @@ const AlumniManagement = () => {
     if (!nomeImpresso || !nomeImpresso.trim()) return;
 
     try {
-      await generateCertificadoPDF(nomeImpresso.trim(), nivel, new Date());
+      await generateCertificadoPDF(nomeImpresso.trim().toUpperCase(), nivel, new Date());
     } catch (err: any) {
       alert('Erro ao gerar certificado: ' + err.message);
     }
@@ -470,12 +584,13 @@ const AlumniManagement = () => {
       status: 'Formado'
     };
 
-    let materiasParaHistorico: { nome: string; media: string | number }[] = (record.historico || [])
-      .filter(h => h.modulo && h.nota)
-      .map(h => ({
-        nome: h.modulo,
-        media: h.nota
-      }));
+    let materiasParaHistorico: { nome: string; media: string | number }[] = sortModulesByCurriculum(
+      (record.historico || []).filter(h => h.modulo && h.nota),
+      h => h.modulo || ''
+    ).map(h => ({
+      nome: getOfficialBookTitle(h.modulo),
+      media: h.nota
+    }));
 
     if (materiasParaHistorico.length === 0 && (record.user_id || record.email)) {
       try {
@@ -630,7 +745,7 @@ const AlumniManagement = () => {
             <GraduationCap size={18} />
             <span>Emitir Certificado</span>
           </button>
-          <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setEditingRecord(null); setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Básico', observacoes: '', rg: '', telefone: '', cep: '', endereco: '', bairro: '', cidade: '', uf: '' }); setShowModal(true); }}>
+          <button className="btn btn-primary" style={{ width: 'auto' }} onClick={() => { setEditingRecord(null); setFormData({ nome: '', email: '', curso: '', nucleo: '', ano_formacao: '', matricula: '', nivel_curso: 'Básico', observacoes: '', cpf: '', telefone: '', cep: '', endereco: '', bairro: '', cidade: '', uf: '' }); setShowModal(true); }}>
             <Plus size={18} /> Adicionar Formado
           </button>
         </div>
@@ -851,13 +966,20 @@ const AlumniManagement = () => {
                     <tr key={record.id} style={{ background: isPending ? 'rgba(245, 158, 11, 0.03)' : undefined }}>
                       <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{globalIdx}</td>
                       <td>
-                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{record.nome}</div>
-                        {record.matricula && (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Matrícula: {record.matricula}</span>
-                        )}
+                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{(record.nome || '').toUpperCase()}</div>
+                        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          {record.matricula && (
+                            <span>Matrícula: {record.matricula}</span>
+                          )}
+                          {(record.cpf || record.rg) && (
+                            <span>CPF: {record.cpf || record.rg}</span>
+                          )}
+                        </div>
                       </td>
                       <td>
-                        <div style={{ fontSize: '0.85rem' }}>{record.email || '—'}</div>
+                        <div style={{ fontSize: '0.85rem', color: (!record.email || record.email.includes('@formados.fatesa.edu.br')) ? 'var(--text-muted)' : 'inherit' }}>
+                          {formatDisplayEmail(record.email)}
+                        </div>
                         {record.telefone && (
                           <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>{record.telefone}</div>
                         )}
@@ -905,6 +1027,29 @@ const AlumniManagement = () => {
                               Aprovar Aluno
                             </button>
                           )}
+
+                          {/* BOTÃO LANÇAR NOTAS MANUALMENTE */}
+                          <button 
+                            className="btn" 
+                            onClick={() => openHistoryModalFor(record)} 
+                            title="Lançar ou editar notas do histórico manualmente (1 a 27)" 
+                            style={{ 
+                              padding: '0.4rem 0.75rem', 
+                              fontSize: '0.8rem', 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              gap: '0.35rem', 
+                              background: 'rgba(16, 185, 129, 0.15)', 
+                              color: '#10b981', 
+                              border: '1px solid rgba(16, 185, 129, 0.35)', 
+                              borderRadius: '8px', 
+                              fontWeight: 700, 
+                              cursor: 'pointer' 
+                            }}
+                          >
+                            <HistoryIcon size={15} />
+                            <span>Lançar Notas</span>
+                          </button>
 
                           {/* BOTÃO EMITIR CERTIFICADO OFICIAL */}
                           <button 
@@ -1021,38 +1166,52 @@ const AlumniManagement = () => {
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                 <h2 style={{ margin: 0 }}>{editingRecord ? 'Editar Registro' : 'Novo Registro de Formado'}</h2>
                 <button className="btn-icon" onClick={() => setShowModal(false)}><X /></button>
+            </div>
+
+            <div style={{
+              background: 'rgba(0, 86, 179, 0.08)',
+              border: '1px solid rgba(0, 86, 179, 0.25)',
+              borderRadius: '10px',
+              padding: '0.75rem 1rem',
+              fontSize: '0.85rem',
+              color: 'var(--text-main, #333)',
+              marginBottom: '1rem'
+            }}>
+              ℹ️ <strong>Cadastramento:</strong> Somente os campos <strong>Nome Completo</strong> e <strong>Nível do Curso</strong> são obrigatórios. Todos os outros campos são opcionais.
             </div>
             
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                   <div className="form-group">
-                    <label>Nome Completo</label>
+                    <label style={{ fontWeight: 700 }}>Nome Completo *</label>
                     <input 
                       type="text" 
                       className="form-control" 
+                      placeholder="Nome do aluno em maiúsculas"
                       value={formData.nome}
-                      onChange={(e) => setFormData({...formData, nome: e.target.value})}
+                      onChange={(e) => setFormData({...formData, nome: e.target.value.toUpperCase()})}
+                      style={{ textTransform: 'uppercase' }}
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label>E-mail</label>
+                    <label>E-mail <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                     <input 
                       type="email" 
                       className="form-control" 
+                      placeholder="aluno@email.com (opcional)"
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      required
                     />
                   </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.25rem' }}>
                 <div className="form-group">
-                  <label>Especialidade do Curso</label>
+                  <label>Especialidade do Curso <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                   <input 
                     type="text" 
                     className="form-control" 
@@ -1062,11 +1221,12 @@ const AlumniManagement = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Nível</label>
+                  <label style={{ fontWeight: 700 }}>Nível do Curso *</label>
                   <select 
                     className="form-control"
                     value={formData.nivel_curso}
                     onChange={(e) => setFormData({...formData, nivel_curso: e.target.value})}
+                    required
                   >
                     {niveis.map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
@@ -1075,19 +1235,30 @@ const AlumniManagement = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                 <div className="form-group">
-                  <label>RG</label>
+                  <label>CPF <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                   <input 
                     type="text" 
+                    inputMode="numeric"
                     className="form-control" 
-                    value={formData.rg}
-                    onChange={(e) => setFormData({...formData, rg: e.target.value})}
+                    placeholder="000.000.000-00"
+                    value={formData.cpf}
+                    onChange={(e) => {
+                      const d = e.target.value.replace(/\D/g, '').slice(0, 11)
+                      const masked = d
+                        .replace(/^(\d{3})(\d)/, '$1.$2')
+                        .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+                        .replace(/\.(\d{3})(\d)/, '.$1-$2')
+                      setFormData({...formData, cpf: masked})
+                    }}
+                    maxLength={14}
                   />
                 </div>
                 <div className="form-group">
-                  <label>Telefone / WhatsApp</label>
+                  <label>Telefone / WhatsApp <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                   <input 
                     type="text" 
                     className="form-control" 
+                    placeholder="(11) 99999-9999"
                     value={formData.telefone}
                     onChange={(e) => setFormData({...formData, telefone: e.target.value})}
                   />
@@ -1096,27 +1267,27 @@ const AlumniManagement = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.25rem' }}>
                 <div className="form-group">
-                  <label>Ano de Formação</label>
+                  <label>Ano de Formação <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                   <input 
                     type="text" 
                     className="form-control" 
                     placeholder="Ex: 2023"
                     value={formData.ano_formacao}
                     onChange={(e) => setFormData({...formData, ano_formacao: e.target.value})}
-                    required
                   />
                 </div>
                 <div className="form-group">
-                  <label>Polo / Núcleo</label>
+                  <label>Polo / Núcleo <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                   <input 
                     type="text" 
                     className="form-control" 
+                    placeholder="Nome do Polo"
                     value={formData.nucleo}
                     onChange={(e) => setFormData({...formData, nucleo: e.target.value})}
                   />
                 </div>
                 <div className="form-group">
-                  <label>Matrícula</label>
+                  <label>Matrícula <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                   <input 
                     type="text" 
                     className="form-control" 
@@ -1128,7 +1299,7 @@ const AlumniManagement = () => {
               </div>
 
               <div className="form-group">
-                <label>Observações Adicionais</label>
+                <label>Observações Adicionais <span style={{ opacity: 0.6, fontWeight: 400 }}>(Opcional)</span></label>
                 <textarea 
                   className="form-control" 
                   rows={3}
@@ -1137,6 +1308,29 @@ const AlumniManagement = () => {
                   placeholder="Informações relevantes sobre o formado..."
                 />
               </div>
+
+              {!editingRecord && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  background: 'rgba(16, 185, 129, 0.08)',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(16, 185, 129, 0.3)'
+                }}>
+                  <input 
+                    type="checkbox" 
+                    id="openHistoryAfterSave"
+                    checked={openHistoryAfterSave}
+                    onChange={(e) => setOpenHistoryAfterSave(e.target.checked)}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                  />
+                  <label htmlFor="openHistoryAfterSave" style={{ margin: 0, cursor: 'pointer', fontSize: '0.88rem', fontWeight: 700, color: '#059669' }}>
+                    Inserir notas do histórico manualmente logo após cadastrar
+                  </label>
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setShowModal(false)} disabled={!!actionLoading}>Cancelar</button>
@@ -1160,7 +1354,10 @@ const AlumniManagement = () => {
                 </div>
                 <div>
                   <h2 style={{ margin: 0 }}>Dossiê do Formado</h2>
-                  <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>{selectedAlumni.nome} • {selectedAlumni.curso}</p>
+                  <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>
+                    {selectedAlumni.nome} • {selectedAlumni.curso} • {selectedAlumni.nivel_curso || 'BÁSICO'}
+                    {(selectedAlumni.cpf || selectedAlumni.rg) ? ` • CPF: ${selectedAlumni.cpf || selectedAlumni.rg}` : ''}
+                  </p>
                 </div>
               </div>
               <button className="btn-icon" onClick={() => setShowDossie(false)}><X /></button>
@@ -1192,20 +1389,11 @@ const AlumniManagement = () => {
                 </h3>
                 <button 
                   className="btn btn-outline" 
-                  style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.8rem' }}
-                  onClick={() => {
-                    const nivelMap: Record<string, string> = { 'Básico': 'basico', 'Basico': 'basico', 'Médio': 'medio', 'Medio': 'medio' }
-                    const matched = courses.find(c => c.nome === selectedAlumni.curso)
-                      || courses.find(c => c.nivel === nivelMap[selectedAlumni.nivel_curso])
-                      || courses[0]
-                    const courseId = matched?.id || ''
-                    setHistoryCourseId(courseId)
-                    setHistoryDrafts(buildHistoryDrafts(courseId, selectedAlumni))
-                    setShowHistoryModal(true)
-                  }}
+                  style={{ width: 'auto', padding: '0.4rem 1rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  onClick={() => openHistoryModalFor(selectedAlumni)}
                   disabled={actionLoading === 'history'}
                 >
-                  <Plus size={14} /> Adicionar Registro
+                  <HistoryIcon size={14} /> Lançar / Editar Notas
                 </button>
               </div>
 
@@ -1224,9 +1412,9 @@ const AlumniManagement = () => {
                       <td colSpan={4} style={{ textAlign: 'center', padding: '2rem', opacity: 0.5 }}>Nenhum registro no histórico.</td>
                     </tr>
                   ) : (
-                    selectedAlumni.historico.map((item: any, idx: number) => (
+                    sortModulesByCurriculum(selectedAlumni.historico, (h: any) => h.modulo || '').map((item: any, idx: number) => (
                       <tr key={idx}>
-                        <td style={{ fontWeight: 600 }}>{item.modulo}</td>
+                        <td style={{ fontWeight: 600 }}>{getOfficialBookTitle(item.modulo)}</td>
                         <td style={{ textAlign: 'center' }}>
                           <span style={{ background: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>
                             {item.nota}
@@ -1270,8 +1458,10 @@ const AlumniManagement = () => {
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '660px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div>
-                <h2 style={{ margin: 0 }}>Inserir Notas do Histórico</h2>
-                <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>{selectedAlumni.nome} • {selectedAlumni.nivel_curso} • lista única da grade</p>
+                <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Histórico de Notas do Formado</h2>
+                <p style={{ margin: '4px 0 0 0', opacity: 0.7, fontSize: '0.85rem' }}>
+                  <strong>{selectedAlumni.nome}</strong> • Nível: {selectedAlumni.nivel_curso || 'Básico'} • 27 Livros Oficiais
+                </p>
               </div>
               <button className="btn-icon" onClick={() => setShowHistoryModal(false)}><X /></button>
             </div>
@@ -1296,6 +1486,24 @@ const AlumniManagement = () => {
                 </div>
               )}
 
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  Notas lançadas: <strong style={{ color: '#10b981' }}>{historyFilledCount}</strong> de {historyDrafts.length} matérias
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  style={{ width: 'auto', padding: '0.25rem 0.7rem', fontSize: '0.75rem' }}
+                  onClick={() => {
+                    const today = new Date().toISOString().split('T')[0];
+                    setHistoryDrafts(prev => prev.map(p => (p.nota.trim() !== '' ? { ...p, data: today } : p)));
+                  }}
+                  title="Aplica a data de hoje para todas as matérias que já têm nota digitada"
+                >
+                  Definir data de hoje nas notas
+                </button>
+              </div>
+
               <div style={{ border: '1px solid var(--glass-border)', borderRadius: '10px', overflow: 'hidden' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 90px 140px 40px', gap: '0.5rem', padding: '0.6rem 0.75rem', background: 'rgba(var(--primary-rgb), 0.06)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   <span>Matéria</span>
@@ -1303,7 +1511,7 @@ const AlumniManagement = () => {
                   <span style={{ textAlign: 'center' }}>Conclusão</span>
                   <span />
                 </div>
-                <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
                   {historyDrafts.map((d, idx) => (
                     <div key={idx} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 90px 140px 40px', gap: '0.5rem', alignItems: 'center', padding: '0.5rem 0.75rem', borderTop: '1px solid var(--glass-border)', background: d.nota.trim() !== '' ? 'rgba(var(--primary-rgb), 0.03)' : 'transparent' }}>
                       {d.manual ? (

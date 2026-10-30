@@ -1,6 +1,7 @@
 import React from 'react';
 import Logo from '../../../components/common/Logo';
 import { generateHistoricoPDF } from '../../../utils/pdfGenerator';
+import { sortModulesByCurriculum, getOfficialBookIndex, getOfficialBookTitle } from '../../../lib/courseTitles';
 
 interface TranscriptAlumni {
   nome: string;
@@ -10,6 +11,7 @@ interface TranscriptAlumni {
   ano_formacao?: string;
   nivel_curso?: string;
   matricula?: string;
+  cpf?: string;
   rg?: string;
   telefone?: string;
   cep?: string;
@@ -27,7 +29,12 @@ interface TranscriptDocumentProps {
 }
 
 const TranscriptDocument: React.FC<TranscriptDocumentProps> = ({ alumni, onClose }) => {
-  const entries = alumni.historico || [];
+  const entries = React.useMemo(() => {
+    return sortModulesByCurriculum(alumni.historico || [], (h: any) => h.modulo || '').map((h: any) => ({
+      ...h,
+      modulo: getOfficialBookTitle(h.modulo || '')
+    }));
+  }, [alumni.historico]);
   const notas = entries
     .map(e => parseFloat(String(e.nota).replace(',', '.')))
     .filter(n => !isNaN(n));
@@ -36,15 +43,15 @@ const TranscriptDocument: React.FC<TranscriptDocumentProps> = ({ alumni, onClose
   const today = new Date().toLocaleDateString('pt-BR');
 
   const dados: { label: string; value: string }[] = [
-    { label: 'Nome Completo', value: alumni.nome || '—' },
+    { label: 'Nome Completo', value: alumni.nome ? alumni.nome.toUpperCase() : '—' },
     { label: 'Matrícula', value: alumni.matricula || '—' },
-    { label: 'RG', value: alumni.rg || '—' },
+    { label: 'CPF', value: alumni.cpf || alumni.rg || '—' },
     { label: 'Telefone', value: alumni.telefone || '—' },
-    { label: 'Curso / Especialidade', value: alumni.curso || '—' },
-    { label: 'Nível', value: alumni.nivel_curso || '—' },
-    { label: 'Polo / Núcleo', value: alumni.nucleo || '—' },
+    { label: 'Curso / Especialidade', value: alumni.curso ? alumni.curso.toUpperCase() : '—' },
+    { label: 'Nível', value: alumni.nivel_curso ? alumni.nivel_curso.toUpperCase() : '—' },
+    { label: 'Polo / Núcleo', value: alumni.nucleo ? alumni.nucleo.toUpperCase() : '—' },
     { label: 'Ano de Formação', value: alumni.ano_formacao || '—' },
-    { label: 'Cidade / UF', value: [alumni.cidade, alumni.uf].filter(Boolean).join(' - ') || '—' },
+    { label: 'Cidade / UF', value: [alumni.cidade, alumni.uf].filter(Boolean).join(' - ').toUpperCase() || '—' },
     { label: 'E-mail', value: alumni.email || '—' }
   ];
 
@@ -126,11 +133,13 @@ const TranscriptDocument: React.FC<TranscriptDocumentProps> = ({ alumni, onClose
               </tr>
             ) : (
               entries.map((item, idx) => {
+                const officialIdx = getOfficialBookIndex(item.modulo);
+                const modNum = (officialIdx >= 0 && officialIdx < 900) ? (officialIdx + 1) : (idx + 1);
                 const nota = parseFloat(String(item.nota).replace(',', '.'));
                 const aprovado = !isNaN(nota) && nota >= 7;
                 return (
                   <tr key={idx} style={{ background: idx % 2 === 0 ? '#faf7f0' : '#fff', borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '0.35rem 0.6rem', textAlign: 'center', color: '#777' }}>{idx + 1}</td>
+                    <td style={{ padding: '0.35rem 0.6rem', textAlign: 'center', color: '#777' }}>{modNum}</td>
                     <td style={{ padding: '0.35rem 0.6rem', fontWeight: 600 }}>{item.modulo}</td>
                     <td style={{
                       padding: '0.35rem 0.6rem',

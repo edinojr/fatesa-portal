@@ -32,7 +32,7 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
     <tr>
       <td>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ fontWeight: 600, marginRight: '0.5rem' }}>{user.nome}</div>
+          <div style={{ fontWeight: 600, marginRight: '0.5rem' }}>{(user.nome || '').toUpperCase()}</div>
           {user.bloqueado && (
             <span style={{ marginRight: '0.4rem', fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: 'rgba(255,77,77,0.2)', color: 'var(--error)', fontWeight: 700, lineHeight: 1.4 }}>
               BLOQUEADO
@@ -48,7 +48,7 @@ const UserRow = ({ user, allNucleos, actionLoading, handleTypeChange, handleAppr
             style={{ padding: '2px', opacity: 0.5 }}
             onClick={() => {
               const newName = prompt('Novo nome para o usuário:', user.nome)
-              if (newName && newName !== user.nome) handleUpdateUserName(user.id, newName)
+              if (newName && newName !== user.nome) handleUpdateUserName(user.id, newName.trim().toUpperCase())
             }}
             title="Editar Nome"
           >

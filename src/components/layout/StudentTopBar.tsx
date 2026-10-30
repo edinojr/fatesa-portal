@@ -107,7 +107,8 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
     <header
       style={{
         height: '60px',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--primary, #0056b3)',
+        background: 'var(--primary, #0056b3)',
         borderBottom: '2.5px solid #d4af37',
         boxShadow: '0 4px 16px rgba(0, 86, 179, 0.16), 0 0 10px rgba(0, 86, 179, 0.22)',
         display: 'flex',
@@ -125,9 +126,9 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
         <button
           onClick={onToggleSidebar}
           style={{
-            background: 'rgba(0, 86, 179, 0.06)',
-            border: '1px solid rgba(212, 175, 55, 0.45)',
-            color: '#003366',
+            background: 'rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(212, 175, 55, 0.6)',
+            color: '#ffffff',
             width: '38px',
             height: '38px',
             borderRadius: '10px',
@@ -140,14 +141,14 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
           }}
           title={isSidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}
         >
-          <Menu size={20} color="#003366" />
+          <Menu size={20} color="#ffffff" />
         </button>
 
         <div className="mobile-hide">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#1e40af', whiteSpace: 'nowrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.85)', whiteSpace: 'nowrap' }}>
             <span>Portal do Aluno</span>
             <span>/</span>
-            <span style={{ color: '#003366', fontWeight: 800 }}>{activeTabTitle}</span>
+            <span style={{ color: '#ffffff', fontWeight: 800 }}>{activeTabTitle}</span>
           </div>
         </div>
       </div>
@@ -287,9 +288,9 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
             onClick={() => setShowNotifications(!showNotifications)}
             style={{
               position: 'relative',
-              background: 'rgba(0, 86, 179, 0.05)',
-              border: '1px solid rgba(212, 175, 55, 0.45)',
-              color: '#003366',
+              background: 'rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(212, 175, 55, 0.6)',
+              color: '#ffffff',
               width: '38px',
               height: '38px',
               borderRadius: '50%',
@@ -300,7 +301,7 @@ export const StudentTopBar: React.FC<StudentTopBarProps> = ({
             }}
             title="Notificações e Avisos"
           >
-            <Bell size={18} color="#003366" />
+            <Bell size={18} color="#ffffff" />
             {totalNotifications > 0 && (
               <span
                 style={{

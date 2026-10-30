@@ -14,6 +14,7 @@ import { graduationService } from '../services/graduationService'
 import { generateCertificadoPDF, generateHistoricoPDF } from '../utils/pdfGenerator'
 import { PanelSwitcher } from '../components/common/PanelSwitcher'
 import { fetchStudentAcademicSummary } from '../services/academicService'
+import { sortModulesByCurriculum, getOfficialBookIndex, getOfficialBookTitle, cleanModuleTitle, LEGACY_AULA_TO_BOOK_TITLE } from '../lib/courseTitles'
 
 
 const ModulosFinalizados = () => {
@@ -102,20 +103,23 @@ const goToPanel = () => {
 
             Promise.all([
                 supabase.from('historico_notas').select('*').eq('aluno_id', profile.id).order('created_at', { ascending: false }),
-                alumniQuery
-            ]).then(([histRes, alumniRes]) => {
+                alumniQuery,
+                supabase.from('respostas_aulas').select('id, aula_id, nota, status, created_at, updated_at').eq('aluno_id', profile.id)
+            ]).then(async ([histRes, alumniRes, respRes]) => {
                 if (histRes.error) console.error('[ModulosFinalizados] Erro ao buscar histórico:', histRes.error.message);
                 const combined: any[] = [];
                 const upsertCombined = (entry: any) => {
                     if (!entry || !entry.modulo_nome || entry.nota == null) return;
                     const numNota = parseFloat(String(entry.nota).replace(',', '.'));
                     if (isNaN(numNota)) return;
-                    const existingIdx = combined.findIndex(h => areModuleTitlesEqual(h.modulo_nome, entry.modulo_nome));
+                    const canonical = getOfficialBookTitle(entry.modulo_nome);
+                    const existingIdx = combined.findIndex(h => areModuleTitlesEqual(h.modulo_nome, entry.modulo_nome) || areModuleTitlesEqual(h.modulo_nome, canonical));
                     if (existingIdx === -1) {
-                        combined.push({ ...entry, nota: numNota });
+                        combined.push({ ...entry, modulo_nome: canonical, nota: numNota });
                     } else if (numNota > Number(combined[existingIdx].nota || 0)) {
                         combined[existingIdx] = {
                             ...combined[existingIdx],
+                            modulo_nome: canonical,
                             nota: numNota,
                             data_conclusao: entry.data_conclusao || combined[existingIdx].data_conclusao
                         };
@@ -150,6 +154,48 @@ const goToPanel = () => {
                         });
                     }
                 });
+
+                // Incorporar notas aprovadas do processo online (respostas_aulas)
+                const onlineSubs = (respRes?.data || []).filter((r: any) => r && r.nota != null);
+                if (onlineSubs.length > 0) {
+                    const aulaIds = Array.from(new Set(onlineSubs.map((r: any) => r.aula_id).filter(Boolean)));
+                    const { data: aData } = await supabase
+                        .from('aulas')
+                        .select('id, titulo, tipo, is_bloco_final, livro_id')
+                        .in('id', aulaIds);
+                    const aulasMap: Record<string, any> = {};
+                    (aData || []).forEach((a: any) => { aulasMap[a.id] = a; });
+
+                    const livroIds = Array.from(new Set((aData || []).map((a: any) => a.livro_id).filter(Boolean)));
+                    const livrosMap: Record<string, any> = {};
+                    if (livroIds.length > 0) {
+                        const { data: lData } = await supabase
+                            .from('livros')
+                            .select('id, titulo, curso_id')
+                            .in('id', livroIds);
+                        (lData || []).forEach((l: any) => { livrosMap[l.id] = l; });
+                    }
+
+                    onlineSubs.forEach((r: any) => {
+                        const numNota = parseFloat(String(r.nota).replace(',', '.'));
+                        if (isNaN(numNota) || numNota < 7.0) return;
+                        const aula = aulasMap[r.aula_id];
+                        const livro = aula?.livro_id ? livrosMap[aula.livro_id] : null;
+                        let modTitle = livro?.titulo || (r.aula_id && LEGACY_AULA_TO_BOOK_TITLE[r.aula_id]) || aula?.titulo;
+                        if (!modTitle) return;
+                        const canonical = getOfficialBookTitle(modTitle);
+                        upsertCombined({
+                            id: `online-${r.id}`,
+                            aluno_id: profile.id,
+                            curso_nome: 'Teologia Básico',
+                            modulo_nome: canonical,
+                            nota: numNota,
+                            data_conclusao: r.updated_at ? new Date(r.updated_at).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR'),
+                            observacao: 'Avaliação online realizada no portal'
+                        });
+                    });
+                }
+
                 console.log('[ModulosFinalizados] total de notas carregadas:', combined.length);
                 setHistoryGrades(combined);
             });
@@ -221,11 +267,12 @@ const goToPanel = () => {
 
         // Incluir também submissões online aprovadas que não estão na lista de livros exibidos
         (atividades || []).forEach((at: any) => {
-            if (at.status === 'corrigida' && at.nota != null && Number(at.nota) >= 7) {
-                const isExamOrManual = at.is_bloco_final || at.lesson_type === 'prova' || at.lesson_type === 'avaliacao' || at.aulas?.tipo === 'prova' || at.aulas?.tipo === 'avaliacao' || at.is_manual;
+            if (at.nota != null && Number(at.nota) >= 7) {
+                const isExamOrManual = at.is_bloco_final || at.lesson_type === 'prova' || at.lesson_type === 'avaliacao' || at.aulas?.tipo === 'prova' || at.aulas?.tipo === 'avaliacao' || at.is_manual || at.status === 'corrigida' || Number(at.nota) >= 7;
                 if (!isExamOrManual) return;
-                const title = at.book_title || at.modulo_nome || at.lesson_title;
-                if (!title) return;
+                const rawTitle = at.book_title || (at.lesson_id && LEGACY_AULA_TO_BOOK_TITLE[at.lesson_id]) || (at.aula_id && LEGACY_AULA_TO_BOOK_TITLE[at.aula_id]) || at.modulo_nome || at.lesson_title;
+                if (!rawTitle) return;
+                const title = getOfficialBookTitle(rawTitle);
                 let alreadyDisplayed = false;
                 for (const disp of displayedTitles) {
                     if (areModuleTitlesEqual(disp, title)) {
@@ -289,7 +336,12 @@ const goToPanel = () => {
             });
         }
 
-        return { finishedCourses: localFinishedCourses, orfaosAprovados: localOrfaosAprovados };
+        const sortedCourses = localFinishedCourses.map(course => ({
+            ...course,
+            livros: sortModulesByCurriculum(course.livros || [], (l: any) => l.titulo)
+        }));
+
+        return { finishedCourses: sortedCourses, orfaosAprovados: localOrfaosAprovados };
     }, [courses, historyGrades, atividades, progressoAulas, profile?.tipo, alumniRecord?.status_aprovacao]);
 
     // Extrair lista plana de todos os módulos com notas para a tabela de boletim (desduplicando por título e mantendo a maior nota)
@@ -302,21 +354,24 @@ const goToPanel = () => {
                 const bestN = Math.max(n1, n2);
                 const n = bestN >= 0 ? bestN : null;
 
-                const existingIdx = list.findIndex(item => areModuleTitlesEqual(item.titulo, l.titulo));
+                const rawTitle = l.titulo || l.modulo_nome || l.book_title || '';
+                const canonicalTitle = getOfficialBookTitle(rawTitle);
+                const existingIdx = list.findIndex(item => areModuleTitlesEqual(item.titulo, rawTitle) || areModuleTitlesEqual(item.titulo, canonicalTitle));
                 if (existingIdx === -1) {
                     list.push({
                         id: l.id,
-                        titulo: l.titulo,
-                        curso: c.nome || (c.nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio'),
+                        titulo: canonicalTitle || rawTitle || 'Módulo',
+                        curso: (c.nome || (c.nivel === 'basico' ? 'Teologia Básico' : 'Teologia Médio')).toUpperCase(),
                         nota: n,
                         data: l.data_conclusao || 'Concluído'
                     });
                 } else if (n !== null && (list[existingIdx].nota === null || n > list[existingIdx].nota!)) {
                     list[existingIdx].nota = n;
+                    list[existingIdx].titulo = canonicalTitle || rawTitle || list[existingIdx].titulo;
                 }
             });
         });
-        return list;
+        return sortModulesByCurriculum(list, item => item.titulo);
     }, [finishedCourses]);
 
     const mediaGeral = useMemo(() => {
@@ -575,16 +630,20 @@ const goToPanel = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {allCompletedBooksFlat.map((item, idx) => (
-                                        <tr key={item.id + idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.2s' }}>
-                                            <td style={{ padding: '1rem 1.5rem', fontWeight: 700, color: 'var(--text-muted)', fontSize: '0.85rem' }}>{idx + 1}</td>
+                                    {allCompletedBooksFlat.map((item, idx) => {
+                                        const officialIdx = getOfficialBookIndex(item.titulo);
+                                        const modNum = (officialIdx >= 0 && officialIdx < 900) ? (officialIdx + 1) : (idx + 1);
+                                        const cleanTitle = cleanModuleTitle(item.titulo) || item.titulo;
+                                        return (
+                                        <tr key={item.id + idx} style={{ borderBottom: '1px solid var(--glass-border, rgba(0, 51, 102, 0.08))', transition: 'background 0.2s' }}>
+                                            <td style={{ padding: '1rem 1.5rem', fontWeight: 800, color: 'var(--text-muted, #1e40af)', fontSize: '0.9rem' }}>{modNum}</td>
                                             <td style={{ padding: '1rem 1.5rem' }}>
-                                                <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{item.titulo}</div>
+                                                <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-main, #003366)' }}>{cleanTitle}</div>
                                             </td>
-                                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-muted, #1e40af)', fontSize: '0.85rem', fontWeight: 600 }}>
                                                 {item.curso}
                                             </td>
-                                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                                            <td style={{ padding: '1rem 1.5rem', color: 'var(--text-muted, #1e40af)', fontSize: '0.85rem' }}>
                                                 {item.data}
                                             </td>
                                             <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
@@ -617,7 +676,8 @@ const goToPanel = () => {
                                                 </span>
                                             </td>
                                         </tr>
-                                    ))}
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>

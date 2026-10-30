@@ -275,7 +275,7 @@ export default function StudentsManagement({
                               }}
                               title="Clique para ver o progresso do aluno por módulo"
                             >
-                              {student.nome}
+                              {(student.nome || '').toUpperCase()}
                             </div>
                           </td>
                           <td>{student.email}</td>

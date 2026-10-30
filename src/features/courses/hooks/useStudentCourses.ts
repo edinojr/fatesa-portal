@@ -279,10 +279,17 @@ export const useStudentCourses = (profile: any) => {
           .in('id', missingAulaIds));
         (missingAulasData || []).forEach((a: any) => {
           aulasMap[a.id] = a;
-          if (a.livro_id && !livrosMap[a.livro_id]) {
-            livrosMap[a.livro_id] = { id: a.livro_id, titulo: a.titulo };
-          }
         });
+        const missingLivroIds = Array.from(new Set<string>((missingAulasData || []).map((a: any) => a.livro_id).filter((lid: string) => lid && !livrosMap[lid])));
+        if (missingLivroIds.length > 0) {
+          const { data: missingLivrosData } = await safeSelect(supabase
+            .from('livros')
+            .select('id, titulo, capa_url, curso_id, ordem')
+            .in('id', missingLivroIds));
+          (missingLivrosData || []).forEach((l: any) => {
+            livrosMap[l.id] = l;
+          });
+        }
       }
 
       const resData = (resDataRaw || []).map((r: any) => {

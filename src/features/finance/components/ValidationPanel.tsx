@@ -26,7 +26,7 @@ interface ValidationPanelProps {
 
 const labelMap: Record<string, string> = {
   'cpf': 'CPF',
-  'rg': 'RG / Identidade',
+  'rg': 'Documento com CPF / Identidade',
   'diploma': 'Diploma de Graduação',
   'historico': 'Histórico Escolar',
   'comprovante_residencia': 'Comprovante de Residência',

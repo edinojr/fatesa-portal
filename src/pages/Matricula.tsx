@@ -60,10 +60,10 @@ const Matricula = () => {
       if (!data.erro) {
         setFormData(prev => ({
           ...prev,
-          endereco: data.logradouro,
-          bairro: data.bairro,
-          cidade: data.localidade,
-          uf: data.uf
+          endereco: (data.logradouro || '').toUpperCase(),
+          bairro: (data.bairro || '').toUpperCase(),
+          cidade: (data.localidade || '').toUpperCase(),
+          uf: (data.uf || '').toUpperCase()
         }))
       }
     } catch (err) {
@@ -101,7 +101,10 @@ const Matricula = () => {
           return v.replace(/^(\d{5})(\d{1,3})$/, '$1-$2')
         }
         default:
-          return value
+          if (['nome', 'endereco', 'complemento', 'bairro', 'cidade', 'uf', 'curso_opcao'].includes(name)) {
+            return value.toUpperCase();
+          }
+          return value;
       }
     }
     setFormData(prev => ({ ...prev, [name]: formatValue(name, value) }))
@@ -128,17 +131,17 @@ const Matricula = () => {
     setError(null)
 
     try {
-      const fullAddress = `${formData.endereco}, ${formData.numero} ${formData.complemento} - ${formData.bairro}, ${formData.cidade}/${formData.uf} (CEP: ${formData.cep})`
+      const fullAddress = `${formData.endereco}, ${formData.numero} ${formData.complemento} - ${formData.bairro}, ${formData.cidade}/${formData.uf} (CEP: ${formData.cep})`.toUpperCase().trim()
       
       const { error: dbError } = await supabase
         .from('solicitacoes_matricula')
         .insert([{
-          nome: formData.nome,
+          nome: formData.nome.trim().toUpperCase(),
           cpf: formData.cpf,
           email: formData.email,
           telefone: formData.telefone,
           endereco: fullAddress,
-          curso_opcao: formData.curso_opcao,
+          curso_opcao: (formData.curso_opcao || '').trim().toUpperCase(),
           modalidade: formData.modalidade
         }])
 
@@ -193,7 +196,7 @@ const Matricula = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label>Nome Completo</label>
-                <input type="text" name="nome" className="form-control" placeholder="Como no seu RG" value={formData.nome} onChange={handleInputChange} required />
+                <input type="text" name="nome" className="form-control" placeholder="COMO NO SEU CPF" value={formData.nome} onChange={handleInputChange} style={{ textTransform: 'uppercase' }} required />
               </div>
               <div className="form-group">
                 <label>CPF</label>
@@ -225,7 +228,7 @@ const Matricula = () => {
               </div>
               <div className="form-group" style={{ gridColumn: 'span 4' }}>
                 <label>Rua / Logradouro</label>
-                <input type="text" name="endereco" className="form-control" placeholder="Ex: Av. Brasil" value={formData.endereco} onChange={handleInputChange} required />
+                <input type="text" name="endereco" className="form-control" placeholder="EX: AV. BRASIL" value={formData.endereco} onChange={handleInputChange} style={{ textTransform: 'uppercase' }} required />
               </div>
               <div className="form-group" style={{ gridColumn: 'span 2' }}>
                 <label>Número</label>
@@ -233,15 +236,15 @@ const Matricula = () => {
               </div>
               <div className="form-group" style={{ gridColumn: 'span 4' }}>
                 <label>Complemento</label>
-                <input type="text" name="complemento" className="form-control" placeholder="Apto, Bloco, etc." value={formData.complemento} onChange={handleInputChange} />
+                <input type="text" name="complemento" className="form-control" placeholder="Apto, Bloco, etc." value={formData.complemento} onChange={handleInputChange} style={{ textTransform: 'uppercase' }} />
               </div>
               <div className="form-group" style={{ gridColumn: 'span 3' }}>
                 <label>Bairro</label>
-                <input type="text" name="bairro" className="form-control" value={formData.bairro} onChange={handleInputChange} required />
+                <input type="text" name="bairro" className="form-control" value={formData.bairro} onChange={handleInputChange} style={{ textTransform: 'uppercase' }} required />
               </div>
               <div className="form-group" style={{ gridColumn: 'span 3' }}>
                 <label>Cidade / UF</label>
-                <input type="text" className="form-control" value={formData.cidade && formData.uf ? `${formData.cidade} - ${formData.uf}` : ''} disabled />
+                <input type="text" className="form-control" value={formData.cidade && formData.uf ? `${formData.cidade} - ${formData.uf}`.toUpperCase() : ''} style={{ textTransform: 'uppercase' }} disabled />
               </div>
             </div>
           </section>

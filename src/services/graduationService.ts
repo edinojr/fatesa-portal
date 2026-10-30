@@ -2,7 +2,8 @@ import { supabase } from '../lib/supabase';
 
 export interface GraduationData {
   nome: string;
-  rg: string;
+  cpf?: string;
+  rg?: string;
   telefone: string;
   cep: string;
   endereco: string;
@@ -27,7 +28,10 @@ export const graduationService = {
       .from('users')
       .update({
         tipo: 'ex_aluno',
-        ano_graduacao: currentYear
+        ano_graduacao: currentYear,
+        ...((data.nome) ? { nome: data.nome.trim().toUpperCase() } : {}),
+        ...((data.cpf) ? { cpf: data.cpf.trim() } : (data.rg ? { rg: data.rg.trim().toUpperCase() } : {})),
+        ...((data.endereco) ? { endereco: data.endereco.trim().toUpperCase() } : {})
       })
       .eq('id', userId);
 
@@ -43,19 +47,19 @@ export const graduationService = {
     // 3. Criar ou Atualizar o registro na tabela registros_alumni
     const alumniRecord = {
       user_id: userId,
-      nome: data.nome,
+      nome: (data.nome || '').trim().toUpperCase(),
       email: userProfile?.email,
-      curso: data.courseName,
-      nivel_curso: data.levelName,
-      nucleo: (userProfile?.nucleos as any)?.nome || 'Polo Central',
+      curso: (data.courseName || '').trim().toUpperCase(),
+      nivel_curso: (data.levelName || '').trim().toUpperCase(),
+      nucleo: (((userProfile?.nucleos as any)?.nome || 'Polo Central') as string).toUpperCase(),
       ano_formacao: currentYear,
-      rg: data.rg,
+      rg: (data.cpf || data.rg || '').trim(),
       telefone: data.telefone,
       cep: data.cep,
-      endereco: data.endereco,
-      bairro: data.bairro,
-      cidade: data.cidade,
-      uf: data.uf,
+      endereco: (data.endereco || '').trim().toUpperCase(),
+      bairro: (data.bairro || '').trim().toUpperCase(),
+      cidade: (data.cidade || '').trim().toUpperCase(),
+      uf: (data.uf || '').trim().toUpperCase(),
       observacoes: `Graduação automática via portal em ${new Date().toLocaleDateString()}`
     };
 

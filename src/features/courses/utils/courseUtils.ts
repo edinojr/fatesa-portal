@@ -51,7 +51,8 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
       : (rawNota !== null ? rawNota : rawNotaHist);
     
     const bookSubmissions = (atividades || []).filter((at: any) => 
-      at.status === 'corrigida' && at.nota !== undefined && at.nota !== null &&
+      (at.status === 'corrigida' || (at.nota !== undefined && at.nota !== null && Number(at.nota) >= 7.0)) &&
+      at.nota !== undefined && at.nota !== null &&
       (at.book_id === l.id || areModuleTitlesEqual(at.book_title || at.modulo_nome || '', l.titulo))
     );
     

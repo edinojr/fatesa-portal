@@ -37,6 +37,7 @@ dist-ssr
 maintenance/
 scratch/
 scripts/
+exercicios_servidor/
 
 # Scripts de debug na raiz (check_*.mjs, update_*.js, etc.)
 /check_*.mjs

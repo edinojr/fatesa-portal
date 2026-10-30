@@ -4,6 +4,7 @@ import {
   Trash2, Edit, X, Loader2, CheckCircle2, FileText
 } from 'lucide-react';
 import { supabase, fetchAllRows } from '../../../lib/supabase';
+import { sortModulesByCurriculum, getOfficialBookTitle } from '../../../lib/courseTitles';
 
 interface ManualHistoryPanelProps {
   onRefresh?: () => void;
@@ -243,7 +244,7 @@ const ManualHistoryPanel: React.FC<ManualHistoryPanelProps> = ({ onRefresh }) =>
 
               {/* Records */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {group.items.map(r => (
+                {sortModulesByCurriculum(group.items, r => r.modulo_nome || '').map(r => (
                   <div key={r.id} style={{
                     padding: '0.9rem 1.25rem',
                     display: 'flex', alignItems: 'center', gap: '1rem',
@@ -256,7 +257,7 @@ const ManualHistoryPanel: React.FC<ManualHistoryPanelProps> = ({ onRefresh }) =>
                     <div style={{ flex: 1, minWidth: '200px' }}>
                       <div style={{ fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                         <BookOpen size={13} style={{ opacity: 0.6 }} />
-                        {r.modulo_nome}
+                        {getOfficialBookTitle(r.modulo_nome)}
                         <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#fff', background: '#a855f7', padding: '1px 6px', borderRadius: '6px', letterSpacing: '0.5px' }}>MANUAL</span>
                       </div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>

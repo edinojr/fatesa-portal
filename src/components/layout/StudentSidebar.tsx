@@ -145,8 +145,8 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             alignItems: 'center',
             justifyContent: isCollapsed ? 'center' : 'space-between',
             borderBottom: '2.5px solid #d4af37',
-            boxShadow: '0 2px 8px rgba(0, 86, 179, 0.35)',
-            background: 'linear-gradient(180deg, rgba(0, 86, 179, 0.05) 0%, #ffffff 100%)',
+            boxShadow: '0 4px 16px rgba(0, 86, 179, 0.16)',
+            background: 'var(--primary, #0056b3)',
           }}
         >
           <div
@@ -164,12 +164,13 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                 width: '38px',
                 height: '38px',
                 borderRadius: '10px',
-                backgroundColor: '#0056b3',
+                backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                border: '1px solid rgba(212, 175, 55, 0.5)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
-                boxShadow: '0 4px 12px rgba(0, 86, 179, 0.35)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
               }}
             >
               <Logo size={26} />
@@ -182,7 +183,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                     fontSize: '1rem',
                     fontWeight: 900,
                     letterSpacing: '0.5px',
-                    color: '#003366',
+                    color: '#ffffff',
                     display: 'block',
                     lineHeight: 1.1,
                   }}
@@ -193,7 +194,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   style={{
                     fontSize: '0.68rem',
                     fontWeight: 700,
-                    color: '#0056b3',
+                    color: 'rgba(255, 255, 255, 0.85)',
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
                   }}
@@ -208,9 +209,9 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
             <button
               onClick={onToggleCollapse}
               style={{
-                background: 'rgba(0, 86, 179, 0.06)',
-                border: '1px solid rgba(212, 175, 55, 0.4)',
-                color: '#003366',
+                background: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(212, 175, 55, 0.5)',
+                color: '#ffffff',
                 width: '28px',
                 height: '28px',
                 borderRadius: '8px',
@@ -222,7 +223,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
               }}
               title="Recolher menu lateral"
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={16} color="#ffffff" />
             </button>
           )}
         </div>
@@ -292,7 +293,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                     lineHeight: 1.2,
                   }}
                 >
-                  {profile?.nome || 'Aluno'}
+                  {(profile?.nome || 'Aluno').toUpperCase()}
                 </div>
                 <div
                   style={{
@@ -723,7 +724,7 @@ export const StudentSidebar: React.FC<StudentSidebarProps> = ({
                   }}
                   title={profile?.nome}
                 >
-                  {profile?.nome || 'Aluno'}
+                  {(profile?.nome || 'Aluno').toUpperCase()}
                 </div>
                 <div
                   style={{

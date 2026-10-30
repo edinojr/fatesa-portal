@@ -21,8 +21,8 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
   const [success, setSuccess] = useState(false);
   
   const [formData, setFormData] = useState({
-    nome: studentName,
-    rg: '',
+    nome: (studentName || '').toUpperCase(),
+    cpf: '',
     telefone: '',
     cep: '',
     endereco: '',
@@ -45,10 +45,10 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
       } else {
         setFormData(prev => ({
           ...prev,
-          endereco: data.logradouro,
-          bairro: data.bairro,
-          cidade: data.localidade,
-          uf: data.uf
+          endereco: (data.logradouro || '').toUpperCase(),
+          bairro: (data.bairro || '').toUpperCase(),
+          cidade: (data.localidade || '').toUpperCase(),
+          uf: (data.uf || '').toUpperCase()
         }));
       }
     } catch (err) {
@@ -62,7 +62,16 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
     e.preventDefault();
     setLoading(true);
     try {
-      await onComplete(formData);
+      const upperData = {
+        ...formData,
+        nome: (formData.nome || '').trim().toUpperCase(),
+        cpf: (formData.cpf || '').trim(),
+        endereco: (formData.endereco || '').trim().toUpperCase(),
+        bairro: (formData.bairro || '').trim().toUpperCase(),
+        cidade: (formData.cidade || '').trim().toUpperCase(),
+        uf: (formData.uf || '').trim().toUpperCase(),
+      };
+      await onComplete(upperData);
       setSuccess(true);
       setTimeout(() => {
         onClose();
@@ -110,20 +119,29 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
               type="text" 
               className="form-control" 
               value={formData.nome}
-              onChange={e => setFormData({...formData, nome: e.target.value})}
+              onChange={e => setFormData({...formData, nome: e.target.value.toUpperCase()})}
+              style={{ textTransform: 'uppercase' }}
               required
             />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
             <div className="form-group">
-              <label>RG (Documento de Identidade)</label>
+              <label>CPF *</label>
               <input 
                 type="text" 
                 className="form-control" 
-                placeholder="00.000.000-0"
-                value={formData.rg}
-                onChange={e => setFormData({...formData, rg: e.target.value})}
+                placeholder="000.000.000-00"
+                value={formData.cpf}
+                onChange={e => {
+                  const d = e.target.value.replace(/\D/g, '').slice(0, 11);
+                  const masked = d
+                    .replace(/^(\d{3})(\d)/, '$1.$2')
+                    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+                    .replace(/\.(\d{3})(\d)/, '.$1-$2');
+                  setFormData({...formData, cpf: masked});
+                }}
+                style={{ textTransform: 'uppercase' }}
                 required
               />
             </div>
@@ -167,7 +185,8 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
                   type="text" 
                   className="form-control" 
                   value={formData.endereco}
-                  onChange={e => setFormData({...formData, endereco: e.target.value})}
+                  onChange={e => setFormData({...formData, endereco: e.target.value.toUpperCase()})}
+                  style={{ textTransform: 'uppercase' }}
                   required
                 />
               </div>
@@ -180,7 +199,8 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
                   type="text" 
                   className="form-control" 
                   value={formData.bairro}
-                  onChange={e => setFormData({...formData, bairro: e.target.value})}
+                  onChange={e => setFormData({...formData, bairro: e.target.value.toUpperCase()})}
+                  style={{ textTransform: 'uppercase' }}
                   required
                 />
               </div>
@@ -190,7 +210,8 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
                   type="text" 
                   className="form-control" 
                   value={formData.cidade}
-                  onChange={e => setFormData({...formData, cidade: e.target.value})}
+                  onChange={e => setFormData({...formData, cidade: e.target.value.toUpperCase()})}
+                  style={{ textTransform: 'uppercase' }}
                   required
                 />
               </div>
@@ -200,7 +221,8 @@ const GraduationFormModal: React.FC<GraduationFormModalProps> = ({
                   type="text" 
                   className="form-control" 
                   value={formData.uf}
-                  onChange={e => setFormData({...formData, uf: e.target.value})}
+                  onChange={e => setFormData({...formData, uf: e.target.value.toUpperCase()})}
+                  style={{ textTransform: 'uppercase' }}
                   required
                   maxLength={2}
                 />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase, toPublicUrl } from '../../../lib/supabase';
 import { unfinalizeModule } from '../../../services/examCorrection';
 import { auditAndDeduplicateAllExams } from '../../../services/examQuestionsService';
+import { consolidateAllOnlineGrades } from '../../../services/academicService';
 
 export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'error') => void, fetchData: () => void) => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -143,6 +144,24 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
       fetchData();
     } catch (err: any) {
       showToast('Erro na auditoria: ' + (err.message || err), 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleConsolidateOnlineHistory = async () => {
+    if (!window.confirm('Consolidar histórico das notas de alunos do processo online?\n\nO sistema analisará todas as avaliações online finalizadas com nota >= 7.0, mapeará para os 27 módulos canônicos e consolidará no Histórico de Notas (historico_notas) e módulos concluídos dos alunos.')) return;
+    setActionLoading('consolidate-online-grades');
+    try {
+      const res = await consolidateAllOnlineGrades();
+      if (res.totalConsolidated === 0 && res.totalModulesUpdated === 0) {
+        showToast(`Consolidação concluída! Todas as notas das ${res.totalOnlineAnalyzed} avaliações online analisadas já estavam sincronizadas no histórico.`, 'success');
+      } else {
+        showToast(`Consolidação concluída: ${res.totalConsolidated} nota(s) inserida(s) no histórico e ${res.totalModulesUpdated} módulo(s) de alunos atualizado(s)!`, 'success');
+      }
+      fetchData();
+    } catch (err: any) {
+      showToast('Erro ao consolidar notas online: ' + (err.message || err), 'error');
     } finally {
       setActionLoading(null);
     }
@@ -352,6 +371,7 @@ export const useAdminActions = (showToast: (msg: string, type?: 'success' | 'err
     handleAddAdmin,
     handleResetAutoCorrectedExams,
     handleAuditAndDeduplicateExams,
+    handleConsolidateOnlineHistory,
     handleFileUpload,
     handleBatchUpload,
     handleRemoveFileFinal,

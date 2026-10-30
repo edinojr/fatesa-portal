@@ -175,7 +175,7 @@ export const PanelSwitcher: React.FC<PanelSwitcherProps> = ({
   })
 
   const currentOption = options.find(o => o.id === currentPanel) || options[0]
-  const isLightHeader = currentPanel === 'aluno'
+  const isLightHeader = false
 
   const handleSelectPanel = (opt: PanelOption) => {
     localStorage.setItem('fatesa_active_role', opt.id)

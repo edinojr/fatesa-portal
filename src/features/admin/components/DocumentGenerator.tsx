@@ -26,8 +26,8 @@ export const DocumentGenerator = () => {
     const validMaterias = materias.filter(m => m.nome.trim() !== '');
     
     generateHistoricoPDF({
-      nome,
-      nucleo: nucleo || 'SEDE',
+      nome: nome.trim().toUpperCase(),
+      nucleo: (nucleo || 'SEDE').trim().toUpperCase(),
       matricula: 'N/A',
       dataMatricula: dataMatricula || 'N/A',
       status
@@ -36,7 +36,7 @@ export const DocumentGenerator = () => {
 
   const handleDownloadCertificado = () => {
     if (!nome) return alert('Preencha o nome do aluno.');
-    generateCertificadoPDF(nome, nivel, dataMatricula || new Date());
+    generateCertificadoPDF(nome.trim().toUpperCase(), nivel, dataMatricula || new Date());
   };
 
   return (
@@ -53,7 +53,7 @@ export const DocumentGenerator = () => {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
         <div className="form-group">
           <label className="form-label">Nome do Aluno</label>
-          <input className="form-input" value={nome} onChange={e => setNome(e.target.value)} placeholder="Ex: João da Silva" />
+          <input className="form-input" value={nome} onChange={e => setNome(e.target.value.toUpperCase())} placeholder="Ex: JOÃO DA SILVA" style={{ textTransform: 'uppercase' }} />
         </div>
         <div className="form-group">
           <label className="form-label">Núcleo</label>

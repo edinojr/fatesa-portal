@@ -25,7 +25,7 @@ const StudentRow: React.FC<StudentRowProps> = ({
           title="Clique para ver o progresso do aluno por módulo"
         >
           <span style={{ fontWeight: 700, color: '#60a5fa', textDecoration: 'underline' }}>
-            {aluno.nome}
+            {(aluno.nome || '').toUpperCase()}
           </span>
         </div>
         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div>

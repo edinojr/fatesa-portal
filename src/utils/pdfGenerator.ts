@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { parseFlexibleDate } from '../services/academicService';
+import { sortModulesByCurriculum, getOfficialBookIndex, getOfficialBookTitle } from '../lib/courseTitles';
 
 // Definição da interface autoTable no jsPDF para evitar erros de typescript
 interface jsPDFWithAutoTable extends jsPDF {
@@ -112,13 +113,13 @@ export const generateHistoricoPDF = async (
   doc.text('Núcleo:', 20, startY);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(0, 0, 200);
-  doc.text(alunoData.nucleo || 'SEDE', 45, startY);
+  doc.text((alunoData.nucleo || 'SEDE').toUpperCase(), 45, startY);
   
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'italic');
   doc.text('Nome do aluno (a):', 20, startY + lineSpacing);
   doc.setFont('helvetica', 'normal');
-  doc.text(alunoData.nome, 65, startY + lineSpacing);
+  doc.text((alunoData.nome || '').toUpperCase(), 65, startY + lineSpacing);
 
   doc.setFont('helvetica', 'italic');
   doc.text('Registro de Matrícula:', 20, startY + 2 * lineSpacing);
@@ -135,17 +136,27 @@ export const generateHistoricoPDF = async (
   doc.setFont('helvetica', 'normal');
   doc.text(alunoData.status || 'Ativo', 110, startY + 3 * lineSpacing);
 
-  // 5. Tabela de Matérias (Dividida em duas colunas, exatamente como o modelo)
-  // Preparar os dados dividindo o array ao meio
-  const midPoint = Math.ceil(materias.length / 2) || 14; 
+  // 5. Tabela de Matérias (Dividida em duas colunas, na ordem oficial do curso 1 a 27)
+  const sortedMaterias = sortModulesByCurriculum(materias || [], m => m.nome || '');
+  const midPoint = Math.ceil(sortedMaterias.length / 2) || 14; 
   const tableData1 = [];
   const tableData2 = [];
   
-  for(let i = 0; i < materias.length; i++){
+  for(let i = 0; i < sortedMaterias.length; i++){
+      const m = sortedMaterias[i];
+      const officialIdx = getOfficialBookIndex(m.nome);
+      const moduloNum = (officialIdx >= 0 && officialIdx < 900) ? (officialIdx + 1).toString() : (i + 1).toString();
+      
+      let displayNome = (m.nome || '').trim().toUpperCase();
+      const officialTitle = getOfficialBookTitle(m.nome);
+      if (officialTitle) {
+        displayNome = officialTitle.replace(/^\d+[\s.-]+/, '').trim().toUpperCase();
+      }
+
       const row = [
-          (i + 1).toString(),
-          materias[i].nome,
-          materias[i].media
+          moduloNum,
+          displayNome,
+          m.media
       ];
       if(i < midPoint){
           tableData1.push(row);
@@ -380,7 +391,7 @@ export const generateCertificadoPDF = async (
 
   // 4. Nome do Aluno
   // Especificação: Deve estar entre aspas e utilizar a fonte Cormorant Garamond 25 como padrão Sempre.
-  const nomeLimpo = (alunoNome || '').replace(/^["']|["']$/g, '').trim();
+  const nomeLimpo = (alunoNome || '').replace(/^["']|["']$/g, '').trim().toUpperCase();
   const nomeTexto = `"${nomeLimpo}"`;
 
   // Fonte Cormorant Garamond em negrito/bold com tamanho 25 padrão Sempre

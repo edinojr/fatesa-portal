@@ -66,7 +66,7 @@ export const collectExamAttempts = (aulas: any[], submissions: any[]): ExamAttem
     (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
   return (submissions || [])
-    .filter((s: any) => s.status === 'corrigida' && s.nota !== undefined && s.nota !== null)
+    .filter((s: any) => (s.status === 'corrigida' || (s.nota !== undefined && s.nota !== null && Number(s.nota) >= 7.0)) && s.nota !== undefined && s.nota !== null)
     .map((s: any) => {
       const subAulaId = s.lesson_id || s.aula_id || s.aulas?.id;
       // 1. Tentar encontrar por ID exato

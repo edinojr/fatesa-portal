@@ -233,7 +233,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
               </div>
 
               <h2 style={{ margin: '0 0 0.4rem 0', fontSize: '1.5rem', fontWeight: 900, color: '#ffffff' }}>
-                {student.nome}
+                {(student.nome || '').toUpperCase()}
               </h2>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', fontSize: '0.82rem', color: '#94a3b8', flexWrap: 'wrap' }}>

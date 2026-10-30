@@ -188,11 +188,12 @@ export const useAdminUsers = (showToast: (msg: string, type?: 'success' | 'error
 
   const handleUpdateUserName = useCallback(async (userId: string, newName: string) => {
     if (!newName.trim()) return;
+    const upperName = newName.trim().toUpperCase();
     setActionLoading(userId);
     try {
-      const { error } = await supabase.from('users').update({ nome: newName }).eq('id', userId);
+      const { error } = await supabase.from('users').update({ nome: upperName }).eq('id', userId);
       if (error) throw error;
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, nome: newName } : u));
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, nome: upperName } : u));
       showToast('Nome atualizado.');
     } catch (err: any) {
       showToast(err.message, 'error');

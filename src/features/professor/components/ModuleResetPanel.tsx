@@ -467,7 +467,7 @@ const ModuleResetPanel: React.FC<ModuleResetPanelProps> = ({ professorNucleos, o
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{aluno.nome}</div>
+                      <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{(aluno.nome || '').toUpperCase()}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{aluno.email} • {aluno.nucleo_nome}</div>
                     </div>
                   </div>

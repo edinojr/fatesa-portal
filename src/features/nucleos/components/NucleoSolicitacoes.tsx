@@ -26,7 +26,7 @@ const NucleoSolicitacoes: React.FC<NucleoSolicitacoesProps> = ({
       <tbody>
         {pending.map(aluno => (
           <tr key={aluno.id}>
-            <td>{aluno.nome} <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div></td>
+            <td>{(aluno.nome || '').toUpperCase()} <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{aluno.email}</div></td>
             <td>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button 

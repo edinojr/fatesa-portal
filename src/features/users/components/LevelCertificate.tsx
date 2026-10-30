@@ -120,7 +120,7 @@ const LevelCertificate: React.FC<LevelCertificateProps> = ({
           </p>
 
           {(() => {
-            const cleanStudentName = (studentName || '').trim();
+            const cleanStudentName = (studentName || '').trim().toUpperCase();
             const isExtenso = cleanStudentName.length >= 24;
             const isMuitoExtenso = cleanStudentName.length >= 35;
             // 5rem padrão, diminuindo 25% para extensos (3.75rem) e 40% para muito extensos (3rem)

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { isStaffStudentProxy, hasStudentScope } from '../../../lib/authUtils';
 import { generateHistoricoPDF, generateCertificadoPDF } from '../../../utils/pdfGenerator';
-import { areModuleTitlesEqual } from '../../../lib/courseTitles';
+import { areModuleTitlesEqual, getOfficialBookIndex, getOfficialBookTitle, sortModulesByCurriculum } from '../../../lib/courseTitles';
 import { fetchStudentAcademicSummary, detectNivelModulo } from '../../../services/academicService';
 
 interface AcademicHistoryProps {
@@ -101,8 +101,11 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
         }
       });
 
-      materiasParaHistorico.sort((a, b) => a.nome.localeCompare(b.nome));
-      await generateHistoricoPDF(alunoData, materiasParaHistorico);
+      const materiasOrdenadas = sortModulesByCurriculum(materiasParaHistorico, m => m.nome).map(m => ({
+        ...m,
+        nome: getOfficialBookTitle(m.nome)
+      }));
+      await generateHistoricoPDF(alunoData, materiasOrdenadas);
     }
   };
 
@@ -602,7 +605,12 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {Object.entries(selectedStudentData.std.modulos).sort((a, b) => a[0].localeCompare(b[0])).map(([modName, content]: [string, any]) => {
+              {Object.entries(selectedStudentData.std.modulos).sort((a, b) => {
+                const idxA = getOfficialBookIndex(a[0]);
+                const idxB = getOfficialBookIndex(b[0]);
+                if (idxA !== idxB) return idxA - idxB;
+                return a[0].localeCompare(b[0], undefined, { numeric: true, sensitivity: 'base' });
+              }).map(([modName, content]: [string, any]) => {
                 const sortedProvas = [...(content.provas || [])].sort((pA: any, pB: any) => {
                   const nA = pA.nota != null ? Number(pA.nota) : -1;
                   const nB = pB.nota != null ? Number(pB.nota) : -1;
@@ -613,7 +621,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                 <div key={modName} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '16px', padding: '1.25rem', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem' }}>
                     <h5 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <BookOpen size={18} /> {modName}
+                      <BookOpen size={18} /> {getOfficialBookTitle(modName)}
                     </h5>
                     {maxNotaModulo !== null && (
                       <span style={{
@@ -775,7 +783,7 @@ const AcademicHistory: React.FC<AcademicHistoryProps> = ({ data, searchTerm, onD
                             <User size={20} color="var(--primary, #0056b3)" />
                           </div>
                           <div style={{ minWidth: 0 }}>
-                            <div style={{ fontWeight: 800, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.nome}</div>
+                            <div style={{ fontWeight: 800, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{(s.nome || '').toUpperCase()}</div>
                             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {s.email}
                             </div>

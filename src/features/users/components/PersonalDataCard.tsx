@@ -14,14 +14,6 @@ interface PersonalDataCardProps {
 
 const onlyDigits = (v: string) => (v || '').replace(/\D/g, '');
 
-const maskRG = (v: string): string => {
-  const d = onlyDigits(v).slice(0, 9);
-  if (d.length <= 2) return d;
-  if (d.length <= 5) return `${d.slice(0, 2)}.${d.slice(2)}`;
-  if (d.length <= 8) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5)}`;
-  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}-${d.slice(8)}`;
-};
-
 const maskCPF = (v: string): string => {
   const d = onlyDigits(v).slice(0, 11);
   if (d.length <= 3) return d;
@@ -67,16 +59,15 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
   const [uploadingFoto, setUploadingFoto] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [form, setForm] = useState({
-    nome: '', rg: '', cpf: '', telefone: '', endereco: '', foto_url: ''
+    nome: '', cpf: '', telefone: '', endereco: '', foto_url: ''
   });
 
   const startEditing = () => {
     setForm({
-      nome: profile?.nome || '',
-      rg: profile?.rg ? maskRG(profile.rg) : '',
+      nome: (profile?.nome || '').toUpperCase(),
       cpf: profile?.cpf ? maskCPF(profile.cpf) : '',
       telefone: profile?.telefone ? maskPhone(profile.telefone) : '',
-      endereco: profile?.endereco || '',
+      endereco: (profile?.endereco || '').toUpperCase(),
       foto_url: profile?.foto_url || ''
     });
     setEditing(true);
@@ -117,21 +108,23 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
     }
     setSaving(true);
     try {
+      const upperNome = form.nome.trim().toUpperCase();
+      const upperEndereco = form.endereco.trim().toUpperCase();
+
       const confirmedPayload: Record<string, any> = {
-        nome: form.nome.trim(),
+        nome: upperNome,
         cpf: onlyDigits(form.cpf) ? form.cpf : null,
         telefone: onlyDigits(form.telefone) ? form.telefone : null,
-        endereco: form.endereco.trim() || null,
+        endereco: upperEndereco || null,
       };
 
       const fullPayload: Record<string, any> = {
         ...confirmedPayload,
-        ...(form.rg ? { rg: form.rg } : {}),
         ...(form.foto_url ? { foto_url: form.foto_url } : {})
       };
 
-      // Tenta primeiro o payload completo (caso as colunas rg/foto_url já existam no banco)
-      const hasExtendedFields = Boolean(form.rg || form.foto_url);
+      // Tenta primeiro o payload completo (caso a coluna foto_url já exista no banco)
+      const hasExtendedFields = Boolean(form.foto_url);
       const targetPayload = hasExtendedFields ? fullPayload : confirmedPayload;
 
       const { error: firstError } = await supabase
@@ -156,7 +149,7 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
           if (fallbackError) throw fallbackError;
 
           toast.success('Dados pessoais salvos com sucesso!');
-          toast('Nota: Para habilitar os campos de RG e Foto no banco, execute a migração SQL no Supabase.', {
+          toast('Nota: Para habilitar o campo de Foto no banco, execute a migração SQL no Supabase.', {
             icon: 'ℹ️',
             duration: 5000
           });
@@ -204,13 +197,12 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
       doc.setFont('helvetica', 'normal');
       y += 7;
       const dados: [string, string][] = [
-        ['Nome', profile.nome || '—'],
+        ['Nome', (profile.nome || '—').toUpperCase()],
         ['CPF', profile.cpf ? maskCPF(profile.cpf) : '—'],
-        ['RG', profile.rg ? maskRG(profile.rg) : '—'],
         ['Telefone/WhatsApp', profile.telefone ? maskPhone(profile.telefone) : '—'],
         ['E-mail', profile.email || '—'],
-        ['Endereço', profile.endereco || '—'],
-        ['Núcleo', profile.nucleo || profile.nucleos?.nome || '—']
+        ['Endereço', (profile.endereco || '—').toUpperCase()],
+        ['Núcleo', (profile.nucleo || profile.nucleos?.nome || '—').toUpperCase()]
       ];
       dados.forEach(([k, v]) => {
         doc.setFont('helvetica', 'bold');
@@ -321,15 +313,11 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.85rem 1.25rem', fontSize: '0.9rem', flex: 1, minWidth: '240px' }}>
               <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
                 <span style={labelStyle}>Nome Completo</span>
-                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.nome || '—'}</strong>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.nome ? profile.nome.toUpperCase() : '—'}</strong>
               </div>
               <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
                 <span style={labelStyle}>CPF</span>
                 <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.cpf ? maskCPF(profile.cpf) : '—'}</strong>
-              </div>
-              <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
-                <span style={labelStyle}>RG</span>
-                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.rg ? maskRG(profile.rg) : '—'}</strong>
               </div>
               <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
                 <span style={labelStyle}>Telefone / WhatsApp</span>
@@ -341,7 +329,7 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
               </div>
               <div style={{ padding: '0.75rem', background: '#f8fafd', borderRadius: '12px', border: '1px solid rgba(212, 175, 55, 0.25)' }}>
                 <span style={labelStyle}>Endereço Residencial</span>
-                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.endereco || '—'}</strong>
+                <strong style={{ color: '#003366', fontSize: '0.95rem' }}>{profile?.endereco ? profile.endereco.toUpperCase() : '—'}</strong>
               </div>
             </div>
           </div>
@@ -377,11 +365,7 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
             <div>
               <label style={labelStyle}>Nome Completo *</label>
-              <input style={inputStyle} value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} placeholder="Seu nome completo" />
-            </div>
-            <div>
-              <label style={labelStyle}>RG</label>
-              <input style={inputStyle} value={form.rg} onChange={e => setForm(p => ({ ...p, rg: maskRG(e.target.value) }))} placeholder="00.000.000-0" inputMode="numeric" />
+              <input style={{ ...inputStyle, textTransform: 'uppercase' }} value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value.toUpperCase() }))} placeholder="SEU NOME COMPLETO" />
             </div>
             <div>
               <label style={labelStyle}>CPF</label>
@@ -397,7 +381,7 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={labelStyle}>Endereço Residencial</label>
-              <input style={inputStyle} value={form.endereco} onChange={e => setForm(p => ({ ...p, endereco: e.target.value }))} placeholder="Rua, número, bairro, cidade/UF" />
+              <input style={{ ...inputStyle, textTransform: 'uppercase' }} value={form.endereco} onChange={e => setForm(p => ({ ...p, endereco: e.target.value.toUpperCase() }))} placeholder="RUA, NÚMERO, BAIRRO, CIDADE/UF" />
             </div>
           </div>
 

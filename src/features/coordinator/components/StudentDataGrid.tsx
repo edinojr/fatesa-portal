@@ -59,7 +59,7 @@ const StudentDataGrid: React.FC<GridProps> = ({ students, page, setPage, totalCo
                       <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold group-hover:scale-110 transition-transform">
                         {student.nome.charAt(0)}
                       </div>
-                      <span className="font-bold text-white text-sm">{student.nome}</span>
+                      <span className="font-bold text-white text-sm">{(student.nome || '').toUpperCase()}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">

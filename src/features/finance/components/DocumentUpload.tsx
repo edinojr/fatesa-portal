@@ -9,7 +9,7 @@ interface DocumentUploadProps {
 
 const DocumentUpload: React.FC<DocumentUploadProps> = ({ documents, handleFileUpload, uploading }) => {
   const labelMap: Record<string, string> = {
-    rg: 'RG / CNH',
+    rg: 'CPF / CNH (Documento com Foto)',
     residencia: 'Comprovante de Residência',
     certidao: 'Certidões (Nasc./Cas.)',
     exame: 'Exame Médico',

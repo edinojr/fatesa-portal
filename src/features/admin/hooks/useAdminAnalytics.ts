@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '../../../lib/supabase';
-import { areModuleTitlesEqual } from '../../../lib/courseTitles';
+import { areModuleTitlesEqual, getOfficialBookTitle, getOfficialBookIndex, LEGACY_AULA_TO_BOOK_TITLE } from '../../../lib/courseTitles';
 
 export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'error') => void) => {
   const [analyticsData, setAnalyticsData] = useState<any>(null);
@@ -58,19 +58,24 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
       setAnalyticsData({ totalViews, uniqueSessions, registeredViews, visitorViews, dau, activeLast7, logs: recentData.slice(0, 100) });
 
       // Step 1: Fetch base data without joins (joins can fail due to RLS)
-      const [subDataRaw, manualDataRaw, alumniDataRaw, aulasData, usersData] = await Promise.all([
+      const [subDataRaw, manualDataRaw, alumniDataRaw, aulasData, livrosData, usersData] = await Promise.all([
         fetchAllPages('respostas_aulas', 'id, nota, status, updated_at, created_at, aula_id, aluno_id'),
         fetchAllPages('historico_notas', 'id, aluno_id, curso_nome, modulo_nome, nota, data_conclusao, observacao, created_at, updated_at'),
         fetchAllPages('registros_alumni', 'id, user_id, nome, email, curso, historico'),
-        fetchAllPages('aulas', 'id, titulo, is_bloco_final, tipo, min_grade, livro_id(id, titulo, curso_id(id, nivel))'),
+        fetchAllPages('aulas', 'id, titulo, is_bloco_final, tipo, min_grade, livro_id'),
+        fetchAllPages('livros', 'id, titulo, curso_id'),
         fetchAllPages('users', 'id, nome, email, tipo, caminhos_acesso, nucleo_id, nucleos:nucleo_id(id, nome)')
       ]);
 
       // Step 2: Build lookup maps
-      const aulasMap: Record<string, any> = aulasData.reduce((acc: any, a: any) => {
-        const livro = Array.isArray(a.livro_id) ? a.livro_id[0] : a.livro_id;
-        const curso = livro ? (Array.isArray(livro.curso_id) ? livro.curso_id[0] : livro.curso_id) : null;
-        acc[a.id] = { ...a, livros: livro ? { ...livro, cursos: curso } : null };
+      const livrosMap: Record<string, any> = (livrosData || []).reduce((acc: any, l: any) => {
+        acc[l.id] = l;
+        return acc;
+      }, {});
+
+      const aulasMap: Record<string, any> = (aulasData || []).reduce((acc: any, a: any) => {
+        const livro = a.livro_id ? livrosMap[a.livro_id] : null;
+        acc[a.id] = { ...a, livros: livro || null };
         return acc;
       }, {});
 
@@ -128,19 +133,36 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
         }
       });
 
-      // Step 3: Map online records com fallback de aula
+      // Step 3: Map online records com resolução canônica de livro e módulo
       const onlineRecords = subDataRaw.map((r: any) => {
         let aula = aulasMap[r.aula_id];
+        let livro = aula?.livros || (aula?.livro_id ? livrosMap[aula.livro_id] : null);
+        let bookTitle = livro?.titulo || (r.aula_id && LEGACY_AULA_TO_BOOK_TITLE[r.aula_id]);
+        if (!bookTitle && aula?.titulo) {
+          bookTitle = getOfficialBookTitle(aula.titulo);
+        }
+        if (!bookTitle) {
+          bookTitle = 'Módulo Geral';
+        }
+        const canonicalTitle = getOfficialBookTitle(bookTitle);
+        const nivel = livro?.cursos?.nivel || (getOfficialBookIndex(canonicalTitle) < 27 ? 'Teologia Básico' : 'Teologia Médio');
+
         if (!aula) {
           aula = {
             id: r.aula_id,
-            titulo: 'Avaliação Online',
+            titulo: canonicalTitle,
             tipo: 'prova',
             min_grade: 7,
             is_bloco_final: true,
-            livros: { id: r.aula_id, titulo: 'Módulo Geral', cursos: { id: null, nivel: 'Teologia Básico' } }
+            livros: { id: r.aula_id, titulo: canonicalTitle, cursos: { id: null, nivel } }
+          };
+        } else {
+          aula = {
+            ...aula,
+            livros: { id: livro?.id || r.aula_id, titulo: canonicalTitle, cursos: { id: null, nivel } }
           };
         }
+
         return {
           ...r,
           aulas: aula,

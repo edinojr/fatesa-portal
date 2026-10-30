@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase, fetchAllRows } from '../../../lib/supabase';
-import { areModuleTitlesEqual } from '../../../lib/courseTitles';
+import { areModuleTitlesEqual, getOfficialBookTitle, getOfficialBookIndex, LEGACY_AULA_TO_BOOK_TITLE } from '../../../lib/courseTitles';
 
 export const useProfessorAcademic = () => {
   const [academicReport, setAcademicReport] = useState<any[]>([]);
@@ -34,12 +34,18 @@ export const useProfessorAcademic = () => {
 
       if (!subDataRaw) return;
 
-      const [aulasRes, usersRes] = await Promise.all([
-        fetchAllRows((from, to) => supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').range(from, to)),
+      const [aulasRes, livrosRes, usersRes] = await Promise.all([
+        fetchAllRows((from, to) => supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id').range(from, to)),
+        fetchAllRows((from, to) => supabase.from('livros').select('id, titulo, curso_id').range(from, to)),
         fetchAllRows((from, to) => supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').range(from, to))
       ]);
 
-      const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
+      const livrosMap = (livrosRes.data || []).reduce((acc, l) => { acc[l.id] = l; return acc; }, {} as Record<string, any>);
+      const aulasMap = (aulasRes.data || []).reduce((acc, a) => {
+        const livro = a.livro_id ? livrosMap[a.livro_id] : null;
+        acc[a.id] = { ...a, livros: livro || null };
+        return acc;
+      }, {} as Record<string, any>);
       const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
       const usersByEmailMap: Record<string, any> = {};
       (usersRes.data || []).forEach((u: any) => {
@@ -93,15 +99,35 @@ export const useProfessorAcademic = () => {
       });
 
       const mapped = subDataRaw.map(r => {
-        const aula = aulasMap[r.aula_id] || {
-          id: r.aula_id,
-          titulo: 'Avaliação Online',
-          tipo: 'prova',
-          livro_id: { id: r.aula_id, titulo: 'Módulo Geral' }
-        };
+        let aula = aulasMap[r.aula_id];
+        let livro = aula?.livros || (aula?.livro_id ? livrosMap[aula.livro_id] : null);
+        let bookTitle = livro?.titulo || (r.aula_id && LEGACY_AULA_TO_BOOK_TITLE[r.aula_id]);
+        if (!bookTitle && aula?.titulo) {
+          bookTitle = getOfficialBookTitle(aula.titulo);
+        }
+        if (!bookTitle) {
+          bookTitle = 'Módulo Geral';
+        }
+        const canonicalTitle = getOfficialBookTitle(bookTitle);
+        const nivel = livro?.curso_id ? 'Teologia Básico' : (getOfficialBookIndex(canonicalTitle) < 27 ? 'Teologia Básico' : 'Teologia Médio');
+
+        if (!aula) {
+          aula = {
+            id: r.aula_id,
+            titulo: canonicalTitle,
+            tipo: 'prova',
+            livros: { id: r.aula_id, titulo: canonicalTitle, cursos: { nivel } }
+          };
+        } else {
+          aula = {
+            ...aula,
+            livros: { id: livro?.id || r.aula_id, titulo: canonicalTitle, cursos: { nivel } }
+          };
+        }
+
         return {
           ...r,
-          aulas: { ...aula, livros: aula.livro_id },
+          aulas: aula,
           users: usersMap[r.aluno_id] || null
         };
       });
@@ -145,7 +171,7 @@ export const useProfessorAcademic = () => {
     setLoading(true);
     try {
       // Step 1: Fetch submissions, manual history and alumni for specific students (paginated)
-      const [{ data: subDataRaw }, { data: manualDataRaw }, { data: alumniDataRaw }, aulasRes, usersRes] = await Promise.all([
+      const [{ data: subDataRaw }, { data: manualDataRaw }, { data: alumniDataRaw }, aulasRes, livrosRes, usersRes] = await Promise.all([
         fetchAllRows((from, to) =>
           supabase
             .from('respostas_aulas')
@@ -167,14 +193,20 @@ export const useProfessorAcademic = () => {
             .select('id, user_id, email, nome, curso, nivel_curso, historico')
             .range(from, to)
         ),
-        fetchAllRows((from, to) => supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id(id, titulo)').range(from, to)),
+        fetchAllRows((from, to) => supabase.from('aulas').select('id, titulo, is_bloco_final, tipo, livro_id').range(from, to)),
+        fetchAllRows((from, to) => supabase.from('livros').select('id, titulo, curso_id').range(from, to)),
         fetchAllRows((from, to) => supabase.from('users').select('id, nome, email, tipo, ano_graduacao, nucleos(id, nome)').range(from, to))
       ]);
 
       if (!subDataRaw) return;
 
-      const aulasMap = (aulasRes.data || []).reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, any>);
-      const usersMap = (usersRes.data || []).reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
+      const livrosMap = (livrosRes.data || []).reduce((acc: Record<string, any>, l: any) => { acc[l.id] = l; return acc; }, {} as Record<string, any>);
+      const aulasMap = (aulasRes.data || []).reduce((acc: Record<string, any>, a: any) => {
+        const livro = a.livro_id ? livrosMap[a.livro_id] : null;
+        acc[a.id] = { ...a, livros: livro || null };
+        return acc;
+      }, {} as Record<string, any>);
+      const usersMap = (usersRes.data || []).reduce((acc: Record<string, any>, u: any) => { acc[u.id] = u; return acc; }, {} as Record<string, any>);
       const usersByEmailMap: Record<string, any> = {};
       (usersRes.data || []).forEach((u: any) => {
         if (u.email) {
@@ -227,15 +259,35 @@ export const useProfessorAcademic = () => {
       });
 
       const mapped = subDataRaw.map(r => {
-        const aula = aulasMap[r.aula_id] || {
-          id: r.aula_id,
-          titulo: 'Avaliação Online',
-          tipo: 'prova',
-          livro_id: { id: r.aula_id, titulo: 'Módulo Geral' }
-        };
+        let aula = aulasMap[r.aula_id];
+        let livro = aula?.livros || (aula?.livro_id ? livrosMap[aula.livro_id] : null);
+        let bookTitle = livro?.titulo || (r.aula_id && LEGACY_AULA_TO_BOOK_TITLE[r.aula_id]);
+        if (!bookTitle && aula?.titulo) {
+          bookTitle = getOfficialBookTitle(aula.titulo);
+        }
+        if (!bookTitle) {
+          bookTitle = 'Módulo Geral';
+        }
+        const canonicalTitle = getOfficialBookTitle(bookTitle);
+        const nivel = livro?.curso_id ? 'Teologia Básico' : (getOfficialBookIndex(canonicalTitle) < 27 ? 'Teologia Básico' : 'Teologia Médio');
+
+        if (!aula) {
+          aula = {
+            id: r.aula_id,
+            titulo: canonicalTitle,
+            tipo: 'prova',
+            livros: { id: r.aula_id, titulo: canonicalTitle, cursos: { nivel } }
+          };
+        } else {
+          aula = {
+            ...aula,
+            livros: { id: livro?.id || r.aula_id, titulo: canonicalTitle, cursos: { nivel } }
+          };
+        }
+
         return {
           ...r,
-          aulas: { ...aula, livros: aula.livro_id },
+          aulas: aula,
           users: usersMap[r.aluno_id] || null
         };
       });

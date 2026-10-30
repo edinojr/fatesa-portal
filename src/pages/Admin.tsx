@@ -182,6 +182,7 @@ const Admin = () => {
     handleDeleteNucleo,
     handleResetAutoCorrectedExams,
     handleAuditAndDeduplicateExams,
+    handleConsolidateOnlineHistory,
     updateParams
   } = useAdminManagement()
 
@@ -530,6 +531,12 @@ const Admin = () => {
                     <div className="icon-wrapper" style={{ background: '#10b981' }}><Sparkles size={32} color="#fff" /></div>
                     <h3 style={{ color: '#10b981' }}>Auditar & Deduplicar Provas</h3>
                     <p>Elimina questões repetidas e complementa com exercícios do módulo.</p>
+                  </div>
+
+                  <div className="admin-action-card" onClick={handleConsolidateOnlineHistory} style={{ border: '1px solid #6366f1', background: 'rgba(99, 102, 241, 0.05)' }}>
+                    <div className="icon-wrapper" style={{ background: '#6366f1' }}><CheckCircle2 size={32} color="#fff" /></div>
+                    <h3 style={{ color: '#6366f1' }}>Consolidar Histórico Online</h3>
+                    <p>Mapeia avaliações online e sincroniza todas as notas e módulos no histórico dos alunos.</p>
                   </div>
 
                   <div className="admin-action-card" onClick={() => setActiveTab('docs_archive')}>

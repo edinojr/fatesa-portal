@@ -123,12 +123,12 @@ export const importAlumniFile = (file: File) => {
             });
 
             records.push({
-              nome,
+              nome: nome.trim().toUpperCase(),
               email: email.toLowerCase(),
               matricula,
-              curso,
-              nivel_curso: 'Curso Básico',
-              nucleo,
+              curso: (curso || '').trim().toUpperCase(),
+              nivel_curso: 'CURSO BÁSICO',
+              nucleo: (nucleo || '').trim().toUpperCase(),
               ano_formacao: ano,
               historico: historico.length > 0 ? historico : undefined,
               status_aprovacao: 'aprovado',

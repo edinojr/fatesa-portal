@@ -913,7 +913,7 @@ const ModuloBoletimContainer: React.FC<ModuloBoletimContainerProps> = ({
                           }}
                           title="Clique para ver o progresso do aluno por módulo"
                         >
-                          {aluno.nome || 'Sem Nome'}
+                          {(aluno.nome || 'Sem Nome').toUpperCase()}
                         </div>
                         {aluno.email && <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 400 }}>{aluno.email}</div>}
                       </div>
