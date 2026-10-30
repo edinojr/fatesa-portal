@@ -27,6 +27,8 @@ export interface Book {
   epub_url?: string
   isReleased?: boolean
   isCurrent?: boolean
+  isVigente?: boolean
+  isLastReleased?: boolean
   isUnlocked?: boolean
   isFinished?: boolean
   isApproved?: boolean
@@ -36,6 +38,9 @@ export interface Book {
   notaHistorico?: number
   nota?: number
   ordem?: number
+  releaseScore?: number
+  dataLiberacaoTimestamp?: number
+  dataLiberacao?: string
 }
 
 export interface Course {

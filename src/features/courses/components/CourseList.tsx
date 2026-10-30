@@ -35,7 +35,11 @@ const CourseList: React.FC<CourseListProps> = ({
       return isApproved || isDP;
     }
 
-    // No painel de estudo (Meus Cursos): módulos desbloqueados que ainda não foram aprovados (incluindo módulos em DP para recuperação)
+    // No painel de estudo (Meus Cursos): respeitar a progressão pedagógica do aluno e do núcleo
+    if (currentBook.isStudentProgressionUnlocked !== undefined) {
+      return (currentBook.isStudentProgressionUnlocked || currentBook.isCurrent || currentBook.isVigente) && !isApproved;
+    }
+
     return isUnlocked && !isApproved;
   };
 

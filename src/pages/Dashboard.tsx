@@ -35,6 +35,7 @@ import { GRADUATION_CONFIG } from '../config/graduation'
 import { useStudentCourses } from '../features/courses/hooks/useStudentCourses'
 import { useFinanceControl } from '../features/finance/hooks/useFinanceControl'
 import { collectExamAttempts, isModuleApproved, isModuleDP, getMinGrade } from '../lib/examRules'
+import { areModuleTitlesEqual, getHierarchicalTrackIndex } from '../lib/courseTitles'
 
 // Componentes Feature-based
 import CourseList from '../features/courses/components/CourseList'
@@ -406,34 +407,96 @@ const Dashboard = () => {
 
   // Filtra cursos para mostrar módulos vigentes e desbloqueados no Dashboard
   const currentCourses = useMemo(() => {
-    if (isStaff || !courses.length) return courses;
+    if (!courses.length) return courses;
     
     return courses.map(course => ({
       ...course,
-      livros: (course.livros || []).filter((livro: any) => livro.isUnlocked && !livro.isFinished)
+      livros: (course.livros || []).filter((livro: any) => 
+        (livro.isStudentProgressionUnlocked || livro.isCurrent || livro.isVigente || (!isStaff && livro.isUnlocked)) && !livro.isFinished
+      )
     })).filter(course => course.livros.length > 0);
   }, [courses, isStaff]);
 
-  // Módulos em andamento (desbloqueados para estudo e não finalizados)
+  // Módulos em andamento (desbloqueados para estudo e não finalizados na progressão do aluno)
   const modulosAtivos = useMemo(() => {
     return courses.map(course => ({
       ...course,
-      livros: (course.livros || []).filter((livro: any) => livro.isUnlocked && !livro.isFinished)
+      livros: (course.livros || []).filter((livro: any) => 
+        (livro.isStudentProgressionUnlocked || livro.isCurrent || livro.isVigente || (!isStaff && livro.isUnlocked)) && !livro.isFinished
+      )
     })).filter(course => course.livros.length > 0);
-  }, [courses]);
+  }, [courses, isStaff]);
 
-  // Módulo atual do aluno (primeiro módulo ativo)
+  // Módulo atual do aluno (SEMPRE o último módulo liberado, pois o progresso dos módulos é independente)
   const currentModule = useMemo(() => {
-    for (const course of modulosAtivos) {
-      if (course.livros.length > 0) {
-        return {
-          courseName: course.nome || course.nivel,
-          livro: course.livros[0]
-        };
-      }
+    const candidateBooks: Array<{
+      courseName: string;
+      livro: any;
+      score: number;
+      isReleased: boolean;
+      isFinished: boolean;
+      isLastReleased: boolean;
+    }> = [];
+
+    courses.forEach(course => {
+      const cName = course.nome || course.nivel || 'Teologia';
+      (course.livros || []).forEach((l: any) => {
+        const isRel = !isStaff 
+          ? (l.isUnlocked || l.isReleased || l.isStudentProgressionUnlocked || l.isCurrent || l.isLastReleased)
+          : (l.isStudentProgressionUnlocked || l.isCurrent || l.isLastReleased || l.isVigente);
+
+        const score = typeof l.releaseScore === 'number'
+          ? l.releaseScore
+          : (typeof l.dataLiberacaoTimestamp === 'number' && l.dataLiberacaoTimestamp > 0
+              ? l.dataLiberacaoTimestamp
+              : (getHierarchicalTrackIndex(l.titulo) !== -1 
+                  ? 1000000000 + getHierarchicalTrackIndex(l.titulo) * 10000000 
+                  : (l.ordem ? Number(l.ordem) : 0)));
+
+        candidateBooks.push({
+          courseName: cName,
+          livro: l,
+          score,
+          isReleased: !!isRel,
+          isFinished: !!l.isFinished,
+          isLastReleased: !!l.isLastReleased
+        });
+      });
+    });
+
+    // 1. Módulo explicitamente identificado como último liberado (isLastReleased)
+    const explicitLast = candidateBooks.find(x => x.isLastReleased);
+    if (explicitLast) {
+      return {
+        courseName: explicitLast.courseName,
+        livro: explicitLast.livro
+      };
     }
+
+    // 2. Módulos liberados para a turma/aluno ordenados por data/ordem de liberação (mais recente primeiro)
+    const releasedCandidates = candidateBooks
+      .filter(x => x.isReleased)
+      .sort((a, b) => b.score - a.score);
+
+    // Se houver algum módulo liberado em andamento (não finalizado), o mais recente liberado tem prioridade máxima
+    const latestUnfinished = releasedCandidates.find(x => !x.isFinished);
+    if (latestUnfinished) {
+      return {
+        courseName: latestUnfinished.courseName,
+        livro: latestUnfinished.livro
+      };
+    }
+
+    // Se todos os liberados estiverem concluídos, ainda assim exibe o último módulo liberado
+    if (releasedCandidates.length > 0) {
+      return {
+        courseName: releasedCandidates[0].courseName,
+        livro: releasedCandidates[0].livro
+      };
+    }
+
     return null;
-  }, [modulosAtivos]);
+  }, [courses, isStaff]);
 
   // Lista plana de livros / módulos em estudo ativo
   const livrosEmEstudo = useMemo(() => {
