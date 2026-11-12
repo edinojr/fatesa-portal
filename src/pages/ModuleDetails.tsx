@@ -23,6 +23,7 @@ const ModuleDetails = () => {
     const [nucleusReleases, setNucleusReleases] = useState<any[]>([]);
     const [moduleException, setModuleException] = useState<boolean>(false);
     const [examExceptions, setExamExceptions] = useState<string[]>([]);
+    const [togglingExam, setTogglingExam] = useState<boolean>(false);
 
     const goToPanel = (path = '/dashboard') => {
         navigate(path);
@@ -171,8 +172,6 @@ const ModuleDetails = () => {
       nucleusReleases.some(r => r.item_id === examV1.id && (r.item_type === 'atividade' || r.item_type === 'prova' || r.item_type === 'avaliacao')) ||
       examV1.professor_active === true
     ) : false;
-
-    const [togglingExam, setTogglingExam] = useState(false);
 
     const handleToggleExamForStaff = async () => {
       if (!examV1) return;
