@@ -13,9 +13,11 @@ const markTableMissing = (name: string) => missingTables.add(name);
 
 function extractTableName(query: any): string | null {
   try {
-    const url: string = query?.url || '';
-    const match = url.match(/\/rest\/v1\/([^?]+)/);
-    return match ? decodeURIComponent(match[1]) : null;
+    const rawUrl = query?.url ? String(query.url) : '';
+    const match = rawUrl.match(/\/rest\/v1\/([^?]+)/);
+    if (match) return decodeURIComponent(match[1]);
+    if (query?.table) return String(query.table);
+    return null;
   } catch {
     return null;
   }
@@ -345,10 +347,10 @@ export const useStudentCourses = (profile: any) => {
       });
 
       const { data: progData } = await safeSelect(supabase.from('progresso').select('aula_id, concluida').eq('aluno_id', profile.id));
-      const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id, created_at').eq('user_id', profile.id));
+      const { data: exceptions } = await safeSelect(supabase.from('liberacoes_excecao').select('livro_id, granted_at').eq('user_id', profile.id));
       const exceptionDates: Record<string, string> = {};
       (exceptions || []).forEach((e: any) => {
-        if (e.livro_id) exceptionDates[e.livro_id] = e.created_at;
+        if (e.livro_id) exceptionDates[e.livro_id] = e.granted_at || e.created_at;
       });
       const { data: examExceptions } = await safeSelect(supabase.from('liberacoes_excecao_atividade').select('aula_id').eq('user_id', profile.id));
       const { data: exclusions } = await safeSelect(supabase.from('exclusoes_modulo_aluno').select('livro_id, motivo').eq('user_id', profile.id));
@@ -526,18 +528,38 @@ export const useStudentCourses = (profile: any) => {
         }
       });
 
+      const isBookPermittedByProfessor = (livroId?: string | null): boolean => {
+        if (!livroId) return false;
+        if (exceptionIds.includes(livroId)) return true;
+        const book = livrosMap[livroId];
+        if (book && Array.isArray(book.aulas)) {
+          return book.aulas.some((a: any) => examExceptionIds.includes(a.id));
+        }
+        return false;
+      };
+
+      const isBookExcludedForStudent = (livroId?: string | null): boolean => {
+        if (!livroId || isStaff) return false;
+        return studentExclusions.includes(livroId) && !isBookPermittedByProfessor(livroId);
+      };
+
       // Helper: verifica se o aluno já começou o módulo (submissões OU aulas assistidas).
       const userHasActivityInModule = (livroId: string, aulaIdsList: string[] = []) => {
+        if (isBookExcludedForStudent(livroId)) return false;
         return resData.some((res: any) => res.book_id === livroId)
           || (progData || []).some((p: any) => aulaIdsList.includes(p.aula_id));
       };
 
-      setAtividades(resData);
+      const visibleResData = isStaff
+        ? resData
+        : resData.filter((r: any) => !isBookExcludedForStudent(r.book_id));
+
+      setAtividades(visibleResData);
       setProgressoAulas(progData || []);
 
-      const finishedBasicModules = new Set((resData || [])
+      const finishedBasicModules = new Set((visibleResData || [])
         .filter((r: any) => {
-          const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.lesson_type === 'avaliacao' || r.aulas?.tipo === 'prova' || r.aulas?.tipo === 'avaliacao' || (r.nota != null && Number(r.nota) >= 7.0);
+          const isEx = r.is_manual || r.is_bloco_final || r.lesson_type === 'prova' || r.lesson_type === 'avaliacao' || r.aulas?.tipo === 'prova' || r.aulas?.tipo === 'avaliacao' || r.aulas?.is_bloco_final;
           const minGrade = r.aulas?.min_grade || 7.0;
           return isEx && (r.status === 'corrigida' || Number(r.nota) >= minGrade) && (r.nota || 0) >= minGrade && (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('basico') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('básico'))
         })
@@ -546,11 +568,13 @@ export const useStudentCourses = (profile: any) => {
       );
       
       // Merge manual completions with actual completions
-      manualBasicModules.forEach(id => finishedBasicModules.add(id));
+      manualBasicModules.forEach(id => {
+        if (!isBookExcludedForStudent(id)) finishedBasicModules.add(id);
+      });
 
-      const finishedMediumModules = new Set((resData || [])
+      const finishedMediumModules = new Set((visibleResData || [])
         .filter((r: any) => {
-          const isEx = r.is_bloco_final || r.lesson_type === 'prova' || r.lesson_type === 'avaliacao' || r.aulas?.tipo === 'prova' || r.aulas?.tipo === 'avaliacao' || (r.nota != null && Number(r.nota) >= 7.0);
+          const isEx = r.is_manual || r.is_bloco_final || r.lesson_type === 'prova' || r.lesson_type === 'avaliacao' || r.aulas?.tipo === 'prova' || r.aulas?.tipo === 'avaliacao' || r.aulas?.is_bloco_final;
           const minGrade = r.aulas?.min_grade || 7.0;
           return isEx && (r.status === 'corrigida' || Number(r.nota) >= minGrade) && (r.nota || 0) >= minGrade && (r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('medio') || r.aulas?.livros?.cursos?.nivel?.toLowerCase().includes('médio'))
         })
@@ -659,7 +683,8 @@ export const useStudentCourses = (profile: any) => {
           }>();
 
           sortedLivros.forEach((l: any) => {
-            const hasExcep = exceptionIds.includes(l.id);
+            const hasExcep = isBookPermittedByProfessor(l.id);
+            const isExcludedForStudent = isBookExcludedForStudent(l.id);
             const isBib = isBibliologiaBook(l);
             const trackIndex = getHierarchicalTrackIndex(l.titulo);
             const isInTrack = trackIndex !== -1;
@@ -685,12 +710,12 @@ export const useStudentCourses = (profile: any) => {
             const histMatch = historyGrades.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
             const hasValidHistoryGrade = !!histMatch && Number(histMatch.nota) >= 7;
             const hasHistoryDP = !!histMatch && Number(histMatch.nota) > 0 && Number(histMatch.nota) < 7;
-            const isManualFinished = manualCompleted.has(l.id) || hasValidHistoryGrade;
+            const isManualFinished = !isExcludedForStudent && (manualCompleted.has(l.id) || hasValidHistoryGrade);
 
-            const moduleSubs = resData.filter((s: any) => s.book_id === l.id);
+            const moduleSubs = visibleResData.filter((s: any) => s.book_id === l.id);
             const moduleExamAttempts = collectExamAttempts(l.aulas || [], moduleSubs);
-            const isApproved = isModuleApproved(moduleExamAttempts) || hasValidHistoryGrade;
-            const isDP = !isStaff && (isModuleDP(moduleExamAttempts) || hasHistoryDP);
+            const isApproved = !isExcludedForStudent && (isModuleApproved(moduleExamAttempts) || hasValidHistoryGrade);
+            const isDP = !isStaff && !isExcludedForStudent && !isApproved && !isManualFinished && (isModuleDP(moduleExamAttempts) || hasHistoryDP);
 
             const examReleased = releasedExamBookIds.has(l.id) || (l.aulas || []).some((a: any) => {
               const isEx = a.tipo === 'prova' || a.tipo === 'avaliacao' || !!a.is_bloco_final || (a.titulo && /V[1-3]|RECUPERA|AVALIA/i.test(a.titulo));
@@ -705,7 +730,7 @@ export const useStudentCourses = (profile: any) => {
 
             // Submissão de avaliação (passou ou reprovou) OU aulas assistidas
             const userActivity = userHasActivityInModule(l.id, (l.aulas || []).map((a: any) => a.id));
-            const studentAttempted = moduleExamAttempts.length > 0 || moduleSubs.length > 0 || userActivity;
+            const studentAttempted = !isExcludedForStudent && (moduleExamAttempts.length > 0 || moduleSubs.length > 0 || userActivity);
 
             const isV1ExamReleased = isV1ExamReleasedForBook(l);
             const isV1ReleasedOrPassed = isV1ExamReleased || isApproved || isManualFinished || studentAttempted;
@@ -736,13 +761,28 @@ export const useStudentCourses = (profile: any) => {
             .filter((x: any) => x.st && x.st.isInTrack)
             .sort((a: any, b: any) => a.st.trackIndex - b.st.trackIndex);
 
+          // Determinar o módulo inicial da trilha em que o aluno ingressou:
+          // Se o aluno iniciou o curso digital em um módulo específico posterior a Hebreus (trackIndex > 0)
+          // e não possui atividade nem liberação do professor nos anteriores, os anteriores ficam bloqueados.
+          const activeTrackModulesForStudent = trackBooksInCourse.filter((x: any) =>
+            !isBookExcludedForStudent(x.book.id) &&
+            (x.st.studentAttempted || x.st.isApproved || x.st.isManualFinished || x.st.hasExcep)
+          );
+          const studentEntryTrackIndex = activeTrackModulesForStudent.length > 0
+            ? Math.min(...activeTrackModulesForStudent.map((x: any) => x.st.trackIndex))
+            : 0;
+
           // Verificar se o curso regular chegou ao final para liberação da fila de DP:
-          const lastTrackModule = trackBooksInCourse.find((x: any) => x.st.trackIndex === 6);
+          const maxTrackIndex = trackBooksInCourse.length > 0
+            ? Math.max(...trackBooksInCourse.map((x: any) => x.st.trackIndex))
+            : 13;
+          const lastTrackModule = trackBooksInCourse.find((x: any) => x.st.trackIndex === maxTrackIndex);
           const isLastTrackV1Released = !!lastTrackModule && (
-            lastTrackModule.st.isV1ReleasedOrPassed || lastTrackModule.st.isApproved || lastTrackModule.st.studentAttempted
+            lastTrackModule.st.isV1ReleasedOrPassed || lastTrackModule.st.isApproved || lastTrackModule.st.studentAttempted || lastTrackModule.st.examReleased
           );
 
           const hasUnfinishedNonDPTrackModules = trackBooksInCourse.some((x: any) => {
+            if (isBookExcludedForStudent(x.book.id) || x.st.trackIndex < studentEntryTrackIndex) return false;
             return !x.st.isApproved && !x.st.isManualFinished && !x.st.isDP;
           });
 
@@ -754,7 +794,7 @@ export const useStudentCourses = (profile: any) => {
           // Fila de DP (Dependência):
           const pendingDPBooks = sortedLivros.filter((l: any) => {
             const st = bookStatusMap.get(l.id);
-            return st && st.isDP && !st.isApproved && !st.isManualFinished;
+            return st && st.isDP && !st.isApproved && !st.isManualFinished && !isBookExcludedForStudent(l.id);
           });
 
           if (pendingDPBooks.length > 0) {
@@ -773,9 +813,14 @@ export const useStudentCourses = (profile: any) => {
             const st = bookStatusMap.get(l.id);
             if (!st) return;
 
-            // 1. Liberação individual de módulos (liberacoes_excecao): prioridade máxima
+            // 1. Liberação individual de módulos ou atividades pelo professor: prioridade máxima
             if (st.hasExcep) {
               studentProgressionUnlockedIds.add(l.id);
+              return;
+            }
+
+            // 1.1. Módulos bloqueados / anteriores ao ingresso do aluno no curso digital:
+            if (isBookExcludedForStudent(l.id)) {
               return;
             }
 
@@ -795,6 +840,11 @@ export const useStudentCourses = (profile: any) => {
               return;
             }
 
+            // 4.1. Módulos da trilha anteriores ao módulo em que o aluno entrou no curso digital:
+            if (st.trackIndex < studentEntryTrackIndex) {
+              return;
+            }
+
             // 5. Alunos em HIATO / Trancados:
             if (isHiatoStudent) {
               if (st.studentAttempted && !st.isApproved && !studentExclusions.includes(l.id)) {
@@ -807,18 +857,20 @@ export const useStudentCourses = (profile: any) => {
             if (!levelLocked && l.professor_active !== false) {
               const trackIdx = st.trackIndex;
 
-              if (trackIdx === 0) {
-                // Hebreus
+              if (trackIdx === 0 || trackIdx === studentEntryTrackIndex) {
+                // Primeiro módulo da trilha para o aluno
                 studentProgressionUnlockedIds.add(l.id);
                 return;
               }
 
-              // Para os módulos seguintes (1 a 6):
+              // Para os módulos seguintes:
               const prevModule = trackBooksInCourse.find((x: any) => x.st.trackIndex === trackIdx - 1);
               const prevV1Released = prevModule && (
                 prevModule.st.isV1ReleasedOrPassed ||
                 prevModule.st.isApproved ||
-                prevModule.st.studentAttempted
+                prevModule.st.studentAttempted ||
+                prevModule.st.examReleased ||
+                prevModule.st.isV1ExamReleased
               );
 
               if (prevV1Released) {
@@ -879,20 +931,15 @@ export const useStudentCourses = (profile: any) => {
             });
 
             const trkIdx = getHierarchicalTrackIndex(l.titulo);
-            let finalScore = maxT;
+            const bookOrdem = l.ordem ? Number(l.ordem) : 0;
+            let finalScore = 0;
+
             if (trkIdx !== -1) {
-              // Trilha sequencial Fatesa (0 a 6): Hebreus até Escatologia Bíblica.
-              // Escatologia Bíblica (trackIndex 6) é o último módulo liberado da trilha.
-              const trkBase = 1000000000 + trkIdx * 10000000;
-              if (finalScore === 0) {
-                finalScore = trkBase;
-              } else {
-                finalScore += trkIdx * 1000;
-              }
+              // Trilha sequencial institucional Fatesa (0 a 13): Hebreus (M14) até Livros Poéticos II (M27).
+              // A progressão curricular é a autoridade máxima: módulo mais avançado da trilha tem precedência.
+              finalScore = 10000000000000 + trkIdx * 1000000000 + (maxT > 0 ? maxT % 1000000 : 0);
             } else {
-              if (finalScore === 0) {
-                finalScore = l.ordem ? Number(l.ordem) : 0;
-              }
+              finalScore = bookOrdem * 1000000000 + (maxT > 0 ? maxT % 1000000 : 0);
             }
 
             bookReleaseScores.set(l.id, {
@@ -904,7 +951,11 @@ export const useStudentCourses = (profile: any) => {
 
           // Identificar todos os livros liberados na progressão da turma / aluno
           const candidateReleasedBooks = sortedLivros.filter((l: any) => {
+            if (isBookExcludedForStudent(l.id)) return false;
             const st = bookStatusMap.get(l.id);
+            if (st && st.isInTrack && st.trackIndex < studentEntryTrackIndex && !st.hasExcep && !st.isApproved && !st.isManualFinished) {
+              return false;
+            }
             return (
               studentProgressionUnlockedIds.has(l.id) ||
               (st && (st.isProfessorReleased || st.hasExcep || st.isV1ExamReleased)) ||
@@ -922,7 +973,7 @@ export const useStudentCourses = (profile: any) => {
           const latestReleasedBook = candidateReleasedBooks.length > 0 ? candidateReleasedBooks[0] : null;
           const latestReleasedBookId = latestReleasedBook ? latestReleasedBook.id : null;
 
-          if (latestReleasedBookId) {
+          if (latestReleasedBookId && !isBookExcludedForStudent(latestReleasedBookId)) {
             studentProgressionUnlockedIds.add(latestReleasedBookId);
           }
 
@@ -943,16 +994,31 @@ export const useStudentCourses = (profile: any) => {
             nome: c.nome,
             nivel: c.nivel,
             livros: sortedLivros.map((l: any) => {
+              const st = bookStatusMap.get(l.id);
+              const hasException = isBookPermittedByProfessor(l.id);
+              const isExcluded = isBookExcludedForStudent(l.id);
+              const isPreEntryBlocked = Boolean(
+                st &&
+                st.isInTrack &&
+                st.trackIndex < studentEntryTrackIndex &&
+                !hasException &&
+                !st.isApproved &&
+                !st.isManualFinished
+              );
+              if ((isExcluded || isPreEntryBlocked) && !isStaff) {
+                return null;
+              }
+
               const histMatch = historyGrades.find((h: any) => areModuleTitlesEqual(h.modulo_nome, l.titulo));
               const hasValidHistoryGrade = !!histMatch && Number(histMatch.nota) >= 7;
               const isManualFinished = manualCompleted.has(l.id) || hasValidHistoryGrade;
 
-              const moduleSubs = resData.filter((s: any) => s.book_id === l.id);
+              const moduleSubs = visibleResData.filter((s: any) => s.book_id === l.id);
               const moduleExamAttempts = collectExamAttempts(l.aulas || [], moduleSubs);
 
               const isApproved = isModuleApproved(moduleExamAttempts) || hasValidHistoryGrade;
               const hasHistoryDP = !!histMatch && Number(histMatch.nota) > 0 && Number(histMatch.nota) < 7;
-              const isDP = !isStaff && (isModuleDP(moduleExamAttempts) || hasHistoryDP);
+              const isDP = !isStaff && !isApproved && !isManualFinished && (isModuleDP(moduleExamAttempts) || hasHistoryDP);
               const isDPActive = dpActiveBookIds.has(l.id);
               const isDPQueued = dpQueuedBookIds.has(l.id);
 
@@ -964,7 +1030,6 @@ export const useStudentCourses = (profile: any) => {
               const isMaintenanceModule = !hasAnyAulasInModule && !isManualFinished && !isApproved;
               const moduleFinished = (isApproved || isManualFinished) && !isMaintenanceModule;
 
-              const hasException = exceptionIds.includes(l.id);
               const isUnlockedByHierarchy = unlockedBookIds.has(l.id);
 
               const effectivelyLevelLocked = levelLocked && !hasException && !isManualFinished;
@@ -975,11 +1040,6 @@ export const useStudentCourses = (profile: any) => {
                 ? l.id === currentVigenteBookId 
                 : (!moduleFinished && studentProgressionUnlockedIds.has(l.id));
               const isStudentProgressionUnlocked = studentProgressionUnlockedIds.has(l.id);
-
-              const isExcluded = studentExclusions.includes(l.id);
-              if (isExcluded && !isStaff && !hasException) {
-                return null;
-              }
 
               // Módulos bloqueados por pré-requisito de nível (ex: Médio sem concluir Básico)
               if (effectivelyLevelLocked && !isUnlocked) {
@@ -1045,6 +1105,9 @@ export const useStudentCourses = (profile: any) => {
                 dataLiberacaoTimestamp: bookReleaseScores.get(l.id)?.timestamp,
                 dataLiberacao: bookReleaseScores.get(l.id)?.date,
                 isStudentProgressionUnlocked,
+                hasException,
+                isExcludedForStudent: isExcluded || isPreEntryBlocked,
+                studentEntryTrackIndex,
                 isUnlocked: finalUnlocked,
                 isFinished: finalFinished,
                 isApproved: finalApproved,

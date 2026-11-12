@@ -115,13 +115,15 @@ export const isModuleApproved = (attempts: ExamAttempt[]): boolean =>
 export const getBestAttempt = (attempts: ExamAttempt[]): ExamAttempt | null =>
   attempts.length ? attempts.reduce((best, cur) => (cur.nota > best.nota ? cur : best)) : null;
 
-/** DP = fez a última recuperação (V3) corrigida e reprovou. */
+/** DP = não atingiu a nota mínima (7.0) em nenhuma tentativa E fez a última recuperação (V3) corrigida e reprovou. */
 export const isModuleDP = (attempts: ExamAttempt[]): boolean =>
+  !isModuleApproved(attempts) &&
   attempts.filter(a => a.versao >= MAX_EXAM_VERSION).some(a => a.nota < a.minGrade);
 
-/** Recuperação (V2/V3) liberada = versão anterior corrigida e reprovada. */
+/** Recuperação (V2/V3) liberada = ainda não aprovado no módulo E versão anterior corrigida e reprovada. */
 export const isRecoveryUnlocked = (versao: number, attempts: ExamAttempt[]): boolean => {
   if (versao <= 1) return true;
+  if (isModuleApproved(attempts)) return false;
   return attempts.filter(a => a.versao === versao - 1).some(a => a.nota < a.minGrade);
 };
 

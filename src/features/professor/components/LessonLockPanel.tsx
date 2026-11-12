@@ -209,8 +209,8 @@ const LessonLockPanel: React.FC<LessonLockPanelProps> = ({ professorNucleos, onR
     const hasExc = (exceptions[student.id] || []).includes(book.id)
     const vigenteId = getVigenteBookId(student)
     const vigente = bookById[vigenteId]?.book
+    if (excl && !hasExc) return 'bloqueado' as const
     if (isFinished(student, book)) return 'concluido' as const
-    if (excl) return 'bloqueado' as const
     if (hasExc) return 'liberado' as const
     if (vigente && book.id === vigente.id) return 'vigente' as const
     if (vigente && (book.ordem || 0) < (vigente.ordem || 0)) return 'anterior' as const

@@ -417,6 +417,24 @@ const Lesson = () => {
           .maybeSingle();
         const hasModuleException = !!modException;
 
+        // Verifica se esta atividade específica possui exceção individual
+        const { data: actException } = await supabase
+          .from('liberacoes_excecao_atividade')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('aula_id', lessonData.id)
+          .maybeSingle();
+        const hasActivityException = !!actException;
+
+        // Verifica se o módulo está excluído/bloqueado para este aluno (ex: anterior ao ingresso no curso digital)
+        const { data: modExclusion } = await supabase
+          .from('exclusoes_modulo_aluno')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('livro_id', lessonData.livro_id)
+          .maybeSingle();
+        const isExcludedForStudent = !!modExclusion && !hasModuleException && !hasActivityException;
+
         // Módulo finalizado manualmente ou por histórico → acesso de revisão liberado
         const manualFinishedModules = (profile?.modulos_finalizados_manual || []) as string[];
         let isModuleFinishedManually = manualFinishedModules.includes(lessonData.livro_id);
@@ -476,10 +494,13 @@ const Lesson = () => {
         // Se o módulo está bloqueado pelo professor, negar acesso
         // A MENOS que o aluno tenha exceção individual, o módulo esteja
         // finalizado (revisão) ou o conteúdo tenha sido liberado para o polo.
-        const isModuleBlocked = bookData && bookData.professor_active === false && !hasNucleoRelease && !hasModuleException && !isModuleFinishedManually;
+        const isModuleBlocked = (bookData && bookData.professor_active === false && !hasNucleoRelease && !hasModuleException && !isModuleFinishedManually) || isExcludedForStudent;
         if (!isStaff && profile?.tipo !== 'ex_aluno' && isModuleBlocked) {
+          if (isExcludedForStudent) {
+            setBlockReason('Este módulo é anterior ao seu ingresso no curso digital e está bloqueado.');
+          }
           setIsReleased(false);
-        } else if (isStaff || profile?.tipo === 'ex_aluno' || modulePassed || hasModuleException || isModuleFinishedManually) {
+        } else if (isStaff || profile?.tipo === 'ex_aluno' || modulePassed || hasModuleException || hasActivityException || isModuleFinishedManually) {
           setIsReleased(true);
         } else {
           const acesso = await checarAcessoSeguroAvaliacao(user.id, lessonData.livro_id, lessonData, profile?.nucleo_id, profile?.created_at);

@@ -360,19 +360,23 @@ const AlumniManagement = () => {
         }
       }
 
+      const docValue = (formData.cpf || '').trim()
+
       const sanitizedData = {
-        ...formData,
         nome: (formData.nome || '').trim().toUpperCase(),
         curso: (formData.curso || 'CURSO BÁSICO EM TEOLOGIA').trim().toUpperCase(),
         nivel_curso: (formData.nivel_curso || 'Básico').trim(),
         nucleo: (formData.nucleo || '').trim().toUpperCase(),
-        rg: (formData.cpf || '').trim(),
+        rg: docValue,
+        telefone: (formData.telefone || '').trim(),
+        cep: (formData.cep || '').trim(),
         endereco: (formData.endereco || '').trim().toUpperCase(),
         bairro: (formData.bairro || '').trim().toUpperCase(),
         cidade: (formData.cidade || '').trim().toUpperCase(),
         uf: (formData.uf || '').trim().toUpperCase(),
         ano_formacao: (formData.ano_formacao || '').trim(),
         matricula: (formData.matricula || '').trim().toUpperCase(),
+        observacoes: (formData.observacoes || '').trim(),
         email: finalEmail,
       };
 
@@ -416,7 +420,12 @@ const AlumniManagement = () => {
         openHistoryModalFor(savedRecord)
       }
     } catch (err: any) {
-      alert('Erro ao salvar: ' + err.message)
+      console.error('Erro ao salvar formado:', err)
+      if (err?.message?.includes('unique_alumni_email') || err?.code === '23505') {
+        alert('Já existe um formando cadastrado com este e-mail. Por favor, verifique o e-mail ou deixe-o em branco para gerar automaticamente.')
+      } else {
+        alert('Erro ao salvar: ' + (err?.message || 'Erro inesperado'))
+      }
     } finally {
       setActionLoading(null)
     }

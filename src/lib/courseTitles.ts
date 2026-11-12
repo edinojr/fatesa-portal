@@ -98,14 +98,21 @@ export const areModuleTitlesEqual = (title1: string, title2: string): boolean =>
 };
 
 /**
- * Trilha Hierárquica Oficial Fatesa (7 Módulos em sequência):
- * 1. Epístolas aos Hebreus
- * 2. Doutrina do Espírito Santo
- * 3. Epístolas Paulinas I
- * 4. Teologia Prática
- * 5. História da Igreja
- * 6. Cristologia
- * 7. Escatologia Bíblica
+ * Trilha Hierárquica Oficial Fatesa (Sequência Curricular Completa do Curso):
+ * 14. Epístola aos Hebreus (0)
+ * 15. Doutrina do Espírito Santo (1)
+ * 16. Epístolas Paulinas I (2)
+ * 17. Teologia Prática (3)
+ * 18. História da Igreja (4)
+ * 19. Cristologia (5)
+ * 20. Escatologia Bíblica (6)
+ * 21. Epístolas Gerais (7)
+ * 22. Doutrina de Deus (8)
+ * 23. Anjos, Homem e Pecado (9)
+ * 24. História de Israel I (10)
+ * 25. História de Israel II (11)
+ * 26. Os Livros Poéticos I – Jó e Salmos (12)
+ * 27. Os Livros Poéticos II – Provérbios, Eclesiastes e Cantares (13)
  */
 export const HIERARCHICAL_TRACK_TITLES = [
   'epistola aos hebreus',
@@ -114,17 +121,34 @@ export const HIERARCHICAL_TRACK_TITLES = [
   'teologia pratica',
   'historia da igreja',
   'cristologia',
-  'escatologia biblica'
+  'escatologia biblica',
+  'epistolas gerais',
+  'doutrina de deus',
+  'anjos homem e pecado',
+  'historia de israel i',
+  'historia de israel ii',
+  'livros poeticos i',
+  'livros poeticos ii'
 ];
 
 export const getHierarchicalTrackIndex = (title: string): number => {
   if (!title) return -1;
+
+  // Reconhecimento por prefixo numérico institucional (M14 a M27)
+  const numMatch = String(title).trim().match(/^(\d+)[\s.-]+/);
+  if (numMatch) {
+    const n = parseInt(numMatch[1], 10);
+    if (n >= 14 && n <= 27) {
+      return n - 14;
+    }
+  }
+
   const clean = cleanModuleTitle(title);
   
   if (clean === 'epistola aos hebreus' || clean === 'epistolas aos hebreus' || clean === 'epistolas ao hebreus' || clean === 'hebreus') {
     return 0;
   }
-  if (clean === 'doutrina do espirito santo' || clean === 'espirito santo') {
+  if (clean === 'doutrina do espirito santo' || clean === 'espirito santo' || clean === 'pneumatologia') {
     return 1;
   }
   if (clean === 'epistolas paulinas i' || clean === 'epistola paulina i' || clean === 'epistolas paulinas 1' || clean === 'paulinas i' || clean === 'paulinas 1') {
@@ -141,6 +165,27 @@ export const getHierarchicalTrackIndex = (title: string): number => {
   }
   if (clean === 'escatologia biblica' || clean === 'escatologia') {
     return 6;
+  }
+  if (clean === 'epistolas gerais' || clean === 'epistola geral' || clean === 'epistola gerais' || clean === 'gerais') {
+    return 7;
+  }
+  if (clean === 'doutrina de deus' || clean === 'teologia propria') {
+    return 8;
+  }
+  if (clean === 'anjos homem e pecado' || clean === 'anjos homem pecado' || clean === 'antropologia e hamartiologia' || clean === 'angelologia') {
+    return 9;
+  }
+  if (clean === 'historia de israel i' || clean === 'historia de israel 1' || clean === 'israel i' || clean === 'israel 1') {
+    return 10;
+  }
+  if (clean === 'historia de israel ii' || clean === 'historia de israel 2' || clean === 'israel ii' || clean === 'israel 2') {
+    return 11;
+  }
+  if (clean === 'livros poeticos i' || clean === 'livros poeticos 1' || clean === 'poeticos i' || clean.includes('jo e salmos') || clean.includes('jo salmos')) {
+    return 12;
+  }
+  if (clean === 'livros poeticos ii' || clean === 'livros poeticos 2' || clean === 'poeticos ii' || clean.includes('proverbios')) {
+    return 13;
   }
 
   for (let i = 0; i < HIERARCHICAL_TRACK_TITLES.length; i++) {

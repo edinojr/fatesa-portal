@@ -66,17 +66,30 @@ export const getBookStats = (l: any, atividades: any[] = [], progressoAulas: any
         isFinished = isApproved || status.isDP;
     }
 
-    // Sempre garante a maior nota (Math.max) entre avaliação online, submissões diretas e histórico manual
-    if (manualGrade !== null || bookSubmissions.length > 0) {
-        const bestSubGrade = bookSubmissions.length > 0 
-          ? Math.max(...bookSubmissions.map((s: any) => Number(s.nota) || 0)) 
+    // Sempre garante a maior nota (Math.max) entre avaliação online, submissões diretas de prova e histórico manual
+    const examOnlySubmissions = bookSubmissions.filter((s: any) => {
+        const subAulaId = getSubAulaId(s);
+        return (
+          s.is_manual ||
+          s.is_bloco_final ||
+          s.lesson_type === 'prova' ||
+          s.lesson_type === 'avaliacao' ||
+          s.aulas?.tipo === 'prova' ||
+          s.aulas?.tipo === 'avaliacao' ||
+          s.aulas?.is_bloco_final ||
+          finalExams.some((a: any) => a.id === subAulaId)
+        );
+    });
+    if (manualGrade !== null || examOnlySubmissions.length > 0) {
+        const bestSubGrade = examOnlySubmissions.length > 0 
+          ? Math.max(...examOnlySubmissions.map((s: any) => Number(s.nota) || 0)) 
           : 0;
         const candidateGrade = Math.max(manualGrade !== null ? manualGrade : 0, bestSubGrade);
         if (candidateGrade >= 7.0) {
             isApproved = true;
             isFinished = true;
             examGrade = Math.max(examGrade, candidateGrade);
-            attemptsCount = Math.max(attemptsCount, bookSubmissions.length || 1);
+            attemptsCount = Math.max(attemptsCount, examOnlySubmissions.length || 1);
         } else if (candidateGrade > 0) {
             examGrade = Math.max(examGrade, candidateGrade);
         }

@@ -11,7 +11,8 @@ import {
   Unlock,
   Lock,
 } from 'lucide-react';
-import { getExamVersion, getExamLabel } from '../../../lib/examRules';
+import { getExamVersion, getExamLabel, isExamAula } from '../../../lib/examRules';
+import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 
 interface StudentProgressCardProps {
   livro: any;
@@ -72,23 +73,31 @@ export const StudentProgressCard: React.FC<StudentProgressCardProps> = ({
     return false;
   });
 
+  // Submissões exclusivamente de avaliações/provas deste módulo (ignora exercícios de lição)
+  const examSubs = moduloSubs
+    .filter((s) => {
+      const matchedAula = avaliacoesAulas.find((a) => a.id === s.aula_id) || s.aulas;
+      return isExamAula(matchedAula) && s.nota !== null && s.nota !== undefined;
+    })
+    .sort((a, b) => Number(b.nota) - Number(a.nota));
+
   // Mapeia tentativas por versão
   const v1Aula = avaliacoesAulas.find((a) => getExamVersion(a) === 1);
   const v2Aula = avaliacoesAulas.find((a) => getExamVersion(a) === 2);
   const v3Aula = avaliacoesAulas.find((a) => getExamVersion(a) === 3);
 
-  const v1Sub = moduloSubs.find((s) => getExamVersion(s.aulas || s) === 1 && (s.status === 'corrigida' || s.nota != null));
-  const v2Sub = moduloSubs.find((s) => getExamVersion(s.aulas || s) === 2 && (s.status === 'corrigida' || s.nota != null));
-  const v3Sub = moduloSubs.find((s) => getExamVersion(s.aulas || s) === 3 && (s.status === 'corrigida' || s.nota != null));
+  const v1Sub = examSubs.find((s) => getExamVersion(avaliacoesAulas.find((a) => a.id === s.aula_id) || s.aulas || s) === 1);
+  const v2Sub = examSubs.find((s) => getExamVersion(avaliacoesAulas.find((a) => a.id === s.aula_id) || s.aulas || s) === 2);
+  const v3Sub = examSubs.find((s) => getExamVersion(avaliacoesAulas.find((a) => a.id === s.aula_id) || s.aulas || s) === 3);
 
   // Fallback para histórico de notas se não houver submissão direta
   const histNota = historicoNotas.find(
-    (h) => (h.modulo_nome || '').toLowerCase().trim() === (livro.titulo || '').toLowerCase().trim()
+    (h) => areModuleTitlesEqual(h.modulo_nome || '', livro.titulo || '')
   );
 
-  const v1Nota = v1Sub ? Number(v1Sub.nota) : histNota ? Number(histNota.nota) : null;
-  const v2Nota = v2Sub ? Number(v2Sub.nota) : null;
-  const v3Nota = v3Sub ? Number(v3Sub.nota) : null;
+  const v1Nota = v1Sub != null ? Number(v1Sub.nota) : histNota && histNota.nota != null ? Number(histNota.nota) : null;
+  const v2Nota = v2Sub != null ? Number(v2Sub.nota) : null;
+  const v3Nota = v3Sub != null ? Number(v3Sub.nota) : null;
 
   // Status Acadêmico do Módulo
   let statusGeral: 'aprovado' | 'recuperacao' | 'dp' | 'andamento' | 'nao_iniciado' = 'nao_iniciado';

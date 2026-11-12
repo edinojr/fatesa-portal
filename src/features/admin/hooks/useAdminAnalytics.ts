@@ -14,6 +14,16 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
       const last7Days = new Date();
       last7Days.setDate(last7Days.getDate() - 7);
 
+      const safeLogQuery = async <T>(promise: PromiseLike<T>, fallback: T): Promise<T> => {
+        try {
+          const res: any = await promise;
+          if (res?.error) return fallback;
+          return res;
+        } catch {
+          return fallback;
+        }
+      };
+
       const [
         totalCountRes,
         registeredCountRes,
@@ -21,13 +31,25 @@ export const useAdminAnalytics = (showToast: (msg: string, type?: 'success' | 'e
         recentLogsRes
       ] = await Promise.all([
         // Total count (exact)
-        supabase.from('portal_access_logs').select('*', { count: 'exact', head: true }),
+        safeLogQuery(
+          supabase.from('portal_access_logs').select('*', { count: 'exact', head: true }),
+          { count: 0, error: null } as any
+        ),
         // Registered count (exact)
-        supabase.from('portal_access_logs').select('*', { count: 'exact', head: true }).eq('user_type', 'registrado'),
+        safeLogQuery(
+          supabase.from('portal_access_logs').select('*', { count: 'exact', head: true }).eq('user_type', 'registrado'),
+          { count: 0, error: null } as any
+        ),
         // Visitor count (exact)
-        supabase.from('portal_access_logs').select('*', { count: 'exact', head: true }).eq('user_type', 'visitante'),
+        safeLogQuery(
+          supabase.from('portal_access_logs').select('*', { count: 'exact', head: true }).eq('user_type', 'visitante'),
+          { count: 0, error: null } as any
+        ),
         // Recent logs for DAU and session analysis
-        supabase.from('portal_access_logs').select('user_id, session_id, user_type, created_at').order('created_at', { ascending: false }).limit(10000)
+        safeLogQuery(
+          supabase.from('portal_access_logs').select('user_id, session_id, user_type, created_at').order('created_at', { ascending: false }).limit(10000),
+          { data: [], error: null } as any
+        )
       ]);
 
       // Pagination helper to bypass Supabase default row limit

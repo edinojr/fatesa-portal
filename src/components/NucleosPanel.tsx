@@ -141,7 +141,7 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
     }
 
     // Fetch All Courses/Livros/Aulas for release management
-    const resAll = await supabase.from('cursos').select('id, nome, livros(id, titulo, aulas(id, titulo, tipo, ordem))')
+    const resAll = await supabase.from('cursos').select('id, nome, livros(id, titulo, ordem, aulas(id, titulo, tipo, ordem, versao, is_bloco_final))')
     if (resAll.data) setAllCourses(resAll.data)
 
     // Fetch existing releases
@@ -185,7 +185,70 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
             item_type: itemType
           })
       if (error) throw error
-      setReleasedItems(prev => ({ ...prev, [key]: newStatus }))
+
+      let autoReleasedNextBookTitle = ''
+      const updatedReleased = { ...releasedItems, [key]: newStatus }
+
+      // Se liberou uma avaliação/prova, libera automaticamente o módulo seguinte na sequência curricular!
+      if (newStatus && (itemType === 'atividade' || itemType === 'modulo')) {
+        let parentLivro: any = null
+        let isExam = false
+
+        if (itemType === 'atividade') {
+          for (const c of allCourses) {
+            for (const l of (c.livros || [])) {
+              const matchedAula = (l.aulas || []).find((a: any) => a.id === itemId)
+              if (matchedAula) {
+                parentLivro = l
+                isExam = matchedAula.tipo === 'prova' || 
+                         matchedAula.tipo === 'avaliacao' || 
+                         matchedAula.is_bloco_final || 
+                         /V[1-3]|RECUPERA|AVALIA/i.test(matchedAula.titulo || '')
+                break
+              }
+            }
+            if (parentLivro) break
+          }
+        } else if (itemType === 'modulo') {
+          for (const c of allCourses) {
+            parentLivro = (c.livros || []).find((l: any) => l.id === itemId)
+            if (parentLivro) break
+          }
+        }
+
+        if (isExam && parentLivro) {
+          // Coletar todos os livros ordenados por ordem
+          const allLivrosSorted: any[] = []
+          allCourses.forEach((c: any) => {
+            (c.livros || []).forEach((l: any) => allLivrosSorted.push(l))
+          })
+          allLivrosSorted.sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+          const currentIdx = allLivrosSorted.findIndex((l: any) => l.id === parentLivro.id)
+          if (currentIdx !== -1 && currentIdx + 1 < allLivrosSorted.length) {
+            const nextLivro = allLivrosSorted[currentIdx + 1]
+
+            // Gravar a liberação do próximo módulo no banco de dados para este núcleo
+            await supabase.from('liberacoes_nucleo').upsert({
+              nucleo_id: selectedNucleo.id,
+              item_id: nextLivro.id,
+              item_type: 'modulo',
+              liberado: true
+            }, { onConflict: 'nucleo_id, item_id, item_type' })
+
+            updatedReleased[`modulo:${nextLivro.id}`] = true
+            autoReleasedNextBookTitle = nextLivro.titulo
+          }
+        }
+      }
+
+      setReleasedItems(updatedReleased)
+
+      if (autoReleasedNextBookTitle) {
+        toast.success(`Avaliação liberada! Módulo seguinte ("${autoReleasedNextBookTitle}") liberado automaticamente.`)
+      } else {
+        toast.success(newStatus ? 'Item liberado com sucesso!' : 'Item bloqueado com sucesso!')
+      }
     } catch (err: any) {
       const handled = await handleSupabaseError(err)
       if (!handled) toast.error('Erro ao alterar liberação: ' + (err.message || 'verifique as permissões do seu usuário'))
@@ -803,8 +866,32 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           granted_by: user?.id
         }, { onConflict: 'user_id,aula_id' })
         if (insErr) throw insErr
+
+        let nextLivroTitle = ''
+        const allLivrosSorted: any[] = []
+        allCourses.forEach((c: any) => {
+          (c.livros || []).forEach((l: any) => allLivrosSorted.push(l))
+        })
+        allLivrosSorted.sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+
+        const currentLivroIdx = allLivrosSorted.findIndex((l: any) => (l.aulas || []).some((a: any) => a.id === aulaId))
+        if (currentLivroIdx !== -1 && currentLivroIdx + 1 < allLivrosSorted.length) {
+          const nextL = allLivrosSorted[currentLivroIdx + 1]
+          await supabase.from('liberacoes_excecao').upsert({
+            user_id: studentId,
+            livro_id: nextL.id,
+            granted_by: user?.id
+          }, { onConflict: 'user_id,livro_id' })
+          setStudentExceptions(prev => prev.includes(nextL.id) ? prev : [...prev, nextL.id])
+          nextLivroTitle = nextL.titulo
+        }
+
         setStudentExamExceptions([...studentExamExceptions, aulaId])
-        toast.success('Prova liberada com sucesso para o aluno!')
+        if (nextLivroTitle) {
+          toast.success(`Prova liberada! Módulo seguinte ("${nextLivroTitle}") liberado para o aluno!`)
+        } else {
+          toast.success('Prova liberada com sucesso para o aluno!')
+        }
       } else {
         const { error: delErr } = await supabase.from('liberacoes_excecao_atividade').delete().match({
           user_id: studentId,
@@ -828,7 +915,8 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         const { error: insErr } = await supabase.from('exclusoes_modulo_aluno').upsert({
           user_id: studentId,
           livro_id: livroId,
-          excluded_by: user?.id
+          motivo: 'manual',
+          granted_by: user?.id
         }, { onConflict: 'user_id,livro_id' })
         if (insErr) throw insErr
         setStudentExclusions([...studentExclusions, livroId])

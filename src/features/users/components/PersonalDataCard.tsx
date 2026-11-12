@@ -224,7 +224,7 @@ const PersonalDataCard: React.FC<PersonalDataCardProps> = ({ profile, onRefresh,
         (c.livros || []).forEach((l: any) => {
           if (l.isFinished) {
             const stats = getBookStats(l, atividades, progressoAulas);
-            const status = l.isDP ? 'D.P. (Dependência)' : (l.isApproved || stats.isApproved) ? 'Aprovado' : 'Concluído';
+            const status = (l.isApproved || stats.isApproved) ? 'Aprovado' : l.isDP ? 'D.P. (Dependência)' : 'Concluído';
             const bestNota = Math.max(
               stats.examGrade || 0,
               l.nota != null && !isNaN(Number(l.nota)) ? Number(l.nota) : 0,

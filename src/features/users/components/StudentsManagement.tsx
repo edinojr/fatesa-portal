@@ -116,7 +116,7 @@ export default function StudentsManagement({
     try {
       const { data } = await supabase
         .from('liberacoes_excecao')
-        .select('id, livro_id, created_at, livros(titulo)')
+        .select('id, livro_id, granted_at, livros(titulo)')
         .eq('user_id', studentId);
       setReleasesData(prev => ({ ...prev, [studentId]: data || [] }));
       setExpandedReleases(studentId);

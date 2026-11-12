@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, CheckCircle2, XCircle, Loader2, BookOpen, ShieldCheck, ChevronDown, ChevronRight, PlayCircle } from 'lucide-react';
+import { Award, CheckCircle2, XCircle, Loader2, BookOpen, ShieldCheck, ChevronDown, ChevronRight, PlayCircle, Lock } from 'lucide-react';
 
 interface NucleoReleaseManagerProps {
   allCourses: any[];
@@ -82,20 +82,37 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                           </span>
                         <button 
                           className="btn"
-                           onClick={() => handleToggleRelease(livro.id, 'modulo', !!isLivroReleased)}
-                           disabled={actionLoading === `release_modulo:${livro.id}` || !canManage}
-                           style={{ 
-                             width: 'auto', 
-                             padding: '0.2rem 0.6rem', 
-                             fontSize: '0.7rem', 
-                             background: isLivroReleased ? 'var(--success)' : 'rgba(255,255,255,0.05)',
-                             color: '#fff',
-                             border: 'none',
-                             opacity: canManage ? 1 : 0.4,
-                             cursor: canManage ? 'pointer' : 'not-allowed'
-                           }}
+                          onClick={() => handleToggleRelease(livro.id, 'modulo', !!isLivroReleased)}
+                          disabled={actionLoading === `release_modulo:${livro.id}` || !canManage}
+                          style={{ 
+                            width: 'auto', 
+                            padding: '0.28rem 0.75rem', 
+                            fontSize: '0.75rem', 
+                            fontWeight: 700,
+                            background: isLivroReleased ? '#10b981' : 'rgba(239,68,68,0.12)',
+                            color: isLivroReleased ? '#ffffff' : '#f87171',
+                            border: isLivroReleased ? '1px solid #059669' : '1px solid rgba(239,68,68,0.25)',
+                            borderRadius: '6px',
+                            boxShadow: isLivroReleased ? '0 0 10px rgba(16, 185, 129, 0.45)' : 'none',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            opacity: canManage ? 1 : 0.4,
+                            cursor: canManage ? 'pointer' : 'not-allowed',
+                            transition: 'all 0.2s ease-in-out'
+                          }}
                         >
-                            {actionLoading === `release_modulo:${livro.id}` ? <Loader2 className="spinner" size={12} /> : isLivroReleased ? 'Liberado' : 'Bloqueado'}
+                            {actionLoading === `release_modulo:${livro.id}` ? (
+                              <Loader2 className="spinner" size={13} />
+                            ) : isLivroReleased ? (
+                              <>
+                                <CheckCircle2 size={13} strokeWidth={2.5} /> Liberado
+                              </>
+                            ) : (
+                              <>
+                                <Lock size={12} /> Bloqueado
+                              </>
+                            )}
                           </button>
                         </div>
 
@@ -113,20 +130,37 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                                 </span>
                                 <button 
                                   className="btn"
-                                 onClick={() => handleToggleRelease(aula.id, type, !!isAulaReleased)}
-                                 disabled={actionLoading === `release_${key}` || (!isProfessor && !isAdmin)}
-                                 style={{ 
-                                   width: 'auto', 
-                                   padding: '0.15rem 0.5rem', 
-                                   fontSize: '0.65rem', 
-                                   background: isAulaReleased ? 'var(--success)' : 'rgba(255,255,255,0.05)',
-                                   color: '#fff',
-                                   border: 'none',
-                                   opacity: (isProfessor || isAdmin) ? 0.8 : 0.3,
-                                   cursor: (isProfessor || isAdmin) ? 'pointer' : 'not-allowed'
-                                 }}
-                              >
-                                  {actionLoading === `release_${key}` ? <Loader2 className="spinner" size={10} /> : isAulaReleased ? 'Liberado' : 'Bloqueado'}
+                                  onClick={() => handleToggleRelease(aula.id, type, !!isAulaReleased)}
+                                  disabled={actionLoading === `release_${key}` || (!isProfessor && !isAdmin)}
+                                  style={{ 
+                                    width: 'auto', 
+                                    padding: '0.22rem 0.65rem', 
+                                    fontSize: '0.7rem', 
+                                    fontWeight: 700,
+                                    background: isAulaReleased ? '#10b981' : 'rgba(239,68,68,0.12)',
+                                    color: isAulaReleased ? '#ffffff' : '#f87171',
+                                    border: isAulaReleased ? '1px solid #059669' : '1px solid rgba(239,68,68,0.25)',
+                                    borderRadius: '6px',
+                                    boxShadow: isAulaReleased ? '0 0 8px rgba(16, 185, 129, 0.4)' : 'none',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                    opacity: (isProfessor || isAdmin) ? 1 : 0.4,
+                                    cursor: (isProfessor || isAdmin) ? 'pointer' : 'not-allowed',
+                                    transition: 'all 0.2s ease-in-out'
+                                  }}
+                                >
+                                  {actionLoading === `release_${key}` ? (
+                                    <Loader2 className="spinner" size={11} />
+                                  ) : isAulaReleased ? (
+                                    <>
+                                      <CheckCircle2 size={12} strokeWidth={2.5} /> Liberado
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Lock size={11} /> Bloqueado
+                                    </>
+                                  )}
                                 </button>
                               </div>
                             );

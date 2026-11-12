@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import StudentProgressCard from './StudentProgressCard';
 import ExamAnswerKeyModal from './ExamAnswerKeyModal';
+import { isExamAula, getExamVersion } from '../../../lib/examRules';
+import { areModuleTitlesEqual } from '../../../lib/courseTitles';
 
 interface StudentDetailsModalProps {
   student: any;
@@ -83,6 +85,19 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
     return [...studentCourseLivros].sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
   }, [studentCourseLivros]);
 
+  // Livros ativos para o aluno (oculta módulos bloqueados/anteriores ao ingresso, salvo se autorizados pelo professor)
+  const visibleLivros = useMemo(() => {
+    return sortedLivros.filter(
+      (l) => !studentExclusions.includes(l.id) || studentExceptions.includes(l.id)
+    );
+  }, [sortedLivros, studentExclusions, studentExceptions]);
+
+  const visibleStudentExams = useMemo(() => {
+    return studentExams.filter(
+      (exam) => !studentExclusions.includes(exam.livro_id) || studentExceptions.includes(exam.livro_id)
+    );
+  }, [studentExams, studentExclusions, studentExceptions]);
+
   // Estatísticas globais do aluno
   const studentStats = useMemo(() => {
     let aprovados = 0;
@@ -91,7 +106,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
     let totalExercicios = 0;
     let concluidosExercicios = 0;
 
-    sortedLivros.forEach((livro) => {
+    visibleLivros.forEach((livro) => {
       const mAulas = allAulas.filter((a) => a.livro_id === livro.id);
       const mExercicios = mAulas.filter(
         (a) =>
@@ -111,15 +126,19 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
         }
       });
 
-      const moduloSubs = courseSubmissions.filter(
-        (s) => s.aulas?.livro_id === livro.id || s.livro_id === livro.id || mAulas.some((a) => a.id === s.aula_id)
-      );
+      const mExams = mAulas.filter(isExamAula);
+      const moduloExamSubs = courseSubmissions.filter((s) => {
+        const matchedAula = mAulas.find((a) => a.id === s.aula_id) || s.aulas;
+        const belongsToModule =
+          s.aulas?.livro_id === livro.id || s.livro_id === livro.id || mAulas.some((a) => a.id === s.aula_id);
+        return belongsToModule && (isExamAula(matchedAula) || mExams.some((a) => a.id === s.aula_id));
+      });
 
       const histNota = historicoNotas.find(
-        (h) => (h.modulo_nome || '').toLowerCase().trim() === (livro.titulo || '').toLowerCase().trim()
+        (h) => areModuleTitlesEqual(h.modulo_nome || '', livro.titulo || '')
       );
 
-      const notasDoModulo = moduloSubs
+      const notasDoModulo = moduloExamSubs
         .filter((s) => s.nota !== undefined && s.nota !== null)
         .map((s) => Number(s.nota));
 
@@ -128,9 +147,10 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
       }
 
       const best = notasDoModulo.length > 0 ? Math.max(...notasDoModulo) : -1;
-      const v3Sub = moduloSubs.find(
-        (s) => (s.aulas?.versao === 3 || s.versao === 3) && s.nota != null
-      );
+      const v3Sub = moduloExamSubs.find((s) => {
+        const matchedAula = mExams.find((a) => a.id === s.aula_id) || s.aulas || s;
+        return getExamVersion(matchedAula) === 3 && s.nota != null;
+      });
 
       if (best >= 7.0) {
         aprovados++;
@@ -142,14 +162,14 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
     });
 
     return {
-      totalModulos: sortedLivros.length,
+      totalModulos: visibleLivros.length,
       aprovados,
       recuperacao,
       dp,
       totalExercicios,
       concluidosExercicios,
     };
-  }, [sortedLivros, allAulas, progressoIds, courseSubmissions, historicoNotas]);
+  }, [visibleLivros, allAulas, progressoIds, courseSubmissions, historicoNotas]);
 
   return (
     <>
@@ -390,7 +410,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                 transition: 'all 0.2s',
               }}
             >
-              <Layers size={16} /> Progresso por Módulo ({sortedLivros.length})
+              <Layers size={16} /> Progresso por Módulo ({visibleLivros.length})
             </button>
 
             <button
@@ -441,7 +461,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
             {/* TAB 1: PROGRESSO POR MÓDULO (1 CARD POR MÓDULO COM FOTO) */}
             {activeTab === 'progresso' && (
               <div>
-                {sortedLivros.length === 0 ? (
+                {visibleLivros.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '3.5rem 1rem', color: '#94a3b8' }}>
                     <BookOpen size={48} style={{ opacity: 0.3, marginBottom: '0.75rem' }} />
                     <p style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>
@@ -456,7 +476,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                       gap: '1.5rem',
                     }}
                   >
-                    {sortedLivros.map((livro) => {
+                    {visibleLivros.map((livro) => {
                       const isAuthorized = studentExceptions.includes(livro.id);
 
                       return (
@@ -794,7 +814,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                 )}
 
                 {/* LIBERAÇÃO INDIVIDUAL DE PROVAS (V1, V2, V3) */}
-                {studentExams.length > 0 && handleToggleExamException && (
+                {visibleStudentExams.length > 0 && handleToggleExamException && (
                   <div
                     style={{
                       padding: '1.25rem',
@@ -810,7 +830,7 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({
                       Libere avaliações específicas diretamente para este aluno.
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      {studentExams.map((exam) => {
+                      {visibleStudentExams.map((exam) => {
                         const isReleased = studentExamExceptions.includes(exam.id);
                         const versao = exam.versao || 1;
                         const moduloNome = exam.livros?.titulo || '';

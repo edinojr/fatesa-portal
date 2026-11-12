@@ -302,9 +302,15 @@ const Dashboard = () => {
     
     const pending: any[] = [];
     courses.forEach(course => {
-      course.livros.forEach(libro => {
+      course.livros.forEach((libro: any) => {
         if (!libro.isReleased) return;
         if (libro.isFinished) return;
+        if (libro.isExcludedForStudent) return;
+        if (libro.isStudentProgressionUnlocked === false && !libro.hasException) return;
+
+        const trkIdx = getHierarchicalTrackIndex(libro.titulo || '');
+        const entryTrkIdx = typeof libro.studentEntryTrackIndex === 'number' ? libro.studentEntryTrackIndex : 0;
+        if (trkIdx !== -1 && trkIdx < entryTrkIdx && !libro.hasException) return;
 
         // Verifica se o aluno já foi aprovado ou está em DP no módulo (regra única examRules)
         const bookSubmissions = atividades.filter(s => s.book_id === libro.id);
@@ -330,7 +336,7 @@ const Dashboard = () => {
            if (!hasManualOverride) return;
         }
 
-        libro.aulas.forEach(aula => {
+        libro.aulas.forEach((aula: any) => {
           const title = aula.titulo || '';
           const isExam = aula.tipo === 'prova' || aula.tipo === 'avaliacao' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
           
@@ -409,22 +415,32 @@ const Dashboard = () => {
   const currentCourses = useMemo(() => {
     if (!courses.length) return courses;
     
-    return courses.map(course => ({
-      ...course,
-      livros: (course.livros || []).filter((livro: any) => 
-        (livro.isStudentProgressionUnlocked || livro.isCurrent || livro.isVigente || (!isStaff && livro.isUnlocked)) && !livro.isFinished
-      )
-    })).filter(course => course.livros.length > 0);
+    return courses.map(course => {
+      const unlockedForStudent = (course.livros || []).filter((livro: any) =>
+        !livro.isExcludedForStudent &&
+        (livro.isStudentProgressionUnlocked || livro.isCurrent || livro.isVigente || (!isStaff && livro.isUnlocked))
+      );
+      const unfinished = unlockedForStudent.filter((livro: any) => !livro.isFinished);
+      return {
+        ...course,
+        livros: unfinished.length > 0 ? unfinished : unlockedForStudent
+      };
+    }).filter(course => course.livros.length > 0);
   }, [courses, isStaff]);
 
-  // Módulos em andamento (desbloqueados para estudo e não finalizados na progressão do aluno)
+  // Módulos em andamento (desbloqueados para estudo na progressão do aluno)
   const modulosAtivos = useMemo(() => {
-    return courses.map(course => ({
-      ...course,
-      livros: (course.livros || []).filter((livro: any) => 
-        (livro.isStudentProgressionUnlocked || livro.isCurrent || livro.isVigente || (!isStaff && livro.isUnlocked)) && !livro.isFinished
-      )
-    })).filter(course => course.livros.length > 0);
+    return courses.map(course => {
+      const unlockedForStudent = (course.livros || []).filter((livro: any) =>
+        !livro.isExcludedForStudent &&
+        (livro.isStudentProgressionUnlocked || livro.isCurrent || livro.isVigente || (!isStaff && livro.isUnlocked))
+      );
+      const unfinished = unlockedForStudent.filter((livro: any) => !livro.isFinished);
+      return {
+        ...course,
+        livros: unfinished.length > 0 ? unfinished : unlockedForStudent
+      };
+    }).filter(course => course.livros.length > 0);
   }, [courses, isStaff]);
 
   // Módulo atual do aluno (SEMPRE o último módulo liberado, pois o progresso dos módulos é independente)
@@ -447,11 +463,9 @@ const Dashboard = () => {
 
         const score = typeof l.releaseScore === 'number'
           ? l.releaseScore
-          : (typeof l.dataLiberacaoTimestamp === 'number' && l.dataLiberacaoTimestamp > 0
-              ? l.dataLiberacaoTimestamp
-              : (getHierarchicalTrackIndex(l.titulo) !== -1 
-                  ? 1000000000 + getHierarchicalTrackIndex(l.titulo) * 10000000 
-                  : (l.ordem ? Number(l.ordem) : 0)));
+          : (getHierarchicalTrackIndex(l.titulo) !== -1 
+              ? 10000000000000 + getHierarchicalTrackIndex(l.titulo) * 1000000000 
+              : (l.ordem ? Number(l.ordem) * 1000000000 : 0));
 
         candidateBooks.push({
           courseName: cName,
@@ -464,21 +478,12 @@ const Dashboard = () => {
       });
     });
 
-    // 1. Módulo explicitamente identificado como último liberado (isLastReleased)
-    const explicitLast = candidateBooks.find(x => x.isLastReleased);
-    if (explicitLast) {
-      return {
-        courseName: explicitLast.courseName,
-        livro: explicitLast.livro
-      };
-    }
-
-    // 2. Módulos liberados para a turma/aluno ordenados por data/ordem de liberação (mais recente primeiro)
+    // 1. Módulos liberados em andamento (não finalizados pelo aluno) ordenados por avanço curricular
     const releasedCandidates = candidateBooks
       .filter(x => x.isReleased)
       .sort((a, b) => b.score - a.score);
 
-    // Se houver algum módulo liberado em andamento (não finalizado), o mais recente liberado tem prioridade máxima
+    // Se houver algum módulo liberado em andamento (não concluído), o mais avançado da trilha é o Módulo Atual
     const latestUnfinished = releasedCandidates.find(x => !x.isFinished);
     if (latestUnfinished) {
       return {
@@ -487,7 +492,16 @@ const Dashboard = () => {
       };
     }
 
-    // Se todos os liberados estiverem concluídos, ainda assim exibe o último módulo liberado
+    // 2. Módulo explicitamente identificado como último liberado (isLastReleased)
+    const explicitLast = candidateBooks.find(x => x.isLastReleased);
+    if (explicitLast) {
+      return {
+        courseName: explicitLast.courseName,
+        livro: explicitLast.livro
+      };
+    }
+
+    // 3. Se todos os liberados estiverem concluídos, exibe o mais recente liberado
     if (releasedCandidates.length > 0) {
       return {
         courseName: releasedCandidates[0].courseName,
@@ -516,6 +530,10 @@ const Dashboard = () => {
   }, [profile?.id, fetchStudentDashboardData, fetchPayments]);
 
   useEffect(() => {
+    if (pendingExams.length === 0) {
+      setShowExamNotice(false);
+      return;
+    }
     // Só mostrar o aviso se houver provas E se ainda não tiver sido mostrado nesta sessão para este usuário
     if (pendingExams.length > 0 && profile?.id) {
       const storageKey = `fatesa_exam_notice_v4_${profile.id}`;

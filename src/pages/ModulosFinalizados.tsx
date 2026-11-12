@@ -238,12 +238,15 @@ const goToPanel = () => {
 
                 return { l, stats, approvedManual, notaManual: notaVal, isFin };
             }).filter(({ isFin }) => isFin)
-            .map(({ l, stats, approvedManual, notaManual }) => ({
+            .map(({ l, notaManual }) => ({
                 ...l,
                 isUnlocked: true,
                 isReleased: true,
                 isFinished: true,
                 isApproved: true,
+                isDP: false,
+                isDPActive: false,
+                isDPQueued: false,
                 notaHistorico: notaManual,
                 nota: notaManual
             }));
