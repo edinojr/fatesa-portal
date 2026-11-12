@@ -198,7 +198,6 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
           })
       if (error) throw error
 
-      let autoReleasedNextBookTitle = ''
       const updatedReleased = { ...releasedItems, [key]: newStatus }
 
       // Cascade quando for módulo: sincroniza as aulas de estudo (vídeos, exercícios e lições) para o polo
@@ -264,67 +263,12 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
         await supabase.from('aulas').update({ professor_active: newStatus }).eq('id', itemId)
       }
 
-      // Se liberou uma avaliação/prova, libera automaticamente o módulo seguinte na sequência curricular!
-      if (newStatus && (itemType === 'atividade' || itemType === 'modulo')) {
-        let parentLivro: any = null
-        let isExam = false
-
-        if (itemType === 'atividade') {
-          for (const c of allCourses) {
-            for (const l of (c.livros || [])) {
-              const matchedAula = (l.aulas || []).find((a: any) => a.id === itemId)
-              if (matchedAula) {
-                parentLivro = l
-                isExam = matchedAula.tipo === 'prova' || 
-                         matchedAula.tipo === 'avaliacao' || 
-                         matchedAula.is_bloco_final || 
-                         /V[1-3]|RECUPERA|AVALIA/i.test(matchedAula.titulo || '')
-                break
-              }
-            }
-            if (parentLivro) break
-          }
-        } else if (itemType === 'modulo') {
-          for (const c of allCourses) {
-            parentLivro = (c.livros || []).find((l: any) => l.id === itemId)
-            if (parentLivro) break
-          }
-        }
-
-        if (isExam && parentLivro) {
-          // Coletar todos os livros ordenados por ordem
-          const allLivrosSorted: any[] = []
-          allCourses.forEach((c: any) => {
-            (c.livros || []).forEach((l: any) => allLivrosSorted.push(l))
-          })
-          allLivrosSorted.sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-
-          const currentIdx = allLivrosSorted.findIndex((l: any) => l.id === parentLivro.id)
-          if (currentIdx !== -1 && currentIdx + 1 < allLivrosSorted.length) {
-            const nextLivro = allLivrosSorted[currentIdx + 1]
-
-            // Gravar a liberação do próximo módulo no banco de dados para este núcleo
-            await supabase.from('liberacoes_nucleo').upsert({
-              nucleo_id: selectedNucleo.id,
-              item_id: nextLivro.id,
-              item_type: 'modulo',
-              liberado: true
-            }, { onConflict: 'nucleo_id, item_id, item_type' })
-
-            updatedReleased[`modulo:${nextLivro.id}`] = true
-            autoReleasedNextBookTitle = nextLivro.titulo
-          }
-        }
-      }
-
       setReleasedItems(updatedReleased)
 
       if (isExamItem) {
         toast.success(newStatus ? 'Prova ligada com sucesso para este polo!' : 'Prova desligada (bloqueada) com sucesso!')
       } else if (itemType === 'modulo') {
         toast.success(newStatus ? 'Módulo liberado com sucesso!' : 'Módulo bloqueado com sucesso!')
-      } else if (autoReleasedNextBookTitle) {
-        toast.success(`Avaliação liberada! Módulo seguinte ("${autoReleasedNextBookTitle}") liberado automaticamente.`)
       } else {
         toast.success(newStatus ? 'Item liberado com sucesso!' : 'Item bloqueado com sucesso!')
       }

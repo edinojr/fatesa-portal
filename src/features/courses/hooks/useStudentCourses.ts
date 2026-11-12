@@ -863,25 +863,23 @@ export const useStudentCourses = (profile: any) => {
                 return;
               }
 
-              // Para os módulos seguintes:
-              const prevModule = trackBooksInCourse.find((x: any) => x.st.trackIndex === trackIdx - 1);
-              const prevV1Released = prevModule && (
-                prevModule.st.isV1ReleasedOrPassed ||
-                prevModule.st.isApproved ||
-                prevModule.st.studentAttempted ||
-                prevModule.st.examReleased ||
-                prevModule.st.isV1ExamReleased
-              );
-
-              if (prevV1Released) {
-                studentProgressionUnlockedIds.add(l.id);
-                return;
-              }
-
               // Liberação direta do professor para a turma / núcleo
               if (st.isProfessorReleased) {
                 studentProgressionUnlockedIds.add(l.id);
                 return;
+              }
+
+              // Para os módulos seguintes:
+              // Se o aluno pertence a um polo (studentNucleoId), a progressão respeita rigorosamente as liberações do polo (st.isProfessorReleased).
+              // Módulos posteriores não devem ser liberados automaticamente em nenhum polo enquanto a coordenação/professor não liberar.
+              // Para alunos 100% online (sem polo), avança apenas quando o módulo anterior foi aprovado (isApproved || isManualFinished).
+              if (!studentNucleoId) {
+                const prevModule = trackBooksInCourse.find((x: any) => x.st.trackIndex === trackIdx - 1);
+                const prevApproved = prevModule && (prevModule.st.isApproved || prevModule.st.isManualFinished);
+                if (prevApproved) {
+                  studentProgressionUnlockedIds.add(l.id);
+                  return;
+                }
               }
             }
           });
