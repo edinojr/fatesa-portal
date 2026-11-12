@@ -5,7 +5,9 @@ import {
   ChevronLeft,
   Lock,
   CheckCircle,
+  CheckCircle2,
   AlertTriangle,
+  Award,
 } from 'lucide-react'
 import { supabase, fetchAllRows } from '../lib/supabase'
 import { handleSupabaseError } from '../lib/authUtils'
@@ -164,6 +166,50 @@ const ModuleDetails = () => {
       })
       .sort((a: any, b: any) => (a.versao || 1) - (b.versao || 1));
 
+    const examV1 = avaliacoes.find((a: any) => (!a.versao || Number(a.versao) === 1)) || rawAvaliacoes[0];
+    const isExamV1Released = examV1 ? (
+      nucleusReleases.some(r => r.item_id === examV1.id && (r.item_type === 'atividade' || r.item_type === 'prova' || r.item_type === 'avaliacao')) ||
+      examV1.professor_active === true
+    ) : false;
+
+    const [togglingExam, setTogglingExam] = useState(false);
+
+    const handleToggleExamForStaff = async () => {
+      if (!examV1) return;
+      setTogglingExam(true);
+      try {
+        const nextStatus = !isExamV1Released;
+        // Atualiza a coluna professor_active na tabela aulas
+        await supabase.from('aulas').update({ professor_active: nextStatus }).eq('id', examV1.id);
+
+        const targetNucleoId = profile?.nucleo_id;
+        if (targetNucleoId) {
+          if (nextStatus) {
+            await supabase.from('liberacoes_nucleo').upsert({
+              nucleo_id: targetNucleoId,
+              item_id: examV1.id,
+              item_type: 'atividade',
+              liberado: true,
+              created_at: new Date().toISOString()
+            }, { onConflict: 'nucleo_id, item_id, item_type' });
+          } else {
+            await supabase.from('liberacoes_nucleo').delete().match({
+              nucleo_id: targetNucleoId,
+              item_id: examV1.id,
+              item_type: 'atividade'
+            });
+          }
+        }
+        await fetchNucleusReleases();
+        await fetchStudentDashboardData();
+        alert(nextStatus ? 'Prova ligada com sucesso! Alunos já podem realizar a avaliação.' : 'Prova desligada com sucesso! Alunos não terão acesso à avaliação.');
+      } catch (err: any) {
+        alert('Erro ao alterar status da prova: ' + (err.message || err));
+      } finally {
+        setTogglingExam(false);
+      }
+    };
+
     const videos = sortedAulas
       .filter((a: any) => isVideoType(a.tipo) || !!a.video_url || !!a.url_video)
       .filter((a: any) => a.tipo !== 'atividade' && a.tipo !== 'exercicio' && a.tipo !== 'avaliacao' && a.tipo !== 'prova' && !a.is_bloco_final)
@@ -216,26 +262,21 @@ const ModuleDetails = () => {
           return !isRecoveryUnlocked(versao, moduleAttempts);
         }
 
-        // V1: liberada se houver liberação por núcleo, professor_active, ou se o módulo foi liberado
+        // V1: liberada APENAS se houver exceção individual OU se o professor LIGOU a prova para o núcleo/globalmente
         const hasNucleusRelease = nucleusReleases.some(r =>
           r.item_id === item.id &&
           (r.item_type === 'atividade' || r.item_type === 'prova' || r.item_type === 'avaliacao')
         );
-        const hasModuleNucleusRelease = nucleusReleases.some(r =>
-          r.item_id === currentBook?.book?.id && r.item_type === 'modulo'
-        );
 
-        if (hasNucleusRelease || item.professor_active === true) return false;
-        if (item.lockedByProfessor) return true;
+        // Se o professor bloqueou ou desligou a prova explicitamente: BLOQUEADA!
+        if (item.professor_active === false || item.lockedByProfessor) return true;
         if (isLocked(item)) return true;
 
-        // Se o módulo está liberado para o aluno/polo e a prova não foi explicitamente desativada
-        if ((currentBook?.book?.isUnlocked || hasModuleNucleusRelease) && item.professor_active !== false) {
-          return false;
-        }
+        // Se o professor ligou a prova para o polo ou globalmente: LIBERADA!
+        if (hasNucleusRelease || item.professor_active === true) return false;
 
-        if (item.professor_active === false && !hasNucleusRelease && !hasModuleNucleusRelease) return true;
-        return isLocked(item);
+        // Caso contrário, prova permanece desligada (bloqueada) por padrão!
+        return true;
       }
 
       // Conteúdo de Estudo (Panorama, Lições, Vídeos, Exercícios):
@@ -378,6 +419,62 @@ const ModuleDetails = () => {
                     <span className="active" style={{ color: '#003366', fontWeight: 800 }}>{book.titulo}</span>
                 </div>
                 <div className="gold-separator-line" style={{ marginBottom: '1.75rem' }} />
+
+                {isStaff && examV1 && (
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '0.85rem 1.25rem',
+                    background: isExamV1Released ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                    border: `1px solid ${isExamV1Released ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                    borderRadius: '12px',
+                    marginBottom: '1.5rem',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem'
+                  }}>
+                    <div>
+                      <span style={{ fontWeight: 800, fontSize: '0.9rem', color: isExamV1Released ? '#10b981' : '#ef4444', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Award size={18} /> Controle da Prova (Professor): {isExamV1Released ? 'LIGADA (Liberada para os alunos)' : 'DESLIGADA (Bloqueada para os alunos)'}
+                      </span>
+                      <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {isExamV1Released ? 'Os alunos deste polo podem acessar e responder a avaliação final.' : 'Alunos têm acesso às lições e vídeos para estudo, mas a avaliação final está bloqueada.'}
+                      </p>
+                    </div>
+                    <button
+                      className="btn"
+                      onClick={handleToggleExamForStaff}
+                      disabled={togglingExam}
+                      style={{
+                        width: 'auto',
+                        padding: '0.45rem 1.1rem',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        background: isExamV1Released ? '#ef4444' : '#10b981',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
+                        boxShadow: isExamV1Released ? '0 0 12px rgba(239, 68, 68, 0.3)' : '0 0 12px rgba(16, 185, 129, 0.3)'
+                      }}
+                    >
+                      {togglingExam ? (
+                        <div className="spinner" style={{ width: '14px', height: '14px' }} />
+                      ) : isExamV1Released ? (
+                        <>
+                          <Lock size={14} /> Desligar Prova (Bloquear)
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 size={14} strokeWidth={2.5} /> Ligar Prova (Liberar)
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
 
                 {!hasAnyContent ? (
                   <div style={{ textAlign: 'center', padding: '6rem 2rem', background: 'var(--glass)', borderRadius: '32px', border: '1px dashed rgba(245, 158, 11, 0.4)' }}>

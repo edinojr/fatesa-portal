@@ -201,12 +201,18 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
       let autoReleasedNextBookTitle = ''
       const updatedReleased = { ...releasedItems, [key]: newStatus }
 
-      // Cascade quando for módulo: sincroniza todas as aulas (vídeos, exercícios, lições e prova V1) para o polo
+      // Cascade quando for módulo: sincroniza as aulas de estudo (vídeos, exercícios e lições) para o polo
+      // OBS: Avaliações/provas NÃO são liberadas automaticamente com o módulo. Elas possuem botão próprio de ligar/desligar!
       if (itemType === 'modulo') {
         if (newStatus) {
           await supabase.from('livros').update({ professor_active: true }).eq('id', itemId)
           if (moduleAulas.length > 0) {
-            const cascadeItems = moduleAulas.map((a: any) => {
+            // Filtrar apenas aulas de estudo (não prova)
+            const studyAulas = moduleAulas.filter((a: any) =>
+              !(a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final)
+            )
+
+            const cascadeItems = studyAulas.map((a: any) => {
               const isVideo = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video'
               return {
                 nucleo_id: selectedNucleo.id,
@@ -215,13 +221,13 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
                 liberado: true
               }
             })
-            await supabase.from('liberacoes_nucleo').upsert(cascadeItems, { onConflict: 'nucleo_id, item_id, item_type' })
+            if (cascadeItems.length > 0) {
+              await supabase.from('liberacoes_nucleo').upsert(cascadeItems, { onConflict: 'nucleo_id, item_id, item_type' })
+            }
 
-            const v1OrContentIds = moduleAulas
-              .filter((a: any) => !a.versao || Number(a.versao) === 1 || a.tipo !== 'prova')
-              .map((a: any) => a.id)
-            if (v1OrContentIds.length > 0) {
-              await supabase.from('aulas').update({ professor_active: true }).in('id', v1OrContentIds)
+            const studyIds = studyAulas.map((a: any) => a.id)
+            if (studyIds.length > 0) {
+              await supabase.from('aulas').update({ professor_active: true }).in('id', studyIds)
             }
 
             cascadeItems.forEach((ci: any) => {
@@ -238,6 +244,24 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
             })
           }
         }
+      }
+
+      // Se for uma avaliação/prova individual sendo ligada ou desligada
+      let isExamItem = false
+      for (const c of allCourses) {
+        for (const l of (c.livros || [])) {
+          const matched = (l.aulas || []).find((a: any) => a.id === itemId)
+          if (matched && (matched.tipo === 'prova' || matched.tipo === 'avaliacao' || matched.is_bloco_final)) {
+            isExamItem = true
+            break
+          }
+        }
+        if (isExamItem) break
+      }
+
+      if (isExamItem) {
+        // Atualiza explicitamente professor_active da prova para refletir ligada/desligada
+        await supabase.from('aulas').update({ professor_active: newStatus }).eq('id', itemId)
       }
 
       // Se liberou uma avaliação/prova, libera automaticamente o módulo seguinte na sequência curricular!
@@ -295,7 +319,11 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
 
       setReleasedItems(updatedReleased)
 
-      if (autoReleasedNextBookTitle) {
+      if (isExamItem) {
+        toast.success(newStatus ? 'Prova ligada com sucesso para este polo!' : 'Prova desligada (bloqueada) com sucesso!')
+      } else if (itemType === 'modulo') {
+        toast.success(newStatus ? 'Módulo liberado com sucesso!' : 'Módulo bloqueado com sucesso!')
+      } else if (autoReleasedNextBookTitle) {
         toast.success(`Avaliação liberada! Módulo seguinte ("${autoReleasedNextBookTitle}") liberado automaticamente.`)
       } else {
         toast.success(newStatus ? 'Item liberado com sucesso!' : 'Item bloqueado com sucesso!')

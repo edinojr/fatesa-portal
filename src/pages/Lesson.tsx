@@ -171,7 +171,7 @@ const Lesson = () => {
         .maybeSingle();
       if (!indivErr && indivRel) return true;
 
-      // 2. Exceção individual de módulo (liberacoes_excecao): libera todo o módulo e V1
+      // 2. Exceção individual de módulo (liberacoes_excecao): libera módulo e V1
       const { data: modExRel, error: modExErr } = await supabase
         .from('liberacoes_excecao')
         .select('id')
@@ -180,7 +180,10 @@ const Lesson = () => {
         .maybeSingle();
       if (!modExErr && modExRel) return true;
 
-      // 3. Liberação de atividade/prova para o núcleo (liberacoes_nucleo)
+      // 3. Se professor desativou expressamente (false), bloqueia!
+      if (aulaAtual.professor_active === false) return false;
+
+      // 4. Liberação específica da prova para o núcleo (liberacoes_nucleo)
       let query = supabase
         .from('liberacoes_nucleo')
         .select('liberado, created_at, nucleo_id')
@@ -194,29 +197,10 @@ const Lesson = () => {
         return true;
       }
 
-      // 4. Liberação do módulo para o núcleo (liberacoes_nucleo)
-      if (moduloId) {
-        let modQuery = supabase
-          .from('liberacoes_nucleo')
-          .select('id')
-          .eq('item_id', moduloId)
-          .eq('item_type', 'modulo')
-          .eq('liberado', true);
-        if (nucleoId) {
-          modQuery = modQuery.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
-        }
-        const { data: modRels } = await modQuery.limit(1);
-        if ((modRels || []).length > 0 && aulaAtual.professor_active !== false) {
-          return true;
-        }
-      }
-
-      // 5. Se professor ativou explicitamente (true), libera acesso
+      // 5. Se professor ativou explicitamente (true) no cadastro da aula
       if (aulaAtual.professor_active === true) return true;
 
-      // Se professor desativou explicitamente (false), bloqueia
-      if (aulaAtual.professor_active === false) return false;
-
+      // Caso contrário, a prova permanece desligada (bloqueada) por padrão!
       return false;
     }
 

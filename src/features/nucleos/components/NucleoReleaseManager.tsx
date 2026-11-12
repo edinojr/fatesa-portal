@@ -74,59 +74,113 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                 <div style={{ padding: '0 1rem 1rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {(course.livros || []).map((livro: any) => {
                     const isLivroReleased = releasedItems[`modulo:${livro.id}`];
+                    // Identificar a prova V1 do livro
+                    const examV1 = (livro.aulas || []).find((a: any) =>
+                      (a.tipo === 'prova' || a.tipo === 'avaliacao' || a.is_bloco_final) &&
+                      (!a.versao || Number(a.versao) === 1)
+                    );
+                    const examType = examV1 ? ((examV1.tipo === 'prova' || examV1.tipo === 'avaliacao') ? 'atividade' : 'video') : 'atividade';
+                    const isExamReleased = examV1 ? !!releasedItems[`${examType}:${examV1.id}`] : false;
+
                     return (
                       <div key={livro.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '8px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                           <span style={{ fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                              <BookOpen size={14} /> {livro.titulo}
                           </span>
-                        <button 
-                          className="btn"
-                          onClick={() => handleToggleRelease(livro.id, 'modulo', !!isLivroReleased)}
-                          disabled={actionLoading === `release_modulo:${livro.id}` || !canManage}
-                          style={{ 
-                            width: 'auto', 
-                            padding: '0.28rem 0.75rem', 
-                            fontSize: '0.75rem', 
-                            fontWeight: 700,
-                            background: isLivroReleased ? '#10b981' : 'rgba(239,68,68,0.12)',
-                            color: isLivroReleased ? '#ffffff' : '#f87171',
-                            border: isLivroReleased ? '1px solid #059669' : '1px solid rgba(239,68,68,0.25)',
-                            borderRadius: '6px',
-                            boxShadow: isLivroReleased ? '0 0 10px rgba(16, 185, 129, 0.45)' : 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.35rem',
-                            opacity: canManage ? 1 : 0.4,
-                            cursor: canManage ? 'pointer' : 'not-allowed',
-                            transition: 'all 0.2s ease-in-out'
-                          }}
-                        >
-                            {actionLoading === `release_modulo:${livro.id}` ? (
-                              <Loader2 className="spinner" size={13} />
-                            ) : isLivroReleased ? (
-                              <>
-                                <CheckCircle2 size={13} strokeWidth={2.5} /> Liberado
-                              </>
-                            ) : (
-                              <>
-                                <Lock size={12} /> Bloqueado
-                              </>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            {/* Botão Dedicado: Ligar / Desligar Prova */}
+                            {examV1 && (
+                              <button
+                                className="btn"
+                                onClick={() => handleToggleRelease(examV1.id, examType as any, isExamReleased)}
+                                disabled={actionLoading === `release_${examType}:${examV1.id}` || !canManage}
+                                title={isExamReleased ? "Clique para DESLIGAR (bloquear) a avaliação deste módulo" : "Clique para LIGAR (liberar) a avaliação deste módulo"}
+                                style={{
+                                  width: 'auto',
+                                  padding: '0.28rem 0.75rem',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  background: isExamReleased ? '#10b981' : 'rgba(239,68,68,0.12)',
+                                  color: isExamReleased ? '#ffffff' : '#f87171',
+                                  border: isExamReleased ? '1px solid #059669' : '1px solid rgba(239,68,68,0.25)',
+                                  borderRadius: '6px',
+                                  boxShadow: isExamReleased ? '0 0 10px rgba(16, 185, 129, 0.45)' : 'none',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  opacity: canManage ? 1 : 0.4,
+                                  cursor: canManage ? 'pointer' : 'not-allowed',
+                                  transition: 'all 0.2s ease-in-out'
+                                }}
+                              >
+                                {actionLoading === `release_${examType}:${examV1.id}` ? (
+                                  <Loader2 className="spinner" size={13} />
+                                ) : isExamReleased ? (
+                                  <>
+                                    <CheckCircle2 size={13} strokeWidth={2.5} /> Prova: Ligada
+                                  </>
+                                ) : (
+                                  <>
+                                    <Lock size={12} /> Prova: Desligada
+                                  </>
+                                )}
+                              </button>
                             )}
-                          </button>
+
+                            {/* Botão de Liberar / Bloquear Módulo (Conteúdo de Estudo) */}
+                            <button 
+                              className="btn"
+                              onClick={() => handleToggleRelease(livro.id, 'modulo', !!isLivroReleased)}
+                              disabled={actionLoading === `release_modulo:${livro.id}` || !canManage}
+                              title={isLivroReleased ? "Clique para bloquear o módulo de estudos" : "Clique para liberar o módulo de estudos"}
+                              style={{ 
+                                width: 'auto', 
+                                padding: '0.28rem 0.75rem', 
+                                fontSize: '0.75rem', 
+                                fontWeight: 700,
+                                background: isLivroReleased ? 'rgba(59, 130, 246, 0.15)' : 'rgba(239,68,68,0.12)',
+                                color: isLivroReleased ? '#60a5fa' : '#f87171',
+                                border: isLivroReleased ? '1px solid rgba(59, 130, 246, 0.35)' : '1px solid rgba(239,68,68,0.25)',
+                                borderRadius: '6px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                opacity: canManage ? 1 : 0.4,
+                                cursor: canManage ? 'pointer' : 'not-allowed',
+                                transition: 'all 0.2s ease-in-out'
+                              }}
+                            >
+                                {actionLoading === `release_modulo:${livro.id}` ? (
+                                  <Loader2 className="spinner" size={13} />
+                                ) : isLivroReleased ? (
+                                  <>
+                                    <CheckCircle2 size={13} strokeWidth={2.5} /> Módulo: Liberado
+                                  </>
+                                ) : (
+                                  <>
+                                    <Lock size={12} /> Módulo: Bloqueado
+                                  </>
+                                )}
+                            </button>
+                          </div>
                         </div>
 
                         {/* Aulas do Livro (Atividades e Vídeos) */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem', marginLeft: '0.5rem' }}>
                           {(livro.aulas || []).map((aula: any) => {
-                            const type = (aula.tipo === 'atividade' || aula.tipo === 'exercicio' || aula.tipo === 'avaliacao' || aula.tipo === 'prova') ? 'atividade' : 'video';
+                            const isExam = aula.tipo === 'prova' || aula.tipo === 'avaliacao' || !!aula.is_bloco_final;
+                            const type = (isExam || aula.tipo === 'atividade' || aula.tipo === 'exercicio') ? 'atividade' : 'video';
                             const key = `${type}:${aula.id}`;
                             const isAulaReleased = releasedItems[key];
                             
                             return (
-                              <div key={aula.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                   {type === 'video' ? <PlayCircle size={12} /> : <Award size={12} />} {aula.titulo}
+                              <div key={aula.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: isExam ? 'rgba(255, 255, 255, 0.02)' : 'transparent', padding: isExam ? '0.2rem 0.4rem' : '0', borderRadius: '4px' }}>
+                                <span style={{ fontSize: '0.75rem', color: isExam ? '#fbbf24' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: isExam ? 700 : 400 }}>
+                                   {type === 'video' ? <PlayCircle size={12} /> : <Award size={12} color={isExam ? '#fbbf24' : 'currentColor'} />} 
+                                   {aula.titulo}
+                                   {isExam && <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.35rem', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', marginLeft: '0.25rem' }}>PROVA</span>}
                                 </span>
                                 <button 
                                   className="btn"
@@ -154,11 +208,11 @@ const NucleoReleaseManager: React.FC<NucleoReleaseManagerProps> = ({
                                     <Loader2 className="spinner" size={11} />
                                   ) : isAulaReleased ? (
                                     <>
-                                      <CheckCircle2 size={12} strokeWidth={2.5} /> Liberado
+                                      <CheckCircle2 size={12} strokeWidth={2.5} /> {isExam ? 'Prova Ligada' : 'Liberado'}
                                     </>
                                   ) : (
                                     <>
-                                      <Lock size={11} /> Bloqueado
+                                      <Lock size={11} /> {isExam ? 'Prova Desligada' : 'Bloqueado'}
                                     </>
                                   )}
                                 </button>
