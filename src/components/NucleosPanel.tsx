@@ -172,6 +172,18 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
 
     setActionLoading(`release_${key}`)
     try {
+      // Localizar aulas do módulo para sincronização em cascata se for módulo
+      let moduleAulas: any[] = []
+      if (itemType === 'modulo') {
+        for (const c of allCourses) {
+          const l = (c.livros || []).find((bk: any) => bk.id === itemId)
+          if (l && l.aulas) {
+            moduleAulas = l.aulas
+            break
+          }
+        }
+      }
+
       const { error } = newStatus
         ? await supabase.from('liberacoes_nucleo').upsert({
             nucleo_id: selectedNucleo.id,
@@ -188,6 +200,45 @@ const NucleosPanel: React.FC<NucleoPanelProps> = ({
 
       let autoReleasedNextBookTitle = ''
       const updatedReleased = { ...releasedItems, [key]: newStatus }
+
+      // Cascade quando for módulo: sincroniza todas as aulas (vídeos, exercícios, lições e prova V1) para o polo
+      if (itemType === 'modulo') {
+        if (newStatus) {
+          await supabase.from('livros').update({ professor_active: true }).eq('id', itemId)
+          if (moduleAulas.length > 0) {
+            const cascadeItems = moduleAulas.map((a: any) => {
+              const isVideo = a.tipo === 'gravada' || a.tipo === 'ao_vivo' || a.tipo === 'video'
+              return {
+                nucleo_id: selectedNucleo.id,
+                item_id: a.id,
+                item_type: isVideo ? 'video' : 'atividade',
+                liberado: true
+              }
+            })
+            await supabase.from('liberacoes_nucleo').upsert(cascadeItems, { onConflict: 'nucleo_id, item_id, item_type' })
+
+            const v1OrContentIds = moduleAulas
+              .filter((a: any) => !a.versao || Number(a.versao) === 1 || a.tipo !== 'prova')
+              .map((a: any) => a.id)
+            if (v1OrContentIds.length > 0) {
+              await supabase.from('aulas').update({ professor_active: true }).in('id', v1OrContentIds)
+            }
+
+            cascadeItems.forEach((ci: any) => {
+              updatedReleased[`${ci.item_type}:${ci.item_id}`] = true
+            })
+          }
+        } else {
+          if (moduleAulas.length > 0) {
+            const aulaIds = moduleAulas.map((a: any) => a.id)
+            await supabase.from('liberacoes_nucleo').delete().eq('nucleo_id', selectedNucleo.id).in('item_id', aulaIds)
+            moduleAulas.forEach((a: any) => {
+              delete updatedReleased[`atividade:${a.id}`]
+              delete updatedReleased[`video:${a.id}`]
+            })
+          }
+        }
+      }
 
       // Se liberou uma avaliação/prova, libera automaticamente o módulo seguinte na sequência curricular!
       if (newStatus && (itemType === 'atividade' || itemType === 'modulo')) {

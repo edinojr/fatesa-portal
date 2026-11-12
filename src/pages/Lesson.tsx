@@ -162,9 +162,7 @@ const Lesson = () => {
 
     // V1 (qualquer prova de versão 1): regras de liberação (professor, exceções, núcleo)
     if (versaoAtual === 1) {
-      if (aulaAtual.professor_active === false) return false;
-
-      // Check individual exception first (liberacoes_excecao_atividade)
+      // 1. Exceção individual de atividade/prova (liberacoes_excecao_atividade): prioridade máxima
       const { data: indivRel, error: indivErr } = await supabase
         .from('liberacoes_excecao_atividade')
         .select('id')
@@ -173,7 +171,7 @@ const Lesson = () => {
         .maybeSingle();
       if (!indivErr && indivRel) return true;
 
-      // Check module-level individual exception (liberacoes_excecao)
+      // 2. Exceção individual de módulo (liberacoes_excecao): libera todo o módulo e V1
       const { data: modExRel, error: modExErr } = await supabase
         .from('liberacoes_excecao')
         .select('id')
@@ -182,6 +180,7 @@ const Lesson = () => {
         .maybeSingle();
       if (!modExErr && modExRel) return true;
 
+      // 3. Liberação de atividade/prova para o núcleo (liberacoes_nucleo)
       let query = supabase
         .from('liberacoes_nucleo')
         .select('liberado, created_at, nucleo_id')
@@ -195,12 +194,28 @@ const Lesson = () => {
         return true;
       }
 
-      // Se não há linha específica na liberacoes_nucleo, respeitar professor_active:
+      // 4. Liberação do módulo para o núcleo (liberacoes_nucleo)
+      if (moduloId) {
+        let modQuery = supabase
+          .from('liberacoes_nucleo')
+          .select('id')
+          .eq('item_id', moduloId)
+          .eq('item_type', 'modulo')
+          .eq('liberado', true);
+        if (nucleoId) {
+          modQuery = modQuery.or(`nucleo_id.eq.${nucleoId},nucleo_id.is.null`);
+        }
+        const { data: modRels } = await modQuery.limit(1);
+        if ((modRels || []).length > 0 && aulaAtual.professor_active !== false) {
+          return true;
+        }
+      }
+
+      // 5. Se professor ativou explicitamente (true), libera acesso
+      if (aulaAtual.professor_active === true) return true;
+
       // Se professor desativou explicitamente (false), bloqueia
       if (aulaAtual.professor_active === false) return false;
-
-      // Se professor ativou explicitamente (true), libera acesso
-      if (aulaAtual.professor_active === true) return true;
 
       return false;
     }

@@ -340,8 +340,8 @@ const Dashboard = () => {
           const title = aula.titulo || '';
           const isExam = aula.tipo === 'prova' || aula.tipo === 'avaliacao' || !!aula.is_bloco_final || /V[1-3]|RECUPERAÇ/i.test(title);
           
-          const isReleasedNow = (aula as any).status_liberacao !== false && 
-                                (!(aula as any).data_liberacao || new Date((aula as any).data_liberacao) <= new Date());
+          const isReleasedNow = !((aula as any).status_liberacao === true && 
+                                  (aula as any).data_liberacao && new Date((aula as any).data_liberacao) > new Date());
           
           const isDoable = !aula.isHidden && !aula.lockedByProfessor && isReleasedNow;
           

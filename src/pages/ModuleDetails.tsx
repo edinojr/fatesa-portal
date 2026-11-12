@@ -178,8 +178,8 @@ const ModuleDetails = () => {
       return watchedIds.includes(item.id);
     };
     const isLocked = (item: any) => {
-      if (item.status_liberacao === false) return true;
-      if (item.data_liberacao && new Date(item.data_liberacao) > new Date()) return true;
+      // Bloqueio por agendamento futuro: apenas quando status_liberacao é explicitamente ativo (true) com data futura
+      if (item.status_liberacao === true && item.data_liberacao && new Date(item.data_liberacao) > new Date()) return true;
       return false;
     };
     const isActuallyLocked = (item: any) => {
@@ -190,12 +190,12 @@ const ModuleDetails = () => {
       const versao = getExamVersion(item);
       const isExam = item.tipo === 'prova' || item.tipo === 'avaliacao' || !!item.is_bloco_final;
 
-      // Exceção individual de módulo desbloqueia conteúdo e V1, mas NÃO V2/V3
+      // Exceção individual de módulo desbloqueia todo o conteúdo e a prova V1 (mas NÃO V2/V3)
       if (moduleException) {
         if (!isExam || versao <= 1) return false;
       }
 
-      // Exceção individual de prova específica desbloqueia aquela prova
+      // Exceção individual de item/atividade/prova específica desbloqueia aquele item
       const hasIndividualExamRelease = examExceptions.includes(item.id);
       if (hasIndividualExamRelease) return false;
 
@@ -221,31 +221,43 @@ const ModuleDetails = () => {
           r.item_id === item.id &&
           (r.item_type === 'atividade' || r.item_type === 'prova' || r.item_type === 'avaliacao')
         );
+        const hasModuleNucleusRelease = nucleusReleases.some(r =>
+          r.item_id === currentBook?.book?.id && r.item_type === 'modulo'
+        );
+
         if (hasNucleusRelease || item.professor_active === true) return false;
-        if (item.professor_active === false) return true;
         if (item.lockedByProfessor) return true;
+        if (isLocked(item)) return true;
+
+        // Se o módulo está liberado para o aluno/polo e a prova não foi explicitamente desativada
+        if ((currentBook?.book?.isUnlocked || hasModuleNucleusRelease) && item.professor_active !== false) {
+          return false;
+        }
+
+        if (item.professor_active === false && !hasNucleusRelease && !hasModuleNucleusRelease) return true;
         return isLocked(item);
       }
 
       // Conteúdo de Estudo (Panorama, Lições, Vídeos, Exercícios):
-      // Se o módulo está desbloqueado para o aluno, o conteúdo está aberto para estudos!
-      if (currentBook?.book?.isUnlocked) {
-        if (item.professor_active === false) return true;
-        if (item.lockedByProfessor) return true;
-        if (item.status_liberacao === false) return true;
-        if (item.data_liberacao && new Date(item.data_liberacao) > new Date()) return true;
+      // Se o módulo está desbloqueado para o aluno ou liberado para o polo, o conteúdo está aberto para estudos!
+      const hasModuleNucleusRelease = nucleusReleases.some(r =>
+        r.item_id === currentBook?.book?.id && r.item_type === 'modulo'
+      );
+      if (currentBook?.book?.isUnlocked || hasModuleNucleusRelease || moduleException) {
+        if (item.professor_active === false && !hasIndividualExamRelease) return true;
+        if (item.lockedByProfessor && !hasIndividualExamRelease) return true;
+        if (isLocked(item)) return true;
         return false;
       }
 
       // Fallback: caso o módulo não esteja com flag isUnlocked (mas tenha liberação avulsa)
       const hasNucleusRelease = nucleusReleases.some(r =>
         r.item_id === item.id &&
-        (r.item_type === 'atividade' || r.item_type === 'video' || r.item_type === 'modulo')
+        (r.item_type === 'atividade' || r.item_type === 'video' || r.item_type === 'modulo' || r.item_type === 'licao')
       );
-      if (hasNucleusRelease) return false;
+      if (hasNucleusRelease || hasIndividualExamRelease) return false;
       if (item.professor_active === true) return false;
-      if (item.professor_active === false) return true;
-      if (item.lockedByProfessor) return true;
+      if (item.professor_active === false || item.lockedByProfessor) return true;
       return isLocked(item);
     };
 
